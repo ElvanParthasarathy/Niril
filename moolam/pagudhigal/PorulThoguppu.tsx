@@ -1,14 +1,14 @@
 // @ts-nocheck
-import { ArrowLeft, FloppyDisk, Tag, FileText, Package } from '@phosphor-icons/react';
+import { FloppyDisk } from '@phosphor-icons/react';
 import React, { useState, useEffect } from 'react';
 import {
-  Box, Typography, Button, Paper, TextField, InputAdornment, IconButton,
-  Grid, Select, MenuItem, InputLabel, FormControl, Divider, Stack
+  Box, Button, TextField, InputAdornment, MenuItem, Typography, Autocomplete
 } from '@mui/material';
 import { saveProduct } from '../Avanam';
 import { getAllUnits, getCountryConfig } from '../Payanpadu';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
+import { FloatingBackButton } from './FloatingBackButton';
 
 const emptyForm = {
   name: '', nameEn: '', hsn: '50072010', rate: '', taxPercent: '5', unit: 'Nos', stock: '', description: '', descriptionEn: '',
@@ -21,6 +21,10 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
   const profileCountry = defaultCountry || 'India';
   const profileCurrency = getCountryConfig(profileCountry).currency;
   const isEditing = !!product?.id;
+
+  const isBilingual = profileSettings?.enableBilingual !== false;
+  const primaryLangSuffix = isBilingual ? ` (${t((profileSettings?.primaryDataLanguage?.toLowerCase() || 'tamil') as any) || profileSettings?.primaryDataLanguage || 'Tamil'})` : '';
+  const secondaryLangSuffix = isBilingual ? ` (${t((profileSettings?.secondaryDataLanguage?.toLowerCase() || 'english') as any) || profileSettings?.secondaryDataLanguage || 'English'})` : '';
 
   useEffect(() => {
     if (product) {
@@ -71,103 +75,82 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
   };
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 800, mx: 'auto' }}>
-      <Stack direction="row" alignItems="center" spacing={2} mb={3}>
-        <IconButton onClick={onBack} sx={{ bgcolor: 'background.paper' }}>
-          <ArrowLeft size={20} weight="regular" />
-        </IconButton>
-        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+    <Box sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', position: 'relative' }}>
+      <Box sx={{ px: { xs: 2, md: 0 }, mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h5" sx={{ ml: 2, fontWeight: 800, letterSpacing: '-0.5px', color: 'text.primary' }}>
           {isEditing ? (t('editProductTitle') || 'Edit Product') : (t('addProductTitle') || 'New Product')}
         </Typography>
-      </Stack>
+        <FloatingBackButton onBack={onBack} label={t('back') as string} className="back-pill" />
+      </Box>
 
-      <Paper elevation={0} sx={{ p: { xs: 2, md: 4 }, borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
+      <Box sx={{ px: { xs: 2, md: 0 } }}>
         <datalist id="hsn-list"><option value="50072010" /></datalist>
 
-        <Box component="form" sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-          <Box>
-            <Typography variant="overline" color="primary" sx={{ fontWeight: 'bold', mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Tag size={16} weight="regular" /> Core Information
-            </Typography>
-            <Divider sx={{ mb: 3 }} />
-
-            <Grid container spacing={3}>
-              <Grid size={{ xs: 12 }}>
-                <TextField
-                  fullWidth size="small"
-                  label={`${t('productNameLabel') || 'Name'} (${profileSettings?.primaryDataLanguage || 'Tamil'})`}
-                  value={form.name}
-                  onChange={e => updateField('name', e.target.value)}
-                  required InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-              {profileSettings?.enableBilingual !== false && (
-                <Grid size={{ xs: 12 }}>
-                  <TextField
-                    fullWidth size="small"
-                    label={`${t('productNameLabel') || 'Name'} (${profileSettings?.secondaryDataLanguage || 'English'})`}
-                    value={form.nameEn || ''}
-                    onChange={e => updateField('nameEn', e.target.value)}
-                    InputLabelProps={{ shrink: true }}
-                  />
-                </Grid>
-              )}
-            </Grid>
-          </Box>
-
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="overline" color="primary" sx={{ fontWeight: 'bold', mb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-              <FileText size={16} weight="regular" /> Tax & Pricing
-            </Typography>
-            <Divider sx={{ mb: 3 }} />
-
-            <Grid container spacing={3}>
-              <Grid size={{ xs: 12, sm: 4 }}>
-                <TextField
-                  fullWidth size="small"
-                  label={t('hsnCodeLabel') || 'HSN / SAC Code'}
-                  value={form.hsn}
-                  onChange={e => updateField('hsn', e.target.value)} slotProps={{ htmlInput: { list: "hsn-list" } }}
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 4 }}>
-                <TextField
-                  fullWidth size="small"
-                  label={t('rateLabel') || 'Selling Rate'}
-                  type="number"
-                  value={form.rate}
-                  onChange={e => updateField('rate', e.target.value)}
-                  InputLabelProps={{ shrink: true }} slotProps={{ htmlInput: { min: 0 }, input: { startAdornment: <InputAdornment position="start">{profileCurrency}</InputAdornment> } }}
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 4 }}>
-                <FormControl fullWidth size="small">
-                  <InputLabel shrink>{t('gstPercentLabel') || 'GST Rate'}</InputLabel>
-                  <Select value={form.taxPercent} label={t('gstPercentLabel') || 'GST Rate'} onChange={e => updateField('taxPercent', e.target.value)} displayEmpty>
-                    <MenuItem value="0">GST0 [0%]</MenuItem>
-                    <MenuItem value="5">GST5 [5%]</MenuItem>
-                    <MenuItem value="12">GST12 [12%]</MenuItem>
-                    <MenuItem value="18">GST18 [18%]</MenuItem>
-                    <MenuItem value="28">GST28 [28%]</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid>
-          </Box>
-
-
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3 }}>
+          <TextField fullWidth size="medium" label={`${t('productNameLabel') || 'Name'}${primaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
+            value={form.name} onChange={e => updateField('name', e.target.value)} required placeholder={t('productNameLabel') || 'Product Name'} />
+            
+          {isBilingual && (
+            <TextField fullWidth size="medium" label={`${t('productNameLabel') || 'Name'}${secondaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
+              value={form.nameEn || ''} onChange={e => updateField('nameEn', e.target.value)} placeholder={t('productNameLabel') || 'Product Name'} />
+          )}
         </Box>
-        
-        <Box sx={{ mt: 5, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-          <Button variant="outlined" color="inherit" onClick={onBack} sx={{ height: 42, borderRadius: '50px', textTransform: 'none', px: 4 }}>
-            {t('cancelModalBtn') || 'Cancel'}
-          </Button>
-          <Button variant="contained" onClick={handleSave} startIcon={<FloppyDisk size={18} weight="regular" />} sx={{ height: 42, borderRadius: '50px', textTransform: 'none', px: 4, bgcolor: '#0f172a', color: 'white', '&:hover': { bgcolor: '#1e293b' } }}>
-            {isEditing ? (t('updateClientModalBtn') || 'Save Changes') : (t('saveClientModalBtn') || 'Create Product')}
-          </Button>
+
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3, mt: 8 }}>
+          <TextField fullWidth size="medium" label={t('hsnCodeLabel') || 'HSN / SAC Code'} slotProps={{ inputLabel: { shrink: true }, htmlInput: { list: "hsn-list" } }}
+            value={form.hsn} onChange={e => updateField('hsn', e.target.value)} placeholder="50072010" />
+
+          <TextField fullWidth size="medium" label={t('rateLabel') || 'Selling Rate'} type="number" slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: 0 }, input: { startAdornment: <InputAdornment position="start" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 24 }}>{getCountryConfig(profileCountry).currencySymbol || getCountryConfig(profileCountry).currency}</InputAdornment> } }}
+            value={form.rate} onChange={e => updateField('rate', e.target.value)} placeholder="0.00" />
+
+          <Autocomplete
+            freeSolo
+            options={[
+              { label: 'GST0 [0%]', value: '0' },
+              { label: 'GST5 [5%]', value: '5' },
+              { label: 'GST12 [12%]', value: '12' },
+              { label: 'GST18 [18%]', value: '18' },
+              { label: 'GST28 [28%]', value: '28' }
+            ]}
+            getOptionLabel={(option) => typeof option === 'string' ? option : option.label}
+            value={
+              [
+                { label: 'GST0 [0%]', value: '0' },
+                { label: 'GST5 [5%]', value: '5' },
+                { label: 'GST12 [12%]', value: '12' },
+                { label: 'GST18 [18%]', value: '18' },
+                { label: 'GST28 [28%]', value: '28' }
+              ].find(o => o.value === String(form.taxPercent)) || String(form.taxPercent)
+            }
+            onChange={(e, newValue) => {
+              if (typeof newValue === 'string') {
+                updateField('taxPercent', newValue);
+              } else if (newValue && newValue.value) {
+                updateField('taxPercent', newValue.value);
+              } else {
+                updateField('taxPercent', '');
+              }
+            }}
+            onInputChange={(e, newInputValue) => {
+              if (e && e.type === 'change') {
+                 updateField('taxPercent', newInputValue);
+              }
+            }}
+            renderInput={(params) => (
+              <TextField {...params} fullWidth size="medium" label={t('gstPercentLabel') || 'GST Rate'} slotProps={{ inputLabel: { shrink: true } }} placeholder="e.g. 5" />
+            )}
+          />
         </Box>
-      </Paper>
+      </Box>
+
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mb: 6, mt: 5, px: { xs: 2, md: 0 } }}>
+        <Button variant="contained" disableElevation onClick={onBack} sx={{ height: 40, minHeight: 40, maxHeight: 40, px: 3, borderRadius: '50px', bgcolor: 'background.paper', color: 'text.primary', '&:hover': { bgcolor: 'action.hover' } }}>
+          {t('cancelModalBtn') || 'Cancel'}
+        </Button>
+        <Button variant="contained" color="primary" disableElevation onClick={handleSave} startIcon={<FloppyDisk size={20} weight="bold" />} sx={{ height: 40, minHeight: 40, maxHeight: 40, px: 3, borderRadius: '50px' }}>
+          {isEditing ? (t('updateClientModalBtn') || 'Save Changes') : (t('saveClientModalBtn') || 'Create Product')}
+        </Button>
+      </Box>
     </Box>
   );
 }

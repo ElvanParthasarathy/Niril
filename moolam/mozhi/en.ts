@@ -37,7 +37,9 @@ export const en: Record<TranslationKey, string> = {
   bills: 'Bills',
   allBills: 'All Bills',
   merchants: 'Merchants',
-  inventory: 'Inventory',
+  inventory: 'Products',
+  inventoryTitle: 'Products',
+  inventorySubtitle: 'Manage your products and services',
   receipts: 'Receipts',
   expenses: 'Expenses',
   purchases: 'Purchases',
@@ -208,7 +210,7 @@ export const en: Record<TranslationKey, string> = {
   moduleGroup_directory: 'Directory',
   moduleDesc_directory: 'Clients and product catalog',
   module_clients: 'Clients',
-  module_inventory: 'Products & Services (inventory)',
+  module_inventory: 'Products & Services',
 
   moduleGroup_purchases: 'Purchases & Expenses',
   moduleDesc_purchases: 'Vendor bills, expense tracking, ITC',
@@ -233,7 +235,17 @@ export const en: Record<TranslationKey, string> = {
   module_upiQr: 'UPI QR code on invoices',
 
   // Settings Form
-  businessNameLabel: 'Business Name *',
+  businessNameLabel: 'Business Name',
+  addProductTitle: 'Add New Product',
+  editProductTitle: 'Edit Product',
+  productNameLabel: 'Product / Service Name',
+  hsnCodeLabel: 'HSN / SAC Code',
+  rateLabel: 'Rate (Base Price)',
+  gstPercentLabel: 'GST %',
+  productAddedToast: 'Product Added Successfully',
+  productUpdatedToast: 'Product Updated',
+  failedToSaveProductToast: 'Failed to Save Product',
+  productNameRequiredToast: 'Product Name is Required',
   countryLabel: 'Country',
   mugavariLabel: 'Address',
   oorLabel: 'City / Town',
@@ -397,4 +409,15 @@ export const en: Record<TranslationKey, string> = {
   invoiceDesc_composition: 'For businesses under Composition scheme (flat tax)',
   invoiceDesc_credit_note: 'For sales returns or reducing the invoice amount',
   invoiceDesc_delivery_challan: 'For sending items on approval, job work, or branch transfer',
+  
+  // Products - Bulk Actions
+  duplicateProductsTitle: 'Duplicate Products?',
+  duplicateProductsMessage: 'Are you sure you want to create copies of the selected product(s)?',
+  saveDuplicate: 'Save (Duplicate)',
+  productsDuplicatedSuccess: 'Products duplicated successfully',
+  errorDuplicating: 'Error duplicating',
+  deleteProductsTitle: 'Delete Products?',
+  deleteProductsMessage: 'Are you sure you want to delete the selected product(s)? This action cannot be undone.',
+  deletedSuccessfully: 'Deleted successfully',
+  errorDeleting: 'Error deleting'
 };

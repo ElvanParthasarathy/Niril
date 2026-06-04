@@ -6,6 +6,7 @@ import { formatCurrency, INVOICE_TYPES } from '../Payanpadu';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
 import { Button, TextField, InputAdornment, IconButton, Typography, Box, Stack, Card, Avatar, Paper, useTheme, Toolbar, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, alpha, Pagination } from '@mui/material';
+import { getSearchPaperSx, searchInputStyle, getEditPaperSx, getEditIconButtonSx, getAddButtonSx } from './commonStyles';
 import ElvanCard from './ElvanCard';
 
 const STATUS_COLORS = {
@@ -220,19 +221,7 @@ export default function Vanigargal({ onEdit, onDuplicate, onNew, onAddClient, on
           <Paper
             elevation={1}
             className="vanigargal-search"
-            sx={{
-              flex: 1,
-              maxWidth: 400,
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1.25,
-              bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF',
-              borderRadius: 100,
-              px: 2.5,
-              boxShadow: 'none',
-              border: 'none',
-              transition: 'background 0.3s ease',
-            }}
+            sx={getSearchPaperSx(isDark)}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.5 }}>
           <circle cx="11" cy="11" r="8" />
@@ -243,17 +232,7 @@ export default function Vanigargal({ onEdit, onDuplicate, onNew, onAddClient, on
           placeholder={t('search')}
           value={search}
           onChange={e => { setSearch(e.target.value); setPage(1); }}
-          style={{
-            flex: 1,
-            minWidth: 0,
-            padding: '12px 0',
-            fontSize: '0.95rem',
-            background: 'transparent',
-            border: 'none',
-            outline: 'none',
-            color: 'inherit',
-            fontFamily: 'inherit',
-          }}
+          style={searchInputStyle}
         />
           {search && (
             <IconButton size="small" onClick={() => { setSearch(''); setPage(1); }} sx={{ flexShrink: 0 }}>
@@ -263,26 +242,16 @@ export default function Vanigargal({ onEdit, onDuplicate, onNew, onAddClient, on
         </Paper>
           <Paper 
             elevation={1}
-            sx={{ 
-              borderRadius: '50%',
-              bgcolor: isSelectionMode ? (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)') : (isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF'), 
-              boxShadow: 'none',
-            }}
+            sx={getEditPaperSx(isDark, isSelectionMode)}
           >
             <IconButton 
               onClick={() => { setIsSelectionMode(!isSelectionMode); setSelectedClientIds([]); }}
-              sx={{ 
-                width: 45, height: 45, 
-                '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' },
-                '& .MuiTouchRipple-child': {
-                  backgroundColor: isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.2)',
-                }
-              }}
+              sx={getEditIconButtonSx(isDark)}
             >
               <PencilSimple size={18} weight={isSelectionMode ? 'fill' : 'regular'} color={isDark ? '#fff' : '#000'} />
             </IconButton>
           </Paper>
-          <Button variant="contained" sx={{ display: { xs: 'none', md: 'inline-flex' }, flexShrink: 0, height: 45, px: 3, borderRadius: '999px', textTransform: 'none', whiteSpace: 'nowrap', ml: 'auto', bgcolor: isDark ? 'white' : 'black', color: isDark ? 'black' : 'white', fontWeight: 700, boxShadow: 'none', '&:hover': { bgcolor: isDark ? '#e5e5e5' : '#333', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' } }} onClick={openAddClient} startIcon={<Plus size={18} weight="bold" />}>
+          <Button variant="contained" sx={getAddButtonSx(isDark)} onClick={openAddClient} startIcon={<Plus size={18} weight="bold" />}>
             {t('addClient')}
           </Button>
         </Box>

@@ -1,4 +1,4 @@
-import { ArrowLeft, Plus, Trash, DownloadSimple, UserPlus, PencilSimple, GearSix, CaretUp, CaretDown, WhatsappLogo, Check, Hourglass, Truck } from '@phosphor-icons/react';
+﻿import { ArrowLeft, Plus, Trash, DownloadSimple, UserPlus, PencilSimple, GearSix, CaretUp, CaretDown, WhatsappLogo, Check, Hourglass, Truck } from '@phosphor-icons/react';
 // @ts-nocheck
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { jsPDF } from 'jspdf';
@@ -1059,7 +1059,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                     ]},
                   ].map(section => (
                     <Grid size={{ xs: 12, sm: 6, md: 4 }} key={section.group}>
-                      <Typography variant="overline" color="text.secondary" fontWeight={700} sx={{ display: 'block', mb: 1 }}>{section.group}</Typography>
+                      <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 700 }} sx={{ display: 'block', mb: 1 }}>{section.group}</Typography>
                       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                         {section.items.map(([key, label]) => {
                           const offByDefault = key === 'showRoundOff' || key === 'showAccountLabel' || key === 'showCess' || key === 'reverseCharge';
@@ -1164,7 +1164,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
               {!isTempClient && selectedClientId && (client.mugavari || client.oor || client.maanilam || client.gstin || client.nameEn) && (
                 <Grid size={{ xs: 12 }}>
                   <Paper elevation={0} sx={{ p: 2, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : 'grey.50', border: '1px solid', borderColor: 'divider' }}>
-                    <Typography variant="overline" color="text.secondary" fontWeight={600} sx={{ display: 'block', mb: 0.5 }}>Saved Client Details</Typography>
+                    <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 600 }} sx={{ display: 'block', mb: 0.5 }}>Saved Client Details</Typography>
                     {client.mugavari && <Typography variant="body2">{client.mugavari}{client.mugavariEn ? ` / ${client.mugavariEn}` : ''}</Typography>}
                     {(client.oor || client.maavattam || client.pin) && <Typography variant="body2">{[
                       client.oor ? client.oor + (client.oorEn ? ` / ${client.oorEn}` : '') : '', 
@@ -1442,7 +1442,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                       />
                       {item.productId && (
                         <Box sx={{ mt: 1, p: 1.5, bgcolor: 'background.paper', borderRadius: 1, border: '1px solid', borderColor: 'divider' }}>
-                          <Typography variant="overline" color="text.secondary" fontWeight={600} sx={{ display: 'block', mb: 0.5 }}>Saved Item Details</Typography>
+                          <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 600 }} sx={{ display: 'block', mb: 0.5 }}>Saved Item Details</Typography>
                           {profile?.enableBilingual !== false && item.nameEn && (
                             <Typography variant="body2" sx={{ mb: 0.5 }}>Name ({profile?.secondaryDataLanguage || 'English'}): <strong>{item.nameEn}</strong></Typography>
                           )}
@@ -1547,7 +1547,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
           <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 2 }}>
             <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 3 }}>{t("termsHeading")}</Typography>
             <Box sx={{ mb: 2 }}>
-              <Typography variant="body2" fontWeight={500} sx={{ mb: 1 }}>{t("termsAppearsOnInvoice")}</Typography>
+              <Typography variant="body2" sx={{ fontWeight: 500 }} sx={{ mb: 1 }}>{t("termsAppearsOnInvoice")}</Typography>
               <RichEditor toolbar value={customTerms}
                 onChange={(v) => { setCustomTerms(v); }}
                 placeholder="Enter or paste your terms & conditions..." />
@@ -1591,3 +1591,4 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
     </Box>
   );
 }
+

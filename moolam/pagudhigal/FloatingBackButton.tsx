@@ -30,10 +30,17 @@ export const FloatingBackButton: React.FC<FloatingBackButtonProps> = ({ label = 
                 textTransform: 'none',
                 fontWeight: 700,
                 px: 2.5,
-                py: 1,
+                height: 40,
+                minHeight: 40,
+                maxHeight: 40,
+                display: 'flex',
+                alignItems: 'center',
                 fontSize: '0.9rem',
                 bgcolor: 'background.paper',
                 color: 'text.primary',
+                '& .MuiButton-startIcon': {
+                    transform: 'translateY(-1px)'
+                },
                 '&:hover': {
                     bgcolor: 'action.hover',
                 }

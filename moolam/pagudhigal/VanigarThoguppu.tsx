@@ -164,10 +164,10 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
       </Box>
 
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mb: 6, mt: 5, px: { xs: 2, md: 0 } }}>
-        <Button variant="outlined" color="inherit" onClick={onBack} sx={{ height: 48, borderRadius: '999px', textTransform: 'none', px: 4, fontWeight: 700, fontSize: '1rem' }}>
+        <Button variant="contained" disableElevation onClick={onBack} sx={{ height: 40, minHeight: 40, maxHeight: 40, px: 3, borderRadius: '50px', bgcolor: 'background.paper', color: 'text.primary', '&:hover': { bgcolor: 'action.hover' } }}>
           {t('cancelModalBtn')}
         </Button>
-        <Button variant="contained" onClick={handleSave} startIcon={<FloppyDisk size={20} weight="bold" />} sx={{ height: 48, borderRadius: '999px', textTransform: 'none', px: 5, fontSize: '1rem', bgcolor: (theme) => theme.palette.mode === 'dark' ? 'white' : 'black', color: (theme) => theme.palette.mode === 'dark' ? 'black' : 'white', fontWeight: 700, boxShadow: 'none', '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? '#e5e5e5' : '#333', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' } }}>
+        <Button variant="contained" color="primary" disableElevation onClick={handleSave} startIcon={<FloppyDisk size={20} weight="bold" />} sx={{ height: 40, minHeight: 40, maxHeight: 40, px: 3, borderRadius: '50px' }}>
           {isEditing ? t('updateClientModalBtn') : t('saveClientModalBtn')}
         </Button>
       </Box>
