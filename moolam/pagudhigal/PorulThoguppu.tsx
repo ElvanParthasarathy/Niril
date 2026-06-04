@@ -100,46 +100,11 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
           <TextField fullWidth size="medium" label={t('hsnCodeLabel') || 'HSN / SAC Code'} slotProps={{ inputLabel: { shrink: true }, htmlInput: { list: "hsn-list" } }}
             value={form.hsn} onChange={e => updateField('hsn', e.target.value)} placeholder="50072010" />
 
-          <TextField fullWidth size="medium" label={t('rateLabel') || 'Selling Rate'} type="number" slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: 0 }, input: { startAdornment: <InputAdornment position="start" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 24 }}>{getCountryConfig(profileCountry).currencySymbol || getCountryConfig(profileCountry).currency}</InputAdornment> } }}
+          <TextField fullWidth size="medium" label={t('rateLabel') || 'Selling Rate'} type="number" slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: 0 }, input: { startAdornment: <InputAdornment position="start" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 24, mt: '0 !important' }}>{getCountryConfig(profileCountry).currencySymbol || getCountryConfig(profileCountry).currency}</InputAdornment> } }}
             value={form.rate} onChange={e => updateField('rate', e.target.value)} placeholder="0.00" />
 
-          <Autocomplete
-            freeSolo
-            options={[
-              { label: 'GST0 [0%]', value: '0' },
-              { label: 'GST5 [5%]', value: '5' },
-              { label: 'GST12 [12%]', value: '12' },
-              { label: 'GST18 [18%]', value: '18' },
-              { label: 'GST28 [28%]', value: '28' }
-            ]}
-            getOptionLabel={(option) => typeof option === 'string' ? option : option.label}
-            value={
-              [
-                { label: 'GST0 [0%]', value: '0' },
-                { label: 'GST5 [5%]', value: '5' },
-                { label: 'GST12 [12%]', value: '12' },
-                { label: 'GST18 [18%]', value: '18' },
-                { label: 'GST28 [28%]', value: '28' }
-              ].find(o => o.value === String(form.taxPercent)) || String(form.taxPercent)
-            }
-            onChange={(e, newValue) => {
-              if (typeof newValue === 'string') {
-                updateField('taxPercent', newValue);
-              } else if (newValue && newValue.value) {
-                updateField('taxPercent', newValue.value);
-              } else {
-                updateField('taxPercent', '');
-              }
-            }}
-            onInputChange={(e, newInputValue) => {
-              if (e && e.type === 'change') {
-                 updateField('taxPercent', newInputValue);
-              }
-            }}
-            renderInput={(params) => (
-              <TextField {...params} fullWidth size="medium" label={t('gstPercentLabel') || 'GST Rate'} slotProps={{ inputLabel: { shrink: true } }} placeholder="e.g. 5" />
-            )}
-          />
+          <TextField fullWidth size="medium" label={t('gstPercentLabel') || 'GST Rate'} type="number" slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: 0 }, input: { endAdornment: <InputAdornment position="end" sx={{ mt: '0 !important', mr: 1.5, color: 'text.secondary' }}>%</InputAdornment> } }}
+            value={form.taxPercent} onChange={e => updateField('taxPercent', e.target.value)} placeholder="0" />
         </Box>
       </Box>
 

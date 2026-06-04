@@ -542,7 +542,7 @@ function Seyali() {
             }
           },
           input: {
-            padding: '12px 24px', // Reduced padding since label is no longer inside
+            padding: '12px 24px !important', // Reduced padding since label is no longer inside
             '&:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus, &:-webkit-autofill:active': {
               transition: 'background-color 5000s ease-in-out 0s',
               WebkitBoxShadow: darkMode ? '0 0 0 100px #262626 inset' : '0 0 0 100px #E8E8E8 inset',
