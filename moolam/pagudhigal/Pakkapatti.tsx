@@ -121,13 +121,21 @@ export default function Pakkapatti({
         </Box>
 
         {/* Nav */}
-        <List sx={{ flex: 1, overflowY: 'auto', px: 1.5, py: 2, '&::-webkit-scrollbar': { display: 'none' } }}>          {(() => {
-            const renderNavItem = (item) => (
+        <List sx={{ flex: 1, overflowY: 'auto', px: 1.5, py: 2, '&::-webkit-scrollbar': { display: 'none' } }}>
+          {(() => {
+            const renderNavItem = (item) => {
+              const isSelected = currentView === item.id || 
+                (item.id === 'clients' && currentView === 'client-editor') ||
+                (item.id === 'inventory' && currentView === 'product-editor') ||
+                (item.id === 'invoice-list' && (currentView === 'invoice-editor' || currentView === 'invoice-view')) ||
+                (item.id === 'receipts' && currentView === 'receipt-editor');
+
+              return (
               <ListItem key={item.id} disablePadding sx={{ mb: isCollapsed ? 1.5 : 1.25 }}>
                 <Tooltip title={isCollapsed ? item.label : ''} placement="right" arrow disableHoverListener={true}>
                   <ListItemButton
                     disableRipple={isCollapsed}
-                    selected={currentView === item.id}
+                    selected={isSelected}
                     onClick={() => handleNavClick(item.id, item.onClick)}
                     sx={{
                       borderRadius: isCollapsed ? '16px' : '100px',
@@ -145,7 +153,7 @@ export default function Pakkapatti({
                         color: darkMode ? '#ffffff' : '#000000',
                         '& .MuiListItemIcon-root': { 
                           color: darkMode ? '#ffffff' : '#000000',
-                          backgroundColor: isCollapsed ? (currentView === item.id ? (darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0,0,0,0.12)') : (darkMode ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0,0,0,0.04)')) : 'transparent'
+                          backgroundColor: isCollapsed ? (isSelected ? (darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0,0,0,0.12)') : (darkMode ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0,0,0,0.04)')) : 'transparent'
                         }
                       },
                       '&.Mui-selected': {
@@ -174,16 +182,16 @@ export default function Pakkapatti({
                       minWidth: 0, 
                       justifyContent: 'center', 
                       alignItems: 'center',
-                      color: currentView === item.id ? (darkMode ? '#ffffff' : '#000000') : (darkMode ? '#aaaaaa' : '#666666'), 
+                      color: isSelected ? (darkMode ? '#ffffff' : '#000000') : (darkMode ? '#aaaaaa' : '#666666'), 
                       transition: 'all 0.2s',
                       ...(isCollapsed && {
                         width: 56,
                         height: 32,
                         borderRadius: '16px',
-                        backgroundColor: currentView === item.id ? (darkMode ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0,0,0,0.06)') : 'transparent',
+                        backgroundColor: isSelected ? (darkMode ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0,0,0,0.06)') : 'transparent',
                       })
                     }}>
-                      <item.icon size={isCollapsed ? 24 : 20} weight={currentView === item.id ? "fill" : "regular"} />
+                      <item.icon size={isCollapsed ? 24 : 20} weight={isSelected ? "fill" : "regular"} />
                     </ListItemIcon>
                     {(!isCollapsed || true) && (
                       <ListItemText
@@ -194,7 +202,7 @@ export default function Pakkapatti({
                         }}
                         primary={
                           <Typography variant="body2" sx={{ 
-                            fontWeight: currentView === item.id ? 700 : 500,
+                            fontWeight: isSelected ? 700 : 500,
                             fontSize: isCollapsed ? '0.65rem' : '0.875rem',
                             textAlign: isCollapsed ? 'center' : 'left',
                             lineHeight: 1.2,
@@ -211,7 +219,8 @@ export default function Pakkapatti({
                   </ListItemButton>
                 </Tooltip>
               </ListItem>
-            );
+              );
+            };
 
             return (
               <>

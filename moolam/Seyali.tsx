@@ -508,9 +508,67 @@ function Seyali() {
           }
         }
       },
+      MuiTextField: {
+        defaultProps: {
+          variant: 'filled',
+          InputLabelProps: { shrink: true }
+        },
+        styleOverrides: {
+          root: {
+            marginTop: 24, // Increased space for the floating label above
+          }
+        }
+      },
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            transform: 'translate(16px, -26px) scale(0.85) !important',
+            fontWeight: 500, // Reduced from 600 to make it less bold
+            color: 'text.secondary',
+          }
+        }
+      },
+      MuiFilledInput: {
+        styleOverrides: {
+          root: {
+            borderRadius: 50,
+            overflow: 'hidden',
+            backgroundColor: 'action.hover',
+            '&::before, &::after': {
+              display: 'none',
+            },
+            '&.Mui-focused': {
+              backgroundColor: 'action.selected',
+            }
+          },
+          input: {
+            padding: '12px 24px', // Reduced padding since label is no longer inside
+            '&:-webkit-autofill, &:-webkit-autofill:hover, &:-webkit-autofill:focus, &:-webkit-autofill:active': {
+              transition: 'background-color 5000s ease-in-out 0s',
+              WebkitBoxShadow: darkMode ? '0 0 0 100px #262626 inset' : '0 0 0 100px #E8E8E8 inset',
+              WebkitTextFillColor: darkMode ? '#fff' : '#000',
+              caretColor: darkMode ? '#fff' : '#000',
+              borderRadius: 0,
+              border: 'none',
+              outline: 'none',
+            }
+          }
+        }
+      },
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            borderRadius: 50,
+          }
+        }
+      },
       MuiButton: {
         styleOverrides: {
           root: {
+            borderRadius: 50,
+            textTransform: 'none',
+            fontWeight: 600,
+            padding: '8px 24px',
             '@media (max-width:600px)': {
               minHeight: 48,
             }
@@ -576,6 +634,7 @@ function Seyali() {
   }
 
     
+  const isEditorView = ['client-editor', 'product-editor', 'invoice-editor', 'receipt-editor', 'invoice-view'].includes(currentView);
     
   const getTopBarTitle = () => {
     if (currentView === 'dashboard') return t('appName');
@@ -673,7 +732,7 @@ function Seyali() {
           flexDirection: 'column',
           overflow: 'hidden',
           mx: { xs: 1.5, md: 0 },
-          mb: { xs: '85px', md: 0 }, // Stops before bottom nav
+          mb: { xs: isEditorView ? 0 : '85px', md: 0 }, // Stops before bottom nav
           borderRadius: { xs: '24px', md: 0 },
           bgcolor: { xs: darkMode ? '#000000' : '#F3F4F6', md: 'transparent' },
           boxShadow: { xs: darkMode ? 'none' : '0 8px 30px rgba(0,0,0,0.04)', md: 'none' }
@@ -767,6 +826,7 @@ function Seyali() {
         </Box>
         
         {/* New Mobile AMOLED Bottom Navigation */}
+        {!isEditorView && (
         <Box sx={{ 
           display: { xs: 'flex', md: 'none' }, 
           position: 'fixed', bottom: 0, left: 0, right: 0, 
@@ -820,6 +880,7 @@ function Seyali() {
             );
           })}
         </Box>
+        )}
 
         {/* Mobile squircle FAB for page-specific adding actions */}
         {['dashboard', 'invoice-list', 'clients', 'inventory', 'receipts'].includes(currentView as string) && (

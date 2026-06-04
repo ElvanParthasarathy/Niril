@@ -5,7 +5,7 @@ import { getAllClients, getAllBills, deleteClient, saveClient, deleteBill, saveB
 import { formatCurrency, INVOICE_TYPES } from '../Payanpadu';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
-import { Button, TextField, InputAdornment, IconButton, Typography, Box, Stack, Card, Avatar, Paper, useTheme, Toolbar, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, alpha } from '@mui/material';
+import { Button, TextField, InputAdornment, IconButton, Typography, Box, Stack, Card, Avatar, Paper, useTheme, Toolbar, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, alpha, Pagination } from '@mui/material';
 import ElvanCard from './ElvanCard';
 
 const STATUS_COLORS = {
@@ -22,10 +22,12 @@ export default function Vanigargal({ onEdit, onDuplicate, onNew, onAddClient, on
   const [clients, setClients] = useState([]);
   const [bills, setBills] = useState([]);
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedClientIds, setSelectedClientIds] = useState([]);
   const [copyConfirmOpen, setCopyConfirmOpen] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState({ open: false, title: '', message: '', action: null });
+  const topRef = useRef(null);
 
   const [expandedClient, setExpandedClient] = useState(null);
   const [profileCountry, setProfileCountry] = useState('');
@@ -70,7 +72,20 @@ export default function Vanigargal({ onEdit, onDuplicate, onNew, onAddClient, on
     return { total, paid, unpaid, count: cBills.length };
   };
 
-  const filteredClients = clients.filter(c => !search.trim() || c.name.toLowerCase().includes(search.toLowerCase()));
+  const filteredClients = clients.filter(c => {
+    if (!search.trim()) return true;
+    const term = search.toLowerCase();
+    const searchable = [
+      c.name, c.nameEn, c.gstin, c.tholaipesi, c.email, 
+      c.mugavari, c.mugavariEn, c.oor, c.oorEn, c.pin, 
+      c.maanilam, c.maanilamEn, c.country
+    ].filter(Boolean).join(' ').toLowerCase();
+    return searchable.includes(term);
+  });
+  const ITEMS_PER_PAGE = 6;
+  const totalPages = Math.ceil(filteredClients.length / ITEMS_PER_PAGE);
+  const safePage = Math.max(1, Math.min(page, totalPages === 0 ? 1 : totalPages));
+  const paginatedClients = filteredClients.slice((safePage - 1) * ITEMS_PER_PAGE, safePage * ITEMS_PER_PAGE);
 
   const handleDeleteClient = (id) => {
     setConfirmDialog({
@@ -155,9 +170,9 @@ export default function Vanigargal({ onEdit, onDuplicate, onNew, onAddClient, on
       setSelectedClientIds([]);
       setCopyConfirmOpen(false);
       loadData();
-      thagaval('Customers duplicated successfully', 'success');
+      thagaval(t('customersDuplicatedSuccess') || 'Customers duplicated successfully', 'success');
     } catch (e) {
-      thagaval('Error duplicating customers', 'error');
+      thagaval(t('errorDuplicating') || 'Error duplicating customers', 'error');
     }
   };
 
@@ -165,8 +180,8 @@ export default function Vanigargal({ onEdit, onDuplicate, onNew, onAddClient, on
     if (selectedClientIds.length === 0) return;
     setConfirmDialog({
       open: true,
-      title: 'Delete Merchants?',
-      message: `Are you sure you want to delete ${selectedClientIds.length} merchant(s)? This action cannot be undone.`,
+      title: t('deleteMerchantsTitle') || 'Delete Merchants?',
+      message: (t('deleteMerchantsMessage') || 'Are you sure you want to delete {count} merchant(s)? This action cannot be undone.').replace('{count}', selectedClientIds.length.toString()),
       action: async () => {
         try {
           for (const id of selectedClientIds) {
@@ -175,9 +190,9 @@ export default function Vanigargal({ onEdit, onDuplicate, onNew, onAddClient, on
           setSelectedClientIds([]);
           setIsSelectionMode(false);
           loadData();
-          thagaval('Deleted successfully', 'success');
+          thagaval(t('deletedSuccessfully') || 'Deleted successfully', 'success');
         } catch (e) {
-          thagaval('Error deleting', 'error');
+          thagaval(t('errorDeleting') || 'Error deleting', 'error');
         }
       }
     });
@@ -192,16 +207,11 @@ export default function Vanigargal({ onEdit, onDuplicate, onNew, onAddClient, on
   };
 
   return (
-    <Box sx={{ p: { xs: 1.5, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
+    <Box ref={topRef} sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
       <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Typography variant="h5" sx={{ fontWeight: 800, letterSpacing: '-0.5px', color: 'text.primary', ml: 2 }}>
           {t('merchants')}
         </Typography>
-        <Box sx={{ display: 'flex', gap: 1.5, overflowX: 'auto', width: { xs: '100%', md: 'auto' }, pb: { xs: 1, md: 0 }, '&::-webkit-scrollbar': { display: 'none' } }}>
-          <Button variant="outlined" color="inherit" sx={{ display: { xs: 'none', md: 'inline-flex' }, flexShrink: 0, height: 42, px: 3, borderRadius: '50px', textTransform: 'none', whiteSpace: 'nowrap' }} onClick={openAddClient} startIcon={<Plus size={18} weight="regular" />}>
-            {t('addClient')}
-          </Button>
-        </Box>
       </Box>
 
       {/* Search and Selection */}
@@ -232,7 +242,7 @@ export default function Vanigargal({ onEdit, onDuplicate, onNew, onAddClient, on
           type="text"
           placeholder={t('search')}
           value={search}
-          onChange={e => setSearch(e.target.value)}
+          onChange={e => { setSearch(e.target.value); setPage(1); }}
           style={{
             flex: 1,
             minWidth: 0,
@@ -246,44 +256,50 @@ export default function Vanigargal({ onEdit, onDuplicate, onNew, onAddClient, on
           }}
         />
           {search && (
-            <IconButton size="small" onClick={() => setSearch('')} sx={{ flexShrink: 0 }}>
+            <IconButton size="small" onClick={() => { setSearch(''); setPage(1); }} sx={{ flexShrink: 0 }}>
               <X size={14} weight="regular" />
             </IconButton>
           )}
         </Paper>
-        <Paper 
-          elevation={1}
-          sx={{ 
-            borderRadius: '50%',
-            bgcolor: isSelectionMode ? (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)') : (isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF'), 
-            boxShadow: 'none',
-          }}
-        >
-          <IconButton 
-            onClick={() => { setIsSelectionMode(!isSelectionMode); setSelectedClientIds([]); }}
+          <Paper 
+            elevation={1}
             sx={{ 
-              width: 45, height: 45, 
-              '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' },
-              '& .MuiTouchRipple-child': {
-                backgroundColor: isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.2)',
-              }
+              borderRadius: '50%',
+              bgcolor: isSelectionMode ? (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)') : (isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF'), 
+              boxShadow: 'none',
             }}
           >
-            <PencilSimple size={18} weight={isSelectionMode ? 'fill' : 'regular'} color={isDark ? '#fff' : '#000'} />
-          </IconButton>
-        </Paper>
-      </Box>
+            <IconButton 
+              onClick={() => { setIsSelectionMode(!isSelectionMode); setSelectedClientIds([]); }}
+              sx={{ 
+                width: 45, height: 45, 
+                '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' },
+                '& .MuiTouchRipple-child': {
+                  backgroundColor: isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.2)',
+                }
+              }}
+            >
+              <PencilSimple size={18} weight={isSelectionMode ? 'fill' : 'regular'} color={isDark ? '#fff' : '#000'} />
+            </IconButton>
+          </Paper>
+          <Button variant="contained" sx={{ display: { xs: 'none', md: 'inline-flex' }, flexShrink: 0, height: 45, px: 3, borderRadius: '999px', textTransform: 'none', whiteSpace: 'nowrap', ml: 'auto', bgcolor: isDark ? 'white' : 'black', color: isDark ? 'black' : 'white', fontWeight: 700, boxShadow: 'none', '&:hover': { bgcolor: isDark ? '#e5e5e5' : '#333', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' } }} onClick={openAddClient} startIcon={<Plus size={18} weight="bold" />}>
+            {t('addClient')}
+          </Button>
+        </Box>
 
       {isSelectionMode && (
         <Toolbar
+          component={Paper}
+          elevation={1}
           variant="dense"
           sx={{
+            boxShadow: 'none',
             pl: { sm: 2 },
             pr: { xs: 1, sm: 1 },
-            mt: 2,
+            mt: 3,
             minHeight: '48px !important',
             borderRadius: '24px',
-            bgcolor: (theme) => alpha(theme.palette.primary.main, isDark ? 0.15 : 0.08),
+            bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF',
           }}
         >
           <IconButton onClick={handleSelectAll} color="primary" sx={{ mr: 1 }}>
@@ -322,7 +338,8 @@ export default function Vanigargal({ onEdit, onDuplicate, onNew, onAddClient, on
         </ElvanCard>
       ) : (
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
-          {filteredClients.map((client, index) => {
+          {paginatedClients.map((client, index) => {
+              const globalIndex = (safePage - 1) * ITEMS_PER_PAGE + index;
               return (
                 <ElvanCard 
                   key={client.id}
@@ -332,7 +349,7 @@ export default function Vanigargal({ onEdit, onDuplicate, onNew, onAddClient, on
                   }}
                   onClick={() => isSelectionMode ? toggleSelection(client.id) : openEditClient(client)}
                 >
-                  <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems="center" spacing={2} sx={{ height: '100%' }}>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} sx={{ height: '100%' }}>
                     <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
                       {!isSelectionMode ? (
                         <Box sx={{ 
@@ -343,7 +360,7 @@ export default function Vanigargal({ onEdit, onDuplicate, onNew, onAddClient, on
                           flexShrink: 0
                         }}>
                           <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
-                            {(index + 1).toString().padStart(2, '0')}
+                            {(globalIndex + 1).toString().padStart(2, '0')}
                           </Typography>
                         </Box>
                       ) : (
@@ -372,7 +389,7 @@ export default function Vanigargal({ onEdit, onDuplicate, onNew, onAddClient, on
                         </Box>
                       </Box>
                     </Box>
-                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mt: { xs: 2, sm: 0 } }}>
+                    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                       {isSelectionMode && (
                         <Tooltip title="Delete">
                           <IconButton color="error" onClick={(e) => { e.stopPropagation(); handleDeleteClient(client.id); }}>
@@ -387,26 +404,47 @@ export default function Vanigargal({ onEdit, onDuplicate, onNew, onAddClient, on
             })}
         </Box>
       )}
-      <Dialog open={copyConfirmOpen} onClose={() => setCopyConfirmOpen(false)} PaperProps={{ sx: { borderRadius: '24px', p: 1 } }}>
-        <DialogTitle sx={{ fontWeight: 800 }}>Duplicate Customers?</DialogTitle>
+      {totalPages > 1 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+          <Pagination 
+            count={totalPages} 
+            page={safePage} 
+            onChange={(e, val) => {
+              setPage(val);
+              if (topRef.current) {
+                topRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }}
+            color="primary" 
+            size="large"
+            sx={{
+              '& .MuiPaginationItem-root': {
+                fontWeight: 600,
+              }
+            }}
+          />
+        </Box>
+      )}
+      <Dialog open={copyConfirmOpen} onClose={() => setCopyConfirmOpen(false)} PaperProps={{ elevation: 8, sx: { borderRadius: '24px', p: 1 } }}>
+        <DialogTitle sx={{ fontWeight: 800 }}>{t('duplicateCustomersTitle') || 'Duplicate Customers?'}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to create copies of the {selectedClientIds.length} selected customer(s)? 
+            {(t('duplicateCustomersMessage') || 'Are you sure you want to create copies of the {count} selected customer(s)?').replace('{count}', selectedClientIds.length.toString())}
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => setCopyConfirmOpen(false)} color="inherit" sx={{ borderRadius: '50px', textTransform: 'none', px: 3 }}>Cancel</Button>
-          <Button onClick={executeCopy} variant="contained" color="primary" sx={{ borderRadius: '50px', textTransform: 'none', px: 3, boxShadow: 'none' }}>Save (Duplicate)</Button>
+          <Button onClick={() => setCopyConfirmOpen(false)} color="inherit" sx={{ borderRadius: '50px', textTransform: 'none', px: 3 }}>{t('cancel') || 'Cancel'}</Button>
+          <Button onClick={executeCopy} variant="contained" color="primary" sx={{ borderRadius: '50px', textTransform: 'none', px: 3, boxShadow: 'none' }}>{t('saveDuplicate') || 'Save (Duplicate)'}</Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={confirmDialog.open} onClose={() => setConfirmDialog({ ...confirmDialog, open: false })} PaperProps={{ sx: { borderRadius: '24px', p: 1 } }}>
+      <Dialog open={confirmDialog.open} onClose={() => setConfirmDialog({ ...confirmDialog, open: false })} PaperProps={{ elevation: 8, sx: { borderRadius: '24px', p: 1 } }}>
         <DialogTitle sx={{ fontWeight: 800 }}>{confirmDialog.title}</DialogTitle>
         <DialogContent>
           <DialogContentText>{confirmDialog.message}</DialogContentText>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => setConfirmDialog({ ...confirmDialog, open: false })} color="inherit" sx={{ borderRadius: '50px', textTransform: 'none', px: 3 }}>Cancel</Button>
-          <Button onClick={async () => { await confirmDialog.action(); setConfirmDialog({ ...confirmDialog, open: false }); }} variant="contained" color="error" sx={{ borderRadius: '50px', textTransform: 'none', px: 3, boxShadow: 'none' }}>Delete</Button>
+          <Button onClick={() => setConfirmDialog({ ...confirmDialog, open: false })} color="inherit" sx={{ borderRadius: '50px', textTransform: 'none', px: 3 }}>{t('cancel') || 'Cancel'}</Button>
+          <Button onClick={async () => { await confirmDialog.action(); setConfirmDialog({ ...confirmDialog, open: false }); }} variant="contained" color="primary" sx={{ borderRadius: '50px', textTransform: 'none', px: 3, boxShadow: 'none' }}>{t('delete') || 'Delete'}</Button>
         </DialogActions>
       </Dialog>
     </Box>
