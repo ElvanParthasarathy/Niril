@@ -1,0 +1,387 @@
+// @ts-nocheck
+import { SidebarSimple, FileText, GearSix, DownloadSimple, Moon, Sun, CaretDown, CaretRight, Question, Bell, SignOut } from '@phosphor-icons/react';
+import { useState } from 'react';
+import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Badge, Box, Typography, Avatar, Divider, Tooltip, IconButton, Collapse, Popover, Switch } from '@mui/material';
+import { useLanguage } from '../mozhi/LanguageContext';
+
+export default function Pakkapatti({
+  mobileOpen,
+  handleDrawerToggle,
+  isCollapsed,
+  setIsCollapsed,
+  currentView,
+  setCurrentView,
+  mainNavItems,
+  accountingItems,
+  reportsItems,
+  updateBannerVisible,
+  updateInfo,
+  setShowUpdateModal,
+  darkMode,
+  setDarkMode,
+  serverStatus,
+  profile,
+  allProfiles,
+  showProfileMenu,
+  setShowProfileMenu,
+  handleSwitchProfile
+}) {
+  const { t, language } = useLanguage();
+  const [expandedGroups, setExpandedGroups] = useState({ accounting: false, reports: false });
+  const [profileAnchorEl, setProfileAnchorEl] = useState(null);
+  const isProfileMenuOpen = Boolean(profileAnchorEl);
+  const handleProfileClose = () => setProfileAnchorEl(null);
+
+  const [themeMode, setThemeMode] = useState(() => localStorage.getItem('elvanniril_theme_mode') || (darkMode ? 'dark' : 'light'));
+
+  const handleThemeChange = (mode) => {
+    setThemeMode(mode);
+    localStorage.setItem('elvanniril_theme_mode', mode);
+    if (mode === 'auto') {
+      const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setDarkMode(isSystemDark);
+    } else {
+      setDarkMode(mode === 'dark');
+    }
+  };
+
+  const handleNavClick = (id: any, defaultOnClick?: any) => {
+    if (defaultOnClick) defaultOnClick();
+    else setCurrentView(id);
+    if (mobileOpen && handleDrawerToggle) {
+      handleDrawerToggle();
+    }
+  };
+
+  const drawerContent = (
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {/* Header */}
+        <Box sx={{ display: 'flex', alignItems: 'center', flexShrink: 0, minHeight: 80, pt: 2, pb: 1, px: isCollapsed ? 0 : 3, justifyContent: isCollapsed ? 'center' : 'space-between' }}>
+          {isCollapsed ? (
+            <Tooltip title="Open sidebar" placement="right" arrow>
+              <IconButton 
+                onClick={() => {
+                  setIsCollapsed(false);
+                  localStorage.setItem('elvanniril_sidebar_collapsed', 'false');
+                }} 
+                size="medium" 
+                sx={{ 
+                  display: { xs: 'none', md: 'inline-flex' }, 
+                  color: darkMode ? '#fff' : '#000', 
+                  '& svg': { opacity: darkMode ? 0.5 : 0.4 },
+                  '&:hover': { 
+                    backgroundColor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+                    '& svg': { opacity: 1 }
+                  } 
+                }}
+              >
+                <svg style={{ transform: 'scaleX(-1)' }} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10 6L5 9L10 12" />
+                  <path d="M14 6H19" />
+                  <path d="M14 12H19" />
+                  <path d="M5 18H19" />
+                </svg>
+              </IconButton>
+            </Tooltip>
+          ) : (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Typography variant="h6" sx={{ userSelect: 'none', letterSpacing: '-0.02em', fontWeight: 800 }}>
+                {t('appName')}
+              </Typography>
+            </Box>
+          )}
+          {!isCollapsed && (
+            <Tooltip title="Close sidebar" placement="right" arrow>
+              <IconButton 
+                onClick={() => {
+                  const next = !isCollapsed;
+                  setIsCollapsed(next);
+                  localStorage.setItem('elvanniril_sidebar_collapsed', String(next));
+                }} 
+                size="medium" 
+                sx={{ 
+                  display: { xs: 'none', md: 'inline-flex' }, 
+                  color: darkMode ? '#fff' : '#000', 
+                  '& svg': { opacity: darkMode ? 0.5 : 0.4 },
+                  '&:hover': { 
+                    backgroundColor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+                    '& svg': { opacity: 1 }
+                  } 
+                }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10 6L5 9L10 12" />
+                  <path d="M14 6H19" />
+                  <path d="M14 12H19" />
+                  <path d="M5 18H19" />
+                </svg>
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
+
+        {/* Nav */}
+        <List sx={{ flex: 1, overflowY: 'auto', px: 1.5, py: 2, '&::-webkit-scrollbar': { display: 'none' } }}>          {(() => {
+            const renderNavItem = (item) => (
+              <ListItem key={item.id} disablePadding sx={{ mb: isCollapsed ? 1.5 : 1.25 }}>
+                <Tooltip title={isCollapsed ? item.label : ''} placement="right" arrow disableHoverListener={true}>
+                  <ListItemButton
+                    disableRipple={isCollapsed}
+                    selected={currentView === item.id}
+                    onClick={() => handleNavClick(item.id, item.onClick)}
+                    sx={{
+                      borderRadius: isCollapsed ? '16px' : '100px',
+                      mx: 0,
+                      justifyContent: isCollapsed ? 'center' : 'flex-start',
+                      alignItems: 'center',
+                      flexDirection: isCollapsed ? 'column' : 'row',
+                      px: isCollapsed ? 1 : '18px',
+                      py: isCollapsed ? 1.5 : '10px',
+                      minHeight: 40,
+                      color: darkMode ? '#aaaaaa' : '#666666',
+                      transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
+                      '&:hover': {
+                        backgroundColor: isCollapsed ? 'transparent' : (darkMode ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0,0,0,0.04)'),
+                        color: darkMode ? '#ffffff' : '#000000',
+                        '& .MuiListItemIcon-root': { 
+                          color: darkMode ? '#ffffff' : '#000000',
+                          backgroundColor: isCollapsed ? (currentView === item.id ? (darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0,0,0,0.12)') : (darkMode ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0,0,0,0.04)')) : 'transparent'
+                        }
+                      },
+                      '&.Mui-selected': {
+                        backgroundColor: isCollapsed ? 'transparent' : (darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0,0,0,0.06)'),
+                        color: darkMode ? '#ffffff' : '#000000',
+                        '&:hover': {
+                          backgroundColor: isCollapsed ? 'transparent' : (darkMode ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0,0,0,0.09)'),
+                          opacity: 1
+                        },
+                        '& .MuiListItemIcon-root': { color: darkMode ? '#ffffff' : '#000000' }
+                      },
+                      '&:active svg': {
+                        transform: 'scale(0.85)',
+                      },
+                      '& svg': {
+                        transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+                      },
+                      '& .MuiTouchRipple-child': {
+                        backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.2)',
+                      }
+                    }}
+                  >
+                    <ListItemIcon sx={{ 
+                      mr: isCollapsed ? 0 : 1.25, 
+                      mb: isCollapsed ? 1 : 0, 
+                      minWidth: 0, 
+                      justifyContent: 'center', 
+                      alignItems: 'center',
+                      color: currentView === item.id ? (darkMode ? '#ffffff' : '#000000') : (darkMode ? '#aaaaaa' : '#666666'), 
+                      transition: 'all 0.2s',
+                      ...(isCollapsed && {
+                        width: 56,
+                        height: 32,
+                        borderRadius: '16px',
+                        backgroundColor: currentView === item.id ? (darkMode ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0,0,0,0.06)') : 'transparent',
+                      })
+                    }}>
+                      <item.icon size={isCollapsed ? 24 : 20} weight={currentView === item.id ? "fill" : "regular"} />
+                    </ListItemIcon>
+                    {(!isCollapsed || true) && (
+                      <ListItemText
+                        sx={{ 
+                          m: 0, 
+                          display: (!isCollapsed || isCollapsed) ? 'block' : 'none',
+                          overflow: 'visible'
+                        }}
+                        primary={
+                          <Typography variant="body2" sx={{ 
+                            fontWeight: currentView === item.id ? 700 : 500,
+                            fontSize: isCollapsed ? '0.65rem' : '0.875rem',
+                            textAlign: isCollapsed ? 'center' : 'left',
+                            lineHeight: 1.2,
+                            position: 'relative',
+                            overflow: 'visible',
+                            top: isCollapsed ? 0 : '1px', // Push text down a tiny bit to visually center with icon
+                            letterSpacing: isCollapsed ? '0.02em' : 'normal',
+                          }}>
+                            {item.label}
+                          </Typography>
+                        }
+                      />
+                    )}
+                  </ListItemButton>
+                </Tooltip>
+              </ListItem>
+            );
+
+            return (
+              <>
+                {mainNavItems.map(renderNavItem)}
+
+                {!isCollapsed && accountingItems.length > 0 && (
+                  <>
+                    <Box sx={{ mx: 0, px: '18px', py: '6px', mb: 0.5, mt: 1.5 }}>
+                      <Typography sx={{ fontSize: '11.5px', fontWeight: 700, color: darkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)', textTransform: 'none', letterSpacing: '-0.1px' }}>
+                        {t('accountingGroup')}
+                      </Typography>
+                    </Box>
+                    {accountingItems.map(renderNavItem)}
+                  </>
+                )}
+                {isCollapsed && accountingItems.map(renderNavItem)}
+
+                {!isCollapsed && reportsItems.length > 0 && (
+                  <>
+                    <Box sx={{ mx: 0, px: '18px', py: '6px', mb: 0.5, mt: 1.5 }}>
+                      <Typography sx={{ fontSize: '11.5px', fontWeight: 700, color: darkMode ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)', textTransform: 'none', letterSpacing: '-0.1px' }}>
+                        {t('reportsGroup')}
+                      </Typography>
+                    </Box>
+                    {reportsItems.map(renderNavItem)}
+                  </>
+                )}
+                {isCollapsed && reportsItems.map(renderNavItem)}
+                
+              </>
+            );
+          })()}
+
+          <Box sx={{ height: 16 }} />
+
+          {/* Bottom tools */}
+          {updateBannerVisible && (
+            <ListItem disablePadding sx={{ mb: 1.25 }}>
+              <Tooltip title={isCollapsed ? `Update to v${updateInfo.latest}` : ''} placement="right" arrow>
+                <ListItemButton
+                  onClick={() => setShowUpdateModal(true)}
+                  sx={{
+                    borderRadius: isCollapsed ? '16px' : '100px', mx: 0, px: isCollapsed ? 1 : '18px', py: isCollapsed ? 1.5 : '10px', minHeight: 40,
+                    justifyContent: isCollapsed ? 'center' : 'flex-start',
+                    background: 'var(--info-bg)', border: '1px solid var(--info-border)', color: 'var(--info-text)',
+                    '& .MuiTouchRipple-child': {
+                      backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.2)',
+                    }
+                  }}
+                >
+                  <ListItemIcon sx={{ mr: isCollapsed ? 0 : 1.25, minWidth: 0, justifyContent: 'center', color: 'var(--info-text)' }}>
+                    <DownloadSimple size={isCollapsed ? 24 : 20} weight="regular" />
+                  </ListItemIcon>
+                  {!isCollapsed && (
+                    <>
+                      <ListItemText primary={<Typography variant="body2" sx={{ fontWeight: 600 }}>`Update to v${updateInfo.latest}`</Typography>} />
+                      <Box sx={{ width: 8, height: 8, borderRadius: '50%', background: '#f59e0b', boxShadow: '0 0 0 3px rgba(245,158,11,0.25)', flexShrink: 0 }} />
+                    </>
+                  )}
+                  {isCollapsed && <Box sx={{ position: 'absolute', top: 6, right: 6, width: 8, height: 8, borderRadius: '50%', background: '#f59e0b' }} />}
+                </ListItemButton>
+              </Tooltip>
+            </ListItem>
+          )}
+
+
+        </List>
+
+          {/* Settings Zone */}
+          <Box sx={{ px: 1.5, pb: 3, display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <ListItemButton 
+              onClick={() => { handleNavClick('settings'); }} 
+              sx={{ 
+                borderRadius: isCollapsed ? '16px' : '100px', 
+                mx: isCollapsed ? 'auto' : 0,
+                width: isCollapsed ? 48 : '100%',
+                height: isCollapsed ? 48 : 'auto',
+                justifyContent: isCollapsed ? 'center' : 'flex-start',
+                alignItems: 'center',
+                flexDirection: isCollapsed ? 'column' : 'row',
+                px: isCollapsed ? 0 : '18px',
+                py: isCollapsed ? 0 : '10px',
+                minHeight: isCollapsed ? 48 : 40,
+                color: darkMode ? '#aaaaaa' : '#666666',
+                transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
+                '&:hover': { 
+                  backgroundColor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+                  color: darkMode ? '#ffffff' : '#000000',
+                  '& .MuiListItemIcon-root': { color: darkMode ? '#ffffff' : '#000000' }
+                },
+                '&:active svg': {
+                  transform: 'scale(0.85)',
+                },
+                '& svg': {
+                  transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
+                },
+                '& .MuiTouchRipple-child': {
+                  backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.2)',
+                }
+              }}
+            >
+              <ListItemIcon sx={{ mr: isCollapsed ? 0 : 1.25, mb: 0, minWidth: 0, justifyContent: 'center', color: currentView === 'settings' ? (darkMode ? '#ffffff' : '#000000') : (darkMode ? '#aaaaaa' : '#666666'), transition: 'color 0.2s' }}>
+                <GearSix size={isCollapsed ? 24 : 20} weight={currentView === 'settings' ? "fill" : "regular"} />
+              </ListItemIcon>
+              {!isCollapsed && (
+                <ListItemText 
+                  sx={{ m: 0, display: 'block' }}
+                  primary={
+                    <Typography variant="body2" sx={{ 
+                      fontWeight: 500, 
+                      fontSize: '0.875rem',
+                      lineHeight: 1.2,
+                      position: 'relative',
+                      top: '1px'
+                    }}>
+                      {t('settings') || 'Settings'}
+                    </Typography>
+                  } 
+                />
+              )}
+            </ListItemButton>
+          </Box>
+      </Box>
+  );
+
+  return (
+    <Box component="nav" sx={{ width: { md: isCollapsed ? 80 : 260 }, flexShrink: { md: 0 } }}>
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{ keepMounted: true }}
+        sx={{
+          display: 'none', // Hidden completely on mobile in favor of bottom nav
+          '& .MuiDrawer-paper': { 
+            boxSizing: 'border-box', 
+            width: '85%', 
+            maxWidth: 320, 
+            backgroundColor: darkMode ? '#111111' : '#FFFFFF', 
+            color: darkMode ? '#ffffff' : '#000000', 
+            backgroundImage: 'none',
+            pt: 'env(safe-area-inset-top, 0px)',
+            pb: 'env(safe-area-inset-bottom, 0px)',
+          },
+          '& .MuiBackdrop-root': { backdropFilter: 'blur(4px)' },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: isCollapsed ? 80 : 260,
+          flexShrink: 0,
+          display: { xs: 'none', md: 'block' },
+          transition: 'width 0.3s cubic-bezier(0.2, 0, 0, 1)',
+          [`& .MuiDrawer-paper`]: { 
+            width: isCollapsed ? 80 : 260, 
+            boxSizing: 'border-box', 
+            backgroundColor: darkMode ? '#111111' : '#FFFFFF', 
+            color: darkMode ? '#ffffff' : '#000000', 
+            borderRight: darkMode ? 'none' : '1px solid #F3F4F6', 
+            backgroundImage: 'none',
+            transition: 'width 0.3s cubic-bezier(0.2, 0, 0, 1), background-color 0.3s',
+            overflowX: 'hidden'
+          },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+    </Box>
+  );
+}
