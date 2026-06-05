@@ -264,31 +264,6 @@ export default function ElvanListView<T extends { id: string }>(props: ElvanList
         </Box>
       )}
 
-      {/* Floating Add Button for Mobile */}
-      {onAdd && (
-        <Button 
-          variant="contained" 
-          onClick={onAdd} 
-          sx={{ 
-            display: { xs: 'flex', md: 'none' }, 
-            position: 'fixed', 
-            bottom: 80, 
-            right: 16, 
-            borderRadius: 50, 
-            minWidth: 'auto', 
-            width: 56, 
-            height: 56, 
-            p: 0, 
-            boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
-            bgcolor: isDark ? 'white' : 'black',
-            color: isDark ? 'black' : 'white',
-            '&:hover': { bgcolor: isDark ? '#e5e5e5' : '#333' }
-          }}
-        >
-          <Plus size={24} weight="bold" />
-        </Button>
-      )}
-
       <Dialog open={copyConfirmOpen} onClose={() => setCopyConfirmOpen(false)} slotProps={{ paper: { elevation: 8, sx: { borderRadius: '24px', p: 1 } } }}>
         <DialogTitle sx={{ fontWeight: 800 }}>{duplicateConfirmTitle}</DialogTitle>
         <DialogContent>

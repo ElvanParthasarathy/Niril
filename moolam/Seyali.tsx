@@ -643,6 +643,9 @@ function Seyali() {
             },
             '&.Mui-focused': {
               backgroundColor: 'action.selected',
+            },
+            '&.MuiInputBase-multiline': {
+              borderRadius: 24,
             }
           },
           input: {
@@ -818,6 +821,7 @@ function Seyali() {
 
     
   const isEditorView = ['client-editor', 'product-editor', 'invoice-editor', 'receipt-editor', 'invoice-view', 'receipt-view'].includes(currentView);
+  const isPrintView = ['invoice-view', 'receipt-view'].includes(currentView);
     
   const getTopBarTitle = () => {
     if (currentView === 'dashboard') return t('appName');
@@ -898,35 +902,40 @@ function Seyali() {
         bgcolor: { xs: darkMode ? '#000000' : '#F3F4F6', md: 'background.default' } 
       }}>
         {/* New Mobile AMOLED Top Bar */}
-        <Box sx={{ display: { xs: 'flex', md: 'none' }, px: 2, py: 1.5, alignItems: 'center', justifyContent: 'space-between', bgcolor: 'transparent', zIndex: 1100 }}>
-          <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.5px', color: darkMode ? '#FFFFFF' : '#000000' }}>
-            {getTopBarTitle()}
-          </Typography>
-          {currentView === 'dashboard' && (
-            <Stack direction="row" spacing={0.5}>
-              <IconButton onClick={() => setCurrentView('reports')} sx={{ 
-                color: currentView === 'reports' ? 'primary.main' : (darkMode ? '#aaa' : '#666'),
-                '&:active svg': { transform: 'scale(0.85)' },
-                '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
-              }}>
-                <BarChart size={24} weight={currentView === 'reports' ? "fill" : "regular"} />
-              </IconButton>
-              <IconButton onClick={() => setCurrentView('gst-returns')} sx={{ 
-                color: currentView === 'gst-returns' ? 'primary.main' : (darkMode ? '#aaa' : '#666'),
-                '&:active svg': { transform: 'scale(0.85)' },
-                '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
-              }}>
-                <Description size={24} weight={currentView === 'gst-returns' ? "fill" : "regular"} />
-              </IconButton>
-              <IconButton onClick={() => setCurrentView('settings')} sx={{ 
-                color: currentView === 'settings' ? 'primary.main' : (darkMode ? '#aaa' : '#666'),
-                '&:active svg': { transform: 'scale(0.85)' },
-                '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
-              }}>
-                <Settings size={24} weight={currentView === 'settings' ? "fill" : "regular"} />
-              </IconButton>
-            </Stack>
+        <Box sx={{ display: { xs: 'flex', md: 'none' }, px: 2, py: 1.5, alignItems: 'center', justifyContent: 'space-between', bgcolor: 'transparent', zIndex: 1100, minHeight: 64 }}>
+          <Box id="mobile-topbar-left" sx={{ display: 'flex', alignItems: 'center' }} />
+          {!isEditorView && (
+            <Typography variant="h6" sx={{ ml: 1.5, fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.5px', color: darkMode ? '#FFFFFF' : '#000000', flexGrow: 1 }}>
+              {getTopBarTitle()}
+            </Typography>
           )}
+          <Box id="mobile-topbar-right" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+            {currentView === 'dashboard' && (
+              <Stack direction="row" spacing={0.5}>
+                <IconButton onClick={() => setCurrentView('reports')} sx={{ 
+                  color: currentView === 'reports' ? 'primary.main' : (darkMode ? '#aaa' : '#666'),
+                  '&:active svg': { transform: 'scale(0.85)' },
+                  '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
+                }}>
+                  <BarChart size={24} weight={currentView === 'reports' ? "fill" : "regular"} />
+                </IconButton>
+                <IconButton onClick={() => setCurrentView('gst-returns')} sx={{ 
+                  color: currentView === 'gst-returns' ? 'primary.main' : (darkMode ? '#aaa' : '#666'),
+                  '&:active svg': { transform: 'scale(0.85)' },
+                  '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
+                }}>
+                  <Description size={24} weight={currentView === 'gst-returns' ? "fill" : "regular"} />
+                </IconButton>
+                <IconButton onClick={() => setCurrentView('settings')} sx={{ 
+                  color: currentView === 'settings' ? 'primary.main' : (darkMode ? '#aaa' : '#666'),
+                  '&:active svg': { transform: 'scale(0.85)' },
+                  '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
+                }}>
+                  <Settings size={24} weight={currentView === 'settings' ? "fill" : "regular"} />
+                </IconButton>
+              </Stack>
+            )}
+          </Box>
         </Box>
 
         {/* Global Floating Shell */}
@@ -935,9 +944,9 @@ function Seyali() {
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
-          mx: { xs: 1.5, md: 0 },
-          mb: { xs: isEditorView ? 0 : '85px', md: 0 }, // Stops before bottom nav
-          borderRadius: { xs: '24px', md: 0 },
+          mx: { xs: isPrintView ? 0 : 1.5, md: 0 },
+          mb: { xs: isPrintView ? 0 : (isEditorView ? 1.5 : '85px'), md: 0 }, // Stops before bottom nav or gives small bottom gap
+          borderRadius: { xs: isPrintView ? 0 : '24px', md: 0 },
           bgcolor: { xs: darkMode ? '#000000' : '#F3F4F6', md: 'transparent' },
           boxShadow: { xs: darkMode ? 'none' : '0 8px 30px rgba(0,0,0,0.04)', md: 'none' }
         }}>
@@ -945,7 +954,7 @@ function Seyali() {
           <Box sx={{ 
             flexGrow: 1, 
             overflowY: 'scroll',
-            pb: { xs: 2, md: 0 } // small padding at the bottom of the scroll inside the shell
+            pb: { xs: isPrintView ? 0 : 2, md: 0 } // small padding at the bottom of the scroll inside the shell
           }}>
           {currentView === 'dashboard' && (
           <Mugappu onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onEdit={handleViewInvoice} onDuplicate={handleDuplicateInvoice} onConvert={handleConvertToInvoice} profile={profile} />

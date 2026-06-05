@@ -1,6 +1,7 @@
 import React from 'react';
-import { Button } from '@mui/material';
+import { Button, IconButton, Box, useMediaQuery, useTheme } from '@mui/material';
 import { CaretLeft } from '@phosphor-icons/react';
+import { useLanguage } from '../mozhi/LanguageContext';
 
 interface FloatingBackButtonProps {
     to?: string; 
@@ -9,22 +10,47 @@ interface FloatingBackButtonProps {
     onBack?: () => void;
 }
 
-export const FloatingBackButton: React.FC<FloatingBackButtonProps> = ({ label = "பின்செல்", className, onBack }) => {
+export const FloatingBackButton: React.FC<FloatingBackButtonProps> = ({ label, className, onBack }) => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const { t } = useLanguage();
+    const displayLabel = label || t('back');
+
+    const handleClick = (e: React.MouseEvent) => {
+        if (onBack) {
+            onBack();
+        } else if (window.history.state && window.history.state.idx > 0) {
+            window.history.back();
+        } else {
+            window.location.search = '';
+        }
+    };
+
+    if (isMobile) {
+        return (
+            <IconButton 
+                className={className}
+                onClick={handleClick}
+                sx={{
+                    bgcolor: 'background.paper',
+                    color: 'text.primary',
+                    p: 1.5, // Better touch target
+                    '&:active svg': { transform: 'scale(0.85)' },
+                    '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
+                }}
+            >
+                <CaretLeft weight="bold" size={20} />
+            </IconButton>
+        );
+    }
+
     return (
         <Button 
             variant="contained"
             disableElevation
             className={className}
             startIcon={<CaretLeft weight="bold" size={16} />}
-            onClick={(e) => {
-                if (onBack) {
-                    onBack();
-                } else if (window.history.state && window.history.state.idx > 0) {
-                    window.history.back();
-                } else {
-                    window.location.search = '';
-                }
-            }}
+            onClick={handleClick}
             sx={{ 
                 borderRadius: '50px', 
                 textTransform: 'none',
@@ -38,15 +64,14 @@ export const FloatingBackButton: React.FC<FloatingBackButtonProps> = ({ label = 
                 fontSize: '0.9rem',
                 bgcolor: 'background.paper',
                 color: 'text.primary',
-                '& .MuiButton-startIcon': {
-                    transform: 'translateY(-1px)'
-                },
                 '&:hover': {
                     bgcolor: 'action.hover',
                 }
             }}
         >
-            {label}
+            <Box component="span" sx={{ transform: 'translateY(2px)' }}>
+                {displayLabel}
+            </Box>
         </Button>
     );
 };

@@ -1,5 +1,6 @@
-import React from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { Box, Typography, Button, useMediaQuery, useTheme } from '@mui/material';
 import { FloppyDisk } from '@phosphor-icons/react';
 import { FloatingBackButton } from './FloatingBackButton';
 import { useLanguage } from '../mozhi/LanguageContext';
@@ -22,21 +23,67 @@ export default function ElvanEditorLayout({
   children
 }: ElvanEditorLayoutProps) {
   const { t } = useLanguage();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
+
+  const isEditingTitle = title.includes(t('edit')) || title.toLowerCase().includes('edit') || title.includes('திருத்து');
+  const displayTitle = isMobile && isEditingTitle ? (t('edit') || 'Edit') : title;
+
+  const titleElement = (
+    <Typography variant="h5" sx={{ 
+      ml: { xs: 1.5, md: 2 }, 
+      fontWeight: 800, 
+      letterSpacing: '-0.5px', 
+      color: 'text.primary',
+      fontSize: { xs: '1.1rem', md: '1.5rem' }
+    }}>
+      {displayTitle}
+    </Typography>
+  );
+
+  const backButtonElement = (
+    <FloatingBackButton onBack={onBack} label={(t('back') || 'Back') as string} className="back-pill" />
+  );
+
+  let renderHeader = null;
+  if (isMobile && mounted) {
+    const leftTarget = document.getElementById('mobile-topbar-left');
+    const rightTarget = document.getElementById('mobile-topbar-right');
+    if (leftTarget && rightTarget) {
+      renderHeader = (
+        <>
+          {createPortal(titleElement, leftTarget)}
+          {createPortal(backButtonElement, rightTarget)}
+        </>
+      );
+    }
+  } else if (!isMobile) {
+    renderHeader = (
+      <Box sx={{ 
+        px: 0, 
+        mb: 4, 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center'
+      }}>
+        {titleElement}
+        {backButtonElement}
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', position: 'relative' }}>
-      <Box sx={{ px: { xs: 2, md: 0 }, mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h5" sx={{ ml: 2, fontWeight: 800, letterSpacing: '-0.5px', color: 'text.primary' }}>
-          {title}
-        </Typography>
-        <FloatingBackButton onBack={onBack} label={(t('back') || 'Back') as string} className="back-pill" />
-      </Box>
+      {renderHeader}
 
-      <Box sx={{ px: { xs: 2, md: 0 } }}>
+      <Box sx={{ px: 0 }}>
         {children}
       </Box>
 
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mb: 6, mt: 5, px: { xs: 2, md: 0 } }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mb: 6, mt: 5, px: 0 }}>
         <Button 
           variant="contained" 
           disableElevation 
