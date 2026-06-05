@@ -113,7 +113,7 @@ export default function ElvanEditorLayout({
           sx={{
             display: { xs: 'flex', md: 'none' },
             position: 'fixed',
-            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 20px)',
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 40px)',
             right: 20,
             minWidth: 56,
             width: 56,

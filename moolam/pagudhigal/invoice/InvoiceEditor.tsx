@@ -893,7 +893,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
         sx={{
           display: { xs: 'flex', sm: 'none' },
           position: 'fixed',
-          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 20px)',
+          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 40px)',
           right: 20,
           minWidth: 56,
           width: 56,
