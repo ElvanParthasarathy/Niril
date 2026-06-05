@@ -25,6 +25,7 @@ import {
 
 // Rich text editor component that works with contentEditable properly
 function RichEditor({ value, onChange, placeholder, toolbar = false }) {
+  const { t } = useLanguage();
   const ref = useRef(null);
   const isInitialized = useRef(false);
 
