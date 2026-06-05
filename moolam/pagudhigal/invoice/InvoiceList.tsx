@@ -1,23 +1,17 @@
 // @ts-nocheck
-import Description from '@mui/icons-material/Description';
-import Search from '@mui/icons-material/Search';
-import Close from '@mui/icons-material/Close';
-import Visibility from '@mui/icons-material/Visibility';
-import ContentCopy from '@mui/icons-material/ContentCopy';
-import WhatsApp from '@mui/icons-material/WhatsApp';
-import Email from '@mui/icons-material/Email';
-import Delete from '@mui/icons-material/Delete';
-import Add from '@mui/icons-material/Add';
-import { useState, useEffect } from 'react';
+import { Plus, X, Trash, Eye, Copy, WhatsappLogo, EnvelopeSimple, FileText, PencilSimple, CheckSquare, Square } from '@phosphor-icons/react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useTheme } from '@mui/material/styles';
+import {
+  Box, Typography, Button, IconButton, Tooltip, Chip, Stack,
+  Paper, Pagination, Toolbar, Dialog, DialogTitle, DialogContent, DialogActions
+} from '@mui/material';
 import { getAllBills, deleteBill, saveBill, getProfile } from '../../Avanam';
-import { formatCurrency, INVOICE_TYPES } from '../../Payanpadu';
+import { formatCurrency, INVOICE_TYPES, getCountryConfig } from '../../Payanpadu';
 import { thagaval } from '../Thagaval';
 import { useLanguage } from '../../mozhi/LanguageContext';
-import { 
-  Box, Typography, Button, TextField, InputAdornment, IconButton, 
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
-  Paper, Select, MenuItem, Chip, Tooltip, useTheme, Fab, Stack, Divider, Card, CardContent
-} from '@mui/material';
+import { getSearchPaperSx, searchInputStyle, getAddButtonSx, getEditPaperSx, getEditIconButtonSx } from '../commonStyles';
+import ElvanCard from '../ElvanCard';
 
 export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
   const { t } = useLanguage();
@@ -25,6 +19,13 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
   const isDark = theme.palette.mode === 'dark';
   const [bills, setBills] = useState([]);
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [confirmDialog, setConfirmDialog] = useState<{ open: boolean; title: string; message: string; action: (() => void) | null }>({ open: false, title: '', message: '', action: null });
+  const topRef = useRef<HTMLDivElement>(null);
+
+  const profileCurrency = getCountryConfig(profile?.country || 'India').currency;
 
   const loadData = async () => {
     try {
@@ -48,7 +49,7 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
 
   const shareWhatsApp = (bill) => {
     const tholaipesi = bill.clientPhone ? bill.clientPhone.replace(/\D/g, '') : '';
-    const msg = `*Invoice ${bill.invoiceNumber}*\nAmount: ${formatCurrency(bill.totalAmount)}\nDate: ${new Date(bill.invoiceDate).toLocaleDateString('en-IN')}`;
+    const msg = `*Invoice ${bill.invoiceNumber}*\nAmount: ${formatCurrency(bill.totalAmount, profileCurrency)}\nDate: ${new Date(bill.invoiceDate).toLocaleDateString('en-IN')}`;
     const encoded = encodeURIComponent(msg);
     const waUrl = tholaipesi ? `https://api.whatsapp.com/send?phone=${tholaipesi}&text=${encoded}` : `https://api.whatsapp.com/send?text=${encoded}`;
     window.location.href = waUrl;
@@ -56,205 +57,307 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
 
   const shareEmail = (bill) => {
     const subject = `Invoice ${bill.invoiceNumber}`;
-    const body = `Dear ${bill.clientName || 'Customer'},\n\nPlease find the details of your invoice:\n\nInvoice No: ${bill.invoiceNumber}\nAmount: ${formatCurrency(bill.totalAmount)}\nDate: ${new Date(bill.invoiceDate).toLocaleDateString('en-IN')}\n\nRegards`;
+    const body = `Dear ${bill.clientName || 'Customer'},\n\nPlease find the details of your invoice:\n\nInvoice No: ${bill.invoiceNumber}\nAmount: ${formatCurrency(bill.totalAmount, profileCurrency)}\nDate: ${new Date(bill.invoiceDate).toLocaleDateString('en-IN')}\n\nRegards`;
     window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
   };
 
-  const filteredBills = bills.filter(b => 
-    !search.trim() || 
-    (b.clientName || '').toLowerCase().includes(search.toLowerCase()) || 
+  const filteredBills = bills.filter(b =>
+    !search.trim() ||
+    (b.clientName || '').toLowerCase().includes(search.toLowerCase()) ||
     b.invoiceNumber.toLowerCase().includes(search.toLowerCase())
-  ).sort((a, b) => new Date(b.invoiceDate).getTime() - new Date(a.invoiceDate).getTime()).reverse();
+  ).sort((a, b) => new Date(b.invoiceDate).getTime() - new Date(a.invoiceDate).getTime());
+
+  const ITEMS_PER_PAGE = 6;
+  const totalPages = Math.ceil(filteredBills.length / ITEMS_PER_PAGE);
+  const safePage = Math.max(1, Math.min(page, totalPages === 0 ? 1 : totalPages));
+  const paginatedBills = filteredBills.slice((safePage - 1) * ITEMS_PER_PAGE, safePage * ITEMS_PER_PAGE);
+
+  const handleSelectAll = () => {
+    if (selectedIds.length === paginatedBills.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(paginatedBills.map(b => b.id));
+    }
+  };
+
+  const toggleSelection = (id: string) => {
+    setSelectedIds(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const handleCopySelected = () => {
+    setConfirmDialog({
+      open: true,
+      title: t('duplicateProductsTitle') || 'Duplicate Invoices?',
+      message: t('duplicateProductsMessage') || 'Are you sure you want to create copies of the selected invoice(s)?',
+      action: async () => {
+        try {
+          const selected = bills.filter(b => selectedIds.includes(b.id));
+          for (const b of selected) {
+            const { id, ...rest } = b;
+            await saveBill({ ...rest, invoiceNumber: `${b.invoiceNumber} (Copy)` });
+          }
+          thagaval(t('productsDuplicatedSuccess') || 'Invoices duplicated successfully', 'success');
+          setSelectedIds([]);
+          setIsSelectionMode(false);
+          loadData();
+        } catch (e) {
+          thagaval(t('errorDuplicating') || 'Error duplicating', 'error');
+        }
+      }
+    });
+  };
+
+  const handleDeleteSelected = () => {
+    setConfirmDialog({
+      open: true,
+      title: t('deleteProductsTitle') || 'Delete Invoices?',
+      message: t('deleteProductsMessage') || 'Are you sure you want to delete the selected invoice(s)? This action cannot be undone.',
+      action: async () => {
+        try {
+          for (const id of selectedIds) {
+            await deleteBill(id);
+          }
+          thagaval(t('deletedSuccessfully') || 'Deleted successfully', 'success');
+          setSelectedIds([]);
+          setIsSelectionMode(false);
+          loadData();
+        } catch (e) {
+          thagaval(t('errorDeleting') || 'Error deleting', 'error');
+        }
+      }
+    });
+  };
 
   return (
-    <Box sx={{ p: { xs: 1.5, sm: 3 }, maxWidth: 1200, margin: '0 auto' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Box>
-          <Typography variant="h4" fontWeight="bold" color="primary.main">
-            {t('invoicesCount') || 'Invoices'}
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            {t('overviewOfInvoices') || 'Manage all generated bills'}
-          </Typography>
-        </Box>
-        <Button variant="contained" startIcon={<Add sx={{ fontSize: 18 }} />} onClick={onNew} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>
-          {t('newInvoiceBtn') || 'New Invoice'}
-        </Button>
+    <Box ref={topRef} sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
+      <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Typography variant="h5" sx={{ fontWeight: 800, letterSpacing: '-0.5px', color: 'text.primary', ml: 2 }}>
+          {t('invoicesCount') || 'Invoices'}
+        </Typography>
       </Box>
 
-      {/* Mobile FAB */}
-      <Fab 
-        color="primary" 
-        onClick={onNew} 
-        sx={{ 
-          position: 'fixed', bottom: 24, right: 24, 
-          display: { xs: 'flex', sm: 'none' }, zIndex: 1000,
-          bgcolor: isDark ? 'white' : 'black', color: isDark ? 'black' : 'white',
-          '&:hover': { bgcolor: isDark ? '#e5e5e5' : '#333' }
-        }}
-      >
-        <Add />
-      </Fab>
-
-      <Paper sx={{ p: 2, mb: 3 }}>
-        <TextField
-          fullWidth
-          placeholder={t('searchInvoices') || 'Search bills...'}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          variant="outlined"
-          size="small"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Search sx={{ fontSize: 18 }} />
-              </InputAdornment>
-            ),
-            endAdornment: search ? (
-              <InputAdornment position="end">
-                <IconButton size="small" onClick={() => setSearch('')}>
-                  <Close sx={{ fontSize: 16 }} />
-                </IconButton>
-              </InputAdornment>
-            ) : null
-          }}
-        />
-      </Paper>
-
-      <Paper>
-        {filteredBills.length === 0 ? (
-          <Box sx={{ p: 6, textAlign: 'center' }}>
-            <Description sx={{ fontSize: 48 }} htmlColor="#94a3b8" />
-            <Typography variant="h6" color="text.secondary" sx={{ mt: 2 }}>
-              {search ? 'No invoices found for your search.' : (t('noInvoicesYet') || 'No invoices found.')}
-            </Typography>
-            {!search && (
-              <Button variant="contained" startIcon={<Add sx={{ fontSize: 16 }} />} sx={{ mt: 2 }} onClick={onNew}>
-                {t('createInvoiceBtn') || 'Create Invoice'}
-              </Button>
+      <Box sx={{ mb: 4 }}>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          <Paper elevation={1} className="vanigargal-search" sx={getSearchPaperSx(isDark)}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.5 }}>
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              placeholder={t('searchInvoices') || 'Search invoices...'}
+              value={search}
+              onChange={e => { setSearch(e.target.value); setPage(1); }}
+              style={searchInputStyle}
+            />
+            {search && (
+              <IconButton size="small" onClick={() => { setSearch(''); setPage(1); }} sx={{ flexShrink: 0 }}>
+                <X size={14} weight="regular" />
+              </IconButton>
             )}
-          </Box>
-        ) : (
-          <>
-            {/* Mobile Cards View (xs only) */}
-            <Box sx={{ display: { xs: 'block', sm: 'none' }, p: 2, bgcolor: isDark ? '#000' : '#f8f9fa' }}>
-              {filteredBills.map(bill => {
-                return (
-                  <Card key={bill.id} sx={{ mb: 2, borderRadius: 4, border: '1px solid', borderColor: 'divider', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', bgcolor: 'background.paper' }}>
-                    <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
-                      <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={1.5}>
-                        <Box sx={{ width: '100%' }}>
-                          <Typography variant="subtitle1" fontWeight={700} noWrap>{bill.clientName || '-'}</Typography>
-                          <Typography variant="caption" color="text.secondary">{new Date(bill.invoiceDate).toLocaleDateString('en-IN')}</Typography>
-                        </Box>
-                      </Stack>
-                      <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
-                        <Chip size="small" label={bill.invoiceNumber} sx={{ fontWeight: 600, borderRadius: '999px', bgcolor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)' }} />
-                        <Typography variant="h6" fontWeight={800}>
-                          {formatCurrency(bill.totalAmount)}
-                        </Typography>
-                      </Stack>
-                      <Divider sx={{ mb: 1.5 }} />
-                      <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
-                        <Chip label={t(`invoiceTypes_${(bill.invoiceType || 'tax-invoice').replace(/-/g, '_')}`, { defaultValue: INVOICE_TYPES[bill.invoiceType || 'tax-invoice']?.label })} size="small" variant="outlined" sx={{ borderRadius: '999px', borderColor: 'divider', fontSize: '0.7rem' }} />
-                        <Stack direction="row" spacing={0.5}>
-                          {bill.data && <IconButton size="small" color="primary" onClick={() => onView(bill)}><Visibility sx={{ fontSize: 16 }} /></IconButton>}
-                          <IconButton size="small" color="primary" onClick={() => onDuplicate(bill)}><ContentCopy sx={{ fontSize: 16 }} /></IconButton>
-                          <IconButton size="small" color="success" onClick={() => shareWhatsApp(bill)}><WhatsApp sx={{ fontSize: 16 }} /></IconButton>
-                          <IconButton size="small" color="primary" onClick={() => shareEmail(bill)}><Email sx={{ fontSize: 16 }} /></IconButton>
-                          <IconButton size="small" color="error" onClick={() => handleDeleteBill(bill.id)}><Delete sx={{ fontSize: 16 }} /></IconButton>
-                        </Stack>
-                      </Stack>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </Box>
+          </Paper>
 
-            {/* Desktop Table View (sm and up) */}
-            <TableContainer sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <Table sx={{ minWidth: 850 }} size="small">
-                <TableHead>
-                  <TableRow sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.02)' : 'grey.100' }}>
-                    <TableCell>{t('dateCol') || 'Date'}</TableCell>
-                  <TableCell>{t('invoiceNoCol') || 'Invoice No.'}</TableCell>
-                  <TableCell>Client Name</TableCell>
-                  <TableCell>{t('typeCol') || 'Type'}</TableCell>
-                  <TableCell align="right">{t('amountCol') || 'Amount'}</TableCell>
-                  <TableCell align="center">{t('actionsCol') || 'Actions'}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredBills.map(bill => {
-                  return (
-                    <TableRow key={bill.id} hover>
-                      <TableCell sx={{ color: 'text.secondary' }}>
-                        {new Date(bill.invoiceDate).toLocaleDateString('en-IN')}
-                      </TableCell>
-                      <TableCell>
-                        <Chip label={bill.invoiceNumber} size="small" variant="outlined" />
-                      </TableCell>
-                      <TableCell>
-                        <Box sx={{ maxWidth: 220, overflow: 'hidden' }}>
-                          <Typography variant="body2" fontWeight={600} noWrap title={bill.clientName || '-'}>
-                            {bill.clientName || '-'}
-                          </Typography>
-                          {profile?.enableBilingual !== false && (bill.clientNameEn || bill.data?.client?.nameEn) && (
-                            <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block', fontWeight: 'normal' }} title={bill.clientNameEn || bill.data?.client?.nameEn}>
-                              {bill.clientNameEn || bill.data?.client?.nameEn}
-                            </Typography>
-                          )}
-                        </Box>
-                      </TableCell>
-                      <TableCell>
-                        <Chip 
-                          label={t(`invoiceTypes_${(bill.invoiceType || 'tax-invoice').replace(/-/g, '_')}`, { defaultValue: INVOICE_TYPES[bill.invoiceType || 'tax-invoice']?.label })} 
-                          size="small" 
-                          color="primary" 
-                          variant="outlined" 
-                        />
-                      </TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 'bold' }}>{formatCurrency(bill.totalAmount)}</TableCell>
-                      <TableCell align="center">
-                        <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'center' }}>
-                          {bill.data && (
-                            <Tooltip title="View Invoice">
-                              <IconButton size="small" color="primary" onClick={() => onView(bill)}>
-                                <Visibility sx={{ fontSize: 16 }} />
-                              </IconButton>
-                            </Tooltip>
-                          )}
-                          <Tooltip title="Duplicate Invoice">
-                            <IconButton size="small" color="primary" onClick={() => onDuplicate(bill)}>
-                              <ContentCopy sx={{ fontSize: 16 }} />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="WhatsApp">
-                            <IconButton size="small" color="success" onClick={() => shareWhatsApp(bill)}>
-                              <WhatsApp sx={{ fontSize: 16 }} />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Email">
-                            <IconButton size="small" color="primary" onClick={() => shareEmail(bill)}>
-                              <Email sx={{ fontSize: 16 }} />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip title="Delete Invoice">
-                            <IconButton size="small" color="error" onClick={() => handleDeleteBill(bill.id)}>
-                              <Delete sx={{ fontSize: 16 }} />
-                            </IconButton>
-                          </Tooltip>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          </>
-        )}
-      </Paper>
+          <Paper
+            elevation={1}
+            sx={getEditPaperSx(isDark, isSelectionMode)}
+          >
+            <IconButton
+              onClick={() => { setIsSelectionMode(!isSelectionMode); setSelectedIds([]); }}
+              sx={getEditIconButtonSx(isDark)}
+            >
+              <PencilSimple size={18} weight={isSelectionMode ? 'fill' : 'regular'} color={isDark ? '#fff' : '#000'} />
+            </IconButton>
+          </Paper>
+          <Button variant="contained" sx={getAddButtonSx(isDark)} onClick={onNew} startIcon={<Plus size={18} weight="bold" />}>
+            {t('newInvoiceBtn') || 'New Invoice'}
+          </Button>
+        </Box>
+      </Box>
+
+      {isSelectionMode && (
+        <Toolbar
+          component={Paper}
+          elevation={1}
+          variant="dense"
+          sx={{
+            boxShadow: 'none',
+            pl: { sm: 2 },
+            pr: { xs: 1, sm: 1 },
+            mt: 0,
+            minHeight: '48px !important',
+            mb: 4,
+            borderRadius: '24px',
+            bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF',
+          }}
+        >
+          <IconButton onClick={handleSelectAll} color="primary" sx={{ mr: 1 }}>
+            {selectedIds.length > 0 && selectedIds.length === paginatedBills.length ? <CheckSquare size={24} weight="fill" /> : <Square size={24} />}
+          </IconButton>
+
+          <Typography sx={{ flex: '1 1 100%', fontWeight: 600, display: 'flex', alignItems: 'center', lineHeight: 1, mt: 0.3 }} color="primary" variant="subtitle1" component="div">
+            {selectedIds.length} {t('selected') || 'Selected'}
+          </Typography>
+
+          <Stack direction="row" spacing={1}>
+            <Tooltip title={t('saveDuplicate') || 'Copy / Duplicate'}>
+              <IconButton onClick={handleCopySelected} color="primary">
+                <Copy size={20} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={t('delete') || 'Delete'}>
+              <IconButton onClick={handleDeleteSelected} color="error">
+                <Trash size={20} />
+              </IconButton>
+            </Tooltip>
+          </Stack>
+        </Toolbar>
+      )}
+
+      {filteredBills.length === 0 ? (
+        <ElvanCard boxSx={{ p: 6, textAlign: 'center' }}>
+          <Box color="text.secondary" mb={2}>
+            <FileText size={48} weight="regular" style={{ opacity: 0.5 }} />
+          </Box>
+          <Typography color="text.secondary" mb={2}>{bills.length === 0 ? (t('noInvoicesYet') || 'No invoices yet') : (t('noInvoicesMatch') || 'No invoices match your search')}</Typography>
+          {bills.length === 0 && (
+            <Button variant="outlined" color="inherit" sx={{ borderRadius: '50px', textTransform: 'none' }} onClick={onNew} startIcon={<Plus size={16} weight="regular" />}>
+              {t('createInvoiceBtn') || 'Create Invoice'}
+            </Button>
+          )}
+        </ElvanCard>
+      ) : (
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
+          {paginatedBills.map((bill, index) => {
+            const globalIndex = (safePage - 1) * ITEMS_PER_PAGE + index;
+            const isSelected = selectedIds.includes(bill.id);
+            const invoiceTypeKey = (bill.invoiceType || 'tax-invoice').replace(/-/g, '_');
+            const invoiceTypeLabel = t(`invoiceTypes_${invoiceTypeKey}`, { defaultValue: INVOICE_TYPES[bill.invoiceType || 'tax-invoice']?.label });
+            return (
+              <ElvanCard
+                key={bill.id}
+                sx={{
+                  height: '100%',
+                  cursor: 'pointer',
+                  ...(isSelectionMode && isSelected ? { bgcolor: isDark ? 'rgba(255,255,255,0.06) !important' : 'rgba(0,0,0,0.04) !important' } : {})
+                }}
+                onClick={() => isSelectionMode ? toggleSelection(bill.id) : (onView && onView(bill))}
+              >
+                <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} sx={{ height: '100%' }}>
+                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
+                    {isSelectionMode ? (
+                      <IconButton
+                        size="small"
+                        onClick={(e) => { e.stopPropagation(); toggleSelection(bill.id); }}
+                        sx={{ color: isSelected ? 'primary.main' : 'text.disabled', p: 0, mt: 0.2 }}
+                      >
+                        {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} />}
+                      </IconButton>
+                    ) : (
+                      <Box sx={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        width: 28, height: 28, mt: 0.15,
+                        borderRadius: '50%',
+                        bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
+                        flexShrink: 0
+                      }}>
+                        <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
+                          {(globalIndex + 1).toString().padStart(2, '0')}
+                        </Typography>
+                      </Box>
+                    )}
+                    <Box>
+                      <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                        {bill.clientName || '-'}
+                      </Typography>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
+                        {profile?.enableBilingual !== false && (bill.clientNameEn || bill.data?.client?.nameEn) && (
+                          <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{bill.clientNameEn || bill.data?.client?.nameEn}</Typography>
+                        )}
+                        <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
+                          {bill.invoiceNumber} <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> {bill.invoiceDate ? new Date(bill.invoiceDate).toLocaleDateString('en-IN') : '-'}
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
+                          {invoiceTypeLabel}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'space-between' }}>
+                    <Box sx={{ display: 'flex', gap: 0.5, mt: -0.5, mr: -0.5 }}>
+                      <Tooltip title="Duplicate">
+                        <IconButton size="small" onClick={(e) => { e.stopPropagation(); onDuplicate(bill); }} color="primary">
+                          <Copy size={18} weight="regular" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="WhatsApp">
+                        <IconButton size="small" onClick={(e) => { e.stopPropagation(); shareWhatsApp(bill); }} sx={{ color: '#25D366' }}>
+                          <WhatsappLogo size={18} weight="regular" />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Email">
+                        <IconButton size="small" onClick={(e) => { e.stopPropagation(); shareEmail(bill); }} color="primary">
+                          <EnvelopeSimple size={18} weight="regular" />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                    <Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: 800 }}>
+                      {formatCurrency(bill.totalAmount, profileCurrency)}
+                    </Typography>
+                  </Box>
+                </Stack>
+              </ElvanCard>
+            );
+          })}
+        </Box>
+      )}
+
+      {totalPages > 1 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+          <Pagination
+            count={totalPages}
+            page={safePage}
+            onChange={(e, val) => {
+              setPage(val);
+              if (topRef.current) {
+                topRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }}
+            color="primary"
+            size="large"
+            sx={{
+              '& .MuiPaginationItem-root': {
+                fontWeight: 600,
+              }
+            }}
+          />
+        </Box>
+      )}
+
+      {/* Confirmation Dialog */}
+      <Dialog open={confirmDialog.open} onClose={() => setConfirmDialog(prev => ({ ...prev, open: false }))} PaperProps={{ sx: { borderRadius: 3 } }}>
+        <DialogTitle sx={{ fontWeight: 700 }}>{confirmDialog.title}</DialogTitle>
+        <DialogContent>
+          <Typography color="text.secondary">{confirmDialog.message}</Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 0 }}>
+          <Button onClick={() => setConfirmDialog(prev => ({ ...prev, open: false }))} sx={{ borderRadius: 50, textTransform: 'none' }}>
+            {t('cancelModalBtn') || 'Cancel'}
+          </Button>
+          <Button
+            onClick={() => {
+              if (confirmDialog.action) confirmDialog.action();
+              setConfirmDialog(prev => ({ ...prev, open: false }));
+            }}
+            variant="contained"
+            color={confirmDialog.title.includes('Delete') ? 'error' : 'primary'}
+            sx={{ borderRadius: 50, textTransform: 'none', px: 3 }}
+          >
+            {t('confirmModalBtn') || 'Confirm'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

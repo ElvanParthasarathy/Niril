@@ -31,15 +31,10 @@ export default function Vanigargal({ onEdit, onDuplicate, onNew, onAddClient, on
   const topRef = useRef(null);
 
   const [expandedClient, setExpandedClient] = useState(null);
-  const [profileCountry, setProfileCountry] = useState('');
-  const [profileSettings, setProfileSettings] = useState({ primary: 'Tamil', secondary: 'English', bilingual: true });
+  const profileCountry = profile?.country || 'India';
+  const profileSettings = { primary: profile?.primaryDataLanguage || 'Tamil', secondary: profile?.secondaryDataLanguage || 'English', bilingual: profile?.enableBilingual !== false };
 
-  useEffect(() => {
-    getProfile().then(p => { 
-      if (p?.country) setProfileCountry(p.country); 
-      if (p) setProfileSettings({ primary: p.primaryDataLanguage || 'Tamil', secondary: p.secondaryDataLanguage || 'English', bilingual: p.enableBilingual !== false }); 
-    }).catch(() => {});
-  }, []);
+
 
   const loadData = async () => {
     try {

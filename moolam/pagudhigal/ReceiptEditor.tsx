@@ -9,24 +9,34 @@ import { saveReceipt, getAllBills, getReceiptNumberSettings, getAllReceipts } fr
 import { formatCurrency, getCountryConfig } from '../Payanpadu';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
+import { FloatingBackButton } from './FloatingBackButton';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 
 const PAYMENT_MODES = ['Bank Transfer', 'UPI', 'Cash', 'Cheque', 'Card', 'Other'];
 
-export default function ReceiptEditor({ profile, onBack, onSaved }: { profile: any, onBack: () => void, onSaved: () => void }) {
+export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt }: { profile: any, onBack: () => void, onSaved: () => void, editingReceipt?: any }) {
   const { t } = useLanguage();
   const profileCurrency = getCountryConfig(profile?.country || 'India').currency;
+  const currencySymbol = getCountryConfig(profile?.country || 'India').currencySymbol || profileCurrency;
+  
+  const primaryLang = profile?.primaryDataLanguage || 'Tamil';
+  const secondaryLang = profile?.secondaryDataLanguage || 'English';
   
   const [form, setForm] = useState({
-    date: new Date().toISOString().split('T')[0],
-    receiptNo: '',
-    clientName: '',
-    clientNameEn: '',
-    clientAddress: '',
-    amount: '',
-    paymentMode: '',
-    referenceNo: '',
-    againstInvoice: '',
-    note: '',
+    id: editingReceipt?.id || '',
+    date: editingReceipt?.date || new Date().toISOString().split('T')[0],
+    receiptNo: editingReceipt?.receiptNo || '',
+    [`clientName_${primaryLang}`]: editingReceipt?.clientName || '',
+    [`clientName_${secondaryLang}`]: editingReceipt?.clientNameEn || '',
+    clientAddress: editingReceipt?.clientAddress || '',
+    amount: editingReceipt?.amount?.toString() || '',
+    paymentMode: editingReceipt?.paymentMode || '',
+    referenceNo: editingReceipt?.referenceNo || '',
+    againstInvoice: editingReceipt?.againstInvoice || '',
+    note: editingReceipt?.note || '',
   });
 
   const [bills, setBills] = useState<any[]>([]);
@@ -42,22 +52,24 @@ export default function ReceiptEditor({ profile, onBack, onSaved }: { profile: a
         ]);
         setBills(bls || []);
         
-        // Generate new receipt number
-        const count = (recs || []).length + (settings.startNumber || 1);
-        const pfx = settings.brandPrefix || 'RCP';
-        const sep = settings.separator || '/';
-        const padded = String(count).padStart(settings.padDigits || 4, '0');
-        let nextNo = `${pfx}${sep}${padded}`;
-        
-        if (settings.format === 'random') {
-          nextNo = `${pfx}${sep}${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-        } else if (settings.showFinYear) {
-          const yr = new Date().getFullYear();
-          const ny = (yr + 1).toString().slice(-2);
-          nextNo = `${pfx}${sep}${yr}-${ny}${sep}${padded}`;
+        if (!editingReceipt) {
+          // Generate new receipt number
+          const count = (recs || []).length + (settings.startNumber || 1);
+          const pfx = settings.brandPrefix || 'RCP';
+          const sep = settings.separator || '/';
+          const padded = String(count).padStart(settings.padDigits || 4, '0');
+          let nextNo = `${pfx}${sep}${padded}`;
+          
+          if (settings.format === 'random') {
+            nextNo = `${pfx}${sep}${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+          } else if (settings.showFinYear) {
+            const yr = new Date().getFullYear();
+            const ny = (yr + 1).toString().slice(-2);
+            nextNo = `${pfx}${sep}${yr}-${ny}${sep}${padded}`;
+          }
+          
+          setForm(prev => ({ ...prev, receiptNo: nextNo }));
         }
-        
-        setForm(prev => ({ ...prev, receiptNo: nextNo }));
       } catch (err) {
         console.error(err);
       }
@@ -70,8 +82,8 @@ export default function ReceiptEditor({ profile, onBack, onSaved }: { profile: a
   const selectInvoice = (bill: any) => {
     setForm(prev => ({
       ...prev,
-      clientName: bill.clientName || '',
-      clientNameEn: bill.clientNameEn || bill.data?.client?.nameEn || '',
+      [`clientName_${primaryLang}`]: bill.clientName || '',
+      [`clientName_${secondaryLang}`]: bill.clientNameEn || bill.data?.client?.nameEn || '',
       clientAddress: bill.data?.client?.mugavari || '',
       amount: String(bill.status === 'paid' ? (bill.paidAmount || bill.totalAmount) : Math.max(0, bill.totalAmount - (bill.paidAmount || 0))),
       againstInvoice: bill.invoiceNumber || '',
@@ -79,15 +91,20 @@ export default function ReceiptEditor({ profile, onBack, onSaved }: { profile: a
   };
 
   const handleSave = async () => {
-    if (!form.clientName.trim()) { thagaval(t('clientNameRequiredToast') || 'Client name is required', 'warning'); return; }
+    if (!form[`clientName_${primaryLang}`]?.trim()) { thagaval(t('clientNameRequiredToast') || 'Client name is required', 'warning'); return; }
     if (!form.amount || parseFloat(form.amount) <= 0) { thagaval(t('enterValidAmountToast') || 'Enter valid amount', 'warning'); return; }
     if (!form.paymentMode) { thagaval(t('paymentModeLabel') + ' is required', 'warning'); return; }
     try {
       const receipt = {
         ...form,
+        clientName: form[`clientName_${primaryLang}`] || '',
+        clientNameEn: form[`clientName_${secondaryLang}`] || '',
         referenceNo: form.paymentMode === 'Cash' ? '' : form.referenceNo,
         amount: parseFloat(form.amount),
       };
+      delete receipt[`clientName_${primaryLang}`];
+      delete receipt[`clientName_${secondaryLang}`];
+      
       await saveReceipt(receipt);
       thagaval(t('receiptSavedToast') || 'Receipt Saved!', 'success');
       onSaved();
@@ -121,17 +138,15 @@ export default function ReceiptEditor({ profile, onBack, onSaved }: { profile: a
   };
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 800, mx: 'auto' }}>
-      <Stack direction="row" alignItems="center" spacing={2} mb={4}>
-        <IconButton onClick={onBack} sx={{ bgcolor: 'white', border: '1px solid', borderColor: 'divider' }}>
-          <ArrowLeft size={20} weight="regular" />
-        </IconButton>
-        <Typography variant="h4" color="text.primary" sx={{ fontWeight: "bold" }}>
-          {t('newPaymentReceiptTitle')}
+    <Box sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', position: 'relative' }}>
+      <Box sx={{ px: { xs: 2, md: 0 }, mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h5" sx={{ ml: 2, fontWeight: 800, letterSpacing: '-0.5px', color: 'text.primary' }}>
+          {editingReceipt ? (t('editReceiptTitle') || 'Edit Receipt') : t('newPaymentReceiptTitle')}
         </Typography>
-      </Stack>
+        <FloatingBackButton onBack={onBack} label={t('back') as string} className="back-pill" />
+      </Box>
 
-      <Paper sx={{ p: 4, borderRadius: 3, border: '1px solid', borderColor: 'divider' }} elevation={0}>
+      <Box sx={{ px: { xs: 2, md: 0 } }}>
         {unpaidBills.length > 0 && !form.againstInvoice && (
           <Box sx={{ mb: 4 }}>
             <Typography variant="subtitle2" color="primary" sx={{ mb: 2, fontWeight: 'bold' }}>
@@ -159,54 +174,63 @@ export default function ReceiptEditor({ profile, onBack, onSaved }: { profile: a
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, sm: 6 }}>
             <TextField 
-              fullWidth size="small" label={t('receiptNoLabel')} 
+              fullWidth size="medium" label={t('receiptNoLabel')} 
               value={form.receiptNo} onChange={e => updateField('receiptNo', e.target.value)} 
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField 
-              fullWidth size="small" label={t('dateLabel')} type="date"
-              value={form.date} onChange={e => updateField('date', e.target.value)} 
-              InputLabelProps={{ shrink: true }}
-            />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label={t('dateLabel')}
+                value={form.date ? dayjs(form.date) : null}
+                onChange={(newValue) => updateField('date', newValue ? newValue.format('YYYY-MM-DD') : '')}
+                slotProps={{ textField: { fullWidth: true, size: 'medium' } }}
+                format="DD/MM/YYYY"
+              />
+            </LocalizationProvider>
           </Grid>
           <Grid size={{ xs: 12, sm: profile?.enableBilingual !== false ? 6 : 12 }}>
             <TextField 
-              fullWidth size="small" label={t('receivedFromLabel')} 
-              value={form.clientName} onChange={e => updateField('clientName', e.target.value)} 
+              fullWidth size="medium" label={`${t('receivedFromLabel')} ${profile?.enableBilingual !== false ? `(${primaryLang})` : ''}`} 
+              value={form[`clientName_${primaryLang}`] || ''} onChange={e => updateField(`clientName_${primaryLang}`, e.target.value)} 
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
           {profile?.enableBilingual !== false && (
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField 
-                fullWidth size="small" label="Received From (English)" 
-                value={form.clientNameEn || ''} onChange={e => updateField('clientNameEn', e.target.value)} 
+                fullWidth size="medium" label={`${t('receivedFromLabel')} (${secondaryLang})`} 
+                value={form[`clientName_${secondaryLang}`] || ''} onChange={e => updateField(`clientName_${secondaryLang}`, e.target.value)} 
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
           )}
           <Grid size={{ xs: 12, sm: 6 }}>
             <TextField 
-              fullWidth size="small" label={t('amountLabelStar')} type="number"
-              value={form.amount} onChange={e => updateField('amount', e.target.value)} slotProps={{ input: { startAdornment: <InputAdornment position="start">{profileCurrency}</InputAdornment> } }}
+              fullWidth size="medium" label={t('amountLabelStar')} type="number"
+              value={form.amount} onChange={e => updateField('amount', e.target.value)} slotProps={{ input: { startAdornment: <InputAdornment position="start" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 24, mt: '0 !important' }}>{currencySymbol}</InputAdornment> } }}
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <FormControl fullWidth size="small">
-              <InputLabel shrink>{t('paymentModeLabel')}</InputLabel>
-              <Select value={form.paymentMode} onChange={e => updateField('paymentMode', e.target.value)} label={t('paymentModeLabel')} displayEmpty>
-                <MenuItem value=""><em>{t('paymentModeLabel')}...</em></MenuItem>
-                {PAYMENT_MODES.map(m => <MenuItem key={m} value={m}>{renderPaymentModeOption(m)}</MenuItem>)}
-              </Select>
-            </FormControl>
+            <TextField 
+              select
+              fullWidth size="medium" 
+              label={t('paymentModeLabel')} 
+              value={form.paymentMode} 
+              onChange={e => updateField('paymentMode', e.target.value)} 
+              InputLabelProps={{ shrink: true }}
+              slotProps={{ select: { displayEmpty: true } }}
+            >
+              <MenuItem value=""><em>{t('paymentModeLabel')}...</em></MenuItem>
+              {PAYMENT_MODES.map(m => <MenuItem key={m} value={m}>{renderPaymentModeOption(m)}</MenuItem>)}
+            </TextField>
           </Grid>
           {form.paymentMode !== 'Cash' && (
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField 
-                fullWidth size="small" label={t('referenceNoLabel')} 
+                fullWidth size="medium" label={t('referenceNoLabel')} 
                 value={form.referenceNo} onChange={e => updateField('referenceNo', e.target.value)} 
                 InputLabelProps={{ shrink: true }}
               />
@@ -234,7 +258,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved }: { profile: a
               renderInput={(params) => (
                 <TextField 
                   {...params}
-                  fullWidth size="small" 
+                  fullWidth size="medium" 
                   label={t('againstInvoiceLabel')} 
                   placeholder={t('againstInvoicePlaceholder')}
                   InputLabelProps={params.InputLabelProps}
@@ -244,22 +268,22 @@ export default function ReceiptEditor({ profile, onBack, onSaved }: { profile: a
           </Grid>
           <Grid size={{ xs: 12 }}>
             <TextField 
-              fullWidth size="small" label={t('noteOptionalLabel')} multiline rows={2}
+              fullWidth size="medium" label={t('noteOptionalLabel')} multiline rows={2}
               value={form.note} onChange={e => updateField('note', e.target.value)} 
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
         </Grid>
+      </Box>
 
-        <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid', borderColor: 'divider', display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-          <Button onClick={onBack} variant="outlined" color="inherit" sx={{ borderRadius: 50, textTransform: 'none', px: 3 }}>
-            {t('cancelModalBtn')}
-          </Button>
-          <Button onClick={handleSave} variant="contained" startIcon={<FloppyDisk size={18} weight="regular" />} sx={{ borderRadius: 50, textTransform: 'none', px: 4, bgcolor: '#0f172a', '&:hover': { bgcolor: '#1e293b' } }}>
-            {t('saveReceiptBtn')}
-          </Button>
-        </Box>
-      </Paper>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mb: 6, mt: 5, px: { xs: 2, md: 0 } }}>
+        <Button variant="contained" disableElevation onClick={onBack} sx={{ height: 40, minHeight: 40, maxHeight: 40, px: 3, borderRadius: '50px', bgcolor: 'background.paper', color: 'text.primary', '&:hover': { bgcolor: 'action.hover' } }}>
+          {t('cancelModalBtn')}
+        </Button>
+        <Button variant="contained" color="primary" disableElevation onClick={handleSave} startIcon={<FloppyDisk size={20} weight="bold" />} sx={{ height: 40, minHeight: 40, maxHeight: 40, px: 3, borderRadius: '50px' }}>
+          {t('saveReceiptBtn')}
+        </Button>
+      </Box>
     </Box>
   );
 }

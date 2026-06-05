@@ -67,7 +67,6 @@ export const ta = {
   province: 'மாகாணம்',
   postcode: 'அஞ்சல் குறியீடு',
   zipCode: 'அஞ்சல் குறியீடு',
-  pinCode: 'அஞ்சல் குறியீடு',
   tamil: 'தமிழ்',
   english: 'ஆங்கிலம்',
   hindi: 'இந்தி',
@@ -104,13 +103,9 @@ export const ta = {
   deleteMerchantConfirm: 'இந்த வணிகரை உறுதியாக நீக்க வேண்டுமா?',
   duplicateCustomersTitle: 'வணிகர்களை நகலெடுக்கவா?',
   duplicateCustomersMessage: 'தேர்ந்தெடுக்கப்பட்ட {count} வணிகர்களின் நகல்களை உருவாக்க வேண்டுமா?',
-  saveDuplicate: 'சேமி',
   deleteMerchantsTitle: 'வணிகர்களை நீக்க வேண்டுமா?',
   deleteMerchantsMessage: 'தேர்ந்தெடுக்கப்பட்ட {count} வணிகரை(களை) நீக்க வேண்டுமா? இதை மாற்ற இயலாது.',
   customersDuplicatedSuccess: 'வணிகர்கள் வெற்றிகரமாக நகலெடுக்கப்பட்டனர்',
-  errorDuplicating: 'நகலெடுப்பதில் பிழை',
-  deletedSuccessfully: 'வெற்றிகரமாக நீக்கப்பட்டது',
-  errorDeleting: 'நீக்குவதில் பிழை',
 
   // Items
   newItem: 'புதிய பொருள்',
@@ -423,6 +418,7 @@ export const ta = {
   updateClientModalBtn: 'புதுப்பி',
   saveClientModalBtn: 'சேமி',
   cancelModalBtn: 'ரத்து',
+  confirmModalBtn: 'உறுதி செய்',
   
 
   // Inventory (Porul) Page
@@ -464,6 +460,7 @@ export const ta = {
   receiptsSubtitle: 'வணிகர்களுக்கான கட்டணப் பற்றுச்சீட்டுகளை உருவாக்கவும்',
   newReceiptBtn: 'புதிய பற்றுச்சீட்டு',
   newPaymentReceiptTitle: 'புதிய கட்டணப் பற்றுச்சீட்டு',
+  editReceiptTitle: 'பற்றுச்சீட்டைத் திருத்து',
   quickSelectUnpaid: 'விரைவான தேர்வு — நிலுவையில் உள்ள பட்டியல்கள்',
   receiptNoLabel: 'பற்றுச்சீட்டு எண்',
   dateLabel: 'தேதி',

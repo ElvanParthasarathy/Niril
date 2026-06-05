@@ -22,6 +22,9 @@ import { getCountryConfig, getStatesForCountry, getBilingualStateName, getBiling
 import { initGoogleDrive, isConnected, disconnect } from '../sevaigal/googleDrive';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
+import { motion, AnimatePresence } from 'framer-motion';
+import '../styles/settings/shared.css';
+import '../styles/settings/hub.css';
 
 // MUI Imports
 import { 
@@ -59,6 +62,30 @@ export default function Amaippugal({ onSaved }) {
 
   const [isEditingCompany, setIsEditingCompany] = useState(false);
   const [showMobileField, setShowMobileField] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [direction, setDirection] = useState(0);
+  const [currentView, setCurrentView] = useState(window.innerWidth <= 768 ? 'hub' : 0);
+  
+  useEffect(() => {
+    const handleResize = () => {
+        const mobile = window.innerWidth <= 768;
+        setIsMobile(mobile);
+        if (!mobile && currentView === 'hub') setCurrentView(0);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [currentView]);
+
+  const handleNavigate = (viewId) => {
+    setDirection(1);
+    setCurrentView(viewId);
+  };
+
+  const goHub = () => {
+    setDirection(-1);
+    setCurrentView(isMobile ? 'hub' : 0);
+  };
 
   const saveLangSettings = async () => {
     await saveProfile(profile);
@@ -474,160 +501,19 @@ export default function Amaippugal({ onSaved }) {
   };
 
 
-  return (
-    <Box sx={{ maxWidth: 1200, mx: 'auto', p: { xs: 2, md: 4 } }}>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" style={{ fontWeight: 'bold' }} color="text.primary" gutterBottom>
-          {t('settingsTitle')}
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          {t('settingsSubtitle')}
-        </Typography>
-      </Box>
 
-      {/* Data Language Settings */}
-      <Paper elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1, mb: 3 }}>
-          <Box>
-            <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0, mb: 0.5 }}>
-              {language === 'ta' ? 'தரவு உள்ளீடு மொழிகள்' : 'Data Entry Languages'}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {language === 'ta' ? 'பட்டியல் உருவாக்கத்தில் பயன்படுத்தப்படும் மொழிகள்' : 'Languages used for billing and data entry'}
-            </Typography>
-          </Box>
-          {!editingLangSettings ? (
-            <Button variant="outlined" size="small" onClick={() => setEditingLangSettings(true)} startIcon={<Edit sx={{ fontSize: 16 }} />}>
-              {t('edit' as any) || 'Edit'}
-            </Button>
-          ) : (
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button variant="outlined" color="inherit" onClick={() => setEditingLangSettings(false)}>{t('cancel' as any) || 'Cancel'}</Button>
-              <Button variant="contained" onClick={saveLangSettings} startIcon={<Save sx={{ fontSize: 16 }} />}>{t('save' as any) || 'Save'}</Button>
-            </Box>
-          )}
-        </Box>
-        
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            {!editingLangSettings ? (
-              <Box>
-                <Typography variant="body2" color="text.secondary" gutterBottom>{language === 'ta' ? 'முதன்மை மொழி' : 'Primary Language'}</Typography>
-                <Typography variant="body1" sx={{ p: 1.5, bgcolor: 'action.hover', borderRadius: 1 }}>{profile.primaryDataLanguage || 'Tamil'}</Typography>
-              </Box>
-            ) : (
-              <FormControl fullWidth size="small">
-                <InputLabel>{language === 'ta' ? 'முதன்மை மொழி' : 'Primary Language'}</InputLabel>
-                <Select MenuProps={{ disableScrollLock: true }} name="primaryDataLanguage" value={profile.primaryDataLanguage || 'Tamil'} onChange={handleChange} label={language === 'ta' ? 'முதன்மை மொழி' : 'Primary Language'}>
-                  <MenuItem value="Tamil">{t('langTamil')}</MenuItem>
-                  <MenuItem value="English">{t('langEnglish')}</MenuItem>
-                  <MenuItem value="Hindi">{t('langHindi')}</MenuItem>
-                  <MenuItem value="Telugu">{t('langTelugu')}</MenuItem>
-                  <MenuItem value="Kannada">{t('langKannada')}</MenuItem>
-                  <MenuItem value="Malayalam">{t('langMalayalam')}</MenuItem>
-                  <MenuItem value="Marathi">{t('langMarathi')}</MenuItem>
-                  <MenuItem value="Gujarati">{t('langGujarati')}</MenuItem>
-                  <MenuItem value="Bengali">{t('langBengali')}</MenuItem>
-                </Select>
-              </FormControl>
-            )}
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            {!editingLangSettings ? (
-              <Box>
-                <Typography variant="body2" color="text.secondary" gutterBottom>{language === 'ta' ? 'இரண்டாம் மொழி' : 'Secondary Language'}</Typography>
-                <Typography variant="body1" sx={{ p: 1.5, bgcolor: 'action.hover', borderRadius: 1 }}>{profile.secondaryDataLanguage || 'English'}</Typography>
-              </Box>
-            ) : (
-              <FormControl fullWidth size="small">
-                <InputLabel>{language === 'ta' ? 'இரண்டாம் மொழி' : 'Secondary Language'}</InputLabel>
-                <Select MenuProps={{ disableScrollLock: true }} name="secondaryDataLanguage" value={profile.secondaryDataLanguage || 'English'} onChange={handleChange} label={language === 'ta' ? 'இரண்டாம் மொழி' : 'Secondary Language'}>
-                  <MenuItem value="English">{t('langEnglish')}</MenuItem>
-                  <MenuItem value="Tamil">{t('langTamil')}</MenuItem>
-                  <MenuItem value="Hindi">{t('langHindi')}</MenuItem>
-                  <MenuItem value="Telugu">{t('langTelugu')}</MenuItem>
-                  <MenuItem value="Kannada">{t('langKannada')}</MenuItem>
-                  <MenuItem value="Malayalam">{t('langMalayalam')}</MenuItem>
-                  <MenuItem value="Marathi">{t('langMarathi')}</MenuItem>
-                  <MenuItem value="Gujarati">{t('langGujarati')}</MenuItem>
-                  <MenuItem value="Bengali">{t('langBengali')}</MenuItem>
-                </Select>
-              </FormControl>
-            )}
-          </Grid>
-          <Grid size={{ xs: 12 }}>
-            <Paper variant="outlined" sx={{ p: 2, display: 'flex', alignItems: 'center', opacity: editingLangSettings ? 1 : 0.7, pointerEvents: editingLangSettings ? 'auto' : 'none', bgcolor: 'action.hover' }}>
-              <FormControlLabel
-                control={
-                  <Switch 
-                    checked={profile.enableBilingual !== false} 
-                    onChange={e => setProfile(prev => ({ ...prev, enableBilingual: e.target.checked }))} 
-                    disabled={!editingLangSettings} 
-                    color="primary"
-                  />
-                }
-                label={
-                  <Box>
-                    <Typography variant="body1" style={{ fontWeight: 500 }}>{language === 'ta' ? 'இருமொழிப் பதிவு' : 'Enable Bilingual Bills'}</Typography>
-                    <Typography variant="body2" color="text.secondary">{language === 'ta' ? 'இரு மொழிகளிலும் தரவை உள்ளிட அனுமதிக்கவும்' : 'Allow data entry in two languages'}</Typography>
-                  </Box>
-                }
-                sx={{ m: 0, width: '100%' }}
-              />
-            </Paper>
-          </Grid>
-        </Grid>
-      </Paper>
+  const variants = {
+    enter: (direction) => ({ x: direction > 0 ? "100%" : (direction < 0 ? "-100%" : 0), opacity: 0, zIndex: 1 }),
+    center: { x: 0, opacity: 1, zIndex: 0 },
+    exit: (direction) => ({ x: direction < 0 ? "100%" : (direction > 0 ? "-100%" : 0), opacity: 0, zIndex: 0 })
+  };
+  const transition = { type: "spring", stiffness: 300, damping: 30 };
 
-
-
-      {/* ---- Language Preference ---- */}
-      <Paper elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
-        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0, mb: 0.5 }}>
-          {t('language')}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {language === 'ta' ? 'பயன்பாட்டின் மொழியை மாற்றவும்.' : 'Change the language of the application.'}
-        </Typography>
-        <Grid container spacing={2}>
-          {[
-            { id: 'ta', label: 'தமிழ்', desc: 'முழுக்க தமிழில்' },
-            { id: 'en', label: 'English', desc: 'English only' },
-          ].map(opt => (
-            <Grid size={{ xs: 12, sm: 6 }} key={opt.id}>
-              <Paper
-                variant="outlined"
-                component="button"
-                onClick={() => {
-                  setLanguage(opt.id as any);
-                  thagaval(opt.id === 'ta' ? 'மொழி தமிழுக்கு மாற்றப்பட்டது' : 'Language changed to English', 'success');
-                }}
-                sx={{
-                  p: 2,
-                  width: '100%',
-                  textAlign: 'left',
-                  height: '100%',
-                  cursor: 'pointer',
-                  borderWidth: language === opt.id ? 2 : 1,
-                  borderColor: language === opt.id ? 'primary.main' : 'divider',
-                  bgcolor: language === opt.id ? 'primary.50' : 'background.paper',
-                  '&:hover': { bgcolor: language === opt.id ? 'primary.50' : 'action.hover' }
-                }}
-              >
-                <Typography variant="subtitle2" style={{ fontWeight: 'bold' }} gutterBottom color={language === opt.id ? 'primary.main' : 'text.primary'}>
-                  {opt.label}
-                </Typography>
-                <Typography variant="body2" color={language === opt.id ? 'primary.main' : 'text.secondary'}>
-                  {opt.desc}
-                </Typography>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-      </Paper>
-
-      {/* ---- Business Profile ---- */}
-      <Paper elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }} component="form" onSubmit={handleSave} ref={companyFormRef}>
+  const renderDetailView = () => {
+    let content = null;
+    let title = "";
+    if (currentView === 0) { content = (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }} component="form" onSubmit={handleSave} ref={companyFormRef}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h6" style={{ fontWeight: 600 }} sx={{ m: 0 }}>
             {t('companyDetailsTitle')}
@@ -646,8 +532,7 @@ export default function Amaippugal({ onSaved }) {
               </Button>
             </Box>
           )}
-        </Box>
-        {(() => {
+        </Box>\n        {(() => {
           const cc = getCountryConfig(profile.country);
           return (
             <Grid container spacing={3}>
@@ -826,8 +711,272 @@ export default function Amaippugal({ onSaved }) {
               </Grid>
             </Grid>
           );
-        })()}
+        })()}\n        {/* Logo & Signature */}
+        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 4, mb: 2 }}>
+          {t('brandingTitle')}
+        </Typography>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Typography variant="subtitle2" gutterBottom>{t('businessLogo')}</Typography>
+            <Paper className="s2-group" variant="outlined" sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, borderStyle: 'dashed' }}>
+              {profile.logo ? (
+                <>
+                  <Box sx={{ position: 'relative' }}>
+                    <img src={profile.logo} alt="Logo" style={{ height: `${profile.logoHeight || 48}px`, maxWidth: '180px', objectFit: 'contain' }} />
+                    <IconButton size="small" color="error" onClick={() => removeImage('logo')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
+                      <Delete sx={{ fontSize: 14 }} />
+                    </IconButton>
+                  </Box>
+                  <Box sx={{ width: '100%', px: 2 }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }} gutterBottom>Logo Size on Invoice ({profile.logoHeight || 48}px)</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="caption" color="text.secondary">S</Typography>
+                      <input type="range" min="24" max="80" value={profile.logoHeight || 48} onChange={(e) => setProfile(prev => ({ ...prev, logoHeight: Number(e.target.value) }))} style={{ flex: 1, accentColor: 'var(--primary)' }} />
+                      <Typography variant="caption" color="text.secondary">L</Typography>
+                    </Box>
+                  </Box>
+                  <Button size="small" variant="outlined" onClick={() => logoInputRef.current?.click()}>Change Logo</Button>
+                </>
+              ) : (
+                <Button variant="outlined" onClick={() => logoInputRef.current?.click()} startIcon={<Image sx={{ fontSize: 20 }} />} sx={{ flexDirection: 'column', py: 3, gap: 1 }}>
+                  {t('uploadLogo')}
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{t('logoHint')}</Typography>
+                </Button>
+              )}
+              <input ref={logoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('logo', e)} />
+            </Paper>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Typography variant="subtitle2" gutterBottom>{t('signature')}</Typography>
+            <Paper className="s2-group" variant="outlined" sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, borderStyle: 'dashed', height: '100%' }}>
+              {profile.signature ? (
+                <>
+                  <Box sx={{ position: 'relative' }}>
+                    <img src={profile.signature} alt="Signature" style={{ maxHeight: '100px', maxWidth: '200px', objectFit: 'contain' }} />
+                    <IconButton size="small" color="error" onClick={() => removeImage('signature')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
+                      <Delete sx={{ fontSize: 14 }} />
+                    </IconButton>
+                  </Box>
+                </>
+              ) : (
+                <Button variant="outlined" onClick={() => sigInputRef.current?.click()} startIcon={<Create sx={{ fontSize: 20 }} />} sx={{ flexDirection: 'column', py: 3, gap: 1, height: '100%', width: '100%' }}>
+                  {t('uploadSignature')}
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{t('sigHint')}</Typography>
+                </Button>
+              )}
+              <input ref={sigInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('signature', e)} />
+            </Paper>
+          </Grid>
+        </Grid>
+\n        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end' }}>
+          <Button type="submit" variant="contained" color="primary" disabled={saving} startIcon={<Save sx={{ fontSize: 18 }} />}>
+            {saving ? t('saving') : t('saveProfile')}
+          </Button>
+        </Box>
+      </Paper>
 
+      {/* ---- Multi-Business Profiles ---- */}
+      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6" style={{ fontWeight: 600 }} sx={{ m: 0 }}>
+            {t('businessProfilesTitle')}
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button variant="outlined" onClick={handleAddNewProfile} startIcon={<Add sx={{ fontSize: 16 }} />}>
+              {t('addNewProfile')}
+            </Button>
+            <Button variant="contained" onClick={handleSaveAsProfile} startIcon={<Business sx={{ fontSize: 16 }} />}>
+              {t('saveAsProfile')}
+            </Button>
+          </Box>
+        </Box>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          {t('businessProfilesDesc1')}
+        </Typography>
+        {businessProfiles.length === 0 ? (
+          <Typography variant="body2" color="text.secondary">
+            {t('businessProfilesDesc2')}
+          </Typography>
+        ) : (
+          <Grid container spacing={2}>
+            {businessProfiles.map(bp => {
+              const isActive = bp.niruvanathinPeyar?.trim().toLowerCase() === profile.niruvanathinPeyar?.trim().toLowerCase();
+              return (
+              <Grid size={{ xs: 12, sm: 6 }} key={bp.id}>
+                <Paper className="s2-group" variant="outlined" sx={{ p: 2, height: '100%', borderColor: isActive ? 'primary.main' : 'divider', borderWidth: isActive ? 2 : 1 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="subtitle2" style={{ fontWeight: 'bold' }}>{bp.niruvanathinPeyar}</Typography>
+                        {isActive && <Chip label="Active" size="small" color="primary" sx={{ height: 20, fontSize: '0.7rem' }} />}
+                      </Box>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                        {bp.maanilam}{bp.gstin ? ` | ${bp.gstin}` : ''}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: 0.5 }}>
+                      <Button size="small" variant={isActive ? 'outlined' : 'contained'} onClick={() => handleLoadProfile(bp)} disabled={isActive}>
+                        {isActive ? 'Current' : 'Switch'}
+                      </Button>
+                      <IconButton size="small" color="error" onClick={() => handleDeleteProfile(bp.id)} title="Delete">
+                        <Delete sx={{ fontSize: 16 }} />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                  {bp.mugavari && (
+                    <Typography variant="caption" color="text.secondary" sx={{ mt: 1, whiteSpace: 'pre-line', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                      {bp.mugavari}
+                    </Typography>
+                  )}
+                </Paper>
+              </Grid>
+            );
+            })}
+          </Grid>
+        )}
+      </Paper>
+</Box>); title = "Profile & Accounts"; }
+    else if (currentView === 1) { content = (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>      {/* ---- Language Preference ---- */}
+      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
+        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0, mb: 0.5 }}>
+          {t('language')}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          {language === 'ta' ? 'பயன்பாட்டின் மொழியை மாற்றவும்.' : 'Change the language of the application.'}
+        </Typography>
+        <Grid container spacing={2}>
+          {[
+            { id: 'ta', label: 'தமிழ்', desc: 'முழுக்க தமிழில்' },
+            { id: 'en', label: 'English', desc: 'English only' },
+          ].map(opt => (
+            <Grid size={{ xs: 12, sm: 6 }} key={opt.id}>
+              <Paper
+                variant="outlined"
+                component="button"
+                onClick={() => {
+                  setLanguage(opt.id as any);
+                  thagaval(opt.id === 'ta' ? 'மொழி தமிழுக்கு மாற்றப்பட்டது' : 'Language changed to English', 'success');
+                }}
+                sx={{
+                  p: 2,
+                  width: '100%',
+                  textAlign: 'left',
+                  height: '100%',
+                  cursor: 'pointer',
+                  borderWidth: language === opt.id ? 2 : 1,
+                  borderColor: language === opt.id ? 'primary.main' : 'divider',
+                  bgcolor: language === opt.id ? 'primary.50' : 'background.paper',
+                  '&:hover': { bgcolor: language === opt.id ? 'primary.50' : 'action.hover' }
+                }}
+              >
+                <Typography variant="subtitle2" style={{ fontWeight: 'bold' }} gutterBottom color={language === opt.id ? 'primary.main' : 'text.primary'}>
+                  {opt.label}
+                </Typography>
+                <Typography variant="body2" color={language === opt.id ? 'primary.main' : 'text.secondary'}>
+                  {opt.desc}
+                </Typography>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      </Paper>
+
+      {/* Data Language Settings */}
+      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1, mb: 3 }}>
+          <Box>
+            <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0, mb: 0.5 }}>
+              {language === 'ta' ? 'தரவு உள்ளீடு மொழிகள்' : 'Data Entry Languages'}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {language === 'ta' ? 'பட்டியல் உருவாக்கத்தில் பயன்படுத்தப்படும் மொழிகள்' : 'Languages used for billing and data entry'}
+            </Typography>
+          </Box>
+          {!editingLangSettings ? (
+            <Button variant="outlined" size="small" onClick={() => setEditingLangSettings(true)} startIcon={<Edit sx={{ fontSize: 16 }} />}>
+              {t('edit' as any) || 'Edit'}
+            </Button>
+          ) : (
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Button variant="outlined" color="inherit" onClick={() => setEditingLangSettings(false)}>{t('cancel' as any) || 'Cancel'}</Button>
+              <Button variant="contained" onClick={saveLangSettings} startIcon={<Save sx={{ fontSize: 16 }} />}>{t('save' as any) || 'Save'}</Button>
+            </Box>
+          )}
+        </Box>
+        
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            {!editingLangSettings ? (
+              <Box>
+                <Typography variant="body2" color="text.secondary" gutterBottom>{language === 'ta' ? 'முதன்மை மொழி' : 'Primary Language'}</Typography>
+                <Typography variant="body1" sx={{ p: 1.5, bgcolor: 'action.hover', borderRadius: 1 }}>{profile.primaryDataLanguage || 'Tamil'}</Typography>
+              </Box>
+            ) : (
+              <FormControl fullWidth size="small">
+                <InputLabel>{language === 'ta' ? 'முதன்மை மொழி' : 'Primary Language'}</InputLabel>
+                <Select MenuProps={{ disableScrollLock: true }} name="primaryDataLanguage" value={profile.primaryDataLanguage || 'Tamil'} onChange={handleChange} label={language === 'ta' ? 'முதன்மை மொழி' : 'Primary Language'}>
+                  <MenuItem value="Tamil">{t('langTamil')}</MenuItem>
+                  <MenuItem value="English">{t('langEnglish')}</MenuItem>
+                  <MenuItem value="Hindi">{t('langHindi')}</MenuItem>
+                  <MenuItem value="Telugu">{t('langTelugu')}</MenuItem>
+                  <MenuItem value="Kannada">{t('langKannada')}</MenuItem>
+                  <MenuItem value="Malayalam">{t('langMalayalam')}</MenuItem>
+                  <MenuItem value="Marathi">{t('langMarathi')}</MenuItem>
+                  <MenuItem value="Gujarati">{t('langGujarati')}</MenuItem>
+                  <MenuItem value="Bengali">{t('langBengali')}</MenuItem>
+                </Select>
+              </FormControl>
+            )}
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            {!editingLangSettings ? (
+              <Box>
+                <Typography variant="body2" color="text.secondary" gutterBottom>{language === 'ta' ? 'இரண்டாம் மொழி' : 'Secondary Language'}</Typography>
+                <Typography variant="body1" sx={{ p: 1.5, bgcolor: 'action.hover', borderRadius: 1 }}>{profile.secondaryDataLanguage || 'English'}</Typography>
+              </Box>
+            ) : (
+              <FormControl fullWidth size="small">
+                <InputLabel>{language === 'ta' ? 'இரண்டாம் மொழி' : 'Secondary Language'}</InputLabel>
+                <Select MenuProps={{ disableScrollLock: true }} name="secondaryDataLanguage" value={profile.secondaryDataLanguage || 'English'} onChange={handleChange} label={language === 'ta' ? 'இரண்டாம் மொழி' : 'Secondary Language'}>
+                  <MenuItem value="English">{t('langEnglish')}</MenuItem>
+                  <MenuItem value="Tamil">{t('langTamil')}</MenuItem>
+                  <MenuItem value="Hindi">{t('langHindi')}</MenuItem>
+                  <MenuItem value="Telugu">{t('langTelugu')}</MenuItem>
+                  <MenuItem value="Kannada">{t('langKannada')}</MenuItem>
+                  <MenuItem value="Malayalam">{t('langMalayalam')}</MenuItem>
+                  <MenuItem value="Marathi">{t('langMarathi')}</MenuItem>
+                  <MenuItem value="Gujarati">{t('langGujarati')}</MenuItem>
+                  <MenuItem value="Bengali">{t('langBengali')}</MenuItem>
+                </Select>
+              </FormControl>
+            )}
+          </Grid>
+          <Grid size={{ xs: 12 }}>
+            <Paper className="s2-group" variant="outlined" sx={{ p: 2, display: 'flex', alignItems: 'center', opacity: editingLangSettings ? 1 : 0.7, pointerEvents: editingLangSettings ? 'auto' : 'none', bgcolor: 'action.hover' }}>
+              <FormControlLabel
+                control={
+                  <Switch 
+                    checked={profile.enableBilingual !== false} 
+                    onChange={e => setProfile(prev => ({ ...prev, enableBilingual: e.target.checked }))} 
+                    disabled={!editingLangSettings} 
+                    color="primary"
+                  />
+                }
+                label={
+                  <Box>
+                    <Typography variant="body1" style={{ fontWeight: 500 }}>{language === 'ta' ? 'இருமொழிப் பதிவு' : 'Enable Bilingual Bills'}</Typography>
+                    <Typography variant="body2" color="text.secondary">{language === 'ta' ? 'இரு மொழிகளிலும் தரவை உள்ளிட அனுமதிக்கவும்' : 'Allow data entry in two languages'}</Typography>
+                  </Box>
+                }
+                sx={{ m: 0, width: '100%' }}
+              />
+            </Paper>
+          </Grid>
+        </Grid>
+      </Paper>
+</Box>); title = "Display & Languages"; }
+    else if (currentView === 2) { content = (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
         {/* ---- Payment Accounts ---- */}
         {(() => {
           const bankCC = getCountryConfig(profile.country);
@@ -853,7 +1002,7 @@ export default function Amaippugal({ onSaved }) {
 
               {/* Migration banner */}
               {hasLegacyFlat && (
-                <Paper elevation={0} sx={{ p: 2, mb: 2, bgcolor: 'warning.light', color: 'warning.contrastText', display: 'flex', gap: 2 }}>
+                <Paper className="s2-group" elevation={0} sx={{ p: 2, mb: 2, bgcolor: 'warning.light', color: 'warning.contrastText', display: 'flex', gap: 2 }}>
                   <Typography variant="h6">📋</Typography>
                   <Box sx={{ flex: 1 }}>
                     <Typography variant="body2" style={{ fontWeight: 'bold' }}>Your existing bank details are still on this profile.</Typography>
@@ -867,7 +1016,7 @@ export default function Amaippugal({ onSaved }) {
 
               {/* Empty state */}
               {accounts.length === 0 && !hasLegacyFlat && (
-                <Paper variant="outlined" sx={{ p: 3, textAlign: 'center', mb: 2, bgcolor: 'action.hover' }}>
+                <Paper className="s2-group" variant="outlined" sx={{ p: 3, textAlign: 'center', mb: 2, bgcolor: 'action.hover' }}>
                   <Typography variant="body2" color="text.secondary">
                     No payment accounts yet. Add the first one — it's auto-marked ⭐ Primary.
                   </Typography>
@@ -878,7 +1027,7 @@ export default function Amaippugal({ onSaved }) {
               {accounts.length > 0 && (
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
                   {accounts.map((a, idx) => (
-                    <Paper key={a.id} variant="outlined" sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', opacity: a.isActive === false ? 0.55 : 1, bgcolor: 'background.paper' }}>
+                    <Paper className="s2-group" key={a.id} variant="outlined" sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', opacity: a.isActive === false ? 0.55 : 1, bgcolor: 'background.paper' }}>
                       <Box sx={{ flex: 1, minWidth: 220 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                           {a.isDefault && <Typography title="Default account" sx={{ fontSize: '1rem' }}>⭐</Typography>}
@@ -981,12 +1130,15 @@ export default function Amaippugal({ onSaved }) {
             </Box>
           );
         })()}
+      </Paper>
 
+
+      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
         {/* Invoice Number Format */}
         <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 4, display: 'flex', alignItems: 'center', gap: 1 }}>
           <Tag sx={{ fontSize: 18 }} /> {t('invoiceNumberFormatTitle')}
         </Typography>
-        <Paper variant="outlined" sx={{ p: 2, mb: 3, bgcolor: 'background.default' }}>
+        <Paper className="s2-group" variant="outlined" sx={{ p: 2, mb: 3, bgcolor: 'background.default' }}>
           <Typography variant="body2" color="text.secondary" gutterBottom>Preview:</Typography>
           <Typography variant="h6" sx={{ fontFamily: 'monospace', color: 'primary.main', m: 0 }}>{getInvNumPreview()}</Typography>
         </Paper>
@@ -1052,12 +1204,11 @@ export default function Amaippugal({ onSaved }) {
             {invNumSaving ? t('saving') : t('saveNumberFormat')}
           </Button>
         </Box>
-
-        {/* Receipt Number Format */}
+\n\n        {/* Receipt Number Format */}
         <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 4, display: 'flex', alignItems: 'center', gap: 1 }}>
           <Tag sx={{ fontSize: 18 }} /> Receipt Number Format
         </Typography>
-        <Paper variant="outlined" sx={{ p: 2, mb: 3, bgcolor: 'background.default' }}>
+        <Paper className="s2-group" variant="outlined" sx={{ p: 2, mb: 3, bgcolor: 'background.default' }}>
           <Typography variant="body2" color="text.secondary" gutterBottom>Preview:</Typography>
           <Typography variant="h6" sx={{ fontFamily: 'monospace', color: 'primary.main', m: 0 }}>{getRcpNumPreview()}</Typography>
         </Paper>
@@ -1124,73 +1275,36 @@ export default function Amaippugal({ onSaved }) {
           </Button>
         </Box>
 
-        {/* Logo & Signature */}
-        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 4, mb: 2 }}>
-          {t('brandingTitle')}
-        </Typography>
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <Typography variant="subtitle2" gutterBottom>{t('businessLogo')}</Typography>
-            <Paper variant="outlined" sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, borderStyle: 'dashed' }}>
-              {profile.logo ? (
-                <>
-                  <Box sx={{ position: 'relative' }}>
-                    <img src={profile.logo} alt="Logo" style={{ height: `${profile.logoHeight || 48}px`, maxWidth: '180px', objectFit: 'contain' }} />
-                    <IconButton size="small" color="error" onClick={() => removeImage('logo')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
-                      <Delete sx={{ fontSize: 14 }} />
-                    </IconButton>
-                  </Box>
-                  <Box sx={{ width: '100%', px: 2 }}>
-                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }} gutterBottom>Logo Size on Invoice ({profile.logoHeight || 48}px)</Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="caption" color="text.secondary">S</Typography>
-                      <input type="range" min="24" max="80" value={profile.logoHeight || 48} onChange={(e) => setProfile(prev => ({ ...prev, logoHeight: Number(e.target.value) }))} style={{ flex: 1, accentColor: 'var(--primary)' }} />
-                      <Typography variant="caption" color="text.secondary">L</Typography>
-                    </Box>
-                  </Box>
-                  <Button size="small" variant="outlined" onClick={() => logoInputRef.current?.click()}>Change Logo</Button>
-                </>
-              ) : (
-                <Button variant="outlined" onClick={() => logoInputRef.current?.click()} startIcon={<Image sx={{ fontSize: 20 }} />} sx={{ flexDirection: 'column', py: 3, gap: 1 }}>
-                  {t('uploadLogo')}
-                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{t('logoHint')}</Typography>
-                </Button>
-              )}
-              <input ref={logoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('logo', e)} />
-            </Paper>
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <Typography variant="subtitle2" gutterBottom>{t('signature')}</Typography>
-            <Paper variant="outlined" sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, borderStyle: 'dashed', height: '100%' }}>
-              {profile.signature ? (
-                <>
-                  <Box sx={{ position: 'relative' }}>
-                    <img src={profile.signature} alt="Signature" style={{ maxHeight: '100px', maxWidth: '200px', objectFit: 'contain' }} />
-                    <IconButton size="small" color="error" onClick={() => removeImage('signature')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
-                      <Delete sx={{ fontSize: 14 }} />
-                    </IconButton>
-                  </Box>
-                </>
-              ) : (
-                <Button variant="outlined" onClick={() => sigInputRef.current?.click()} startIcon={<Create sx={{ fontSize: 20 }} />} sx={{ flexDirection: 'column', py: 3, gap: 1, height: '100%', width: '100%' }}>
-                  {t('uploadSignature')}
-                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{t('sigHint')}</Typography>
-                </Button>
-              )}
-              <input ref={sigInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('signature', e)} />
-            </Paper>
-          </Grid>
-        </Grid>
+      </Paper>
 
-        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end' }}>
-          <Button type="submit" variant="contained" color="primary" disabled={saving} startIcon={<Save sx={{ fontSize: 18 }} />}>
+      {/* ---- Invoice Terms & Conditions ---- */}
+      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
+        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0 }}>
+          {t('termsTemplatesTitle')}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Default Terms and Conditions that will appear on your invoices.
+        </Typography>
+        <TextField 
+          fullWidth 
+          multiline 
+          rows={6} 
+          size="small" 
+          label="Terms & Conditions" 
+          name="invoiceTerms" 
+          value={profile.invoiceTerms || ''} 
+          onChange={handleChange} 
+          placeholder="Paste or type your terms & conditions..." 
+        />
+        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+          <Button type="button" variant="contained" color="primary" onClick={handleSave} disabled={saving} startIcon={<Save sx={{ fontSize: 18 }} />}>
             {saving ? t('saving') : t('saveProfile')}
           </Button>
         </Box>
       </Paper>
-
-      {/* ---- Advanced Settings ---- */}
-      <Paper elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
+</Box>); title = "Billing & Payments"; }
+    else if (currentView === 3) { content = (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>      {/* ---- Advanced Settings ---- */}
+      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
         <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0, mb: 0.5 }}>
           Advanced Settings
         </Typography>
@@ -1238,96 +1352,33 @@ export default function Amaippugal({ onSaved }) {
         </details>
       </Paper>
 
-
-      {/* ---- Invoice Terms & Conditions ---- */}
-      <Paper elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
+      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
         <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0 }}>
-          {t('termsTemplatesTitle')}
+          {t('dataManagementTitle')}
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Default Terms and Conditions that will appear on your invoices.
+
+        <Paper className="s2-group" elevation={0} sx={{ p: 2, mb: 2, bgcolor: 'info.light', color: 'info.contrastText', display: 'flex', gap: 2 }}>
+          <Typography variant="h6" sx={{ m: 0 }}>🔒</Typography>
+          <Typography variant="body2" dangerouslySetInnerHTML={{ __html: t('dataNoticeText') as string }} />
+        </Paper>
+
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+          {t('dataManagementDesc')}
         </Typography>
-        <TextField 
-          fullWidth 
-          multiline 
-          rows={6} 
-          size="small" 
-          label="Terms & Conditions" 
-          name="invoiceTerms" 
-          value={profile.invoiceTerms || ''} 
-          onChange={handleChange} 
-          placeholder="Paste or type your terms & conditions..." 
-        />
-        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-          <Button type="button" variant="contained" color="primary" onClick={handleSave} disabled={saving} startIcon={<Save sx={{ fontSize: 18 }} />}>
-            {saving ? t('saving') : t('saveProfile')}
+        
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+          <Button variant="contained" onClick={() => setShowExportModal(true)} startIcon={<Download sx={{ fontSize: 18 }} />}>
+            {t('exportBackup')}
           </Button>
+          <Button variant="outlined" onClick={() => fileInputRef.current?.click()} startIcon={<Upload sx={{ fontSize: 18 }} />}>
+            {t('importBackup')}
+          </Button>
+          <input ref={fileInputRef} type="file" accept=".json" onChange={handleImportPick} style={{ display: 'none' }} />
         </Box>
       </Paper>
-
-      {/* ---- Multi-Business Profiles ---- */}
-      <Paper elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" style={{ fontWeight: 600 }} sx={{ m: 0 }}>
-            {t('businessProfilesTitle')}
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button variant="outlined" onClick={handleAddNewProfile} startIcon={<Add sx={{ fontSize: 16 }} />}>
-              {t('addNewProfile')}
-            </Button>
-            <Button variant="contained" onClick={handleSaveAsProfile} startIcon={<Business sx={{ fontSize: 16 }} />}>
-              {t('saveAsProfile')}
-            </Button>
-          </Box>
-        </Box>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {t('businessProfilesDesc1')}
-        </Typography>
-        {businessProfiles.length === 0 ? (
-          <Typography variant="body2" color="text.secondary">
-            {t('businessProfilesDesc2')}
-          </Typography>
-        ) : (
-          <Grid container spacing={2}>
-            {businessProfiles.map(bp => {
-              const isActive = bp.niruvanathinPeyar?.trim().toLowerCase() === profile.niruvanathinPeyar?.trim().toLowerCase();
-              return (
-              <Grid size={{ xs: 12, sm: 6 }} key={bp.id}>
-                <Paper variant="outlined" sx={{ p: 2, height: '100%', borderColor: isActive ? 'primary.main' : 'divider', borderWidth: isActive ? 2 : 1 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                    <Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography variant="subtitle2" style={{ fontWeight: 'bold' }}>{bp.niruvanathinPeyar}</Typography>
-                        {isActive && <Chip label="Active" size="small" color="primary" sx={{ height: 20, fontSize: '0.7rem' }} />}
-                      </Box>
-                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-                        {bp.maanilam}{bp.gstin ? ` | ${bp.gstin}` : ''}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', gap: 0.5 }}>
-                      <Button size="small" variant={isActive ? 'outlined' : 'contained'} onClick={() => handleLoadProfile(bp)} disabled={isActive}>
-                        {isActive ? 'Current' : 'Switch'}
-                      </Button>
-                      <IconButton size="small" color="error" onClick={() => handleDeleteProfile(bp.id)} title="Delete">
-                        <Delete sx={{ fontSize: 16 }} />
-                      </IconButton>
-                    </Box>
-                  </Box>
-                  {bp.mugavari && (
-                    <Typography variant="caption" color="text.secondary" sx={{ mt: 1, whiteSpace: 'pre-line', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                      {bp.mugavari}
-                    </Typography>
-                  )}
-                </Paper>
-              </Grid>
-            );
-            })}
-          </Grid>
-        )}
-      </Paper>
-
-      {/* ---- Data Management ---- */}
-      <Paper elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
+</Box>); title = "Storage & Cloud"; }
+    else if (currentView === 4) { content = (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>      {/* ---- Data Management ---- */}
+      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
         <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0, mb: 0.5 }}>
           {t('appUpdatesTitle')}
         </Typography>
@@ -1366,7 +1417,7 @@ export default function Amaippugal({ onSaved }) {
           )}
         </Box>
         {updateInfo?.updateAvailable && (
-          <Paper elevation={0} sx={{ p: 2, bgcolor: 'primary.50', color: 'primary.900', borderRadius: 2 }}>
+          <Paper className="s2-group" elevation={0} sx={{ p: 2, bgcolor: 'primary.50', color: 'primary.900', borderRadius: 2 }}>
             <Typography variant="subtitle2" style={{ fontWeight: 'bold' }}>New version v{updateInfo.latest} is available!</Typography>
             <Typography variant="body2" sx={{ mb: 1 }}>Your data will not be affected. Click below to update:</Typography>
             <Button component="a" href="elvanniril-update://run" variant="contained" color="primary" startIcon={<Download sx={{ fontSize: 18 }} />}>
@@ -1375,31 +1426,137 @@ export default function Amaippugal({ onSaved }) {
           </Paper>
         )}
       </Paper>
+</Box>); title = "System & Updates"; }
 
-      <Paper elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
-        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0 }}>
-          {t('dataManagementTitle')}
-        </Typography>
+    return (
+      <Box sx={{ width: '100%', pb: 10 }}>
+        {isMobile && (
+           <div className="s2-sub-header" style={{ display: 'flex', alignItems: 'center', marginBottom: 24, padding: '0 8px' }}>
+              <button className="s2-back-btn" onClick={goHub} type="button">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+              </button>
+              <div className="s2-sub-title" style={{ fontSize: 22, marginLeft: 8 }}>{title}</div>
+           </div>
+        )}
+        {!isMobile && (
+           <div className="s2-sub-header" style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
+              <div className="s2-sub-title">{title}</div>
+           </div>
+        )}
+        {content}
+      </Box>
+    );
+  };
 
-        <Paper elevation={0} sx={{ p: 2, mb: 2, bgcolor: 'info.light', color: 'info.contrastText', display: 'flex', gap: 2 }}>
-          <Typography variant="h6" sx={{ m: 0 }}>🔒</Typography>
-          <Typography variant="body2" dangerouslySetInnerHTML={{ __html: t('dataNoticeText') as string }} />
-        </Paper>
+  const detailContent = renderDetailView();
 
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          {t('dataManagementDesc')}
-        </Typography>
-        
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-          <Button variant="contained" onClick={() => setShowExportModal(true)} startIcon={<Download sx={{ fontSize: 18 }} />}>
-            {t('exportBackup')}
-          </Button>
-          <Button variant="outlined" onClick={() => fileInputRef.current?.click()} startIcon={<Upload sx={{ fontSize: 18 }} />}>
-            {t('importBackup')}
-          </Button>
-          <input ref={fileInputRef} type="file" accept=".json" onChange={handleImportPick} style={{ display: 'none' }} />
-        </Box>
-      </Paper>
+  const renderHub = () => (
+    <div style={{ paddingBottom: 100 }}>
+       <div className="s2-sub-header" style={{ display: isMobile ? 'flex' : 'none', marginBottom: 24, padding: '0 8px' }}>
+           <div className="s2-sub-title">{t('settingsTitle')}</div>
+       </div>
+
+       <div className="s2-profile-card" onClick={() => handleNavigate(0)} style={{ marginBottom: 32 }}>
+          <div className="s2-avatar">
+              {profile.logo ? <img src={profile.logo} alt="Logo" /> : <Business className="s2-avatar-icon" />}
+          </div>
+          <div className="s2-profile-text">
+              <div className="s2-profile-title">{profile.niruvanathinPeyar || 'Business Profile'}</div>
+              <div className="s2-profile-sub">{profile.email || 'Configure your details'}</div>
+          </div>
+          <div style={{ color: 'var(--mac-text-secondary)', paddingRight: 8 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+          </div>
+       </div>
+
+       <div className="s2-section-label">Preferences</div>
+       <div className="s2-group" style={{ marginBottom: 32 }}>
+          <div className="s2-item" onClick={() => handleNavigate(1)}>
+              <div className="s2-icon-circle blue"><Tag fontSize="small" /></div>
+              <div className="s2-item-text">
+                  <div className="s2-item-title">Display & Languages</div>
+                  <div className="s2-item-desc">UI language, Data languages</div>
+              </div>
+          </div>
+          <div className="s2-divider"></div>
+          <div className="s2-item" onClick={() => handleNavigate(2)}>
+              <div className="s2-icon-circle green"><Tag fontSize="small" /></div>
+              <div className="s2-item-text">
+                  <div className="s2-item-title">Billing & Payments</div>
+                  <div className="s2-item-desc">Accounts, Invoice formats, Terms</div>
+              </div>
+          </div>
+       </div>
+
+       <div className="s2-section-label">Advanced</div>
+       <div className="s2-group" style={{ marginBottom: 32 }}>
+          <div className="s2-item" onClick={() => handleNavigate(3)}>
+              <div className="s2-icon-circle purple"><Cloud fontSize="small" /></div>
+              <div className="s2-item-text">
+                  <div className="s2-item-title">Storage & Cloud</div>
+                  <div className="s2-item-desc">Google Drive, Local Backups</div>
+              </div>
+          </div>
+          <div className="s2-divider"></div>
+          <div className="s2-item" onClick={() => handleNavigate(4)}>
+              <div className="s2-icon-circle orange"><Refresh fontSize="small" /></div>
+              <div className="s2-item-text">
+                  <div className="s2-item-title">System & Updates</div>
+                  <div className="s2-item-desc">App versions, Cache</div>
+              </div>
+          </div>
+       </div>
+    </div>
+  );
+
+  return (
+    <div className="s2-page-view" style={isMobile ? { position: 'relative', overflow: 'hidden', height: 'calc(100vh - 60px)', paddingTop: 16 } : { paddingTop: 24 }}>
+      {isMobile ? (
+          <AnimatePresence mode="popLayout" custom={direction} initial={false}>
+              {currentView === 'hub' ? (
+                  <motion.div
+                      key="hub"
+                      custom={direction}
+                      variants={variants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={transition}
+                      className="s2-col-left"
+                      style={{ width: '100%', height: '100%' }}
+                  >
+                      {renderHub()}
+                  </motion.div>
+              ) : (
+                  <motion.div
+                      key="detail"
+                      custom={direction}
+                      variants={variants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={transition}
+                      className="s2-col-right"
+                      style={{ width: '100%', height: '100%' }}
+                  >
+                      {detailContent}
+                  </motion.div>
+              )}
+          </AnimatePresence>
+      ) : (
+          <div className="s2-content-grid">
+              <div className="s2-col-left" style={{ paddingRight: 16 }}>
+                  {renderHub()}
+              </div>
+              <div className="s2-col-right" style={{ paddingLeft: 16, borderLeft: '1px solid var(--mac-divider)' }}>
+                  {detailContent || <div className="s2-welcome-card">Select a setting</div>}
+              </div>
+          </div>
+      )}
 
       {/* ----------------------- Export modal ----------------------- */}
       <Dialog open={showExportModal} onClose={() => !drivePending && setShowExportModal(false)} maxWidth="sm" fullWidth>
@@ -1449,7 +1606,7 @@ export default function Amaippugal({ onSaved }) {
               {importInspection.exportedAt && <span> — exported {new Date(importInspection.exportedAt).toLocaleString()}</span>}
               {importInspection.version && <span> · v{importInspection.version}</span>}
             </Typography>
-            <Paper elevation={0} sx={{ p: 1.5, bgcolor: 'warning.light', color: 'warning.contrastText', mb: 2 }}>
+            <Paper className="s2-group" elevation={0} sx={{ p: 1.5, bgcolor: 'warning.light', color: 'warning.contrastText', mb: 2 }}>
               <Typography variant="body2">
                 ⚠ Restoring will <strong>overwrite matching records by ID</strong> in the categories you select. Records you didn't tick are untouched. We recommend exporting a fresh backup of your current data first.
               </Typography>
@@ -1485,7 +1642,7 @@ export default function Amaippugal({ onSaved }) {
           </DialogActions>
         </Dialog>
       )}
-    </Box>
+    </div>
   );
 }
 

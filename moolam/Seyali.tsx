@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { CaretDoubleLeft as KeyboardDoubleArrowLeft, CaretDoubleRight as KeyboardDoubleArrowRight, House as Home, FileText as Description, GearSix as Settings, Plus as Add, Users as People, Package as Inventory, ChartBar as BarChart, Wallet as AccountBalanceWallet, ArrowsClockwise as Refresh, Receipt, BookOpen as MenuBook, Moon as DarkMode, Sun as LightMode, DownloadSimple as Download, X as Close, ShoppingCart, CaretDown as KeyboardArrowDown, CaretRight as KeyboardArrowRight, Buildings as Business, PencilSimple as Edit, Question as HelpOutlined, MagnifyingGlass as Search, Command as KeyboardCommandKey, Bell as Notifications, List as Menu } from '@phosphor-icons/react';
+import { CaretDoubleLeft as KeyboardDoubleArrowLeft, CaretDoubleRight as KeyboardDoubleArrowRight, House as Home, FileText as Description, GearSix as Settings, Plus as Add, Users as People, Package as Inventory, ChartBar as BarChart, Wallet as AccountBalanceWallet, ArrowsClockwise as Refresh, Receipt, BookOpen as MenuBook, Moon as DarkMode, Sun as LightMode, DownloadSimple as Download, X as Close, ShoppingCart, CaretDown as KeyboardArrowDown, CaretRight as KeyboardArrowRight, Buildings as Business, PencilSimple as Edit, Question as HelpOutlined, MagnifyingGlass as Search, Command as KeyboardCommandKey, Bell as Notifications, List as Menu, CalendarDots } from '@phosphor-icons/react';
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Badge, Box, Typography, Avatar, Divider, Tooltip, IconButton, Collapse, CssBaseline, Dialog, DialogTitle, DialogContent, DialogActions, Button, Backdrop, CircularProgress, InputBase, AppBar, Toolbar, useMediaQuery, Stack } from '@mui/material';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
@@ -103,8 +103,9 @@ function Seyali() {
       return saved ? JSON.parse(saved) : null;
     } catch { return null; }
   });
-  const [editingClient, setEditingClient] = useState(null);
-  const [editingProduct, setEditingProduct] = useState(null);
+  const [editingClient, setEditingClient] = useState<any>(null);
+  const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [editingReceipt, setEditingReceipt] = useState<any>(null);
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem('elvanniril_theme') === 'dark';
   });
@@ -562,6 +563,45 @@ function Seyali() {
           }
         }
       },
+      MuiPickersTextField: {
+        defaultProps: {
+          variant: 'filled',
+        },
+        styleOverrides: {
+          root: {
+            marginTop: 24,
+          }
+        }
+      },
+      MuiPickersFilledInput: {
+        defaultProps: {
+          disableUnderline: true,
+        },
+        styleOverrides: {
+          root: {
+            borderRadius: 50,
+            overflow: 'hidden',
+            backgroundColor: 'action.hover',
+            '&::before, &::after': {
+              display: 'none',
+            },
+            '&.Mui-focused': {
+              backgroundColor: 'action.selected',
+            },
+            paddingRight: '20px',
+          },
+          sectionsContainer: {
+            padding: '12px 24px !important',
+          }
+        }
+      },
+      MuiDatePicker: {
+        defaultProps: {
+          slots: {
+            openPickerIcon: () => <CalendarDots size={20} weight="duotone" />,
+          },
+        },
+      },
       MuiButton: {
         styleOverrides: {
           root: {
@@ -581,6 +621,26 @@ function Seyali() {
             '@media (max-width:600px)': {
               minHeight: 48,
             }
+          }
+        }
+      },
+      MuiAutocomplete: {
+        styleOverrides: {
+          inputRoot: {
+            paddingTop: '0px !important',
+            paddingBottom: '0px !important',
+            paddingLeft: '0px !important',
+            paddingRight: '40px !important',
+          }
+        }
+      },
+      MuiPaginationItem: {
+        styleOverrides: {
+          root: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingTop: '2px',
           }
         }
       }
@@ -648,6 +708,25 @@ function Seyali() {
   return (
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />
+      
+      {/* Dev-only floating blank state toggle */}
+      <IconButton 
+        onClick={() => {
+          const isBlank = sessionStorage.getItem('__DEV_BLANK_STATE__') === 'true';
+          sessionStorage.setItem('__DEV_BLANK_STATE__', isBlank ? 'false' : 'true');
+          window.location.reload();
+        }}
+        sx={{ 
+          position: 'fixed', top: 12, right: 56, zIndex: 9999, 
+          bgcolor: sessionStorage.getItem('__DEV_BLANK_STATE__') === 'true' ? 'rgba(255,69,58,0.8)' : (darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
+          backdropFilter: 'blur(8px)', width: 32, height: 32,
+          '&:hover': { bgcolor: sessionStorage.getItem('__DEV_BLANK_STATE__') === 'true' ? 'rgba(255,69,58,1)' : (darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)') }
+        }}
+        title="Toggle Blank State (Dev Only)"
+      >
+        <div style={{ width: 12, height: 12, borderRadius: '50%', border: '2px solid', borderColor: darkMode ? "#ffffff" : "#000000" }} />
+      </IconButton>
+
       {/* Dev-only floating dark mode toggle */}
       <IconButton 
         onClick={() => setDarkMode(!darkMode)}
@@ -700,29 +779,31 @@ function Seyali() {
           <Typography variant="h6" sx={{ fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.5px', color: darkMode ? '#FFFFFF' : '#000000' }}>
             {getTopBarTitle()}
           </Typography>
-          <Stack direction="row" spacing={0.5}>
-            <IconButton onClick={() => setCurrentView('reports')} sx={{ 
-              color: currentView === 'reports' ? 'primary.main' : (darkMode ? '#aaa' : '#666'),
-              '&:active svg': { transform: 'scale(0.85)' },
-              '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
-            }}>
-              <BarChart size={24} weight={currentView === 'reports' ? "fill" : "regular"} />
-            </IconButton>
-            <IconButton onClick={() => setCurrentView('gst-returns')} sx={{ 
-              color: currentView === 'gst-returns' ? 'primary.main' : (darkMode ? '#aaa' : '#666'),
-              '&:active svg': { transform: 'scale(0.85)' },
-              '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
-            }}>
-              <Description size={24} weight={currentView === 'gst-returns' ? "fill" : "regular"} />
-            </IconButton>
-            <IconButton onClick={() => setCurrentView('settings')} sx={{ 
-              color: currentView === 'settings' ? 'primary.main' : (darkMode ? '#aaa' : '#666'),
-              '&:active svg': { transform: 'scale(0.85)' },
-              '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
-            }}>
-              <Settings size={24} weight={currentView === 'settings' ? "fill" : "regular"} />
-            </IconButton>
-          </Stack>
+          {currentView === 'dashboard' && (
+            <Stack direction="row" spacing={0.5}>
+              <IconButton onClick={() => setCurrentView('reports')} sx={{ 
+                color: currentView === 'reports' ? 'primary.main' : (darkMode ? '#aaa' : '#666'),
+                '&:active svg': { transform: 'scale(0.85)' },
+                '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
+              }}>
+                <BarChart size={24} weight={currentView === 'reports' ? "fill" : "regular"} />
+              </IconButton>
+              <IconButton onClick={() => setCurrentView('gst-returns')} sx={{ 
+                color: currentView === 'gst-returns' ? 'primary.main' : (darkMode ? '#aaa' : '#666'),
+                '&:active svg': { transform: 'scale(0.85)' },
+                '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
+              }}>
+                <Description size={24} weight={currentView === 'gst-returns' ? "fill" : "regular"} />
+              </IconButton>
+              <IconButton onClick={() => setCurrentView('settings')} sx={{ 
+                color: currentView === 'settings' ? 'primary.main' : (darkMode ? '#aaa' : '#666'),
+                '&:active svg': { transform: 'scale(0.85)' },
+                '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
+              }}>
+                <Settings size={24} weight={currentView === 'settings' ? "fill" : "regular"} />
+              </IconButton>
+            </Stack>
+          )}
         </Box>
 
         {/* Global Floating Shell */}
@@ -763,6 +844,7 @@ function Seyali() {
         {currentView === 'invoice-view' && editingBill && (
           <InvoiceView
             bill={editingBill}
+            profile={profile}
             onBack={() => { setEditingBill(null); setCurrentView('invoice-list'); }}
             onEdit={handleEditInvoice}
           />
@@ -807,16 +889,16 @@ function Seyali() {
 
 
         {currentView === 'receipts' && (
-          <Raseedhu profile={profile} onAddReceipt={() => setCurrentView('receipt-editor')} />
+          <Raseedhu profile={profile} onAddReceipt={() => { setEditingReceipt(null); setCurrentView('receipt-editor'); }} onEditReceipt={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-editor'); }} />
         )}
         {currentView === 'receipt-editor' && (
-          <ReceiptEditor profile={profile} onBack={() => setCurrentView('receipts')} onSaved={() => setCurrentView('receipts')} />
+          <ReceiptEditor profile={profile} editingReceipt={editingReceipt} onBack={() => { setEditingReceipt(null); setCurrentView('receipts'); }} onSaved={() => { setEditingReceipt(null); setCurrentView('receipts'); }} />
         )}
         {currentView === 'reports' && (
           <Arikkaigal />
         )}
         {currentView === 'gst-returns' && (
-          <VariArikkaigal />
+          <VariArikkaigal profile={profile} />
         )}
 
         {currentView === 'settings' && (
@@ -895,6 +977,7 @@ function Seyali() {
                 setEditingProduct(null);
                 setCurrentView('product-editor');
               } else if (currentView === 'receipts') {
+                setEditingReceipt(null);
                 setCurrentView('receipt-editor');
               } else {
                 handleNewInvoice();

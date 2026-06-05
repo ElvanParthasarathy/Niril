@@ -1,25 +1,21 @@
-// @ts-nocheck
-import Receipt from '@mui/icons-material/Receipt';
-import Add from '@mui/icons-material/Add';
-import Delete from '@mui/icons-material/Delete';
-import Search from '@mui/icons-material/Search';
-import Print from '@mui/icons-material/Print';
-import Close from '@mui/icons-material/Close';
+import { Plus, X, Trash, Printer as PrintIcon, Receipt as PhosphorReceipt, PencilSimple, Copy, CheckSquare, Square } from '@phosphor-icons/react';
 import React, { useState, useEffect, useRef } from 'react';
+import { useTheme } from '@mui/material/styles';
 import { 
   Box, Typography, Button, Paper, TextField, InputAdornment, 
-  IconButton, Tooltip, TableContainer, Table, TableHead, TableRow, 
-  TableCell, TableBody, Chip, Grid, Select, MenuItem, InputLabel, 
-  FormControl, Stack, Dialog, DialogTitle, DialogContent, DialogActions, Autocomplete
+  IconButton, Tooltip, Chip, Grid, Select, MenuItem, InputLabel, 
+  FormControl, Stack, Dialog, DialogTitle, DialogContent, DialogActions, Autocomplete, Pagination, Toolbar
 } from '@mui/material';
-import { getAllReceipts, saveReceipt, deleteReceipt, getAllBills, getProfile, getReceiptNumberSettings } from '../Avanam';
+import { getAllReceipts, saveReceipt, deleteReceipt, getAllBills, getReceiptNumberSettings, getProfile } from '../Avanam';
 import { formatCurrency, numberToWords, getCountryConfig } from '../Payanpadu';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
+import { getSearchPaperSx, searchInputStyle, getAddButtonSx, getEditPaperSx, getEditIconButtonSx } from './commonStyles';
+import ElvanCard from './ElvanCard';
 
 const PAYMENT_MODES = ['Bank Transfer', 'UPI', 'Cash', 'Cheque', 'Card', 'Other'];
 
-export default function Raseedhu({ profile: parentProfile, onAddReceipt }: { profile?: any, onAddReceipt?: () => void } = {}) {
+export default function Raseedhu({ profile: parentProfile, onAddReceipt, onEditReceipt }: { profile?: any, onAddReceipt?: () => void, onEditReceipt?: (rcp: any) => void } = {}) {
   const { t } = useLanguage();
   const [receipts, setReceipts] = useState<any[]>([]);
   const [bills, setBills] = useState<any[]>([]);
@@ -28,6 +24,13 @@ export default function Raseedhu({ profile: parentProfile, onAddReceipt }: { pro
   const [search, setSearch] = useState('');
   const [previewReceipt, setPreviewReceipt] = useState<any>(null);
   const receiptRef = useRef<HTMLDivElement>(null);
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const [page, setPage] = useState(1);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [selectedReceiptIds, setSelectedReceiptIds] = useState<string[]>([]);
+  const [confirmDialog, setConfirmDialog] = useState<{ open: boolean; title: string; message: string; action: (() => void) | null }>({ open: false, title: '', message: '', action: null });
+  const topRef = useRef<HTMLDivElement>(null);
   
   const profileCurrency = getCountryConfig(profile?.country || 'India').currency;
 
@@ -92,6 +95,69 @@ export default function Raseedhu({ profile: parentProfile, onAddReceipt }: { pro
         (r.receiptNo || '').toLowerCase().includes(search.toLowerCase()))
     : receipts;
 
+  const ITEMS_PER_PAGE = 6;
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const safePage = Math.max(1, Math.min(page, totalPages === 0 ? 1 : totalPages));
+  const paginatedReceipts = filtered.slice((safePage - 1) * ITEMS_PER_PAGE, safePage * ITEMS_PER_PAGE);
+
+  const handleSelectAll = () => {
+    if (selectedReceiptIds.length === paginatedReceipts.length) {
+      setSelectedReceiptIds([]);
+    } else {
+      setSelectedReceiptIds(paginatedReceipts.map(r => r.id));
+    }
+  };
+
+  const toggleSelection = (id: string) => {
+    setSelectedReceiptIds(prev =>
+      prev.includes(id) ? prev.filter(rId => rId !== id) : [...prev, id]
+    );
+  };
+
+  const handleCopySelected = () => {
+    setConfirmDialog({
+      open: true,
+      title: t('duplicateProductsTitle') || 'Duplicate Receipts?',
+      message: t('duplicateProductsMessage') || 'Are you sure you want to create copies of the selected receipt(s)?',
+      action: async () => {
+        try {
+          const selected = receipts.filter(r => selectedReceiptIds.includes(r.id));
+          for (const r of selected) {
+            const { id, ...rest } = r;
+            await saveReceipt({ ...rest, receiptNo: `${r.receiptNo} (Copy)` });
+          }
+          thagaval(t('productsDuplicatedSuccess') || 'Receipts duplicated successfully', 'success');
+          setSelectedReceiptIds([]);
+          setIsSelectionMode(false);
+          loadData();
+        } catch (e) {
+          thagaval(t('errorDuplicating') || 'Error duplicating', 'error');
+        }
+      }
+    });
+  };
+
+  const handleDeleteSelected = () => {
+    setConfirmDialog({
+      open: true,
+      title: t('deleteProductsTitle') || 'Delete Receipts?',
+      message: t('deleteProductsMessage') || 'Are you sure you want to delete the selected receipt(s)? This action cannot be undone.',
+      action: async () => {
+        try {
+          for (const id of selectedReceiptIds) {
+            await deleteReceipt(id);
+          }
+          thagaval(t('deletedSuccessfully') || 'Deleted successfully', 'success');
+          setSelectedReceiptIds([]);
+          setIsSelectionMode(false);
+          loadData();
+        } catch (e) {
+          thagaval(t('errorDeleting') || 'Error deleting', 'error');
+        }
+      }
+    });
+  };
+
   const handleDelete = async (id: string) => {
     if (confirm(t('deleteReceiptConfirmMsg') || 'Delete this receipt?')) {
       try { await deleteReceipt(id); thagaval(t('deletedToast') || 'Deleted!', 'success'); loadData(); }
@@ -136,27 +202,96 @@ export default function Raseedhu({ profile: parentProfile, onAddReceipt }: { pro
   const unpaidBills = bills.filter(b => b.status !== 'paid');
 
   return (
-    <Box sx={{ p: { xs: 1.5, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
-      <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'flex-start', sm: 'center' }} mb={4} spacing={2}>
-        <Box>
-          <Typography variant="h4" color="text.primary" sx={{ fontWeight: "bold" }}>
-            {t('receipts')}
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            {t('receiptsSubtitle')}
-          </Typography>
+    <Box ref={topRef} sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
+      <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Typography variant="h5" sx={{ fontWeight: 800, letterSpacing: '-0.5px', color: 'text.primary', ml: 2 }}>
+          {t('receipts')}
+        </Typography>
+      </Box>
+
+      <Box sx={{ mb: 4 }}>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          <Paper elevation={1} className="vanigargal-search" sx={getSearchPaperSx(isDark)}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.5 }}>
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input 
+              type="text" 
+              placeholder={t('searchReceipts') || 'Search receipts...'} 
+              value={search} 
+              onChange={e => { setSearch(e.target.value); setPage(1); }} 
+              style={searchInputStyle} 
+            />
+            {search && (
+              <IconButton size="small" onClick={() => { setSearch(''); setPage(1); }} sx={{ flexShrink: 0 }}>
+                <X size={14} weight="regular" />
+              </IconButton>
+            )}
+          </Paper>
+
+          <Paper 
+            elevation={1}
+            sx={getEditPaperSx(isDark, isSelectionMode)}
+          >
+            <IconButton 
+              onClick={() => { setIsSelectionMode(!isSelectionMode); setSelectedReceiptIds([]); }}
+              sx={getEditIconButtonSx(isDark)}
+            >
+              <PencilSimple size={18} weight={isSelectionMode ? 'fill' : 'regular'} color={isDark ? '#fff' : '#000'} />
+            </IconButton>
+          </Paper>
+          <Button variant="contained" sx={getAddButtonSx(isDark)} onClick={openAdd} startIcon={<Plus size={18} weight="bold" />}>
+            {t('newReceiptBtn') || 'Add Receipt'}
+          </Button>
         </Box>
-        <Button variant="contained" startIcon={<Add sx={{ fontSize: 18 }} />} onClick={openAdd} sx={{ borderRadius: 50, px: 3, textTransform: 'none', py: 1.5, bgcolor: '#0f172a', '&:hover': { bgcolor: '#1e293b' } }}>
-          {t('newReceiptBtn')}
-        </Button>
-      </Stack>
+      </Box>
+
+      {isSelectionMode && (
+        <Toolbar
+          component={Paper}
+          elevation={1}
+          variant="dense"
+          sx={{
+            boxShadow: 'none',
+            pl: { sm: 2 },
+            pr: { xs: 1, sm: 1 },
+            mt: 0,
+            minHeight: '48px !important',
+            mb: 4,
+            borderRadius: '24px',
+            bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF',
+          }}
+        >
+          <IconButton onClick={handleSelectAll} color="primary" sx={{ mr: 1 }}>
+            {selectedReceiptIds.length > 0 && selectedReceiptIds.length === paginatedReceipts.length ? <CheckSquare size={24} weight="fill" /> : <Square size={24} />}
+          </IconButton>
+          
+          <Typography sx={{ flex: '1 1 100%', fontWeight: 600, display: 'flex', alignItems: 'center', lineHeight: 1, mt: 0.3 }} color="primary" variant="subtitle1" component="div">
+            {selectedReceiptIds.length} {t('selected') || 'Selected'}
+          </Typography>
+
+          <Stack direction="row" spacing={1}>
+            <Tooltip title={t('saveDuplicate') || 'Copy / Duplicate'}>
+              <IconButton onClick={handleCopySelected} color="primary">
+                <Copy size={20} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title={t('delete') || 'Delete'}>
+              <IconButton onClick={handleDeleteSelected} color="error">
+                <Trash size={20} />
+              </IconButton>
+            </Tooltip>
+          </Stack>
+        </Toolbar>
+      )}
 
       {/* Receipt Preview Modal */}
       {previewReceipt && (
         <Dialog open={Boolean(previewReceipt)} onClose={() => setPreviewReceipt(null)} maxWidth="md" fullWidth PaperProps={{ sx: { borderRadius: 3 } }}>
           <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 3, pb: 2 }}>
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>{t('receiptPreview') || 'Receipt Preview'}</Typography>
-            <IconButton onClick={() => setPreviewReceipt(null)} size="small"><Close sx={{ fontSize: 20 }} /></IconButton>
+            <IconButton onClick={() => setPreviewReceipt(null)} size="small"><X size={20} /></IconButton>
           </DialogTitle>
           <DialogContent dividers sx={{ p: 0, bgcolor: '#f8fafc', display: 'flex', justifyContent: 'center' }}>
             <style>{`
@@ -230,114 +365,145 @@ export default function Raseedhu({ profile: parentProfile, onAddReceipt }: { pro
           </DialogContent>
           <DialogActions sx={{ p: 3 }}>
             <Button onClick={() => setPreviewReceipt(null)} variant="outlined" sx={{ borderRadius: 50, px: 3, textTransform: 'none' }}>{t('cancelModalBtn') || 'Cancel'}</Button>
-            <Button onClick={executePrint} variant="contained" startIcon={<Print sx={{ fontSize: 18 }} />} sx={{ borderRadius: 50, px: 4, textTransform: 'none', bgcolor: '#0f172a', '&:hover': { bgcolor: '#1e293b' } }}>Print Receipt</Button>
+            <Button onClick={executePrint} variant="contained" startIcon={<PrintIcon size={18} />} sx={{ borderRadius: 50, px: 4, textTransform: 'none', bgcolor: '#0f172a', '&:hover': { bgcolor: '#1e293b' } }}>Print Receipt</Button>
           </DialogActions>
         </Dialog>
       )}
 
-      {/* Search */}
-      <Paper elevation={0} sx={{ p: 2, mb: 4, borderRadius: 3, border: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
-        <TextField
-          fullWidth
-          variant="outlined"
-          size="small"
-          placeholder={t('searchReceipts')}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          sx={{ maxWidth: 400, '& fieldset': { border: 'none' } }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Search sx={{ fontSize: 20 }} htmlColor="#94a3b8" />
-              </InputAdornment>
-            ),
-          }}
-        />
-      </Paper>
 
-      {/* Receipts Table */}
-      <Paper elevation={0} sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
-        <Box sx={{ p: 3, borderBottom: '1px solid', borderColor: 'divider' }}>
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>{t('paymentReceiptsTableTitle')}</Typography>
-        </Box>
-        
-        {filtered.length === 0 ? (
-          <Box sx={{ p: 8, textAlign: 'center' }}>
-            <Receipt sx={{ fontSize: 64 }} htmlColor="#cbd5e1" style={{ margin: '0 auto', marginBottom: '16px' }} />
-            <Typography variant="h6" color="text.secondary" gutterBottom>
-              {receipts.length === 0 ? t('noReceiptsYet') : t('noReceiptsMatch')}
-            </Typography>
-            {receipts.length === 0 && (
-              <Button variant="contained" startIcon={<Add sx={{ fontSize: 18 }} />} onClick={openAdd} sx={{ mt: 2, borderRadius: 50, px: 3, textTransform: 'none', bgcolor: '#0f172a' }}>
-                {t('createReceiptBtn')}
-              </Button>
-            )}
+
+      {filtered.length === 0 ? (
+        <ElvanCard boxSx={{ p: 6, textAlign: 'center' }}>
+          <Box color="text.secondary" mb={2}>
+            <PhosphorReceipt size={48} weight="regular" style={{ opacity: 0.5 }} />
           </Box>
-        ) : (
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: 'bold' }}>{t('dateLabel')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>{t('receiptNoLabel')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>{t('clientCol') || 'Client'}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>{t('againstInvoiceLabel')}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }} align="right">{t('amountCol') || 'Amount'}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }}>{t('modeCol') || 'Mode'}</TableCell>
-                  <TableCell sx={{ fontWeight: 'bold' }} align="right">{t('actionsCol') || 'Actions'}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filtered.map(rcp => (
-                  <TableRow key={rcp.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <TableCell color="text.secondary">
-                      {rcp.date ? new Date(rcp.date).toLocaleDateString('en-IN') : '-'}
-                    </TableCell>
-                    <TableCell>
-                      <Chip label={rcp.receiptNo} size="small" sx={{ borderRadius: 1, fontWeight: 'bold', bgcolor: '#f1f5f9' }} />
-                    </TableCell>
-                    <TableCell sx={{ fontWeight: 500 }}>
-                      {rcp.clientName}
-                      {profile?.enableBilingual !== false && getDisplayClientNameEn(rcp) && (
-                        <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
-                          {getDisplayClientNameEn(rcp)}
+          <Typography color="text.secondary" mb={2}>{receipts.length === 0 ? t('noReceiptsYet') : t('noReceiptsMatch')}</Typography>
+          {receipts.length === 0 && (
+            <Button variant="outlined" color="inherit" sx={{ borderRadius: '50px', textTransform: 'none' }} onClick={openAdd} startIcon={<Plus size={16} weight="regular" />}>
+              {t('createReceiptBtn') || 'Add Receipt'}
+            </Button>
+          )}
+        </ElvanCard>
+      ) : (
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
+          {paginatedReceipts.map((rcp, index) => {
+            const globalIndex = (safePage - 1) * ITEMS_PER_PAGE + index;
+            const isSelected = selectedReceiptIds.includes(rcp.id);
+            return (
+              <ElvanCard 
+                key={rcp.id} 
+                sx={{ 
+                  height: '100%', 
+                  cursor: 'pointer',
+                  ...(isSelectionMode && isSelected ? { bgcolor: isDark ? 'rgba(255,255,255,0.06) !important' : 'rgba(0,0,0,0.04) !important' } : {})
+                }} 
+                onClick={() => isSelectionMode ? toggleSelection(rcp.id) : (onEditReceipt && onEditReceipt(rcp))}
+              >
+                <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} sx={{ height: '100%' }}>
+                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
+                    {isSelectionMode ? (
+                      <IconButton 
+                        size="small" 
+                        onClick={(e) => { e.stopPropagation(); toggleSelection(rcp.id); }} 
+                        sx={{ color: isSelected ? 'primary.main' : 'text.disabled', p: 0, mt: 0.2 }}
+                      >
+                        {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} />}
+                      </IconButton>
+                    ) : (
+                      <Box sx={{ 
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                        width: 28, height: 28, mt: 0.15, 
+                        borderRadius: '50%',
+                        bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
+                        flexShrink: 0
+                      }}>
+                        <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
+                          {(globalIndex + 1).toString().padStart(2, '0')}
                         </Typography>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {rcp.againstInvoice ? (
-                        <Typography variant="body2" color="text.secondary">{rcp.againstInvoice}</Typography>
-                      ) : (
-                        <Typography variant="body2" color="text.disabled">-</Typography>
-                      )}
-                    </TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                      {formatCurrency(rcp.amount, profileCurrency)}
-                    </TableCell>
-                    <TableCell>
-                      <Chip label={rcp.paymentMode} size="small" variant="outlined" sx={{ borderRadius: 50 }} />
-                    </TableCell>
-                    <TableCell align="right">
-                      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                        <Tooltip title="Preview" arrow>
-                          <IconButton size="small" onClick={() => setPreviewReceipt(rcp)} color="primary">
-                            <Print sx={{ fontSize: 18 }} />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Delete" arrow>
-                          <IconButton size="small" onClick={() => handleDelete(rcp.id)} color="error">
-                            <Delete sx={{ fontSize: 18 }} />
-                          </IconButton>
-                        </Tooltip>
                       </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
-      </Paper>
+                    )}
+                    <Box>
+                      <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                        {rcp.clientName}
+                      </Typography>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
+                        {profile?.enableBilingual !== false && getDisplayClientNameEn(rcp) && (
+                          <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{getDisplayClientNameEn(rcp)}</Typography>
+                        )}
+                        <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
+                          {rcp.receiptNo} <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> {rcp.date ? new Date(rcp.date).toLocaleDateString('en-IN') : '-'}
+                        </Typography>
+                        <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
+                          {t('modeCol') || 'Mode'}: {rcp.paymentMode}
+                          {rcp.againstInvoice && <><span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> Inv: {rcp.againstInvoice}</>}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'space-between' }}>
+                    <Box sx={{ display: 'flex', gap: 0.5, mt: -0.5, mr: -0.5 }}>
+                      <Tooltip title="Preview">
+                        <IconButton size="small" onClick={(e) => { e.stopPropagation(); setPreviewReceipt(rcp); }} color="primary">
+                          <PrintIcon size={20} weight="regular" />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                    <Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: 800 }}>
+                      {formatCurrency(rcp.amount, profileCurrency)}
+                    </Typography>
+                  </Box>
+                </Stack>
+              </ElvanCard>
+            );
+          })}
+        </Box>
+      )}
+
+      {totalPages > 1 && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+          <Pagination 
+            count={totalPages} 
+            page={safePage} 
+            onChange={(e, val) => {
+              setPage(val);
+              if (topRef.current) {
+                topRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }}
+            color="primary" 
+            size="large"
+            sx={{
+              '& .MuiPaginationItem-root': {
+                fontWeight: 600,
+              }
+            }}
+          />
+        </Box>
+      )}
+
+      {/* Confirmation Dialog */}
+      <Dialog open={confirmDialog.open} onClose={() => setConfirmDialog(prev => ({ ...prev, open: false }))} PaperProps={{ sx: { borderRadius: 3 } }}>
+        <DialogTitle sx={{ fontWeight: 700 }}>{confirmDialog.title}</DialogTitle>
+        <DialogContent>
+          <Typography color="text.secondary">{confirmDialog.message}</Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 0 }}>
+          <Button onClick={() => setConfirmDialog(prev => ({ ...prev, open: false }))} sx={{ borderRadius: 50, textTransform: 'none' }}>
+            {t('cancelModalBtn') || 'Cancel'}
+          </Button>
+          <Button 
+            onClick={() => {
+              if (confirmDialog.action) confirmDialog.action();
+              setConfirmDialog(prev => ({ ...prev, open: false }));
+            }} 
+            variant="contained" 
+            color={confirmDialog.title.includes('Delete') ? 'error' : 'primary'}
+            sx={{ borderRadius: 50, textTransform: 'none', px: 3 }}
+          >
+            {t('confirmModalBtn') || 'Confirm'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

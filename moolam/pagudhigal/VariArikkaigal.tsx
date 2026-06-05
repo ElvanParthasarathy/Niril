@@ -11,7 +11,7 @@ import MenuBook from '@mui/icons-material/MenuBook';
 import BarChart from '@mui/icons-material/BarChart';
 import { useState, useEffect, useRef } from 'react';
 import { Box, Typography, Link, ButtonBase, Button, Paper, TextField, Select, MenuItem, FormControl, InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Stack, InputAdornment, Grid, Card, CardContent, Alert } from '@mui/material';
-import { getAllBills, getAllExpenses, getAllPurchases, getProfile } from '../Avanam';
+import { getAllBills, getAllExpenses, getAllPurchases } from '../Avanam';
 import { formatCurrency, INVOICE_TYPES, calculateLineItemTax, getStateCode, formatDateGST, getFilingPeriod, getUnitUQC } from '../Payanpadu';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
@@ -496,7 +496,7 @@ function StepList({ steps, title }: { steps: any[], title: string }) {
 }
 
 // ========== Main Component ==========
-export default function VariArikkaigal() {
+export default function VariArikkaigal({ profile }) {
   const { t } = useLanguage();
   const MONTHS = [t('january'), t('february'), t('march'), t('april'), t('may'), t('june'), t('july'), t('august'), t('september'), t('october'), t('november'), t('december')];
 
@@ -504,7 +504,6 @@ export default function VariArikkaigal() {
   const [bills, setBills] = useState([]);
   const [expenses, setExpenses] = useState([]);
   const [purchases, setPurchases] = useState([]);
-  const [profile, setProfile] = useState<any>({});
   const [filterMode, setFilterMode] = useState('month');
   const [fyFilter, setFyFilter] = useState('');
   const [monthFilter, setMonthFilter] = useState('');
@@ -548,8 +547,8 @@ export default function VariArikkaigal() {
 
   const loadData = async () => {
     try {
-      const [b, e, p] = await Promise.all([getAllBills(), getAllExpenses(), getProfile()]);
-      setBills(b); setExpenses(e); setProfile(p || {});
+      const [b, e] = await Promise.all([getAllBills(), getAllExpenses()]);
+      setBills(b); setExpenses(e);
       // Purchases endpoint may not exist on older server versions
       try { const pur = await getAllPurchases(); setPurchases(pur || []); } catch { /* ignore — older servers don't have this endpoint */ }
     } catch { thagaval('Failed to load data', 'error'); }

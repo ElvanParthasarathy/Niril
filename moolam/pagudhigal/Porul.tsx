@@ -26,8 +26,8 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState('');
   const [units, setUnits] = useState(getAllUnits());
-  const [profileSettings, setProfileSettings] = useState({ primary: 'Tamil', secondary: 'English', bilingual: true });
-  const [profileCountry, setProfileCountry] = useState('India');
+  const profileSettings = { primary: profile?.primaryDataLanguage || 'Tamil', secondary: profile?.secondaryDataLanguage || 'English', bilingual: profile?.enableBilingual !== false };
+  const profileCountry = profile?.country || 'India';
   const profileCurrency = getCountryConfig(profileCountry).currency;
 
   const [page, setPage] = useState(1);
@@ -49,7 +49,6 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
   useEffect(() => {
     loadProducts();
     setUnits(getAllUnits());
-    getProfile().then(p => { if (p?.country) setProfileCountry(p.country); if (p) setProfileSettings({ primary: p.primaryDataLanguage || 'Tamil', secondary: p.secondaryDataLanguage || 'English', bilingual: p.enableBilingual !== false }); }).catch(() => { });
   }, []);
 
   const filtered = products.filter(p => {

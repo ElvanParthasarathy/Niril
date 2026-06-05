@@ -1,4 +1,4 @@
-﻿import { ArrowLeft, Plus, Trash, DownloadSimple, UserPlus, PencilSimple, GearSix, CaretUp, CaretDown, WhatsappLogo, Check, Hourglass, Truck } from '@phosphor-icons/react';
+import { ArrowLeft, Plus, Trash, DownloadSimple, UserPlus, PencilSimple, GearSix, CaretUp, CaretDown, WhatsappLogo, Check, Hourglass, Truck } from '@phosphor-icons/react';
 // @ts-nocheck
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { jsPDF } from 'jspdf';
@@ -10,6 +10,7 @@ import DOMPurify from 'dompurify';
 import VanigarThirai from '../VanigarThirai';
 import { thagaval } from '../Thagaval';
 import { useLanguage } from '../../mozhi/LanguageContext';
+import ElvanCard from '../ElvanCard';
 
 // MUI Imports
 import { 
@@ -205,8 +206,43 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
     ...activeProfile,
     ...profileProp
   } : (activeProfile || profileProp);
+
+  const primaryLang = profile?.primaryDataLanguage || 'Tamil';
+  const secondaryLang = profile?.secondaryDataLanguage || 'English';
+  const enableBilingual = profile?.enableBilingual !== false;
+
+  const clientFields = ['name', 'mugavari', 'oor', 'maavattam', 'maanilam', 'country'];
+  const itemFields = ['name', 'description'];
+
+  const convertFromSnapshot = (obj, fields) => {
+    if (!obj) return {};
+    const result = { ...obj };
+    fields.forEach(f => {
+       if (result[f] !== undefined) result[`${f}_${primaryLang}`] = result[f];
+       if (result[`${f}En`] !== undefined) result[`${f}_${secondaryLang}`] = result[`${f}En`];
+       delete result[f];
+       delete result[`${f}En`];
+    });
+    return result;
+  };
+
+  const convertToSnapshot = (obj, fields) => {
+    if (!obj) return {};
+    const result = { ...obj };
+    fields.forEach(f => {
+       result[f] = result[`${f}_${primaryLang}`] || '';
+       result[`${f}En`] = result[`${f}_${secondaryLang}`] || '';
+    });
+    return result;
+  };
+
+  const getClientField = (f, l) => client[`${f}_${l}`] || '';
+  const setClientField = (f, l, v) => setClient(prev => ({...prev, [`${f}_${l}`]: v}));
+  
+  const getItemField = (item, f, l) => item[`${f}_${l}`] || '';
+
   const [invoiceType, setInvoiceType] = useState(draft?.invoiceType || 'tax-invoice');
-  const [client, setClient] = useState(draft?.client || (IS_TESTING_MODE ? TEST_CLIENT : { name: '', nameEn: '', mugavari: '', mugavariEn: '', oor: '', oorEn: '', maavattam: '', maavattamEn: '', pin: '', maanilam: '', maanilamEn: '', gstin: '', country: '', countryEn: '' }));
+  const [client, setClient] = useState(() => convertFromSnapshot(draft?.client || (IS_TESTING_MODE ? TEST_CLIENT : { name: '', nameEn: '', mugavari: '', mugavariEn: '', oor: '', oorEn: '', maavattam: '', maavattamEn: '', pin: '', maanilam: '', maanilamEn: '', gstin: '', country: '', countryEn: '' }), clientFields));
   const [isTempClient, setIsTempClient] = useState(draft?.isTempClient || false);
   const [details, setDetails] = useState(draft?.details || {
     invoiceNumber: '',
@@ -215,9 +251,10 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
     originalInvoiceRef: '',
   });
 
-  const [items, setItems] = useState(draft?.items || (IS_TESTING_MODE ? TEST_ITEMS.map(i => ({...i, isTemp: true})) : [
-    { id: Date.now().toString(), name: '', nameEn: '', hsn: '50072010', quantity: 1, unit: 'Nos', rate: 0, discount: 0, taxPercent: 5, cessPercent: 0, isTemp: false }
-  ]));
+  const [items, setItems] = useState(() => {
+    const defaultItems = IS_TESTING_MODE ? TEST_ITEMS.map(i => ({...i, isTemp: true})) : [ { id: Date.now().toString(), name: '', nameEn: '', hsn: '50072010', quantity: 1, unit: 'Nos', rate: 0, discount: 0, taxPercent: 5, cessPercent: 0, isTemp: false } ];
+    return (draft?.items || defaultItems).map(i => convertFromSnapshot(i, itemFields));
+  });
   const [showBackDialog, setShowBackDialog] = useState(false);
   const [units, setUnits] = useState(getAllUnits());
   const [taxInclusive, setTaxInclusive] = useState(draft?.taxInclusive || false);
@@ -313,9 +350,9 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
   // bug where opening "New Invoice" and clicking away saves an empty bill to the list.
   const isMeaningfulInvoice = useCallback(() => {
     if (editingBill) return true; // editing an existing bill — always persist changes
-    if (!client?.name?.trim()) return false;
-    return items.some(item => (item.name || '').trim() && (item.quantity || 0) * (item.rate || 0) > 0);
-  }, [client?.name, items, editingBill]);
+    if (!getClientField('name', primaryLang)?.trim()) return false;
+    return items.some(item => (getItemField(item, 'name', primaryLang) || '').trim() && (item.quantity || 0) * (item.rate || 0) > 0);
+  }, [getClientField('name', primaryLang), items, editingBill]);
 
   // Debounced auto-save to server was REMOVED as per user request.
   // The app now only auto-saves temporarily to sessionStorage for crash recovery.
@@ -387,8 +424,8 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
     getAllClients().then(clients => {
       setSavedClients(clients);
       // Auto-link if editing a bill with a known client
-      if (client.name.trim()) {
-        const match = clients.find(c => c.name.toLowerCase() === client.name.trim().toLowerCase());
+      if (getClientField('name', primaryLang).trim()) {
+        const match = clients.find(c => c.name.toLowerCase() === getClientField('name', primaryLang).trim().toLowerCase());
         if (match) {
           setSelectedClientId(match.id);
           // If the invoice's client snapshot is missing newer fields (like maavattam), backfill them from the saved database
@@ -413,8 +450,8 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
     }
     if (editingBill?.data) {
       const d = editingBill.data;
-      setClient(d.client);
-      setItems(d.items.map(i => ({ ...i, isTemp: i.isTemp ?? (i.productId ? false : true) })));
+      setClient(convertFromSnapshot(d.client, clientFields));
+      setItems(d.items.map(i => convertFromSnapshot({ ...i, isTemp: i.isTemp ?? (i.productId ? false : true) }, itemFields)));
       setInvoiceType(d.invoiceType || 'tax-invoice');
       if (d.customTerms !== undefined) setCustomTerms(d.customTerms);
       if (d.internalNote !== undefined) setInternalNote(d.internalNote);
@@ -608,10 +645,10 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
   const selectProduct = (itemId, product) => {
     setItems(prev => prev.map(item => item.id === itemId ? {
       ...item,
-      name: product.name,
-      nameEn: product.nameEn || '',
-      description: product.description || '',
-      descriptionEn: product.descriptionEn || '',
+      [`name_${primaryLang}`]: product.name,
+      [`name_${secondaryLang}`]: product.nameEn || '',
+      [`description_${primaryLang}`]: product.description || '',
+      [`description_${secondaryLang}`]: product.descriptionEn || '',
       hsn: product.hsn || '',
       rate: product.rate || 0,
       unit: product.unit || item.unit || 'Nos',
@@ -625,7 +662,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
     if (productSearch.itemId !== itemId || !productSearch.query.trim()) return [];
     const q = productSearch.query.toLowerCase();
     return products.filter(p =>
-      p.name?.toLowerCase().includes(q) || p.hsn?.toLowerCase().includes(q)
+      (p.name?.toLowerCase().includes(q) || p.nameEn?.toLowerCase().includes(q) || p.hsn?.toLowerCase().includes(q))
     ).slice(0, 5);
   };
 
@@ -675,7 +712,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
 
 
   const selectSavedClient = (cli) => {
-    setClient({ name: cli.name, nameEn: cli.nameEn || '', mugavari: cli.mugavari || '', mugavariEn: cli.mugavariEn || '', oor: cli.oor || '', oorEn: cli.oorEn || '', maavattam: cli.maavattam || '', maavattamEn: cli.maavattamEn || '', pin: cli.pin || '', maanilam: cli.maanilam || '', maanilamEn: cli.maanilamEn || '', gstin: cli.gstin || '', country: cli.country || '', countryEn: cli.countryEn || '' });
+    setClient(convertFromSnapshot(cli, clientFields));
     setSelectedClientId(cli.id);
     setShowClientSuggestions(false);
     thagaval(`Loaded client: ${cli.name}`, 'info');
@@ -683,7 +720,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
 
   // Open modal to add new client (pre-fill from current invoice fields)
   const openAddClientModal = () => {
-    setModalClient({ name: client.name || '', mugavari: client.mugavari || '', oor: client.oor || '', pin: client.pin || '', maanilam: client.maanilam || '', gstin: client.gstin || '' });
+    setModalClient({ name: getClientField('name', primaryLang), nameEn: getClientField('name', secondaryLang), mugavari: getClientField('mugavari', primaryLang), mugavariEn: getClientField('mugavari', secondaryLang), oor: getClientField('oor', primaryLang), oorEn: getClientField('oor', secondaryLang), maavattam: getClientField('maavattam', primaryLang), maavattamEn: getClientField('maavattam', secondaryLang), pin: client.pin || '', maanilam: client.maanilam || '', maanilamEn: client.maanilamEn || '', gstin: client.gstin || '', country: client.country || '', countryEn: client.countryEn || '' });
     setIsEditingClient(false);
     setShowClientModal(true);
     setShowClientSuggestions(false);
@@ -704,7 +741,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
     const updated = await getAllClients();
     setSavedClients(updated);
     // Also update the invoice form fields
-    setClient({ name: data.name, nameEn: data.nameEn || '', mugavari: data.mugavari, mugavariEn: data.mugavariEn || '', oor: data.oor || '', oorEn: data.oorEn || '', maavattam: data.maavattam || '', maavattamEn: data.maavattamEn || '', pin: data.pin || '', maanilam: data.maanilam, maanilamEn: data.maanilamEn || '', gstin: data.gstin, country: data.country || '', countryEn: data.countryEn || '' });
+    setClient(convertFromSnapshot(data, clientFields));
     if (isEditingClient && modalClient?.id) {
       setSelectedClientId(modalClient.id);
       thagaval(`Client "${data.name}" updated!`, 'success');
@@ -717,8 +754,8 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
   };
 
   // Filter saved clients based on typed name
-  const filteredClients = client.name.trim()
-    ? savedClients.filter(cli => cli.name.toLowerCase().includes(client.name.trim().toLowerCase()))
+  const filteredClients = getClientField('name', primaryLang).trim()
+    ? savedClients.filter(cli => cli.name.toLowerCase().includes(getClientField('name', primaryLang).trim().toLowerCase()))
     : savedClients;
 
   // Close suggestions on click outside
@@ -734,9 +771,11 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
   }, []);
 
   const saveInvoiceToDB = async (skipStockDeduction = false) => {
+    const snapClient = convertToSnapshot(client, clientFields);
+    const snapItems = items.map(i => convertToSnapshot(i, itemFields));
     const bill = {
       id: details.invoiceNumber,
-      clientName: client.name,
+      clientName: snapClient.name,
       invoiceNumber: details.invoiceNumber,
       invoiceDate: details.invoiceDate,
       invoiceType,
@@ -746,7 +785,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
       status: 'paid',
       paidAmount: Math.round(Number(totals.total)) || 0,
       payments: editingBill?.payments || [],
-      data: { profile, client, details, items, totals, invoiceType, customTerms, internalNote, invoiceOptions }
+      data: { profile, client: snapClient, details, items: snapItems, totals, invoiceType, customTerms, internalNote, invoiceOptions }
     };
     await saveBill(bill);
 
@@ -846,7 +885,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
           
           {/* Business Profile Selector — shown only if multiple profiles saved */}
           {allProfiles.length > 1 && (
-            <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 2 }}>
+            <ElvanCard sx={{ mb: 3 }}>
               <Typography variant="h6" sx={{ mb: 2, fontSize: '1.1rem', fontWeight: 600 }}>Billing From (Business Profile)</Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 {allProfiles.map(bp => {
@@ -863,11 +902,11 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                   );
                 })}
               </Box>
-            </Paper>
+            </ElvanCard>
           )}
 
           {/* Invoice Type */}
-          <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 2 }}>
+          <ElvanCard sx={{ mb: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t("invoiceType")}</Typography>
               <Button variant="outlined" size="small" onClick={() => setShowOptions(!showOptions)} startIcon={<GearSix size={15} weight="regular"   />}>
@@ -1059,7 +1098,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                     ]},
                   ].map(section => (
                     <Grid size={{ xs: 12, sm: 6, md: 4 }} key={section.group}>
-                      <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 700 }} sx={{ display: 'block', mb: 1 }}>{section.group}</Typography>
+                      <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 700, display: 'block', mb: 1 }}>{section.group}</Typography>
                       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                         {section.items.map(([key, label]) => {
                           const offByDefault = key === 'showRoundOff' || key === 'showAccountLabel' || key === 'showCess' || key === 'reverseCharge';
@@ -1082,13 +1121,13 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                 </Box>
               </Box>
             )}
-          </Paper>
+          </ElvanCard>
 
           {/* Client Modal */}
           <VanigarThirai show={showClientModal} onClose={() => setShowClientModal(false)} onSave={handleClientModalSave} client={modalClient} isEditing={isEditingClient} defaultCountry={profile?.country} profileSettings={profile} />
 
           {/* Client Details */}
-          <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 2 }}>
+          <ElvanCard sx={{ mb: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
               <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('billedTo')}</Typography>
               <ToggleButtonGroup
@@ -1110,28 +1149,23 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                   {t('clientName')}{profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'} & ${profile?.secondaryDataLanguage || 'English'})` : ''}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1, flexDirection: 'column', position: 'relative' }}>
-                  <TextField fullWidth size="small" value={client.name} inputRef={clientNameRef}
+                  <TextField fullWidth size="small" value={getClientField('name', primaryLang)} inputRef={clientNameRef}
                     onChange={(e) => {
                       const newName = e.target.value;
                       if (!isTempClient) {
-                        setClient({ 
-                          name: newName, nameEn: '', mugavari: '', mugavariEn: '', 
-                          oor: '', oorEn: '', maavattam: '', maavattamEn: '', 
-                          pin: '', maanilam: '', maanilamEn: '', gstin: '', 
-                          country: '', countryEn: '' 
-                        });
+                        setClient({ [`name_${primaryLang}`]: newName });
                         setSelectedClientId(null);
                         setShowClientSuggestions(true);
                       } else {
-                        setClient({ ...client, name: newName });
+                        setClientField('name', primaryLang, newName);
                       }
                     }}
                     onFocus={() => { if (!isTempClient && savedClients.length > 0) setShowClientSuggestions(true); }}
                     placeholder={`${t("typeClientName")}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`} autoComplete="off" />
                   
                   {profile?.enableBilingual !== false && isTempClient && (
-                    <TextField fullWidth size="small" value={client.nameEn || ''}
-                      onChange={(e) => setClient({ ...client, nameEn: e.target.value })} placeholder={`Client Name in ${profile?.secondaryDataLanguage || 'English'}`} autoComplete="off" />
+                    <TextField fullWidth size="small" value={getClientField('name', secondaryLang)}
+                      onChange={(e) => setClientField('name', secondaryLang, e.target.value)} placeholder={`Client Name in ${profile?.secondaryDataLanguage || 'English'}`} autoComplete="off" />
                   )}
 
                   {!isTempClient && showClientSuggestions && savedClients.length > 0 && (
@@ -1152,7 +1186,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                           </ListItem>
                         )) : (
                           <ListItem>
-                            <ListItemText primary={client.name.trim() ? "No saved clients found." : "Type to search clients"} />
+                            <ListItemText primary={getClientField('name', primaryLang).trim() ? "No saved clients found." : "Type to search clients"} />
                           </ListItem>
                         )}
                       </List>
@@ -1161,19 +1195,19 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                 </Box>
               </Grid>
               
-              {!isTempClient && selectedClientId && (client.mugavari || client.oor || client.maanilam || client.gstin || client.nameEn) && (
+              {!isTempClient && selectedClientId && (getClientField('mugavari', primaryLang) || getClientField('oor', primaryLang) || client.maanilam || client.gstin || getClientField('name', secondaryLang)) && (
                 <Grid size={{ xs: 12 }}>
                   <Paper elevation={0} sx={{ p: 2, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : 'grey.50', border: '1px solid', borderColor: 'divider' }}>
-                    <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 600 }} sx={{ display: 'block', mb: 0.5 }}>Saved Client Details</Typography>
-                    {client.mugavari && <Typography variant="body2">{client.mugavari}{client.mugavariEn ? ` / ${client.mugavariEn}` : ''}</Typography>}
-                    {(client.oor || client.maavattam || client.pin) && <Typography variant="body2">{[
-                      client.oor ? client.oor + (client.oorEn ? ` / ${client.oorEn}` : '') : '', 
-                      client.maavattam ? client.maavattam + (client.maavattamEn ? ` / ${client.maavattamEn}` : '') : '', 
+                    <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>Saved Client Details</Typography>
+                    {getClientField('mugavari', primaryLang) && <Typography variant="body2">{getClientField('mugavari', primaryLang)}{getClientField('mugavari', secondaryLang) ? ` / ${getClientField('mugavari', secondaryLang)}` : ''}</Typography>}
+                    {(getClientField('oor', primaryLang) || getClientField('maavattam', primaryLang) || client.pin) && <Typography variant="body2">{[
+                      getClientField('oor', primaryLang) ? getClientField('oor', primaryLang) + (getClientField('oor', secondaryLang) ? ` / ${getClientField('oor', secondaryLang)}` : '') : '', 
+                      getClientField('maavattam', primaryLang) ? getClientField('maavattam', primaryLang) + (getClientField('maavattam', secondaryLang) ? ` / ${getClientField('maavattam', secondaryLang)}` : '') : '', 
                       client.pin
                     ].filter(Boolean).join(' - ')}</Typography>}
                     {client.maanilam && <Typography variant="body2">{getBilingualStateName(client.maanilam, profile)}</Typography>}
                     {client.country && <Typography variant="body2">{getBilingualCountryName(client.country, profile)}</Typography>}
-                    {client.nameEn && profile?.enableBilingual !== false && <Typography variant="body2" sx={{ mt: 0.5 }}>Name ({profile?.secondaryDataLanguage || 'English'}): <strong>{client.nameEn}</strong></Typography>}
+                    {getClientField('name', secondaryLang) && profile?.enableBilingual !== false && <Typography variant="body2" sx={{ mt: 0.5 }}>Name ({profile?.secondaryDataLanguage || 'English'}): <strong>{getClientField('name', secondaryLang)}</strong></Typography>}
                     {client.gstin && <Typography variant="body2" sx={{ mt: 0.5 }}>GSTIN: <strong>{client.gstin}</strong></Typography>}
                   </Paper>
                 </Grid>
@@ -1183,34 +1217,34 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                 <>
                   <Grid size={{ xs: 12 }}>
                     <TextField fullWidth size="small" label={`${t('billingAddress')}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`} slotProps={{ inputLabel: { shrink: true } }}
-                      value={client.mugavari} onChange={(e) => setClient({ ...client, mugavari: e.target.value })} placeholder={t('billingAddress')} />
+                      value={getClientField('mugavari', primaryLang)} onChange={(e) => setClientField('mugavari', primaryLang, e.target.value)} placeholder={t('billingAddress')} />
                   </Grid>
                   {profile?.enableBilingual !== false && (
                     <Grid size={{ xs: 12 }}>
                       <TextField fullWidth size="small" label={`${t('billingAddress')} (${profile?.secondaryDataLanguage || 'English'})`} slotProps={{ inputLabel: { shrink: true } }}
-                        value={client.mugavariEn || ''} onChange={(e) => setClient({ ...client, mugavariEn: e.target.value })} placeholder={`Address in ${profile?.secondaryDataLanguage || 'English'}`} />
+                        value={getClientField('mugavari', secondaryLang) || ''} onChange={(e) => setClientField('mugavari', secondaryLang, e.target.value)} placeholder={`Address in ${profile?.secondaryDataLanguage || 'English'}`} />
                     </Grid>
                   )}
                   
                   <Grid size={{ xs: 12, md: 6 }}>
                     <TextField fullWidth size="small" label={`${t('city')}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`} slotProps={{ inputLabel: { shrink: true } }}
-                      value={client.oor} onChange={(e) => setClient({ ...client, oor: e.target.value })} placeholder={t("egMumbai")} />
+                      value={getClientField('oor', primaryLang)} onChange={(e) => setClientField('oor', primaryLang, e.target.value)} placeholder={t("egMumbai")} />
                   </Grid>
                   {profile?.enableBilingual !== false && (
                     <Grid size={{ xs: 12, md: 6 }}>
                       <TextField fullWidth size="small" label={`${t('city')} (${profile?.secondaryDataLanguage || 'English'})`} slotProps={{ inputLabel: { shrink: true } }}
-                        value={client.oorEn || ''} onChange={(e) => setClient({ ...client, oorEn: e.target.value })} placeholder={`City in ${profile?.secondaryDataLanguage || 'English'}`} />
+                        value={getClientField('oor', secondaryLang) || ''} onChange={(e) => setClientField('oor', secondaryLang, e.target.value)} placeholder={`City in ${profile?.secondaryDataLanguage || 'English'}`} />
                     </Grid>
                   )}
 
                   <Grid size={{ xs: 12, md: 6 }}>
                     <TextField fullWidth size="small" label={`மாவட்டம் (District)${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`} slotProps={{ inputLabel: { shrink: true } }}
-                      value={client.maavattam || ''} onChange={(e) => setClient({ ...client, maavattam: e.target.value })} placeholder={`மாவட்டம்`} />
+                      value={getClientField('maavattam', primaryLang) || ''} onChange={(e) => setClientField('maavattam', primaryLang, e.target.value)} placeholder={`மாவட்டம்`} />
                   </Grid>
                   {profile?.enableBilingual !== false && (
                     <Grid size={{ xs: 12, md: 6 }}>
                       <TextField fullWidth size="small" label={`District (${profile?.secondaryDataLanguage || 'English'})`} slotProps={{ inputLabel: { shrink: true } }}
-                        value={client.maavattamEn || ''} onChange={(e) => setClient({ ...client, maavattamEn: e.target.value })} placeholder={`District`} />
+                        value={getClientField('maavattam', secondaryLang) || ''} onChange={(e) => setClientField('maavattam', secondaryLang, e.target.value)} placeholder={`District`} />
                     </Grid>
                   )}
                   
@@ -1306,10 +1340,10 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                 </>
               )}
             </Grid>
-          </Paper>
+          </ElvanCard>
 
           {/* Invoice Details */}
-          <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 2 }}>
+          <ElvanCard sx={{ mb: 3 }}>
             <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 3 }}>{t('invoiceDetailsForm')}</Typography>
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, md: 6 }}>
@@ -1367,10 +1401,10 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                 </Grid>
               )}
             </Grid>
-          </Paper>
+          </ElvanCard>
 
           {/* Line Items */}
-          <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 2 }}>
+          <ElvanCard sx={{ mb: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
               <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('lineItems')}</Typography>
             </Box>
@@ -1398,12 +1432,12 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                   {item.isTemp ? (
                     <>
                       <TextField fullWidth size="small" label={t("descriptionCol")} slotProps={{ inputLabel: { shrink: true } }}
-                        value={item.name} onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
+                        value={getItemField(item, 'name', primaryLang)} onChange={(e) => handleItemChange(item.id, 'name', e.target.value)}
                         placeholder={`Description${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`} autoComplete="off" 
                         sx={{ mb: profile?.enableBilingual !== false ? 1 : 0 }} />
                       {profile?.enableBilingual !== false && (
-                        <TextField fullWidth size="small" value={item.nameEn || ''}
-                          onChange={(e) => handleItemChange(item.id, 'nameEn', e.target.value)}
+                        <TextField fullWidth size="small" value={getItemField(item, 'description', secondaryLang) || getItemField(item, 'name', secondaryLang) || ''}
+                          onChange={(e) => handleItemChange(item.id, `description_${secondaryLang}`, e.target.value)}
                           placeholder={`${profile?.secondaryDataLanguage || 'English'} Description`} autoComplete="off" />
                       )}
                     </>
@@ -1413,14 +1447,14 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                         fullWidth size="small"
                         options={products}
                         getOptionLabel={(option) => option.name || ''}
-                        value={products.find(p => p.id === item.productId) || (item.name ? { name: item.name } : null)}
+                        value={products.find(p => p.id === item.productId) || (getItemField(item, 'name', primaryLang) ? { name: getItemField(item, 'name', primaryLang) } : null)}
                         onChange={(_, newValue) => {
                           if (newValue && newValue.id) {
                             selectProduct(item.id, newValue);
                           } else {
                             handleItemChange(item.id, 'productId', null);
-                            handleItemChange(item.id, 'name', '');
-                            handleItemChange(item.id, 'nameEn', '');
+                            handleItemChange(item.id, `name_${primaryLang}`, '');
+                            handleItemChange(item.id, `name_${secondaryLang}`, '');
                             handleItemChange(item.id, 'hsn', '');
                             handleItemChange(item.id, 'rate', 0);
                           }
@@ -1442,9 +1476,9 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                       />
                       {item.productId && (
                         <Box sx={{ mt: 1, p: 1.5, bgcolor: 'background.paper', borderRadius: 1, border: '1px solid', borderColor: 'divider' }}>
-                          <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 600 }} sx={{ display: 'block', mb: 0.5 }}>Saved Item Details</Typography>
-                          {profile?.enableBilingual !== false && item.nameEn && (
-                            <Typography variant="body2" sx={{ mb: 0.5 }}>Name ({profile?.secondaryDataLanguage || 'English'}): <strong>{item.nameEn}</strong></Typography>
+                          <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>Saved Item Details</Typography>
+                          {profile?.enableBilingual !== false && getItemField(item, 'name', secondaryLang) && (
+                            <Typography variant="body2" sx={{ mb: 0.5 }}>Name ({profile?.secondaryDataLanguage || 'English'}): <strong>{getItemField(item, 'name', secondaryLang)}</strong></Typography>
                           )}
                           {invoiceOptions.showHSN && item.hsn && (
                             <Typography variant="body2" sx={{ mb: 0.5 }}>HSN/SAC: <strong>{item.hsn}</strong></Typography>
@@ -1541,28 +1575,19 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
             </Box>
             ))}
             <Button variant="outlined" startIcon={<Plus size={18} weight="regular"   />} onClick={addItem} sx={{ mt: 1 }}>Add Item</Button>
-          </Paper>
+          </ElvanCard>
 
           {/* Terms */}
-          <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 2 }}>
+          <ElvanCard sx={{ mb: 3 }}>
             <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 3 }}>{t("termsHeading")}</Typography>
             <Box sx={{ mb: 2 }}>
-              <Typography variant="body2" sx={{ fontWeight: 500 }} sx={{ mb: 1 }}>{t("termsAppearsOnInvoice")}</Typography>
+              <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>{t("termsAppearsOnInvoice")}</Typography>
               <RichEditor toolbar value={customTerms}
                 onChange={(v) => { setCustomTerms(v); }}
                 placeholder="Enter or paste your terms & conditions..." />
             </Box>
-            <Paper elevation={0} sx={{ p: 2, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(202, 138, 4, 0.1)' : '#fefce8', border: '1px dashed #ca8a04', borderRadius: 2 }}>
-              <Typography variant="body2" sx={{ color: '#92400e', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v4m0 4h.01"/></svg>
-                Private Note (not shown on invoice)
-              </Typography>
-              <TextField fullWidth multiline rows={2} size="small" value={internalNote}
-                onChange={(e) => setInternalNote(e.target.value)}
-                sx={{ '& .MuiInputBase-root': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(202, 138, 4, 0.05)' : '#fffef5' } }}
-                placeholder={t("privateNoteEg")} />
-            </Paper>
-          </Paper>
+
+          </ElvanCard>
 
         </Grid>
 

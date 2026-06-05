@@ -11,15 +11,10 @@ export default function ElvanCard({ children, onClick, sx = {}, boxSx = {}, ...p
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
 
-  const innerContent = (
-    <Box sx={{ p: { xs: 2, sm: 2.5 }, height: '100%', ...boxSx }}>
-      {children}
-    </Box>
-  );
-
   return (
     <Paper 
       elevation={1}
+      onClick={onClick}
       sx={{
         borderRadius: '24px', 
         bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF', 
@@ -28,9 +23,10 @@ export default function ElvanCard({ children, onClick, sx = {}, boxSx = {}, ...p
         border: 'none',
         transition: 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s',
         ...(onClick ? {
+          cursor: 'pointer',
           userSelect: 'none',
           '@media (hover: hover)': {
-            '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)' },
+            '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)' },
           },
           '&:active': { 
             transform: 'scale(0.985)',
@@ -41,24 +37,9 @@ export default function ElvanCard({ children, onClick, sx = {}, boxSx = {}, ...p
       }}
       {...props}
     >
-      {onClick ? (
-        <CardActionArea 
-          onClick={onClick} 
-          sx={{ 
-            height: '100%',
-            '&:hover .MuiCardActionArea-focusHighlight': {
-              opacity: isDark ? 0.02 : 0.04,
-            },
-            '& .MuiTouchRipple-child': {
-              backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.2)',
-            }
-          }}
-        >
-          {innerContent}
-        </CardActionArea>
-      ) : (
-        innerContent
-      )}
+      <Box sx={{ p: { xs: 2, sm: 2.5 }, height: '100%', ...boxSx }}>
+        {children}
+      </Box>
     </Paper>
   );
 }

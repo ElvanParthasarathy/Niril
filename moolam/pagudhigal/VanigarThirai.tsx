@@ -2,7 +2,6 @@
 import { X } from '@phosphor-icons/react';
 import { useState, useEffect } from 'react';
 import { getCountryConfig, getStatesForCountry, getBilingualStateName, getBilingualCountryName, validateTaxId, detectCountryFromBrowser, getCountriesForRegion } from '../Payanpadu';
-import { getProfile } from '../Avanam';
 import { useLanguage } from '../mozhi/LanguageContext';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Button, IconButton, Grid, Typography, useMediaQuery, useTheme, Divider } from '@mui/material';
 
@@ -10,29 +9,32 @@ export default function VanigarThirai({ show, onClose, onSave, client, isEditing
   const { t } = useLanguage();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  // Country defaults: explicit prop (active business profile) → browser locale → 'India'.
+  
+  const primaryLang = profileSettings?.primaryDataLanguage || 'Tamil';
+  const secondaryLang = profileSettings?.secondaryDataLanguage || 'English';
+  const enableBilingual = profileSettings?.enableBilingual !== false;
+  
   const fallbackCountry = defaultCountry || detectCountryFromBrowser();
-  const emptyForm = { name: '', nameEn: '', mugavari: '', mugavariEn: '', oor: '', oorEn: '', maavattam: '', maavattamEn: '', pin: '', maanilam: '', maanilamEn: '', gstin: '', email: '', tholaipesi: '', country: fallbackCountry, countryEn: '', isSEZ: false };
-  const [form, setForm] = useState({ ...emptyForm });
+
+  const [form, setForm] = useState({});
   const [taxIdWarning, setTaxIdWarning] = useState('');
 
   useEffect(() => {
     if (show && client) {
       setForm({
-        name: client.name || '', nameEn: client.nameEn || '', mugavari: client.mugavari || '', mugavariEn: client.mugavariEn || '', oor: client.oor || '', oorEn: client.oorEn || '',
-        maavattam: client.maavattam || '', maavattamEn: client.maavattamEn || '',
-        pin: client.pin || '', maanilam: client.maanilam || '', maanilamEn: client.maanilamEn || '', gstin: client.gstin || '',
-        email: client.email || '', tholaipesi: client.tholaipesi || '', country: client.country || fallbackCountry, countryEn: client.countryEn || '',
-        isSEZ: !!client.isSEZ,
+        ...client,
+        country: client.country || fallbackCountry,
       });
     } else if (show) {
-      setForm({ ...emptyForm });
+      setForm({ country: fallbackCountry });
     }
     setTaxIdWarning('');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [show, client]);
+  }, [show, client, fallbackCountry]);
 
   if (!show) return null;
+
+  const getField = (baseField, lang) => form[`${baseField}_${lang}`] || '';
+  const setField = (baseField, lang, val) => setForm(prev => ({ ...prev, [`${baseField}_${lang}`]: val }));
 
   const cc = getCountryConfig(form.country);
   const stateOptions = getStatesForCountry(form.country);
@@ -43,8 +45,24 @@ export default function VanigarThirai({ show, onClose, onSave, client, isEditing
   };
 
   const handleSave = () => {
-    if (!form.name.trim()) return;
-    onSave(form);
+    if (!getField('name', primaryLang).trim()) return;
+    
+    // Convert dynamic fields back to name/nameEn for compatibility with Avanam's saveClient
+    const finalData = { ...form };
+    finalData.name = getField('name', primaryLang);
+    finalData.nameEn = getField('name', secondaryLang);
+    finalData.mugavari = getField('mugavari', primaryLang);
+    finalData.mugavariEn = getField('mugavari', secondaryLang);
+    finalData.oor = getField('oor', primaryLang);
+    finalData.oorEn = getField('oor', secondaryLang);
+    finalData.maavattam = getField('maavattam', primaryLang);
+    finalData.maavattamEn = getField('maavattam', secondaryLang);
+    finalData.maanilam = form.maanilam || '';
+    finalData.maanilamEn = form.maanilamEn || '';
+    finalData.country = form.country || '';
+    finalData.countryEn = form.countryEn || '';
+    
+    onSave(finalData);
   };
 
   return (
@@ -57,83 +75,81 @@ export default function VanigarThirai({ show, onClose, onSave, client, isEditing
       </DialogTitle>
       
       <DialogContent dividers sx={{ p: { xs: 2, sm: 3 } }}>
-        {/* Business Details Section */}
         <Typography variant="subtitle2" sx={{ mb: 2.5, fontWeight: 700, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 1 }}>
           Business Details
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <TextField fullWidth size="medium" label={`${t('clientBusinessName')}${profileSettings?.bilingual ? ` (${profileSettings?.primaryDataLanguage || 'Tamil'})` : ''}`} InputLabelProps={{ shrink: true }}
-              value={form.name} onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))} placeholder="e.g. Acme Corp" />
+            <TextField fullWidth size="medium" label={`${t('clientBusinessName')}${enableBilingual ? ` (${primaryLang})` : ''}`} InputLabelProps={{ shrink: true }}
+              value={getField('name', primaryLang)} onChange={e => setField('name', primaryLang, e.target.value)} placeholder="e.g. Acme Corp" />
           </Grid>
           
-          {profileSettings?.bilingual && (
+          {enableBilingual && (
             <Grid item xs={12}>
-              <TextField fullWidth size="medium" label={`${t('clientBusinessName')} (${profileSettings?.secondaryDataLanguage || 'English'})`} InputLabelProps={{ shrink: true }}
-                value={form.nameEn || ''} onChange={e => setForm(prev => ({ ...prev, nameEn: e.target.value }))} placeholder="e.g. Acme Corp (English)" />
+              <TextField fullWidth size="medium" label={`${t('clientBusinessName')} (${secondaryLang})`} InputLabelProps={{ shrink: true }}
+                value={getField('name', secondaryLang)} onChange={e => setField('name', secondaryLang, e.target.value)} placeholder="e.g. Acme Corp (English)" />
             </Grid>
           )}
         </Grid>
 
         <Divider sx={{ my: 4 }} />
 
-        {/* Address Information Section */}
         <Typography variant="subtitle2" sx={{ mb: 2.5, fontWeight: 700, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 1 }}>
           Address Information
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <TextField fullWidth size="medium" label={`${t('billingAddress')}${profileSettings?.bilingual ? ` (${profileSettings?.primaryDataLanguage || 'Tamil'})` : ''}`} InputLabelProps={{ shrink: true }}
-              value={form.mugavari} onChange={e => setForm(prev => ({ ...prev, mugavari: e.target.value }))} placeholder={t('streetAddressPlaceholder')} />
+            <TextField fullWidth size="medium" label={`${t('billingAddress')}${enableBilingual ? ` (${primaryLang})` : ''}`} InputLabelProps={{ shrink: true }}
+              value={getField('mugavari', primaryLang)} onChange={e => setField('mugavari', primaryLang, e.target.value)} placeholder={t('streetAddressPlaceholder')} />
           </Grid>
 
-          {profileSettings?.bilingual && (
+          {enableBilingual && (
             <Grid item xs={12}>
-              <TextField fullWidth size="medium" label={`${t('billingAddress')} (${profileSettings?.secondaryDataLanguage || 'English'})`} InputLabelProps={{ shrink: true }}
-                value={form.mugavariEn || ''} onChange={e => setForm(prev => ({ ...prev, mugavariEn: e.target.value }))} placeholder="Address in English" />
+              <TextField fullWidth size="medium" label={`${t('billingAddress')} (${secondaryLang})`} InputLabelProps={{ shrink: true }}
+                value={getField('mugavari', secondaryLang)} onChange={e => setField('mugavari', secondaryLang, e.target.value)} placeholder="Address in English" />
             </Grid>
           )}
 
-          <Grid item xs={12} sm={profileSettings?.bilingual ? 6 : 12}>
-            <TextField fullWidth size="medium" label={`${t('city')}${profileSettings?.bilingual ? ` (${profileSettings?.primaryDataLanguage || 'Tamil'})` : ''}`} InputLabelProps={{ shrink: true }}
-              value={form.oor} onChange={e => setForm(prev => ({ ...prev, oor: e.target.value }))} placeholder={t('cityPlaceholder')} />
+          <Grid item xs={12} sm={enableBilingual ? 6 : 12}>
+            <TextField fullWidth size="medium" label={`${t('city')}${enableBilingual ? ` (${primaryLang})` : ''}`} InputLabelProps={{ shrink: true }}
+              value={getField('oor', primaryLang)} onChange={e => setField('oor', primaryLang, e.target.value)} placeholder={t('cityPlaceholder')} />
           </Grid>
 
-          {profileSettings?.bilingual && (
+          {enableBilingual && (
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth size="medium" label={`${t('city')} (${profileSettings?.secondaryDataLanguage || 'English'})`} InputLabelProps={{ shrink: true }}
-                value={form.oorEn || ''} onChange={e => setForm(prev => ({ ...prev, oorEn: e.target.value }))} placeholder="City in English" />
+              <TextField fullWidth size="medium" label={`${t('city')} (${secondaryLang})`} InputLabelProps={{ shrink: true }}
+                value={getField('oor', secondaryLang)} onChange={e => setField('oor', secondaryLang, e.target.value)} placeholder="City in English" />
             </Grid>
           )}
 
-          <Grid item xs={12} sm={profileSettings?.bilingual ? 6 : 12}>
-            <TextField fullWidth size="medium" label={`மாவட்டம் (District)${profileSettings?.bilingual ? ` (${profileSettings?.primaryDataLanguage || 'Tamil'})` : ''}`} InputLabelProps={{ shrink: true }}
-              value={form.maavattam || ''} onChange={e => setForm(prev => ({ ...prev, maavattam: e.target.value }))} placeholder="மாவட்டம்" />
+          <Grid item xs={12} sm={enableBilingual ? 6 : 12}>
+            <TextField fullWidth size="medium" label={`மாவட்டம் (District)${enableBilingual ? ` (${primaryLang})` : ''}`} InputLabelProps={{ shrink: true }}
+              value={getField('maavattam', primaryLang)} onChange={e => setField('maavattam', primaryLang, e.target.value)} placeholder="மாவட்டம்" />
           </Grid>
 
-          {profileSettings?.bilingual && (
+          {enableBilingual && (
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth size="medium" label={`District (${profileSettings?.secondaryDataLanguage || 'English'})`} InputLabelProps={{ shrink: true }}
-                value={form.maavattamEn || ''} onChange={e => setForm(prev => ({ ...prev, maavattamEn: e.target.value }))} placeholder="District" />
+              <TextField fullWidth size="medium" label={`District (${secondaryLang})`} InputLabelProps={{ shrink: true }}
+                value={getField('maavattam', secondaryLang)} onChange={e => setField('maavattam', secondaryLang, e.target.value)} placeholder="District" />
             </Grid>
           )}
 
-          <Grid item xs={12} sm={profileSettings?.bilingual ? 6 : 12}>
+          <Grid item xs={12} sm={enableBilingual ? 6 : 12}>
             {stateOptions.length > 0 ? (
-              <TextField select fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${profileSettings?.bilingual ? ` (${profileSettings?.primaryDataLanguage || 'Tamil'})` : ''}`} InputLabelProps={{ shrink: true }}
-                value={form.maanilam} onChange={e => setForm(prev => ({ ...prev, maanilam: e.target.value }))}>
+              <TextField select fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${enableBilingual ? ` (${primaryLang})` : ''}`} InputLabelProps={{ shrink: true }}
+                value={form.maanilam || ''} onChange={e => setForm(prev => ({ ...prev, maanilam: e.target.value }))}>
                 <MenuItem value="">{t('selectLabel')} {t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}</MenuItem>
                 {stateOptions.map(s => <MenuItem key={s} value={s}>{getBilingualStateName(s, { ...profileSettings, returnOnlyPrimary: true })}</MenuItem>)}
               </TextField>
             ) : (
-              <TextField fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${profileSettings?.bilingual ? ` (${profileSettings?.primaryDataLanguage || 'Tamil'})` : ''}`} InputLabelProps={{ shrink: true }}
-                value={form.maanilam} onChange={e => setForm(prev => ({ ...prev, maanilam: e.target.value }))} placeholder={cc.stateLabel} />
+              <TextField fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${enableBilingual ? ` (${primaryLang})` : ''}`} InputLabelProps={{ shrink: true }}
+                value={form.maanilam || ''} onChange={e => setForm(prev => ({ ...prev, maanilam: e.target.value }))} placeholder={cc.stateLabel} />
             )}
           </Grid>
 
-          {profileSettings?.bilingual && (
+          {enableBilingual && (
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth size="medium" disabled label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })} (${profileSettings?.secondaryDataLanguage || 'English'})`} InputLabelProps={{ shrink: true }}
+              <TextField fullWidth size="medium" disabled label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })} (${secondaryLang})`} InputLabelProps={{ shrink: true }}
                 value={form.maanilam ? getBilingualStateName(form.maanilam, { ...profileSettings, returnOnlySecondary: true }) : ''} sx={{ '& .MuiInputBase-root': { bgcolor: 'action.hover' } }} />
             </Grid>
           )}
@@ -143,8 +159,8 @@ export default function VanigarThirai({ show, onClose, onSave, client, isEditing
             const isCustomCountry = form.country === 'Other' || (form.country && !visible.some(c => c.name === form.country));
             return (
               <>
-                <Grid item xs={12} sm={profileSettings?.bilingual ? 6 : 12}>
-                  <TextField select fullWidth size="medium" label={`${t('country')}${profileSettings?.bilingual ? ` (${profileSettings?.primaryDataLanguage || 'Tamil'})` : ''}`} InputLabelProps={{ shrink: true }}
+                <Grid item xs={12} sm={enableBilingual ? 6 : 12}>
+                  <TextField select fullWidth size="medium" label={`${t('country')}${enableBilingual ? ` (${primaryLang})` : ''}`} InputLabelProps={{ shrink: true }}
                     value={isCustomCountry ? 'Other' : form.country} sx={{ mb: isCustomCountry ? 2 : 0 }}
                     onChange={e => {
                       if (e.target.value === 'Other') {
@@ -160,9 +176,9 @@ export default function VanigarThirai({ show, onClose, onSave, client, isEditing
                     <TextField fullWidth size="medium" value={form.country === 'Other' ? '' : form.country} onChange={e => setForm(prev => ({ ...prev, country: e.target.value }))} placeholder="Enter country name" />
                   )}
                 </Grid>
-                {profileSettings?.bilingual && (
+                {enableBilingual && (
                   <Grid item xs={12} sm={6}>
-                    <TextField fullWidth size="medium" disabled={!isCustomCountry} label={`${t('country')} (${profileSettings?.secondaryDataLanguage || 'English'})`} InputLabelProps={{ shrink: true }}
+                    <TextField fullWidth size="medium" disabled={!isCustomCountry} label={`${t('country')} (${secondaryLang})`} InputLabelProps={{ shrink: true }}
                       value={isCustomCountry ? (form.countryEn || '') : (form.country ? getBilingualCountryName(form.country, { ...profileSettings, returnOnlySecondary: true }) : '')}
                       onChange={e => isCustomCountry ? setForm(prev => ({ ...prev, countryEn: e.target.value })) : null}
                       sx={!isCustomCountry ? { '& .MuiInputBase-root': { bgcolor: 'action.hover' } } : {}}
@@ -175,13 +191,12 @@ export default function VanigarThirai({ show, onClose, onSave, client, isEditing
 
           <Grid item xs={12} sm={6}>
             <TextField fullWidth size="medium" label={t(cc.postalLabel as any, { defaultValue: cc.postalLabel })} InputLabelProps={{ shrink: true }}
-              value={form.pin} onChange={e => setForm(prev => ({ ...prev, pin: e.target.value }))} placeholder={cc.postalLabel} />
+              value={form.pin || ''} onChange={e => setForm(prev => ({ ...prev, pin: e.target.value }))} placeholder={cc.postalLabel} />
           </Grid>
         </Grid>
 
         <Divider sx={{ my: 4 }} />
 
-        {/* Tax & Contact Section */}
         <Typography variant="subtitle2" sx={{ mb: 2.5, fontWeight: 700, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 1 }}>
           Tax & Contact Information
         </Typography>
@@ -189,18 +204,18 @@ export default function VanigarThirai({ show, onClose, onSave, client, isEditing
           <Grid item xs={12} sm={12}>
             <TextField fullWidth size="medium" label={t(cc.taxIdLabel as any, { defaultValue: cc.taxIdLabel })} InputLabelProps={{ shrink: true }}
               error={!!taxIdWarning} helperText={taxIdWarning || ' '}
-              value={form.gstin} onChange={e => { setForm(prev => ({ ...prev, gstin: e.target.value.toUpperCase() })); if (taxIdWarning) setTaxIdWarning(''); }}
+              value={form.gstin || ''} onChange={e => { setForm(prev => ({ ...prev, gstin: e.target.value.toUpperCase() })); if (taxIdWarning) setTaxIdWarning(''); }}
               onBlur={handleTaxIdBlur} placeholder={cc.taxIdPlaceholder} slotProps={{ htmlInput: { maxLength: 20 } }} />
           </Grid>
 
           <Grid item xs={12} sm={6}>
             <TextField fullWidth size="medium" label={t('emailLabel')} InputLabelProps={{ shrink: true }} type="email"
-              value={form.email} onChange={e => setForm(prev => ({ ...prev, email: e.target.value }))} placeholder={t('emailPlaceholder')} />
+              value={form.email || ''} onChange={e => setForm(prev => ({ ...prev, email: e.target.value }))} placeholder={t('emailPlaceholder')} />
           </Grid>
           
           <Grid item xs={12} sm={6}>
             <TextField fullWidth size="medium" label={t('phoneLabel')} InputLabelProps={{ shrink: true }} type="tel"
-              value={form.tholaipesi} onChange={e => setForm(prev => ({ ...prev, tholaipesi: e.target.value }))} placeholder={t('phonePlaceholder')} />
+              value={form.tholaipesi || ''} onChange={e => setForm(prev => ({ ...prev, tholaipesi: e.target.value }))} placeholder={t('phonePlaceholder')} />
           </Grid>
         </Grid>
       </DialogContent>

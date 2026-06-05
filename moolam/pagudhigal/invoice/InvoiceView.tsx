@@ -7,17 +7,17 @@ import InvoicePreview from './InvoicePreview';
 import { thagaval } from '../Thagaval';
 import { useLanguage } from '../../mozhi/LanguageContext';
 import { formatCurrency, INVOICE_TYPES } from '../../Payanpadu';
-import { getProfile, saveBill } from '../../Avanam';
+import { saveBill } from '../../Avanam';
 import { ensureToken, findOrCreateFolder, uploadPDF } from '../../sevaigal/googleDrive';
 import { Box, Button, Typography, Paper } from '@mui/material';
 
-export default function InvoiceView({ bill, onBack, onEdit }) {
+export default function InvoiceView({ bill, profile, onBack, onEdit }) {
   const { t } = useLanguage();
   const printRef = useRef(null);
   const [saving, setSaving] = useState(false);
 
   const {
-    profile, client, details, items, totals, invoiceType = 'tax-invoice',
+    profile: snapshotProfile, client, details, items, totals, invoiceType = 'tax-invoice',
     customTerms, invoiceOptions
   } = bill.data || {};
 
@@ -26,9 +26,8 @@ export default function InvoiceView({ bill, onBack, onEdit }) {
   // Upload PDF to Google Drive if configured
   const uploadToGoogleDrive = async (pdfBlob, fileName) => {
     try {
-      const latestProfile = await getProfile();
-      const clientId = latestProfile.googleClientId;
-      const folderName = latestProfile.googleDriveFolder || 'GST Billing Invoices';
+      const clientId = profile.googleClientId;
+      const folderName = profile.googleDriveFolder || 'GST Billing Invoices';
       if (!clientId) return;
 
       const hasToken = await ensureToken(clientId);

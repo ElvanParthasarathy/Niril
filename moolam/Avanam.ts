@@ -57,6 +57,8 @@ export const saveReceiptNumberSettings = async (settings) => {
 };
 
 // ---- Language-Tagged Data Storage Helpers ----
+const isBlankState = () => typeof window !== 'undefined' && window.sessionStorage.getItem('__DEV_BLANK_STATE__') === 'true';
+
 const getLangConfig = async () => {
   try {
     const profile = await apiFetch(`${API}/profile`);
@@ -84,8 +86,14 @@ const restoreFromStorage = async (items, fields) => {
   return items.map(item => {
     const out = { ...item };
     fields.forEach(f => {
-      if (out[`${f}_${primary}`] !== undefined) out[f] = out[`${f}_${primary}`];
-      if (out[`${f}_${secondary}`] !== undefined) out[`${f}En`] = out[`${f}_${secondary}`];
+      const hasAnyTag = Object.keys(item).some(k => k.startsWith(`${f}_`));
+      if (hasAnyTag) {
+        out[f] = out[`${f}_${primary}`] !== undefined ? out[`${f}_${primary}`] : '';
+        out[`${f}En`] = out[`${f}_${secondary}`] !== undefined ? out[`${f}_${secondary}`] : '';
+      } else {
+        if (out[`${f}_${primary}`] !== undefined) out[f] = out[`${f}_${primary}`];
+        if (out[`${f}_${secondary}`] !== undefined) out[`${f}En`] = out[`${f}_${secondary}`];
+      }
     });
     return out;
   });
@@ -144,7 +152,7 @@ export const getNextInvoiceNumber = async (prefix = 'INV') => {
 // ---- Bills ----
 export const saveBill = async (bill) => {
   const taggedBill = { ...bill };
-  if (taggedBill.client) taggedBill.client = await prepareForStorage(taggedBill.client, ['name', 'mugavari', 'oor', 'maanilam']);
+  if (taggedBill.client) taggedBill.client = await prepareForStorage(taggedBill.client, ['name', 'mugavari', 'oor', 'maavattam', 'maanilam', 'country']);
   if (taggedBill.items && Array.isArray(taggedBill.items)) {
     taggedBill.items = await Promise.all(taggedBill.items.map(async item => prepareForStorage(item, ['name', 'description'])));
   }
@@ -152,10 +160,11 @@ export const saveBill = async (bill) => {
 };
 
 export const getAllBills = async () => {
+  if (isBlankState()) return [];
   const bills = await apiFetch(`${API}/pattiyalkal`);
   return Promise.all(bills.map(async bill => {
     const b = { ...bill };
-    if (b.client) b.client = await restoreSingleFromStorage(b.client, ['name', 'mugavari', 'oor', 'maanilam']);
+    if (b.client) b.client = await restoreSingleFromStorage(b.client, ['name', 'mugavari', 'oor', 'maavattam', 'maanilam', 'country']);
     if (b.items && Array.isArray(b.items)) {
       b.items = await restoreFromStorage(b.items, ['name', 'description']);
     }
@@ -169,28 +178,30 @@ export const deleteBill = async (id) => {
 
 // ---- Profile ----
 export const saveProfile = async (profile) => {
-  const taggedProfile = await prepareForStorage(profile, ['niruvanathinPeyar', 'mugavari', 'oor', 'maanilam', 'bankName', 'branch', 'terms']);
+  const taggedProfile = await prepareForStorage(profile, ['niruvanathinPeyar', 'mugavari', 'oor', 'maavattam', 'maanilam', 'country', 'bankName', 'branch', 'terms']);
   const result = await apiFetch(`${API}/profile`, { method: 'POST', body: JSON.stringify(taggedProfile) });
   window.dispatchEvent(new Event('profileUpdated'));
   return result;
 };
 
 export const getProfile = async () => {
+  if (isBlankState()) return {};
   const profile = await apiFetch(`${API}/profile`);
-  return restoreSingleFromStorage(profile, ['niruvanathinPeyar', 'mugavari', 'oor', 'maanilam', 'bankName', 'branch', 'terms']);
+  return restoreSingleFromStorage(profile, ['niruvanathinPeyar', 'mugavari', 'oor', 'maavattam', 'maanilam', 'country', 'bankName', 'branch', 'terms']);
 };
 
 // ---- Saved Clients ----
 export const saveClient = async (client) => {
-  const taggedClient = await prepareForStorage(client, ['name', 'mugavari', 'oor', 'maanilam']);
+  const taggedClient = await prepareForStorage(client, ['name', 'mugavari', 'oor', 'maavattam', 'maanilam', 'country']);
   const res = await apiFetch(`${API}/vanigargal`, { method: 'POST', body: JSON.stringify(taggedClient) });
   if (res.id) client.id = res.id;
   return client;
 };
 
 export const getAllClients = async () => {
+  if (isBlankState()) return [];
   const clients = await apiFetch(`${API}/vanigargal`);
-  return restoreFromStorage(clients, ['name', 'mugavari', 'oor', 'maanilam']);
+  return restoreFromStorage(clients, ['name', 'mugavari', 'oor', 'maavattam', 'maanilam', 'country']);
 };
 
 export const deleteClient = async (id) => {
@@ -200,6 +211,7 @@ export const deleteClient = async (id) => {
 
 // ---- Products / Inventory ----
 export const getAllProducts = async () => {
+  if (isBlankState()) return [];
   const products = await apiFetch(`${API}/porulgal`);
   return restoreFromStorage(products, ['name', 'description']);
 };
@@ -218,6 +230,7 @@ export const deleteProduct = async (id) => {
 
 // ---- Receipts / Payment Vouchers ----
 export const getAllReceipts = async () => {
+  if (isBlankState()) return [];
   return apiFetch(`${API}/raseedhugal`);
 };
 
@@ -233,6 +246,7 @@ export const deleteReceipt = async (id) => {
 
 // ---- Business Profiles (multi-business) ----
 export const getAllProfiles = async () => {
+  if (isBlankState()) return [];
   return apiFetch(`${API}/suya_vivaram`);
 };
 
