@@ -67,15 +67,9 @@ export const ViewHeader = ({ onEdit, onPrint, onPDF, onShare, saving, sharing = 
         zIndex: 1100,
         boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
         p: 0,
-        bgcolor: 'primary.main',
-        color: 'primary.contrastText',
-        '&:active': {
-          bgcolor: 'primary.main',
-          transform: 'scale(0.95)',
-        }
       }}
     >
-      <PencilSimple size={24} weight="fill" color={theme.palette.primary.contrastText} />
+      <PencilSimple size={24} weight="fill" />
     </Button>
   ) : null;
 

@@ -83,7 +83,7 @@ export default function ElvanEditorLayout({
         {children}
       </Box>
 
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mb: 6, mt: 5, px: 0 }}>
+      <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end', gap: 2, mb: 6, mt: 5, px: 0 }}>
         <Button 
           variant="contained" 
           disableElevation 
@@ -103,6 +103,30 @@ export default function ElvanEditorLayout({
           {saveButtonText}
         </Button>
       </Box>
+
+      {/* Mobile Squircle FAB for Save */}
+      {isMobile && (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={onSave}
+          sx={{
+            display: { xs: 'flex', md: 'none' },
+            position: 'fixed',
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 20px)',
+            right: 20,
+            minWidth: 56,
+            width: 56,
+            height: 56,
+            borderRadius: '20px',
+            zIndex: 1100,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+            p: 0,
+          }}
+        >
+          {saveButtonIcon || <FloppyDisk size={24} weight="fill" />}
+        </Button>
+      )}
     </Box>
   );
 }

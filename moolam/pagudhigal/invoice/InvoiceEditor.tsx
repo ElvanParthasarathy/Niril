@@ -1,4 +1,4 @@
-import { ArrowLeft, Plus, Trash, DownloadSimple, UserPlus, PencilSimple, GearSix, CaretUp, CaretDown, WhatsappLogo, Check, Hourglass, Truck } from '@phosphor-icons/react';
+import { ArrowLeft, Plus, Trash, DownloadSimple, UserPlus, PencilSimple, GearSix, CaretUp, CaretDown, WhatsappLogo, Check, Hourglass, Truck, FloppyDisk } from '@phosphor-icons/react';
 // @ts-nocheck
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { jsPDF } from 'jspdf';
@@ -856,31 +856,56 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
 
   return (
     <Box sx={{ p: { xs: 1.5, sm: 2 }, bgcolor: 'background.default', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' }, mb: { xs: 2, sm: 3 }, gap: 1 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', mb: { xs: 2, sm: 3 }, gap: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
-          <Button variant="outlined" startIcon={<ArrowLeft size={18} weight="regular"   />} onClick={handleBack} size="small" sx={{ minHeight: 40, borderRadius: '999px', flexShrink: 0 }}>
+          {/* Desktop Back Button */}
+          <Button variant="outlined" startIcon={<ArrowLeft size={18} weight="regular" />} onClick={handleBack} size="small" sx={{ minHeight: 40, borderRadius: '999px', flexShrink: 0, display: { xs: 'none', sm: 'inline-flex' } }}>
             Back
           </Button>
+          {/* Mobile Back Button */}
+          <IconButton onClick={handleBack} size="small" sx={{ display: { xs: 'inline-flex', sm: 'none' }, minHeight: 40, width: 40, borderRadius: '999px', border: '1px solid', borderColor: 'divider' }}>
+            <ArrowLeft size={20} weight="regular" />
+          </IconButton>
           <Typography variant="caption" sx={{ 
-            display: { xs: 'none', sm: 'flex' }, alignItems: 'center', gap: 0.5,
+            display: { xs: 'flex', sm: 'flex' }, alignItems: 'center', gap: 0.5,
             color: autoSaveStatus === 'saving' ? 'text.secondary' 
                  : autoSaveStatus === 'saved' ? 'success.main' 
                  : isMeaningfulInvoice() ? 'text.secondary' : 'text.disabled'
           }}>
-            {autoSaveStatus === 'saving' && <><Box component="span" sx={{ display: 'inline-flex', animation: 'spin 1s linear infinite', '@keyframes spin': { '100%': { transform: 'rotate(360deg)' } } }}><Hourglass size={13} weight="regular"   /></Box> Saving...</>}
-            {autoSaveStatus === 'saved' && <><Check size={13} weight="regular"   />{t('hc_allChangesSaved')}</>}
+            {autoSaveStatus === 'saving' && <><Box component="span" sx={{ display: 'inline-flex', animation: 'spin 1s linear infinite', '@keyframes spin': { '100%': { transform: 'rotate(360deg)' } } }}><Hourglass size={13} weight="regular"   /></Box> <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Saving...</Box></>}
+            {autoSaveStatus === 'saved' && <><Check size={13} weight="regular"   /><Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>{t('hc_allChangesSaved')}</Box></>}
             {autoSaveStatus === 'idle' && !isMeaningfulInvoice() && <span title={t('hc_addAClientNameAnd')}>{t("draftOnly")}</span>}
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button variant="contained" color="primary" onClick={handleDone} disabled={saving || !isMeaningfulInvoice()} startIcon={<Check size={18} weight="regular"   />} fullWidth sx={{ minHeight: 44, borderRadius: '999px', display: { sm: 'none' } }}>
-            {saving ? 'Saving...' : 'Save Invoice'}
-          </Button>
-          <Button variant="contained" color="primary" onClick={handleDone} disabled={saving || !isMeaningfulInvoice()} startIcon={<Check size={18} weight="regular"   />} sx={{ display: { xs: 'none', sm: 'inline-flex' } }}>
+          <Button variant="contained" color="primary" onClick={handleDone} disabled={saving || !isMeaningfulInvoice()} startIcon={<Check size={18} weight="regular"   />} sx={{ display: { xs: 'none', sm: 'inline-flex' }, minHeight: 40, borderRadius: '999px' }}>
             {saving ? 'Saving...' : 'Save Invoice'}
           </Button>
         </Box>
       </Box>
+
+      {/* Mobile squircle FAB for saving */}
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleDone}
+        disabled={saving || !isMeaningfulInvoice()}
+        sx={{
+          display: { xs: 'flex', sm: 'none' },
+          position: 'fixed',
+          bottom: 'calc(env(safe-area-inset-bottom, 0px) + 20px)',
+          right: 20,
+          minWidth: 56,
+          width: 56,
+          height: 56,
+          borderRadius: '20px',
+          zIndex: 1100,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+          p: 0,
+        }}
+      >
+        <FloppyDisk size={24} weight="fill" />
+      </Button>
 
       <Grid container spacing={3} sx={{ flexGrow: 1 }}>
         <Grid size={12}>

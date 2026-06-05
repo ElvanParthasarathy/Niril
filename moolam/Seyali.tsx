@@ -1146,15 +1146,9 @@ function Seyali() {
               zIndex: 1100,
               boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
               p: 0,
-              bgcolor: 'primary.main',
-              color: 'primary.contrastText',
-              '&:active': {
-                bgcolor: 'primary.main',
-                transform: 'scale(0.95)',
-              }
             }}
           >
-            <Add size={28} weight="bold" color={muiTheme.palette.primary.contrastText} />
+            <Add size={28} weight="bold" />
           </Button>
         )}
       </Box>
