@@ -69,7 +69,7 @@ export const ViewHeader = ({ onEdit, onPrint, onPDF, onShare, saving, sharing = 
         p: 0,
       }}
     >
-      <PencilSimple size={24} weight="fill" color="#fff" />
+      <PencilSimple size={24} weight="fill" />
     </Button>
   ) : null;
 
