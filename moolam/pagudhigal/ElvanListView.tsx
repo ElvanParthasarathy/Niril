@@ -1,5 +1,5 @@
 import React, { useState, useRef, ReactNode } from 'react';
-import { Box, Typography, Button, Paper, IconButton, Toolbar, Stack, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Pagination } from '@mui/material';
+import { Box, Typography, Button, Paper, IconButton, Toolbar, Stack, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Pagination, LinearProgress, Skeleton } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { X, PencilSimple, Plus, CheckSquare, Square, Trash, Copy } from '@phosphor-icons/react';
 import { useLanguage } from '../mozhi/LanguageContext';
@@ -13,6 +13,7 @@ export interface ElvanListViewProps<T> {
   onAdd?: () => void;
   
   items: T[];
+  isLoading?: boolean;
   filterFn: (item: T, search: string) => boolean;
   renderCard: (
     item: T, 
@@ -25,8 +26,8 @@ export interface ElvanListViewProps<T> {
   emptyIcon: ReactNode;
   emptyText: string;
   
-  onDeleteSelected?: (ids: string[]) => Promise<void>;
-  onDuplicateSelected?: (ids: string[]) => Promise<void>;
+  onDeleteSelected?: (ids: string[], onProgress?: (completed: number, total: number) => void) => Promise<void>;
+  onDuplicateSelected?: (ids: string[], onProgress?: (completed: number, total: number) => void) => Promise<void>;
   
   deleteConfirmTitle?: string;
   deleteConfirmMessage?: (count: number) => string;
@@ -43,7 +44,7 @@ export default function ElvanListView<T extends { id: string }>(props: ElvanList
   
   const {
     title, searchPlaceholder = t('search') || 'Search...', addButtonText = t('add') || 'Add', onAdd,
-    items, filterFn, renderCard, emptyIcon, emptyText,
+    items, isLoading = false, filterFn, renderCard, emptyIcon, emptyText,
     onDeleteSelected, onDuplicateSelected,
     deleteConfirmTitle = t('delete') || 'Delete?',
     deleteConfirmMessage = (count) => t('deleteConfirmMessage') || `Are you sure you want to delete ${count} item(s)?`,
@@ -59,6 +60,7 @@ export default function ElvanListView<T extends { id: string }>(props: ElvanList
   
   const [confirmDialog, setConfirmDialog] = useState<{ open: boolean; title: string; message: string; action: (() => Promise<void>) | null }>({ open: false, title: '', message: '', action: null });
   const [copyConfirmOpen, setCopyConfirmOpen] = useState(false);
+  const [progress, setProgress] = useState<{ current: number, total: number } | null>(null);
   
   const topRef = useRef<HTMLDivElement>(null);
 
@@ -89,7 +91,9 @@ export default function ElvanListView<T extends { id: string }>(props: ElvanList
 
   const executeCopy = async () => {
     if (onDuplicateSelected) {
-      await onDuplicateSelected(selectedIds);
+      setProgress({ current: 0, total: selectedIds.length });
+      await onDuplicateSelected(selectedIds, (completed, total) => setProgress({ current: completed, total }));
+      setProgress(null);
       setSelectedIds([]);
       setCopyConfirmOpen(false);
       setIsSelectionMode(false);
@@ -104,7 +108,9 @@ export default function ElvanListView<T extends { id: string }>(props: ElvanList
       message: deleteConfirmMessage(selectedIds.length),
       action: async () => {
         if (onDeleteSelected) {
-          await onDeleteSelected(selectedIds);
+          setProgress({ current: 0, total: selectedIds.length });
+          await onDeleteSelected(selectedIds, (completed, total) => setProgress({ current: completed, total }));
+          setProgress(null);
           setSelectedIds([]);
           setIsSelectionMode(false);
         }
@@ -204,7 +210,22 @@ export default function ElvanListView<T extends { id: string }>(props: ElvanList
         </Toolbar>
       )}
 
-      {filteredItems.length === 0 ? (
+      {isLoading ? (
+        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <ElvanCard key={i} sx={{ height: '100%', p: 2 }}>
+              <Stack direction="row" spacing={2} sx={{ alignItems: 'center', height: '100%' }}>
+                <Skeleton variant="circular" width={28} height={28} />
+                <Box sx={{ flex: 1 }}>
+                  <Skeleton variant="text" width="60%" height={24} />
+                  <Skeleton variant="text" width="40%" height={16} sx={{ mt: 0.5 }} />
+                </Box>
+                <Skeleton variant="rectangular" width={60} height={24} sx={{ borderRadius: 1 }} />
+              </Stack>
+            </ElvanCard>
+          ))}
+        </Box>
+      ) : filteredItems.length === 0 ? (
         <ElvanCard boxSx={{ p: 6, textAlign: 'center' }}>
           <Box color="text.secondary" mb={2}>
             {emptyIcon}
@@ -268,34 +289,53 @@ export default function ElvanListView<T extends { id: string }>(props: ElvanList
         </Button>
       )}
 
-      <Dialog open={copyConfirmOpen} onClose={() => setCopyConfirmOpen(false)} PaperProps={{ elevation: 8, sx: { borderRadius: '24px', p: 1 } }}>
+      <Dialog open={copyConfirmOpen} onClose={() => setCopyConfirmOpen(false)} slotProps={{ paper: { elevation: 8, sx: { borderRadius: '24px', p: 1 } } }}>
         <DialogTitle sx={{ fontWeight: 800 }}>{duplicateConfirmTitle}</DialogTitle>
         <DialogContent>
           <DialogContentText>{duplicateConfirmMessage(selectedIds.length)}</DialogContentText>
+          {progress && (
+            <Box sx={{ width: '100%', mt: 3 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                <Typography variant="body2" color="text.secondary">{t('processing') || 'Processing...'}</Typography>
+                <Typography variant="body2" color="text.secondary">{progress.current} / {progress.total}</Typography>
+              </Box>
+              <LinearProgress variant="determinate" value={(progress.current / progress.total) * 100} sx={{ borderRadius: 1, height: 6 }} />
+            </Box>
+          )}
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => setCopyConfirmOpen(false)} color="inherit" sx={{ borderRadius: '50px', textTransform: 'none', px: 3 }}>
+          <Button disabled={!!progress} onClick={() => setCopyConfirmOpen(false)} color="inherit" sx={{ borderRadius: '50px', textTransform: 'none', px: 3 }}>
             {t('cancel') || 'Cancel'}
           </Button>
-          <Button onClick={executeCopy} variant="contained" color="primary" sx={{ borderRadius: '50px', textTransform: 'none', px: 3, boxShadow: 'none' }}>
+          <Button disabled={!!progress} onClick={executeCopy} variant="contained" color="primary" sx={{ borderRadius: '50px', textTransform: 'none', px: 3, boxShadow: 'none' }}>
             {t('saveDuplicate') || 'Save (Duplicate)'}
           </Button>
         </DialogActions>
       </Dialog>
       
-      <Dialog open={confirmDialog.open} onClose={() => setConfirmDialog(prev => ({ ...prev, open: false }))} PaperProps={{ elevation: 8, sx: { borderRadius: '24px', p: 1 } }}>
+      <Dialog open={confirmDialog.open} onClose={() => setConfirmDialog(prev => ({ ...prev, open: false }))} slotProps={{ paper: { elevation: 8, sx: { borderRadius: '24px', p: 1 } } }}>
         <DialogTitle sx={{ fontWeight: 800 }}>{confirmDialog.title}</DialogTitle>
         <DialogContent>
           <DialogContentText>{confirmDialog.message}</DialogContentText>
+          {progress && (
+            <Box sx={{ width: '100%', mt: 3 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                <Typography variant="body2" color="text.secondary">{t('processing') || 'Processing...'}</Typography>
+                <Typography variant="body2" color="text.secondary">{progress.current} / {progress.total}</Typography>
+              </Box>
+              <LinearProgress variant="determinate" value={(progress.current / progress.total) * 100} sx={{ borderRadius: 1, height: 6 }} color="error" />
+            </Box>
+          )}
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => setConfirmDialog(prev => ({ ...prev, open: false }))} color="inherit" sx={{ borderRadius: '50px', textTransform: 'none', px: 3 }}>
+          <Button disabled={!!progress} onClick={() => setConfirmDialog(prev => ({ ...prev, open: false }))} color="inherit" sx={{ borderRadius: '50px', textTransform: 'none', px: 3 }}>
             {t('cancel') || 'Cancel'}
           </Button>
           <Button 
+            disabled={!!progress}
             onClick={async () => { 
               if (confirmDialog.action) {
-                await confirmDialog.action();
+                try { await confirmDialog.action(); } catch(e){}
               }
               setConfirmDialog(prev => ({ ...prev, open: false })); 
             }} 

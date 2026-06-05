@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { TrendUp, TrendDown, Wallet, ChartBar, Clock, MagnifyingGlass, X } from '@phosphor-icons/react';
 import { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Grid, FormControl, InputLabel, Select, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack } from '@mui/material';
+import { Box, Typography, Paper, Grid, FormControl, InputLabel, Select, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Skeleton } from '@mui/material';
 import { getAllBills } from '../Avanam';
 import { formatCurrency } from '../Payanpadu';
 import { thagaval } from './Thagaval';
@@ -27,6 +27,7 @@ export default function Arikkaigal() {
   const MONTHS = [t('january'), t('february'), t('march'), t('april'), t('may'), t('june'), t('july'), t('august'), t('september'), t('october'), t('november'), t('december')];
 
   const [bills, setBills] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [filterMode, setFilterMode] = useState('fy');
   const [fyFilter, setFyFilter] = useState('');
   const [monthFilter, setMonthFilter] = useState('');
@@ -39,11 +40,14 @@ export default function Arikkaigal() {
   for (let y = currentYear; y >= currentYear - 5; y--) yearOptions.push(y);
 
   const loadData = async () => {
+    setIsLoading(true);
     try {
       const [billData] = await Promise.all([getAllBills()]);
       setBills(billData);
     } catch {
       thagaval(t('failedToLoadProductsToast'), 'error');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -160,11 +164,15 @@ export default function Arikkaigal() {
             <Box sx={{ p: 1.5, borderRadius: '50%', bgcolor: 'success.light', color: 'success.dark', display: 'flex' }}>
               <TrendUp size={24} weight="fill" />
             </Box>
-            <Box>
+            <Box sx={{ flex: 1 }}>
               <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>{t('revenueExTax')}</Typography>
-              <Typography variant="h5" color="success.main" sx={{ fontWeight: "bold" }}>
-                {formatCurrency(revenueExTax, currencyFilter)}
-              </Typography>
+              {isLoading ? (
+                <Skeleton variant="text" width="80%" height={32} />
+              ) : (
+                <Typography variant="h5" color="success.main" sx={{ fontWeight: "bold" }}>
+                  {formatCurrency(revenueExTax, currencyFilter)}
+                </Typography>
+              )}
             </Box>
           </Paper>
         </Grid>
@@ -183,18 +191,28 @@ export default function Arikkaigal() {
           )}
         </Box>
         <Box sx={{ p: 3, maxWidth: 500, mx: 'auto' }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
-            <Typography variant="body1" color="text.secondary" sx={{ fontWeight: 500 }}>{t('totalRevenueLabel')}</Typography>
-            <Typography variant="body1" sx={{ fontWeight: 600 }}>{formatCurrency(totalRevenue, currencyFilter)}</Typography>
-          </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
-            <Typography variant="body1" color="text.secondary" sx={{ fontWeight: 500 }}>{t('lessGstCollectedLabel')}</Typography>
-            <Typography variant="body1" color="error.main">-{formatCurrency(totalTaxCollected, currencyFilter)}</Typography>
-          </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1.5, borderBottom: '2px solid', borderColor: 'divider' }}>
-            <Typography variant="h6" sx={{ fontWeight: 700 }}>{t('netRevenueLabel')}</Typography>
-            <Typography variant="h6" sx={{ fontWeight: 700 }}>{formatCurrency(revenueExTax, currencyFilter)}</Typography>
-          </Box>
+          {isLoading ? (
+            <Stack spacing={2}>
+              <Skeleton variant="text" width="100%" height={24} />
+              <Skeleton variant="text" width="100%" height={24} />
+              <Skeleton variant="text" width="100%" height={32} />
+            </Stack>
+          ) : (
+            <>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
+                <Typography variant="body1" color="text.secondary" sx={{ fontWeight: 500 }}>{t('totalRevenueLabel')}</Typography>
+                <Typography variant="body1" sx={{ fontWeight: 600 }}>{formatCurrency(totalRevenue, currencyFilter)}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
+                <Typography variant="body1" color="text.secondary" sx={{ fontWeight: 500 }}>{t('lessGstCollectedLabel')}</Typography>
+                <Typography variant="body1" color="error.main">-{formatCurrency(totalTaxCollected, currencyFilter)}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1.5, borderBottom: '2px solid', borderColor: 'divider' }}>
+                <Typography variant="h6" sx={{ fontWeight: 700 }}>{t('netRevenueLabel')}</Typography>
+                <Typography variant="h6" sx={{ fontWeight: 700 }}>{formatCurrency(revenueExTax, currencyFilter)}</Typography>
+              </Box>
+            </>
+          )}
         </Box>
       </Paper>
 

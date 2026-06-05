@@ -85,9 +85,13 @@ function writeJSON(filePath, data) {
 
 // Helper: delete file (with cache invalidation)
 function deleteFile(filePath) {
-  if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-  const parentDir = path.basename(path.dirname(filePath));
-  if (DIRS.includes(parentDir)) invalidateCache(parentDir);
+  try {
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    const parentDir = path.basename(path.dirname(filePath));
+    if (DIRS.includes(parentDir)) invalidateCache(parentDir);
+  } catch (e) {
+    console.error('Failed to delete file:', e);
+  }
 }
 
 // ========================

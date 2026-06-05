@@ -10,6 +10,7 @@ import Mugappu from './pagudhigal/Mugappu';
 import InvoiceEditor from './pagudhigal/invoice/InvoiceEditor';
 import InvoiceList from './pagudhigal/invoice/InvoiceList';
 import InvoiceView from './pagudhigal/invoice/InvoiceView';
+import ReceiptView from './pagudhigal/ReceiptView';
 import Amaippugal from './pagudhigal/Amaippugal';
 import Vanigargal from './pagudhigal/Vanigargal';
 import VanigarThoguppu from './pagudhigal/VanigarThoguppu';
@@ -42,6 +43,108 @@ function ResponsiveDialog({ open, onClose, children, maxWidth = 'sm' }: any) {
   );
 }
 
+function DevLanguageSwitcher({ profile, setProfile, language, setLanguage }: any) {
+  const { t } = useLanguage();
+  const [devOpen, setDevOpen] = useState(false);
+  const LANGS = ['Tamil', 'English', 'Hindi', 'Telugu', 'Kannada', 'Malayalam', 'Marathi', 'Gujarati', 'Bengali'];
+
+  if (!profile) return null;
+
+  const switchLang = async (primary, secondary) => {
+    const updated = { ...profile, primaryDataLanguage: primary, secondaryDataLanguage: secondary };
+    setProfile(updated);
+    await saveProfile(updated);
+  };
+  const toggleBilingual = async () => {
+    const updated = { ...profile, enableBilingual: profile.enableBilingual === false ? true : false };
+    setProfile(updated);
+    await saveProfile(updated);
+  };
+
+  return (
+    <>
+      <Box onClick={() => setDevOpen(o => !o)} sx={{
+        position: 'fixed', bottom: 24, right: 24, zIndex: 9999,
+        width: 48, height: 48, borderRadius: '50%',
+        bgcolor: '#6366f1', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        cursor: 'pointer', boxShadow: '0 4px 20px rgba(99,102,241,0.5)',
+        fontSize: '1.2rem', fontWeight: 700, userSelect: 'none',
+        '&:hover': { bgcolor: '#4f46e5', transform: 'scale(1.1)' },
+        transition: 'all 0.2s'
+      }} title={t('hc_devSwitchBilingualLanguage')}>
+        {(profile.primaryDataLanguage || 'Ta').slice(0, 2)}
+      </Box>
+      {devOpen && (
+        <Box sx={{
+          position: 'fixed', bottom: 80, right: 24, zIndex: 9999,
+          bgcolor: 'background.paper', borderRadius: 2, boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
+          p: 2, minWidth: 260, maxHeight: '70vh', overflowY: 'auto',
+          border: '2px solid #6366f1'
+        }}>
+          <Typography variant="caption" color="#6366f1" sx={{ fontWeight: 700, mb: 1, display: 'block' }}>{t('hc_devLanguageSwitcher')}</Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ mb: 1.5, display: 'block' }}>Current: {profile.primaryDataLanguage || 'Tamil'} / {profile.secondaryDataLanguage || 'English'}</Typography>
+          <Divider sx={{ mb: 1 }} />
+          <Typography variant="caption" sx={{ fontWeight: 600, mb: 0.5, display: 'block' }}>{t('hc_primaryLanguage')}</Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1.5 }}>
+            {LANGS.map(l => (
+              <Box key={l} onClick={() => switchLang(l, profile.secondaryDataLanguage || 'English')}
+                sx={{
+                  px: 1.2, py: 0.4, borderRadius: 1, fontSize: '0.75rem', cursor: 'pointer',
+                  bgcolor: (profile.primaryDataLanguage || 'Tamil') === l ? '#6366f1' : 'action.hover',
+                  color: (profile.primaryDataLanguage || 'Tamil') === l ? '#fff' : 'text.primary',
+                  fontWeight: (profile.primaryDataLanguage || 'Tamil') === l ? 700 : 400,
+                  '&:hover': { bgcolor: (profile.primaryDataLanguage || 'Tamil') === l ? '#4f46e5' : 'action.selected' },
+                  transition: 'all 0.15s'
+                }}>{l}</Box>
+            ))}
+          </Box>
+          <Typography variant="caption" sx={{ fontWeight: 600, mb: 0.5, display: 'block' }}>{t('hc_secondaryLanguage')}</Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1.5 }}>
+            {LANGS.map(l => (
+              <Box key={l} onClick={() => switchLang(profile.primaryDataLanguage || 'Tamil', l)}
+                sx={{
+                  px: 1.2, py: 0.4, borderRadius: 1, fontSize: '0.75rem', cursor: 'pointer',
+                  bgcolor: (profile.secondaryDataLanguage || 'English') === l ? '#6366f1' : 'action.hover',
+                  color: (profile.secondaryDataLanguage || 'English') === l ? '#fff' : 'text.primary',
+                  fontWeight: (profile.secondaryDataLanguage || 'English') === l ? 700 : 400,
+                  '&:hover': { bgcolor: (profile.secondaryDataLanguage || 'English') === l ? '#4f46e5' : 'action.selected' },
+                  transition: 'all 0.15s'
+                }}>{l}</Box>
+            ))}
+          </Box>
+          <Typography variant="caption" sx={{ fontWeight: 600, mb: 0.5, display: 'block' }}>{t('hc_bilingualMode')}</Typography>
+          <Box
+            onClick={toggleBilingual}
+            sx={{
+              px: 1.2, py: 0.4, borderRadius: 1, fontSize: '0.75rem', cursor: 'pointer',
+              bgcolor: profile.enableBilingual !== false ? '#10b981' : 'action.hover',
+              color: profile.enableBilingual !== false ? '#fff' : 'text.primary',
+              fontWeight: profile.enableBilingual !== false ? 700 : 400,
+              textAlign: 'center',
+              transition: 'all 0.15s'
+            }}>
+            {profile.enableBilingual !== false ? 'ON (Bilingual Active)' : 'OFF (Single Language)'}
+          </Box>
+          <Typography variant="caption" sx={{ fontWeight: 600, mb: 0.5, mt: 1.5, display: 'block' }}>{t('hc_uiLanguage')}</Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1.5 }}>
+            {[{code: 'ta', label: 'Tamil (தமிழ்)'}, {code: 'en', label: 'English'}].map(l => (
+              <Box key={l.code} onClick={() => setLanguage(l.code as any)}
+                sx={{
+                  px: 1.2, py: 0.4, borderRadius: 1, fontSize: '0.75rem', cursor: 'pointer',
+                  bgcolor: language === l.code ? '#6366f1' : 'action.hover',
+                  color: language === l.code ? '#fff' : 'text.primary',
+                  fontWeight: language === l.code ? 700 : 400,
+                  '&:hover': { bgcolor: language === l.code ? '#4f46e5' : 'action.selected' },
+                  transition: 'all 0.15s'
+                }}>{l.label}</Box>
+            ))}
+          </Box>
+        </Box>
+      )}
+    </>
+  );
+}
+
 function Seyali() {
   const { t, language, setLanguage } = useLanguage();
   const [currentView, setCurrentView] = useState(() => {
@@ -51,7 +154,7 @@ function Seyali() {
     try {
       const params = new URLSearchParams(window.location.search);
       const v = params.get('view');
-      const valid = ['dashboard', 'new', 'invoice-editor', 'invoice-list', 'invoice-view', 'clients', 'client-editor', 'inventory', 'product-editor', 'receipts', 'reports', 'filing', 'settings'];
+      const valid = ['dashboard', 'new', 'invoice-editor', 'invoice-list', 'invoice-view', 'clients', 'client-editor', 'inventory', 'product-editor', 'receipts', 'receipt-editor', 'receipt-view', 'reports', 'filing', 'settings'];
       if (v && valid.includes(v)) {
         return v === 'new' ? 'invoice-editor' : v;
       }
@@ -643,6 +746,26 @@ function Seyali() {
             paddingTop: '2px',
           }
         }
+      },
+      MuiButtonBase: {
+        styleOverrides: {
+          root: {
+            ...(darkMode && {
+              '& .MuiTouchRipple-child': {
+                backgroundColor: 'rgba(0, 0, 0, 0.8)'
+              }
+            })
+          }
+        }
+      },
+      MuiCardActionArea: {
+        styleOverrides: {
+          focusHighlight: {
+            ...(darkMode && {
+              backgroundColor: 'rgba(0, 0, 0, 0.5)'
+            })
+          }
+        }
       }
     }
   }), [darkMode]);
@@ -694,13 +817,13 @@ function Seyali() {
   }
 
     
-  const isEditorView = ['client-editor', 'product-editor', 'invoice-editor', 'receipt-editor', 'invoice-view'].includes(currentView);
+  const isEditorView = ['client-editor', 'product-editor', 'invoice-editor', 'receipt-editor', 'invoice-view', 'receipt-view'].includes(currentView);
     
   const getTopBarTitle = () => {
     if (currentView === 'dashboard') return t('appName');
     if (currentView === 'settings') return t('settingsTitle');
     if (currentView === 'invoice-editor' || currentView === 'invoice-view') return t('invoices');
-    if (currentView === 'receipt-editor') return t('receipts');
+    if (currentView === 'receipt-editor' || currentView === 'receipt-view') return t('receipts');
     const navItem = allNavItems.find(item => item && item.id === currentView);
     return navItem ? navItem.label : t('appName');
   };
@@ -847,6 +970,7 @@ function Seyali() {
             profile={profile}
             onBack={() => { setEditingBill(null); setCurrentView('invoice-list'); }}
             onEdit={handleEditInvoice}
+            onDuplicate={handleDuplicateInvoice}
           />
         )}
         {currentView === 'invoice-view' && !editingBill && (
@@ -889,10 +1013,28 @@ function Seyali() {
 
 
         {currentView === 'receipts' && (
-          <Raseedhu profile={profile} onAddReceipt={() => { setEditingReceipt(null); setCurrentView('receipt-editor'); }} onEditReceipt={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-editor'); }} />
+          <Raseedhu 
+            profile={profile} 
+            onAddReceipt={() => { setEditingReceipt(null); setCurrentView('receipt-editor'); }} 
+            onEditReceipt={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-editor'); }} 
+            onViewReceipt={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-view'); }}
+          />
         )}
         {currentView === 'receipt-editor' && (
-          <ReceiptEditor profile={profile} editingReceipt={editingReceipt} onBack={() => { setEditingReceipt(null); setCurrentView('receipts'); }} onSaved={() => { setEditingReceipt(null); setCurrentView('receipts'); }} />
+          <ReceiptEditor 
+            profile={profile} 
+            editingReceipt={editingReceipt} 
+            onBack={() => { setEditingReceipt(null); setCurrentView('receipts'); }} 
+            onSaved={() => { setEditingReceipt(null); setCurrentView('receipts'); }} 
+          />
+        )}
+        {currentView === 'receipt-view' && editingReceipt && (
+          <ReceiptView
+            receipt={editingReceipt}
+            profile={profile}
+            onBack={() => { setEditingReceipt(null); setCurrentView('receipts'); }}
+            onEdit={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-editor'); }}
+          />
         )}
         {currentView === 'reports' && (
           <Arikkaigal />
@@ -1141,103 +1283,7 @@ function Seyali() {
       <Thagaval />
 
       {/* ── DEV: Floating bilingual language switcher ── */}
-      {(() => {
-        const LANGS = ['Tamil', 'English', 'Hindi', 'Telugu', 'Kannada', 'Malayalam', 'Marathi', 'Gujarati', 'Bengali'];
-        const [devOpen, setDevOpen] = useState(false);
-        const switchLang = async (primary, secondary) => {
-          const updated = { ...profile, primaryDataLanguage: primary, secondaryDataLanguage: secondary };
-          setProfile(updated);
-          await saveProfile(updated);
-        };
-        const toggleBilingual = async () => {
-          const updated = { ...profile, enableBilingual: profile.enableBilingual === false ? true : false };
-          setProfile(updated);
-          await saveProfile(updated);
-        };
-        if (!profile) return null;
-        return (
-          <>
-            <Box onClick={() => setDevOpen(o => !o)} sx={{
-              position: 'fixed', bottom: 24, right: 24, zIndex: 9999,
-              width: 48, height: 48, borderRadius: '50%',
-              bgcolor: '#6366f1', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer', boxShadow: '0 4px 20px rgba(99,102,241,0.5)',
-              fontSize: '1.2rem', fontWeight: 700, userSelect: 'none',
-              '&:hover': { bgcolor: '#4f46e5', transform: 'scale(1.1)' },
-              transition: 'all 0.2s'
-            }} title={t('hc_devSwitchBilingualLanguage')}>
-              {(profile.primaryDataLanguage || 'Ta').slice(0, 2)}
-            </Box>
-            {devOpen && (
-              <Box sx={{
-                position: 'fixed', bottom: 80, right: 24, zIndex: 9999,
-                bgcolor: 'background.paper', borderRadius: 2, boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
-                p: 2, minWidth: 260, maxHeight: '70vh', overflowY: 'auto',
-                border: '2px solid #6366f1'
-              }}>
-                <Typography variant="caption"  color="#6366f1" sx={{ fontWeight: 700, mb: 1, display: 'block' }}>{t('hc_devLanguageSwitcher')}</Typography>
-                <Typography variant="caption" color="text.secondary" sx={{ mb: 1.5, display: 'block' }}>Current: {profile.primaryDataLanguage || 'Tamil'} / {profile.secondaryDataLanguage || 'English'}</Typography>
-                <Divider sx={{ mb: 1 }} />
-                <Typography variant="caption"  sx={{ fontWeight: 600, mb: 0.5, display: 'block' }}>{t('hc_primaryLanguage')}</Typography>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1.5 }}>
-                  {LANGS.map(l => (
-                    <Box key={l} onClick={() => switchLang(l, profile.secondaryDataLanguage || 'English')}
-                      sx={{
-                        px: 1.2, py: 0.4, borderRadius: 1, fontSize: '0.75rem', cursor: 'pointer',
-                        bgcolor: (profile.primaryDataLanguage || 'Tamil') === l ? '#6366f1' : 'action.hover',
-                        color: (profile.primaryDataLanguage || 'Tamil') === l ? '#fff' : 'text.primary',
-                        fontWeight: (profile.primaryDataLanguage || 'Tamil') === l ? 700 : 400,
-                        '&:hover': { bgcolor: (profile.primaryDataLanguage || 'Tamil') === l ? '#4f46e5' : 'action.selected' },
-                        transition: 'all 0.15s'
-                      }}>{l}</Box>
-                  ))}
-                </Box>
-                <Typography variant="caption"  sx={{ fontWeight: 600, mb: 0.5, display: 'block' }}>{t('hc_secondaryLanguage')}</Typography>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1.5 }}>
-                  {LANGS.map(l => (
-                    <Box key={l} onClick={() => switchLang(profile.primaryDataLanguage || 'Tamil', l)}
-                      sx={{
-                        px: 1.2, py: 0.4, borderRadius: 1, fontSize: '0.75rem', cursor: 'pointer',
-                        bgcolor: (profile.secondaryDataLanguage || 'English') === l ? '#6366f1' : 'action.hover',
-                        color: (profile.secondaryDataLanguage || 'English') === l ? '#fff' : 'text.primary',
-                        fontWeight: (profile.secondaryDataLanguage || 'English') === l ? 700 : 400,
-                        '&:hover': { bgcolor: (profile.secondaryDataLanguage || 'English') === l ? '#4f46e5' : 'action.selected' },
-                        transition: 'all 0.15s'
-                      }}>{l}</Box>
-                  ))}
-                </Box>
-                <Typography variant="caption"  sx={{ fontWeight: 600, mb: 0.5, display: 'block' }}>{t('hc_bilingualMode')}</Typography>
-                <Box 
-                  onClick={toggleBilingual}
-                  sx={{
-                    px: 1.2, py: 0.4, borderRadius: 1, fontSize: '0.75rem', cursor: 'pointer',
-                    bgcolor: profile.enableBilingual !== false ? '#10b981' : 'action.hover',
-                    color: profile.enableBilingual !== false ? '#fff' : 'text.primary',
-                    fontWeight: profile.enableBilingual !== false ? 700 : 400,
-                    textAlign: 'center',
-                    transition: 'all 0.15s'
-                  }}>
-                  {profile.enableBilingual !== false ? 'ON (Bilingual Active)' : 'OFF (Single Language)'}
-                </Box>
-                <Typography variant="caption"  sx={{ fontWeight: 600, mb: 0.5, mt: 1.5, display: 'block' }}>{t('hc_uiLanguage')}</Typography>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1.5 }}>
-                  {[{code: 'ta', label: 'Tamil (தமிழ்)'}, {code: 'en', label: 'English'}].map(l => (
-                    <Box key={l.code} onClick={() => setLanguage(l.code as any)}
-                      sx={{
-                        px: 1.2, py: 0.4, borderRadius: 1, fontSize: '0.75rem', cursor: 'pointer',
-                        bgcolor: language === l.code ? '#6366f1' : 'action.hover',
-                        color: language === l.code ? '#fff' : 'text.primary',
-                        fontWeight: language === l.code ? 700 : 400,
-                        '&:hover': { bgcolor: language === l.code ? '#4f46e5' : 'action.selected' },
-                        transition: 'all 0.15s'
-                      }}>{l.label}</Box>
-                  ))}
-                </Box>
-              </Box>
-            )}
-          </>
-        );
-      })()}
+      <DevLanguageSwitcher profile={profile} setProfile={setProfile} language={language} setLanguage={setLanguage} />
 
       </Box>
     </ThemeProvider>

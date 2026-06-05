@@ -13,16 +13,20 @@ export default function Vanigargal({ onEditClient, onAddClient, profile }) {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
   const [clients, setClients] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [bills, setBills] = useState([]);
   const [confirmDialog, setConfirmDialog] = useState({ open: false, title: '', message: '', action: null });
 
   const loadData = async () => {
+    setIsLoading(true);
     try {
       const [c, b] = await Promise.all([getAllClients(), getAllBills()]);
       setClients(c);
       setBills(b);
     } catch {
-      thagaval('Failed to load data', 'error');
+      thagaval(t('errorLoadingCustomers') || 'Error loading customers', 'error');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -41,9 +45,14 @@ export default function Vanigargal({ onEditClient, onAddClient, profile }) {
     return searchable.includes(term);
   };
 
-  const handleBulkDelete = async (ids) => {
+  const handleBulkDelete = async (ids, onProgress) => {
     try {
-      for (const id of ids) await deleteClient(id);
+      let count = 0;
+      for (const id of ids) {
+        await deleteClient(id);
+        count++;
+        if (onProgress) onProgress(count, ids.length);
+      }
       thagaval(t('deletedSuccessfully') || 'Deleted successfully', 'success');
       loadData();
     } catch (e) {
@@ -51,12 +60,15 @@ export default function Vanigargal({ onEditClient, onAddClient, profile }) {
     }
   };
 
-  const handleBulkDuplicate = async (ids) => {
+  const handleBulkDuplicate = async (ids, onProgress) => {
     try {
       const selected = clients.filter(c => ids.includes(c.id));
+      let count = 0;
       for (const client of selected) {
         const { id, ...rest } = client;
         await saveClient({ ...rest, name: `${client.name} (Copy)` });
+        count++;
+        if (onProgress) onProgress(count, selected.length);
       }
       loadData();
       thagaval(t('customersDuplicatedSuccess') || 'Customers duplicated successfully', 'success');
@@ -88,7 +100,7 @@ export default function Vanigargal({ onEditClient, onAddClient, profile }) {
         }}
         onClick={() => isSelectionMode ? toggleSelection(client.id) : onEditClient(client)}
       >
-        <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} sx={{ height: '100%' }}>
+        <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
             {!isSelectionMode ? (
               <Box sx={{ 
@@ -150,6 +162,7 @@ export default function Vanigargal({ onEditClient, onAddClient, profile }) {
         addButtonText={t('addClient')}
         onAdd={() => onAddClient(null)}
         items={clients}
+        isLoading={isLoading}
         filterFn={filterFn}
         renderCard={renderCard}
         emptyIcon={<Users size={48} weight="regular" style={{ opacity: 0.5 }} />}
@@ -161,14 +174,14 @@ export default function Vanigargal({ onEditClient, onAddClient, profile }) {
         duplicateConfirmTitle={t('duplicateCustomersTitle') || 'Duplicate Customers?'}
         duplicateConfirmMessage={(count) => (t('duplicateCustomersMessage') || 'Are you sure you want to create copies of the {count} selected customer(s)?').replace('{count}', count.toString())}
       />
-      <Dialog open={confirmDialog.open} onClose={() => setConfirmDialog({ ...confirmDialog, open: false })} PaperProps={{ elevation: 8, sx: { borderRadius: '24px', p: 1 } }}>
+      <Dialog open={confirmDialog.open} onClose={() => setConfirmDialog({ ...confirmDialog, open: false })} slotProps={{ paper: { elevation: 8, sx: { borderRadius: '24px', p: 1 } } }}>
         <DialogTitle sx={{ fontWeight: 800 }}>{confirmDialog.title}</DialogTitle>
         <DialogContent>
           <DialogContentText>{confirmDialog.message}</DialogContentText>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button onClick={() => setConfirmDialog({ ...confirmDialog, open: false })} color="inherit" sx={{ borderRadius: '50px', textTransform: 'none', px: 3 }}>{t('cancel') || 'Cancel'}</Button>
-          <Button onClick={async () => { await confirmDialog.action(); setConfirmDialog({ ...confirmDialog, open: false }); }} variant="contained" color="primary" sx={{ borderRadius: '50px', textTransform: 'none', px: 3, boxShadow: 'none' }}>{t('delete') || 'Delete'}</Button>
+          <Button onClick={async () => { try { await confirmDialog.action(); } catch(e){} setConfirmDialog({ ...confirmDialog, open: false }); }} variant="contained" color="primary" sx={{ borderRadius: '50px', textTransform: 'none', px: 3, boxShadow: 'none' }}>{t('delete') || 'Delete'}</Button>
         </DialogActions>
       </Dialog>
     </>

@@ -1371,7 +1371,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                             MenuProps={{
                               anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
                               transformOrigin: { vertical: 'top', horizontal: 'left' },
-                              PaperProps: { style: { maxHeight: 300 } }
+                              slotProps: { paper: { style: { maxHeight: 300 } } }
                             }}
                           >
                             <MenuItem value="">Defaults to {client.maanilam ? getBilingualStateName(client.maanilam, { ...profile, returnOnlyPrimary: true }) : 'Client maanilam'}</MenuItem>

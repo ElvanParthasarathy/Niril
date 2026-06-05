@@ -1,6 +1,7 @@
 // @ts-nocheck
-import { ArrowLeft, PencilSimple, DownloadSimple, WhatsappLogo, Truck } from '@phosphor-icons/react';
+import { ArrowLeft, PencilSimple, DownloadSimple, ShareNetwork, Printer as PrintIcon, Copy, DotsThreeVertical } from '@phosphor-icons/react';
 import { useRef, useState } from 'react';
+import { FloatingBackButton } from '../FloatingBackButton';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import InvoicePreview from './InvoicePreview';
@@ -9,9 +10,10 @@ import { useLanguage } from '../../mozhi/LanguageContext';
 import { formatCurrency, INVOICE_TYPES } from '../../Payanpadu';
 import { saveBill } from '../../Avanam';
 import { ensureToken, findOrCreateFolder, uploadPDF } from '../../sevaigal/googleDrive';
-import { Box, Button, Typography, Paper } from '@mui/material';
+import { Box, Paper } from '@mui/material';
+import { ViewHeader } from '../ViewHeader';
 
-export default function InvoiceView({ bill, profile, onBack, onEdit }) {
+export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate }) {
   const { t } = useLanguage();
   const printRef = useRef(null);
   const [saving, setSaving] = useState(false);
@@ -135,39 +137,63 @@ export default function InvoiceView({ bill, profile, onBack, onEdit }) {
     }
   };
 
-  const shareWhatsApp = () => {
-    const tholaipesi = client?.tholaipesi ? client.tholaipesi.replace(/\D/g, '') : '';
+  const handleNativeShare = async () => {
     const amount = formatCurrency(items.reduce((s, i) => s + (i.quantity * i.rate), 0));
     const msg = `*Invoice: ${details.invoiceNumber}*\nClient: ${client?.name || ''}\nAmount: ${amount}\nDate: ${details.invoiceDate}`;
-    const encoded = encodeURIComponent(msg);
-    const waUrl = tholaipesi ? `https://api.whatsapp.com/send?tholaipesi=${tholaipesi}&text=${encoded}` : `https://api.whatsapp.com/send?text=${encoded}`;
-    window.location.href = waUrl;
+    
+    if (navigator.share) {
+      setSaving(true);
+      try {
+        const pdf = await buildPDF();
+        const fileName = `${typeConfig.prefix}_${details.invoiceNumber.replace(/\//g, '-')}.pdf`;
+        const pdfBlob = pdf.output('blob');
+        const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+        
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          navigator.share({ files: [file], title: fileName, text: msg }).catch((err) => {
+            if (err.name === 'InvalidStateError') {
+              thagaval('Share menu is already open! Please check your taskbar or behind your browser window.', 'warning');
+            } else if (err.name !== 'AbortError') {
+              console.error('Share failed', err);
+            }
+          });
+        } else {
+          navigator.share({ title: fileName, text: msg }).catch((err) => {
+            if (err.name === 'InvalidStateError') {
+              thagaval('Share menu is already open! Please check your taskbar or behind your browser window.', 'warning');
+            } else if (err.name !== 'AbortError') {
+              console.error('Share failed', err);
+            }
+          });
+          // If files can't be shared via native share, download it instead
+          pdf.save(fileName);
+        }
+      } catch (error) {
+        console.error('PDF Generation failed', error);
+        thagaval('Failed to generate PDF for sharing', 'error');
+      } finally {
+        setTimeout(() => setSaving(false), 2000);
+      }
+    } else {
+      thagaval(t('featureNotSupported') || 'Native sharing not supported on this device.', 'warning');
+    }
+  };
+
+  const handlePrint = () => {
+    window.print();
   };
 
   return (
-    <Box sx={{ p: { xs: 1, sm: 2 }, bgcolor: 'background.default', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* Header Toolbar */}
-      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: { xs: 1, sm: 2 }, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' }, mb: { xs: 2, sm: 3 } }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Button variant="outlined" startIcon={<ArrowLeft size={18} weight="regular" />} onClick={onBack} size="small" sx={{ borderRadius: '999px', minHeight: 40 }}>
-            Back
-          </Button>
-          <Typography variant="subtitle1" fontWeight="bold" noWrap sx={{ maxWidth: { xs: 180, sm: 'auto' } }}>
-            {details?.invoiceNumber}
-          </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', gap: 0.75, overflowX: 'auto', width: '100%', pb: { xs: 0.5, sm: 0 }, '&::-webkit-scrollbar': { display: 'none' }, WebkitOverflowScrolling: 'touch' }}>
-          <Button variant="outlined" onClick={() => onEdit(bill)} startIcon={<PencilSimple size={16} weight="regular" />} size="small" sx={{ whiteSpace: 'nowrap', borderRadius: '999px', minHeight: 40, flexShrink: 0 }}>
-            Edit
-          </Button>
-          <Button variant="contained" color="primary" onClick={generatePDF} disabled={saving} startIcon={<DownloadSimple size={16} weight="regular" />} size="small" sx={{ whiteSpace: 'nowrap', borderRadius: '999px', minHeight: 40, flexShrink: 0 }}>
-            {saving ? 'Gen...' : 'PDF'}
-          </Button>
-          <Button variant="contained" onClick={shareWhatsApp} disabled={saving} startIcon={<WhatsappLogo size={16} weight="regular" />} size="small" sx={{ bgcolor: '#25d366', color: '#fff', '&:hover': { bgcolor: '#20bd5a' }, whiteSpace: 'nowrap', borderRadius: '999px', minHeight: 40, flexShrink: 0 }}>
-            WhatsApp
-          </Button>
-        </Box>
-      </Box>
+    <Box sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', width: '100%', position: 'relative', bgcolor: 'background.default', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <ViewHeader 
+        onEdit={() => onEdit(bill)}
+        onPrint={handlePrint}
+        onPDF={generatePDF}
+        onShare={handleNativeShare}
+        saving={saving}
+        title={details?.invoiceNumber}
+        onBack={onBack}
+      />
 
       {/* Centered Preview Container */}
       <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4 }}>

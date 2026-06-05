@@ -1,4 +1,4 @@
-import { FileText, Copy, WhatsappLogo, EnvelopeSimple, CheckSquare, Square } from '@phosphor-icons/react';
+import { FileText, CheckSquare, Square } from '@phosphor-icons/react';
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Box, Typography, IconButton, Tooltip, Stack } from '@mui/material';
@@ -14,16 +14,20 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
   const [bills, setBills] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const profileCurrency = getCountryConfig(profile?.country || 'India').currency;
 
   const loadData = async () => {
+    setIsLoading(true);
     try {
       const b = await getAllBills();
       // sort bills by date
       setBills(b.sort((a, b) => new Date(b.invoiceDate).getTime() - new Date(a.invoiceDate).getTime()));
     } catch {
-      thagaval('Failed to load invoices', 'error');
+      thagaval(t('errorLoadingInvoices') || 'Failed to load invoices', 'error');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -31,19 +35,7 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
     loadData();
   }, []);
 
-  const shareWhatsApp = (bill) => {
-    const tholaipesi = bill.clientPhone ? bill.clientPhone.replace(/\D/g, '') : '';
-    const msg = `*Invoice ${bill.invoiceNumber}*\nAmount: ${formatCurrency(bill.totalAmount, profileCurrency)}\nDate: ${new Date(bill.invoiceDate).toLocaleDateString('en-IN')}`;
-    const encoded = encodeURIComponent(msg);
-    const waUrl = tholaipesi ? `https://api.whatsapp.com/send?phone=${tholaipesi}&text=${encoded}` : `https://api.whatsapp.com/send?text=${encoded}`;
-    window.location.href = waUrl;
-  };
 
-  const shareEmail = (bill) => {
-    const subject = `Invoice ${bill.invoiceNumber}`;
-    const body = `Dear ${bill.clientName || 'Customer'},\n\nPlease find the details of your invoice:\n\nInvoice No: ${bill.invoiceNumber}\nAmount: ${formatCurrency(bill.totalAmount, profileCurrency)}\nDate: ${new Date(bill.invoiceDate).toLocaleDateString('en-IN')}\n\nRegards`;
-    window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
-  };
 
   const filterFn = (b, search) => {
     if (!search.trim()) return true;
@@ -56,10 +48,13 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
     return searchable.includes(term);
   };
 
-  const handleBulkDelete = async (ids) => {
+  const handleBulkDelete = async (ids, onProgress) => {
     try {
+      let count = 0;
       for (const id of ids) {
         await deleteBill(id);
+        count++;
+        if (onProgress) onProgress(count, ids.length);
       }
       thagaval(t('deletedSuccessfully') || 'Deleted successfully', 'success');
       loadData();
@@ -68,17 +63,25 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
     }
   };
 
-  const handleBulkDuplicate = async (ids) => {
+  const handleBulkDuplicate = async (ids, onProgress) => {
     try {
       const selected = bills.filter(b => ids.includes(b.id));
-      for (const b of selected) {
-        const { id, ...rest } = b;
-        await saveBill({ ...rest, invoiceNumber: `${b.invoiceNumber} (Copy)` });
+      let count = 0;
+      for (const bill of selected) {
+        const { id, ...rest } = bill;
+        const dup = { ...rest };
+        
+        dup.id = `dup_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+        dup.invoiceNumber = `${bill.invoiceNumber || ''} (Copy)`;
+        
+        await saveBill(dup);
+        count++;
+        if (onProgress) onProgress(count, selected.length);
       }
-      thagaval(t('productsDuplicatedSuccess') || 'Invoices duplicated successfully', 'success');
       loadData();
+      thagaval(t('invoicesDuplicatedSuccess') || 'Invoices duplicated successfully', 'success');
     } catch (e) {
-      thagaval(t('errorDuplicating') || 'Error duplicating', 'error');
+      thagaval(t('errorDuplicating') || 'Error duplicating invoices', 'error');
     }
   };
 
@@ -96,7 +99,7 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
         }}
         onClick={() => isSelectionMode ? toggleSelection(bill.id) : (onView && onView(bill))}
       >
-        <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} sx={{ height: '100%' }}>
+        <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
             {isSelectionMode ? (
               <IconButton
@@ -138,21 +141,6 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
           </Box>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', gap: 0.5, mt: -0.5, mr: -0.5 }}>
-              <Tooltip title={t('saveDuplicate') || 'Duplicate'}>
-                <IconButton size="small" onClick={(e) => { e.stopPropagation(); onDuplicate(bill); }} color="primary">
-                  <Copy size={18} weight="regular" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="WhatsApp">
-                <IconButton size="small" onClick={(e) => { e.stopPropagation(); shareWhatsApp(bill); }} sx={{ color: '#25D366' }}>
-                  <WhatsappLogo size={18} weight="regular" />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Email">
-                <IconButton size="small" onClick={(e) => { e.stopPropagation(); shareEmail(bill); }} color="primary">
-                  <EnvelopeSimple size={18} weight="regular" />
-                </IconButton>
-              </Tooltip>
             </Box>
             <Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: 800 }}>
               {formatCurrency(bill.totalAmount, profileCurrency)}
@@ -164,12 +152,14 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
   };
 
   return (
+    <>
     <ElvanListView 
       title={t('invoicesCount') || 'Invoices'}
       searchPlaceholder={t('search') || 'Search...'}
       addButtonText={t('newInvoiceBtn') || 'New Invoice'}
       onAdd={() => onNew()}
       items={bills}
+      isLoading={isLoading}
       filterFn={filterFn}
       renderCard={renderCard}
       emptyIcon={<FileText size={48} weight="regular" style={{ opacity: 0.5 }} />}
@@ -181,5 +171,6 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
       duplicateConfirmTitle={t('duplicateProductsTitle') || 'Duplicate Invoices?'}
       duplicateConfirmMessage={() => t('duplicateProductsMessage') || 'Are you sure you want to create copies of the selected invoice(s)?'}
     />
+    </>
   );
 }

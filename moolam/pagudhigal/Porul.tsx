@@ -14,17 +14,21 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
   const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [confirmDialog, setConfirmDialog] = useState({ open: false, title: '', message: '', action: null });
 
   const profileCountry = profile?.country || 'India';
   const profileCurrency = getCountryConfig(profileCountry).currency;
 
   const loadProducts = async () => {
+    setIsLoading(true);
     try {
       const data = await getAllProducts();
       setProducts(data);
     } catch {
       thagaval(t('failedToLoadProductsToast') || 'Failed to load products', 'error');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -42,9 +46,14 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
     return searchable.includes(term);
   };
 
-  const handleBulkDelete = async (ids) => {
+  const handleBulkDelete = async (ids, onProgress) => {
     try {
-      for (const id of ids) await deleteProduct(id);
+      let count = 0;
+      for (const id of ids) {
+        await deleteProduct(id);
+        count++;
+        if (onProgress) onProgress(count, ids.length);
+      }
       thagaval(t('deletedSuccessfully') || 'Deleted successfully', 'success');
       loadProducts();
     } catch (e) {
@@ -52,12 +61,15 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
     }
   };
 
-  const handleBulkDuplicate = async (ids) => {
+  const handleBulkDuplicate = async (ids, onProgress) => {
     try {
       const selected = products.filter(p => ids.includes(p.id));
+      let count = 0;
       for (const product of selected) {
         const { id, ...rest } = product;
         await saveProduct({ ...rest, name: `${product.name} (Copy)` });
+        count++;
+        if (onProgress) onProgress(count, selected.length);
       }
       loadProducts();
       thagaval(t('productsDuplicatedSuccess') || 'Products duplicated successfully', 'success');
@@ -93,7 +105,7 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
         }}
         onClick={() => isSelectionMode ? toggleSelection(product.id) : onEditProduct(product)}
       >
-        <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} sx={{ height: '100%' }}>
+        <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
             {!isSelectionMode ? (
               <Box sx={{ 
@@ -160,6 +172,7 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
         addButtonText={t('addProductBtn') || 'Add Product'}
         onAdd={() => onAddProduct(null)}
         items={products}
+        isLoading={isLoading}
         filterFn={filterFn}
         renderCard={renderCard}
         emptyIcon={<Package size={48} weight="regular" style={{ opacity: 0.5 }} />}
@@ -171,14 +184,14 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
         duplicateConfirmTitle={t('duplicateProductsTitle') || 'Duplicate Products?'}
         duplicateConfirmMessage={(count) => (t('duplicateProductsMessage') || 'Are you sure you want to create copies of the {count} selected product(s)?').replace('{count}', count.toString())}
       />
-      <Dialog open={confirmDialog.open} onClose={() => setConfirmDialog({ ...confirmDialog, open: false })} PaperProps={{ elevation: 8, sx: { borderRadius: '24px', p: 1 } }}>
+      <Dialog open={confirmDialog.open} onClose={() => setConfirmDialog({ ...confirmDialog, open: false })} slotProps={{ paper: { elevation: 8, sx: { borderRadius: '24px', p: 1 } } }}>
         <DialogTitle sx={{ fontWeight: 800 }}>{confirmDialog.title}</DialogTitle>
         <DialogContent>
           <DialogContentText>{confirmDialog.message}</DialogContentText>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button onClick={() => setConfirmDialog({ ...confirmDialog, open: false })} color="inherit" sx={{ borderRadius: '50px', textTransform: 'none', px: 3 }}>{t('cancel') || 'Cancel'}</Button>
-          <Button onClick={async () => { await confirmDialog.action(); setConfirmDialog({ ...confirmDialog, open: false }); }} variant="contained" color="primary" sx={{ borderRadius: '50px', textTransform: 'none', px: 3, boxShadow: 'none' }}>{t('delete') || 'Delete'}</Button>
+          <Button onClick={async () => { try { await confirmDialog.action(); } catch(e){} setConfirmDialog({ ...confirmDialog, open: false }); }} variant="contained" color="primary" sx={{ borderRadius: '50px', textTransform: 'none', px: 3, boxShadow: 'none' }}>{t('delete') || 'Delete'}</Button>
         </DialogActions>
       </Dialog>
     </>

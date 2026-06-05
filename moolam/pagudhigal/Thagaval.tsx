@@ -38,7 +38,7 @@ export default function Thagaval() {
           severity={t.type}
           onClose={() => dismiss(t.id)}
           variant="filled"
-          sx={{ boxShadow: 3, display: 'flex', alignItems: 'center' }}
+          sx={{ boxShadow: 3, display: 'flex', alignItems: 'center', borderRadius: '50px', px: 3 }}
         >
           {t.message}
         </Alert>

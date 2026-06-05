@@ -152,7 +152,7 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
             value={getField('maanilam', primaryLang) || null}
             onChange={(e, newValue) => updateField('maanilam', primaryLang, newValue || '')}
             renderInput={(params) => (
-              <TextField {...params} fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`} InputLabelProps={{ shrink: true }} placeholder={`${t('selectLabel')} ${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}`} />
+              <TextField {...params} fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`} InputLabelProps={{ ...params.InputLabelProps, shrink: true }} placeholder={`${t('selectLabel')} ${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}`} />
             )}
           />
         ) : (
@@ -187,7 +187,7 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
               }
             }}
             renderInput={(params) => (
-              <TextField {...params} fullWidth size="medium" sx={{ mb: isCustomCountry ? 2 : 0 }} label={`${t('country')}${primaryLangSuffix}`} InputLabelProps={{ shrink: true }} />
+              <TextField {...params} fullWidth size="medium" sx={{ mb: isCustomCountry ? 2 : 0 }} label={`${t('country')}${primaryLangSuffix}`} InputLabelProps={{ ...params.InputLabelProps, shrink: true }} />
             )}
           />
           {isCustomCountry && (

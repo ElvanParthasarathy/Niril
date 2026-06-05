@@ -9,7 +9,7 @@ import {
   Box, Typography, Button, Card, CardContent,
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, Chip, Stack,
-  useTheme, Divider, Avatar
+  useTheme, Divider, Avatar, Skeleton
 } from '@mui/material';
 import ElvanCard from './ElvanCard';
 
@@ -21,8 +21,10 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
   const [bills, setBills] = useState([]);
   const [stats, setStats] = useState({ byCurrency: {}, count: 0 });
   const [lowStockProducts, setLowStockProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const loadBills = async () => {
+    setIsLoading(true);
     try {
       const data = await getAllBills();
       setBills(data);
@@ -37,6 +39,8 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
       setStats({ byCurrency, count: data.length });
     } catch {
       thagaval('Failed to load invoices', 'error');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -221,7 +225,22 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
           </Button>
         </Box>
 
-        {recentBills.length === 0 ? (
+        {isLoading ? (
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 2, pb: 3, px: 0 }}>
+            {[1, 2, 3, 4].map((i) => (
+              <ElvanCard key={i} sx={{ height: '100%', p: 2 }}>
+                <Stack direction="row" spacing={2} sx={{ alignItems: 'center', height: '100%' }}>
+                  <Skeleton variant="circular" width={28} height={28} />
+                  <Box sx={{ flex: 1 }}>
+                    <Skeleton variant="text" width="60%" height={24} />
+                    <Skeleton variant="text" width="40%" height={16} sx={{ mt: 0.5 }} />
+                  </Box>
+                  <Skeleton variant="rectangular" width={60} height={24} sx={{ borderRadius: 1 }} />
+                </Stack>
+              </ElvanCard>
+            ))}
+          </Box>
+        ) : recentBills.length === 0 ? (
           <Box sx={{ py: 10, textAlign: 'center' }}>
             <Receipt size={48} weight="regular" color={isDark ? '#475569' : '#cbd5e1'} style={{ margin: '0 auto', marginBottom: '16px' }} />
             <Typography color="text.secondary" mb={2}>
@@ -236,7 +255,7 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
                 const billCurrency = bill.currency || bill.data?.invoiceOptions?.currency || 'INR';
                 return (
                   <ElvanCard key={bill.id} onClick={() => handleView(bill)}>
-                        <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} sx={{ height: '100%' }}>
+                        <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
                         <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
                           <Box sx={{ 
                             display: 'flex', alignItems: 'center', justifyContent: 'center', 
