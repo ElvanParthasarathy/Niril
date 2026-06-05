@@ -75,13 +75,11 @@ export default function VanigarThirai({ show, onClose, onSave, client, isEditing
       </DialogTitle>
       
       <DialogContent dividers sx={{ p: { xs: 2, sm: 3 } }}>
-        <Typography variant="subtitle2" sx={{ mb: 2.5, fontWeight: 700, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 1 }}>
-          Business Details
-        </Typography>
+        <Typography variant="subtitle2" sx={{ mb: 2.5, fontWeight: 700, color: 'text.secondary', textTransform: 'uppercase', letterSpacing: 1 }}>{t('hc_businessDetails')}</Typography>
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <TextField fullWidth size="medium" label={`${t('clientBusinessName')}${enableBilingual ? ` (${primaryLang})` : ''}`} InputLabelProps={{ shrink: true }}
-              value={getField('name', primaryLang)} onChange={e => setField('name', primaryLang, e.target.value)} placeholder="e.g. Acme Corp" />
+              value={getField('name', primaryLang)} onChange={e => setField('name', primaryLang, e.target.value)} placeholder={t('hc_egAcmeCorp')} />
           </Grid>
           
           {enableBilingual && (
@@ -106,7 +104,7 @@ export default function VanigarThirai({ show, onClose, onSave, client, isEditing
           {enableBilingual && (
             <Grid item xs={12}>
               <TextField fullWidth size="medium" label={`${t('billingAddress')} (${secondaryLang})`} InputLabelProps={{ shrink: true }}
-                value={getField('mugavari', secondaryLang)} onChange={e => setField('mugavari', secondaryLang, e.target.value)} placeholder="Address in English" />
+                value={getField('mugavari', secondaryLang)} onChange={e => setField('mugavari', secondaryLang, e.target.value)} placeholder={t('hc_addressInEnglish')} />
             </Grid>
           )}
 
@@ -118,7 +116,7 @@ export default function VanigarThirai({ show, onClose, onSave, client, isEditing
           {enableBilingual && (
             <Grid item xs={12} sm={6}>
               <TextField fullWidth size="medium" label={`${t('city')} (${secondaryLang})`} InputLabelProps={{ shrink: true }}
-                value={getField('oor', secondaryLang)} onChange={e => setField('oor', secondaryLang, e.target.value)} placeholder="City in English" />
+                value={getField('oor', secondaryLang)} onChange={e => setField('oor', secondaryLang, e.target.value)} placeholder={t('hc_cityInEnglish')} />
             </Grid>
           )}
 
@@ -173,7 +171,7 @@ export default function VanigarThirai({ show, onClose, onSave, client, isEditing
                     <MenuItem value="Other">Other (Custom)</MenuItem>
                   </TextField>
                   {isCustomCountry && (
-                    <TextField fullWidth size="medium" value={form.country === 'Other' ? '' : form.country} onChange={e => setForm(prev => ({ ...prev, country: e.target.value }))} placeholder="Enter country name" />
+                    <TextField fullWidth size="medium" value={form.country === 'Other' ? '' : form.country} onChange={e => setForm(prev => ({ ...prev, country: e.target.value }))} placeholder={t('hc_enterCountryName')} />
                   )}
                 </Grid>
                 {enableBilingual && (
@@ -182,7 +180,7 @@ export default function VanigarThirai({ show, onClose, onSave, client, isEditing
                       value={isCustomCountry ? (form.countryEn || '') : (form.country ? getBilingualCountryName(form.country, { ...profileSettings, returnOnlySecondary: true }) : '')}
                       onChange={e => isCustomCountry ? setForm(prev => ({ ...prev, countryEn: e.target.value })) : null}
                       sx={!isCustomCountry ? { '& .MuiInputBase-root': { bgcolor: 'action.hover' } } : {}}
-                      placeholder="Country in English" />
+                      placeholder={t('hc_countryInEnglish')} />
                   </Grid>
                 )}
               </>

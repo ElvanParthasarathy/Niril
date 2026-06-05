@@ -1163,12 +1163,12 @@ export default function VariArikkaigal({ profile }) {
     <Box sx={{ p: { xs: 1.5, md: 4 }, maxWidth: 1400, mx: 'auto' }}>
       {/* Header row: title + period selector + portal link */}
       <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mb: 3, alignItems: { xs: 'flex-start', md: 'center' }, flexWrap: 'wrap' }}>
-        <Typography variant="h4" sx={{ m: 0 ,  fontWeight: "bold" }}>Tax Data Export</Typography>
+        <Typography variant="h4" sx={{ m: 0 ,  fontWeight: "bold" }}>{t('hc_taxDataExport')}</Typography>
         <Stack direction="row" spacing={1} sx={{ flex: 1, alignItems: 'center', flexWrap: 'wrap' }}>
           <TextField select size="small" value={filterMode} onChange={e => setFilterMode(e.target.value)} sx={{ minWidth: 120 }}>
             <MenuItem value="month">{t('monthlyTab')}</MenuItem>
             <MenuItem value="quarter">Quarterly (QRMP)</MenuItem>
-            <MenuItem value="fy">Full Year</MenuItem>
+            <MenuItem value="fy">{t('hc_fullYear')}</MenuItem>
           </TextField>
           {filterMode === 'fy' ? (
             <TextField select size="small" value={fyFilter} onChange={e => setFyFilter(e.target.value)}>
@@ -1219,13 +1219,13 @@ export default function VariArikkaigal({ profile }) {
       {/* Compact summary + tabs in one row */}
       <Stack direction="row" spacing={2} sx={{ mb: 2, alignItems: 'stretch', flexWrap: 'wrap' }}>
         <Paper elevation={0} sx={{ p: 2, flex: 1, minWidth: 200, display: 'flex', alignItems: 'center', gap: 3, border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-          <Box><Typography variant="caption" color="text.secondary">Total Invoices</Typography><Typography variant="h6" sx={{ fontWeight: "bold" }}>{filteredBills.length}</Typography></Box>
+          <Box><Typography variant="caption" color="text.secondary">{t('hc_totalInvoices')}</Typography><Typography variant="h6" sx={{ fontWeight: "bold" }}>{filteredBills.length}</Typography></Box>
           <Box sx={{ width: 1, height: 32, bgcolor: 'divider' }} />
           <Box><Typography variant="caption" color="text.secondary">Total Sales (Taxable)</Typography><Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>{formatCurrency(grandTotals.taxable)}</Typography></Box>
           <Box sx={{ width: 1, height: 32, bgcolor: 'divider' }} />
-          <Box><Typography variant="caption" color="text.secondary">Tax Collected</Typography><Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>{formatCurrency(totalTax)}</Typography></Box>
+          <Box><Typography variant="caption" color="text.secondary">{t('hc_taxCollected')}</Typography><Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>{formatCurrency(totalTax)}</Typography></Box>
           <Box sx={{ width: 1, height: 32, bgcolor: 'divider' }} />
-          <Box><Typography variant="caption" color="text.secondary">Net Payable</Typography><Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: "bold" }}>{formatCurrency(netPayable)}</Typography></Box>
+          <Box><Typography variant="caption" color="text.secondary">{t('hc_netPayable')}</Typography><Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: "bold" }}>{formatCurrency(netPayable)}</Typography></Box>
         </Paper>
       </Stack>
 
@@ -1250,7 +1250,7 @@ export default function VariArikkaigal({ profile }) {
           <Paper elevation={0} sx={{ mb: 2, borderRadius: 3, border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
             <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
               <Box>
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>Invoices for this Period</Typography>
+                <Typography variant="h6" sx={{ fontWeight: "bold" }}>{t('hc_invoicesForThisPeriod')}</Typography>
                 <Typography variant="body2" color="text.secondary">{filteredBills.length} invoices</Typography>
               </Box>
               <Button variant="outlined" onClick={exportSimpleCSV} startIcon={<Download sx={{ fontSize: 16 }} />} sx={{ borderRadius: 5, textTransform: 'none' }}>
@@ -1258,17 +1258,17 @@ export default function VariArikkaigal({ profile }) {
               </Button>
             </Box>
             {filteredBills.length === 0 ? (
-              <Typography sx={{ p: 3, color: 'text.secondary' }}>No invoices found for this period.</Typography>
+              <Typography sx={{ p: 3, color: 'text.secondary' }}>{t('hc_noInvoicesFoundForThis')}</Typography>
             ) : (
               <TableContainer>
                 <Table size="small">
                   <TableHead sx={{ bgcolor: 'rgba(0,0,0,0.02)' }}>
                     <TableRow>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Invoice No</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Client</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_invoiceNo')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_client')}</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 'bold' }}>Taxable Value</TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 'bold' }}>Tax Amount</TableCell>
+                      <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('hc_taxableValue')}</TableCell>
+                      <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('hc_taxAmount')}</TableCell>
                       <TableCell align="right" sx={{ fontWeight: 'bold' }}>Total</TableCell>
                     </TableRow>
                   </TableHead>
@@ -1336,11 +1336,11 @@ export default function VariArikkaigal({ profile }) {
                   <TableHead sx={{ bgcolor: 'rgba(0,0,0,0.02)' }}>
                     <TableRow>
                       <TableCell sx={{ fontWeight: 'bold' }}>GSTIN</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Client</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Invoice No</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_client')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_invoiceNo')}</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>POS</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Type</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_type')}</TableCell>
                       <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('taxableLabel')}</TableCell>
                       <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('cgstCol')}</TableCell>
                       <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('sgstCol')}</TableCell>
@@ -1365,7 +1365,7 @@ export default function VariArikkaigal({ profile }) {
                       </TableRow>
                     ))}
                     <TableRow sx={{ bgcolor: 'rgba(0,0,0,0.02)', '& td': { fontWeight: 'bold', borderTop: '2px solid rgba(224, 224, 224, 1)' } }}>
-                      <TableCell colSpan={6}>B2B Total</TableCell>
+                      <TableCell colSpan={6}>{t('hc_b2bTotal')}</TableCell>
                       <TableCell align="right">{formatCurrency(b2bTotals.taxable)}</TableCell>
                       <TableCell align="right">{formatCurrency(b2bTotals.cgst)}</TableCell>
                       <TableCell align="right">{formatCurrency(b2bTotals.sgst)}</TableCell>
@@ -1382,7 +1382,7 @@ export default function VariArikkaigal({ profile }) {
           {creditNotes.length > 0 && (
             <Paper elevation={0} sx={{ mb: 3, borderRadius: 3, border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
               <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
-                <Typography variant="h6" sx={{ fontWeight: "bold" ,  m: 0 }}>Credit/Debit Notes — Table 9B</Typography>
+                <Typography variant="h6" sx={{ fontWeight: "bold" ,  m: 0 }}>{t('hc_creditdebitNotesTable9b')}</Typography>
                 <Typography variant="body2" color="text.secondary">{creditNotes.length} note{creditNotes.length !== 1 ? 's' : ''}</Typography>
               </Box>
               <TableContainer>
@@ -1390,8 +1390,8 @@ export default function VariArikkaigal({ profile }) {
                   <TableHead sx={{ bgcolor: 'rgba(0,0,0,0.02)' }}>
                     <TableRow>
                       <TableCell sx={{ fontWeight: 'bold' }}>GSTIN</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Client</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Note No</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_client')}</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_noteNo')}</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
                       <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('taxableLabel')}</TableCell>
                       <TableCell align="right" sx={{ fontWeight: 'bold' }}>Tax</TableCell>
@@ -1478,7 +1478,7 @@ export default function VariArikkaigal({ profile }) {
               <Typography variant="body2" color="text.secondary">{hsnRows.length} {hsnRows.length !== 1 ? t('codesWord') : t('codeWord')}</Typography>
             </Box>
             {hsnRows.length === 0 ? (
-              <Typography sx={{ p: 3, color: 'text.secondary' }}>No items found.</Typography>
+              <Typography sx={{ p: 3, color: 'text.secondary' }}>{t('hc_noItemsFound')}</Typography>
             ) : (
               <TableContainer>
                 <Table size="small">
@@ -1528,7 +1528,7 @@ export default function VariArikkaigal({ profile }) {
               <Typography variant="h6" sx={{ fontWeight: "bold" ,  m: 0 }}>{t('docSummaryTable')}</Typography>
             </Box>
             {Object.keys(docSummary).length === 0 ? (
-              <Typography sx={{ p: 3, color: 'text.secondary' }}>No documents issued.</Typography>
+              <Typography sx={{ p: 3, color: 'text.secondary' }}>{t('hc_noDocumentsIssued')}</Typography>
             ) : (
               <TableContainer>
                 <Table size="small">
@@ -1627,8 +1627,8 @@ export default function VariArikkaigal({ profile }) {
               <Table size="small">
                 <TableHead sx={{ bgcolor: 'rgba(0,0,0,0.02)' }}>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Nature of Supplies</TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>Taxable Value</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_natureOfSupplies')}</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('hc_taxableValue')}</TableCell>
                     <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('igstCol')}</TableCell>
                     <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('cgstCol')}</TableCell>
                     <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('sgstCol')}</TableCell>
@@ -1652,7 +1652,7 @@ export default function VariArikkaigal({ profile }) {
                   <TableRow hover>
                     <TableCell sx={{ fontWeight: 500 }}>(c) Non-GST supplies</TableCell>
                     <TableCell align="right">{formatCurrency(0)}</TableCell>
-                    <TableCell colSpan={3} align="center" sx={{ color: 'text.secondary' }}>N/A</TableCell>
+                    <TableCell colSpan={3} align="center" sx={{ color: 'text.secondary' }}>{t('hc_na')}</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -1680,14 +1680,14 @@ export default function VariArikkaigal({ profile }) {
             return (
               <Paper elevation={0} sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
                 <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
-                  <Typography variant="h6" sx={{ fontWeight: "bold" ,  m: 0 }}>Table 3.2 — Inter-maanilam Supplies to Unregistered Persons</Typography>
+                  <Typography variant="h6" sx={{ fontWeight: "bold" ,  m: 0 }}>{t('hc_table32IntermaanilamSuppliesTo')}</Typography>
                 </Box>
                 <TableContainer>
                   <Table size="small">
                     <TableHead sx={{ bgcolor: 'rgba(0,0,0,0.02)' }}>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Place of Supply</TableCell>
-                        <TableCell align="right" sx={{ fontWeight: 'bold' }}>Taxable Value</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_placeOfSupply')}</TableCell>
+                        <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('hc_taxableValue')}</TableCell>
                         <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('igstCol')}</TableCell>
                       </TableRow>
                     </TableHead>
@@ -1720,7 +1720,7 @@ export default function VariArikkaigal({ profile }) {
               <Table size="small">
                 <TableHead sx={{ bgcolor: 'rgba(0,0,0,0.02)' }}>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Details</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_details')}</TableCell>
                     <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('igstCol')}</TableCell>
                     <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('cgstCol')}</TableCell>
                     <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('sgstCol')}</TableCell>
@@ -1734,7 +1734,7 @@ export default function VariArikkaigal({ profile }) {
                     <TableCell align="right">{formatCurrency(itcFromExpenses.sgst)}</TableCell>
                   </TableRow>
                   <TableRow sx={{ fontWeight: 'bold' }}>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Net ITC Available</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_netItcAvailable')}</TableCell>
                     <TableCell align="right">{formatCurrency(itcFromExpenses.igst)}</TableCell>
                     <TableCell align="right">{formatCurrency(itcFromExpenses.cgst)}</TableCell>
                     <TableCell align="right">{formatCurrency(itcFromExpenses.sgst)}</TableCell>
@@ -1750,7 +1750,7 @@ export default function VariArikkaigal({ profile }) {
           {/* Table 6 — Tax Payment */}
           <Paper elevation={0} sx={{ borderRadius: 3, border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
             <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
-              <Typography variant="h6" sx={{ fontWeight: "bold" ,  m: 0 }}>Table 6 — Tax Payment Summary</Typography>
+              <Typography variant="h6" sx={{ fontWeight: "bold" ,  m: 0 }}>{t('hc_table6TaxPaymentSummary')}</Typography>
             </Box>
             <TableContainer>
               <Table size="small">
@@ -1765,21 +1765,21 @@ export default function VariArikkaigal({ profile }) {
                 </TableHead>
                 <TableBody>
                   <TableRow hover>
-                    <TableCell sx={{ fontWeight: 500 }}>Output Tax Liability</TableCell>
+                    <TableCell sx={{ fontWeight: 500 }}>{t('hc_outputTaxLiability')}</TableCell>
                     <TableCell align="right">{formatCurrency(outputTax.igst)}</TableCell>
                     <TableCell align="right">{formatCurrency(outputTax.cgst)}</TableCell>
                     <TableCell align="right">{formatCurrency(outputTax.sgst)}</TableCell>
                     <TableCell align="right" sx={{ fontWeight: 'bold' }}>{formatCurrency(outputTax.igst + outputTax.cgst + outputTax.sgst)}</TableCell>
                   </TableRow>
                   <TableRow hover>
-                    <TableCell sx={{ fontWeight: 500, color: 'success.main' }}>Less: ITC Claimed</TableCell>
+                    <TableCell sx={{ fontWeight: 500, color: 'success.main' }}>{t('hc_lessItcClaimed')}</TableCell>
                     <TableCell align="right" sx={{ color: 'success.main' }}>-{formatCurrency(itcFromExpenses.igst)}</TableCell>
                     <TableCell align="right" sx={{ color: 'success.main' }}>-{formatCurrency(itcFromExpenses.cgst)}</TableCell>
                     <TableCell align="right" sx={{ color: 'success.main' }}>-{formatCurrency(itcFromExpenses.sgst)}</TableCell>
                     <TableCell align="right" sx={{ color: 'success.main' }}>-{formatCurrency(itcFromExpenses.igst + itcFromExpenses.cgst + itcFromExpenses.sgst)}</TableCell>
                   </TableRow>
                   <TableRow sx={{ bgcolor: 'rgba(0,0,0,0.02)', '& td': { fontWeight: 'bold', borderTop: '2px solid rgba(224, 224, 224, 1)' } }}>
-                    <TableCell>Net Tax Payable</TableCell>
+                    <TableCell>{t('hc_netTaxPayable')}</TableCell>
                     <TableCell align="right">{formatCurrency(netTax.igst)}</TableCell>
                     <TableCell align="right">{formatCurrency(netTax.cgst)}</TableCell>
                     <TableCell align="right">{formatCurrency(netTax.sgst)}</TableCell>
@@ -1792,7 +1792,7 @@ export default function VariArikkaigal({ profile }) {
 
           {/* Net Payable */}
           <Paper elevation={0} sx={{ p: 3, textAlign: 'center', borderRadius: 3, border: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>Net GST Payable</Typography>
+            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>{t('hc_netGstPayable')}</Typography>
             <Typography variant="h4" color="primary.main" sx={{ fontWeight: 800 ,  m: 0 }}>
               {formatCurrency(netPayable)}
             </Typography>
@@ -1840,19 +1840,17 @@ export default function VariArikkaigal({ profile }) {
             {/* Help banner */}
             <Paper elevation={0} sx={{ p: 2, borderLeft: '4px solid', borderColor: 'primary.main', bgcolor: 'background.paper' }}>
               <Typography variant="body2" color="text.secondary">
-                <strong>How to use:</strong> Download your GSTR-2B JSON from the GST portal
+                <strong>{t('hc_howToUse')}</strong> Download your GSTR-2B JSON from the GST portal
                 (<Link href="https://services.gst.gov.in/services/auth/dashboard" target="_blank" rel="noopener noreferrer">services.gst.gov.in</Link>
-                {' '}→ Returns → GSTR-2B → Download JSON), then click <strong>Import 2B JSON</strong> below.
-                We match each 2B entry against your <em>Purchase Bills</em> by supplier GSTIN + invoice number, and flag mismatches so you can claim ITC accurately.
+                {' '}→ Returns → GSTR-2B → Download JSON), then click <strong>{t('hc_import2bJson')}</strong> below.
+                We match each 2B entry against your <em>{t('hc_purchaseBills')}</em> by supplier GSTIN + invoice number, and flag mismatches so you can claim ITC accurately.
               </Typography>
             </Paper>
 
             {/* Actions */}
             <Stack direction="row"   spacing={1} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
               <input ref={gstr2bInputRef} type="file" accept=".json,application/json" onChange={handleImport2B} style={{ display: 'none' }} />
-              <Button variant="contained" onClick={() => gstr2bInputRef.current?.click()} startIcon={<Upload sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none' }}>
-                Import 2B JSON
-              </Button>
+              <Button variant="contained" onClick={() => gstr2bInputRef.current?.click()} startIcon={<Upload sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none' }}>{t('hc_import2bJson')}</Button>
               {gstr2bData && (
                 <>
                   <Button variant="outlined" onClick={exportReconCSV} startIcon={<Download sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none' }}>
@@ -1871,7 +1869,7 @@ export default function VariArikkaigal({ profile }) {
             {!gstr2bData && (
               <Paper elevation={0} sx={{ p: 4, textAlign: 'center', bgcolor: 'background.paper', borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
                 <CheckCircle sx={{ fontSize: 48 }} htmlColor="var(--mui-palette-text-disabled)" style={{ marginBottom: 16 }} />
-                <Typography variant="body1" color="text.secondary">Import your GSTR-2B JSON to reconcile against your purchase records.</Typography>
+                <Typography variant="body1" color="text.secondary">{t('hc_importYourGstr2bJsonTo')}</Typography>
                 {purchases.length === 0 && (
                   <Typography variant="body2" color="warning.main" sx={{ mt: 2 }}>
                     ⚠ You have no purchase bills recorded yet. Add some in the Purchases view first, otherwise everything will show as "2B only".
@@ -1906,20 +1904,20 @@ export default function VariArikkaigal({ profile }) {
                     <Table size="small">
                       <TableHead sx={{ bgcolor: 'rgba(0,0,0,0.02)' }}>
                         <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold' }}>Supplier</TableCell>
-                          <TableCell sx={{ fontWeight: 'bold' }}>Invoice No.</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_status')}</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_supplier')}</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_invoiceNo1')}</TableCell>
                           <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
-                          <TableCell align="right" sx={{ fontWeight: 'bold' }}>2B Value</TableCell>
-                          <TableCell align="right" sx={{ fontWeight: 'bold' }}>Books Value</TableCell>
-                          <TableCell align="right" sx={{ fontWeight: 'bold' }}>Diff</TableCell>
+                          <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('hc_2bValue')}</TableCell>
+                          <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('hc_booksValue')}</TableCell>
+                          <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('hc_diff')}</TableCell>
                           <TableCell sx={{ fontWeight: 'bold' }}>ITC</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
                         {visibleRows.length === 0 ? (
                           <TableRow>
-                            <TableCell colSpan={8} align="center" sx={{ py: 3, color: 'text.secondary' }}>No entries match this filter.</TableCell>
+                            <TableCell colSpan={8} align="center" sx={{ py: 3, color: 'text.secondary' }}>{t('hc_noEntriesMatchThisFilter')}</TableCell>
                           </TableRow>
                         ) : visibleRows.map((r, i) => {
                           const badge = STATUS_BADGES[r.status as keyof typeof STATUS_BADGES];
@@ -2037,9 +2035,9 @@ export default function VariArikkaigal({ profile }) {
           <Stack spacing={3}>
             <Paper elevation={0} sx={{ p: 2, borderLeft: '4px solid', borderColor: 'primary.main', bgcolor: 'background.paper' }}>
               <Typography variant="body2" color="text.secondary">
-                <strong>What this is:</strong> Aggregates TDS (tax deducted by your clients on payments to you — Section 194C/194J/194Q etc.)
+                <strong>{t('hc_whatThisIs')}</strong> Aggregates TDS (tax deducted by your clients on payments to you — Section 194C/194J/194Q etc.)
                 and TCS (tax collected by you from clients — Section 206C(1H)/52 etc.) across the selected period.
-                Use the CSV exports as input for <strong>Form 26Q</strong> (TDS) and <strong>Form 27EQ</strong> (TCS) quarterly returns,
+                Use the CSV exports as input for <strong>{t('hc_form26q')}</strong> (TDS) and <strong>{t('hc_form27eq')}</strong> (TCS) quarterly returns,
                 or hand the file to your CA. Filed at <Link href="https://www.tin-nsdl.com" target="_blank" rel="noopener noreferrer">tin-nsdl.com</Link>.
               </Typography>
             </Paper>
@@ -2059,7 +2057,7 @@ export default function VariArikkaigal({ profile }) {
               </Stack>
               <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 2, mb: 3 }}>
                 <Paper elevation={0} sx={{ p: 2, bgcolor: 'background.default', borderRadius: 2 }}>
-                  <Typography variant="caption" color="text.secondary">Invoices with TDS</Typography>
+                  <Typography variant="caption" color="text.secondary">{t('hc_invoicesWithTds')}</Typography>
                   <Typography variant="h6" sx={{ fontWeight: "bold" }}>{tdsRows.length}</Typography>
                 </Paper>
                 <Paper elevation={0} sx={{ p: 2, bgcolor: 'background.default', borderRadius: 2 }}>
@@ -2067,7 +2065,7 @@ export default function VariArikkaigal({ profile }) {
                   <Typography variant="h6" sx={{ fontWeight: "bold" }}>{formatCurrency(tdsTotal.taxable)}</Typography>
                 </Paper>
                 <Paper elevation={0} sx={{ p: 2, bgcolor: 'background.default', borderRadius: 2 }}>
-                  <Typography variant="caption" color="text.secondary">Total TDS receivable</Typography>
+                  <Typography variant="caption" color="text.secondary">{t('hc_totalTdsReceivable')}</Typography>
                   <Typography variant="h6" color="success.main" sx={{ fontWeight: "bold" }}>{formatCurrency(tdsTotal.tds)}</Typography>
                 </Paper>
               </Box>
@@ -2076,8 +2074,8 @@ export default function VariArikkaigal({ profile }) {
                   <Table size="small">
                     <TableHead sx={{ bgcolor: 'rgba(0,0,0,0.02)' }}>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Quarter</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Section</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_quarter')}</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_section')}</TableCell>
                         <TableCell sx={{ fontWeight: 'bold' }}>Invoices</TableCell>
                         <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('taxableLabel')}</TableCell>
                         <TableCell align="right" sx={{ fontWeight: 'bold' }}>TDS</TableCell>
@@ -2098,7 +2096,7 @@ export default function VariArikkaigal({ profile }) {
                 </TableContainer>
               ) : (
                 <Typography variant="body2" color="text.secondary" align="center" sx={{ py: 2 }}>
-                  No invoices with TDS in this period. Enable TDS on an invoice via <em>Customize → TDS</em>.
+                  No invoices with TDS in this period. Enable TDS on an invoice via <em>{t('hc_customizeTds')}</em>.
                 </Typography>
               )}
             </Paper>
@@ -2118,7 +2116,7 @@ export default function VariArikkaigal({ profile }) {
               </Stack>
               <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 2, mb: 3 }}>
                 <Paper elevation={0} sx={{ p: 2, bgcolor: 'background.default', borderRadius: 2 }}>
-                  <Typography variant="caption" color="text.secondary">Invoices with TCS</Typography>
+                  <Typography variant="caption" color="text.secondary">{t('hc_invoicesWithTcs')}</Typography>
                   <Typography variant="h6" sx={{ fontWeight: "bold" }}>{tcsRows.length}</Typography>
                 </Paper>
                 <Paper elevation={0} sx={{ p: 2, bgcolor: 'background.default', borderRadius: 2 }}>
@@ -2126,7 +2124,7 @@ export default function VariArikkaigal({ profile }) {
                   <Typography variant="h6" sx={{ fontWeight: "bold" }}>{formatCurrency(tcsTotal.taxable)}</Typography>
                 </Paper>
                 <Paper elevation={0} sx={{ p: 2, bgcolor: 'background.default', borderRadius: 2 }}>
-                  <Typography variant="caption" color="text.secondary">Total TCS collected</Typography>
+                  <Typography variant="caption" color="text.secondary">{t('hc_totalTcsCollected')}</Typography>
                   <Typography variant="h6" color="warning.main" sx={{ fontWeight: "bold" }}>{formatCurrency(tcsTotal.tcs)}</Typography>
                 </Paper>
               </Box>
@@ -2135,8 +2133,8 @@ export default function VariArikkaigal({ profile }) {
                   <Table size="small">
                     <TableHead sx={{ bgcolor: 'rgba(0,0,0,0.02)' }}>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Quarter</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Section</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_quarter')}</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_section')}</TableCell>
                         <TableCell sx={{ fontWeight: 'bold' }}>Invoices</TableCell>
                         <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('taxableLabel')}</TableCell>
                         <TableCell align="right" sx={{ fontWeight: 'bold' }}>TCS</TableCell>
@@ -2157,7 +2155,7 @@ export default function VariArikkaigal({ profile }) {
                 </TableContainer>
               ) : (
                 <Typography variant="body2" color="text.secondary" align="center" sx={{ py: 2 }}>
-                  No invoices with TCS in this period. Enable TCS on an invoice via <em>Customize → TCS</em>.
+                  No invoices with TCS in this period. Enable TCS on an invoice via <em>{t('hc_customizeTcs')}</em>.
                 </Typography>
               )}
             </Paper>
@@ -2171,8 +2169,8 @@ export default function VariArikkaigal({ profile }) {
           {/* Quick Start */}
           <Paper elevation={0} sx={{ p: 2, borderLeft: '4px solid', borderColor: 'primary.main', bgcolor: 'background.paper' }}>
             <Typography variant="body2" color="text.secondary">
-              <strong>Steps:</strong> Review GSTR-1 & 3B tabs → Export JSON → Upload to gst.gov.in → File GSTR-1 first, then GSTR-3B.
-              <Typography component="span" variant="caption" sx={{ color: 'text.disabled', ml: 1 }}>| Due: R1 by 11th, 3B by 20th of next month | Late fee: ₹50/day</Typography>
+              <strong>{t('hc_steps')}</strong> Review GSTR-1 & 3B tabs → Export JSON → Upload to gst.gov.in → File GSTR-1 first, then GSTR-3B.
+              <Typography component="span" variant="caption" sx={{ color: 'text.disabled', ml: 1 }}>{t('hc_dueR1By11th3b')}</Typography>
             </Typography>
           </Paper>
 
@@ -2194,9 +2192,9 @@ export default function VariArikkaigal({ profile }) {
               <StepList steps={GSTR1_STEPS} title="GSTR-1 — Sales Return (File This First)" />
 
               <Paper elevation={0} sx={{ p: 3, bgcolor: '#f0fdf4', borderRadius: 3 }}>
-                <Typography variant="subtitle2" color="#059669" sx={{ fontWeight: "bold" ,  mb: 1 }}>GSTR-1 Pro Tips</Typography>
+                <Typography variant="subtitle2" color="#059669" sx={{ fontWeight: "bold" ,  mb: 1 }}>{t('hc_gstr1ProTips')}</Typography>
                 <Box component="ul" sx={{ m: 0, pl: 2, typography: 'body2', color: '#047857', '& li': { mb: 0.5 } }}>
-                  <li><strong>Fastest method:</strong> Export GSTR-1 JSON from the GSTR-1 tab above → Go to GST portal → GSTR-1 → Prepare Offline → Download Offline Tool → Import JSON → Upload. Saves 90% of time.</li>
+                  <li><strong>{t('hc_fastestMethod')}</strong>{t('hc_exportGstr1JsonFromThe')}</li>
                   <li>If turnover {'<'} ₹5 Cr, opt for QRMP scheme — file quarterly instead of monthly. Apply via Services → User Services → Opt-in for QRMP.</li>
                   <li>Amendments to previous period invoices: Use Table 9A (not 4A). You can amend within the September return of the following FY.</li>
                   <li>Export invoices (zero-rated): Report in Table 6A with shipping bill details.</li>
@@ -2207,14 +2205,14 @@ export default function VariArikkaigal({ profile }) {
               <StepList steps={GSTR3B_STEPS} title="GSTR-3B — Summary Return + Tax Payment (File After GSTR-1)" />
 
               <Paper elevation={0} sx={{ p: 3, bgcolor: '#eff6ff', borderRadius: 3 }}>
-                <Typography variant="subtitle2" color="primary.main" sx={{ fontWeight: "bold" ,  mb: 1 }}>GSTR-3B Pro Tips</Typography>
+                <Typography variant="subtitle2" color="primary.main" sx={{ fontWeight: "bold" ,  mb: 1 }}>{t('hc_gstr3bProTips')}</Typography>
                 <Box component="ul" sx={{ m: 0, pl: 2, typography: 'body2', color: '#1e40af', '& li': { mb: 0.5 } }}>
-                  <li><strong>From July 2025:</strong> Table 3 auto-populates from GSTR-1 — just VERIFY, don't re-enter values.</li>
-                  <li><strong>ITC matching:</strong> Always check GSTR-2B statement BEFORE claiming ITC. Go to Returns → GSTR-2B → Download. Only claim ITC that appears in GSTR-2B.</li>
+                  <li><strong>{t('hc_fromJuly2025')}</strong>{t('hc_table3AutopopulatesFromGstr1')}</li>
+                  <li><strong>{t('hc_itcMatching')}</strong>{t('hc_alwaysCheckGstr2bStatementBefore')}</li>
                   <li><strong>ITC utilization order (Section 49):</strong> IGST credit first (against IGST → CGST → SGST), then CGST (against CGST → IGST), then SGST (against SGST → IGST).</li>
-                  <li><strong>Payment:</strong> Use Electronic Credit Ledger (ITC) first. Pay remaining via Electronic Cash Ledger. Create challan via Services → Payments → Create Challan.</li>
-                  <li><strong>Interest calculation:</strong> If you file late, interest is 18% p.a. calculated on tax payable (not total liability). Interest starts from day after due date.</li>
-                  <li><strong>Reverse charge:</strong> If you paid RCM (restaurant/legal/GTA services), report in 3.1(d) AND claim ITC in Table 4(A)(3).</li>
+                  <li><strong>{t('hc_payment')}</strong> Use Electronic Credit Ledger (ITC) first. Pay remaining via Electronic Cash Ledger. Create challan via Services → Payments → Create Challan.</li>
+                  <li><strong>{t('hc_interestCalculation')}</strong> If you file late, interest is 18% p.a. calculated on tax payable (not total liability). Interest starts from day after due date.</li>
+                  <li><strong>{t('hc_reverseCharge')}</strong> If you paid RCM (restaurant/legal/GTA services), report in 3.1(d) AND claim ITC in Table 4(A)(3).</li>
                 </Box>
               </Paper>
             </Stack>
@@ -2223,13 +2221,13 @@ export default function VariArikkaigal({ profile }) {
           {guideTab === 'nil' && (
             <Stack spacing={3}>
               <Paper elevation={0} sx={{ p: 3, bgcolor: '#fffbeb', borderLeft: '4px solid #f59e0b', borderRadius: 3 }}>
-                <Typography variant="subtitle2" color="#92400e" sx={{ fontWeight: "bold" ,  mb: 1 }}>When to File NIL Return</Typography>
+                <Typography variant="subtitle2" color="#92400e" sx={{ fontWeight: "bold" ,  mb: 1 }}>{t('hc_whenToFileNilReturn')}</Typography>
                 <Box component="ul" sx={{ m: 0, pl: 2, typography: 'body2', color: '#a16207', '& li': { mb: 0.5 } }}>
-                  <li>You had <strong>ZERO outward supplies</strong> (no sales/services) during the period</li>
-                  <li>You have <strong>NO input tax credit</strong> to claim</li>
-                  <li>You have <strong>NO tax liability</strong> (including reverse charge)</li>
-                  <li>You have <strong>NO inward supplies</strong> liable to reverse charge</li>
-                  <li>If ANY of the above has a value, you MUST file a regular return — not NIL</li>
+                  <li>{t('hc_youHad')}<strong>{t('hc_zeroOutwardSupplies')}</strong> (no sales/services) during the period</li>
+                  <li>{t('hc_youHave')}<strong>{t('hc_noInputTaxCredit')}</strong>{t('hc_toClaim')}</li>
+                  <li>{t('hc_youHave')}<strong>{t('hc_noTaxLiability')}</strong> (including reverse charge)</li>
+                  <li>{t('hc_youHave')}<strong>{t('hc_noInwardSupplies')}</strong>{t('hc_liableToReverseCharge')}</li>
+                  <li>{t('hc_ifAnyOfTheAbove')}</li>
                 </Box>
                 <Typography variant="body2" color="#92400e" sx={{ mt: 2, fontWeight: "bold" }}>
                   MANDATORY: You must file NIL returns every month/quarter even with zero activity. Non-filing for 6 continuous months can result in suo-motu GSTIN cancellation under Section 29(2)(c).
@@ -2237,16 +2235,16 @@ export default function VariArikkaigal({ profile }) {
               </Paper>
 
               <StepList steps={NIL_GSTR1_STEPS} title="NIL GSTR-1 — File First (Even with Zero Sales)" />
-              <StepList steps={NIL_GSTR3B_STEPS} title="NIL GSTR-3B — File After NIL GSTR-1" />
+              <StepList steps={NIL_GSTR3B_STEPS} title={t('hc_nilGstr3bFileAfterNil')} />
 
               <Paper elevation={0} sx={{ p: 3, bgcolor: '#f0fdf4', borderRadius: 3 }}>
-                <Typography variant="subtitle2" color="#059669" sx={{ fontWeight: "bold" ,  mb: 1 }}>NIL Return Quick Summary</Typography>
+                <Typography variant="subtitle2" color="#059669" sx={{ fontWeight: "bold" ,  mb: 1 }}>{t('hc_nilReturnQuickSummary')}</Typography>
                 <Box component="ul" sx={{ m: 0, pl: 2, typography: 'body2', color: '#047857', '& li': { mb: 0.5 } }}>
-                  <li>NIL GSTR-1 and NIL GSTR-3B are <strong>separate returns</strong> — file both</li>
-                  <li>NIL filing takes 2-3 minutes per return — just login, verify zeros, submit, file</li>
+                  <li>{t('hc_nilGstr1AndNilGstr3b')}<strong>{t('hc_separateReturns')}</strong>{t('hc_fileBoth')}</li>
+                  <li>{t('hc_nilFilingTakes23Minutes')}</li>
                   <li>Late fee for NIL: ₹20/day (₹10 CGST + ₹10 SGST), capped at ₹500 per return</li>
-                  <li>You can file NIL returns via SMS: Send <code>NIL space GSTIN space Return Period</code> to 14409. Verify with OTP.</li>
-                  <li>QRMP users filing quarterly: NIL return covers the entire quarter</li>
+                  <li>{t('hc_youCanFileNilReturns')}<code>{t('hc_nilSpaceGstinSpaceReturn')}</code>{t('hc_to14409VerifyWithOtp')}</li>
+                  <li>{t('hc_qrmpUsersFilingQuarterlyNil')}</li>
                   <li>Even if you had no sales but had purchases with GST → file REGULAR return (not NIL) to claim ITC</li>
                 </Box>
               </Paper>
@@ -2282,17 +2280,17 @@ export default function VariArikkaigal({ profile }) {
               </Paper>
 
               <Paper elevation={0} sx={{ p: 3, bgcolor: '#f8fafc', borderRadius: 3 }}>
-                <Typography variant="subtitle2" sx={{ fontWeight: "bold" ,  mb: 1 }}>Key GST Rules to Remember</Typography>
+                <Typography variant="subtitle2" sx={{ fontWeight: "bold" ,  mb: 1 }}>{t('hc_keyGstRulesToRemember')}</Typography>
                 <Box component="ul" sx={{ m: 0, pl: 2, typography: 'body2', color: 'text.secondary', '& li': { mb: 0.5 } }}>
-                  <li><strong>Section 16(4):</strong> ITC for any invoice must be claimed by the due date of September return of the following FY, or the date of filing annual return — whichever is earlier.</li>
-                  <li><strong>Section 34:</strong> Credit notes must be issued before September 30 following the end of FY of the original invoice or annual return filing — whichever is earlier.</li>
-                  <li><strong>Section 31:</strong> Tax invoice must be issued at or before the time of supply. For services, within 30 days of supply.</li>
-                  <li><strong>Section 49:</strong> ITC utilization order is mandatory: IGST first (against IGST→CGST→SGST), then CGST (→CGST→IGST), then SGST (→SGST→IGST). Cross-utilization of CGST↔SGST is NOT allowed.</li>
-                  <li><strong>Rule 36(4):</strong> ITC can only be claimed for invoices that appear in GSTR-2B. No provisional ITC beyond GSTR-2B.</li>
-                  <li><strong>Section 50:</strong> Interest on late payment is 18% p.a. on NET tax payable (after ITC). Calculated from the day after due date to date of payment.</li>
-                  <li><strong>Section 73/74:</strong> Tax department can issue notice for short payment within 3 years (73) or 5 years for fraud (74). Maintain all records for at least 6 years.</li>
+                  <li><strong>Section 16(4):</strong>{t('hc_itcForAnyInvoiceMust')}</li>
+                  <li><strong>{t('hc_section34')}</strong>{t('hc_creditNotesMustBeIssued')}</li>
+                  <li><strong>{t('hc_section31')}</strong>{t('hc_taxInvoiceMustBeIssued')}</li>
+                  <li><strong>{t('hc_section49')}</strong> ITC utilization order is mandatory: IGST first (against IGST→CGST→SGST), then CGST (→CGST→IGST), then SGST (→SGST→IGST). Cross-utilization of CGST↔SGST is NOT allowed.</li>
+                  <li><strong>Rule 36(4):</strong>{t('hc_itcCanOnlyBeClaimed')}</li>
+                  <li><strong>{t('hc_section50')}</strong> Interest on late payment is 18% p.a. on NET tax payable (after ITC). Calculated from the day after due date to date of payment.</li>
+                  <li><strong>{t('hc_section7374')}</strong> Tax department can issue notice for short payment within 3 years (73) or 5 years for fraud (74). Maintain all records for at least 6 years.</li>
                   <li><strong>Section 29(2)(c):</strong> GSTIN cancellation if returns not filed for 6+ continuous months (quarterly filers: 2 consecutive quarters).</li>
-                  <li><strong>E-way Bill:</strong> Cannot generate e-way bills if GSTR-3B not filed for 2+ consecutive months.</li>
+                  <li><strong>{t('hc_ewayBill')}</strong>{t('hc_cannotGenerateEwayBillsIf')}</li>
                 </Box>
               </Paper>
             </Stack>

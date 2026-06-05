@@ -1,3 +1,4 @@
+import { useLanguage } from '../mozhi/LanguageContext';
 // @ts-nocheck
 import { Buildings, FileText, ChartBar, ShieldCheck, CaretRight, CaretLeft, Check, ArrowRight, Image, PencilSimple } from '@phosphor-icons/react';
 import { useState } from 'react';
@@ -14,6 +15,8 @@ const STEPS = [
 ];
 
 export default function Nalvaravu({ onComplete }) {
+  const { t } = useLanguage();
+
   const [step, setStep] = useState(0);
   const detectedCountry = detectCountryFromBrowser();
   const [profile, setProfile] = useState({
@@ -112,7 +115,7 @@ export default function Nalvaravu({ onComplete }) {
               <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
                 <FileText size={32} weight="regular" color="white" />
               </div>
-              <h1 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--text-primary)' }}>Welcome to Elvan Niril</h1>
+              <h1 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--text-primary)' }}>{t('hc_welcomeToElvanNiril')}</h1>
               <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', lineHeight: 1.6 }}>
                 Free, open-source GST billing software that runs 100% on your computer. Your data never leaves your machine.
               </p>
@@ -142,18 +145,18 @@ export default function Nalvaravu({ onComplete }) {
           {/* Step 1: Business Details */}
           {step === 1 && (
             <div>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--text-primary)' }}>Business Details</h2>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '0.5rem', color: 'var(--text-primary)' }}>{t('hc_businessDetails')}</h2>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
                 This info appears on every invoice you generate. You can change it anytime in Settings.
               </p>
 
               <Grid container spacing={2}>
                 <Grid size={{ xs: 12 }}>
-                  <TextField fullWidth size="small" required label="Business Name" name="niruvanathinPeyar" value={profile.niruvanathinPeyar} onChange={handleChange} placeholder="e.g. Sharma Consultants Pvt. Ltd." />
+                  <TextField fullWidth size="small" required label={t('hc_businessName')} name="niruvanathinPeyar" value={profile.niruvanathinPeyar} onChange={handleChange} placeholder={t('hc_egSharmaConsultantsPvtLtd')} />
                 </Grid>
 
                 <Grid size={{ xs: 12 }}>
-                  <TextField fullWidth multiline rows={2} size="small" label="Address" name="mugavari" value={profile.mugavari} onChange={handleChange} placeholder="e.g. 42, MG Road, Sector 15, Gurugram 122001" />
+                  <TextField fullWidth multiline rows={2} size="small" label="Address" name="mugavari" value={profile.mugavari} onChange={handleChange} placeholder={t('hc_eg42MgRoadSector')} />
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 6 }}>
@@ -169,7 +172,7 @@ export default function Nalvaravu({ onComplete }) {
                     ) : (
                       <TextField fullWidth size="small" label={cc.stateLabel} name="maanilam" value={profile.maanilam} onChange={handleChange} placeholder={cc.stateLabel} />
                     )}
-                    {profile.country === 'India' && <FormHelperText>Needed for auto CGST/SGST vs IGST</FormHelperText>}
+                    {profile.country === 'India' && <FormHelperText>{t('hc_neededForAutoCgstsgstVs')}</FormHelperText>}
                   </FormControl>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
@@ -180,7 +183,7 @@ export default function Nalvaravu({ onComplete }) {
                   <TextField fullWidth size="small" label="PAN" name="pan" value={profile.pan} onChange={handleChange} placeholder="AAAAA1234A" slotProps={{ htmlInput: { maxLength: 10, style: { textTransform: 'uppercase' } } }} />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField fullWidth size="small" label="Phone / Mobile" name="tholaipesi" value={profile.tholaipesi} onChange={handleChange} placeholder="+91 98765 43210" />
+                  <TextField fullWidth size="small" label={t('hc_phoneMobile')} name="tholaipesi" value={profile.tholaipesi} onChange={handleChange} placeholder="+91 98765 43210" />
                 </Grid>
 
                 <Grid size={{ xs: 12 }}>
@@ -200,34 +203,34 @@ export default function Nalvaravu({ onComplete }) {
 
               <Grid container spacing={2}>
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField fullWidth size="small" label="Bank Name" name="vangiPeyar" value={profile.vangiPeyar} onChange={handleChange} placeholder="e.g. HDFC Bank" />
+                  <TextField fullWidth size="small" label={t('hc_bankName')} name="vangiPeyar" value={profile.vangiPeyar} onChange={handleChange} placeholder={t('hc_egHdfcBank')} />
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField fullWidth size="small" label="Account Number" name="kanakkuEn" value={profile.kanakkuEn} onChange={handleChange} placeholder="e.g. 12345678901234" />
-                </Grid>
-
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField fullWidth size="small" label="IFSC Code" name="ifsc" value={profile.ifsc} onChange={handleChange} placeholder="e.g. HDFC0001234" slotProps={{ htmlInput: { style: { textTransform: 'uppercase' } } }} />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField fullWidth size="small" label="UPI ID" name="upiId" value={profile.upiId} onChange={handleChange} placeholder="e.g. business@upi" helperText="Auto-generates QR code on invoices" />
+                  <TextField fullWidth size="small" label={t('hc_accountNumber')} name="kanakkuEn" value={profile.kanakkuEn} onChange={handleChange} placeholder={t('hc_eg12345678901234')} />
                 </Grid>
 
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>Business Logo</Typography>
+                  <TextField fullWidth size="small" label={t('hc_ifscCode')} name="ifsc" value={profile.ifsc} onChange={handleChange} placeholder={t('hc_egHdfc0001234')} slotProps={{ htmlInput: { style: { textTransform: 'uppercase' } } }} />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField fullWidth size="small" label={t('hc_upiId')} name="upiId" value={profile.upiId} onChange={handleChange} placeholder={t('hc_egBusinessupi')} helperText="Auto-generates QR code on invoices" />
+                </Grid>
+
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Typography variant="body2" color="text.secondary" gutterBottom>{t('hc_businessLogo')}</Typography>
                   <Button variant="outlined" color="inherit" fullWidth onClick={() => handleFileUpload('logo')} startIcon={<Image size={16} weight="regular" />}>
                     {profile.logo ? 'Change Logo' : 'Upload Logo'}
                   </Button>
                   {profile.logo && <img src={profile.logo} alt="Logo" style={{ height: '40px', marginTop: '0.5rem', objectFit: 'contain' }} />}
-                  <FormHelperText>PNG/JPG, max 500KB</FormHelperText>
+                  <FormHelperText>{t('hc_pngjpgMax500kb')}</FormHelperText>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6 }}>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>Digital Signature</Typography>
+                  <Typography variant="body2" color="text.secondary" gutterBottom>{t('hc_digitalSignature')}</Typography>
                   <Button variant="outlined" color="inherit" fullWidth onClick={() => handleFileUpload('signature')} startIcon={<PencilSimple size={16} weight="regular" />}>
                     {profile.signature ? 'Change Signature' : 'Upload Signature'}
                   </Button>
                   {profile.signature && <img src={profile.signature} alt="Signature" style={{ height: '40px', marginTop: '0.5rem', objectFit: 'contain' }} />}
-                  <FormHelperText>PNG/JPG, max 500KB</FormHelperText>
+                  <FormHelperText>{t('hc_pngjpgMax500kb')}</FormHelperText>
                 </Grid>
               </Grid>
             </div>
@@ -239,7 +242,7 @@ export default function Nalvaravu({ onComplete }) {
               <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
                 <Check size={32} weight="regular" color="white" />
               </div>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--text-primary)' }}>You're All Set!</h2>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--text-primary)' }}>{t('hc_youreAllSet')}</h2>
               <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', lineHeight: 1.6 }}>
                 Your business profile is ready. Here's what to do next:
               </p>

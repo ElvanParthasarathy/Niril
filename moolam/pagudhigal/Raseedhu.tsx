@@ -1,19 +1,13 @@
-import { Plus, X, Trash, Printer as PrintIcon, Receipt as PhosphorReceipt, PencilSimple, Copy, CheckSquare, Square } from '@phosphor-icons/react';
+import { X, Printer as PrintIcon, Receipt as PhosphorReceipt, CheckSquare, Square } from '@phosphor-icons/react';
 import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { 
-  Box, Typography, Button, Paper, TextField, InputAdornment, 
-  IconButton, Tooltip, Chip, Grid, Select, MenuItem, InputLabel, 
-  FormControl, Stack, Dialog, DialogTitle, DialogContent, DialogActions, Autocomplete, Pagination, Toolbar
-} from '@mui/material';
-import { getAllReceipts, saveReceipt, deleteReceipt, getAllBills, getReceiptNumberSettings, getProfile } from '../Avanam';
+import { Box, Typography, Button, IconButton, Tooltip, Stack, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { getAllReceipts, saveReceipt, deleteReceipt, getAllBills, getProfile } from '../Avanam';
 import { formatCurrency, numberToWords, getCountryConfig } from '../Payanpadu';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
-import { getSearchPaperSx, searchInputStyle, getAddButtonSx, getEditPaperSx, getEditIconButtonSx } from './commonStyles';
 import ElvanCard from './ElvanCard';
-
-const PAYMENT_MODES = ['Bank Transfer', 'UPI', 'Cash', 'Cheque', 'Card', 'Other'];
+import ElvanListView from './ElvanListView';
 
 export default function Raseedhu({ profile: parentProfile, onAddReceipt, onEditReceipt }: { profile?: any, onAddReceipt?: () => void, onEditReceipt?: (rcp: any) => void } = {}) {
   const { t } = useLanguage();
@@ -21,16 +15,10 @@ export default function Raseedhu({ profile: parentProfile, onAddReceipt, onEditR
   const [bills, setBills] = useState<any[]>([]);
   const [localProfile, setLocalProfile] = useState<any>({});
   const profile = parentProfile || localProfile;
-  const [search, setSearch] = useState('');
   const [previewReceipt, setPreviewReceipt] = useState<any>(null);
   const receiptRef = useRef<HTMLDivElement>(null);
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
-  const [page, setPage] = useState(1);
-  const [isSelectionMode, setIsSelectionMode] = useState(false);
-  const [selectedReceiptIds, setSelectedReceiptIds] = useState<string[]>([]);
-  const [confirmDialog, setConfirmDialog] = useState<{ open: boolean; title: string; message: string; action: (() => void) | null }>({ open: false, title: '', message: '', action: null });
-  const topRef = useRef<HTMLDivElement>(null);
   
   const profileCurrency = getCountryConfig(profile?.country || 'India').currency;
 
@@ -47,14 +35,7 @@ export default function Raseedhu({ profile: parentProfile, onAddReceipt, onEditR
       'Bengali': { 'Cash': 'নগদ', 'UPI': 'UPI', 'Bank Transfer': 'ব্যাঙ্ক ট্রান্সফার', 'Cheque': 'চেক', 'Card': 'কার্ড', 'Other': 'অন্য' }
     };
     const primaryLang = profile?.primaryDataLanguage || 'Tamil';
-    const secondaryLang = profile?.secondaryDataLanguage || 'English';
-    
     const primaryVal = (dictionaries[primaryLang] || {})[mode] || mode;
-    const secondaryVal = (dictionaries[secondaryLang] || {})[mode] || mode;
-    
-    if (profile?.enableBilingual !== false && primaryVal !== secondaryVal) {
-      return `${primaryVal} / ${secondaryVal}`;
-    }
     return primaryVal;
   };
 
@@ -84,86 +65,6 @@ export default function Raseedhu({ profile: parentProfile, onAddReceipt, onEditR
   useEffect(() => {
     loadData();
   }, []);
-
-  const openAdd = () => {
-    if (onAddReceipt) onAddReceipt();
-  };
-
-  const filtered = search.trim()
-    ? receipts.filter(r =>
-        (r.clientName || '').toLowerCase().includes(search.toLowerCase()) ||
-        (r.receiptNo || '').toLowerCase().includes(search.toLowerCase()))
-    : receipts;
-
-  const ITEMS_PER_PAGE = 6;
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-  const safePage = Math.max(1, Math.min(page, totalPages === 0 ? 1 : totalPages));
-  const paginatedReceipts = filtered.slice((safePage - 1) * ITEMS_PER_PAGE, safePage * ITEMS_PER_PAGE);
-
-  const handleSelectAll = () => {
-    if (selectedReceiptIds.length === paginatedReceipts.length) {
-      setSelectedReceiptIds([]);
-    } else {
-      setSelectedReceiptIds(paginatedReceipts.map(r => r.id));
-    }
-  };
-
-  const toggleSelection = (id: string) => {
-    setSelectedReceiptIds(prev =>
-      prev.includes(id) ? prev.filter(rId => rId !== id) : [...prev, id]
-    );
-  };
-
-  const handleCopySelected = () => {
-    setConfirmDialog({
-      open: true,
-      title: t('duplicateProductsTitle') || 'Duplicate Receipts?',
-      message: t('duplicateProductsMessage') || 'Are you sure you want to create copies of the selected receipt(s)?',
-      action: async () => {
-        try {
-          const selected = receipts.filter(r => selectedReceiptIds.includes(r.id));
-          for (const r of selected) {
-            const { id, ...rest } = r;
-            await saveReceipt({ ...rest, receiptNo: `${r.receiptNo} (Copy)` });
-          }
-          thagaval(t('productsDuplicatedSuccess') || 'Receipts duplicated successfully', 'success');
-          setSelectedReceiptIds([]);
-          setIsSelectionMode(false);
-          loadData();
-        } catch (e) {
-          thagaval(t('errorDuplicating') || 'Error duplicating', 'error');
-        }
-      }
-    });
-  };
-
-  const handleDeleteSelected = () => {
-    setConfirmDialog({
-      open: true,
-      title: t('deleteProductsTitle') || 'Delete Receipts?',
-      message: t('deleteProductsMessage') || 'Are you sure you want to delete the selected receipt(s)? This action cannot be undone.',
-      action: async () => {
-        try {
-          for (const id of selectedReceiptIds) {
-            await deleteReceipt(id);
-          }
-          thagaval(t('deletedSuccessfully') || 'Deleted successfully', 'success');
-          setSelectedReceiptIds([]);
-          setIsSelectionMode(false);
-          loadData();
-        } catch (e) {
-          thagaval(t('errorDeleting') || 'Error deleting', 'error');
-        }
-      }
-    });
-  };
-
-  const handleDelete = async (id: string) => {
-    if (confirm(t('deleteReceiptConfirmMsg') || 'Delete this receipt?')) {
-      try { await deleteReceipt(id); thagaval(t('deletedToast') || 'Deleted!', 'success'); loadData(); }
-      catch { thagaval('Failed to delete', 'error'); }
-    }
-  };
 
   const executePrint = () => {
     if (!previewReceipt) return;
@@ -199,92 +100,128 @@ export default function Raseedhu({ profile: parentProfile, onAddReceipt, onEditR
     printWindow.document.close();
   };
 
-  const unpaidBills = bills.filter(b => b.status !== 'paid');
+  const filterFn = (r, search) => {
+    if (!search.trim()) return true;
+    const term = search.toLowerCase();
+    const searchable = [
+      r.receiptNo, r.clientName, r.clientNameEn, r.paymentMode, 
+      r.referenceNo, r.againstInvoice, r.note, r.amount?.toString()
+    ].filter(Boolean).join(' ').toLowerCase();
+    return searchable.includes(term);
+  };
+
+  const handleBulkDelete = async (ids) => {
+    try {
+      for (const id of ids) await deleteReceipt(id);
+      thagaval(t('deletedSuccessfully') || 'Deleted successfully', 'success');
+      loadData();
+    } catch (e) {
+      thagaval(t('errorDeleting') || 'Error deleting', 'error');
+    }
+  };
+
+  const handleBulkDuplicate = async (ids) => {
+    try {
+      const selected = receipts.filter(r => ids.includes(r.id));
+      for (const r of selected) {
+        const { id, ...rest } = r;
+        await saveReceipt({ ...rest, receiptNo: `${r.receiptNo} (Copy)` });
+      }
+      thagaval(t('productsDuplicatedSuccess') || 'Receipts duplicated successfully', 'success');
+      loadData();
+    } catch (e) {
+      thagaval(t('errorDuplicating') || 'Error duplicating', 'error');
+    }
+  };
+
+  const renderCard = (rcp, globalIndex, isSelectionMode, isSelected, toggleSelection) => {
+    return (
+      <ElvanCard 
+        key={rcp.id} 
+        sx={{ 
+          height: '100%', 
+          cursor: 'pointer',
+          ...(isSelectionMode && isSelected ? { bgcolor: isDark ? 'rgba(255,255,255,0.06) !important' : 'rgba(0,0,0,0.04) !important' } : {})
+        }} 
+        onClick={() => isSelectionMode ? toggleSelection(rcp.id) : (onEditReceipt && onEditReceipt(rcp))}
+      >
+        <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} sx={{ height: '100%' }}>
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
+            {isSelectionMode ? (
+              <IconButton 
+                size="small" 
+                onClick={(e) => { e.stopPropagation(); toggleSelection(rcp.id); }} 
+                sx={{ color: isSelected ? 'primary.main' : 'text.disabled', p: 0, mt: 0.2 }}
+              >
+                {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} />}
+              </IconButton>
+            ) : (
+              <Box sx={{ 
+                display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                width: 28, height: 28, mt: 0.15, 
+                borderRadius: '50%',
+                bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
+                flexShrink: 0
+              }}>
+                <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
+                  {(globalIndex + 1).toString().padStart(2, '0')}
+                </Typography>
+              </Box>
+            )}
+            <Box>
+              <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                {rcp.clientName}
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
+                {profile?.enableBilingual !== false && getDisplayClientNameEn(rcp) && (
+                  <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{getDisplayClientNameEn(rcp)}</Typography>
+                )}
+                <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
+                  {rcp.receiptNo} <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> {rcp.date ? new Date(rcp.date).toLocaleDateString('en-IN') : '-'}
+                </Typography>
+                <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
+                  {t('modeCol') || 'Mode'}: {rcp.paymentMode}
+                  {rcp.againstInvoice && <><span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> Inv: {rcp.againstInvoice}</>}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', gap: 0.5, mt: -0.5, mr: -0.5 }}>
+              <Tooltip title="Preview">
+                <IconButton size="small" onClick={(e) => { e.stopPropagation(); setPreviewReceipt(rcp); }} color="primary">
+                  <PrintIcon size={20} weight="regular" />
+                </IconButton>
+              </Tooltip>
+            </Box>
+            <Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: 800 }}>
+              {formatCurrency(rcp.amount, profileCurrency)}
+            </Typography>
+          </Box>
+        </Stack>
+      </ElvanCard>
+    );
+  };
 
   return (
-    <Box ref={topRef} sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
-      <Box sx={{ display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h5" sx={{ fontWeight: 800, letterSpacing: '-0.5px', color: 'text.primary', ml: 2 }}>
-          {t('receipts')}
-        </Typography>
-      </Box>
-
-      <Box sx={{ mb: 4 }}>
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-          <Paper elevation={1} className="vanigargal-search" sx={getSearchPaperSx(isDark)}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.5 }}>
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input 
-              type="text" 
-              placeholder={t('searchReceipts') || 'Search receipts...'} 
-              value={search} 
-              onChange={e => { setSearch(e.target.value); setPage(1); }} 
-              style={searchInputStyle} 
-            />
-            {search && (
-              <IconButton size="small" onClick={() => { setSearch(''); setPage(1); }} sx={{ flexShrink: 0 }}>
-                <X size={14} weight="regular" />
-              </IconButton>
-            )}
-          </Paper>
-
-          <Paper 
-            elevation={1}
-            sx={getEditPaperSx(isDark, isSelectionMode)}
-          >
-            <IconButton 
-              onClick={() => { setIsSelectionMode(!isSelectionMode); setSelectedReceiptIds([]); }}
-              sx={getEditIconButtonSx(isDark)}
-            >
-              <PencilSimple size={18} weight={isSelectionMode ? 'fill' : 'regular'} color={isDark ? '#fff' : '#000'} />
-            </IconButton>
-          </Paper>
-          <Button variant="contained" sx={getAddButtonSx(isDark)} onClick={openAdd} startIcon={<Plus size={18} weight="bold" />}>
-            {t('newReceiptBtn') || 'Add Receipt'}
-          </Button>
-        </Box>
-      </Box>
-
-      {isSelectionMode && (
-        <Toolbar
-          component={Paper}
-          elevation={1}
-          variant="dense"
-          sx={{
-            boxShadow: 'none',
-            pl: { sm: 2 },
-            pr: { xs: 1, sm: 1 },
-            mt: 0,
-            minHeight: '48px !important',
-            mb: 4,
-            borderRadius: '24px',
-            bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF',
-          }}
-        >
-          <IconButton onClick={handleSelectAll} color="primary" sx={{ mr: 1 }}>
-            {selectedReceiptIds.length > 0 && selectedReceiptIds.length === paginatedReceipts.length ? <CheckSquare size={24} weight="fill" /> : <Square size={24} />}
-          </IconButton>
-          
-          <Typography sx={{ flex: '1 1 100%', fontWeight: 600, display: 'flex', alignItems: 'center', lineHeight: 1, mt: 0.3 }} color="primary" variant="subtitle1" component="div">
-            {selectedReceiptIds.length} {t('selected') || 'Selected'}
-          </Typography>
-
-          <Stack direction="row" spacing={1}>
-            <Tooltip title={t('saveDuplicate') || 'Copy / Duplicate'}>
-              <IconButton onClick={handleCopySelected} color="primary">
-                <Copy size={20} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title={t('delete') || 'Delete'}>
-              <IconButton onClick={handleDeleteSelected} color="error">
-                <Trash size={20} />
-              </IconButton>
-            </Tooltip>
-          </Stack>
-        </Toolbar>
-      )}
+    <>
+      <ElvanListView 
+        title={t('receipts') || 'Receipts'}
+        searchPlaceholder={t('search') || 'Search...'}
+        addButtonText={t('newReceiptBtn') || 'Add Receipt'}
+        onAdd={onAddReceipt ? () => onAddReceipt() : undefined}
+        items={receipts}
+        filterFn={filterFn}
+        renderCard={renderCard}
+        emptyIcon={<PhosphorReceipt size={48} weight="regular" style={{ opacity: 0.5 }} />}
+        emptyText={receipts.length === 0 ? (t('noReceiptsYet') || 'No receipts yet') : (t('noReceiptsMatch') || 'No receipts match')}
+        onDeleteSelected={handleBulkDelete}
+        onDuplicateSelected={handleBulkDuplicate}
+        deleteConfirmTitle={t('deleteProductsTitle') || 'Delete Receipts?'}
+        deleteConfirmMessage={() => t('deleteProductsMessage') || 'Are you sure you want to delete the selected receipt(s)? This action cannot be undone.'}
+        duplicateConfirmTitle={t('duplicateProductsTitle') || 'Duplicate Receipts?'}
+        duplicateConfirmMessage={() => t('duplicateProductsMessage') || 'Are you sure you want to create copies of the selected receipt(s)?'}
+      />
 
       {/* Receipt Preview Modal */}
       {previewReceipt && (
@@ -340,11 +277,11 @@ export default function Raseedhu({ profile: parentProfile, onAddReceipt, onEditR
 
                   {profile.enableBilingual !== false ? (
                     <div style={{ textAlign: 'center', marginTop: '1.5rem', marginBottom: '1.5rem' }}>
-                      <h2 className="receipt-title" style={{ margin: 0, padding: 0 }}>பண ரசீது</h2>
-                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#64748b', marginTop: '2px', letterSpacing: '0.05em' }}>PAYMENT RECEIPT</div>
+                      <h2 className="receipt-title" style={{ margin: 0, padding: 0 }}>{t('emptyKey')}</h2>
+                      <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#64748b', marginTop: '2px', letterSpacing: '0.05em' }}>{t('hc_paymentReceipt')}</div>
                     </div>
                   ) : (
-                    <h2 className="receipt-title" style={{ marginTop: '1.5rem', marginBottom: '1.5rem' }}>PAYMENT RECEIPT</h2>
+                    <h2 className="receipt-title" style={{ marginTop: '1.5rem', marginBottom: '1.5rem' }}>{t('hc_paymentReceipt')}</h2>
                   )}
                 </div>
                 <div className="receipt-row"><span className="receipt-label">{renderLabel('Receipt No:', 'ரசீது எண்:')}</span><span className="receipt-value">{previewReceipt.receiptNo}</span></div>
@@ -369,141 +306,6 @@ export default function Raseedhu({ profile: parentProfile, onAddReceipt, onEditR
           </DialogActions>
         </Dialog>
       )}
-
-
-
-      {filtered.length === 0 ? (
-        <ElvanCard boxSx={{ p: 6, textAlign: 'center' }}>
-          <Box color="text.secondary" mb={2}>
-            <PhosphorReceipt size={48} weight="regular" style={{ opacity: 0.5 }} />
-          </Box>
-          <Typography color="text.secondary" mb={2}>{receipts.length === 0 ? t('noReceiptsYet') : t('noReceiptsMatch')}</Typography>
-          {receipts.length === 0 && (
-            <Button variant="outlined" color="inherit" sx={{ borderRadius: '50px', textTransform: 'none' }} onClick={openAdd} startIcon={<Plus size={16} weight="regular" />}>
-              {t('createReceiptBtn') || 'Add Receipt'}
-            </Button>
-          )}
-        </ElvanCard>
-      ) : (
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
-          {paginatedReceipts.map((rcp, index) => {
-            const globalIndex = (safePage - 1) * ITEMS_PER_PAGE + index;
-            const isSelected = selectedReceiptIds.includes(rcp.id);
-            return (
-              <ElvanCard 
-                key={rcp.id} 
-                sx={{ 
-                  height: '100%', 
-                  cursor: 'pointer',
-                  ...(isSelectionMode && isSelected ? { bgcolor: isDark ? 'rgba(255,255,255,0.06) !important' : 'rgba(0,0,0,0.04) !important' } : {})
-                }} 
-                onClick={() => isSelectionMode ? toggleSelection(rcp.id) : (onEditReceipt && onEditReceipt(rcp))}
-              >
-                <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} sx={{ height: '100%' }}>
-                  <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
-                    {isSelectionMode ? (
-                      <IconButton 
-                        size="small" 
-                        onClick={(e) => { e.stopPropagation(); toggleSelection(rcp.id); }} 
-                        sx={{ color: isSelected ? 'primary.main' : 'text.disabled', p: 0, mt: 0.2 }}
-                      >
-                        {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} />}
-                      </IconButton>
-                    ) : (
-                      <Box sx={{ 
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                        width: 28, height: 28, mt: 0.15, 
-                        borderRadius: '50%',
-                        bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
-                        flexShrink: 0
-                      }}>
-                        <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
-                          {(globalIndex + 1).toString().padStart(2, '0')}
-                        </Typography>
-                      </Box>
-                    )}
-                    <Box>
-                      <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                        {rcp.clientName}
-                      </Typography>
-                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
-                        {profile?.enableBilingual !== false && getDisplayClientNameEn(rcp) && (
-                          <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{getDisplayClientNameEn(rcp)}</Typography>
-                        )}
-                        <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
-                          {rcp.receiptNo} <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> {rcp.date ? new Date(rcp.date).toLocaleDateString('en-IN') : '-'}
-                        </Typography>
-                        <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
-                          {t('modeCol') || 'Mode'}: {rcp.paymentMode}
-                          {rcp.againstInvoice && <><span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> Inv: {rcp.againstInvoice}</>}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
-                  <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'space-between' }}>
-                    <Box sx={{ display: 'flex', gap: 0.5, mt: -0.5, mr: -0.5 }}>
-                      <Tooltip title="Preview">
-                        <IconButton size="small" onClick={(e) => { e.stopPropagation(); setPreviewReceipt(rcp); }} color="primary">
-                          <PrintIcon size={20} weight="regular" />
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
-                    <Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: 800 }}>
-                      {formatCurrency(rcp.amount, profileCurrency)}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </ElvanCard>
-            );
-          })}
-        </Box>
-      )}
-
-      {totalPages > 1 && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-          <Pagination 
-            count={totalPages} 
-            page={safePage} 
-            onChange={(e, val) => {
-              setPage(val);
-              if (topRef.current) {
-                topRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }
-            }}
-            color="primary" 
-            size="large"
-            sx={{
-              '& .MuiPaginationItem-root': {
-                fontWeight: 600,
-              }
-            }}
-          />
-        </Box>
-      )}
-
-      {/* Confirmation Dialog */}
-      <Dialog open={confirmDialog.open} onClose={() => setConfirmDialog(prev => ({ ...prev, open: false }))} PaperProps={{ sx: { borderRadius: 3 } }}>
-        <DialogTitle sx={{ fontWeight: 700 }}>{confirmDialog.title}</DialogTitle>
-        <DialogContent>
-          <Typography color="text.secondary">{confirmDialog.message}</Typography>
-        </DialogContent>
-        <DialogActions sx={{ p: 2, pt: 0 }}>
-          <Button onClick={() => setConfirmDialog(prev => ({ ...prev, open: false }))} sx={{ borderRadius: 50, textTransform: 'none' }}>
-            {t('cancelModalBtn') || 'Cancel'}
-          </Button>
-          <Button 
-            onClick={() => {
-              if (confirmDialog.action) confirmDialog.action();
-              setConfirmDialog(prev => ({ ...prev, open: false }));
-            }} 
-            variant="contained" 
-            color={confirmDialog.title.includes('Delete') ? 'error' : 'primary'}
-            sx={{ borderRadius: 50, textTransform: 'none', px: 3 }}
-          >
-            {t('confirmModalBtn') || 'Confirm'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+    </>
   );
 }

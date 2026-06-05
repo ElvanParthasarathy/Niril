@@ -1,15 +1,14 @@
-// @ts-nocheck
-import { ArrowLeft, FloppyDisk } from '@phosphor-icons/react';
 import React, { useState, useEffect } from 'react';
 import { 
-  Box, Typography, Button, Paper, TextField, InputAdornment, 
-  Grid, Select, MenuItem, InputLabel, FormControl, Stack, Autocomplete, IconButton 
+  Box, Typography, Paper, TextField, InputAdornment, 
+  Grid, MenuItem, Stack, Autocomplete 
 } from '@mui/material';
 import { saveReceipt, getAllBills, getReceiptNumberSettings, getAllReceipts } from '../Avanam';
 import { formatCurrency, getCountryConfig } from '../Payanpadu';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
-import { FloatingBackButton } from './FloatingBackButton';
+import ElvanEditorLayout from './ElvanEditorLayout';
+import ElvanBilingualField from './ElvanBilingualField';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -131,159 +130,138 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
     const primaryVal = (dictionaries[primaryLang] || {})[mode] || mode;
     const secondaryVal = (dictionaries[secondaryLang] || {})[mode] || mode;
     
-    if (profile?.enableBilingual !== false && primaryVal !== secondaryVal) {
-      return `${primaryVal} (${secondaryVal})`;
-    }
+    
     return primaryVal;
   };
 
   return (
-    <Box sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', position: 'relative' }}>
-      <Box sx={{ px: { xs: 2, md: 0 }, mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h5" sx={{ ml: 2, fontWeight: 800, letterSpacing: '-0.5px', color: 'text.primary' }}>
-          {editingReceipt ? (t('editReceiptTitle') || 'Edit Receipt') : t('newPaymentReceiptTitle')}
-        </Typography>
-        <FloatingBackButton onBack={onBack} label={t('back') as string} className="back-pill" />
-      </Box>
+    <ElvanEditorLayout
+      title={(editingReceipt ? (t('editReceiptTitle') || 'Edit Receipt') : t('newPaymentReceiptTitle')) as string}
+      onBack={onBack}
+      onSave={handleSave}
+      saveButtonText={(t('saveReceiptBtn') || 'Save Receipt') as string}
+    >
+      {unpaidBills.length > 0 && !form.againstInvoice && (
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="subtitle2" color="primary" sx={{ mb: 2, fontWeight: 'bold' }}>
+            {t('quickSelectUnpaid') || 'Quick Select Unpaid Invoices'}
+          </Typography>
+          <Stack direction="row" spacing={2} sx={{ overflowX: 'auto', pb: 1 }}>
+            {unpaidBills.slice(0, 10).map(bill => (
+              <Paper 
+                key={bill.id} 
+                variant="outlined" 
+                sx={{ p: 2, minWidth: 200, cursor: 'pointer', '&:hover': { borderColor: 'primary.main', bgcolor: 'primary.50' }, borderRadius: 2 }}
+                onClick={() => selectInvoice(bill)}
+              >
+                <Typography variant="body2" noWrap sx={{ fontWeight: "bold" }}>{bill.clientName}</Typography>
+                <Typography variant="caption" color="text.secondary" gutterBottom sx={{ display: "block" }}>{bill.invoiceNumber}</Typography>
+                <Typography variant="body1" color="primary" sx={{ fontWeight: "bold" }}>
+                  {formatCurrency(bill.totalAmount - (bill.paidAmount || 0), profileCurrency)}
+                </Typography>
+              </Paper>
+            ))}
+          </Stack>
+        </Box>
+      )}
 
-      <Box sx={{ px: { xs: 2, md: 0 } }}>
-        {unpaidBills.length > 0 && !form.againstInvoice && (
-          <Box sx={{ mb: 4 }}>
-            <Typography variant="subtitle2" color="primary" sx={{ mb: 2, fontWeight: 'bold' }}>
-              {t('quickSelectUnpaid') || 'Quick Select Unpaid Invoices'}
-            </Typography>
-            <Stack direction="row" spacing={2} sx={{ overflowX: 'auto', pb: 1 }}>
-              {unpaidBills.slice(0, 10).map(bill => (
-                <Paper 
-                  key={bill.id} 
-                  variant="outlined" 
-                  sx={{ p: 2, minWidth: 200, cursor: 'pointer', '&:hover': { borderColor: 'primary.main', bgcolor: 'primary.50' }, borderRadius: 2 }}
-                  onClick={() => selectInvoice(bill)}
-                >
-                  <Typography variant="body2" noWrap sx={{ fontWeight: "bold" }}>{bill.clientName}</Typography>
-                  <Typography variant="caption" color="text.secondary" gutterBottom sx={{ display: "block" }}>{bill.invoiceNumber}</Typography>
-                  <Typography variant="body1" color="primary" sx={{ fontWeight: "bold" }}>
-                    {formatCurrency(bill.totalAmount - (bill.paidAmount || 0), profileCurrency)}
-                  </Typography>
-                </Paper>
-              ))}
-            </Stack>
-          </Box>
-        )}
-
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField 
-              fullWidth size="medium" label={t('receiptNoLabel')} 
-              value={form.receiptNo} onChange={e => updateField('receiptNo', e.target.value)} 
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label={t('dateLabel')}
-                value={form.date ? dayjs(form.date) : null}
-                onChange={(newValue) => updateField('date', newValue ? newValue.format('YYYY-MM-DD') : '')}
-                slotProps={{ textField: { fullWidth: true, size: 'medium' } }}
-                format="DD/MM/YYYY"
-              />
-            </LocalizationProvider>
-          </Grid>
-          <Grid size={{ xs: 12, sm: profile?.enableBilingual !== false ? 6 : 12 }}>
-            <TextField 
-              fullWidth size="medium" label={`${t('receivedFromLabel')} ${profile?.enableBilingual !== false ? `(${primaryLang})` : ''}`} 
-              value={form[`clientName_${primaryLang}`] || ''} onChange={e => updateField(`clientName_${primaryLang}`, e.target.value)} 
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          {profile?.enableBilingual !== false && (
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField 
-                fullWidth size="medium" label={`${t('receivedFromLabel')} (${secondaryLang})`} 
-                value={form[`clientName_${secondaryLang}`] || ''} onChange={e => updateField(`clientName_${secondaryLang}`, e.target.value)} 
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid>
-          )}
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField 
-              fullWidth size="medium" label={t('amountLabelStar')} type="number"
-              value={form.amount} onChange={e => updateField('amount', e.target.value)} slotProps={{ input: { startAdornment: <InputAdornment position="start" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 24, mt: '0 !important' }}>{currencySymbol}</InputAdornment> } }}
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField 
-              select
-              fullWidth size="medium" 
-              label={t('paymentModeLabel')} 
-              value={form.paymentMode} 
-              onChange={e => updateField('paymentMode', e.target.value)} 
-              InputLabelProps={{ shrink: true }}
-              slotProps={{ select: { displayEmpty: true } }}
-            >
-              <MenuItem value=""><em>{t('paymentModeLabel')}...</em></MenuItem>
-              {PAYMENT_MODES.map(m => <MenuItem key={m} value={m}>{renderPaymentModeOption(m)}</MenuItem>)}
-            </TextField>
-          </Grid>
-          {form.paymentMode !== 'Cash' && (
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField 
-                fullWidth size="medium" label={t('referenceNoLabel')} 
-                value={form.referenceNo} onChange={e => updateField('referenceNo', e.target.value)} 
-                InputLabelProps={{ shrink: true }}
-              />
-            </Grid>
-          )}
-          <Grid size={{ xs: 12, sm: form.paymentMode === 'Cash' ? 12 : 6 }}>
-            <Autocomplete
-              fullWidth
-              freeSolo
-              forcePopupIcon={true}
-              sx={{ width: '100%', minWidth: 200 }}
-              options={bills}
-              getOptionLabel={(option) => typeof option === 'string' ? option : `${option.invoiceNumber} - ${option.clientName}`}
-              value={bills.find(b => b.invoiceNumber === form.againstInvoice) || form.againstInvoice}
-              onChange={(_, newValue) => {
-                if (typeof newValue === 'object' && newValue !== null) {
-                  selectInvoice(newValue);
-                } else {
-                  updateField('againstInvoice', newValue || '');
-                }
-              }}
-              onInputChange={(_, newInputValue) => {
-                updateField('againstInvoice', newInputValue);
-              }}
-              renderInput={(params) => (
-                <TextField 
-                  {...params}
-                  fullWidth size="medium" 
-                  label={t('againstInvoiceLabel')} 
-                  placeholder={t('againstInvoicePlaceholder')}
-                  InputLabelProps={params.InputLabelProps}
-                />
-              )}
-            />
-          </Grid>
-          <Grid size={{ xs: 12 }}>
-            <TextField 
-              fullWidth size="medium" label={t('noteOptionalLabel')} multiline rows={2}
-              value={form.note} onChange={e => updateField('note', e.target.value)} 
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <TextField 
+            fullWidth size="medium" label={t('receiptNoLabel') as string} 
+            value={form.receiptNo} onChange={e => updateField('receiptNo', e.target.value)} 
+            InputLabelProps={{ shrink: true }}
+          />
         </Grid>
-      </Box>
-
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mb: 6, mt: 5, px: { xs: 2, md: 0 } }}>
-        <Button variant="contained" disableElevation onClick={onBack} sx={{ height: 40, minHeight: 40, maxHeight: 40, px: 3, borderRadius: '50px', bgcolor: 'background.paper', color: 'text.primary', '&:hover': { bgcolor: 'action.hover' } }}>
-          {t('cancelModalBtn')}
-        </Button>
-        <Button variant="contained" color="primary" disableElevation onClick={handleSave} startIcon={<FloppyDisk size={20} weight="bold" />} sx={{ height: 40, minHeight: 40, maxHeight: 40, px: 3, borderRadius: '50px' }}>
-          {t('saveReceiptBtn')}
-        </Button>
-      </Box>
-    </Box>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label={t('dateLabel') as string}
+              value={form.date ? dayjs(form.date) : null}
+              onChange={(newValue) => updateField('date', newValue ? newValue.format('YYYY-MM-DD') : '')}
+              slotProps={{ textField: { fullWidth: true, size: 'medium' } }}
+              format="DD/MM/YYYY"
+            />
+          </LocalizationProvider>
+        </Grid>
+        <ElvanBilingualField
+          label={t('receivedFromLabel') as string}
+          primaryLang={primaryLang}
+          secondaryLang={secondaryLang}
+          isBilingual={profile?.enableBilingual !== false}
+          primaryValue={form[`clientName_${primaryLang}`] || ''}
+          onPrimaryChange={e => updateField(`clientName_${primaryLang}`, e.target.value)}
+          secondaryValue={form[`clientName_${secondaryLang}`] || ''}
+          onSecondaryChange={e => updateField(`clientName_${secondaryLang}`, e.target.value)}
+        />
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <TextField 
+            fullWidth size="medium" label={t('amountLabelStar') as string} type="number"
+            value={form.amount} onChange={e => updateField('amount', e.target.value)} slotProps={{ input: { startAdornment: <InputAdornment position="start" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 24, mt: '0 !important' }}>{currencySymbol}</InputAdornment> } }}
+            InputLabelProps={{ shrink: true }}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <TextField 
+            select
+            fullWidth size="medium" 
+            label={t('paymentModeLabel') as string} 
+            value={form.paymentMode} 
+            onChange={e => updateField('paymentMode', e.target.value)} 
+            InputLabelProps={{ shrink: true }}
+            slotProps={{ select: { displayEmpty: true } }}
+          >
+            <MenuItem value=""><em>{t('paymentModeLabel')}...</em></MenuItem>
+            {PAYMENT_MODES.map(m => <MenuItem key={m} value={m}>{renderPaymentModeOption(m)}</MenuItem>)}
+          </TextField>
+        </Grid>
+        {form.paymentMode !== 'Cash' && (
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField 
+              fullWidth size="medium" label={t('referenceNoLabel') as string} 
+              value={form.referenceNo} onChange={e => updateField('referenceNo', e.target.value)} 
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
+        )}
+        <Grid size={{ xs: 12, sm: form.paymentMode === 'Cash' ? 12 : 6 }}>
+          <Autocomplete
+            fullWidth
+            freeSolo
+            forcePopupIcon={true}
+            sx={{ width: '100%', minWidth: 200 }}
+            options={bills}
+            getOptionLabel={(option) => typeof option === 'string' ? option : `${option.invoiceNumber} - ${option.clientName}`}
+            value={bills.find(b => b.invoiceNumber === form.againstInvoice) || form.againstInvoice}
+            onChange={(_, newValue) => {
+              if (typeof newValue === 'object' && newValue !== null) {
+                selectInvoice(newValue);
+              } else {
+                updateField('againstInvoice', newValue || '');
+              }
+            }}
+            onInputChange={(_, newInputValue) => {
+              updateField('againstInvoice', newInputValue);
+            }}
+            renderInput={(params) => (
+              <TextField 
+                {...params}
+                fullWidth size="medium" 
+                label={t('againstInvoiceLabel') as string} 
+                placeholder={t('againstInvoicePlaceholder') as string}
+                InputLabelProps={params.InputLabelProps}
+              />
+            )}
+          />
+        </Grid>
+        <Grid size={{ xs: 12 }}>
+          <TextField 
+            fullWidth size="medium" label={t('noteOptionalLabel') as string} multiline rows={2}
+            value={form.note} onChange={e => updateField('note', e.target.value)} 
+            InputLabelProps={{ shrink: true }}
+          />
+        </Grid>
+      </Grid>
+    </ElvanEditorLayout>
   );
 }

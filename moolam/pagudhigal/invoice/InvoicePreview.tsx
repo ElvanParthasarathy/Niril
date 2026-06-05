@@ -1,10 +1,12 @@
 // @ts-nocheck
+import { useLanguage } from '../../mozhi/LanguageContext';
 import React, { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
 import DOMPurify from 'dompurify';
 import { numberToWords, formatCurrency, INVOICE_TYPES, getCountryConfig, CURRENCY_NAMES, formatExchangeRateLine, getAccountById, getBilingualStateName, getBilingualCountryName } from '../../Payanpadu';
 
 const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, totals, invoiceType = 'tax-invoice', customTerms, options = {} }, ref) => {
+  const { t } = useLanguage();
   const businessState = profile?.maanilam?.trim().toLowerCase();
   const clientState = client?.maanilam?.trim().toLowerCase();
   const isInterstate = businessState && clientState && businessState !== clientState;
@@ -137,7 +139,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
           )}
           <h1 style={{ fontSize: '1.4rem', fontWeight: 800, margin: 0, letterSpacing: '0.08em' }}>{customTitle}</h1>
           {invoiceType === 'proforma' && (
-            <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.7)', fontStyle: 'italic', margin: '0.25rem 0 0' }}>For estimation purposes only</p>
+            <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.7)', fontStyle: 'italic', margin: '0.25rem 0 0' }}>{t('hc_forEstimationPurposesOnly')}</p>
           )}
         </div>
         <div style={{ textAlign: 'right' }}>
@@ -161,7 +163,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
           {showInvoiceDate && <span><strong style={{ color: '#64748b' }}>Date</strong> {details?.invoiceDate ? new Date(details.invoiceDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : ''}</span>}
         </div>
         {invoiceType === 'credit-note' && details?.originalInvoiceRef && (
-          <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Against: <strong style={{ color: '#334155' }}>{details.originalInvoiceRef}</strong></span>
+          <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{t('hc_against')}<strong style={{ color: '#334155' }}>{details.originalInvoiceRef}</strong></span>
         )}
       </div>
     </>
@@ -196,7 +198,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
         </div>
       </div>
       {invoiceType === 'proforma' && (
-        <p style={{ fontSize: '0.7rem', color: '#94a3b8', fontStyle: 'italic', margin: '0 0 0.5rem' }}>This is not a tax invoice. For estimation purposes only.</p>
+        <p style={{ fontSize: '0.7rem', color: '#94a3b8', fontStyle: 'italic', margin: '0 0 0.5rem' }}>{t('hc_thisIsNotATax')}</p>
       )}
       <div style={{ borderBottom: `1.5px solid ${accent}`, marginBottom: '0' }} />
     </div>
@@ -212,10 +214,10 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
           )}
           <h1 className="inv-title" style={{ color: accent }}>{customTitle}</h1>
           {invoiceType === 'proforma' && (
-            <p style={{ fontSize: '0.7rem', color: '#94a3b8', fontStyle: 'italic', marginBottom: '0.75rem' }}>This is not a tax invoice. For estimation purposes only.</p>
+            <p style={{ fontSize: '0.7rem', color: '#94a3b8', fontStyle: 'italic', marginBottom: '0.75rem' }}>{t('hc_thisIsNotATax')}</p>
           )}
           {invoiceType === 'credit-note' && details?.originalInvoiceRef && (
-            <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.75rem' }}>Against Invoice: <strong style={{ color: '#334155' }}>{details.originalInvoiceRef}</strong></p>
+            <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.75rem' }}>{t('hc_againstInvoice')}<strong style={{ color: '#334155' }}>{details.originalInvoiceRef}</strong></p>
           )}
           <div className="inv-meta">
             {showInvoiceNumber && <div className="inv-meta-row"><span className="inv-meta-label">No.</span><span className="inv-meta-value">{details?.invoiceNumber}</span></div>}
@@ -292,7 +294,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
                   {showHSN && <th className="inv-th inv-th-center" rowSpan="2">HSN/SAC</th>}
                   {showItemQty && <th className="inv-th inv-th-center" rowSpan="2">Qty</th>}
                   {showRateColumn && <th className="inv-th inv-th-right" rowSpan="2">Rate</th>}
-                  {hasAnyDiscount && <th className="inv-th inv-th-right" rowSpan="2">Disc.</th>}
+                  {hasAnyDiscount && <th className="inv-th inv-th-right" rowSpan="2">{t('hc_disc')}</th>}
                   <th className="inv-th inv-th-center" colSpan="2" style={{ borderBottom: '1px solid #cbd5e1' }}>IGST</th>
                   <th className="inv-th inv-th-right" rowSpan="2">Amount</th>
                 </tr>
@@ -309,7 +311,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
                   {showHSN && <th className="inv-th inv-th-center" rowSpan="2">HSN/SAC</th>}
                   {showItemQty && <th className="inv-th inv-th-center" rowSpan="2">Qty</th>}
                   {showRateColumn && <th className="inv-th inv-th-right" rowSpan="2">Rate</th>}
-                  {hasAnyDiscount && <th className="inv-th inv-th-right" rowSpan="2">Disc.</th>}
+                  {hasAnyDiscount && <th className="inv-th inv-th-right" rowSpan="2">{t('hc_disc')}</th>}
                   <th className="inv-th inv-th-center" colSpan="2" style={{ borderBottom: '1px solid #cbd5e1' }}>CGST</th>
                   <th className="inv-th inv-th-center" colSpan="2" style={{ borderBottom: '1px solid #cbd5e1' }}>SGST</th>
                   <th className="inv-th inv-th-right" rowSpan="2">Amount</th>
@@ -330,7 +332,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
                   {showHSN && <th className="inv-th inv-th-center" rowSpan="2">HSN/SAC</th>}
                   {showItemQty && <th className="inv-th inv-th-center" rowSpan="2">Qty</th>}
                   {showRateColumn && <th className="inv-th inv-th-right" rowSpan="2">Rate</th>}
-                  {hasAnyDiscount && <th className="inv-th inv-th-right" rowSpan="2">Disc.</th>}
+                  {hasAnyDiscount && <th className="inv-th inv-th-right" rowSpan="2">{t('hc_disc')}</th>}
                   <th className="inv-th inv-th-center" colSpan="2" style={{ borderBottom: '1px solid #cbd5e1' }}>{taxLabel}</th>
                   <th className="inv-th inv-th-right" rowSpan="2">Amount</th>
                 </tr>
@@ -347,7 +349,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
               {showHSN && <th className="inv-th inv-th-center">HSN/SAC</th>}
               {showItemQty && <th className="inv-th inv-th-center">Qty</th>}
               {showRateColumn && <th className="inv-th inv-th-right">Rate</th>}
-              {hasAnyDiscount && <th className="inv-th inv-th-right">Disc.</th>}
+              {hasAnyDiscount && <th className="inv-th inv-th-right">{t('hc_disc')}</th>}
               <th className="inv-th inv-th-right">Amount</th>
             </tr>
           )}
@@ -431,7 +433,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
         <div className="inv-totals">
           {showSubtotal && (
             <div className="inv-total-row">
-              <span>Subtotal</span>
+              <span>{t('hc_subtotal')}</span>
               <span>{fmt(totals.subtotal)}</span>
             </div>
           )}
@@ -467,7 +469,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
           )}
           {totals.cess > 0 && (
             <div className="inv-total-row">
-              <span>GST Cess</span>
+              <span>{t('hc_gstCess')}</span>
               <span>{fmt(totals.cess)}</span>
             </div>
           )}
@@ -479,7 +481,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
           )}
           {totals.roundOff !== undefined && totals.roundOff !== 0 && (
             <div className="inv-total-row" style={{ color: '#64748b', fontStyle: 'italic' }}>
-              <span>Round-off</span>
+              <span>{t('hc_roundoff')}</span>
               <span>{totals.roundOff > 0 ? '+' : ''}{fmt(totals.roundOff)}</span>
             </div>
           )}
@@ -501,7 +503,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
                 <span>− {fmt(totals.tdsAmount)}</span>
               </div>
               <div className="inv-total-row" style={{ fontWeight: 600, color: '#0f766e', fontSize: '0.78rem' }}>
-                <span>Net Receivable</span>
+                <span>{t('hc_netReceivable')}</span>
                 <span>{fmt(totals.netReceivable)}</span>
               </div>
             </>
@@ -514,7 +516,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
           RCM. The buyer is responsible for paying GST under Section 9(3)/9(4). */}
       {options.reverseCharge && isIndia && showGST && (
         <div style={{ margin: '0 2rem 0.5rem', padding: '0.5rem 0.75rem', background: 'var(--warn-bg)', border: '1px solid var(--warn-border)', borderRadius: 4, fontSize: '0.78rem', color: 'var(--warn-text)' }}>
-          <strong>Reverse Charge applicable.</strong> GST is payable by the recipient under Section 9(3)/9(4) of the CGST Act.
+          <strong>{t('hc_reverseChargeApplicable')}</strong> GST is payable by the recipient under Section 9(3)/9(4) of the CGST Act.
         </div>
       )}
 
@@ -552,7 +554,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
           )}
           {options.exchangeRate && currencySymbol !== 'INR' && (
             <div className="inv-footer-block">
-              <h4 className="inv-section-label">EXCHANGE RATE</h4>
+              <h4 className="inv-section-label">{t('hc_exchangeRate')}</h4>
               <p className="inv-terms">{formatExchangeRateLine(currencySymbol, options.exchangeRate, profile?.country === 'India' || !profile?.country ? 'INR' : sellerCC.currency)}</p>
             </div>
           )}

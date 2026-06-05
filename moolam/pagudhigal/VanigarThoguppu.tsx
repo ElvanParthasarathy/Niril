@@ -1,12 +1,11 @@
-// @ts-nocheck
-import { FloppyDisk } from '@phosphor-icons/react';
 import { useState, useEffect } from 'react';
 import { getCountryConfig, getStatesForCountry, getBilingualStateName, getBilingualCountryName, validateTaxId, detectCountryFromBrowser, getCountriesForRegion } from '../Payanpadu';
 import { useLanguage } from '../mozhi/LanguageContext';
-import { TextField, Button, Box, Autocomplete, Typography } from '@mui/material';
+import { TextField, Box, Autocomplete } from '@mui/material';
 import { saveClient } from '../Avanam';
 import { thagaval } from './Thagaval';
-import { FloatingBackButton } from './FloatingBackButton';
+import ElvanEditorLayout from './ElvanEditorLayout';
+import ElvanBilingualField from './ElvanBilingualField';
 
 export default function VanigarThoguppu({ onBack, onSaved, client, profileSettings, defaultCountry }) {
   const { t } = useLanguage();
@@ -89,142 +88,143 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
   };
 
   return (
-    <Box sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', position: 'relative' }}>
-      
-      <Box sx={{ px: { xs: 2, md: 0 }, mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h5" sx={{ ml: 2, fontWeight: 800, letterSpacing: '-0.5px', color: 'text.primary' }}>
-          {isEditing ? t('editClientTitle') : t('addNewClientTitle')}
-        </Typography>
-        <FloatingBackButton onBack={onBack} label={t('back') as string} className="back-pill" />
+    <ElvanEditorLayout
+      title={(isEditing ? t('editClientTitle') : t('addNewClientTitle')) as string}
+      onBack={onBack}
+      onSave={handleSave}
+      saveButtonText={(isEditing ? t('updateClientModalBtn') : t('saveClientModalBtn')) as string}
+    >
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3 }}>
+        <ElvanBilingualField
+          label={t('clientBusinessName') as string}
+          primaryLang={primaryLang}
+          secondaryLang={secondaryLang}
+          isBilingual={isBilingual}
+          primaryValue={getField('name', primaryLang)}
+          onPrimaryChange={e => updateField('name', primaryLang, e.target.value)}
+          secondaryValue={getField('name', secondaryLang)}
+          onSecondaryChange={e => updateField('name', secondaryLang, e.target.value)}
+          placeholder={t('clientNamePlaceholder') as string}
+        />
       </Box>
 
-      <Box sx={{ px: { xs: 2, md: 0 } }}>
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3 }}>
-          <TextField fullWidth size="medium" label={`${t('clientBusinessName')}${primaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
-            value={getField('name', primaryLang)} onChange={e => updateField('name', primaryLang, e.target.value)} placeholder={t('clientNamePlaceholder')} />
-          
-          {isBilingual && (
-            <TextField fullWidth size="medium" label={`${t('clientBusinessName')}${secondaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
-              value={getField('name', secondaryLang)} onChange={e => updateField('name', secondaryLang, e.target.value)} placeholder={t('clientNamePlaceholder')} />
-          )}
-        </Box>
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3, mt: 8 }}>
+        <ElvanBilingualField
+          label={t('billingAddress') as string}
+          primaryLang={primaryLang}
+          secondaryLang={secondaryLang}
+          isBilingual={isBilingual}
+          primaryValue={getField('mugavari', primaryLang)}
+          onPrimaryChange={e => updateField('mugavari', primaryLang, e.target.value)}
+          secondaryValue={getField('mugavari', secondaryLang)}
+          onSecondaryChange={e => updateField('mugavari', secondaryLang, e.target.value)}
+          placeholder={t('streetAddressPlaceholder') as string}
+        />
 
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3, mt: 8 }}>
-          <TextField fullWidth size="medium" label={`${t('billingAddress')}${primaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
-            value={getField('mugavari', primaryLang)} onChange={e => updateField('mugavari', primaryLang, e.target.value)} placeholder={t('streetAddressPlaceholder')} />
+        <ElvanBilingualField
+          label={t('city') as string}
+          primaryLang={primaryLang}
+          secondaryLang={secondaryLang}
+          isBilingual={isBilingual}
+          primaryValue={getField('oor', primaryLang)}
+          onPrimaryChange={e => updateField('oor', primaryLang, e.target.value)}
+          secondaryValue={getField('oor', secondaryLang)}
+          onSecondaryChange={e => updateField('oor', secondaryLang, e.target.value)}
+          placeholder={t('cityPlaceholder') as string}
+        />
 
-          {isBilingual && (
-            <TextField fullWidth size="medium" label={`${t('billingAddress')}${secondaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
-              value={getField('mugavari', secondaryLang)} onChange={e => updateField('mugavari', secondaryLang, e.target.value)} placeholder={t('streetAddressPlaceholder')} />
-          )}
+        <ElvanBilingualField
+          label={t('district') as string}
+          primaryLang={primaryLang}
+          secondaryLang={secondaryLang}
+          isBilingual={isBilingual}
+          primaryValue={getField('maavattam', primaryLang)}
+          onPrimaryChange={e => updateField('maavattam', primaryLang, e.target.value)}
+          secondaryValue={getField('maavattam', secondaryLang)}
+          onSecondaryChange={e => updateField('maavattam', secondaryLang, e.target.value)}
+          placeholder={t('districtPlaceholder') as string}
+        />
 
-          <TextField fullWidth size="medium" label={`${t('city')}${primaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
-            value={getField('oor', primaryLang)} onChange={e => updateField('oor', primaryLang, e.target.value)} placeholder={t('cityPlaceholder')} />
-
-          {isBilingual && (
-            <TextField fullWidth size="medium" label={`${t('city')}${secondaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
-              value={getField('oor', secondaryLang)} onChange={e => updateField('oor', secondaryLang, e.target.value)} placeholder={t('cityPlaceholder')} />
-          )}
-
-          <TextField fullWidth size="medium" label={`${t('district')}${primaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
-            value={getField('maavattam', primaryLang)} onChange={e => updateField('maavattam', primaryLang, e.target.value)} placeholder={t('districtPlaceholder')} />
-
-          {isBilingual && (
-            <TextField fullWidth size="medium" label={`${t('district')}${secondaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
-              value={getField('maavattam', secondaryLang)} onChange={e => updateField('maavattam', secondaryLang, e.target.value)} placeholder={t('districtPlaceholder')} />
-          )}
-
-          {stateOptions.length > 0 ? (
-            <Autocomplete
-              options={stateOptions}
-              getOptionLabel={(s) => getBilingualStateName(s, { ...profileSettings, returnOnlyPrimary: true }) || s}
-              value={getField('maanilam', primaryLang) || null}
-              onChange={(e, newValue) => updateField('maanilam', primaryLang, newValue || '')}
-              renderInput={(params) => (
-                <TextField {...params} fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`} InputLabelProps={{ shrink: true }} placeholder={`${t('selectLabel')} ${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}`} />
-              )}
-            />
-          ) : (
-            <TextField fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
-              value={getField('maanilam', primaryLang)} onChange={e => updateField('maanilam', primaryLang, e.target.value)} placeholder={cc.stateLabel} />
-          )}
-
-          {isBilingual && (
-            <TextField fullWidth size="medium" disabled label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${secondaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
-              value={getField('maanilam', primaryLang) ? getBilingualStateName(getField('maanilam', primaryLang), { ...profileSettings, returnOnlySecondary: true }) : ''} sx={{ '& .MuiInputBase-root': { bgcolor: 'action.hover' } }} />
-          )}
-
-          <Box>
-            <Autocomplete
-              options={[...visibleCountries.map(c => c.name), 'Other']}
-              getOptionLabel={(c) => c === 'Other' ? 'Other (Custom)' : (getBilingualCountryName(c, { ...profileSettings, returnOnlyPrimary: true }) || c)}
-              value={isCustomCountry ? 'Other' : (formCountry || null)}
-              onChange={(e, newValue) => {
-                const val = newValue || '';
-                if (val === 'Other') {
-                  updateField('country', null, 'Other');
-                  updateField('country', primaryLang, '');
-                  updateField('country', secondaryLang, '');
-                  updateField('maanilam', primaryLang, '');
-                  updateField('maanilam', secondaryLang, '');
-                } else {
-                  updateField('country', null, val);
-                  updateField('country', primaryLang, val);
-                  updateField('country', secondaryLang, '');
-                  updateField('maanilam', primaryLang, '');
-                  updateField('maanilam', secondaryLang, '');
-                }
-              }}
-              renderInput={(params) => (
-                <TextField {...params} fullWidth size="medium" sx={{ mb: isCustomCountry ? 2 : 0 }} label={`${t('country')}${primaryLangSuffix}`} InputLabelProps={{ shrink: true }} />
-              )}
-            />
-            {isCustomCountry && (
-              <TextField fullWidth size="medium" 
-                value={getField('country', primaryLang)} 
-                onChange={e => updateField('country', primaryLang, e.target.value)} 
-                placeholder="Enter country name" />
+        {stateOptions.length > 0 ? (
+          <Autocomplete
+            options={stateOptions}
+            getOptionLabel={(s) => getBilingualStateName(s, { ...profileSettings, returnOnlyPrimary: true }) || s}
+            value={getField('maanilam', primaryLang) || null}
+            onChange={(e, newValue) => updateField('maanilam', primaryLang, newValue || '')}
+            renderInput={(params) => (
+              <TextField {...params} fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`} InputLabelProps={{ shrink: true }} placeholder={`${t('selectLabel')} ${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}`} />
             )}
-          </Box>
+          />
+        ) : (
+          <TextField fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
+            value={getField('maanilam', primaryLang)} onChange={e => updateField('maanilam', primaryLang, e.target.value)} placeholder={cc.stateLabel} />
+        )}
 
-          {isBilingual && (
-            <Box>
-              {isCustomCountry && <Box sx={{ height: 40, mb: 2 }} />}
-              <TextField fullWidth size="medium" disabled={!isCustomCountry} label={`${t('country')}${secondaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
-                value={isCustomCountry ? getField('country', secondaryLang) : (formCountry ? getBilingualCountryName(formCountry, { ...profileSettings, returnOnlySecondary: true }) : '')}
-                onChange={e => isCustomCountry ? updateField('country', secondaryLang, e.target.value) : null}
-                sx={!isCustomCountry ? { '& .MuiInputBase-root': { bgcolor: 'action.hover' } } : {}}
-                placeholder={t('country')} />
-            </Box>
+        {isBilingual && (
+          <TextField fullWidth size="medium" disabled label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${secondaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
+            value={getField('maanilam', primaryLang) ? getBilingualStateName(getField('maanilam', primaryLang), { ...profileSettings, returnOnlySecondary: true }) : ''} sx={{ '& .MuiInputBase-root': { bgcolor: 'action.hover' } }} />
+        )}
+
+        <Box>
+          <Autocomplete
+            options={[...visibleCountries.map(c => c.name), 'Other']}
+            getOptionLabel={(c) => c === 'Other' ? 'Other (Custom)' : (getBilingualCountryName(c, { ...profileSettings, returnOnlyPrimary: true }) || c)}
+            value={isCustomCountry ? 'Other' : (formCountry || null)}
+            onChange={(e, newValue) => {
+              const val = newValue || '';
+              if (val === 'Other') {
+                updateField('country', null, 'Other');
+                updateField('country', primaryLang, '');
+                updateField('country', secondaryLang, '');
+                updateField('maanilam', primaryLang, '');
+                updateField('maanilam', secondaryLang, '');
+              } else {
+                updateField('country', null, val);
+                updateField('country', primaryLang, val);
+                updateField('country', secondaryLang, '');
+                updateField('maanilam', primaryLang, '');
+                updateField('maanilam', secondaryLang, '');
+              }
+            }}
+            renderInput={(params) => (
+              <TextField {...params} fullWidth size="medium" sx={{ mb: isCustomCountry ? 2 : 0 }} label={`${t('country')}${primaryLangSuffix}`} InputLabelProps={{ shrink: true }} />
+            )}
+          />
+          {isCustomCountry && (
+            <TextField fullWidth size="medium" 
+              value={getField('country', primaryLang)} 
+              onChange={e => updateField('country', primaryLang, e.target.value)} 
+              placeholder={t('hc_enterCountryName') as string} />
           )}
-
-          <TextField fullWidth size="medium" label={t(cc.postalLabel as any, { defaultValue: cc.postalLabel })} slotProps={{ inputLabel: { shrink: true } }}
-            value={form.pin || ''} onChange={e => updateField('pin', null, e.target.value)} placeholder={cc.postalLabel} />
         </Box>
 
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3, mt: 8 }}>
-          <TextField fullWidth size="medium" label={t(cc.taxIdLabel as any) || cc.taxIdLabel}
-            error={!!taxIdWarning} helperText={taxIdWarning || ' '}
-            value={form.gstin || ''} onChange={e => { updateField('gstin', null, e.target.value.toUpperCase()); if (taxIdWarning) setTaxIdWarning(''); }}
-            onBlur={handleTaxIdBlur} placeholder={cc.taxIdPlaceholder} slotProps={{ inputLabel: { shrink: true }, htmlInput: { maxLength: 20 } }} />
+        {isBilingual && (
+          <Box>
+            {isCustomCountry && <Box sx={{ height: 40, mb: 2 }} />}
+            <TextField fullWidth size="medium" disabled={!isCustomCountry} label={`${t('country')}${secondaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
+              value={isCustomCountry ? getField('country', secondaryLang) : (formCountry ? getBilingualCountryName(formCountry, { ...profileSettings, returnOnlySecondary: true }) : '')}
+              onChange={e => isCustomCountry ? updateField('country', secondaryLang, e.target.value) : null}
+              sx={!isCustomCountry ? { '& .MuiInputBase-root': { bgcolor: 'action.hover' } } : {}}
+              placeholder={t('country') as string} />
+          </Box>
+        )}
 
-          <TextField fullWidth size="medium" label={t('emailLabel')} slotProps={{ inputLabel: { shrink: true } }} type="email"
-            value={form.email || ''} onChange={e => updateField('email', null, e.target.value)} placeholder={t('emailPlaceholder')} />
-          
-          <TextField fullWidth size="medium" label={t('phoneLabel')} slotProps={{ inputLabel: { shrink: true } }} type="tel"
-            value={form.tholaipesi || ''} onChange={e => updateField('tholaipesi', null, e.target.value)} placeholder={t('phonePlaceholder')} />
-        </Box>
+        <TextField fullWidth size="medium" label={t(cc.postalLabel as any, { defaultValue: cc.postalLabel }) as string} slotProps={{ inputLabel: { shrink: true } }}
+          value={form.pin || ''} onChange={e => updateField('pin', null, e.target.value)} placeholder={cc.postalLabel} />
+      </Box>
+
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3, mt: 8 }}>
+        <TextField fullWidth size="medium" label={t(cc.taxIdLabel as any) || cc.taxIdLabel}
+          error={!!taxIdWarning} helperText={taxIdWarning || ' '}
+          value={form.gstin || ''} onChange={e => { updateField('gstin', null, e.target.value.toUpperCase()); if (taxIdWarning) setTaxIdWarning(''); }}
+          onBlur={handleTaxIdBlur} placeholder={cc.taxIdPlaceholder} slotProps={{ inputLabel: { shrink: true }, htmlInput: { maxLength: 20 } }} />
+
+        <TextField fullWidth size="medium" label={t('emailLabel') as string} slotProps={{ inputLabel: { shrink: true } }} type="email"
+          value={form.email || ''} onChange={e => updateField('email', null, e.target.value)} placeholder={t('emailPlaceholder') as string} />
         
+        <TextField fullWidth size="medium" label={t('phoneLabel') as string} slotProps={{ inputLabel: { shrink: true } }} type="tel"
+          value={form.tholaipesi || ''} onChange={e => updateField('tholaipesi', null, e.target.value)} placeholder={t('phonePlaceholder') as string} />
       </Box>
-
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mb: 6, mt: 5, px: { xs: 2, md: 0 } }}>
-        <Button variant="contained" disableElevation onClick={onBack} sx={{ height: 40, minHeight: 40, maxHeight: 40, px: 3, borderRadius: '50px', bgcolor: 'background.paper', color: 'text.primary', '&:hover': { bgcolor: 'action.hover' } }}>
-          {t('cancelModalBtn')}
-        </Button>
-        <Button variant="contained" color="primary" disableElevation onClick={handleSave} startIcon={<FloppyDisk size={20} weight="bold" />} sx={{ height: 40, minHeight: 40, maxHeight: 40, px: 3, borderRadius: '50px' }}>
-          {isEditing ? t('updateClientModalBtn') : t('saveClientModalBtn')}
-        </Button>
-      </Box>
-    </Box>
+    </ElvanEditorLayout>
   );
 }

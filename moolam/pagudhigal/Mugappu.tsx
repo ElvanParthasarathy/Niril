@@ -232,30 +232,48 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
           <>
             {/* Responsive Bento Card Grid */}
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 2, pb: 3, px: 0 }}>
-              {recentBills.map((bill) => {
+              {recentBills.map((bill, index) => {
                 const billCurrency = bill.currency || bill.data?.invoiceOptions?.currency || 'INR';
                 return (
                   <ElvanCard key={bill.id} onClick={() => handleView(bill)}>
-                        <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={1}>
-                        <Box sx={{ width: 'calc(100% - 30px)' }}>
-                          <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700 }}>{bill.clientName || '-'}</Typography>
-                          {profile?.enableBilingual !== false && (bill.clientNameEn || bill.data?.client?.nameEn) && (
-                            <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block', fontWeight: 'normal' }}>
-                              {bill.clientNameEn || bill.data?.client?.nameEn}
+                        <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} sx={{ height: '100%' }}>
+                        <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
+                          <Box sx={{ 
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                            width: 28, height: 28, mt: 0.15, 
+                            borderRadius: '50%',
+                            bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
+                            flexShrink: 0
+                          }}>
+                            <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
+                              {(index + 1).toString().padStart(2, '0')}
                             </Typography>
-                          )}
-                          <Typography variant="caption" color="text.secondary">{new Date(bill.invoiceDate).toLocaleDateString('en-IN')}</Typography>
+                          </Box>
+                          <Box sx={{ minWidth: 0, flex: 1 }}>
+                            <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700 }}>
+                              {bill.clientName || '-'}
+                            </Typography>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
+                              {profile?.enableBilingual !== false && (bill.clientNameEn || bill.data?.client?.nameEn) && (
+                                <Typography variant="caption" noWrap sx={{ display: 'block', fontWeight: 500 }}>
+                                  {bill.clientNameEn || bill.data?.client?.nameEn}
+                                </Typography>
+                              )}
+                              <Typography variant="body2" sx={{ fontSize: '0.85rem' }} noWrap>
+                                {bill.invoiceNumber} <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> {bill.invoiceDate ? new Date(bill.invoiceDate).toLocaleDateString('en-IN') : '-'}
+                              </Typography>
+                              <Typography variant="body2" sx={{ fontSize: '0.85rem' }} noWrap>
+                                {(INVOICE_TYPES[bill.invoiceType || 'tax-invoice'])?.label}
+                              </Typography>
+                            </Box>
+                          </Box>
                         </Box>
-                        <CaretRight size={18} weight="regular" color={isDark ? "#555" : "#aaa"} style={{ marginTop: '4px' }} />
-                      </Stack>
-                      <Stack direction="row" justifyContent="space-between" alignItems="flex-end">
-                        <Box sx={{ flex: 1, minWidth: 0, mr: 2 }}>
-                          <Typography variant="body2" sx={{ fontWeight: 600 }} noWrap>{bill.invoiceNumber}</Typography>
-                          <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{(INVOICE_TYPES[bill.invoiceType || 'tax-invoice'])?.label}</Typography>
+                        <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'space-between', flexShrink: 0 }}>
+                          <CaretRight size={18} weight="regular" color={isDark ? "#555" : "#aaa"} style={{ marginTop: '2px', marginRight: '-4px' }} />
+                          <Typography variant="subtitle2" sx={{ fontWeight: 800, color: 'primary.main' }}>
+                            {formatCurrency(bill.totalAmount, billCurrency)}
+                          </Typography>
                         </Box>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 800, flexShrink: 0 }}>
-                          {formatCurrency(bill.totalAmount, billCurrency)}
-                        </Typography>
                       </Stack>
                   </ElvanCard>
                 );

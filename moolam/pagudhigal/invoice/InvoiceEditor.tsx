@@ -11,6 +11,7 @@ import VanigarThirai from '../VanigarThirai';
 import { thagaval } from '../Thagaval';
 import { useLanguage } from '../../mozhi/LanguageContext';
 import ElvanCard from '../ElvanCard';
+import ElvanBilingualField from '../ElvanBilingualField';
 
 // MUI Imports
 import { 
@@ -65,14 +66,14 @@ function RichEditor({ value, onChange, placeholder, toolbar = false }) {
           <button type="button" onClick={() => applyFormat('italic')}      title="Italic (Ctrl+I)"    style={{ ...btnStyle, fontStyle: 'italic' }}>I</button>
           <button type="button" onClick={() => applyFormat('underline')}   title="Underline (Ctrl+U)" style={{ ...btnStyle, textDecoration: 'underline' }}>U</button>
           <span style={{ width: 1, background: 'var(--border-color)', margin: '0 0.2rem' }} />
-          <button type="button" onClick={() => applyFormat('insertUnorderedList')} title="Bullet list"  style={btnStyle}>•&nbsp;List</button>
-          <button type="button" onClick={() => applyFormat('insertOrderedList')}   title="Numbered list" style={btnStyle}>1.&nbsp;List</button>
+          <button type="button" onClick={() => applyFormat('insertUnorderedList')} title={t('hc_bulletList')}  style={btnStyle}>•&nbsp;List</button>
+          <button type="button" onClick={() => applyFormat('insertOrderedList')}   title={t('hc_numberedList')} style={btnStyle}>1.&nbsp;List</button>
           <span style={{ width: 1, background: 'var(--border-color)', margin: '0 0.2rem' }} />
-          <button type="button" onClick={() => applyFormat('formatBlock', '<h4>')}  title="Heading"   style={{ ...btnStyle, fontWeight: 700, fontSize: '0.85rem' }}>H</button>
-          <button type="button" onClick={() => applyFormat('formatBlock', '<p>')}   title="Paragraph" style={btnStyle}>¶</button>
-          <button type="button" onClick={() => { const url = window.prompt('Link URL:'); if (url) applyFormat('createLink', url); }} title="Insert link" style={btnStyle}>🔗</button>
+          <button type="button" onClick={() => applyFormat('formatBlock', '<h4>')}  title={t('hc_heading')}   style={{ ...btnStyle, fontWeight: 700, fontSize: '0.85rem' }}>H</button>
+          <button type="button" onClick={() => applyFormat('formatBlock', '<p>')}   title={t('hc_paragraph')} style={btnStyle}>¶</button>
+          <button type="button" onClick={() => { const url = window.prompt('Link URL:'); if (url) applyFormat('createLink', url); }} title={t('hc_insertLink')} style={btnStyle}>🔗</button>
           <span style={{ width: 1, background: 'var(--border-color)', margin: '0 0.2rem' }} />
-          <button type="button" onClick={() => applyFormat('removeFormat')} title="Clear formatting" style={btnStyle}>✕</button>
+          <button type="button" onClick={() => applyFormat('removeFormat')} title={t('hc_clearFormatting')} style={btnStyle}>✕</button>
         </div>
       )}
       <Box component="div" ref={ref} contentEditable suppressContentEditableWarning
@@ -866,8 +867,8 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                  : isMeaningfulInvoice() ? 'text.secondary' : 'text.disabled'
           }}>
             {autoSaveStatus === 'saving' && <><Box component="span" sx={{ display: 'inline-flex', animation: 'spin 1s linear infinite', '@keyframes spin': { '100%': { transform: 'rotate(360deg)' } } }}><Hourglass size={13} weight="regular"   /></Box> Saving...</>}
-            {autoSaveStatus === 'saved' && <><Check size={13} weight="regular"   /> All changes saved</>}
-            {autoSaveStatus === 'idle' && !isMeaningfulInvoice() && <span title="Add a client name and at least one item to start saving">{t("draftOnly")}</span>}
+            {autoSaveStatus === 'saved' && <><Check size={13} weight="regular"   />{t('hc_allChangesSaved')}</>}
+            {autoSaveStatus === 'idle' && !isMeaningfulInvoice() && <span title={t('hc_addAClientNameAnd')}>{t("draftOnly")}</span>}
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
@@ -938,7 +939,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                 </FormControl>
                 {invoiceOptions.invoiceMode === 'services' && (
                   <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5, lineHeight: 1.4 }}>
-                    💡 Use a <strong>SAC code</strong> (services accounting code) in the HSN field
+                    💡 Use a <strong>{t('hc_sacCode')}</strong> (services accounting code) in the HSN field
                   </Typography>
                 )}
               </Grid>
@@ -949,7 +950,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
               <Box sx={{ mt: 3, p: 2, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 12 }}>
-                    <TextField fullWidth size="small" label="Invoice Title" placeholder={typeConfig?.title || 'TAX INVOICE'} 
+                    <TextField fullWidth size="small" label={t('hc_invoiceTitle')} placeholder={typeConfig?.title || 'TAX INVOICE'} 
                       value={invoiceOptions.customTitle || ''} 
                       onChange={(e) => setInvoiceOptions(prev => ({ ...prev, customTitle: e.target.value }))} 
                       slotProps={{ inputLabel: { shrink: true } }}
@@ -957,8 +958,8 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                   </Grid>
                   <Grid size={{ xs: 12, md: invoiceOptions.currency !== 'INR' ? 6 : 12 }}>
                     <FormControl fullWidth size="small">
-                      <InputLabel shrink>Currency</InputLabel>
-                      <Select value={invoiceOptions.currency || 'INR'} label="Currency" displayEmpty
+                      <InputLabel shrink>{t('hc_currency')}</InputLabel>
+                      <Select value={invoiceOptions.currency || 'INR'} label={t('hc_currency')} displayEmpty
                         onChange={(e) => setInvoiceOptions(prev => ({ ...prev, currency: e.target.value }))}>
                         {Array.from(new Map(getCountriesForRegion().map(c => [c.currency, c])).values()).map(c => (
                           <MenuItem key={c.currency} value={c.currency}>{c.currency} ({c.currencySymbol === c.currency ? c.name : c.currencySymbol})</MenuItem>
@@ -993,8 +994,8 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                   return (
                     <Box sx={{ mb: 3 }}>
                       <FormControl fullWidth size="small">
-                        <InputLabel shrink>Payment account on this invoice</InputLabel>
-                        <Select displayEmpty value={resolved?.id || ''} label="Payment account on this invoice" onChange={(e) => setInvoiceOptions(prev => ({ ...prev, selectedAccountId: e.target.value || null }))}>
+                        <InputLabel shrink>{t('hc_paymentAccountOnThisInvoice')}</InputLabel>
+                        <Select displayEmpty value={resolved?.id || ''} label={t('hc_paymentAccountOnThisInvoice')} onChange={(e) => setInvoiceOptions(prev => ({ ...prev, selectedAccountId: e.target.value || null }))}>
                           <MenuItem value="">{t('noneLabel')}</MenuItem>
                           {accounts.map(a => (
                             <MenuItem key={a.id} value={a.id}>
@@ -1013,7 +1014,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
 
                 <Grid container spacing={2} sx={{ mb: 3 }}>
                   <Grid size={{ xs: 12, md: 6 }}>
-                    <Typography variant="body2" gutterBottom sx={{ fontWeight: 600 }}>PDF Style</Typography>
+                    <Typography variant="body2" gutterBottom sx={{ fontWeight: 600 }}>{t('hc_pdfStyle')}</Typography>
                     <Box sx={{ display: 'flex', gap: 1 }}>
                       {PDF_STYLES.map(s => (
                         <Chip key={s.id} 
@@ -1028,7 +1029,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 6 }}>
-                    <Typography variant="body2" gutterBottom sx={{ fontWeight: 600 }}>Accent Color</Typography>
+                    <Typography variant="body2" gutterBottom sx={{ fontWeight: 600 }}>{t('hc_accentColor')}</Typography>
                     <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
                       <Box component="button" type="button" title="Auto (match invoice type)"
                         sx={{ width: 28, height: 28, borderRadius: '50%', border: !invoiceOptions.accentColor ? '2.5px solid #334155' : '2px solid #cbd5e1', background: 'conic-gradient(#1e40af, #7c3aed, #0f766e, #be123c, #1e40af)', cursor: 'pointer', position: 'relative' }}
@@ -1116,7 +1117,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                   <Button variant="outlined" size="small" onClick={() => {
                     const allKeys = ['showLogo','showniruvanathinPeyar','showBusinessAddress','showBusinessPhone','showBusinessEmail','showState','showDistrict','showCountry','showGSTIN','showClientAddress','showClientPhone','showClientEmail','showPlaceOfSupply','showInvoiceNumber','showInvoiceDate','showHSN','showItemQty','showItemUnit','showRateColumn','showDiscount','showGST','showSubtotal','showAmountWords','showRoundOff','showBankDetails','showAccountLabel','showUPI','showSignature','showSignatoryText','showTerms','showNotes'];
                     setInvoiceOptions(prev => { const out = { ...prev }; allKeys.forEach(k => { out[k] = false; }); return out; });
-                  }}>Hide all</Button>
+                  }}>{t('hc_hideAll')}</Button>
                   <Button variant="outlined" size="small" onClick={() => setInvoiceOptions(DEFAULT_OPTIONS)}>Reset to default</Button>
                 </Box>
               </Box>
@@ -1138,8 +1139,8 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                   if (val !== null) setIsTempClient(val === 'temp');
                 }}
               >
-                <ToggleButton value="saved">Saved Customer</ToggleButton>
-                <ToggleButton value="temp">Temp Customer</ToggleButton>
+                <ToggleButton value="saved">{t('hc_savedCustomer')}</ToggleButton>
+                <ToggleButton value="temp">{t('hc_tempCustomer')}</ToggleButton>
               </ToggleButtonGroup>
             </Box>
 
@@ -1198,7 +1199,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
               {!isTempClient && selectedClientId && (getClientField('mugavari', primaryLang) || getClientField('oor', primaryLang) || client.maanilam || client.gstin || getClientField('name', secondaryLang)) && (
                 <Grid size={{ xs: 12 }}>
                   <Paper elevation={0} sx={{ p: 2, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : 'grey.50', border: '1px solid', borderColor: 'divider' }}>
-                    <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>Saved Client Details</Typography>
+                    <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>{t('hc_savedClientDetails')}</Typography>
                     {getClientField('mugavari', primaryLang) && <Typography variant="body2">{getClientField('mugavari', primaryLang)}{getClientField('mugavari', secondaryLang) ? ` / ${getClientField('mugavari', secondaryLang)}` : ''}</Typography>}
                     {(getClientField('oor', primaryLang) || getClientField('maavattam', primaryLang) || client.pin) && <Typography variant="body2">{[
                       getClientField('oor', primaryLang) ? getClientField('oor', primaryLang) + (getClientField('oor', secondaryLang) ? ` / ${getClientField('oor', secondaryLang)}` : '') : '', 
@@ -1302,7 +1303,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                             </FormControl>
                             {isCustomCountry && (
                               <TextField fullWidth size="small" label={`Custom Country${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`} slotProps={{ inputLabel: { shrink: true } }}
-                                value={client.country === 'Other' ? '' : client.country} onChange={(e) => setClient({ ...client, country: e.target.value })} placeholder="Enter country name" />
+                                value={client.country === 'Other' ? '' : client.country} onChange={(e) => setClient({ ...client, country: e.target.value })} placeholder={t('hc_enterCountryName')} />
                             )}
                           </Box>
                         </Grid>
@@ -1379,7 +1380,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                         </FormControl>
                       ) : (
                         <TextField fullWidth size="small" label={`${t('placeOfSupply')}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`} slotProps={{ inputLabel: { shrink: true } }}
-                          value={details.placeOfSupply} onChange={(e) => setDetails({ ...details, placeOfSupply: e.target.value })} placeholder="maanilam / Region" />
+                          value={details.placeOfSupply} onChange={(e) => setDetails({ ...details, placeOfSupply: e.target.value })} placeholder={t('hc_maanilamRegion')} />
                       )}
                     </Grid>
                     {profile?.enableBilingual !== false && (
@@ -1396,8 +1397,8 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
               })()}
               {invoiceType === 'credit-note' && (
                 <Grid size={{ xs: 12, md: 6 }}>
-                  <TextField fullWidth size="small" label="Original Invoice Reference" slotProps={{ inputLabel: { shrink: true } }}
-                    value={details.originalInvoiceRef} onChange={(e) => setDetails({ ...details, originalInvoiceRef: e.target.value })} placeholder="e.g. INV/2025-26/0001" />
+                  <TextField fullWidth size="small" label={t('hc_originalInvoiceReference')} slotProps={{ inputLabel: { shrink: true } }}
+                    value={details.originalInvoiceRef} onChange={(e) => setDetails({ ...details, originalInvoiceRef: e.target.value })} placeholder={t('hc_egInv2025260001')} />
                 </Grid>
               )}
             </Grid>
@@ -1423,8 +1424,8 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                       if (val !== null) handleItemChange(item.id, 'isTemp', val === 'temp');
                     }}
                   >
-                    <ToggleButton value="saved" sx={{ py: 0, px: 1, fontSize: '0.75rem' }}>Saved Item</ToggleButton>
-                    <ToggleButton value="temp" sx={{ py: 0, px: 1, fontSize: '0.75rem' }}>Temp Item</ToggleButton>
+                    <ToggleButton value="saved" sx={{ py: 0, px: 1, fontSize: '0.75rem' }}>{t('hc_savedItem')}</ToggleButton>
+                    <ToggleButton value="temp" sx={{ py: 0, px: 1, fontSize: '0.75rem' }}>{t('hc_tempItem')}</ToggleButton>
                   </ToggleButtonGroup>
                 </Box>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, p: 2, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : 'grey.50', border: '1px solid', borderColor: 'divider', borderRadius: 1, position: 'relative' }}>
@@ -1471,24 +1472,24 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                         )}
                         renderInput={(params) => (
                           <TextField {...params} label={t("descriptionCol")} slotProps={{ inputLabel: { shrink: true } }}
-                            placeholder="Search saved items..." />
+                            placeholder={t('hc_searchSavedItems')} />
                         )}
                       />
                       {item.productId && (
                         <Box sx={{ mt: 1, p: 1.5, bgcolor: 'background.paper', borderRadius: 1, border: '1px solid', borderColor: 'divider' }}>
-                          <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>Saved Item Details</Typography>
+                          <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>{t('hc_savedItemDetails')}</Typography>
                           {profile?.enableBilingual !== false && getItemField(item, 'name', secondaryLang) && (
                             <Typography variant="body2" sx={{ mb: 0.5 }}>Name ({profile?.secondaryDataLanguage || 'English'}): <strong>{getItemField(item, 'name', secondaryLang)}</strong></Typography>
                           )}
                           {invoiceOptions.showHSN && item.hsn && (
-                            <Typography variant="body2" sx={{ mb: 0.5 }}>HSN/SAC: <strong>{item.hsn}</strong></Typography>
+                            <Typography variant="body2" sx={{ mb: 0.5 }}>{t('hc_hsnsac')}<strong>{item.hsn}</strong></Typography>
                           )}
-                          <Typography variant="body2" sx={{ mb: 0.5 }}>Unit: <strong>{item.unit || 'Nos'}</strong></Typography>
+                          <Typography variant="body2" sx={{ mb: 0.5 }}>{t('hc_unit')}<strong>{item.unit || 'Nos'}</strong></Typography>
                           {showGST && (
-                            <Typography variant="body2" sx={{ mb: 0.5 }}>Tax: <strong>{item.taxPercent}%</strong></Typography>
+                            <Typography variant="body2" sx={{ mb: 0.5 }}>{t('hc_tax')}<strong>{item.taxPercent}%</strong></Typography>
                           )}
                           {showGST && invoiceOptions.showCess && (profile?.country || 'India') === 'India' && (
-                            <Typography variant="body2" sx={{ mb: 0 }}>Cess: <strong>{item.cessPercent || 0}%</strong></Typography>
+                            <Typography variant="body2" sx={{ mb: 0 }}>{t('hc_cess')}<strong>{item.cessPercent || 0}%</strong></Typography>
                           )}
                         </Box>
                       )}
@@ -1529,7 +1530,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                             </>
                           );
                         })()}
-                        <option value="__custom__">＋ Add custom…</option>
+                        <option value="__custom__">{t('hc_addCustom')}</option>
                         {units.some(u => u.custom) && units.filter(u => u.custom).map(u => (
                           <option key={`rm-${u.label}`} value={`__remove__::${u.label}`}>− Remove "{u.label}"</option>
                         ))}
@@ -1569,7 +1570,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                   </Box>
                 )}
                 <Box sx={{ flex: '0 0 auto', display: 'flex', alignItems: 'center' }}>
-                  <IconButton color="error" onClick={() => removeItem(item.id)} title="Remove"><Trash size={18} weight="regular"   /></IconButton>
+                  <IconButton color="error" onClick={() => removeItem(item.id)} title={t('hc_remove')}><Trash size={18} weight="regular"   /></IconButton>
                 </Box>
               </Box>
             </Box>
@@ -1595,7 +1596,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
 
       {/* Back Confirmation Dialog */}
       <Dialog open={showBackDialog} onClose={() => setShowBackDialog(false)}>
-        <DialogTitle>Save changes before closing?</DialogTitle>
+        <DialogTitle>{t('hc_saveChangesBeforeClosing')}</DialogTitle>
         <DialogContent>
           <DialogContentText>
             You have unsaved changes on this invoice. Do you want to save them before leaving?

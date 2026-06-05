@@ -658,23 +658,23 @@ function Seyali() {
             Elvan Niril Needs a Quick Start
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Your data is <strong>100% safe</strong> on your computer — nothing is lost.
+            Your data is <strong>{t('hc_100Safe')}</strong> on your computer — nothing is lost.
             The app just needs to be started once.
           </Typography>
           <Button variant="contained" color="primary" href="elvanniril://start" sx={{ textTransform: 'none', mb: 3 }}>
             Open GST Billing
           </Button>
           <Box sx={{ textAlign: 'left', bgcolor: 'action.hover', p: 2, borderRadius: 2, mb: 3 }}>
-            <Typography variant="caption" gutterBottom sx={{ fontWeight: 600, display: 'block' }}>Or start manually:</Typography>
-            <Typography variant="caption" sx={{ display: 'block' }}>1. Double-click <strong>Elvan Niril</strong> on your Desktop</Typography>
-            <Typography variant="caption" sx={{ display: 'block' }}>2. Or search <strong>"Elvan Niril"</strong> in Start Menu</Typography>
+            <Typography variant="caption" gutterBottom sx={{ fontWeight: 600, display: 'block' }}>{t('hc_orStartManually')}</Typography>
+            <Typography variant="caption" sx={{ display: 'block' }}>{t('hc_1Doubleclick')}<strong>Elvan Niril</strong>{t('hc_onYourDesktop')}</Typography>
+            <Typography variant="caption" sx={{ display: 'block' }}>{t('hc_2OrSearch')}<strong>"Elvan Niril"</strong>{t('hc_inStartMenu')}</Typography>
           </Box>
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
             All your invoices, clients, and data are safely stored on your computer. They are never deleted or shared.
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1.5, color: 'text.secondary' }}>
             <CircularProgress size={16} color="inherit" />
-            <Typography variant="caption">Starting... this page will open automatically.</Typography>
+            <Typography variant="caption">{t('hc_startingThisPageWillOpen')}</Typography>
           </Box>
         </Box>
       </Backdrop>
@@ -1013,7 +1013,7 @@ function Seyali() {
           <Search size={20} weight="regular" />
           <InputBase
             autoFocus
-            placeholder="Type a command or page name…"
+            placeholder={t('hc_typeACommandOrPage')}
             value={paletteQuery}
             onChange={e => { setPaletteQuery(e.target.value); setPaletteIdx(0); }}
             sx={{ flex: 1, fontSize: '1rem' }}
@@ -1096,7 +1096,7 @@ function Seyali() {
             <Box sx={{ display: 'flex', gap: 1.5, p: 2,  borderRadius: 2, mb: 2, bgcolor: 'rgba(59, 130, 246, 0.1)', color: 'info.main' }}>
               <Typography variant="body1">🔒</Typography>
               <Typography variant="body2">
-                <strong>Your data is safe.</strong> Updates only refresh the app code and dependencies — your <code>data/</code> folder (invoices, clients, products, settings) and <code>Saved Invoices/</code> PDF archive are <strong>never touched</strong>. The updater pulls the latest source from GitHub and rebuilds, then restarts.
+                <strong>{t('hc_yourDataIsSafe')}</strong>{t('hc_updatesOnlyRefreshTheApp')}<code>data/</code> folder (invoices, clients, products, settings) and <code>Saved Invoices/</code>{t('hc_pdfArchiveAre')}<strong>{t('hc_neverTouched')}</strong>. The updater pulls the latest source from GitHub and rebuilds, then restarts.
               </Typography>
             </Box>
 
@@ -1106,7 +1106,7 @@ function Seyali() {
                 {updateInfo.releaseNotes || (
                   <span style={{ color: 'var(--text-muted)' }}>
                     No release notes available — see the full changelog at{' '}
-                    <a href={updateInfo.releaseUrl || 'https://github.com/ElvanParthasarathy/Niril/releases'} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>GitHub Releases</a>.
+                    <a href={updateInfo.releaseUrl || 'https://github.com/ElvanParthasarathy/Niril/releases'} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>{t('hc_githubReleases')}</a>.
                   </span>
                 )}
               </Typography>
@@ -1116,25 +1116,23 @@ function Seyali() {
             <Box sx={{ display: 'flex', gap: 1.5, p: 2,  borderRadius: 2, mb: 1, bgcolor: 'rgba(245, 158, 11, 0.1)', color: 'warning.main' }}>
               <Typography variant="body1">💡</Typography>
               <Typography variant="body2">
-                <strong>Recommended:</strong> export a backup before updating, just in case.{' '}
+                <strong>{t('hc_recommended')}</strong> export a backup before updating, just in case.{' '}
                 <Box component="span" onClick={() => { setShowUpdateModal(false); setCurrentView('settings'); }} sx={{ cursor: 'pointer', textDecoration: 'underline', fontWeight: 600 }}>Open Settings → Data Management</Box>{' '}
-                and click <em>Export Backup…</em>.
+                and click <em>{t('hc_exportBackup')}</em>.
               </Typography>
             </Box>
           </DialogContent>
           <DialogActions sx={{ p: 2, pt: 1.5, flexDirection: 'column', alignItems: 'stretch' }}>
             <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end', flexWrap: 'wrap', width: '100%' }}>
-              <Button onClick={dismissUpdate} color="inherit">Skip this version</Button>
+              <Button onClick={dismissUpdate} color="inherit">{t('hc_skipThisVersion')}</Button>
               <Button onClick={() => setShowUpdateModal(false)} color="inherit">Remind me later</Button>
               {updateInfo.releaseUrl && (
-                <Button href={updateInfo.releaseUrl} target="_blank" color="inherit">View on GitHub</Button>
+                <Button href={updateInfo.releaseUrl} target="_blank" color="inherit">{t('hc_viewOnGithub')}</Button>
               )}
-              <Button variant="contained" color="primary" href="elvanniril-update://run" startIcon={<Download size={16} weight="regular" />}>
-                Update Now
-              </Button>
+              <Button variant="contained" color="primary" href="elvanniril-update://run" startIcon={<Download size={16} weight="regular" />}>{t('hc_updateNow')}</Button>
             </Box>
             <Typography variant="caption" color="text.secondary" sx={{ mt: 1.5, textAlign: 'right' }}>
-              <em>Update Now</em> launches <code>Update ElvanNiril.bat</code> in a window. Wait for it to finish (~30 seconds), then refresh this page.
+              <em>{t('hc_updateNow')}</em>{t('hc_launches')}<code>Update ElvanNiril.bat</code> in a window. Wait for it to finish (~30 seconds), then refresh this page.
             </Typography>
           </DialogActions>
         </ResponsiveDialog>
@@ -1167,7 +1165,7 @@ function Seyali() {
               fontSize: '1.2rem', fontWeight: 700, userSelect: 'none',
               '&:hover': { bgcolor: '#4f46e5', transform: 'scale(1.1)' },
               transition: 'all 0.2s'
-            }} title="DEV: Switch bilingual language">
+            }} title={t('hc_devSwitchBilingualLanguage')}>
               {(profile.primaryDataLanguage || 'Ta').slice(0, 2)}
             </Box>
             {devOpen && (
@@ -1177,10 +1175,10 @@ function Seyali() {
                 p: 2, minWidth: 260, maxHeight: '70vh', overflowY: 'auto',
                 border: '2px solid #6366f1'
               }}>
-                <Typography variant="caption"  color="#6366f1" sx={{ fontWeight: 700, mb: 1, display: 'block' }}>DEV: Language Switcher</Typography>
+                <Typography variant="caption"  color="#6366f1" sx={{ fontWeight: 700, mb: 1, display: 'block' }}>{t('hc_devLanguageSwitcher')}</Typography>
                 <Typography variant="caption" color="text.secondary" sx={{ mb: 1.5, display: 'block' }}>Current: {profile.primaryDataLanguage || 'Tamil'} / {profile.secondaryDataLanguage || 'English'}</Typography>
                 <Divider sx={{ mb: 1 }} />
-                <Typography variant="caption"  sx={{ fontWeight: 600, mb: 0.5, display: 'block' }}>Primary Language</Typography>
+                <Typography variant="caption"  sx={{ fontWeight: 600, mb: 0.5, display: 'block' }}>{t('hc_primaryLanguage')}</Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1.5 }}>
                   {LANGS.map(l => (
                     <Box key={l} onClick={() => switchLang(l, profile.secondaryDataLanguage || 'English')}
@@ -1194,7 +1192,7 @@ function Seyali() {
                       }}>{l}</Box>
                   ))}
                 </Box>
-                <Typography variant="caption"  sx={{ fontWeight: 600, mb: 0.5, display: 'block' }}>Secondary Language</Typography>
+                <Typography variant="caption"  sx={{ fontWeight: 600, mb: 0.5, display: 'block' }}>{t('hc_secondaryLanguage')}</Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1.5 }}>
                   {LANGS.map(l => (
                     <Box key={l} onClick={() => switchLang(profile.primaryDataLanguage || 'Tamil', l)}
@@ -1208,7 +1206,7 @@ function Seyali() {
                       }}>{l}</Box>
                   ))}
                 </Box>
-                <Typography variant="caption"  sx={{ fontWeight: 600, mb: 0.5, display: 'block' }}>Bilingual Mode</Typography>
+                <Typography variant="caption"  sx={{ fontWeight: 600, mb: 0.5, display: 'block' }}>{t('hc_bilingualMode')}</Typography>
                 <Box 
                   onClick={toggleBilingual}
                   sx={{
@@ -1221,7 +1219,7 @@ function Seyali() {
                   }}>
                   {profile.enableBilingual !== false ? 'ON (Bilingual Active)' : 'OFF (Single Language)'}
                 </Box>
-                <Typography variant="caption"  sx={{ fontWeight: 600, mb: 0.5, mt: 1.5, display: 'block' }}>UI Language</Typography>
+                <Typography variant="caption"  sx={{ fontWeight: 600, mb: 0.5, mt: 1.5, display: 'block' }}>{t('hc_uiLanguage')}</Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1.5 }}>
                   {[{code: 'ta', label: 'Tamil (தமிழ்)'}, {code: 'en', label: 'English'}].map(l => (
                     <Box key={l.code} onClick={() => setLanguage(l.code as any)}

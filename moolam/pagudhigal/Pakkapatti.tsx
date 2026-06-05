@@ -26,6 +26,7 @@ export default function Pakkapatti({
   setShowProfileMenu,
   handleSwitchProfile
 }) {
+
   const { t, language } = useLanguage();
   const [expandedGroups, setExpandedGroups] = useState({ accounting: false, reports: false });
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
@@ -56,9 +57,9 @@ export default function Pakkapatti({
   const drawerContent = (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* Header */}
-        <Box sx={{ display: 'flex', alignItems: 'center', flexShrink: 0, minHeight: 80, pt: 2, pb: 1, px: isCollapsed ? 0 : 3, justifyContent: isCollapsed ? 'center' : 'space-between' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', flexShrink: 0, minHeight: 80, pt: 3, pb: 1, pl: isCollapsed ? 0 : 4, pr: isCollapsed ? 0 : 3, justifyContent: isCollapsed ? 'center' : 'space-between' }}>
           {isCollapsed ? (
-            <Tooltip title="Open sidebar" placement="right" arrow>
+            <Tooltip title={t('hc_openSidebar')} placement="right" arrow>
               <IconButton 
                 onClick={() => {
                   setIsCollapsed(false);
@@ -67,11 +68,9 @@ export default function Pakkapatti({
                 size="medium" 
                 sx={{ 
                   display: { xs: 'none', md: 'inline-flex' }, 
-                  color: darkMode ? '#fff' : '#000', 
-                  '& svg': { opacity: darkMode ? 0.5 : 0.4 },
+                  color: 'primary.main', 
                   '&:hover': { 
                     backgroundColor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
-                    '& svg': { opacity: 1 }
                   } 
                 }}
               >
@@ -85,13 +84,13 @@ export default function Pakkapatti({
             </Tooltip>
           ) : (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              <Typography variant="h6" sx={{ userSelect: 'none', letterSpacing: '-0.02em', fontWeight: 800 }}>
+              <Typography variant="h6" sx={{ userSelect: 'none', letterSpacing: '-0.02em', fontWeight: 800, color: 'primary.main', display: 'flex', alignItems: 'center', lineHeight: 1 }}>
                 {t('appName')}
               </Typography>
             </Box>
           )}
           {!isCollapsed && (
-            <Tooltip title="Close sidebar" placement="right" arrow>
+            <Tooltip title={t('hc_closeSidebar')} placement="right" arrow>
               <IconButton 
                 onClick={() => {
                   const next = !isCollapsed;
@@ -101,11 +100,9 @@ export default function Pakkapatti({
                 size="medium" 
                 sx={{ 
                   display: { xs: 'none', md: 'inline-flex' }, 
-                  color: darkMode ? '#fff' : '#000', 
-                  '& svg': { opacity: darkMode ? 0.5 : 0.4 },
+                  color: 'primary.main', 
                   '&:hover': { 
                     backgroundColor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
-                    '& svg': { opacity: 1 }
                   } 
                 }}
               >

@@ -1,12 +1,11 @@
-// @ts-nocheck
-import { FloppyDisk } from '@phosphor-icons/react';
 import React, { useState, useEffect } from 'react';
-import { Box, Button, TextField, InputAdornment, Typography } from '@mui/material';
+import { Box, TextField, InputAdornment } from '@mui/material';
 import { saveProduct } from '../Avanam';
-import { getAllUnits, getCountryConfig } from '../Payanpadu';
+import { getCountryConfig } from '../Payanpadu';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
-import { FloatingBackButton } from './FloatingBackButton';
+import ElvanEditorLayout from './ElvanEditorLayout';
+import ElvanBilingualField from './ElvanBilingualField';
 
 export default function PorulThoguppu({ onBack, onSaved, product, profileSettings, defaultCountry }) {
   const { t } = useLanguage();
@@ -70,87 +69,79 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
   };
 
   return (
-    <Box sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', position: 'relative' }}>
-      <Box sx={{ px: { xs: 2, md: 0 }, mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h5" sx={{ ml: 2, fontWeight: 800, letterSpacing: '-0.5px', color: 'text.primary' }}>
-          {isEditing ? (t('editProductTitle') || 'Edit Product') : (t('addProductTitle') || 'New Product')}
-        </Typography>
-        <FloatingBackButton onBack={onBack} label={t('back') as string} className="back-pill" />
+    <ElvanEditorLayout
+      title={(isEditing ? (t('editProductTitle') || 'Edit Product') : (t('addProductTitle') || 'New Product')) as string}
+      onBack={onBack}
+      onSave={handleSave}
+      saveButtonText={(isEditing ? (t('updateClientModalBtn') || 'Save Changes') : (t('saveClientModalBtn') || 'Create Product')) as string}
+    >
+      <datalist id="hsn-list"><option value="50072010" /></datalist>
+      <datalist id="gst-list">
+        <option value="0" />
+        <option value="5" />
+        <option value="12" />
+        <option value="18" />
+        <option value="28" />
+      </datalist>
+
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3 }}>
+        <ElvanBilingualField
+          label={(t('productNameLabel') || 'Name') as string}
+          primaryLang={primaryLang}
+          secondaryLang={secondaryLang}
+          isBilingual={isBilingual}
+          primaryValue={getField('name', primaryLang)}
+          onPrimaryChange={e => updateField('name', primaryLang, e.target.value)}
+          secondaryValue={getField('name', secondaryLang)}
+          onSecondaryChange={e => updateField('name', secondaryLang, e.target.value)}
+          required
+          placeholder={(t('productNameLabel') || 'Product Name') as string}
+        />
       </Box>
 
-      <Box sx={{ px: { xs: 2, md: 0 } }}>
-        <datalist id="hsn-list"><option value="50072010" /></datalist>
-        <datalist id="gst-list">
-          <option value="0" />
-          <option value="5" />
-          <option value="12" />
-          <option value="18" />
-          <option value="28" />
-        </datalist>
-
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3 }}>
-          <TextField fullWidth size="medium" label={`${t('productNameLabel') || 'Name'}${primaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
-            value={getField('name', primaryLang)} onChange={e => updateField('name', primaryLang, e.target.value)} required placeholder={t('productNameLabel') || 'Product Name'} />
-            
-          {isBilingual && (
-            <TextField fullWidth size="medium" label={`${t('productNameLabel') || 'Name'}${secondaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
-              value={getField('name', secondaryLang)} onChange={e => updateField('name', secondaryLang, e.target.value)} placeholder={t('productNameLabel') || 'Product Name'} />
-          )}
-        </Box>
-
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3, mt: 8 }}>
-          <TextField fullWidth size="medium" label={t('hsnCodeLabel') || 'HSN / SAC Code'} 
-            slotProps={{ 
-              inputLabel: { shrink: true }, 
-              htmlInput: { list: "hsn-list" },
-              input: {
-                sx: { 
-                  '& input::-webkit-calendar-picker-indicator': { 
-                    position: 'absolute', 
-                    right: 16, 
-                    top: '50%', 
-                    transform: 'translateY(-50%)',
-                    cursor: 'pointer',
-                    opacity: 0.6
-                  } 
-                }
+      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3, mt: 8 }}>
+        <TextField fullWidth size="medium" label={(t('hsnCodeLabel') || 'HSN / SAC Code') as string} 
+          slotProps={{ 
+            inputLabel: { shrink: true }, 
+            htmlInput: { list: "hsn-list" },
+            input: {
+              sx: { 
+                '& input::-webkit-calendar-picker-indicator': { 
+                  position: 'absolute', 
+                  right: 16, 
+                  top: '50%', 
+                  transform: 'translateY(-50%)',
+                  cursor: 'pointer',
+                  opacity: 0.6
+                } 
               }
-            }}
-            value={form.hsn || ''} onChange={e => updateField('hsn', null, e.target.value)} placeholder="50072010" />
+            }
+          }}
+          value={form.hsn || ''} onChange={e => updateField('hsn', null, e.target.value)} placeholder="50072010" />
 
-          <TextField fullWidth size="medium" label={t('rateLabel') || 'Selling Rate'} type="number" slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: 0 }, input: { startAdornment: <InputAdornment position="start" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 24, mt: '0 !important' }}>{getCountryConfig(profileCountry).currencySymbol || getCountryConfig(profileCountry).currency}</InputAdornment> } }}
-            value={form.rate || ''} onChange={e => updateField('rate', null, e.target.value)} placeholder="0.00" />
+        <TextField fullWidth size="medium" label={(t('rateLabel') || 'Selling Rate') as string} type="number" slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: 0 }, input: { startAdornment: <InputAdornment position="start" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 24, mt: '0 !important' }}>{getCountryConfig(profileCountry).currencySymbol || getCountryConfig(profileCountry).currency}</InputAdornment> } }}
+          value={form.rate || ''} onChange={e => updateField('rate', null, e.target.value)} placeholder="0.00" />
 
-          <TextField fullWidth size="medium" label={t('gstPercentLabel') || 'GST Rate'} type="number" 
-            slotProps={{ 
-              inputLabel: { shrink: true }, 
-              htmlInput: { min: 0, list: "gst-list" }, 
-              input: { 
-                endAdornment: <InputAdornment position="end" sx={{ mt: '0 !important', mr: 1.5, color: 'text.secondary' }}>%</InputAdornment>,
-                sx: { 
-                  '& input::-webkit-calendar-picker-indicator': { 
-                    position: 'absolute', 
-                    right: 36, 
-                    top: '50%', 
-                    transform: 'translateY(-50%)',
-                    cursor: 'pointer',
-                    opacity: 0.6
-                  } 
-                }
-              } 
-            }}
-            value={form.taxPercent || ''} onChange={e => updateField('taxPercent', null, e.target.value)} placeholder="0" />
-        </Box>
+        <TextField fullWidth size="medium" label={(t('gstPercentLabel') || 'GST Rate') as string} type="number" 
+          slotProps={{ 
+            inputLabel: { shrink: true }, 
+            htmlInput: { min: 0, list: "gst-list" }, 
+            input: { 
+              endAdornment: <InputAdornment position="end" sx={{ mt: '0 !important', mr: 1.5, color: 'text.secondary' }}>%</InputAdornment>,
+              sx: { 
+                '& input::-webkit-calendar-picker-indicator': { 
+                  position: 'absolute', 
+                  right: 36, 
+                  top: '50%', 
+                  transform: 'translateY(-50%)',
+                  cursor: 'pointer',
+                  opacity: 0.6
+                } 
+              }
+            } 
+          }}
+          value={form.taxPercent || ''} onChange={e => updateField('taxPercent', null, e.target.value)} placeholder="0" />
       </Box>
-
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mb: 6, mt: 5, px: { xs: 2, md: 0 } }}>
-        <Button variant="contained" disableElevation onClick={onBack} sx={{ height: 40, minHeight: 40, maxHeight: 40, px: 3, borderRadius: '50px', bgcolor: 'background.paper', color: 'text.primary', '&:hover': { bgcolor: 'action.hover' } }}>
-          {t('cancelModalBtn') || 'Cancel'}
-        </Button>
-        <Button variant="contained" color="primary" disableElevation onClick={handleSave} startIcon={<FloppyDisk size={20} weight="bold" />} sx={{ height: 40, minHeight: 40, maxHeight: 40, px: 3, borderRadius: '50px' }}>
-          {isEditing ? (t('updateClientModalBtn') || 'Save Changes') : (t('saveClientModalBtn') || 'Create Product')}
-        </Button>
-      </Box>
-    </Box>
+    </ElvanEditorLayout>
   );
 }
