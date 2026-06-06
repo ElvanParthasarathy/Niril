@@ -182,9 +182,7 @@ export default function LineItemsTable({
                                 primary={pName}
                                 secondary={[
                                   pNameSec,
-                                  p.hsn ? `HSN: ${p.hsn}` : '',
                                   p.rate ? formatCurrency(p.rate, currency) : '',
-                                  p.unit || '',
                                 ].filter(Boolean).join(' · ')}
                               />
                             </ListItemButton>
@@ -220,8 +218,6 @@ export default function LineItemsTable({
                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
                   {[
                     getItemField(item, 'name', secondaryLang),
-                    item.hsn ? `HSN: ${item.hsn}` : '',
-                    item.unit || '',
                     item.taxPercent ? `GST ${item.taxPercent}%` : '',
                   ].filter(Boolean).join(' · ')}
                 </Typography>
