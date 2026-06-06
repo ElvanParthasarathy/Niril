@@ -141,6 +141,7 @@ export default function Arikkaigal() {
               label={t('filterByLabel') as string} 
               value={filterMode} 
               onChange={e => setFilterMode(e.target.value)}
+              sx={{ '& .MuiFilledInput-root': { bgcolor: { xs: 'transparent', sm: 'action.hover' } } }}
             >
               <MenuItem value="fy">{t('fiscalYearLabel')}</MenuItem>
               <MenuItem value="month">{t('monthYearLabel')}</MenuItem>
@@ -155,6 +156,7 @@ export default function Arikkaigal() {
                 label={t('fiscalYearLabel') as string} 
                 value={fyFilter} 
                 onChange={e => setFyFilter(e.target.value)}
+                sx={{ '& .MuiFilledInput-root': { bgcolor: { xs: 'transparent', sm: 'action.hover' } } }}
               >
                 {fyOptions.map(fy => <MenuItem key={fy.value} value={fy.value}>{fy.label}</MenuItem>)}
               </TextField>
@@ -168,6 +170,7 @@ export default function Arikkaigal() {
                   label={t('monthLabel') as string} 
                   value={monthFilter} 
                   onChange={e => setMonthFilter(e.target.value)}
+                  sx={{ '& .MuiFilledInput-root': { bgcolor: { xs: 'transparent', sm: 'action.hover' } } }}
                 >
                   {MONTHS.map((m, i) => <MenuItem key={i} value={i}>{m}</MenuItem>)}
                 </TextField>
@@ -179,6 +182,7 @@ export default function Arikkaigal() {
                   label={t('yearLabel') as string} 
                   value={yearFilter} 
                   onChange={e => setYearFilter(e.target.value)}
+                  sx={{ '& .MuiFilledInput-root': { bgcolor: { xs: 'transparent', sm: 'action.hover' } } }}
                 >
                   {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
                 </TextField>
@@ -194,6 +198,7 @@ export default function Arikkaigal() {
                 label={t('currencyLabel') as string} 
                 value={currencyFilter} 
                 onChange={e => setCurrencyFilter(e.target.value)}
+                sx={{ '& .MuiFilledInput-root': { bgcolor: { xs: 'transparent', sm: 'action.hover' } } }}
               >
                 {allCurrencies.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
               </TextField>
