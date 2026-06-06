@@ -127,8 +127,7 @@ export default function LineItemsTable({
           <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1, ml: 1.5 }}>
             {t('item')} #{index + 1}
           </Typography>
-          <Box sx={{ display: 'flex', flexWrap: { xs: 'wrap', md: 'nowrap' }, gap: 2, alignItems: 'stretch' }}>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, p: 2, bgcolor: 'action.hover', borderRadius: '16px', flex: 1 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, p: 2, bgcolor: 'action.hover', borderRadius: '16px' }}>
             
             {/* Product Search */}
             <Box sx={{ flex: '3 1 250px', position: 'relative' }}>
@@ -264,11 +263,8 @@ export default function LineItemsTable({
               </Box>
             )}
 
-            </Box>
-
-            <Box sx={{ display: 'flex', gap: 2, flex: { xs: '1 1 100%', md: '0 0 auto' } }}>
-              {/* Line Total */}
-              <Box sx={{ width: { xs: '100%', md: 140 }, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', bgcolor: 'action.hover', p: 2, borderRadius: '16px' }}>
+            {/* Line Total */}
+            <Box sx={{ flex: '1 1 120px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', pr: 2 }}>
               {(() => {
                  const qty = Number(item.qty) || 0;
                  const rate = Number(item.rate) || 0;
@@ -281,12 +277,12 @@ export default function LineItemsTable({
                  return (
                    <>
                      {taxAmt > 0 && (
-                       <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mb: 0.5 }}>
+                       <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', gap: 1, mb: 0.5 }}>
                          <span>{t('tax') || 'Tax'}:</span> <span>{formatCurrency(taxAmt, currency)}</span>
                        </Typography>
                      )}
-                     <Typography variant="subtitle2" sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontWeight: 600 }}>
-                       <span>{t('total') || 'Total'}:</span> <span>{formatCurrency(total, currency)}</span>
+                     <Typography variant="subtitle1" sx={{ display: 'flex', gap: 1, fontWeight: 700 }}>
+                       <span style={{ color: 'var(--mui-palette-text-secondary)' }}>{t('total') || 'Total'}:</span> <span>{formatCurrency(total, currency)}</span>
                      </Typography>
                    </>
                  );
@@ -296,7 +292,6 @@ export default function LineItemsTable({
             {/* Delete */}
             <Box sx={{ flex: '0 0 auto', display: 'flex', alignItems: 'center' }}>
               <IconButton color="error" onClick={() => removeItem(item.id)} title={t('hc_remove')}><Trash size={18} weight="regular" /></IconButton>
-            </Box>
             </Box>
           </Box>
         </Box>
