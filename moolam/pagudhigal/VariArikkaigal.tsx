@@ -1199,11 +1199,6 @@ export default function VariArikkaigal({ profile }) {
 
       {/* Period Selector - MOBILE (Unified Card) */}
       <Box sx={{ display: { xs: 'block', sm: 'none' }, mb: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h5" sx={{ fontWeight: 800 }}>
-            {t('hc_taxDataExport')}
-          </Typography>
-        </Box>
         <ElvanCard boxSx={{ px: 3, pt: 2, pb: 2 }}>
           <Grid container spacing={2} sx={{ alignItems: 'center' }}>
             <Grid size={12}>
