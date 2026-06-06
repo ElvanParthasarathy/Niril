@@ -106,7 +106,7 @@ export default function Arikkaigal() {
 
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1200, mx: 'auto', pb: { xs: 10, md: 4 } }}>
+    <Box sx={{ pt: { xs: 2, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', pb: { xs: 10, md: 4 } }}>
       {/* Page Header (Hidden on Mobile) */}
       <Box sx={{ mb: 4, display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <Box>
