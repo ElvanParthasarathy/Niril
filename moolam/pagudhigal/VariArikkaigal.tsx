@@ -1195,9 +1195,6 @@ export default function VariArikkaigal({ profile }) {
             GSTR returns, e-Way Bill, TDS/TCS, HSN summaries
           </Typography>
         </Box>
-        <Button component="a" href="https://gst.gov.in" target="_blank" rel="noopener noreferrer" variant="contained" startIcon={<OpenInNew sx={{ fontSize: 14 }} />} sx={{ whiteSpace: 'nowrap', borderRadius: 5, textTransform: 'none', boxShadow: 'none' }}>
-          GST Portal
-        </Button>
       </Box>
 
       {/* Period Selector - MOBILE (Unified Card) */}
@@ -1206,9 +1203,6 @@ export default function VariArikkaigal({ profile }) {
           <Typography variant="h5" sx={{ fontWeight: 800 }}>
             {t('hc_taxDataExport')}
           </Typography>
-          <Button component="a" href="https://gst.gov.in" target="_blank" rel="noopener noreferrer" variant="contained" size="small" sx={{ borderRadius: 5, textTransform: 'none', boxShadow: 'none' }}>
-            Portal
-          </Button>
         </Box>
         <ElvanCard boxSx={{ px: 3, pt: 2, pb: 2 }}>
           <Grid container spacing={2} sx={{ alignItems: 'center' }}>
@@ -2469,6 +2463,12 @@ export default function VariArikkaigal({ profile }) {
           )}
         </Stack>
       )}
+
+      <Box sx={{ mt: 6, mb: 2, textAlign: 'center' }}>
+        <Typography variant="body2" color="text.secondary">
+          Ready to file? <a href="https://services.gst.gov.in/services/login" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>{t('gstPortalBtn')} <OpenInNew sx={{ fontSize: 14, verticalAlign: 'middle', ml: 0.5 }} /></a>
+        </Typography>
+      </Box>
     </Box>
   );
 }
