@@ -961,21 +961,6 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
             {/* Customization Options */}
             {showOptions && (
               <Box sx={{ mt: 3, p: 2, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
-                <Grid container spacing={2}>
-                  <Grid size={{ xs: 12 }}>
-                    <TextField fullWidth size="small" label={t('hc_invoiceTitle')} placeholder={typeConfig?.title || 'TAX INVOICE'} 
-                      value={invoiceOptions.customTitle || ''} 
-                      onChange={(e) => setInvoiceOptions(prev => ({ ...prev, customTitle: e.target.value }))} 
-                      slotProps={{ inputLabel: { shrink: true } }}
-                    />
-                  </Grid>
-                </Grid>
-
-                <Divider sx={{ my: 3 }} />
-
-
-
-
 
                 {/* Payment account */}
                 {(() => {
