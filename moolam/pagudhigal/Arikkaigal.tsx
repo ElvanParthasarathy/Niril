@@ -204,56 +204,56 @@ export default function Arikkaigal() {
 
       <Grid container spacing={2} sx={{ mb: 4 }}>
         <Grid size={{ xs: 12, sm: 4 }}>
-          <ElvanCard sx={{ height: '100%' }} boxSx={{ display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-              <Box sx={{ width: 40, height: 40, borderRadius: '12px', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Wallet size={20} weight="fill" />
-              </Box>
-              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>{t('totalRevenueLabel') || 'Gross Revenue'}</Typography>
+          <ElvanCard sx={{ height: '100%' }} boxSx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ width: 48, height: 48, borderRadius: '16px', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Wallet size={24} weight="regular" />
             </Box>
-            {isLoading ? (
-              <Skeleton variant="text" width="80%" height={40} />
-            ) : (
-              <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary' }}>
-                {formatCurrency(totalRevenue, currencyFilter)}
-              </Typography>
-            )}
+            <Box>
+              <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>{t('totalRevenueLabel') || 'Gross Revenue'}</Typography>
+              {isLoading ? (
+                <Skeleton variant="text" width={100} height={32} />
+              ) : (
+                <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary' }}>
+                  {formatCurrency(totalRevenue, currencyFilter)}
+                </Typography>
+              )}
+            </Box>
           </ElvanCard>
         </Grid>
         
         <Grid size={{ xs: 12, sm: 4 }}>
-          <ElvanCard sx={{ height: '100%' }} boxSx={{ display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-              <Box sx={{ width: 40, height: 40, borderRadius: '12px', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <TrendDown size={20} weight="fill" />
-              </Box>
-              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>{t('lessGstCollectedLabel') || 'Tax Collected'}</Typography>
+          <ElvanCard sx={{ height: '100%' }} boxSx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ width: 48, height: 48, borderRadius: '16px', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <TrendDown size={24} weight="regular" />
             </Box>
-            {isLoading ? (
-              <Skeleton variant="text" width="80%" height={40} />
-            ) : (
-              <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary' }}>
-                {formatCurrency(totalTaxCollected, currencyFilter)}
-              </Typography>
-            )}
+            <Box>
+              <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>{t('lessGstCollectedLabel') || 'Tax Collected'}</Typography>
+              {isLoading ? (
+                <Skeleton variant="text" width={100} height={32} />
+              ) : (
+                <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary' }}>
+                  {formatCurrency(totalTaxCollected, currencyFilter)}
+                </Typography>
+              )}
+            </Box>
           </ElvanCard>
         </Grid>
 
         <Grid size={{ xs: 12, sm: 4 }}>
-          <ElvanCard sx={{ height: '100%' }} boxSx={{ display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-              <Box sx={{ width: 40, height: 40, borderRadius: '12px', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <TrendUp size={20} weight="fill" />
-              </Box>
-              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>{t('netRevenueLabel') || 'Net Revenue'}</Typography>
+          <ElvanCard sx={{ height: '100%' }} boxSx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ width: 48, height: 48, borderRadius: '16px', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <TrendUp size={24} weight="regular" />
             </Box>
-            {isLoading ? (
-              <Skeleton variant="text" width="80%" height={40} />
-            ) : (
-              <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary' }}>
-                {formatCurrency(revenueExTax, currencyFilter)}
-              </Typography>
-            )}
+            <Box>
+              <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>{t('netRevenueLabel') || 'Net Revenue'}</Typography>
+              {isLoading ? (
+                <Skeleton variant="text" width={100} height={32} />
+              ) : (
+                <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary' }}>
+                  {formatCurrency(revenueExTax, currencyFilter)}
+                </Typography>
+              )}
+            </Box>
           </ElvanCard>
         </Grid>
       </Grid>
