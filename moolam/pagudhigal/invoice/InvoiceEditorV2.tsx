@@ -206,7 +206,7 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
       <Divider sx={{ my: 1, borderColor: 'divider', opacity: 0.5 }} />
 
       {/* Invoice Type */}
-      <Box sx={{ py: 3, px: 2 }}>
+      <Box sx={{ mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, ml: 2 }}>
           <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>5</Box>
           <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t("invoiceType")}</Typography>
