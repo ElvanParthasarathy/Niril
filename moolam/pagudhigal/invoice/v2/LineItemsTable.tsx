@@ -129,7 +129,6 @@ export default function LineItemsTable({
               {t('item')} #{index + 1}
             </Typography>
             <IconButton 
-              size="small"
               onClick={() => removeItem(item.id)} 
               title={t('hc_remove')}
               sx={{ 
@@ -138,7 +137,7 @@ export default function LineItemsTable({
                 '&:hover': { bgcolor: 'action.selected' }
               }}
             >
-              <Trash size={16} weight="regular" />
+              <Trash size={20} weight="regular" />
             </IconButton>
           </Box>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, p: 2, bgcolor: 'action.hover', borderRadius: '16px' }}>
