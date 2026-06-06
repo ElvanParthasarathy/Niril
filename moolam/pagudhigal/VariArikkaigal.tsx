@@ -1184,15 +1184,15 @@ export default function VariArikkaigal({ profile }) {
   const paginatedBills = searchedBills.slice((safePage - 1) * itemsPerPage, safePage * itemsPerPage);
 
   return (
-    <Box sx={{ p: { xs: 1.5, md: 4 }, maxWidth: 1400, mx: 'auto' }}>
+    <Box sx={{ p: { xs: 1.5, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
       {/* Page Header (Hidden on Mobile) */}
       <Box sx={{ mb: 4, display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        <Box>
+        <Box sx={{ ml: { xs: 0, md: 2 } }}>
           <Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
             {t('hc_taxDataExport')}
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            {t('gstReturnsSubtitle') || 'GST Returns and Tax Data Export'}
+            GSTR returns, e-Way Bill, TDS/TCS, HSN summaries
           </Typography>
         </Box>
         <Button component="a" href="https://gst.gov.in" target="_blank" rel="noopener noreferrer" variant="contained" startIcon={<OpenInNew sx={{ fontSize: 14 }} />} sx={{ whiteSpace: 'nowrap', borderRadius: 5, textTransform: 'none', boxShadow: 'none' }}>
@@ -1392,7 +1392,7 @@ export default function VariArikkaigal({ profile }) {
       {/* ===================== SUMMARY TAB ===================== */}
       {activeTab === 'summary' && (
         <Stack spacing={3} ref={listTopRef} sx={{ scrollMarginTop: '100px' }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2, mb: -1, flexWrap: 'wrap', gap: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: -1, flexWrap: 'wrap', gap: 2 }}>
             <Box>
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>{t('hc_invoicesForThisPeriod')}</Typography>
               <Typography variant="body2" color="text.secondary">{searchedBills.length} invoices</Typography>
