@@ -1382,7 +1382,7 @@ export default function VariArikkaigal({ profile }) {
       {/* ===================== SUMMARY TAB ===================== */}
       {activeTab === 'summary' && (
         <Stack spacing={3} ref={listTopRef} sx={{ scrollMarginTop: '100px' }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: -1, flexWrap: 'wrap', gap: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: -1, flexWrap: 'wrap', gap: 2, px: { xs: 2, sm: 2.5 } }}>
             <Box>
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>{t('hc_invoicesForThisPeriod')}</Typography>
               <Typography variant="body2" color="text.secondary">{searchedBills.length} invoices</Typography>
