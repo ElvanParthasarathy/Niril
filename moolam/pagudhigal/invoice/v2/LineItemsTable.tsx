@@ -223,20 +223,20 @@ export default function LineItemsTable({
             </Box>
 
             {/* Qty */}
-            <Box sx={{ flex: '1 1 120px' }}>
+            <Box sx={{ flex: { xs: '1 1 40%', sm: '1 1 120px' } }}>
               <TextField fullWidth size="small" label={t('qty')} type="number" slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: 0, step: "any" } }} 
                 value={item.qty} onChange={(e) => handleItemChange(item.id, 'quantity', clampNonNeg(e.target.value))} />
             </Box>
 
             {/* Rate */}
-            <Box sx={{ flex: '1 1 120px' }}>
+            <Box sx={{ flex: { xs: '1 1 40%', sm: '1 1 120px' } }}>
               <TextField fullWidth size="small" label={t("rateCol")} type="number" slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: 0, step: "any" } }} 
                 value={item.rate} onChange={(e) => handleItemChange(item.id, 'rate', clampNonNeg(e.target.value))} />
             </Box>
 
             {/* Discount */}
             {settings.showDiscountColumn && (
-              <Box sx={{ flex: '1 1 120px' }}>
+              <Box sx={{ flex: { xs: '1 1 40%', sm: '1 1 120px' } }}>
                 <TextField fullWidth size="small" label={t('discount')} type="number" 
                   slotProps={{ 
                     inputLabel: { shrink: true }, 
@@ -264,7 +264,7 @@ export default function LineItemsTable({
             )}
 
             {/* Line Total */}
-            <Box sx={{ flex: '1 1 120px' }}>
+            <Box sx={{ flex: { xs: '1 1 40%', sm: '1 1 120px' } }}>
               {(() => {
                  const qty = Number(item.qty) || 0;
                  const rate = Number(item.rate) || 0;
