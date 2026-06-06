@@ -225,15 +225,6 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
         </Box>
       </Box>
 
-      {/* Notes and Terms */}
-      <InvoiceNotes
-        customTerms={customTerms}
-        setCustomTerms={setCustomTerms}
-        internalNote={internalNote}
-        setInternalNote={setInternalNote}
-        showTerms={settings.showTerms}
-        showNotes={settings.showNotes}
-      />
 
       {/* Discard Confirmation Modal */}
       <Dialog open={showDiscardModal} onClose={() => setShowDiscardModal(false)}>
