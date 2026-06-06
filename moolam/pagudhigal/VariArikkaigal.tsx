@@ -1398,7 +1398,7 @@ export default function VariArikkaigal({ profile }) {
                 {search && <IconButton size="small" onClick={() => { setSearch(''); setPage(1); }}><X size={14} weight="regular" /></IconButton>}
               </Paper>
               <Tooltip title="Download Excel" placement="top">
-                <IconButton onClick={exportSimpleCSV} sx={{ border: '1px solid', borderColor: 'divider', width: 48, height: 48, flexShrink: 0 }}>
+                <IconButton onClick={exportSimpleCSV} sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF', width: 48, height: 48, flexShrink: 0, transition: 'background 0.3s ease', '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.08)' : '#F5F5F5' } }}>
                   <Download sx={{ fontSize: 20 }} />
                 </IconButton>
               </Tooltip>
