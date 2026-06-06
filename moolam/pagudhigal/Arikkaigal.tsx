@@ -117,62 +117,74 @@ export default function Arikkaigal() {
       </Box>
 
       {/* Period + Currency Selector */}
-      <ElvanCard boxSx={{ p: 3, mb: 4 }}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ alignItems: { xs: 'stretch', sm: 'flex-start' } }}>
-          <TextField 
-            select 
-            sx={{ minWidth: 150 }} 
-            label={t('filterByLabel') as string} 
-            value={filterMode} 
-            onChange={e => setFilterMode(e.target.value)}
-          >
-            <MenuItem value="fy">{t('fiscalYearLabel')}</MenuItem>
-            <MenuItem value="month">{t('monthYearLabel')}</MenuItem>
-          </TextField>
-          {filterMode === 'fy' ? (
+      <ElvanCard boxSx={{ p: 3, pt: 1, mb: 4 }}>
+        <Grid container spacing={2} sx={{ alignItems: 'center' }}>
+          <Grid size={{ xs: 12, sm: 4, md: 3 }}>
             <TextField 
               select 
-              sx={{ minWidth: 150 }} 
-              label={t('fiscalYearLabel') as string} 
-              value={fyFilter} 
-              onChange={e => setFyFilter(e.target.value)}
+              fullWidth
+              label={t('filterByLabel') as string} 
+              value={filterMode} 
+              onChange={e => setFilterMode(e.target.value)}
             >
-              {fyOptions.map(fy => <MenuItem key={fy.value} value={fy.value}>{fy.label}</MenuItem>)}
+              <MenuItem value="fy">{t('fiscalYearLabel')}</MenuItem>
+              <MenuItem value="month">{t('monthYearLabel')}</MenuItem>
             </TextField>
+          </Grid>
+          
+          {filterMode === 'fy' ? (
+            <Grid size={{ xs: 12, sm: 4, md: 3 }}>
+              <TextField 
+                select 
+                fullWidth
+                label={t('fiscalYearLabel') as string} 
+                value={fyFilter} 
+                onChange={e => setFyFilter(e.target.value)}
+              >
+                {fyOptions.map(fy => <MenuItem key={fy.value} value={fy.value}>{fy.label}</MenuItem>)}
+              </TextField>
+            </Grid>
           ) : (
             <>
-              <TextField 
-                select 
-                sx={{ minWidth: 150, mt: { xs: 2, sm: 0 } }} 
-                label={t('monthLabel') as string} 
-                value={monthFilter} 
-                onChange={e => setMonthFilter(e.target.value)}
-              >
-                {MONTHS.map((m, i) => <MenuItem key={i} value={i}>{m}</MenuItem>)}
-              </TextField>
-              <TextField 
-                select 
-                sx={{ minWidth: 100 }} 
-                label={t('yearLabel') as string} 
-                value={yearFilter} 
-                onChange={e => setYearFilter(e.target.value)}
-              >
-                {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
-              </TextField>
+              <Grid size={{ xs: 6, sm: 4, md: 3 }}>
+                <TextField 
+                  select 
+                  fullWidth
+                  label={t('monthLabel') as string} 
+                  value={monthFilter} 
+                  onChange={e => setMonthFilter(e.target.value)}
+                >
+                  {MONTHS.map((m, i) => <MenuItem key={i} value={i}>{m}</MenuItem>)}
+                </TextField>
+              </Grid>
+              <Grid size={{ xs: 6, sm: 4, md: 3 }}>
+                <TextField 
+                  select 
+                  fullWidth
+                  label={t('yearLabel') as string} 
+                  value={yearFilter} 
+                  onChange={e => setYearFilter(e.target.value)}
+                >
+                  {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
+                </TextField>
+              </Grid>
             </>
           )}
+          
           {allCurrencies.length > 1 && (
-            <TextField 
-              select 
-              sx={{ minWidth: 120 }} 
-              label={t('currencyLabel') as string} 
-              value={currencyFilter} 
-              onChange={e => setCurrencyFilter(e.target.value)}
-            >
-              {allCurrencies.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
-            </TextField>
+            <Grid size={{ xs: 12, sm: 4, md: 3 }}>
+              <TextField 
+                select 
+                fullWidth
+                label={t('currencyLabel') as string} 
+                value={currencyFilter} 
+                onChange={e => setCurrencyFilter(e.target.value)}
+              >
+                {allCurrencies.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+              </TextField>
+            </Grid>
           )}
-        </Stack>
+        </Grid>
       </ElvanCard>
 
       {/* P&L Metric Cards */}
