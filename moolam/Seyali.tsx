@@ -956,7 +956,7 @@ function Seyali() {
           flexDirection: 'column',
           overflow: 'hidden',
           mx: { xs: isPrintView ? 0 : 1.5, md: 0 },
-          mb: { xs: isPrintView ? 0 : (isEditorView ? 1.5 : '85px'), md: 0 }, // Stops before bottom nav or gives small bottom gap
+          mb: { xs: isPrintView ? 0 : (isEditorView ? 1.5 : (['reports', 'gst-returns', 'settings'].includes(currentView as string) ? 1.5 : '85px')), md: 0 },
           borderRadius: { xs: isPrintView ? 0 : '24px', md: 0 },
           bgcolor: { xs: darkMode ? '#000000' : '#F3F4F6', md: 'transparent' },
           boxShadow: { xs: darkMode ? 'none' : '0 8px 30px rgba(0,0,0,0.04)', md: 'none' }
