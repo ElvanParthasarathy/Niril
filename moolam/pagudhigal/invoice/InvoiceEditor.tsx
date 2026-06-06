@@ -1067,7 +1067,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                       <>
                         <Grid size={{ xs: 12, md: profile?.enableBilingual !== false ? 6 : 12 }}>
                           {stateOpts.length > 0 ? (
-                            <FormControl fullWidth size="small">
+                            <FormControl variant="filled" fullWidth size="small">
                               <InputLabel shrink>{stLabel}{profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}</InputLabel>
                               <Select displayEmpty value={client.maanilam} label={`${stLabel}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`} onChange={(e) => setClient({ ...client, maanilam: e.target.value })}>
                                 <MenuItem value="">{t('selectLabelGeneric')} {stLabel}</MenuItem>
@@ -1098,7 +1098,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                       <>
                         <Grid size={{ xs: 12, md: profile?.enableBilingual !== false ? 6 : 12 }}>
                           <Box>
-                            <FormControl fullWidth size="small" sx={{ mb: isCustomCountry ? 2 : 0 }}>
+                            <FormControl variant="filled" fullWidth size="small" sx={{ mb: isCustomCountry ? 2 : 0 }}>
                               <InputLabel shrink>{t('country')}{profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}</InputLabel>
                               <Select displayEmpty value={isCustomCountry ? 'Other' : (client.country || profile?.country || 'India')} label={`${t('country')}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`}
                                 onChange={(e) => {
@@ -1172,7 +1172,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                   <>
                     <Grid size={{ xs: 12, md: 6 }}>
                       {posOpts.length > 0 ? (
-                        <FormControl fullWidth size="small">
+                        <FormControl variant="filled" fullWidth size="small">
                           <InputLabel shrink>{t('placeOfSupply')}{profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}</InputLabel>
                           <Select 
                             displayEmpty 
@@ -1320,7 +1320,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                 </Box>
                 {item.isTemp && (
                   <Box sx={{ flex: '0.9 1 100px' }}>
-                    <FormControl fullWidth size="small">
+                    <FormControl variant="filled" fullWidth size="small">
                       <InputLabel shrink>{t('unit')}</InputLabel>
                       <Select native displayEmpty value={item.unit || 'Nos'} label={t('unit')} 
                         onChange={(e) => {
@@ -1362,7 +1362,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                 )}
                 {showGST && item.isTemp && (
                   <Box sx={{ flex: '1 1 100px' }}>
-                    <FormControl fullWidth size="small">
+                    <FormControl variant="filled" fullWidth size="small">
                       <InputLabel shrink>{taxLabel} %</InputLabel>
                       <Select native value={item.taxPercent} label={`${taxLabel} %`} 
                         onChange={(e) => handleItemChange(item.id, 'taxPercent', parseFloat(e.target.value) || 0)}>
@@ -1400,7 +1400,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
 
             <Grid container spacing={2} sx={{ mb: 2 }}>
               <Grid size={{ xs: 12, md: 6 }}>
-                <FormControl fullWidth size="small">
+                <FormControl variant="filled" fullWidth size="small">
                   <Select value={invoiceType} onChange={(e) => handleTypeChange(e.target.value)}>
                     {Object.entries(INVOICE_TYPES).map(([key, val]) => (
                       <MenuItem key={key} value={key}>{t(`invoiceTypes_${key.replace(/-/g, '_')}` as any, { defaultValue: val.label })}</MenuItem>
@@ -1422,7 +1422,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                   const resolved = getAccountById(profile, invoiceOptions.selectedAccountId);
                   return (
                     <Box sx={{ mb: 3 }}>
-                      <FormControl fullWidth size="small">
+                      <FormControl variant="filled" fullWidth size="small">
                         <InputLabel shrink>{t('hc_paymentAccountOnThisInvoice')}</InputLabel>
                         <Select displayEmpty value={resolved?.id || ''} label={t('hc_paymentAccountOnThisInvoice')} onChange={(e) => setInvoiceOptions(prev => ({ ...prev, selectedAccountId: e.target.value || null }))}>
                           <MenuItem value="">{t('noneLabel')}</MenuItem>
