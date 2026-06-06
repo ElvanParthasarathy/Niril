@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, TextField, IconButton, Button, Divider, List, ListItem, ListItemButton, ListItemText, InputAdornment, Select, MenuItem } from '@mui/material';
 import { Trash, Plus } from '@phosphor-icons/react';
+import ElvanCard from '../../ElvanCard';
 import { useLanguage } from '../../../mozhi/LanguageContext';
 import { LineItemState, InvoiceSettingsState, createEmptyLineItem } from './InvoiceTypes';
 import { getAllProducts } from '../../../Avanam';
@@ -213,15 +214,6 @@ export default function LineItemsTable({
                 </Paper>
               )}
 
-              {/* Show selected product details as a compact chip/summary */}
-              {item.productId && (
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5 }}>
-                  {[
-                    getItemField(item, 'name', secondaryLang),
-                    item.taxPercent ? `GST ${item.taxPercent}%` : '',
-                  ].filter(Boolean).join(' · ')}
-                </Typography>
-              )}
             </Box>
 
             {/* Qty */}
@@ -296,6 +288,19 @@ export default function LineItemsTable({
               <IconButton color="error" onClick={() => removeItem(item.id)} title={t('hc_remove')}><Trash size={18} weight="regular" /></IconButton>
             </Box>
           </Box>
+          {item.productId && (
+            <ElvanCard sx={{ mt: 1 }} boxSx={{ p: 2 }}>
+              <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>
+                {t('hc_savedProductDetails') || 'SAVED PRODUCT DETAILS'}
+              </Typography>
+              <Typography variant="body2">
+                {[
+                  getItemField(item, 'name', secondaryLang),
+                  item.taxPercent ? `GST ${item.taxPercent}%` : '',
+                ].filter(Boolean).join(' · ')}
+              </Typography>
+            </ElvanCard>
+          )}
         </Box>
       ))}
       <Button variant="outlined" startIcon={<Plus size={18} weight="regular" />} onClick={addItem} sx={{ mt: 1 }}>Add Item</Button>
