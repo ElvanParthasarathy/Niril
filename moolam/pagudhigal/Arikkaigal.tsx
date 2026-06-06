@@ -192,7 +192,7 @@ export default function Arikkaigal() {
 
       {/* P&L Metric Cards */}
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h6" sx={{ fontWeight: 700 }}>
+        <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
           {t('salesSummaryTitle') === 'salesSummaryTitle' ? 'Sales Summary' : t('salesSummaryTitle')}
         </Typography>
         {allCurrencies.length > 1 && (
@@ -214,7 +214,7 @@ export default function Arikkaigal() {
             {isLoading ? (
               <Skeleton variant="text" width="80%" height={40} />
             ) : (
-              <Typography variant="h4" sx={{ fontWeight: 800, color: 'text.primary' }}>
+              <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary' }}>
                 {formatCurrency(totalRevenue, currencyFilter)}
               </Typography>
             )}
@@ -232,7 +232,7 @@ export default function Arikkaigal() {
             {isLoading ? (
               <Skeleton variant="text" width="80%" height={40} />
             ) : (
-              <Typography variant="h4" sx={{ fontWeight: 800, color: 'text.primary' }}>
+              <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary' }}>
                 {formatCurrency(totalTaxCollected, currencyFilter)}
               </Typography>
             )}
@@ -250,7 +250,7 @@ export default function Arikkaigal() {
             {isLoading ? (
               <Skeleton variant="text" width="80%" height={40} />
             ) : (
-              <Typography variant="h4" sx={{ fontWeight: 800, color: 'text.primary' }}>
+              <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary' }}>
                 {formatCurrency(revenueExTax, currencyFilter)}
               </Typography>
             )}
@@ -262,7 +262,7 @@ export default function Arikkaigal() {
       {monthlyKeys.length > 0 && (
         <>
           <Box sx={{ mb: 2 }}>
-            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
               {t('monthlySalesTitle') === 'monthlySalesTitle' ? 'Monthly Breakdown' : t('monthlySalesTitle')}
             </Typography>
           </Box>
