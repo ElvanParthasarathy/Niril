@@ -107,17 +107,20 @@ export default function Arikkaigal() {
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1200, mx: 'auto', pb: { xs: 10, md: 4 } }}>
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" color="text.primary" gutterBottom sx={{ fontWeight: "bold" }}>
-          {t('reports')}
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          {t('reportsSubtitle')}
-        </Typography>
+      {/* Page Header (Hidden on Mobile) */}
+      <Box sx={{ mb: 4, display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <Box>
+          <Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
+            {t('reportsTitle')}
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            {t('reportsSubtitle')}
+          </Typography>
+        </Box>
       </Box>
 
       {/* Period + Currency Selector */}
-      <ElvanCard sx={{ mb: 4 }} boxSx={{ px: 3, pt: 1, pb: 3 }}>
+      <ElvanCard sx={{ mb: 4 }} boxSx={{ px: 3, pt: 2, pb: 2 }}>
         <Grid container spacing={2} sx={{ alignItems: 'center' }}>
           <Grid size={{ xs: 12, sm: 4, md: 3 }}>
             <TextField 
