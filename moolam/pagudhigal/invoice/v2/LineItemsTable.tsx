@@ -305,7 +305,25 @@ export default function LineItemsTable({
           </Box>
         </Box>
       ))}
-      <Button variant="outlined" startIcon={<Plus size={18} weight="regular" />} onClick={addItem} sx={{ mt: 1 }}>Add Item</Button>
+      <Button 
+        variant="text" 
+        startIcon={<Plus size={18} weight="regular" />} 
+        onClick={addItem} 
+        sx={{ 
+          mt: 1,
+          bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : '#FFFFFF',
+          color: 'text.primary',
+          borderRadius: '24px',
+          px: 3,
+          py: 1,
+          boxShadow: (theme) => theme.palette.mode === 'dark' ? 'none' : 1,
+          '&:hover': { 
+            bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)' 
+          }
+        }}
+      >
+        {t('hc_addItem') || 'Add Item'}
+      </Button>
     </Box>
   );
 }
