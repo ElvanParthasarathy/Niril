@@ -204,7 +204,7 @@ export default function Arikkaigal() {
           label={t('filterByLabel') as string} 
           value={filterMode} 
           onChange={e => setFilterMode(e.target.value)}
-          sx={{ minWidth: 200 }}
+          sx={{ width: 200 }}
         >
           <MenuItem value="fy">{t('fiscalYearLabel')}</MenuItem>
           <MenuItem value="month">{t('monthYearLabel')}</MenuItem>
@@ -216,7 +216,7 @@ export default function Arikkaigal() {
             label={t('fiscalYearLabel') as string} 
             value={fyFilter} 
             onChange={e => setFyFilter(e.target.value)}
-            sx={{ minWidth: 200 }}
+            sx={{ width: 200 }}
           >
             {fyOptions.map(fy => <MenuItem key={fy.value} value={fy.value}>{fy.label}</MenuItem>)}
           </TextField>
@@ -227,7 +227,7 @@ export default function Arikkaigal() {
               label={t('monthLabel') as string} 
               value={monthFilter} 
               onChange={e => setMonthFilter(e.target.value)}
-              sx={{ minWidth: 150 }}
+              sx={{ width: 200 }}
             >
               {MONTHS.map((m, i) => <MenuItem key={i} value={i}>{m}</MenuItem>)}
             </TextField>
@@ -236,7 +236,7 @@ export default function Arikkaigal() {
               label={t('yearLabel') as string} 
               value={yearFilter} 
               onChange={e => setYearFilter(e.target.value)}
-              sx={{ minWidth: 120 }}
+              sx={{ width: 200 }}
             >
               {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
             </TextField>
@@ -249,7 +249,7 @@ export default function Arikkaigal() {
             label={t('currencyLabel') as string} 
             value={currencyFilter} 
             onChange={e => setCurrencyFilter(e.target.value)}
-            sx={{ minWidth: 200 }}
+            sx={{ width: 200 }}
           >
             {allCurrencies.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
           </TextField>
