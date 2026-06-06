@@ -128,17 +128,20 @@ export default function LineItemsTable({
             <Typography variant="subtitle2" color="text.secondary">
               {t('item')} #{index + 1}
             </Typography>
-            <IconButton 
+            <Button 
               size="small"
+              color="error"
               onClick={() => removeItem(item.id)} 
               title={t('hc_remove')}
+              startIcon={<Trash size={16} weight="regular" />}
               sx={{ 
-                color: 'text.secondary',
-                '&:hover': { bgcolor: 'action.hover', color: 'error.main' } 
+                textTransform: 'none', 
+                borderRadius: 2,
+                px: 2
               }}
             >
-              <Trash size={16} weight="regular" />
-            </IconButton>
+              {t('hc_remove') || 'Remove'}
+            </Button>
           </Box>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, p: 2, bgcolor: 'action.hover', borderRadius: '16px' }}>
             
