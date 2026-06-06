@@ -517,6 +517,7 @@ export default function VariArikkaigal({ profile }) {
   const [activeTab, setActiveTab] = useState('summary');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const listTopRef = useRef(null);
   const [gstr2bData, setGstr2bData] = useState(null); // imported 2B JSON
   const [gstr2bFilter, setGstr2bFilter] = useState('all'); // all | matched | mismatch | bookOnly | twoBOnly
   const gstr2bInputRef = useRef(null);
@@ -1390,7 +1391,7 @@ export default function VariArikkaigal({ profile }) {
 
       {/* ===================== SUMMARY TAB ===================== */}
       {activeTab === 'summary' && (
-        <Stack spacing={3}>
+        <Stack spacing={3} ref={listTopRef} sx={{ scrollMarginTop: '100px' }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2, mb: -1, flexWrap: 'wrap', gap: 2 }}>
             <Box>
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>{t('hc_invoicesForThisPeriod')}</Typography>
@@ -1464,7 +1465,12 @@ export default function VariArikkaigal({ profile }) {
 
           {totalPages > 1 && (
             <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-              <Pagination count={totalPages} page={safePage} onChange={(_e, val) => setPage(val)} color="primary" size="large" sx={{ '& .MuiPaginationItem-root': { fontWeight: 600 } }} />
+              <Pagination count={totalPages} page={safePage} onChange={(_e, val) => {
+                setPage(val);
+                if (listTopRef.current) {
+                  listTopRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }} color="primary" size="large" sx={{ '& .MuiPaginationItem-root': { fontWeight: 600 } }} />
             </Box>
           )}
         </Stack>
