@@ -311,6 +311,7 @@ export default function LineItemsTable({
           startIcon={<Plus size={18} weight="regular" />} 
           onClick={addItem} 
           sx={{ 
+            width: { xs: '100%', sm: 'auto' },
             bgcolor: 'action.hover',
             color: 'text.primary',
             borderRadius: '24px',
