@@ -1307,7 +1307,7 @@ export default function VariArikkaigal({ profile }) {
       )}
 
       {isNilReturn && (
-        <Alert severity="warning" sx={{ mb: 2, borderRadius: 2, bgcolor: '#fffbeb', color: '#92400e', '& .MuiAlert-icon': { color: '#92400e' } }}>
+        <Alert severity="warning" sx={{ mb: 2, borderRadius: '24px', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF', color: 'text.primary', '& .MuiAlert-icon': { color: 'warning.main' } }}>
           No invoices or expenses found — file a NIL return on the GST portal. NIL returns are mandatory.
         </Alert>
       )}
