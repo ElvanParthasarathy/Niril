@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, TextField, IconButton, Button, Divider, List, ListItem, ListItemButton, ListItemText, InputAdornment, Select, MenuItem } from '@mui/material';
 import { Trash, Plus } from '@phosphor-icons/react';
-import ElvanCard from '../../ElvanCard';
 import { useLanguage } from '../../../mozhi/LanguageContext';
 import { LineItemState, InvoiceSettingsState, createEmptyLineItem } from './InvoiceTypes';
 import { getAllProducts } from '../../../Avanam';
@@ -145,6 +144,13 @@ export default function LineItemsTable({
                 }}
                 onFocus={() => setActiveSuggestionRow(item.id)}
                 autoComplete="off"
+                helperText={item.productId ? [
+                  getItemField(item, 'name', secondaryLang),
+                  item.taxPercent ? `GST ${item.taxPercent}%` : '',
+                ].filter(Boolean).join(' · ') : undefined}
+                FormHelperTextProps={{
+                  sx: { margin: 0, mt: 0.5, lineHeight: 1.2 }
+                }}
               />
 
               {activeSuggestionRow === item.id && (
@@ -286,21 +292,7 @@ export default function LineItemsTable({
             {/* Delete */}
             <Box sx={{ flex: '0 0 auto', display: 'flex', alignItems: 'center' }}>
               <IconButton color="error" onClick={() => removeItem(item.id)} title={t('hc_remove')}><Trash size={18} weight="regular" /></IconButton>
-            </Box>
           </Box>
-          {item.productId && (
-            <ElvanCard sx={{ mt: 1 }} boxSx={{ p: 2 }}>
-              <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>
-                {t('hc_savedProductDetails') || 'SAVED PRODUCT DETAILS'}
-              </Typography>
-              <Typography variant="body2">
-                {[
-                  getItemField(item, 'name', secondaryLang),
-                  item.taxPercent ? `GST ${item.taxPercent}%` : '',
-                ].filter(Boolean).join(' · ')}
-              </Typography>
-            </ElvanCard>
-          )}
         </Box>
       ))}
       <Button variant="outlined" startIcon={<Plus size={18} weight="regular" />} onClick={addItem} sx={{ mt: 1 }}>Add Item</Button>
