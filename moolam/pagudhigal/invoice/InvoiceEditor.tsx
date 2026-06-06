@@ -283,7 +283,6 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
       return { ...DEFAULT_OPTIONS, ...persisted, ...(draft?.invoiceOptions || {}) };
     } catch { return draft?.invoiceOptions || { ...DEFAULT_OPTIONS }; }
   });
-  const [showOptions, setShowOptions] = useState(false);
   const printRef = useRef(null);
   const draftInitialized = useRef(!!draft);
   const [autoSaveStatus, setAutoSaveStatus] = useState('idle'); // 'idle' | 'saving' | 'saved'
@@ -936,9 +935,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
           <ElvanCard sx={{ mb: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t("invoiceType")}</Typography>
-              <Button variant="outlined" size="small" onClick={() => setShowOptions(!showOptions)} startIcon={<GearSix size={15} weight="regular"   />}>
-                {showOptions ? 'Hide Options' : t('customize')}
-              </Button>
+              
             </Box>
 
             <Grid container spacing={2} sx={{ mb: 2 }}>
@@ -958,11 +955,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
 
             </Grid>
 
-            {/* Customization Options */}
-            {showOptions && (
-              <Box sx={{ mt: 3, p: 2, bgcolor: 'background.default', border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
-
-                {/* Payment account */}
+            {/* Payment account */}
                 {(() => {
                   const accounts = getActiveAccounts(profile);
                   if (accounts.length === 0) return null;
@@ -987,10 +980,6 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                     </Box>
                   );
                 })()}
-
-                
-              </Box>
-            )}
           </ElvanCard>
 
           {/* Client Modal */}
