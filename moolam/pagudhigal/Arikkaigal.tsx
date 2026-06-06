@@ -117,7 +117,7 @@ export default function Arikkaigal() {
       </Box>
 
       {/* Period + Currency Selector */}
-      <ElvanCard sx={{ mb: 4 }} boxSx={{ px: 3, pt: 1, pb: 3 }}>
+      <ElvanCard sx={{ mb: 4 }} boxSx={{ px: 3, pt: 1, pb: 2 }}>
         <Grid container spacing={2} sx={{ alignItems: 'center' }}>
           <Grid size={{ xs: 12, sm: 4, md: 3 }}>
             <TextField 
