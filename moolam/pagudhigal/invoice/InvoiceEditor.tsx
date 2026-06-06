@@ -854,7 +854,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
 
 
   return (
-    <Box sx={{ p: { xs: 1.5, sm: 2 }, bgcolor: 'background.default', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 1.5, md: 4 }, maxWidth: 1200, mx: 'auto', bgcolor: 'background.default', minHeight: '100vh', display: 'flex', flexDirection: 'column', width: '100%' }}>
       <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', mb: { xs: 2, sm: 3 }, gap: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
           {/* Desktop Back Button */}
