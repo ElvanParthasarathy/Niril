@@ -1,9 +1,10 @@
 // @ts-nocheck
 import { TrendUp, TrendDown, Wallet, ChartBar, Clock, MagnifyingGlass, X } from '@phosphor-icons/react';
 import { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Grid, FormControl, InputLabel, Select, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Skeleton } from '@mui/material';
+import { Box, Typography, Paper, Grid, FormControl, InputLabel, Select, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Skeleton, useTheme } from '@mui/material';
 import { getAllBills } from '../Avanam';
 import { formatCurrency } from '../Payanpadu';
+import ElvanCard from './ElvanCard';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
 
@@ -24,6 +25,8 @@ const getBillCurrency = (b) => b.currency || b.data?.invoiceOptions?.currency ||
 
 export default function Arikkaigal() {
   const { t } = useLanguage();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const MONTHS = [t('january'), t('february'), t('march'), t('april'), t('may'), t('june'), t('july'), t('august'), t('september'), t('october'), t('november'), t('december')];
 
   const [bills, setBills] = useState([]);
@@ -114,7 +117,7 @@ export default function Arikkaigal() {
       </Box>
 
       {/* Period + Currency Selector */}
-      <Paper elevation={0} sx={{ p: 3, mb: 4, borderRadius: '24px', bgcolor: 'background.paper' }}>
+      <ElvanCard boxSx={{ p: 3, mb: 4 }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ alignItems: { xs: 'stretch', sm: 'center' } }}>
           <FormControl size="small" sx={{ minWidth: 150, '& .MuiOutlinedInput-root': { borderRadius: '16px' } }}>
             <InputLabel>{t('filterByLabel')}</InputLabel>
@@ -155,7 +158,7 @@ export default function Arikkaigal() {
             </FormControl>
           )}
         </Stack>
-      </Paper>
+      </ElvanCard>
 
       {/* P&L Metric Cards */}
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -171,7 +174,7 @@ export default function Arikkaigal() {
 
       <Grid container spacing={2} sx={{ mb: 4 }}>
         <Grid size={{ xs: 12, sm: 4 }}>
-          <Paper elevation={0} sx={{ p: 3, borderRadius: '24px', bgcolor: 'background.paper', height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <ElvanCard sx={{ height: '100%' }} boxSx={{ display: 'flex', flexDirection: 'column' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
               <Box sx={{ width: 40, height: 40, borderRadius: '12px', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Wallet size={20} weight="fill" />
@@ -185,11 +188,11 @@ export default function Arikkaigal() {
                 {formatCurrency(totalRevenue, currencyFilter)}
               </Typography>
             )}
-          </Paper>
+          </ElvanCard>
         </Grid>
         
         <Grid size={{ xs: 12, sm: 4 }}>
-          <Paper elevation={0} sx={{ p: 3, borderRadius: '24px', bgcolor: 'background.paper', height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <ElvanCard sx={{ height: '100%' }} boxSx={{ display: 'flex', flexDirection: 'column' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
               <Box sx={{ width: 40, height: 40, borderRadius: '12px', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <TrendDown size={20} weight="fill" />
@@ -203,11 +206,11 @@ export default function Arikkaigal() {
                 {formatCurrency(totalTaxCollected, currencyFilter)}
               </Typography>
             )}
-          </Paper>
+          </ElvanCard>
         </Grid>
 
         <Grid size={{ xs: 12, sm: 4 }}>
-          <Paper elevation={0} sx={{ p: 3, borderRadius: '24px', bgcolor: 'background.paper', height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <ElvanCard sx={{ height: '100%' }} boxSx={{ display: 'flex', flexDirection: 'column' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
               <Box sx={{ width: 40, height: 40, borderRadius: '12px', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <TrendUp size={20} weight="fill" />
@@ -221,7 +224,7 @@ export default function Arikkaigal() {
                 {formatCurrency(revenueExTax, currencyFilter)}
               </Typography>
             )}
-          </Paper>
+          </ElvanCard>
         </Grid>
       </Grid>
 
@@ -240,7 +243,7 @@ export default function Arikkaigal() {
               const [y, mo] = key.split('-');
               return (
                 <Grid size={{ xs: 12, sm: 6, md: 4 }} key={key}>
-                  <Paper elevation={0} sx={{ p: 3, borderRadius: '24px', bgcolor: 'background.paper', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <ElvanCard boxSx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                       <Box sx={{ p: 1.5, borderRadius: '12px', bgcolor: 'action.hover', display: 'flex', color: 'text.secondary' }}>
                         <ChartBar size={20} weight="duotone" />
@@ -252,7 +255,7 @@ export default function Arikkaigal() {
                     <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary' }}>
                       {formatCurrency(rev, currencyFilter)}
                     </Typography>
-                  </Paper>
+                  </ElvanCard>
                 </Grid>
               );
             })}
