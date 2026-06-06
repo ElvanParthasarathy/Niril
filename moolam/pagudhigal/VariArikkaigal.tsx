@@ -734,7 +734,7 @@ export default function VariArikkaigal({ profile }) {
       warnings.push({ type: 'warning', msg: `Invoice ${bill.invoiceNumber}: Client ${client.name} has GSTIN but no maanilam — Place of Supply may be wrong` });
     }
   });
-  if (!profile.gstin) {
+  if (!profile?.gstin) {
     warnings.push({ type: 'error', msg: t('gstinNotSet') });
   }
 
