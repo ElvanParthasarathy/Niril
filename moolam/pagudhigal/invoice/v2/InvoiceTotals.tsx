@@ -108,17 +108,18 @@ export default function InvoiceTotals({
       
       {/* Global Discount Input (Outside the Totals Card) */}
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', mb: 2 }}>
-        <Typography color="text.secondary" variant="body2">{t('discount') || 'Discount'}</Typography>
         <Box sx={{ display: 'flex', width: '100%' }}>
           <TextField 
             fullWidth
-            hiddenLabel
             size="small" 
             type="number"
+            label={t('discount') || 'Discount'}
             placeholder="0"
             value={totals.globalDiscountValue === undefined ? '' : totals.globalDiscountValue}
             onChange={(e) => setTotals({ ...totals, globalDiscountValue: e.target.value === '' ? '' as any : Number(e.target.value) })}
             slotProps={{
+              inputLabel: { shrink: true },
+              htmlInput: { min: 0, step: "any" },
               input: {
                 endAdornment: (
                   <InputAdornment position="end" sx={{ mr: -1.7 }}>
