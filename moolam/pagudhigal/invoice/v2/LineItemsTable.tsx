@@ -256,7 +256,7 @@ export default function LineItemsTable({
                     htmlInput: { min: 0, step: "any" },
                     input: {
                       endAdornment: (
-                        <InputAdornment position="end" sx={{ mr: -1.7 }}>
+                        <InputAdornment position="end">
                           <Select
                             variant="standard"
                             disableUnderline
