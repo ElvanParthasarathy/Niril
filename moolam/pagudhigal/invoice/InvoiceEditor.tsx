@@ -912,7 +912,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
           {/* Business Profile Selector — shown only if multiple profiles saved */}
           {allProfiles.length > 1 && (
             <>
-              <Box sx={{ py: 3, px: { xs: 2, md: 3 } }}>
+              <Box sx={{ py: 3 }}>
                 <Typography variant="h6" sx={{ mb: 2, fontSize: '1.1rem', fontWeight: 600 }}>Billing From (Business Profile)</Typography>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                   {allProfiles.map(bp => {
@@ -938,7 +938,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
           <VanigarThirai show={showClientModal} onClose={() => setShowClientModal(false)} onSave={handleClientModalSave} client={modalClient} isEditing={isEditingClient} defaultCountry={profile?.country} profileSettings={profile} />
 
           {/* Client Details */}
-          <Box sx={{ py: 3, px: { xs: 2, md: 3 } }}>
+          <Box sx={{ py: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
               <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('billedTo')}</Typography>
               <ToggleButtonGroup
@@ -1155,7 +1155,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
           <Divider sx={{ my: 1, borderColor: 'divider', opacity: 0.5 }} />
 
           {/* Invoice Details */}
-          <Box sx={{ py: 3, px: { xs: 2, md: 3 } }}>
+          <Box sx={{ py: 3 }}>
             <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 3 }}>{t('invoiceDetailsForm')}</Typography>
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, md: 6 }}>
@@ -1217,7 +1217,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
           <Divider sx={{ my: 1, borderColor: 'divider', opacity: 0.5 }} />
 
           {/* Line Items */}
-          <Box sx={{ py: 3, px: { xs: 2, md: 3 } }}>
+          <Box sx={{ py: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
               <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('lineItems')}</Typography>
             </Box>
@@ -1392,7 +1392,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
           <Divider sx={{ my: 1, borderColor: 'divider', opacity: 0.5 }} />
 
           {/* Invoice Type */}
-          <Box sx={{ py: 3, px: { xs: 2, md: 3 } }}>
+          <Box sx={{ py: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t("invoiceType")}</Typography>
               
@@ -1444,7 +1444,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
           <Divider sx={{ my: 1, borderColor: 'divider', opacity: 0.5 }} />
 
 {/* Terms */}
-          <Box sx={{ py: 3, px: { xs: 2, md: 3 } }}>
+          <Box sx={{ py: 3 }}>
             <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 3 }}>{t("termsHeading")}</Typography>
             <Box sx={{ mb: 2 }}>
               <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>{t("termsAppearsOnInvoice")}</Typography>
