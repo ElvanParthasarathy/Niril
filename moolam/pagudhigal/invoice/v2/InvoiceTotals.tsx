@@ -104,8 +104,8 @@ export default function InvoiceTotals({
   }, [items, client.maanilam.primary, profileState, country, globalDiscountValue, globalDiscountType]);
 
   return (
-    <Box sx={{ width: '100%', maxWidth: 400, ml: 'auto' }}>
-      <Paper sx={{ p: 3, borderRadius: 2 }}>
+    <Box sx={{ width: '100%', maxWidth: { xs: '100%', sm: 400 }, ml: 'auto' }}>
+      <Paper sx={{ p: 3, borderRadius: '24px', boxShadow: 'none', bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : '#FFFFFF' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
           <Box sx={{ width: 18, height: 18, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: 'bold' }}>4</Box>
           <Typography variant="h6" sx={{ mb: 0, lineHeight: 1 }}>{t('totals') || 'Totals'}</Typography>
