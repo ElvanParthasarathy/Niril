@@ -127,7 +127,8 @@ export default function LineItemsTable({
           <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1, ml: 1.5 }}>
             {t('item')} #{index + 1}
           </Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, p: 2, bgcolor: 'action.hover', borderRadius: '16px' }}>
+          <Box sx={{ display: 'flex', flexWrap: { xs: 'wrap', md: 'nowrap' }, gap: 2, alignItems: 'stretch' }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, p: 2, bgcolor: 'action.hover', borderRadius: '16px', flex: 1 }}>
             
             {/* Product Search */}
             <Box sx={{ flex: '3 1 250px', position: 'relative' }}>
@@ -263,8 +264,11 @@ export default function LineItemsTable({
               </Box>
             )}
 
-            {/* Line Total */}
-            <Box sx={{ flex: '1 1 120px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', bgcolor: 'background.paper', p: 1, px: 1.5, borderRadius: 2 }}>
+            </Box>
+
+            <Box sx={{ display: 'flex', gap: 2, flex: { xs: '1 1 100%', md: '0 0 auto' } }}>
+              {/* Line Total */}
+              <Box sx={{ width: { xs: '100%', md: 140 }, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', bgcolor: 'action.hover', p: 2, borderRadius: '16px' }}>
               {(() => {
                  const qty = Number(item.qty) || 0;
                  const rate = Number(item.rate) || 0;
