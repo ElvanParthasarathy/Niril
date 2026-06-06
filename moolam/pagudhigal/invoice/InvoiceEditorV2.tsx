@@ -66,9 +66,19 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
   useEffect(() => {
     if (editingBill?.data) {
       const d = editingBill.data;
+      
+      // Load common data
+      if (d.client) setClient(d.client);
+      if (d.items?.length) setItems(d.items);
+      if (d.totals) setTotals(d.totals);
+      if (d.invoiceOptions) setSettings(d.invoiceOptions);
+      if (d.customTerms !== undefined) setCustomTerms(d.customTerms);
+      if (d.internalNote !== undefined) setInternalNote(d.internalNote);
+
       if (editingBill._isDuplicate) {
         const convertType = editingBill._convertToType;
         const type = convertType || d.invoiceType || 'tax-invoice';
+        setMetadata(prev => ({ ...prev, invoiceType: type, placeOfSupply: d.details?.placeOfSupply || '' }));
         const prefix = (INVOICE_TYPES as any)[type]?.prefix || 'INV';
         getNextInvoiceNumber(prefix).then((num: string) => {
           setMetadata(prev => ({ ...prev, invoiceNumber: num, date: new Date().toISOString().split('T')[0] }));
@@ -76,6 +86,7 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
       } else {
         setMetadata(prev => ({
           ...prev,
+          invoiceType: d.invoiceType || 'tax-invoice',
           invoiceNumber: d.details?.invoiceNumber || prev.invoiceNumber,
           date: d.details?.invoiceDate || prev.date,
           placeOfSupply: d.details?.placeOfSupply || '',
