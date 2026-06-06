@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { CaretDoubleLeft as KeyboardDoubleArrowLeft, CaretDoubleRight as KeyboardDoubleArrowRight, House as Home, FileText as Description, GearSix as Settings, Plus as Add, Users as People, Package as Inventory, ChartBar as BarChart, Wallet as AccountBalanceWallet, ArrowsClockwise as Refresh, Receipt, BookOpen as MenuBook, Moon as DarkMode, Sun as LightMode, DownloadSimple as Download, X as Close, ShoppingCart, CaretDown as KeyboardArrowDown, CaretRight as KeyboardArrowRight, Buildings as Business, PencilSimple as Edit, Question as HelpOutlined, MagnifyingGlass as Search, Command as KeyboardCommandKey, Bell as Notifications, List as Menu, CalendarDots } from '@phosphor-icons/react';
+import { CaretLeft, CaretDoubleLeft as KeyboardDoubleArrowLeft, CaretDoubleRight as KeyboardDoubleArrowRight, House as Home, FileText as Description, GearSix as Settings, Plus as Add, Users as People, Package as Inventory, ChartBar as BarChart, Wallet as AccountBalanceWallet, ArrowsClockwise as Refresh, Receipt, BookOpen as MenuBook, Moon as DarkMode, Sun as LightMode, DownloadSimple as Download, X as Close, ShoppingCart, CaretDown as KeyboardArrowDown, CaretRight as KeyboardArrowRight, Buildings as Business, PencilSimple as Edit, Question as HelpOutlined, MagnifyingGlass as Search, Command as KeyboardCommandKey, Bell as Notifications, List as Menu, CalendarDots } from '@phosphor-icons/react';
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Badge, Box, Typography, Avatar, Divider, Tooltip, IconButton, Collapse, CssBaseline, Dialog, DialogTitle, DialogContent, DialogActions, Button, Backdrop, CircularProgress, InputBase, AppBar, Toolbar, useMediaQuery, Stack } from '@mui/material';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
@@ -903,7 +903,13 @@ function Seyali() {
       }}>
         {/* New Mobile AMOLED Top Bar */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, px: 2, py: 1.5, alignItems: 'center', justifyContent: 'space-between', bgcolor: 'transparent', zIndex: 1100, minHeight: 64 }}>
-          <Box id="mobile-topbar-left" sx={{ display: 'flex', alignItems: 'center' }} />
+          <Box id="mobile-topbar-left" sx={{ display: 'flex', alignItems: 'center' }}>
+            {['reports', 'gst-returns', 'settings'].includes(currentView as string) && (
+              <IconButton onClick={() => setCurrentView('dashboard')} sx={{ ml: -1, mr: 1, color: darkMode ? '#FFFFFF' : '#000000' }}>
+                <CaretLeft size={24} weight="bold" />
+              </IconButton>
+            )}
+          </Box>
           {!isEditorView && (
             <Typography variant="h6" sx={{ ml: 1.5, fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.5px', color: darkMode ? '#FFFFFF' : '#000000', flexGrow: 1 }}>
               {getTopBarTitle()}
@@ -1059,7 +1065,7 @@ function Seyali() {
         </Box>
         
         {/* New Mobile AMOLED Bottom Navigation */}
-        {!isEditorView && (
+        {!isEditorView && !['reports', 'gst-returns', 'settings'].includes(currentView as string) && (
         <Box sx={{ 
           display: { xs: 'flex', md: 'none' }, 
           position: 'fixed', bottom: 0, left: 0, right: 0, 
