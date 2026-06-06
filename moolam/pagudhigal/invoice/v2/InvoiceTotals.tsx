@@ -106,11 +106,6 @@ export default function InvoiceTotals({
   return (
     <Box sx={{ width: '100%', maxWidth: { xs: '100%', sm: 400 }, ml: 'auto' }}>
       <Paper sx={{ p: 3, borderRadius: '24px', boxShadow: 'none', bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : '#FFFFFF' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-          <Box sx={{ width: 18, height: 18, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: 'bold' }}>4</Box>
-          <Typography variant="h6" sx={{ mb: 0, lineHeight: 1 }}>{t('totals') || 'Totals'}</Typography>
-        </Box>
-        
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
           <Typography color="text.secondary">{t('subtotal') || 'Subtotal'}</Typography>
           <Typography>₹ {totals.subtotal.toFixed(2)}</Typography>
@@ -125,26 +120,13 @@ export default function InvoiceTotals({
               placeholder="0"
               value={totals.globalDiscountValue === undefined ? '' : totals.globalDiscountValue}
               onChange={(e) => setTotals({ ...totals, globalDiscountValue: e.target.value === '' ? '' as any : Number(e.target.value) })}
-              InputProps={{
-                sx: { 
-                  borderTopRightRadius: 0, 
-                  borderBottomRightRadius: 0, 
-                  bgcolor: 'action.hover' 
-                }
-              }}
+              sx={{ '& .MuiOutlinedInput-root': { borderTopRightRadius: 0, borderBottomRightRadius: 0, bgcolor: 'background.paper' } }}
             />
             <Select
               size="small"
               value={totals.globalDiscountType || 'percentage'}
               onChange={(e) => setTotals({ ...totals, globalDiscountType: e.target.value as any })}
-              sx={{ 
-                width: 65, 
-                minWidth: 65, 
-                borderTopLeftRadius: 0, 
-                borderBottomLeftRadius: 0, 
-                bgcolor: 'action.selected', 
-                '& fieldset': { borderLeftColor: 'transparent' } 
-              }}
+              sx={{ width: 65, minWidth: 65, borderTopLeftRadius: 0, borderBottomLeftRadius: 0, bgcolor: 'action.hover', '& fieldset': { borderLeftColor: 'transparent' } }}
             >
               <MenuItem value="percentage">%</MenuItem>
               <MenuItem value="amount">₹</MenuItem>
