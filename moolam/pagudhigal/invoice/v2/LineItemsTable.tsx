@@ -124,9 +124,22 @@ export default function LineItemsTable({
       
       {items.map((item: any, index) => (
         <Box key={item.id} sx={{ mb: 2 }}>
-          <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1, ml: 1.5 }}>
-            {t('item')} #{index + 1}
-          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1, px: 1.5 }}>
+            <Typography variant="subtitle2" color="text.secondary">
+              {t('item')} #{index + 1}
+            </Typography>
+            <IconButton 
+              size="small"
+              onClick={() => removeItem(item.id)} 
+              title={t('hc_remove')}
+              sx={{ 
+                color: 'text.secondary',
+                '&:hover': { bgcolor: 'action.hover', color: 'error.main' } 
+              }}
+            >
+              <Trash size={16} weight="regular" />
+            </IconButton>
+          </Box>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, p: 2, bgcolor: 'action.hover', borderRadius: '16px' }}>
             
             {/* Product Search */}
@@ -289,20 +302,6 @@ export default function LineItemsTable({
               })()}
             </Box>
 
-            {/* Delete */}
-            <Box sx={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', ml: 1 }}>
-              <IconButton 
-                onClick={() => removeItem(item.id)} 
-                title={t('hc_remove')}
-                sx={{ 
-                  bgcolor: 'background.paper', 
-                  color: 'text.secondary',
-                  '&:hover': { bgcolor: 'action.selected' } 
-                }}
-              >
-                <Trash size={18} weight="regular" />
-              </IconButton>
-            </Box>
           </Box>
         </Box>
       ))}
