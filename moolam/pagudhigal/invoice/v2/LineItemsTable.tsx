@@ -297,6 +297,7 @@ export default function LineItemsTable({
             <Box sx={{ flex: '0 0 auto', display: 'flex', alignItems: 'center' }}>
               <IconButton color="error" onClick={() => removeItem(item.id)} title={t('hc_remove')}><Trash size={18} weight="regular" /></IconButton>
             </Box>
+            </Box>
           </Box>
         </Box>
       ))}
