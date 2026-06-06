@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { TrendUp, TrendDown, Wallet, ChartBar, Clock, MagnifyingGlass, X } from '@phosphor-icons/react';
 import { useState, useEffect } from 'react';
-import { Box, Typography, Paper, Grid, FormControl, InputLabel, Select, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Skeleton, useTheme } from '@mui/material';
+import { Box, Typography, Paper, Grid, TextField, InputAdornment, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Skeleton, useTheme } from '@mui/material';
 import { getAllBills } from '../Avanam';
 import { formatCurrency } from '../Payanpadu';
 import ElvanCard from './ElvanCard';
@@ -118,44 +118,59 @@ export default function Arikkaigal() {
 
       {/* Period + Currency Selector */}
       <ElvanCard boxSx={{ p: 3, mb: 4 }}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ alignItems: { xs: 'stretch', sm: 'center' } }}>
-          <FormControl size="small" sx={{ minWidth: 150, '& .MuiOutlinedInput-root': { borderRadius: '16px' } }}>
-            <InputLabel>{t('filterByLabel')}</InputLabel>
-            <Select value={filterMode} onChange={e => setFilterMode(e.target.value)} label={t('filterByLabel')}>
-              <MenuItem value="fy">{t('fiscalYearLabel')}</MenuItem>
-              <MenuItem value="month">{t('monthYearLabel')}</MenuItem>
-            </Select>
-          </FormControl>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ alignItems: { xs: 'stretch', sm: 'flex-start' } }}>
+          <TextField 
+            select 
+            sx={{ minWidth: 150 }} 
+            label={t('filterByLabel') as string} 
+            value={filterMode} 
+            onChange={e => setFilterMode(e.target.value)}
+          >
+            <MenuItem value="fy">{t('fiscalYearLabel')}</MenuItem>
+            <MenuItem value="month">{t('monthYearLabel')}</MenuItem>
+          </TextField>
           {filterMode === 'fy' ? (
-            <FormControl size="small" sx={{ minWidth: 150, '& .MuiOutlinedInput-root': { borderRadius: '16px' } }}>
-              <InputLabel>{t('fiscalYearLabel')}</InputLabel>
-              <Select value={fyFilter} onChange={e => setFyFilter(e.target.value)} label={t('fiscalYearLabel')}>
-                {fyOptions.map(fy => <MenuItem key={fy.value} value={fy.value}>{fy.label}</MenuItem>)}
-              </Select>
-            </FormControl>
+            <TextField 
+              select 
+              sx={{ minWidth: 150 }} 
+              label={t('fiscalYearLabel') as string} 
+              value={fyFilter} 
+              onChange={e => setFyFilter(e.target.value)}
+            >
+              {fyOptions.map(fy => <MenuItem key={fy.value} value={fy.value}>{fy.label}</MenuItem>)}
+            </TextField>
           ) : (
             <>
-              <FormControl size="small" sx={{ minWidth: 150, '& .MuiOutlinedInput-root': { borderRadius: '16px' } }}>
-                <InputLabel>{t('monthLabel')}</InputLabel>
-                <Select value={monthFilter} onChange={e => setMonthFilter(e.target.value)} label={t('monthLabel')}>
-                  {MONTHS.map((m, i) => <MenuItem key={i} value={i}>{m}</MenuItem>)}
-                </Select>
-              </FormControl>
-              <FormControl size="small" sx={{ minWidth: 100, '& .MuiOutlinedInput-root': { borderRadius: '16px' } }}>
-                <InputLabel>{t('yearLabel')}</InputLabel>
-                <Select value={yearFilter} onChange={e => setYearFilter(e.target.value)} label={t('yearLabel')}>
-                  {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
-                </Select>
-              </FormControl>
+              <TextField 
+                select 
+                sx={{ minWidth: 150, mt: { xs: 2, sm: 0 } }} 
+                label={t('monthLabel') as string} 
+                value={monthFilter} 
+                onChange={e => setMonthFilter(e.target.value)}
+              >
+                {MONTHS.map((m, i) => <MenuItem key={i} value={i}>{m}</MenuItem>)}
+              </TextField>
+              <TextField 
+                select 
+                sx={{ minWidth: 100 }} 
+                label={t('yearLabel') as string} 
+                value={yearFilter} 
+                onChange={e => setYearFilter(e.target.value)}
+              >
+                {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
+              </TextField>
             </>
           )}
           {allCurrencies.length > 1 && (
-            <FormControl size="small" sx={{ minWidth: 120, '& .MuiOutlinedInput-root': { borderRadius: '16px' } }}>
-              <InputLabel>{t('currencyLabel')}</InputLabel>
-              <Select value={currencyFilter} onChange={e => setCurrencyFilter(e.target.value)} label={t('currencyLabel')}>
-                {allCurrencies.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
-              </Select>
-            </FormControl>
+            <TextField 
+              select 
+              sx={{ minWidth: 120 }} 
+              label={t('currencyLabel') as string} 
+              value={currencyFilter} 
+              onChange={e => setCurrencyFilter(e.target.value)}
+            >
+              {allCurrencies.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+            </TextField>
           )}
         </Stack>
       </ElvanCard>
