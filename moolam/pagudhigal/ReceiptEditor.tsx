@@ -197,8 +197,11 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField 
             fullWidth size="medium" label={t('amountLabelStar') as string} type="number"
-            value={form.amount} onChange={e => updateField('amount', e.target.value)} slotProps={{ input: { startAdornment: <InputAdornment position="start" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 24, mt: '0 !important' }}>{currencySymbol}</InputAdornment> } }}
-            slotProps={{ inputLabel: { shrink: true } }}
+            value={form.amount} onChange={e => updateField('amount', e.target.value)}
+            slotProps={{
+              input: { startAdornment: <InputAdornment position="start" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 24, mt: '0 !important' }}>{currencySymbol}</InputAdornment> },
+              inputLabel: { shrink: true }
+            }}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
@@ -208,8 +211,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
             label={t('paymentModeLabel') as string} 
             value={form.paymentMode} 
             onChange={e => updateField('paymentMode', e.target.value)} 
-            slotProps={{ inputLabel: { shrink: true } }}
-            slotProps={{ select: { displayEmpty: true } }}
+            slotProps={{ inputLabel: { shrink: true }, select: { displayEmpty: true } }}
           >
             <MenuItem value=""><em>{t('paymentModeLabel')}...</em></MenuItem>
             {PAYMENT_MODES.map(m => <MenuItem key={m} value={m}>{renderPaymentModeOption(m)}</MenuItem>)}

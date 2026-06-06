@@ -335,7 +335,7 @@ export const ta = {
   // New Invoice Line Items & Extras
   descriptionCol: 'விளக்கம்',
   hsnSacCol: 'HSN/SAC',
-  rateCol: 'விகிதம் %',
+  rateCol: 'விலை',
   addItemBtn: 'சேர்',
   termsHeading: 'விதிமுறைகள் & வரையறைகள்',
   insertPreset: 'முன்-அமைப்பைச் செருகு',

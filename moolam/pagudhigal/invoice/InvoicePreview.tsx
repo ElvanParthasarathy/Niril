@@ -55,7 +55,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
   const showClientEmail = opt('showClientEmail');
   const showInvoiceNumber = opt('showInvoiceNumber');
   const showInvoiceDate = opt('showInvoiceDate');
-  const customTitle = options.customTitle || typeConfig.title;
+  const customTitle = details?.customTitle || options.customTitle || typeConfig.title;
   const currencySymbol = options.currency || 'INR';
 
   const renderLabel = (enLabel, taLabel) => profile?.enableBilingual !== false ? `${taLabel} / ${enLabel}` : enLabel;

@@ -200,10 +200,10 @@ export default function VanigarThirai({ show, onClose, onSave, client, isEditing
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={12}>
-            <TextField fullWidth size="medium" label={t(cc.taxIdLabel as any, { defaultValue: cc.taxIdLabel })} slotProps={{ inputLabel: { shrink: true } }}
+            <TextField fullWidth size="medium" label={t(cc.taxIdLabel as any, { defaultValue: cc.taxIdLabel })} 
               error={!!taxIdWarning} helperText={taxIdWarning || ' '}
               value={form.gstin || ''} onChange={e => { setForm(prev => ({ ...prev, gstin: e.target.value.toUpperCase() })); if (taxIdWarning) setTaxIdWarning(''); }}
-              onBlur={handleTaxIdBlur} placeholder={cc.taxIdPlaceholder} slotProps={{ htmlInput: { maxLength: 20 } }} />
+              onBlur={handleTaxIdBlur} placeholder={cc.taxIdPlaceholder} slotProps={{ inputLabel: { shrink: true }, htmlInput: { maxLength: 20 } }} />
           </Grid>
 
           <Grid item xs={12} sm={6}>

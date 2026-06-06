@@ -125,34 +125,6 @@ export const INVOICE_TYPES = {
     showGST: true,
     description: 'Quotation or estimate — not a legal tax document',
   },
-  'bill-of-supply': {
-    label: 'Bill of Supply (No GST)',
-    prefix: 'BOS',
-    title: 'BILL OF SUPPLY',
-    showGST: false,
-    description: 'For exempt goods/services or non-composition dealers selling exempt supplies',
-  },
-  'composition': {
-    label: 'Composition (Bill of Supply)',
-    prefix: 'COMP',
-    title: 'BILL OF SUPPLY',
-    showGST: false,
-    description: 'For composition-scheme dealers under Section 10. Auto-adds Rule 46A declaration.',
-  },
-  'credit-note': {
-    label: 'Credit Note',
-    prefix: 'CN',
-    title: 'CREDIT NOTE',
-    showGST: true,
-    description: 'Issued for returns, price adjustments, or corrections',
-  },
-  'delivery-challan': {
-    label: 'Delivery Challan',
-    prefix: 'DC',
-    title: 'DELIVERY CHALLAN',
-    showGST: false,
-    description: 'For goods transport, job work, or supply on approval — not a tax document',
-  },
 };
 
 export const tamilNaduDistricts = [
@@ -1129,6 +1101,25 @@ export const getBilingualStateName = (state, opts) => {
   const secondary = getTranslated(secondaryLang);
   if (primary !== secondary) return `${primary} / ${secondary}`;
   return primary;
+};
+
+export const doesStateMatchSearch = (state: string, searchTerm: string): boolean => {
+  if (!searchTerm) return true;
+  const lowerSearch = searchTerm.toLowerCase();
+  
+  // Resolve to English first in case input state is already translated
+  let englishName = state;
+  for (const [, langMap] of Object.entries(STATE_TRANSLATIONS)) {
+    const found = Object.entries(langMap).find(([, v]) => v === state);
+    if (found) { englishName = found[0]; break; }
+  }
+
+  if (englishName.toLowerCase().includes(lowerSearch)) return true;
+  
+  for (const langMap of Object.values(STATE_TRANSLATIONS)) {
+    if (langMap[englishName]?.toLowerCase().includes(lowerSearch)) return true;
+  }
+  return false;
 };
 
 export const getBilingualCountryName = (country, opts) => {
