@@ -117,7 +117,7 @@ export default function Arikkaigal() {
       </Box>
 
       {/* Period + Currency Selector */}
-      <ElvanCard boxSx={{ p: 3, pt: 1, mb: 4 }}>
+      <ElvanCard boxSx={{ px: 3, pt: 1, pb: 1, mb: 4 }}>
         <Grid container spacing={2} sx={{ alignItems: 'center' }}>
           <Grid size={{ xs: 12, sm: 4, md: 3 }}>
             <TextField 
@@ -190,7 +190,7 @@ export default function Arikkaigal() {
       {/* P&L Metric Cards */}
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Typography variant="h6" sx={{ fontWeight: 700 }}>
-          {t('salesSummaryTitle') || 'Sales Summary'}
+          {t('salesSummaryTitle') === 'salesSummaryTitle' ? 'Sales Summary' : t('salesSummaryTitle')}
         </Typography>
         {allCurrencies.length > 1 && (
           <Typography variant="caption" color="text.secondary" sx={{ bgcolor: 'action.hover', px: 1.5, py: 0.5, borderRadius: '16px', fontWeight: 600 }}>
@@ -260,7 +260,7 @@ export default function Arikkaigal() {
         <>
           <Box sx={{ mb: 2 }}>
             <Typography variant="h6" sx={{ fontWeight: 700 }}>
-              {t('monthlySalesTitle') || 'Monthly Breakdown'}
+              {t('monthlySalesTitle') === 'monthlySalesTitle' ? 'Monthly Breakdown' : t('monthlySalesTitle')}
             </Typography>
           </Box>
           <Grid container spacing={2}>
