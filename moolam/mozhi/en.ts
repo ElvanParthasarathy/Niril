@@ -322,6 +322,8 @@ export const en: Record<TranslationKey, string> = {
   totalItems: 'Total',
   seeAll: 'See All',
   newInvoice: 'New Invoice',
+  editInvoice: 'Edit Invoice',
+  item: 'Item',
   dashboard: 'Dashboard',
   overviewOfInvoices: 'Overview of your invoices',
   totalInvoiced: 'Total Invoiced',

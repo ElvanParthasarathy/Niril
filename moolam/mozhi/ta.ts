@@ -270,6 +270,8 @@ export const ta = {
   totalItems: 'மொத்தம்',
   seeAll: 'யாவும்',
   newInvoice: 'புதிய பட்டியல்',
+  editInvoice: 'பட்டியலைத் திருத்து',
+  item: 'பொருள்',
   dashboard: 'முகப்பு',
   overviewOfInvoices: 'உங்கள் பட்டியல்களின் சுருக்கம்',
   totalInvoiced: 'மொத்த பட்டியல்',
