@@ -108,7 +108,7 @@ export default function InvoiceTotals({
       
       {/* Global Discount Input (Outside the Totals Card) */}
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 2, gap: 2, px: 1 }}>
-        <Typography color="text.secondary" variant="body2">{t('applyDiscount') || 'Apply Discount'}</Typography>
+        <Typography color="text.secondary" variant="body2">{t('discount') || 'Discount'}</Typography>
         <Box sx={{ display: 'flex', width: 140 }}>
           <TextField 
             size="small" 
