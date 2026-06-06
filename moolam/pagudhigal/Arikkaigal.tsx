@@ -213,7 +213,7 @@ export default function Arikkaigal() {
               {isLoading ? (
                 <Skeleton variant="text" width={100} height={32} />
               ) : (
-                <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary' }}>
+                <Typography variant="h6" sx={{ fontWeight: 800, color: 'text.primary' }}>
                   {formatCurrency(totalRevenue, currencyFilter)}
                 </Typography>
               )}
@@ -231,7 +231,7 @@ export default function Arikkaigal() {
               {isLoading ? (
                 <Skeleton variant="text" width={100} height={32} />
               ) : (
-                <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary' }}>
+                <Typography variant="h6" sx={{ fontWeight: 800, color: 'text.primary' }}>
                   {formatCurrency(totalTaxCollected, currencyFilter)}
                 </Typography>
               )}
@@ -249,7 +249,7 @@ export default function Arikkaigal() {
               {isLoading ? (
                 <Skeleton variant="text" width={100} height={32} />
               ) : (
-                <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary' }}>
+                <Typography variant="h6" sx={{ fontWeight: 800, color: 'text.primary' }}>
                   {formatCurrency(revenueExTax, currencyFilter)}
                 </Typography>
               )}
@@ -281,7 +281,7 @@ export default function Arikkaigal() {
                       <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>
                         {MONTHS[parseInt(mo) - 1]} {y}
                       </Typography>
-                      <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary' }}>
+                      <Typography variant="h6" sx={{ fontWeight: 800, color: 'text.primary' }}>
                         {formatCurrency(rev, currencyFilter)}
                       </Typography>
                     </Box>
