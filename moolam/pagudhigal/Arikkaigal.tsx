@@ -103,7 +103,7 @@ export default function Arikkaigal() {
 
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
+    <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1200, mx: 'auto', pb: { xs: 10, md: 4 } }}>
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" color="text.primary" gutterBottom sx={{ fontWeight: "bold" }}>
           {t('reports')}
@@ -114,9 +114,9 @@ export default function Arikkaigal() {
       </Box>
 
       {/* Period + Currency Selector */}
-      <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 2 }}>
+      <Paper elevation={0} sx={{ p: 3, mb: 4, borderRadius: '24px', bgcolor: 'background.paper' }}>
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ alignItems: { xs: 'stretch', sm: 'center' } }}>
-          <FormControl size="small" sx={{ minWidth: 150 }}>
+          <FormControl size="small" sx={{ minWidth: 150, '& .MuiOutlinedInput-root': { borderRadius: '16px' } }}>
             <InputLabel>{t('filterByLabel')}</InputLabel>
             <Select value={filterMode} onChange={e => setFilterMode(e.target.value)} label={t('filterByLabel')}>
               <MenuItem value="fy">{t('fiscalYearLabel')}</MenuItem>
@@ -124,7 +124,7 @@ export default function Arikkaigal() {
             </Select>
           </FormControl>
           {filterMode === 'fy' ? (
-            <FormControl size="small" sx={{ minWidth: 150 }}>
+            <FormControl size="small" sx={{ minWidth: 150, '& .MuiOutlinedInput-root': { borderRadius: '16px' } }}>
               <InputLabel>{t('fiscalYearLabel')}</InputLabel>
               <Select value={fyFilter} onChange={e => setFyFilter(e.target.value)} label={t('fiscalYearLabel')}>
                 {fyOptions.map(fy => <MenuItem key={fy.value} value={fy.value}>{fy.label}</MenuItem>)}
@@ -132,13 +132,13 @@ export default function Arikkaigal() {
             </FormControl>
           ) : (
             <>
-              <FormControl size="small" sx={{ minWidth: 150 }}>
+              <FormControl size="small" sx={{ minWidth: 150, '& .MuiOutlinedInput-root': { borderRadius: '16px' } }}>
                 <InputLabel>{t('monthLabel')}</InputLabel>
                 <Select value={monthFilter} onChange={e => setMonthFilter(e.target.value)} label={t('monthLabel')}>
                   {MONTHS.map((m, i) => <MenuItem key={i} value={i}>{m}</MenuItem>)}
                 </Select>
               </FormControl>
-              <FormControl size="small" sx={{ minWidth: 100 }}>
+              <FormControl size="small" sx={{ minWidth: 100, '& .MuiOutlinedInput-root': { borderRadius: '16px' } }}>
                 <InputLabel>{t('yearLabel')}</InputLabel>
                 <Select value={yearFilter} onChange={e => setYearFilter(e.target.value)} label={t('yearLabel')}>
                   {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
@@ -147,7 +147,7 @@ export default function Arikkaigal() {
             </>
           )}
           {allCurrencies.length > 1 && (
-            <FormControl size="small" sx={{ minWidth: 120 }}>
+            <FormControl size="small" sx={{ minWidth: 120, '& .MuiOutlinedInput-root': { borderRadius: '16px' } }}>
               <InputLabel>{t('currencyLabel')}</InputLabel>
               <Select value={currencyFilter} onChange={e => setCurrencyFilter(e.target.value)} label={t('currencyLabel')}>
                 {allCurrencies.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
@@ -157,97 +157,107 @@ export default function Arikkaigal() {
         </Stack>
       </Paper>
 
-      {/* P&L Summary Cards */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <Paper elevation={2} sx={{ p: 3, borderRadius: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Box sx={{ p: 1.5, borderRadius: '50%', bgcolor: 'success.light', color: 'success.dark', display: 'flex' }}>
-              <TrendUp size={24} weight="fill" />
+      {/* P&L Metric Cards */}
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h6" sx={{ fontWeight: 700 }}>
+          {t('salesSummaryTitle') || 'Sales Summary'}
+        </Typography>
+        {allCurrencies.length > 1 && (
+          <Typography variant="caption" color="text.secondary" sx={{ bgcolor: 'action.hover', px: 1.5, py: 0.5, borderRadius: '16px', fontWeight: 600 }}>
+            {currencyFilter}
+          </Typography>
+        )}
+      </Box>
+
+      <Grid container spacing={2} sx={{ mb: 4 }}>
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <Paper elevation={0} sx={{ p: 3, borderRadius: '24px', bgcolor: 'background.paper', height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+              <Box sx={{ width: 40, height: 40, borderRadius: '12px', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Wallet size={20} weight="fill" />
+              </Box>
+              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>{t('totalRevenueLabel') || 'Gross Revenue'}</Typography>
             </Box>
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>{t('revenueExTax')}</Typography>
-              {isLoading ? (
-                <Skeleton variant="text" width="80%" height={32} />
-              ) : (
-                <Typography variant="h5" color="success.main" sx={{ fontWeight: "bold" }}>
-                  {formatCurrency(revenueExTax, currencyFilter)}
-                </Typography>
-              )}
+            {isLoading ? (
+              <Skeleton variant="text" width="80%" height={40} />
+            ) : (
+              <Typography variant="h4" sx={{ fontWeight: 800, color: 'text.primary' }}>
+                {formatCurrency(totalRevenue, currencyFilter)}
+              </Typography>
+            )}
+          </Paper>
+        </Grid>
+        
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <Paper elevation={0} sx={{ p: 3, borderRadius: '24px', bgcolor: 'background.paper', height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+              <Box sx={{ width: 40, height: 40, borderRadius: '12px', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <TrendDown size={20} weight="fill" />
+              </Box>
+              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>{t('lessGstCollectedLabel') || 'Tax Collected'}</Typography>
             </Box>
+            {isLoading ? (
+              <Skeleton variant="text" width="80%" height={40} />
+            ) : (
+              <Typography variant="h4" sx={{ fontWeight: 800, color: 'text.primary' }}>
+                {formatCurrency(totalTaxCollected, currencyFilter)}
+              </Typography>
+            )}
+          </Paper>
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <Paper elevation={0} sx={{ p: 3, borderRadius: '24px', bgcolor: 'background.paper', height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+              <Box sx={{ width: 40, height: 40, borderRadius: '12px', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <TrendUp size={20} weight="fill" />
+              </Box>
+              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>{t('netRevenueLabel') || 'Net Revenue'}</Typography>
+            </Box>
+            {isLoading ? (
+              <Skeleton variant="text" width="80%" height={40} />
+            ) : (
+              <Typography variant="h4" sx={{ fontWeight: 800, color: 'text.primary' }}>
+                {formatCurrency(revenueExTax, currencyFilter)}
+              </Typography>
+            )}
           </Paper>
         </Grid>
       </Grid>
 
-      {/* P&L Statement */}
-      <Paper elevation={2} sx={{ mb: 3, borderRadius: 2, overflow: 'hidden' }}>
-        <Box sx={{ px: 3, py: 2, borderBottom: '1px solid', borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6" sx={{ m: 0 ,  fontWeight: 600 }}>
-            {t('salesSummaryTitle')}
-          </Typography>
-          {allCurrencies.length > 1 && (
-            <Typography variant="body2" color="text.secondary">
-              Showing {currencyFilter} {t('showingCurrencyInvoicesOnly')}
-            </Typography>
-          )}
-        </Box>
-        <Box sx={{ p: 3, maxWidth: 500, mx: 'auto' }}>
-          {isLoading ? (
-            <Stack spacing={2}>
-              <Skeleton variant="text" width="100%" height={24} />
-              <Skeleton variant="text" width="100%" height={24} />
-              <Skeleton variant="text" width="100%" height={32} />
-            </Stack>
-          ) : (
-            <>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
-                <Typography variant="body1" color="text.secondary" sx={{ fontWeight: 500 }}>{t('totalRevenueLabel')}</Typography>
-                <Typography variant="body1" sx={{ fontWeight: 600 }}>{formatCurrency(totalRevenue, currencyFilter)}</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
-                <Typography variant="body1" color="text.secondary" sx={{ fontWeight: 500 }}>{t('lessGstCollectedLabel')}</Typography>
-                <Typography variant="body1" color="error.main">-{formatCurrency(totalTaxCollected, currencyFilter)}</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1.5, borderBottom: '2px solid', borderColor: 'divider' }}>
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>{t('netRevenueLabel')}</Typography>
-                <Typography variant="h6" sx={{ fontWeight: 700 }}>{formatCurrency(revenueExTax, currencyFilter)}</Typography>
-              </Box>
-            </>
-          )}
-        </Box>
-      </Paper>
-
-      {/* Monthly Breakdown */}
+      {/* Monthly Breakdown Cards */}
       {monthlyKeys.length > 0 && (
-        <Paper elevation={2} sx={{ borderRadius: 2, overflow: 'hidden' }}>
-          <Box sx={{ px: 3, py: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
-            <Typography variant="h6" sx={{ m: 0 ,  fontWeight: 600 }}>
-              {t('monthlySalesTitle')}
+        <>
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              {t('monthlySalesTitle') || 'Monthly Breakdown'}
             </Typography>
           </Box>
-          <TableContainer>
-            <Table sx={{ minWidth: 600 }}>
-              <TableHead>
-                <TableRow sx={{ bgcolor: 'action.hover' }}>
-                  <TableCell>{t('monthLabel')}</TableCell>
-                  <TableCell align="right">{t('revenueCol')}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {monthlyKeys.map(key => {
-                  const m = monthlyPL[key];
-                  const rev = m.revenue - m.tax;
-                  const [y, mo] = key.split('-');
-                  return (
-                    <TableRow key={key} hover>
-                      <TableCell sx={{ fontWeight: 500 }}>{MONTHS[parseInt(mo) - 1]} {y}</TableCell>
-                      <TableCell align="right">{formatCurrency(rev, currencyFilter)}</TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Paper>
+          <Grid container spacing={2}>
+            {monthlyKeys.map(key => {
+              const m = monthlyPL[key];
+              const rev = m.revenue - m.tax;
+              const [y, mo] = key.split('-');
+              return (
+                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={key}>
+                  <Paper elevation={0} sx={{ p: 3, borderRadius: '24px', bgcolor: 'background.paper', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <Box sx={{ p: 1.5, borderRadius: '12px', bgcolor: 'action.hover', display: 'flex', color: 'text.secondary' }}>
+                        <ChartBar size={20} weight="duotone" />
+                      </Box>
+                      <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                        {MONTHS[parseInt(mo) - 1]} {y}
+                      </Typography>
+                    </Box>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary' }}>
+                      {formatCurrency(rev, currencyFilter)}
+                    </Typography>
+                  </Paper>
+                </Grid>
+              );
+            })}
+          </Grid>
+        </>
       )}
 
     </Box>
