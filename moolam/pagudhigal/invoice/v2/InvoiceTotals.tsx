@@ -109,8 +109,9 @@ export default function InvoiceTotals({
       {/* Global Discount Input (Outside the Totals Card) */}
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', mb: 2, gap: 1, px: 3 }}>
         <Typography color="text.secondary" variant="body2">{t('discount') || 'Discount'}</Typography>
-        <Box sx={{ display: 'flex', width: 140 }}>
+        <Box sx={{ display: 'flex', width: '100%' }}>
           <TextField 
+            fullWidth
             size="small" 
             type="number"
             placeholder="0"
