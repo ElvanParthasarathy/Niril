@@ -49,7 +49,7 @@ export default function ElvanBilingualField({
 
   return (
     <>
-      <Grid size={{ xs: 12, sm: isBilingual ? 6 : 12 }}>
+      <Grid size={{ xs: 12, sm: isBilingual ? 6 : 12 }} sx={!isBilingual ? { gridColumn: { sm: '1 / -1' } } : undefined}>
         {renderPrimary ? (
           renderPrimary(primaryLang, primaryLangSuffix)
         ) : (
