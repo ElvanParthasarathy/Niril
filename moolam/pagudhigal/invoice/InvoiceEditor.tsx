@@ -911,25 +911,27 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
           
           {/* Business Profile Selector — shown only if multiple profiles saved */}
           {allProfiles.length > 1 && (
-            <Box sx={{ mb: 5 }}>
-              <Typography variant="h6" sx={{ mb: 2, fontSize: '1.1rem', fontWeight: 600 }}>Billing From (Business Profile)</Typography>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                {allProfiles.map(bp => {
-                  const isSelected = (activeProfile?.niruvanathinPeyar || profileProp?.niruvanathinPeyar) === bp.niruvanathinPeyar;
-                  return (
-                    <Button key={bp.id} variant={isSelected ? "contained" : "outlined"} 
-                      onClick={() => setActiveProfile(bp)}
-                      color={isSelected ? "primary" : "inherit"}
-                      sx={{ borderRadius: 2, textTransform: 'none' }}
-                    >
-                      {bp.niruvanathinPeyar}
-                      {bp.gstin && <Typography variant="caption" sx={{ ml: 1, opacity: 0.8 }}>{bp.gstin}</Typography>}
-                    </Button>
-                  );
-                })}
+            <>
+              <Box sx={{ mb: 5 }}>
+                <Typography variant="h6" sx={{ mb: 2, fontSize: '1.1rem', fontWeight: 600 }}>Billing From (Business Profile)</Typography>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                  {allProfiles.map(bp => {
+                    const isSelected = (activeProfile?.niruvanathinPeyar || profileProp?.niruvanathinPeyar) === bp.niruvanathinPeyar;
+                    return (
+                      <Button key={bp.id} variant={isSelected ? "contained" : "outlined"} 
+                        onClick={() => setActiveProfile(bp)}
+                        color={isSelected ? "primary" : "inherit"}
+                        sx={{ borderRadius: 2, textTransform: 'none' }}
+                      >
+                        {bp.niruvanathinPeyar}
+                        {bp.gstin && <Typography variant="caption" sx={{ ml: 1, opacity: 0.8 }}>{bp.gstin}</Typography>}
+                      </Button>
+                    );
+                  })}
+                </Box>
               </Box>
-            </Box>
-          <Divider sx={{ mb: 5, borderColor: 'divider', opacity: 0.5 }} />
+              <Divider sx={{ mb: 5, borderColor: 'divider', opacity: 0.5 }} />
+            </>
           )}
 
                     {/* Client Modal */}
