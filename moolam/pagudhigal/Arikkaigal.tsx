@@ -257,7 +257,7 @@ export default function Arikkaigal() {
       </Box>
 
       {/* P&L Metric Cards */}
-      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2 }}>
         <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
           {t('salesSummaryTitle') === 'salesSummaryTitle' ? 'Sales Summary' : t('salesSummaryTitle')}
         </Typography>
@@ -327,7 +327,7 @@ export default function Arikkaigal() {
       {/* Monthly Breakdown Cards */}
       {monthlyKeys.length > 0 && (
         <>
-          <Box sx={{ mb: 2 }}>
+          <Box sx={{ mb: 2, px: 2 }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
               {t('monthlySalesTitle') === 'monthlySalesTitle' ? 'Monthly Breakdown' : t('monthlySalesTitle')}
             </Typography>
