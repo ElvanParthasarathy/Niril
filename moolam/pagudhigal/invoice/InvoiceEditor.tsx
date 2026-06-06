@@ -911,7 +911,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
           
           {/* Business Profile Selector — shown only if multiple profiles saved */}
           {allProfiles.length > 1 && (
-            <ElvanCard sx={{ mb: 3 }}>
+            <Box sx={{ mb: 5 }}>
               <Typography variant="h6" sx={{ mb: 2, fontSize: '1.1rem', fontWeight: 600 }}>Billing From (Business Profile)</Typography>
               <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                 {allProfiles.map(bp => {
@@ -928,14 +928,15 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                   );
                 })}
               </Box>
-            </ElvanCard>
+            </Box>
+          <Divider sx={{ mb: 5, borderColor: 'divider', opacity: 0.5 }} />
           )}
 
                     {/* Client Modal */}
           <VanigarThirai show={showClientModal} onClose={() => setShowClientModal(false)} onSave={handleClientModalSave} client={modalClient} isEditing={isEditingClient} defaultCountry={profile?.country} profileSettings={profile} />
 
           {/* Client Details */}
-          <ElvanCard sx={{ mb: 3 }}>
+          <Box sx={{ mb: 5 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
               <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('billedTo')}</Typography>
               <ToggleButtonGroup
@@ -1148,10 +1149,11 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                 </>
               )}
             </Grid>
-          </ElvanCard>
+          </Box>
+          <Divider sx={{ mb: 5, borderColor: 'divider', opacity: 0.5 }} />
 
           {/* Invoice Details */}
-          <ElvanCard sx={{ mb: 3 }}>
+          <Box sx={{ mb: 5 }}>
             <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 3 }}>{t('invoiceDetailsForm')}</Typography>
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, md: 6 }}>
@@ -1209,10 +1211,11 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                 </Grid>
               )}
             </Grid>
-          </ElvanCard>
+          </Box>
+          <Divider sx={{ mb: 5, borderColor: 'divider', opacity: 0.5 }} />
 
           {/* Line Items */}
-          <ElvanCard sx={{ mb: 3 }}>
+          <Box sx={{ mb: 5 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
               <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('lineItems')}</Typography>
             </Box>
@@ -1383,10 +1386,11 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
             </Box>
             ))}
             <Button variant="outlined" startIcon={<Plus size={18} weight="regular"   />} onClick={addItem} sx={{ mt: 1 }}>Add Item</Button>
-          </ElvanCard>
+          </Box>
+          <Divider sx={{ mb: 5, borderColor: 'divider', opacity: 0.5 }} />
 
           {/* Invoice Type */}
-          <ElvanCard sx={{ mb: 3 }}>
+          <Box sx={{ mb: 5 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t("invoiceType")}</Typography>
               
@@ -1434,10 +1438,11 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                     </Box>
                   );
                 })()}
-          </ElvanCard>
+          </Box>
+          <Divider sx={{ mb: 5, borderColor: 'divider', opacity: 0.5 }} />
 
 {/* Terms */}
-          <ElvanCard sx={{ mb: 3 }}>
+          <Box sx={{ mb: 5 }}>
             <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 3 }}>{t("termsHeading")}</Typography>
             <Box sx={{ mb: 2 }}>
               <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>{t("termsAppearsOnInvoice")}</Typography>
@@ -1446,7 +1451,8 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                 placeholder="Enter or paste your terms & conditions..." />
             </Box>
 
-          </ElvanCard>
+          </Box>
+          <Divider sx={{ mb: 5, borderColor: 'divider', opacity: 0.5 }} />
 
         </Grid>
 
