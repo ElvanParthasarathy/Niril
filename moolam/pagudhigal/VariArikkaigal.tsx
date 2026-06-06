@@ -1255,10 +1255,7 @@ export default function VariArikkaigal({ profile }) {
               </>
             )}
             
-            <Grid size={12} sx={{ display: 'flex', gap: 1 }}>
-              <Chip size="small" label={`R1 ${periodFiling.gstr1 ? 'Filed' : 'Pending'}`} sx={{ bgcolor: periodFiling.gstr1 ? '#ecfdf5' : '#fef2f2', color: periodFiling.gstr1 ? '#059669' : '#dc2626', fontWeight: 600, borderRadius: 2 }} />
-              <Chip size="small" label={`3B ${periodFiling.gstr3b ? 'Filed' : 'Pending'}`} sx={{ bgcolor: periodFiling.gstr3b ? '#ecfdf5' : '#fef2f2', color: periodFiling.gstr3b ? '#059669' : '#dc2626', fontWeight: 600, borderRadius: 2 }} />
-            </Grid>
+
           </Grid>
         </ElvanCard>
       </Box>
@@ -1295,8 +1292,7 @@ export default function VariArikkaigal({ profile }) {
           </Box>
         )}
 
-        <Chip size="small" label={`R1 ${periodFiling.gstr1 ? 'Filed' : 'Pending'}`} sx={{ bgcolor: periodFiling.gstr1 ? '#ecfdf5' : '#fef2f2', color: periodFiling.gstr1 ? '#059669' : '#dc2626', fontWeight: 600, borderRadius: 2 }} />
-        <Chip size="small" label={`3B ${periodFiling.gstr3b ? 'Filed' : 'Pending'}`} sx={{ bgcolor: periodFiling.gstr3b ? '#ecfdf5' : '#fef2f2', color: periodFiling.gstr3b ? '#059669' : '#dc2626', fontWeight: 600, borderRadius: 2 }} />
+
       </Box>
 
       {/* Warnings & Alerts */}
