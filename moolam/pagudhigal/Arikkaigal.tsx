@@ -152,7 +152,7 @@ export default function Arikkaigal() {
               </Grid>
             ) : (
               <>
-                <Grid size={6}>
+                <Grid size={12}>
                   <TextField 
                     select 
                     fullWidth
@@ -164,7 +164,7 @@ export default function Arikkaigal() {
                     {MONTHS.map((m, i) => <MenuItem key={i} value={i}>{m}</MenuItem>)}
                   </TextField>
                 </Grid>
-                <Grid size={6}>
+                <Grid size={12}>
                   <TextField 
                     select 
                     fullWidth
