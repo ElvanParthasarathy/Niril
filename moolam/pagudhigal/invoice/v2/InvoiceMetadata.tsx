@@ -58,6 +58,9 @@ export default function InvoiceMetadata({
         </Grid>
         {settings.showPlaceOfSupply && (() => {
           const posOpts = getStatesForCountry(profile?.country) || [];
+          const defaultClientState = typeof client?.maanilam === 'object' ? client?.maanilam?.primary : client?.maanilam;
+          const currentValue = metadata.placeOfSupply || defaultClientState;
+
           return (
             <>
               <Grid size={{ xs: 12, md: 6 }}>
@@ -66,33 +69,30 @@ export default function InvoiceMetadata({
                     fullWidth
                     size="small"
                     options={posOpts}
-                    value={metadata.placeOfSupply || null}
+                    value={currentValue || null}
                     onChange={(_, newValue) => updateMeta('placeOfSupply', newValue || '')}
                     filterOptions={(options, { inputValue }) => {
                       return options.filter((option) => doesStateMatchSearch(option, inputValue));
                     }}
                     getOptionLabel={(option) => getBilingualStateName(option, { ...profile, returnOnlyPrimary: true })}
-                    renderInput={(params) => {
-                      const defaultClientState = (typeof client?.maanilam === 'object' ? client?.maanilam?.primary : client?.maanilam) || 'Client maanilam';
-                      return (
-                        <TextField
-                          {...params}
-                          label={`${t('placeOfSupply')}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`}
-                          placeholder={`Defaults to ${defaultClientState}`}
-                          InputLabelProps={{ ...params.InputLabelProps, shrink: true }}
-                        />
-                      );
-                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label={`${t('placeOfSupply')}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`}
+                        placeholder={`Defaults to ${defaultClientState || 'Client State'}`}
+                        InputLabelProps={{ ...params.InputLabelProps, shrink: true }}
+                      />
+                    )}
                   />
                 ) : (
                   <TextField fullWidth size="small" label={`${t('placeOfSupply')}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`} slotProps={{ inputLabel: { shrink: true } }}
-                    value={metadata.placeOfSupply || ''} onChange={(e) => updateMeta('placeOfSupply', e.target.value)} placeholder={t('hc_maanilamRegion')} />
+                    value={currentValue || ''} onChange={(e) => updateMeta('placeOfSupply', e.target.value)} placeholder={t('hc_maanilamRegion')} />
                 )}
               </Grid>
               {profile?.enableBilingual !== false && (
                 <Grid size={{ xs: 12, md: 6 }}>
                   <TextField fullWidth size="small" label={`${t('placeOfSupply')} (${profile?.secondaryDataLanguage || 'English'})`} slotProps={{ inputLabel: { shrink: true } }}
-                    value={(metadata.placeOfSupply || (typeof client?.maanilam === 'object' ? client?.maanilam?.primary : client?.maanilam)) ? getBilingualStateName(metadata.placeOfSupply || (typeof client?.maanilam === 'object' ? client?.maanilam?.primary : client?.maanilam), { ...profile, returnOnlySecondary: true }) : ''} 
+                    value={currentValue ? getBilingualStateName(currentValue, { ...profile, returnOnlySecondary: true }) : ''} 
                     placeholder={`Place of Supply in ${profile?.secondaryDataLanguage || 'English'}`} 
                     disabled={true}
                     sx={{ '& .MuiInputBase-root': { bgcolor: 'action.hover' } }} />
