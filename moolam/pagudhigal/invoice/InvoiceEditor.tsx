@@ -969,28 +969,6 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                       slotProps={{ inputLabel: { shrink: true } }}
                     />
                   </Grid>
-                  <Grid size={{ xs: 12, md: invoiceOptions.currency !== 'INR' ? 6 : 12 }}>
-                    <FormControl fullWidth size="small">
-                      <InputLabel shrink>{t('hc_currency')}</InputLabel>
-                      <Select value={invoiceOptions.currency || 'INR'} label={t('hc_currency')} displayEmpty
-                        onChange={(e) => setInvoiceOptions(prev => ({ ...prev, currency: e.target.value }))}>
-                        {Array.from(new Map(getCountriesForRegion().map(c => [c.currency, c])).values()).map(c => (
-                          <MenuItem key={c.currency} value={c.currency}>{c.currency} ({c.currencySymbol === c.currency ? c.name : c.currencySymbol})</MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  {invoiceOptions.currency !== 'INR' && (
-                    <Grid size={{ xs: 12, md: 6 }}>
-                      <TextField fullWidth size="small" label="Exchange Rate (optional, snapshot)" 
-                        type="number" slotProps={{ htmlInput: { step: "any", min: 0 } }}
-                        value={invoiceOptions.exchangeRate || ''}
-                        onChange={(e) => setInvoiceOptions(prev => ({ ...prev, exchangeRate: e.target.value }))}
-                        placeholder={`1 ${invoiceOptions.currency} = ? INR`}
-                        helperText="Stored on this invoice — historical reports stay accurate even if rates change."
-                      />
-                    </Grid>
-                  )}
                 </Grid>
 
                 <Divider sx={{ my: 3 }} />

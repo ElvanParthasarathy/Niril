@@ -1347,6 +1347,31 @@ export default function Amaippugal({ onSaved }) {
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
           Configure default styling and optional fields for all your invoices.
         </Typography>
+
+        <Grid container spacing={3} sx={{ mb: 3 }}>
+          <Grid size={{ xs: 12, md: invoiceTemplate.currency !== 'INR' ? 6 : 12 }}>
+            <FormControl fullWidth size="small">
+              <InputLabel shrink>{t('hc_currency')}</InputLabel>
+              <Select value={invoiceTemplate.currency || 'INR'} label={t('hc_currency')} displayEmpty
+                onChange={(e) => handleTemplateChange('currency', e.target.value)}>
+                {Array.from(new Map(getCountriesForRegion().map(c => [c.currency, c])).values()).map(c => (
+                  <MenuItem key={c.currency} value={c.currency}>{c.currency} ({c.currencySymbol === c.currency ? c.name : c.currencySymbol})</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          {invoiceTemplate.currency !== 'INR' && (
+            <Grid size={{ xs: 12, md: 6 }}>
+              <TextField fullWidth size="small" label="Exchange Rate (optional, snapshot)" 
+                type="number" slotProps={{ htmlInput: { step: "any", min: 0 } }}
+                value={invoiceTemplate.exchangeRate || ''}
+                onChange={(e) => handleTemplateChange('exchangeRate', e.target.value)}
+                placeholder={`1 ${invoiceTemplate.currency} = ? INR`}
+                helperText="Stored on this invoice — historical reports stay accurate even if rates change."
+              />
+            </Grid>
+          )}
+        </Grid>
         
         <Grid container spacing={3} sx={{ mb: 3 }}>
           <Grid size={{ xs: 12, md: 6 }}>
