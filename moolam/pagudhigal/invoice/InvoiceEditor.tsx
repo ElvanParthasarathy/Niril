@@ -931,58 +931,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
             </ElvanCard>
           )}
 
-          {/* Invoice Type */}
-          <ElvanCard sx={{ mb: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t("invoiceType")}</Typography>
-              
-            </Box>
-
-            <Grid container spacing={2} sx={{ mb: 2 }}>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <FormControl fullWidth size="small">
-                  <Select value={invoiceType} onChange={(e) => handleTypeChange(e.target.value)}>
-                    {Object.entries(INVOICE_TYPES).map(([key, val]) => (
-                      <MenuItem key={key} value={key}>{t(`invoiceTypes_${key.replace(/-/g, '_')}` as any, { defaultValue: val.label })}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5, lineHeight: 1.4 }}>
-                  {t(`invoiceDesc_${invoiceType.replace(/-/g, '_')}` as any, { defaultValue: typeConfig?.description })}
-                </Typography>
-              </Grid>
-
-
-            </Grid>
-
-            {/* Payment account */}
-                {(() => {
-                  const accounts = getActiveAccounts(profile);
-                  if (accounts.length === 0) return null;
-                  const resolved = getAccountById(profile, invoiceOptions.selectedAccountId);
-                  return (
-                    <Box sx={{ mb: 3 }}>
-                      <FormControl fullWidth size="small">
-                        <InputLabel shrink>{t('hc_paymentAccountOnThisInvoice')}</InputLabel>
-                        <Select displayEmpty value={resolved?.id || ''} label={t('hc_paymentAccountOnThisInvoice')} onChange={(e) => setInvoiceOptions(prev => ({ ...prev, selectedAccountId: e.target.value || null }))}>
-                          <MenuItem value="">{t('noneLabel')}</MenuItem>
-                          {accounts.map(a => (
-                            <MenuItem key={a.id} value={a.id}>
-                              {a.isDefault ? '⭐ ' : ''}{a.label || a.vangiPeyar || 'Untitled account'}
-                              {a.vangiPeyar && a.label !== a.vangiPeyar ? ` — ${a.vangiPeyar}` : ''}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                      <Typography variant="caption" color="text.secondary">
-                        Bank details and UPI QR on the PDF come from the selected account.
-                      </Typography>
-                    </Box>
-                  );
-                })()}
-          </ElvanCard>
-
-          {/* Client Modal */}
+                    {/* Client Modal */}
           <VanigarThirai show={showClientModal} onClose={() => setShowClientModal(false)} onSave={handleClientModalSave} client={modalClient} isEditing={isEditingClient} defaultCountry={profile?.country} profileSettings={profile} />
 
           {/* Client Details */}
@@ -1436,7 +1385,58 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
             <Button variant="outlined" startIcon={<Plus size={18} weight="regular"   />} onClick={addItem} sx={{ mt: 1 }}>Add Item</Button>
           </ElvanCard>
 
-          {/* Terms */}
+          {/* Invoice Type */}
+          <ElvanCard sx={{ mb: 3 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t("invoiceType")}</Typography>
+              
+            </Box>
+
+            <Grid container spacing={2} sx={{ mb: 2 }}>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <FormControl fullWidth size="small">
+                  <Select value={invoiceType} onChange={(e) => handleTypeChange(e.target.value)}>
+                    {Object.entries(INVOICE_TYPES).map(([key, val]) => (
+                      <MenuItem key={key} value={key}>{t(`invoiceTypes_${key.replace(/-/g, '_')}` as any, { defaultValue: val.label })}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5, lineHeight: 1.4 }}>
+                  {t(`invoiceDesc_${invoiceType.replace(/-/g, '_')}` as any, { defaultValue: typeConfig?.description })}
+                </Typography>
+              </Grid>
+
+
+            </Grid>
+
+            {/* Payment account */}
+                {(() => {
+                  const accounts = getActiveAccounts(profile);
+                  if (accounts.length === 0) return null;
+                  const resolved = getAccountById(profile, invoiceOptions.selectedAccountId);
+                  return (
+                    <Box sx={{ mb: 3 }}>
+                      <FormControl fullWidth size="small">
+                        <InputLabel shrink>{t('hc_paymentAccountOnThisInvoice')}</InputLabel>
+                        <Select displayEmpty value={resolved?.id || ''} label={t('hc_paymentAccountOnThisInvoice')} onChange={(e) => setInvoiceOptions(prev => ({ ...prev, selectedAccountId: e.target.value || null }))}>
+                          <MenuItem value="">{t('noneLabel')}</MenuItem>
+                          {accounts.map(a => (
+                            <MenuItem key={a.id} value={a.id}>
+                              {a.isDefault ? '⭐ ' : ''}{a.label || a.vangiPeyar || 'Untitled account'}
+                              {a.vangiPeyar && a.label !== a.vangiPeyar ? ` — ${a.vangiPeyar}` : ''}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      <Typography variant="caption" color="text.secondary">
+                        Bank details and UPI QR on the PDF come from the selected account.
+                      </Typography>
+                    </Box>
+                  );
+                })()}
+          </ElvanCard>
+
+{/* Terms */}
           <ElvanCard sx={{ mb: 3 }}>
             <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600, mb: 3 }}>{t("termsHeading")}</Typography>
             <Box sx={{ mb: 2 }}>
