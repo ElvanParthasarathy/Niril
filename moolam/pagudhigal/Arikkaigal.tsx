@@ -199,71 +199,60 @@ export default function Arikkaigal() {
 
       {/* Period + Currency Selector - DESKTOP (Split Cards) */}
       <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 2, mb: 4, flexWrap: 'wrap', alignItems: 'center' }}>
-        <ElvanCard boxSx={{ p: 2, minWidth: 200 }}>
-          <TextField 
-            select 
-            fullWidth
-            label={t('filterByLabel') as string} 
-            value={filterMode} 
-            onChange={e => setFilterMode(e.target.value)}
-            sx={{ '& .MuiFilledInput-root': { bgcolor: 'transparent' } }}
-          >
-            <MenuItem value="fy">{t('fiscalYearLabel')}</MenuItem>
-            <MenuItem value="month">{t('monthYearLabel')}</MenuItem>
-          </TextField>
-        </ElvanCard>
+        <TextField 
+          select 
+          label={t('filterByLabel') as string} 
+          value={filterMode} 
+          onChange={e => setFilterMode(e.target.value)}
+          sx={{ minWidth: 200 }}
+        >
+          <MenuItem value="fy">{t('fiscalYearLabel')}</MenuItem>
+          <MenuItem value="month">{t('monthYearLabel')}</MenuItem>
+        </TextField>
         
         {filterMode === 'fy' ? (
-          <ElvanCard boxSx={{ p: 2, minWidth: 200 }}>
-            <TextField 
-              select 
-              fullWidth
-              label={t('fiscalYearLabel') as string} 
-              value={fyFilter} 
-              onChange={e => setFyFilter(e.target.value)}
-              sx={{ '& .MuiFilledInput-root': { bgcolor: 'transparent' } }}
-            >
-              {fyOptions.map(fy => <MenuItem key={fy.value} value={fy.value}>{fy.label}</MenuItem>)}
-            </TextField>
-          </ElvanCard>
+          <TextField 
+            select 
+            label={t('fiscalYearLabel') as string} 
+            value={fyFilter} 
+            onChange={e => setFyFilter(e.target.value)}
+            sx={{ minWidth: 200 }}
+          >
+            {fyOptions.map(fy => <MenuItem key={fy.value} value={fy.value}>{fy.label}</MenuItem>)}
+          </TextField>
         ) : (
-          <ElvanCard boxSx={{ p: 2, display: 'flex', gap: 2, minWidth: 300 }}>
+          <Box sx={{ display: 'flex', gap: 2 }}>
             <TextField 
               select 
-              fullWidth
               label={t('monthLabel') as string} 
               value={monthFilter} 
               onChange={e => setMonthFilter(e.target.value)}
-              sx={{ '& .MuiFilledInput-root': { bgcolor: 'transparent' } }}
+              sx={{ minWidth: 150 }}
             >
               {MONTHS.map((m, i) => <MenuItem key={i} value={i}>{m}</MenuItem>)}
             </TextField>
             <TextField 
               select 
-              fullWidth
               label={t('yearLabel') as string} 
               value={yearFilter} 
               onChange={e => setYearFilter(e.target.value)}
-              sx={{ '& .MuiFilledInput-root': { bgcolor: 'transparent' } }}
+              sx={{ minWidth: 120 }}
             >
               {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
             </TextField>
-          </ElvanCard>
+          </Box>
         )}
         
         {allCurrencies.length > 1 && (
-          <ElvanCard boxSx={{ p: 2, minWidth: 200 }}>
-            <TextField 
-              select 
-              fullWidth
-              label={t('currencyLabel') as string} 
-              value={currencyFilter} 
-              onChange={e => setCurrencyFilter(e.target.value)}
-              sx={{ '& .MuiFilledInput-root': { bgcolor: 'transparent' } }}
-            >
-              {allCurrencies.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
-            </TextField>
-          </ElvanCard>
+          <TextField 
+            select 
+            label={t('currencyLabel') as string} 
+            value={currencyFilter} 
+            onChange={e => setCurrencyFilter(e.target.value)}
+            sx={{ minWidth: 200 }}
+          >
+            {allCurrencies.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+          </TextField>
         )}
       </Box>
 
