@@ -1069,14 +1069,14 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                           {stateOpts.length > 0 ? (
                             <FormControl variant="filled" fullWidth size="small">
                               <InputLabel shrink>{stLabel}{profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}</InputLabel>
-                              <Select displayEmpty value={client.maanilam} label={`${stLabel}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`} onChange={(e) => setClient({ ...client, maanilam: e.target.value })}>
+                              <Select displayEmpty value={client.maanilam || ''} label={`${stLabel}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`} onChange={(e) => setClient({ ...client, maanilam: e.target.value })}>
                                 <MenuItem value="">{t('selectLabelGeneric')} {stLabel}</MenuItem>
                                 {stateOpts.map(s => <MenuItem key={s} value={s}>{getBilingualStateName(s, { ...profile, returnOnlyPrimary: true })}</MenuItem>)}
                               </Select>
                             </FormControl>
                           ) : (
                             <TextField fullWidth size="small" label={`${stLabel}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`} slotProps={{ inputLabel: { shrink: true } }}
-                              value={client.maanilam} onChange={(e) => setClient({ ...client, maanilam: e.target.value })} placeholder={stLabel} />
+                              value={client.maanilam || ''} onChange={(e) => setClient({ ...client, maanilam: e.target.value })} placeholder={stLabel} />
                           )}
                         </Grid>
                         {profile?.enableBilingual !== false && (

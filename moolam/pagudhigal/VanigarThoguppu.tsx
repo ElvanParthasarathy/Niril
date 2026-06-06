@@ -145,23 +145,22 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
           placeholder={t('districtPlaceholder') as string}
         />
 
-        {stateOptions.length > 0 ? (
-          <Autocomplete
-            options={stateOptions}
-            getOptionLabel={(s) => getBilingualStateName(s, { ...profileSettings, returnOnlyPrimary: true }) || s}
-            value={getField('maanilam', primaryLang) || null}
-            onChange={(e, newValue) => updateField('maanilam', primaryLang, newValue || '')}
-            sx={!isBilingual ? { gridColumn: { sm: '1 / -1' } } : undefined}
-            renderInput={(params) => (
-              <TextField {...params} fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`} InputLabelProps={{ ...params.InputLabelProps, shrink: true }} placeholder={`${t('selectLabel')} ${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}`} />
-            )}
-          />
-        ) : (
-          <TextField fullWidth size="medium" sx={!isBilingual ? { gridColumn: { sm: '1 / -1' } } : undefined} label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
-            value={getField('maanilam', primaryLang)} onChange={e => updateField('maanilam', primaryLang, e.target.value)} placeholder={cc.stateLabel} />
-        )}
-
-        {isBilingual && (
+        <Box sx={{ gridColumn: !isBilingual ? { sm: '1 / -1' } : undefined }}>
+          {stateOptions.length > 0 ? (
+            <Autocomplete
+              options={stateOptions}
+              getOptionLabel={(s) => getBilingualStateName(s, { ...profileSettings, returnOnlyPrimary: true }) || s}
+              value={getField('maanilam', primaryLang) || null}
+              onChange={(e, newValue) => updateField('maanilam', primaryLang, newValue || '')}
+              renderInput={(params) => (
+                <TextField {...params} fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`} slotProps={{ inputLabel: { ...params.InputLabelProps, shrink: true } }} placeholder={`${t('selectLabel')} ${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}`} />
+              )}
+            />
+          ) : (
+            <TextField fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
+              value={getField('maanilam', primaryLang)} onChange={e => updateField('maanilam', primaryLang, e.target.value)} placeholder={t(cc.stateLabel as any, { defaultValue: cc.stateLabel }) as string} />
+          )}
+        </Box>{isBilingual && (
           <TextField fullWidth size="medium" disabled label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${secondaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
             value={getField('maanilam', primaryLang) ? getBilingualStateName(getField('maanilam', primaryLang), { ...profileSettings, returnOnlySecondary: true }) : ''} sx={{ '& .MuiInputBase-root': { bgcolor: 'action.hover' } }} />
         )}
@@ -188,7 +187,7 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
               }
             }}
             renderInput={(params) => (
-              <TextField {...params} fullWidth size="medium" sx={{ mb: isCustomCountry ? 2 : 0 }} label={`${t('country')}${primaryLangSuffix}`} InputLabelProps={{ ...params.InputLabelProps, shrink: true }} />
+              <TextField {...params} fullWidth size="medium" sx={{ mb: isCustomCountry ? 2 : 0 }} label={`${t('country')}${primaryLangSuffix}`} slotProps={{ inputLabel: { ...params.InputLabelProps, shrink: true } }} />
             )}
           />
           {isCustomCountry && (

@@ -170,7 +170,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
           <TextField 
             fullWidth size="medium" label={t('receiptNoLabel') as string} 
             value={form.receiptNo} onChange={e => updateField('receiptNo', e.target.value)} 
-            InputLabelProps={{ shrink: true }}
+            slotProps={{ inputLabel: { shrink: true } }}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
@@ -198,7 +198,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
           <TextField 
             fullWidth size="medium" label={t('amountLabelStar') as string} type="number"
             value={form.amount} onChange={e => updateField('amount', e.target.value)} slotProps={{ input: { startAdornment: <InputAdornment position="start" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 24, mt: '0 !important' }}>{currencySymbol}</InputAdornment> } }}
-            InputLabelProps={{ shrink: true }}
+            slotProps={{ inputLabel: { shrink: true } }}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
@@ -208,7 +208,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
             label={t('paymentModeLabel') as string} 
             value={form.paymentMode} 
             onChange={e => updateField('paymentMode', e.target.value)} 
-            InputLabelProps={{ shrink: true }}
+            slotProps={{ inputLabel: { shrink: true } }}
             slotProps={{ select: { displayEmpty: true } }}
           >
             <MenuItem value=""><em>{t('paymentModeLabel')}...</em></MenuItem>
@@ -220,7 +220,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
             <TextField 
               fullWidth size="medium" label={t('referenceNoLabel') as string} 
               value={form.referenceNo} onChange={e => updateField('referenceNo', e.target.value)} 
-              InputLabelProps={{ shrink: true }}
+              slotProps={{ inputLabel: { shrink: true } }}
             />
           </Grid>
         )}
@@ -249,7 +249,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
                 fullWidth size="medium" 
                 label={t('againstInvoiceLabel') as string} 
                 placeholder={t('againstInvoicePlaceholder') as string}
-                InputLabelProps={params.InputLabelProps}
+                slotProps={{ inputLabel: params.InputLabelProps }}
               />
             )}
           />
@@ -258,7 +258,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
           <TextField 
             fullWidth size="medium" label={t('noteOptionalLabel') as string} multiline rows={2}
             value={form.note} onChange={e => updateField('note', e.target.value)} 
-            InputLabelProps={{ shrink: true }}
+            slotProps={{ inputLabel: { shrink: true } }}
           />
         </Grid>
       </Grid>
