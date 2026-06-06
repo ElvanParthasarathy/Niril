@@ -273,18 +273,18 @@ export default function Arikkaigal() {
               const [y, mo] = key.split('-');
               return (
                 <Grid size={{ xs: 12, sm: 6, md: 4 }} key={key}>
-                  <ElvanCard boxSx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                      <Box sx={{ p: 1.5, borderRadius: '12px', bgcolor: 'action.hover', display: 'flex', color: 'text.secondary' }}>
-                        <ChartBar size={20} weight="duotone" />
-                      </Box>
-                      <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                  <ElvanCard sx={{ height: '100%' }} boxSx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+                    <Box sx={{ width: 48, height: 48, borderRadius: '16px', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <ChartBar size={24} weight="regular" />
+                    </Box>
+                    <Box>
+                      <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>
                         {MONTHS[parseInt(mo) - 1]} {y}
                       </Typography>
+                      <Typography variant="h5" sx={{ fontWeight: 800, color: 'text.primary' }}>
+                        {formatCurrency(rev, currencyFilter)}
+                      </Typography>
                     </Box>
-                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'text.primary' }}>
-                      {formatCurrency(rev, currencyFilter)}
-                    </Typography>
                   </ElvanCard>
                 </Grid>
               );
