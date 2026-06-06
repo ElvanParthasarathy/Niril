@@ -124,7 +124,7 @@ export default function LineItemsTable({
       
       {items.map((item: any, index) => (
         <Box key={item.id} sx={{ mb: 2 }}>
-          <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
+          <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1, ml: 1.5 }}>
             {t('item')} #{index + 1}
           </Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, p: 2, bgcolor: 'action.hover', borderRadius: '16px' }}>
