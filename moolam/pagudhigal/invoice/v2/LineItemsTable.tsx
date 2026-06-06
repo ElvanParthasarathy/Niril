@@ -250,7 +250,7 @@ export default function LineItemsTable({
                             size="small"
                             value={item.discountType || 'amount'}
                             onChange={(e) => handleItemChange(item.id, 'discountType', e.target.value)}
-                            sx={{ minWidth: 45, bgcolor: 'action.hover', px: 1, py: 0.5, borderTopRightRadius: 4, borderBottomRightRadius: 4, height: '100%', '& .MuiSelect-select': { py: 0 } }}
+                            sx={{ minWidth: 45, px: 1, py: 0.5, borderTopRightRadius: 4, borderBottomRightRadius: 4, height: '100%', '& .MuiSelect-select': { py: 0 } }}
                           >
                             <MenuItem value="amount">₹</MenuItem>
                             <MenuItem value="percentage">%</MenuItem>
