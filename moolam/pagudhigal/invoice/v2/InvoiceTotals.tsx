@@ -105,42 +105,44 @@ export default function InvoiceTotals({
 
   return (
     <Box sx={{ width: '100%', maxWidth: { xs: '100%', sm: 400 }, ml: 'auto' }}>
+      
+      {/* Global Discount Input (Outside the Totals Card) */}
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 2, gap: 2, px: 1 }}>
+        <Typography color="text.secondary" variant="body2">{t('applyDiscount') || 'Apply Discount'}</Typography>
+        <Box sx={{ display: 'flex', width: 140 }}>
+          <TextField 
+            size="small" 
+            type="number"
+            placeholder="0"
+            value={totals.globalDiscountValue === undefined ? '' : totals.globalDiscountValue}
+            onChange={(e) => setTotals({ ...totals, globalDiscountValue: e.target.value === '' ? '' as any : Number(e.target.value) })}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end" sx={{ mr: -1.7 }}>
+                    <Select
+                      variant="standard"
+                      disableUnderline
+                      size="small"
+                      value={totals.globalDiscountType || 'percentage'}
+                      onChange={(e) => setTotals({ ...totals, globalDiscountType: e.target.value as any })}
+                      sx={{ minWidth: 45, px: 1, py: 0.5, borderTopRightRadius: 4, borderBottomRightRadius: 4, height: '100%', '& .MuiSelect-select': { py: 0 } }}
+                    >
+                      <MenuItem value="percentage">%</MenuItem>
+                      <MenuItem value="amount">₹</MenuItem>
+                    </Select>
+                  </InputAdornment>
+                )
+              }
+            }}
+          />
+        </Box>
+      </Box>
+
       <Paper sx={{ p: 3, borderRadius: '24px', boxShadow: 'none', bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : '#FFFFFF' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
           <Typography color="text.secondary">{t('subtotal') || 'Subtotal'}</Typography>
           <Typography>₹ {totals.subtotal.toFixed(2)}</Typography>
-        </Box>
-
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1, alignItems: 'center' }}>
-          <Typography color="text.secondary">{t('discount') || 'Discount'}</Typography>
-          <Box sx={{ display: 'flex', width: 140 }}>
-            <TextField 
-              size="small" 
-              type="number"
-              placeholder="0"
-              value={totals.globalDiscountValue === undefined ? '' : totals.globalDiscountValue}
-              onChange={(e) => setTotals({ ...totals, globalDiscountValue: e.target.value === '' ? '' as any : Number(e.target.value) })}
-              slotProps={{
-                input: {
-                  endAdornment: (
-                    <InputAdornment position="end" sx={{ mr: -1.7 }}>
-                      <Select
-                        variant="standard"
-                        disableUnderline
-                        size="small"
-                        value={totals.globalDiscountType || 'percentage'}
-                        onChange={(e) => setTotals({ ...totals, globalDiscountType: e.target.value as any })}
-                        sx={{ minWidth: 45, px: 1, py: 0.5, borderTopRightRadius: 4, borderBottomRightRadius: 4, height: '100%', '& .MuiSelect-select': { py: 0 } }}
-                      >
-                        <MenuItem value="percentage">%</MenuItem>
-                        <MenuItem value="amount">₹</MenuItem>
-                      </Select>
-                    </InputAdornment>
-                  )
-                }
-              }}
-            />
-          </Box>
         </Box>
 
         {totals.totalDiscount > 0 && (
