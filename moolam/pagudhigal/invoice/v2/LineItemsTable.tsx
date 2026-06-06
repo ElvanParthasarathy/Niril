@@ -117,8 +117,8 @@ export default function LineItemsTable({
     <Box sx={{ py: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, ml: 1.5 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-          <Box sx={{ width: 18, height: 18, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: 'bold' }}>3</Box>
-          <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600, lineHeight: 1 }}>{t('lineItems')}</Typography>
+          <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1 }}>3</Box>
+          <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('lineItems')}</Typography>
         </Box>
       </Box>
       

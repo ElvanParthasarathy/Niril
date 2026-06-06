@@ -36,8 +36,8 @@ export default function InvoiceMetadata({
   return (
     <Box sx={{ py: 3 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3, ml: 1.5 }}>
-        <Box sx={{ width: 18, height: 18, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.65rem', fontWeight: 'bold' }}>2</Box>
-        <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600, lineHeight: 1 }}>{t('invoiceDetailsForm') || 'பட்டியல் தரவுகள்'}</Typography>
+        <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1 }}>2</Box>
+        <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('invoiceDetailsForm') || 'பட்டியல் தரவுகள்'}</Typography>
       </Box>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6 }}>
