@@ -10,7 +10,7 @@ import Warning from '@mui/icons-material/Warning';
 import MenuBook from '@mui/icons-material/MenuBook';
 import BarChart from '@mui/icons-material/BarChart';
 import { useState, useEffect, useRef } from 'react';
-import { Box, Typography, Link, ButtonBase, Button, Paper, TextField, Select, MenuItem, FormControl, InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Stack, InputAdornment, Grid, Card, CardContent, Alert, useTheme, Pagination } from '@mui/material';
+import { Box, Typography, Link, ButtonBase, Button, Paper, TextField, Select, MenuItem, FormControl, InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Stack, InputAdornment, Grid, Card, CardContent, Alert, useTheme, Pagination, Tooltip } from '@mui/material';
 import { TrendUp, TrendDown, Wallet, FileText, X, MagnifyingGlass } from '@phosphor-icons/react';
 import { getSearchPaperSx, searchInputStyle } from './commonStyles';
 import ElvanCard from './ElvanCard';
@@ -1397,9 +1397,11 @@ export default function VariArikkaigal({ profile }) {
                 <input type="text" placeholder={t('search') || 'Search...'} value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} style={searchInputStyle} />
                 {search && <IconButton size="small" onClick={() => { setSearch(''); setPage(1); }}><X size={14} weight="regular" /></IconButton>}
               </Paper>
-              <Button variant="outlined" onClick={exportSimpleCSV} startIcon={<Download sx={{ fontSize: 16 }} />} sx={{ borderRadius: 5, textTransform: 'none', height: 48 }}>
-                Download Excel
-              </Button>
+              <Tooltip title="Download Excel" placement="top">
+                <IconButton onClick={exportSimpleCSV} sx={{ border: '1px solid', borderColor: 'divider', width: 48, height: 48, flexShrink: 0 }}>
+                  <Download sx={{ fontSize: 20 }} />
+                </IconButton>
+              </Tooltip>
             </Box>
           </Box>
           
