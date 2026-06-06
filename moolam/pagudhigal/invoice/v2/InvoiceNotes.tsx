@@ -57,7 +57,8 @@ function RichEditor({ value, onChange, placeholder, toolbar = false }: any) {
         onInput={handleInput}
         sx={{
           minHeight: '100px', whiteSpace: 'pre-wrap', width: '100%', padding: '0.65rem 0.9rem',
-          border: '1px solid', borderColor: 'divider', borderRadius: 1, background: 'background.paper',
+          border: '1px solid', borderColor: 'divider', borderRadius: 2, 
+          bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : '#FFFFFF',
           fontFamily: 'inherit', fontSize: '0.9rem', color: 'text.primary', transition: 'all 0.2s',
           cursor: 'text', outline: 'none', lineHeight: 1.6,
           '&:empty::before': { content: 'attr(data-placeholder)', color: 'text.disabled', pointerEvents: 'none' },
