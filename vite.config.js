@@ -119,6 +119,7 @@ export default defineConfig(({ command }) => ({
     },
   },
   server: {
+    host: true,
     open: true,
     proxy: {
       '/api': {
