@@ -311,18 +311,18 @@ export default function LineItemsTable({
         onClick={addItem} 
         sx={{ 
           mt: 1,
-          bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : '#FFFFFF',
+          bgcolor: 'action.hover',
           color: 'text.primary',
           borderRadius: '24px',
           px: 3,
           py: 1,
           boxShadow: (theme) => theme.palette.mode === 'dark' ? 'none' : 1,
           '&:hover': { 
-            bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)' 
+            bgcolor: 'action.selected'
           }
         }}
       >
-        {t('hc_addItem') || 'Add Item'}
+        Add Item
       </Button>
     </Box>
   );
