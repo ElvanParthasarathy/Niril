@@ -112,6 +112,7 @@ export default function InvoiceTotals({
         <Box sx={{ display: 'flex', width: '100%' }}>
           <TextField 
             fullWidth
+            hiddenLabel
             size="small" 
             type="number"
             placeholder="0"
