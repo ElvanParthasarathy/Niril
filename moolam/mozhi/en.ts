@@ -300,6 +300,7 @@ export const en: Record<TranslationKey, string> = {
 
 
   // Reports page
+  reportsTitle: 'Reports',
   reportsSubtitle: 'Overview of your sales revenue and taxes collected',
   filterByLabel: 'Filter By',
   fiscalYearLabel: 'Fiscal Year',

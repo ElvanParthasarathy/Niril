@@ -602,6 +602,9 @@ export const ta = {
   
 
   // Reports Page
+  reportsTitle: 'அறிக்கைகள்',
+  salesSummaryTitle: 'விற்பனை சுருக்கம்',
+  monthlySalesTitle: 'மாதாந்திர அறிக்கை',
   reportsSubtitle: 'நிதி அறிக்கைகள் மற்றும் பெற வேண்டியவைகளின் பகுப்பாய்வு',
   profitAndLossTab: 'வருவாய் & இழப்பு',
   outstandingAndAgingTab: 'நிலுவையில் உள்ளவை & பழமை',
