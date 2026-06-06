@@ -1184,7 +1184,7 @@ export default function VariArikkaigal({ profile }) {
   const paginatedBills = searchedBills.slice((safePage - 1) * itemsPerPage, safePage * itemsPerPage);
 
   return (
-    <Box sx={{ p: { xs: 1.5, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
+    <Box sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
       {/* Page Header (Hidden on Mobile) */}
       <Box sx={{ mb: 4, display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <Box sx={{ ml: { xs: 0, md: 2 } }}>
