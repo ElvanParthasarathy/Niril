@@ -1301,7 +1301,7 @@ export default function VariArikkaigal({ profile }) {
 
       {/* Warnings & Alerts */}
       {warnings.filter(w => w.type === 'error').length > 0 && (
-        <Alert severity="error" sx={{ mb: 2, borderRadius: 2, alignItems: 'center' }}>
+        <Alert severity="error" sx={{ mb: 2, borderRadius: '24px', bgcolor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF', color: 'text.primary', '& .MuiAlert-icon': { color: 'error.main' }, alignItems: 'center' }}>
           {warnings.filter(w => w.type === 'error').slice(0, 3).map(w => w.msg).join(' | ')}
         </Alert>
       )}
