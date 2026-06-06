@@ -305,13 +305,13 @@ export default function LineItemsTable({
           </Box>
         </Box>
       ))}
-      <Box sx={{ display: 'flex', justifyContent: { xs: 'flex-end', sm: 'flex-start' }, mt: 1 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
         <Button 
           variant="text" 
           startIcon={<Plus size={18} weight="regular" />} 
           onClick={addItem} 
           sx={{ 
-            width: { xs: '100%', sm: 'auto' },
+            width: 'auto',
             bgcolor: 'action.hover',
             color: 'text.primary',
             borderRadius: '24px',
