@@ -305,25 +305,26 @@ export default function LineItemsTable({
           </Box>
         </Box>
       ))}
-      <Button 
-        variant="text" 
-        startIcon={<Plus size={18} weight="regular" />} 
-        onClick={addItem} 
-        sx={{ 
-          mt: 1,
-          bgcolor: 'action.hover',
-          color: 'text.primary',
-          borderRadius: '24px',
-          px: 3,
-          py: 1,
-          boxShadow: (theme) => theme.palette.mode === 'dark' ? 'none' : 1,
-          '&:hover': { 
-            bgcolor: 'action.selected'
-          }
-        }}
-      >
-        Add Item
-      </Button>
+      <Box sx={{ display: 'flex', justifyContent: { xs: 'flex-end', sm: 'flex-start' }, mt: 1 }}>
+        <Button 
+          variant="text" 
+          startIcon={<Plus size={18} weight="regular" />} 
+          onClick={addItem} 
+          sx={{ 
+            bgcolor: 'action.hover',
+            color: 'text.primary',
+            borderRadius: '24px',
+            px: 3,
+            py: 1,
+            boxShadow: (theme) => theme.palette.mode === 'dark' ? 'none' : 1,
+            '&:hover': { 
+              bgcolor: 'action.selected'
+            }
+          }}
+        >
+          Add Item
+        </Button>
+      </Box>
     </Box>
   );
 }
