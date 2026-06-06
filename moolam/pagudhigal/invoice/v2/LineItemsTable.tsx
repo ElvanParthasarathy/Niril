@@ -264,7 +264,7 @@ export default function LineItemsTable({
             )}
 
             {/* Line Total */}
-            <Box sx={{ flex: '1 1 120px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', pr: 2 }}>
+            <Box sx={{ flex: '1 1 120px' }}>
               {(() => {
                  const qty = Number(item.qty) || 0;
                  const rate = Number(item.rate) || 0;
@@ -275,16 +275,18 @@ export default function LineItemsTable({
                  const cessAmt = settings.showCess ? (taxable > 0 ? taxable : 0) * ((item.cessPercent || 0) / 100) : 0;
                  const total = (taxable > 0 ? taxable : 0) + taxAmt + cessAmt;
                  return (
-                   <>
-                     {taxAmt > 0 && (
-                       <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', gap: 1, mb: 0.5 }}>
-                         <span>{t('tax') || 'Tax'}:</span> <span>{formatCurrency(taxAmt, currency)}</span>
-                       </Typography>
-                     )}
-                     <Typography variant="subtitle1" sx={{ display: 'flex', gap: 1, fontWeight: 700 }}>
-                       <span style={{ color: 'var(--mui-palette-text-secondary)' }}>{t('total') || 'Total'}:</span> <span>{formatCurrency(total, currency)}</span>
-                     </Typography>
-                   </>
+                   <TextField
+                     fullWidth
+                     size="small"
+                     label={t('total') || 'Total'}
+                     value={formatCurrency(total, currency)}
+                     slotProps={{ 
+                       inputLabel: { shrink: true },
+                       htmlInput: { readOnly: true, style: { fontWeight: 600, textAlign: 'right' } }
+                     }}
+                     helperText={taxAmt > 0 ? `${t('tax') || 'Tax'}: ${formatCurrency(taxAmt, currency)}` : undefined}
+                     FormHelperTextProps={{ sx: { margin: 0, mt: 0.5, lineHeight: 1.2, textAlign: 'right' } }}
+                   />
                  );
               })()}
             </Box>
