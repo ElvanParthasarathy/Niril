@@ -2465,7 +2465,7 @@ export default function VariArikkaigal({ profile }) {
       )}
 
       <Box sx={{ mt: 6, mb: 2, textAlign: 'center' }}>
-        <Typography variant="body2" color="text.disabled">
+        <Typography variant="caption" sx={{ opacity: 0.15, userSelect: 'none', transition: 'opacity 0.2s', '&:hover': { opacity: 0.5 } }}>
           <a href="https://services.gst.gov.in/services/login" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>{t('gstPortalBtn')}</a>
         </Typography>
       </Box>
