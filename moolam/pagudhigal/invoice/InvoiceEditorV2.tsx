@@ -211,21 +211,18 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
           <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>5</Box>
           <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t("invoiceType")}</Typography>
         </Box>
-
-        <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FormControl variant="filled" fullWidth size="small">
-              <Select 
-                value={metadata.invoiceType} 
-                onChange={handleTypeChange}
-              >
-                {Object.entries(INVOICE_TYPES).map(([key, val]) => (
-                  <MenuItem key={key} value={key}>{t(`invoiceTypes_${key.replace(/-/g, '_')}` as any, { defaultValue: val.label })}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-        </Grid>
+        <Box sx={{ mb: 2 }}>
+          <FormControl variant="filled" fullWidth size="small" sx={{ maxWidth: { sm: 400 } }}>
+            <Select 
+              value={metadata.invoiceType} 
+              onChange={handleTypeChange}
+            >
+              {Object.entries(INVOICE_TYPES).map(([key, val]) => (
+                <MenuItem key={key} value={key}>{t(`invoiceTypes_${key.replace(/-/g, '_')}` as any, { defaultValue: val.label })}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
       </Box>
 
       {/* Notes and Terms */}
