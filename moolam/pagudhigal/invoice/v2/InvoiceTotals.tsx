@@ -125,13 +125,26 @@ export default function InvoiceTotals({
               placeholder="0"
               value={totals.globalDiscountValue === undefined ? '' : totals.globalDiscountValue}
               onChange={(e) => setTotals({ ...totals, globalDiscountValue: e.target.value === '' ? '' as any : Number(e.target.value) })}
-              sx={{ '& .MuiOutlinedInput-root': { borderTopRightRadius: 0, borderBottomRightRadius: 0, bgcolor: 'background.paper' } }}
+              InputProps={{
+                sx: { 
+                  borderTopRightRadius: 0, 
+                  borderBottomRightRadius: 0, 
+                  bgcolor: 'action.hover' 
+                }
+              }}
             />
             <Select
               size="small"
               value={totals.globalDiscountType || 'percentage'}
               onChange={(e) => setTotals({ ...totals, globalDiscountType: e.target.value as any })}
-              sx={{ width: 65, minWidth: 65, borderTopLeftRadius: 0, borderBottomLeftRadius: 0, bgcolor: 'action.hover', '& fieldset': { borderLeftColor: 'transparent' } }}
+              sx={{ 
+                width: 65, 
+                minWidth: 65, 
+                borderTopLeftRadius: 0, 
+                borderBottomLeftRadius: 0, 
+                bgcolor: 'action.selected', 
+                '& fieldset': { borderLeftColor: 'transparent' } 
+              }}
             >
               <MenuItem value="percentage">%</MenuItem>
               <MenuItem value="amount">₹</MenuItem>
