@@ -264,7 +264,7 @@ export default function LineItemsTable({
             )}
 
             {/* Line Total */}
-            <Box sx={{ flex: '1 1 120px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', bgcolor: 'background.paper', p: 1, borderRadius: 1, border: '1px dashed', borderColor: 'divider' }}>
+            <Box sx={{ flex: '1 1 120px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', bgcolor: 'background.paper', p: 1, px: 1.5, borderRadius: 2 }}>
               {(() => {
                  const qty = Number(item.qty) || 0;
                  const rate = Number(item.rate) || 0;
@@ -277,12 +277,12 @@ export default function LineItemsTable({
                  return (
                    <>
                      {taxAmt > 0 && (
-                       <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                         <span>{t('hc_tax')}:</span> <span>{formatCurrency(taxAmt, currency)}</span>
+                       <Typography variant="caption" color="text.secondary" sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mb: 0.5 }}>
+                         <span>{t('tax') || 'Tax'}:</span> <span>{formatCurrency(taxAmt, currency)}</span>
                        </Typography>
                      )}
                      <Typography variant="subtitle2" sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontWeight: 600 }}>
-                       <span>{t('hc_total')}:</span> <span>{formatCurrency(total, currency)}</span>
+                       <span>{t('total') || 'Total'}:</span> <span>{formatCurrency(total, currency)}</span>
                      </Typography>
                    </>
                  );
