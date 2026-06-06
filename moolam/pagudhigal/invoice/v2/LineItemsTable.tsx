@@ -130,7 +130,7 @@ export default function LineItemsTable({
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, p: 2, bgcolor: 'action.hover', borderRadius: '16px' }}>
             
             {/* Product Search */}
-            <Box sx={{ flex: '3 1 250px', position: 'relative' }}>
+            <Box sx={{ flex: { xs: '1 1 100%', sm: '3 1 250px' }, position: 'relative' }}>
               <TextField 
                 fullWidth size="small" 
                 label={t("descriptionCol")} slotProps={{ inputLabel: { shrink: true } }}
