@@ -903,13 +903,7 @@ function Seyali() {
       }}>
         {/* New Mobile AMOLED Top Bar */}
         <Box sx={{ display: { xs: 'flex', md: 'none' }, px: 2, py: 1.5, alignItems: 'center', justifyContent: 'space-between', bgcolor: 'transparent', zIndex: 1100, minHeight: 64 }}>
-          <Box id="mobile-topbar-left" sx={{ display: 'flex', alignItems: 'center' }}>
-            {['reports', 'gst-returns', 'settings'].includes(currentView as string) && (
-              <IconButton onClick={() => setCurrentView('dashboard')} sx={{ ml: -1, mr: 1, color: darkMode ? '#FFFFFF' : '#000000' }}>
-                <CaretLeft size={24} weight="bold" />
-              </IconButton>
-            )}
-          </Box>
+          <Box id="mobile-topbar-left" sx={{ display: 'flex', alignItems: 'center' }} />
           {!isEditorView && (
             <Typography variant="h6" sx={{ ml: 1.5, fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.5px', color: darkMode ? '#FFFFFF' : '#000000', flexGrow: 1 }}>
               {getTopBarTitle()}
@@ -940,6 +934,18 @@ function Seyali() {
                   <Settings size={24} weight={currentView === 'settings' ? "fill" : "regular"} />
                 </IconButton>
               </Stack>
+            )}
+            {['reports', 'gst-returns', 'settings'].includes(currentView as string) && (
+              <IconButton onClick={() => setCurrentView('dashboard')} sx={{ 
+                bgcolor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)', 
+                width: 40, height: 40, 
+                color: darkMode ? '#FFFFFF' : '#000000',
+                '&:hover': { bgcolor: darkMode ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)' },
+                '&:active svg': { transform: 'scale(0.85)' },
+                '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
+              }}>
+                <CaretLeft size={20} weight="bold" />
+              </IconButton>
             )}
           </Box>
         </Box>
