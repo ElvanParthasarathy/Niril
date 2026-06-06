@@ -224,9 +224,6 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
                 ))}
               </Select>
             </FormControl>
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5, lineHeight: 1.4 }}>
-              {t(`invoiceDesc_${metadata.invoiceType.replace(/-/g, '_')}` as any, { defaultValue: (INVOICE_TYPES as any)[metadata.invoiceType]?.description })}
-            </Typography>
           </Grid>
         </Grid>
       </Box>
