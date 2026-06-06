@@ -1454,7 +1454,7 @@ export default function Amaippugal({ onSaved }) {
 
   const renderHub = () => (
     <div style={{ paddingBottom: 100 }}>
-       <div className="s2-sub-header" style={{ display: isMobile ? 'flex' : 'none', marginBottom: 24, padding: '0 8px' }}>
+       <div className="s2-sub-header" style={{ display: 'none', marginBottom: 24, padding: '0 8px' }}>
            <div className="s2-sub-title">{t('settingsTitle')}</div>
        </div>
 
@@ -1514,7 +1514,7 @@ export default function Amaippugal({ onSaved }) {
   );
 
   return (
-    <div className="s2-page-view" style={isMobile ? { position: 'relative', overflow: 'hidden', height: 'calc(100vh - 60px)', paddingTop: 16 } : { paddingTop: 24 }}>
+    <div className="s2-page-view" style={isMobile ? { position: 'relative', overflow: 'hidden', height: 'calc(100vh - 60px)', paddingTop: 16, fontFamily: '"Elvan Sans", sans-serif' } : { paddingTop: 24, fontFamily: '"Elvan Sans", sans-serif' }}>
       {isMobile ? (
           <AnimatePresence mode="popLayout" custom={direction} initial={false}>
               {currentView === 'hub' ? (
