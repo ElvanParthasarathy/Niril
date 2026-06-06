@@ -675,7 +675,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
     // overridden a previous row.
     const defaultUnit = items.length > 0 && items[items.length - 1].unit
       ? items[items.length - 1].unit
-      : getDefaultUnitForMode(invoiceOptions.invoiceMode);
+      : 'Nos';
     setItems(prev => [...prev, {
       id: Date.now().toString(), name: '', nameEn: '', hsn: '50072010', quantity: 1, unit: defaultUnit, rate: 0, discount: 0,
       taxPercent: showGST ? 5 : 0,
@@ -955,20 +955,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                 </Typography>
               </Grid>
 
-              <Grid size={{ xs: 12, md: 6 }}>
-                <FormControl fullWidth size="small">
-                  <Select value={invoiceOptions.invoiceMode || 'goods'} onChange={(e) => setInvoiceOptions(prev => ({ ...prev, invoiceMode: e.target.value }))}>
-                    <MenuItem value="goods">📦 {t("thisInvoiceIsFor")}: {t("invoiceModeGoods")}</MenuItem>
-                    <MenuItem value="services">⏱ {t("thisInvoiceIsFor")}: {t("invoiceModeServices")}</MenuItem>
-                    <MenuItem value="mixed">🔀 {t("thisInvoiceIsFor")}: {t("invoiceModeMixed")}</MenuItem>
-                  </Select>
-                </FormControl>
-                {invoiceOptions.invoiceMode === 'services' && (
-                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5, lineHeight: 1.4 }}>
-                    💡 Use a <strong>{t('hc_sacCode')}</strong> (services accounting code) in the HSN field
-                  </Typography>
-                )}
-              </Grid>
+
             </Grid>
 
             {/* Customization Options */}
@@ -1547,7 +1534,7 @@ export default function InvoiceEditor({ onBack, onSaved, profile: profileProp, e
                         handleItemChange(item.id, 'unit', e.target.value);
                       }}>
                         {(() => {
-                          const visible = filterUnitsByMode(units, invoiceOptions.invoiceMode);
+                          const visible = units;
                           const showCurrentExtra = item.unit && !visible.some(u => u.label === item.unit);
                           return (
                             <>
