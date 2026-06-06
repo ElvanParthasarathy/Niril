@@ -119,93 +119,153 @@ export default function Arikkaigal() {
         </Box>
       </Box>
 
-      {/* Period + Currency Selector */}
-      <ElvanCard 
-        sx={{ 
-          mb: 4, 
-          bgcolor: { sm: 'transparent' }, 
-          backgroundImage: { sm: 'none' }, 
-          boxShadow: { sm: 'none' } 
-        }} 
-        boxSx={{ 
-          px: { xs: 3, sm: 0 }, 
-          pt: { xs: 2, sm: 0 }, 
-          pb: { xs: 2, sm: 0 } 
-        }}
-      >
-        <Grid container spacing={2} sx={{ alignItems: 'center' }}>
-          <Grid size={{ xs: 12, sm: 4, md: 3 }}>
+      {/* Period + Currency Selector - MOBILE (Unified Card) */}
+      <Box sx={{ display: { xs: 'block', sm: 'none' }, mb: 4 }}>
+        <ElvanCard boxSx={{ px: 3, pt: 2, pb: 2 }}>
+          <Grid container spacing={2} sx={{ alignItems: 'center' }}>
+            <Grid size={12}>
+              <TextField 
+                select 
+                fullWidth
+                label={t('filterByLabel') as string} 
+                value={filterMode} 
+                onChange={e => setFilterMode(e.target.value)}
+                sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF' } }}
+              >
+                <MenuItem value="fy">{t('fiscalYearLabel')}</MenuItem>
+                <MenuItem value="month">{t('monthYearLabel')}</MenuItem>
+              </TextField>
+            </Grid>
+            
+            {filterMode === 'fy' ? (
+              <Grid size={12}>
+                <TextField 
+                  select 
+                  fullWidth
+                  label={t('fiscalYearLabel') as string} 
+                  value={fyFilter} 
+                  onChange={e => setFyFilter(e.target.value)}
+                  sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF' } }}
+                >
+                  {fyOptions.map(fy => <MenuItem key={fy.value} value={fy.value}>{fy.label}</MenuItem>)}
+                </TextField>
+              </Grid>
+            ) : (
+              <>
+                <Grid size={6}>
+                  <TextField 
+                    select 
+                    fullWidth
+                    label={t('monthLabel') as string} 
+                    value={monthFilter} 
+                    onChange={e => setMonthFilter(e.target.value)}
+                    sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF' } }}
+                  >
+                    {MONTHS.map((m, i) => <MenuItem key={i} value={i}>{m}</MenuItem>)}
+                  </TextField>
+                </Grid>
+                <Grid size={6}>
+                  <TextField 
+                    select 
+                    fullWidth
+                    label={t('yearLabel') as string} 
+                    value={yearFilter} 
+                    onChange={e => setYearFilter(e.target.value)}
+                    sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF' } }}
+                  >
+                    {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
+                  </TextField>
+                </Grid>
+              </>
+            )}
+            
+            {allCurrencies.length > 1 && (
+              <Grid size={12}>
+                <TextField 
+                  select 
+                  fullWidth
+                  label={t('currencyLabel') as string} 
+                  value={currencyFilter} 
+                  onChange={e => setCurrencyFilter(e.target.value)}
+                  sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF' } }}
+                >
+                  {allCurrencies.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+                </TextField>
+              </Grid>
+            )}
+          </Grid>
+        </ElvanCard>
+      </Box>
+
+      {/* Period + Currency Selector - DESKTOP (Split Cards) */}
+      <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 2, mb: 4, flexWrap: 'wrap', alignItems: 'center' }}>
+        <ElvanCard boxSx={{ p: 2, minWidth: 200 }}>
+          <TextField 
+            select 
+            fullWidth
+            label={t('filterByLabel') as string} 
+            value={filterMode} 
+            onChange={e => setFilterMode(e.target.value)}
+            sx={{ '& .MuiFilledInput-root': { bgcolor: 'transparent' } }}
+          >
+            <MenuItem value="fy">{t('fiscalYearLabel')}</MenuItem>
+            <MenuItem value="month">{t('monthYearLabel')}</MenuItem>
+          </TextField>
+        </ElvanCard>
+        
+        {filterMode === 'fy' ? (
+          <ElvanCard boxSx={{ p: 2, minWidth: 200 }}>
             <TextField 
               select 
               fullWidth
-              label={t('filterByLabel') as string} 
-              value={filterMode} 
-              onChange={e => setFilterMode(e.target.value)}
-              sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF' } }}
+              label={t('fiscalYearLabel') as string} 
+              value={fyFilter} 
+              onChange={e => setFyFilter(e.target.value)}
+              sx={{ '& .MuiFilledInput-root': { bgcolor: 'transparent' } }}
             >
-              <MenuItem value="fy">{t('fiscalYearLabel')}</MenuItem>
-              <MenuItem value="month">{t('monthYearLabel')}</MenuItem>
+              {fyOptions.map(fy => <MenuItem key={fy.value} value={fy.value}>{fy.label}</MenuItem>)}
             </TextField>
-          </Grid>
-          
-          {filterMode === 'fy' ? (
-            <Grid size={{ xs: 12, sm: 4, md: 3 }}>
-              <TextField 
-                select 
-                fullWidth
-                label={t('fiscalYearLabel') as string} 
-                value={fyFilter} 
-                onChange={e => setFyFilter(e.target.value)}
-                sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF' } }}
-              >
-                {fyOptions.map(fy => <MenuItem key={fy.value} value={fy.value}>{fy.label}</MenuItem>)}
-              </TextField>
-            </Grid>
-          ) : (
-            <>
-              <Grid size={{ xs: 6, sm: 4, md: 3 }}>
-                <TextField 
-                  select 
-                  fullWidth
-                  label={t('monthLabel') as string} 
-                  value={monthFilter} 
-                  onChange={e => setMonthFilter(e.target.value)}
-                  sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF' } }}
-                >
-                  {MONTHS.map((m, i) => <MenuItem key={i} value={i}>{m}</MenuItem>)}
-                </TextField>
-              </Grid>
-              <Grid size={{ xs: 6, sm: 4, md: 3 }}>
-                <TextField 
-                  select 
-                  fullWidth
-                  label={t('yearLabel') as string} 
-                  value={yearFilter} 
-                  onChange={e => setYearFilter(e.target.value)}
-                  sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF' } }}
-                >
-                  {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
-                </TextField>
-              </Grid>
-            </>
-          )}
-          
-          {allCurrencies.length > 1 && (
-            <Grid size={{ xs: 12, sm: 4, md: 3 }}>
-              <TextField 
-                select 
-                fullWidth
-                label={t('currencyLabel') as string} 
-                value={currencyFilter} 
-                onChange={e => setCurrencyFilter(e.target.value)}
-                sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF' } }}
-              >
-                {allCurrencies.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
-              </TextField>
-            </Grid>
-          )}
-        </Grid>
-      </ElvanCard>
+          </ElvanCard>
+        ) : (
+          <ElvanCard boxSx={{ p: 2, display: 'flex', gap: 2, minWidth: 300 }}>
+            <TextField 
+              select 
+              fullWidth
+              label={t('monthLabel') as string} 
+              value={monthFilter} 
+              onChange={e => setMonthFilter(e.target.value)}
+              sx={{ '& .MuiFilledInput-root': { bgcolor: 'transparent' } }}
+            >
+              {MONTHS.map((m, i) => <MenuItem key={i} value={i}>{m}</MenuItem>)}
+            </TextField>
+            <TextField 
+              select 
+              fullWidth
+              label={t('yearLabel') as string} 
+              value={yearFilter} 
+              onChange={e => setYearFilter(e.target.value)}
+              sx={{ '& .MuiFilledInput-root': { bgcolor: 'transparent' } }}
+            >
+              {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
+            </TextField>
+          </ElvanCard>
+        )}
+        
+        {allCurrencies.length > 1 && (
+          <ElvanCard boxSx={{ p: 2, minWidth: 200 }}>
+            <TextField 
+              select 
+              fullWidth
+              label={t('currencyLabel') as string} 
+              value={currencyFilter} 
+              onChange={e => setCurrencyFilter(e.target.value)}
+              sx={{ '& .MuiFilledInput-root': { bgcolor: 'transparent' } }}
+            >
+              {allCurrencies.map(c => <MenuItem key={c} value={c}>{c}</MenuItem>)}
+            </TextField>
+          </ElvanCard>
+        )}
+      </Box>
 
       {/* P&L Metric Cards */}
       <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
