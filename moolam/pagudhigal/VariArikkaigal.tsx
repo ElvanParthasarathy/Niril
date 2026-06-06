@@ -1391,8 +1391,8 @@ export default function VariArikkaigal({ profile }) {
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>{t('hc_invoicesForThisPeriod')}</Typography>
               <Typography variant="body2" color="text.secondary">{searchedBills.length} invoices</Typography>
             </Box>
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-              <Paper elevation={1} sx={getSearchPaperSx(isDark)}>
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', width: { xs: '100%', md: 'auto' } }}>
+              <Paper elevation={1} sx={{ ...getSearchPaperSx(isDark), flex: 1 }}>
                 <MagnifyingGlass size={16} weight="regular" style={{ opacity: 0.5 }} />
                 <input type="text" placeholder={t('search') || 'Search...'} value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} style={searchInputStyle} />
                 {search && <IconButton size="small" onClick={() => { setSearch(''); setPage(1); }}><X size={14} weight="regular" /></IconButton>}
