@@ -290,8 +290,18 @@ export default function LineItemsTable({
             </Box>
 
             {/* Delete */}
-            <Box sx={{ flex: '0 0 auto', display: 'flex', alignItems: 'center' }}>
-              <IconButton color="error" onClick={() => removeItem(item.id)} title={t('hc_remove')}><Trash size={18} weight="regular" /></IconButton>
+            <Box sx={{ flex: '0 0 auto', display: 'flex', alignItems: 'center', ml: 1 }}>
+              <IconButton 
+                color="error" 
+                onClick={() => removeItem(item.id)} 
+                title={t('hc_remove')}
+                sx={{ 
+                  bgcolor: 'background.paper', 
+                  '&:hover': { bgcolor: 'error.main', color: 'error.contrastText' } 
+                }}
+              >
+                <Trash size={18} weight="regular" />
+              </IconButton>
             </Box>
           </Box>
         </Box>
