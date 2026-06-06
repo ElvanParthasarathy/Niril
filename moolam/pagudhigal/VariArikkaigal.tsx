@@ -10,8 +10,9 @@ import Warning from '@mui/icons-material/Warning';
 import MenuBook from '@mui/icons-material/MenuBook';
 import BarChart from '@mui/icons-material/BarChart';
 import { useState, useEffect, useRef } from 'react';
-import { Box, Typography, Link, ButtonBase, Button, Paper, TextField, Select, MenuItem, FormControl, InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Stack, InputAdornment, Grid, Card, CardContent, Alert, useTheme } from '@mui/material';
-import { TrendUp, TrendDown, Wallet, FileText } from '@phosphor-icons/react';
+import { Box, Typography, Link, ButtonBase, Button, Paper, TextField, Select, MenuItem, FormControl, InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Stack, InputAdornment, Grid, Card, CardContent, Alert, useTheme, Pagination } from '@mui/material';
+import { TrendUp, TrendDown, Wallet, FileText, X, MagnifyingGlass } from '@phosphor-icons/react';
+import { getSearchPaperSx, searchInputStyle } from './commonStyles';
 import ElvanCard from './ElvanCard';
 import { getAllBills, getAllExpenses, getAllPurchases } from '../Avanam';
 import { formatCurrency, INVOICE_TYPES, calculateLineItemTax, getStateCode, formatDateGST, getFilingPeriod, getUnitUQC } from '../Payanpadu';
@@ -514,6 +515,8 @@ export default function VariArikkaigal({ profile }) {
   const [yearFilter, setYearFilter] = useState('');
   const [quarterFilter, setQuarterFilter] = useState('Q1');
   const [activeTab, setActiveTab] = useState('summary');
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
   const [gstr2bData, setGstr2bData] = useState(null); // imported 2B JSON
   const [gstr2bFilter, setGstr2bFilter] = useState('all'); // all | matched | mismatch | bookOnly | twoBOnly
   const gstr2bInputRef = useRef(null);
@@ -1163,6 +1166,22 @@ export default function VariArikkaigal({ profile }) {
   const totalTax = grandTotals.cgst + grandTotals.sgst + grandTotals.igst;
   const netPayable = netTax.igst + netTax.cgst + netTax.sgst;
 
+  // Pagination & Search
+  const searchedBills = filteredBills.filter(b => {
+    if (!search.trim()) return true;
+    const term = search.toLowerCase();
+    const itemsText = b.data?.items ? b.data.items.map((i: any) => `${i.name || ''} ${i.nameEn || ''}`).join(' ') : '';
+    const searchable = [
+      b.invoiceNumber, b.clientName, b.clientNameEn, b.data?.client?.gstin,
+      b.data?.totals?.total?.toString(), itemsText
+    ].filter(Boolean).join(' ').toLowerCase();
+    return searchable.includes(term);
+  });
+  const itemsPerPage = 8;
+  const totalPages = Math.ceil(searchedBills.length / itemsPerPage);
+  const safePage = Math.max(1, Math.min(page, totalPages === 0 ? 1 : totalPages));
+  const paginatedBills = searchedBills.slice((safePage - 1) * itemsPerPage, safePage * itemsPerPage);
+
   return (
     <Box sx={{ p: { xs: 1.5, md: 4 }, maxWidth: 1400, mx: 'auto' }}>
       {/* Page Header (Hidden on Mobile) */}
@@ -1372,60 +1391,82 @@ export default function VariArikkaigal({ profile }) {
       {/* ===================== SUMMARY TAB ===================== */}
       {activeTab === 'summary' && (
         <Stack spacing={3}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2, mb: -1 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2, mb: -1, flexWrap: 'wrap', gap: 2 }}>
             <Box>
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>{t('hc_invoicesForThisPeriod')}</Typography>
-              <Typography variant="body2" color="text.secondary">{filteredBills.length} invoices</Typography>
+              <Typography variant="body2" color="text.secondary">{searchedBills.length} invoices</Typography>
             </Box>
-            <Button variant="outlined" onClick={exportSimpleCSV} startIcon={<Download sx={{ fontSize: 16 }} />} sx={{ borderRadius: 5, textTransform: 'none' }}>
-              Download Excel
-            </Button>
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+              <Paper elevation={1} sx={getSearchPaperSx(isDark)}>
+                <MagnifyingGlass size={16} weight="regular" style={{ opacity: 0.5 }} />
+                <input type="text" placeholder={t('search') || 'Search...'} value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} style={searchInputStyle} />
+                {search && <IconButton size="small" onClick={() => { setSearch(''); setPage(1); }}><X size={14} weight="regular" /></IconButton>}
+              </Paper>
+              <Button variant="outlined" onClick={exportSimpleCSV} startIcon={<Download sx={{ fontSize: 16 }} />} sx={{ borderRadius: 5, textTransform: 'none', height: 48 }}>
+                Download Excel
+              </Button>
+            </Box>
           </Box>
-          <ElvanCard boxSx={{ p: 0, overflow: 'hidden' }}>
-            {filteredBills.length === 0 ? (
-              <Typography sx={{ p: 3, color: 'text.secondary' }}>{t('hc_noInvoicesFoundForThis')}</Typography>
-            ) : (
-              <TableContainer>
-                <Table size="small">
-                  <TableHead sx={{ bgcolor: 'rgba(0,0,0,0.02)' }}>
-                    <TableRow>
-                      <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_invoiceNo')}</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>{t('hc_client')}</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('hc_taxableValue')}</TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t('hc_taxAmount')}</TableCell>
-                      <TableCell align="right" sx={{ fontWeight: 'bold' }}>Total</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {filteredBills.map((b: any, i: number) => {
-                      let cNamePrimary = b.clientName || b.data?.client?.name || '';
-                      let cNameSecondary = '';
-                      if ((profile as any)?.enableBilingual !== false) {
-                        const enName = b.clientNameEn || b.data?.client?.nameEn || b.data?.client?.peyarEn || '';
-                        if (enName && enName !== cNamePrimary) {
-                           cNameSecondary = enName;
-                        }
-                      }
-                      return (
-                      <TableRow key={i} hover>
-                        <TableCell sx={{ fontWeight: 500 }}>{b.invoiceNumber || ''}</TableCell>
-                        <TableCell>
-                          {cNamePrimary}
-                          {cNameSecondary && <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>{cNameSecondary}</Typography>}
-                        </TableCell>
-                        <TableCell sx={{ color: 'text.secondary' }}>{b.invoiceDate ? new Date(b.invoiceDate).toLocaleDateString('en-IN') : ''}</TableCell>
-                        <TableCell align="right">{formatCurrency(getTaxableAmount(b.data?.totals))}</TableCell>
-                        <TableCell align="right">{formatCurrency((b.data?.totals?.cgst || 0) + (b.data?.totals?.sgst || 0) + (b.data?.totals?.igst || 0))}</TableCell>
-                        <TableCell align="right" sx={{ fontWeight: 'bold' }}>{formatCurrency(b.data?.totals?.total || 0)}</TableCell>
-                      </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            )}
-          </ElvanCard>
+          
+          {paginatedBills.length === 0 ? (
+            <ElvanCard boxSx={{ p: 6, textAlign: 'center' }}>
+              <Box color="text.secondary" mb={2}>
+                <FileText size={48} weight="regular" style={{ opacity: 0.5 }} />
+              </Box>
+              <Typography color="text.secondary">No invoices match your search</Typography>
+            </ElvanCard>
+          ) : (
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
+              {paginatedBills.map((b: any, index: number) => {
+                let cNamePrimary = b.clientName || b.data?.client?.name || '';
+                let cNameSecondary = '';
+                if ((profile as any)?.enableBilingual !== false) {
+                  const enName = b.clientNameEn || b.data?.client?.nameEn || b.data?.client?.peyarEn || '';
+                  if (enName && enName !== cNamePrimary) cNameSecondary = enName;
+                }
+                const globalIndex = (safePage - 1) * itemsPerPage + index;
+                return (
+                  <ElvanCard key={b.id || index} sx={{ height: '100%' }}>
+                    <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
+                      <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, mt: 0.15, borderRadius: '50%', bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)', flexShrink: 0 }}>
+                          <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
+                            {(globalIndex + 1).toString().padStart(2, '0')}
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                            {cNamePrimary || '-'}
+                          </Typography>
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
+                            {cNameSecondary && <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{cNameSecondary}</Typography>}
+                            <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
+                              {b.invoiceNumber} <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> {b.invoiceDate ? new Date(b.invoiceDate).toLocaleDateString('en-IN') : '-'}
+                            </Typography>
+                            <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
+                              Taxable: {formatCurrency(getTaxableAmount(b.data?.totals))} | Tax: {formatCurrency((b.data?.totals?.cgst || 0) + (b.data?.totals?.sgst || 0) + (b.data?.totals?.igst || 0))}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Box>
+                      <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'space-between' }}>
+                        <Box sx={{ display: 'flex', gap: 0.5, mt: -0.5, mr: -0.5 }}></Box>
+                        <Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: 800 }}>
+                          {formatCurrency(b.data?.totals?.total || 0)}
+                        </Typography>
+                      </Box>
+                    </Stack>
+                  </ElvanCard>
+                );
+              })}
+            </Box>
+          )}
+
+          {totalPages > 1 && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+              <Pagination count={totalPages} page={safePage} onChange={(_e, val) => setPage(val)} color="primary" size="large" sx={{ '& .MuiPaginationItem-root': { fontWeight: 600 } }} />
+            </Box>
+          )}
         </Stack>
       )}
 
