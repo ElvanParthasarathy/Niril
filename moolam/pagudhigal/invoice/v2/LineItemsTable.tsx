@@ -223,7 +223,7 @@ export default function LineItemsTable({
             </Box>
 
             {/* Qty */}
-            <Box sx={{ flex: '0.7 1 80px' }}>
+            <Box sx={{ flex: '1 1 120px' }}>
               <TextField fullWidth size="small" label={t('qty')} type="number" slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: 0, step: "any" } }} 
                 value={item.qty} onChange={(e) => handleItemChange(item.id, 'quantity', clampNonNeg(e.target.value))} />
             </Box>
@@ -236,7 +236,7 @@ export default function LineItemsTable({
 
             {/* Discount */}
             {settings.showDiscountColumn && (
-              <Box sx={{ flex: '0.8 1 100px' }}>
+              <Box sx={{ flex: '1 1 120px' }}>
                 <TextField fullWidth size="small" label={t('discount')} type="number" 
                   slotProps={{ 
                     inputLabel: { shrink: true }, 
