@@ -90,7 +90,7 @@ export default function InvoiceNotes({
   if (!showTerms) return null;
 
   return (
-    <Paper sx={{ p: 3, borderRadius: 2 }}>
+    <Box sx={{ mb: 2 }}>
       <Grid container spacing={3}>
         {showTerms && (
           <Grid size={{ xs: 12, md: 6 }}>
@@ -104,6 +104,6 @@ export default function InvoiceNotes({
           </Grid>
         )}
       </Grid>
-    </Paper>
+    </Box>
   );
 }
