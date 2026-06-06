@@ -937,10 +937,9 @@ function Seyali() {
             )}
             {['reports', 'gst-returns', 'settings'].includes(currentView as string) && (
               <IconButton onClick={() => setCurrentView('dashboard')} sx={{ 
-                bgcolor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)', 
-                width: 40, height: 40, 
-                color: darkMode ? '#FFFFFF' : '#000000',
-                '&:hover': { bgcolor: darkMode ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)' },
+                bgcolor: 'background.paper', 
+                color: 'text.primary',
+                p: 1.5,
                 '&:active svg': { transform: 'scale(0.85)' },
                 '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
               }}>
