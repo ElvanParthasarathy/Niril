@@ -10,7 +10,9 @@ import Warning from '@mui/icons-material/Warning';
 import MenuBook from '@mui/icons-material/MenuBook';
 import BarChart from '@mui/icons-material/BarChart';
 import { useState, useEffect, useRef } from 'react';
-import { Box, Typography, Link, ButtonBase, Button, Paper, TextField, Select, MenuItem, FormControl, InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Stack, InputAdornment, Grid, Card, CardContent, Alert } from '@mui/material';
+import { Box, Typography, Link, ButtonBase, Button, Paper, TextField, Select, MenuItem, FormControl, InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Stack, InputAdornment, Grid, Card, CardContent, Alert, useTheme } from '@mui/material';
+import { TrendUp, TrendDown, Wallet, FileText } from '@phosphor-icons/react';
+import ElvanCard from './ElvanCard';
 import { getAllBills, getAllExpenses, getAllPurchases } from '../Avanam';
 import { formatCurrency, INVOICE_TYPES, calculateLineItemTax, getStateCode, formatDateGST, getFilingPeriod, getUnitUQC } from '../Payanpadu';
 import { thagaval } from './Thagaval';
@@ -497,6 +499,8 @@ function StepList({ steps, title }: { steps: any[], title: string }) {
 
 // ========== Main Component ==========
 export default function VariArikkaigal({ profile }) {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
   const { t } = useLanguage();
   const MONTHS = [t('january'), t('february'), t('march'), t('april'), t('may'), t('june'), t('july'), t('august'), t('september'), t('october'), t('november'), t('december')];
 
@@ -1161,73 +1165,194 @@ export default function VariArikkaigal({ profile }) {
 
   return (
     <Box sx={{ p: { xs: 1.5, md: 4 }, maxWidth: 1400, mx: 'auto' }}>
-      {/* Header row: title + period selector + portal link */}
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mb: 3, alignItems: { xs: 'flex-start', md: 'center' }, flexWrap: 'wrap' }}>
-        <Typography variant="h4" sx={{ m: 0 ,  fontWeight: "bold" }}>{t('hc_taxDataExport')}</Typography>
-        <Stack direction="row" spacing={1} sx={{ flex: 1, alignItems: 'center', flexWrap: 'wrap' }}>
-          <TextField select size="small" value={filterMode} onChange={e => setFilterMode(e.target.value)} sx={{ minWidth: 120 }}>
-            <MenuItem value="month">{t('monthlyTab')}</MenuItem>
-            <MenuItem value="quarter">Quarterly (QRMP)</MenuItem>
-            <MenuItem value="fy">{t('hc_fullYear')}</MenuItem>
-          </TextField>
-          {filterMode === 'fy' ? (
-            <TextField select size="small" value={fyFilter} onChange={e => setFyFilter(e.target.value)}>
-              {fyOptions.map(fy => <MenuItem key={fy.value} value={fy.value}>{fy.label}</MenuItem>)}
-            </TextField>
-          ) : filterMode === 'quarter' ? (
-            <>
-              <TextField select size="small" value={quarterFilter} onChange={e => setQuarterFilter(e.target.value)}>
-                {QUARTERS.map(q => <MenuItem key={q.id} value={q.id}>{q.label}</MenuItem>)}
-              </TextField>
-              <TextField select size="small" value={yearFilter} onChange={e => setYearFilter(e.target.value)} sx={{ minWidth: 80 }}>
-                {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
-              </TextField>
-            </>
-          ) : (
-            <>
-              <TextField select size="small" value={monthFilter} onChange={e => setMonthFilter(e.target.value)}>
-                {(MONTHS as string[]).map((m, i) => <MenuItem key={i} value={i}>{m}</MenuItem>)}
-              </TextField>
-              <TextField select size="small" value={yearFilter} onChange={e => setYearFilter(e.target.value)} sx={{ minWidth: 80 }}>
-                {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
-              </TextField>
-            </>
-          )}
-          {/* Filing status */}
-          <Chip size="small" label={`R1 ${periodFiling.gstr1 ? 'Filed' : 'Pending'}`} sx={{ bgcolor: periodFiling.gstr1 ? '#ecfdf5' : '#fef2f2', color: periodFiling.gstr1 ? '#059669' : '#dc2626', fontWeight: 600, borderRadius: 2 }} />
-          <Chip size="small" label={`3B ${periodFiling.gstr3b ? 'Filed' : 'Pending'}`} sx={{ bgcolor: periodFiling.gstr3b ? '#ecfdf5' : '#fef2f2', color: periodFiling.gstr3b ? '#059669' : '#dc2626', fontWeight: 600, borderRadius: 2 }} />
-        </Stack>
+      {/* Page Header (Hidden on Mobile) */}
+      <Box sx={{ mb: 4, display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <Box>
+          <Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
+            {t('hc_taxDataExport')}
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            {t('gstReturnsSubtitle') || 'GST Returns and Tax Data Export'}
+          </Typography>
+        </Box>
         <Button component="a" href="https://gst.gov.in" target="_blank" rel="noopener noreferrer" variant="contained" startIcon={<OpenInNew sx={{ fontSize: 14 }} />} sx={{ whiteSpace: 'nowrap', borderRadius: 5, textTransform: 'none', boxShadow: 'none' }}>
           GST Portal
         </Button>
-      </Stack>
+      </Box>
 
-      {/* Warnings — collapsed by default, only errors show */}
+      {/* Period Selector - MOBILE (Unified Card) */}
+      <Box sx={{ display: { xs: 'block', sm: 'none' }, mb: 4 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h5" sx={{ fontWeight: 800 }}>
+            {t('hc_taxDataExport')}
+          </Typography>
+          <Button component="a" href="https://gst.gov.in" target="_blank" rel="noopener noreferrer" variant="contained" size="small" sx={{ borderRadius: 5, textTransform: 'none', boxShadow: 'none' }}>
+            Portal
+          </Button>
+        </Box>
+        <ElvanCard boxSx={{ px: 3, pt: 2, pb: 2 }}>
+          <Grid container spacing={2} sx={{ alignItems: 'center' }}>
+            <Grid size={12}>
+              <TextField 
+                select 
+                fullWidth
+                label={t('filterByLabel') as string} 
+                value={filterMode} 
+                onChange={e => setFilterMode(e.target.value)}
+                sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF' } }}
+              >
+                <MenuItem value="month">{t('monthlyTab')}</MenuItem>
+                <MenuItem value="quarter">Quarterly (QRMP)</MenuItem>
+                <MenuItem value="fy">{t('hc_fullYear')}</MenuItem>
+              </TextField>
+            </Grid>
+            
+            {filterMode === 'fy' ? (
+              <Grid size={12}>
+                <TextField select fullWidth label={t('fiscalYearLabel') as string} value={fyFilter} onChange={e => setFyFilter(e.target.value)} sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF' } }}>
+                  {fyOptions.map(fy => <MenuItem key={fy.value} value={fy.value}>{fy.label}</MenuItem>)}
+                </TextField>
+              </Grid>
+            ) : filterMode === 'quarter' ? (
+              <>
+                <Grid size={12}>
+                  <TextField select fullWidth label="Quarter" value={quarterFilter} onChange={e => setQuarterFilter(e.target.value)} sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF' } }}>
+                    {QUARTERS.map(q => <MenuItem key={q.id} value={q.id}>{q.label}</MenuItem>)}
+                  </TextField>
+                </Grid>
+                <Grid size={12}>
+                  <TextField select fullWidth label={t('yearLabel') as string} value={yearFilter} onChange={e => setYearFilter(e.target.value)} sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF' } }}>
+                    {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
+                  </TextField>
+                </Grid>
+              </>
+            ) : (
+              <>
+                <Grid size={12}>
+                  <TextField select fullWidth label={t('monthLabel') as string} value={monthFilter} onChange={e => setMonthFilter(e.target.value)} sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF' } }}>
+                    {(MONTHS as string[]).map((m, i) => <MenuItem key={i} value={i}>{m}</MenuItem>)}
+                  </TextField>
+                </Grid>
+                <Grid size={12}>
+                  <TextField select fullWidth label={t('yearLabel') as string} value={yearFilter} onChange={e => setYearFilter(e.target.value)} sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF' } }}>
+                    {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
+                  </TextField>
+                </Grid>
+              </>
+            )}
+            
+            <Grid size={12} sx={{ display: 'flex', gap: 1 }}>
+              <Chip size="small" label={`R1 ${periodFiling.gstr1 ? 'Filed' : 'Pending'}`} sx={{ bgcolor: periodFiling.gstr1 ? '#ecfdf5' : '#fef2f2', color: periodFiling.gstr1 ? '#059669' : '#dc2626', fontWeight: 600, borderRadius: 2 }} />
+              <Chip size="small" label={`3B ${periodFiling.gstr3b ? 'Filed' : 'Pending'}`} sx={{ bgcolor: periodFiling.gstr3b ? '#ecfdf5' : '#fef2f2', color: periodFiling.gstr3b ? '#059669' : '#dc2626', fontWeight: 600, borderRadius: 2 }} />
+            </Grid>
+          </Grid>
+        </ElvanCard>
+      </Box>
+
+      {/* Period Selector - DESKTOP (Split Cards) */}
+      <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 2, mb: 4, flexWrap: 'wrap', alignItems: 'center' }}>
+        <TextField select label={t('filterByLabel') as string} value={filterMode} onChange={e => setFilterMode(e.target.value)} sx={{ minWidth: 200 }}>
+          <MenuItem value="month">{t('monthlyTab')}</MenuItem>
+          <MenuItem value="quarter">Quarterly (QRMP)</MenuItem>
+          <MenuItem value="fy">{t('hc_fullYear')}</MenuItem>
+        </TextField>
+        
+        {filterMode === 'fy' ? (
+          <TextField select label={t('fiscalYearLabel') as string} value={fyFilter} onChange={e => setFyFilter(e.target.value)} sx={{ minWidth: 200 }}>
+            {fyOptions.map(fy => <MenuItem key={fy.value} value={fy.value}>{fy.label}</MenuItem>)}
+          </TextField>
+        ) : filterMode === 'quarter' ? (
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <TextField select label="Quarter" value={quarterFilter} onChange={e => setQuarterFilter(e.target.value)} sx={{ minWidth: 200 }}>
+              {QUARTERS.map(q => <MenuItem key={q.id} value={q.id}>{q.label}</MenuItem>)}
+            </TextField>
+            <TextField select label={t('yearLabel') as string} value={yearFilter} onChange={e => setYearFilter(e.target.value)} sx={{ minWidth: 200 }}>
+              {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
+            </TextField>
+          </Box>
+        ) : (
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <TextField select label={t('monthLabel') as string} value={monthFilter} onChange={e => setMonthFilter(e.target.value)} sx={{ minWidth: 200 }}>
+              {(MONTHS as string[]).map((m, i) => <MenuItem key={i} value={i}>{m}</MenuItem>)}
+            </TextField>
+            <TextField select label={t('yearLabel') as string} value={yearFilter} onChange={e => setYearFilter(e.target.value)} sx={{ minWidth: 200 }}>
+              {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
+            </TextField>
+          </Box>
+        )}
+
+        <Chip size="small" label={`R1 ${periodFiling.gstr1 ? 'Filed' : 'Pending'}`} sx={{ bgcolor: periodFiling.gstr1 ? '#ecfdf5' : '#fef2f2', color: periodFiling.gstr1 ? '#059669' : '#dc2626', fontWeight: 600, borderRadius: 2 }} />
+        <Chip size="small" label={`3B ${periodFiling.gstr3b ? 'Filed' : 'Pending'}`} sx={{ bgcolor: periodFiling.gstr3b ? '#ecfdf5' : '#fef2f2', color: periodFiling.gstr3b ? '#059669' : '#dc2626', fontWeight: 600, borderRadius: 2 }} />
+      </Box>
+
+      {/* Warnings & Alerts */}
       {warnings.filter(w => w.type === 'error').length > 0 && (
         <Alert severity="error" sx={{ mb: 2, borderRadius: 2, alignItems: 'center' }}>
           {warnings.filter(w => w.type === 'error').slice(0, 3).map(w => w.msg).join(' | ')}
         </Alert>
       )}
 
-      {/* NIL Return notice */}
       {isNilReturn && (
         <Alert severity="warning" sx={{ mb: 2, borderRadius: 2, bgcolor: '#fffbeb', color: '#92400e', '& .MuiAlert-icon': { color: '#92400e' } }}>
           No invoices or expenses found — file a NIL return on the GST portal. NIL returns are mandatory.
         </Alert>
       )}
 
-      {/* Compact summary + tabs in one row */}
-      <Stack direction="row" spacing={2} sx={{ mb: 2, alignItems: 'stretch', flexWrap: 'wrap' }}>
-        <Paper elevation={0} sx={{ p: 2, flex: 1, minWidth: 200, display: 'flex', alignItems: 'center', gap: 3, border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-          <Box><Typography variant="caption" color="text.secondary">{t('hc_totalInvoices')}</Typography><Typography variant="h6" sx={{ fontWeight: "bold" }}>{filteredBills.length}</Typography></Box>
-          <Box sx={{ width: 1, height: 32, bgcolor: 'divider' }} />
-          <Box><Typography variant="caption" color="text.secondary">Total Sales (Taxable)</Typography><Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>{formatCurrency(grandTotals.taxable)}</Typography></Box>
-          <Box sx={{ width: 1, height: 32, bgcolor: 'divider' }} />
-          <Box><Typography variant="caption" color="text.secondary">{t('hc_taxCollected')}</Typography><Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>{formatCurrency(totalTax)}</Typography></Box>
-          <Box sx={{ width: 1, height: 32, bgcolor: 'divider' }} />
-          <Box><Typography variant="caption" color="text.secondary">{t('hc_netPayable')}</Typography><Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: "bold" }}>{formatCurrency(netPayable)}</Typography></Box>
-        </Paper>
-      </Stack>
+      {/* GST Summary Cards (ElvanCard style) */}
+      <Box sx={{ mb: 2, px: 2 }}>
+        <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+          {t('moduleDesc_gst') || 'GST Summary'}
+        </Typography>
+      </Box>
+      <Grid container spacing={2} sx={{ mb: 4 }}>
+        <Grid size={{ xs: 12, sm: 3 }}>
+          <ElvanCard sx={{ height: '100%' }} boxSx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ width: 48, height: 48, borderRadius: '16px', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <FileText size={24} weight="regular" />
+            </Box>
+            <Box>
+              <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>{t('hc_totalInvoices')}</Typography>
+              <Typography variant="h6" sx={{ fontWeight: 800 }}>{filteredBills.length}</Typography>
+            </Box>
+          </ElvanCard>
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 3 }}>
+          <ElvanCard sx={{ height: '100%' }} boxSx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ width: 48, height: 48, borderRadius: '16px', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Wallet size={24} weight="regular" />
+            </Box>
+            <Box>
+              <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>Total Sales (Taxable)</Typography>
+              <Typography variant="h6" sx={{ fontWeight: 800 }}>{formatCurrency(grandTotals.taxable)}</Typography>
+            </Box>
+          </ElvanCard>
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 3 }}>
+          <ElvanCard sx={{ height: '100%' }} boxSx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ width: 48, height: 48, borderRadius: '16px', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <TrendDown size={24} weight="regular" />
+            </Box>
+            <Box>
+              <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>{t('hc_taxCollected')}</Typography>
+              <Typography variant="h6" sx={{ fontWeight: 800 }}>{formatCurrency(totalTax)}</Typography>
+            </Box>
+          </ElvanCard>
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 3 }}>
+          <ElvanCard sx={{ height: '100%' }} boxSx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ width: 48, height: 48, borderRadius: '16px', bgcolor: 'action.hover', color: 'text.primary', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <TrendUp size={24} weight="regular" />
+            </Box>
+            <Box>
+              <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>{t('hc_netPayable')}</Typography>
+              <Typography variant="h6" sx={{ fontWeight: 800, color: 'primary.main' }}>{formatCurrency(netPayable)}</Typography>
+            </Box>
+          </ElvanCard>
+        </Grid>
+      </Grid>
 
       {/* Tabs */}
       <Stack direction="row" spacing={1} sx={{ mb: 2, display: 'none', flexWrap: 'wrap' }}>
@@ -1247,16 +1372,16 @@ export default function VariArikkaigal({ profile }) {
       {/* ===================== SUMMARY TAB ===================== */}
       {activeTab === 'summary' && (
         <Stack spacing={3}>
-          <Paper elevation={0} sx={{ mb: 2, borderRadius: 3, border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
-            <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'background.paper' }}>
-              <Box>
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>{t('hc_invoicesForThisPeriod')}</Typography>
-                <Typography variant="body2" color="text.secondary">{filteredBills.length} invoices</Typography>
-              </Box>
-              <Button variant="outlined" onClick={exportSimpleCSV} startIcon={<Download sx={{ fontSize: 16 }} />} sx={{ borderRadius: 5, textTransform: 'none' }}>
-                Download Excel
-              </Button>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', px: 2, mb: -1 }}>
+            <Box>
+              <Typography variant="h6" sx={{ fontWeight: "bold" }}>{t('hc_invoicesForThisPeriod')}</Typography>
+              <Typography variant="body2" color="text.secondary">{filteredBills.length} invoices</Typography>
             </Box>
+            <Button variant="outlined" onClick={exportSimpleCSV} startIcon={<Download sx={{ fontSize: 16 }} />} sx={{ borderRadius: 5, textTransform: 'none' }}>
+              Download Excel
+            </Button>
+          </Box>
+          <ElvanCard boxSx={{ p: 0, overflow: 'hidden' }}>
             {filteredBills.length === 0 ? (
               <Typography sx={{ p: 3, color: 'text.secondary' }}>{t('hc_noInvoicesFoundForThis')}</Typography>
             ) : (
@@ -1300,7 +1425,7 @@ export default function VariArikkaigal({ profile }) {
                 </Table>
               </TableContainer>
             )}
-          </Paper>
+          </ElvanCard>
         </Stack>
       )}
 
