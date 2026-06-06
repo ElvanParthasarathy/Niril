@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, Typography, Paper, Grid, TextField, MenuItem, Select } from '@mui/material';
+import { Box, Typography, Paper, Grid, TextField, MenuItem, Select, InputAdornment } from '@mui/material';
 import { useLanguage } from '../../../mozhi/LanguageContext';
 import { LineItemState, InvoiceTotalsState, InvoiceSettingsState, ClientState } from './InvoiceTypes';
 
@@ -120,17 +120,26 @@ export default function InvoiceTotals({
               placeholder="0"
               value={totals.globalDiscountValue === undefined ? '' : totals.globalDiscountValue}
               onChange={(e) => setTotals({ ...totals, globalDiscountValue: e.target.value === '' ? '' as any : Number(e.target.value) })}
-              sx={{ '& .MuiOutlinedInput-root': { borderTopRightRadius: 0, borderBottomRightRadius: 0, bgcolor: 'background.paper' } }}
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end" sx={{ mr: -1.7 }}>
+                      <Select
+                        variant="standard"
+                        disableUnderline
+                        size="small"
+                        value={totals.globalDiscountType || 'percentage'}
+                        onChange={(e) => setTotals({ ...totals, globalDiscountType: e.target.value as any })}
+                        sx={{ minWidth: 45, px: 1, py: 0.5, borderTopRightRadius: 4, borderBottomRightRadius: 4, height: '100%', '& .MuiSelect-select': { py: 0 } }}
+                      >
+                        <MenuItem value="percentage">%</MenuItem>
+                        <MenuItem value="amount">₹</MenuItem>
+                      </Select>
+                    </InputAdornment>
+                  )
+                }
+              }}
             />
-            <Select
-              size="small"
-              value={totals.globalDiscountType || 'percentage'}
-              onChange={(e) => setTotals({ ...totals, globalDiscountType: e.target.value as any })}
-              sx={{ width: 65, minWidth: 65, borderTopLeftRadius: 0, borderBottomLeftRadius: 0, bgcolor: 'action.hover', '& fieldset': { borderLeftColor: 'transparent' } }}
-            >
-              <MenuItem value="percentage">%</MenuItem>
-              <MenuItem value="amount">₹</MenuItem>
-            </Select>
           </Box>
         </Box>
 
