@@ -282,10 +282,10 @@ export default function LineItemsTable({
                      value={formatCurrency(total, currency)}
                      slotProps={{ 
                        inputLabel: { shrink: true },
-                       htmlInput: { readOnly: true, style: { fontWeight: 600, textAlign: 'right' } }
+                       htmlInput: { readOnly: true, style: { fontWeight: 600 } }
                      }}
                      helperText={taxAmt > 0 ? `${t('tax') || 'Tax'}: ${formatCurrency(taxAmt, currency)}` : undefined}
-                     FormHelperTextProps={{ sx: { margin: 0, mt: 0.5, lineHeight: 1.2, textAlign: 'right' } }}
+                     FormHelperTextProps={{ sx: { margin: 0, mt: 0.5, lineHeight: 1.2 } }}
                    />
                  );
               })()}
