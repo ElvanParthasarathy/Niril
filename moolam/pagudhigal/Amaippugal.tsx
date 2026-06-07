@@ -1348,6 +1348,7 @@ export default function Amaippugal({ onSaved }) {
           Configure default styling and optional fields for all your invoices.
         </Typography>
 
+        {Array.from(new Map(getCountriesForRegion().map(c => [c.currency, c])).values()).length > 1 && (
         <Grid container spacing={3} sx={{ mb: 3 }}>
           <Grid size={{ xs: 12, md: invoiceTemplate.currency !== 'INR' ? 6 : 12 }}>
             <FormControl fullWidth size="small">
@@ -1372,6 +1373,7 @@ export default function Amaippugal({ onSaved }) {
             </Grid>
           )}
         </Grid>
+        )}
         
         <Grid container spacing={3} sx={{ mb: 3 }}>
           <Grid size={{ xs: 12, md: 6 }}>

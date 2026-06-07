@@ -235,6 +235,10 @@ export const getStatesForCountry = (countryName) => {
   }
 };
 
+// Configurable array of supported country codes. 
+// Change to ['ALL'] or add other codes like ['IN', 'US', 'AE'] to scale internationally.
+export const SUPPORTED_REGIONS = ['IN'];
+
 // ========== Country Configuration ==========
 // Each entry: { name, code, currency, currencySymbol, taxLabel, taxIdLabel, taxIdPlaceholder, bankLabel, postalLabel, stateLabel, hasStates, taxRates, taxIdRegex }
 // taxRates: common rates for that country's tax dropdown (always allow custom entry)
@@ -266,16 +270,14 @@ export const COUNTRIES = [
 ];
 
 export const getCountryConfig = (countryName) => {
-  if (!countryName) return COUNTRIES[0]; // default India
-  return COUNTRIES.find(c => c.name === countryName) || COUNTRIES.find(c => c.code === countryName) || COUNTRIES[COUNTRIES.length - 1];
+  const supported = getCountriesForRegion();
+  if (!countryName) return supported[0] || COUNTRIES[0]; 
+  return supported.find(c => c.name === countryName) || supported.find(c => c.code === countryName) || supported[0] || COUNTRIES[0];
 };
 
-// Filter the country list according to the user's region preference.
-// 'india' → only India + a synthetic "Other" entry as escape hatch.
-// 'international' → everything except India.
-// 'both' (default) → all 22 countries.
 export const getCountriesForRegion = () => {
-  return COUNTRIES;
+  if (SUPPORTED_REGIONS.includes('ALL')) return COUNTRIES;
+  return COUNTRIES.filter(c => SUPPORTED_REGIONS.includes(c.code));
 };
 
 // GST maanilam Codes (as per GST portal) — used in GSTR-1 JSON export

@@ -81,8 +81,8 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
   const selectInvoice = (bill: any) => {
     setForm(prev => ({
       ...prev,
-      [`clientName_${primaryLang}`]: bill.clientName || getDynamicField(bill.data?.client, 'name', profile, true) || '',
-      [`clientName_${secondaryLang}`]: bill.clientNameEn || getDynamicField(bill.data?.client, 'name', profile, false) || bill.data?.client?.nameEn || '',
+      [`clientName_${primaryLang}`]: getDynamicField(bill.data?.client, 'name', profile, true) || '',
+      [`clientName_${secondaryLang}`]: getDynamicField(bill.data?.client, 'name', profile, false) || '',
       clientAddress: getDynamicField(bill.data?.client, 'mugavari', profile, true) || bill.data?.client?.mugavari || '',
       amount: String(bill.status === 'paid' ? (bill.paidAmount || bill.totalAmount) : Math.max(0, bill.totalAmount - (bill.paidAmount || 0))),
       againstInvoice: bill.invoiceNumber || '',
@@ -252,7 +252,14 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
               if (typeof newValue === 'object' && newValue !== null) {
                 selectInvoice(newValue);
               } else {
-                updateField('againstInvoice', newValue || '');
+                setForm(prev => ({
+                  ...prev,
+                  againstInvoice: typeof newValue === 'string' ? newValue : '',
+                  [`clientName_${primaryLang}`]: '',
+                  [`clientName_${secondaryLang}`]: '',
+                  clientAddress: '',
+                  amount: ''
+                }));
               }
             }}
             onInputChange={(_, newInputValue) => {
