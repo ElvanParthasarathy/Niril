@@ -135,7 +135,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
       return (
         <Box>
           <Typography variant="body1" sx={{ lineHeight: 1.2 }}>{primaryVal}</Typography>
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.2, mt: 0.2 }}>{secondaryVal}</Typography>
+          <Typography variant="body2" sx={{ display: 'block', lineHeight: 1.2, mt: 0.2, opacity: 0.6, fontSize: '0.75rem' }}>{secondaryVal}</Typography>
         </Box>
       );
     }
