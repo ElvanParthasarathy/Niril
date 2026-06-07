@@ -3,12 +3,14 @@ import { useLanguage } from '../../mozhi/LanguageContext';
 import React, { useState, useEffect } from 'react';
 import QRCode from 'qrcode';
 import DOMPurify from 'dompurify';
-import { numberToWords, formatCurrency, INVOICE_TYPES, getCountryConfig, CURRENCY_NAMES, formatExchangeRateLine, getAccountById, getBilingualStateName, getBilingualCountryName } from '../../Payanpadu';
+import { numberToWords, formatCurrency, INVOICE_TYPES, getCountryConfig, CURRENCY_NAMES, formatExchangeRateLine, getAccountById, getBilingualStateName, getBilingualCountryName, getDynamicField } from '../../Payanpadu';
+import { en } from '../../mozhi/en';
+import { ta } from '../../mozhi/ta';
 
-const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, totals, invoiceType = 'tax-invoice', customTerms, options = {} }, ref) => {
+const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items = [], totals = {}, invoiceType = 'tax-invoice', customTerms, options = {} }, ref) => {
   const { t } = useLanguage();
-  const businessState = profile?.maanilam?.trim().toLowerCase();
-  const clientState = client?.maanilam?.trim().toLowerCase();
+  const businessState = getDynamicField(profile, 'maanilam', profile, true)?.trim().toLowerCase();
+  const clientState = getDynamicField(client, 'maanilam', profile, true)?.trim().toLowerCase();
   const isInterstate = businessState && clientState && businessState !== clientState;
   const typeConfig = INVOICE_TYPES[invoiceType] || INVOICE_TYPES['tax-invoice'];
   // Seller's country drives tax label (GST / VAT / SST / MwSt etc.) and bank label.
@@ -58,17 +60,61 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
   const customTitle = details?.customTitle || options.customTitle || typeConfig.title;
   const currencySymbol = options.currency || 'INR';
 
-  const renderLabel = (enLabel, taLabel) => profile?.enableBilingual !== false ? `${taLabel} / ${enLabel}` : enLabel;
+  const renderLabel = (enLabel, taLabel) => {
+    const p = profile?.primaryDataLanguage || 'Tamil';
+    const s = profile?.secondaryDataLanguage || 'English';
+    const b = profile?.enableBilingual !== false;
+
+    const getLabel = (lang) => {
+      if (lang === 'Tamil') return taLabel;
+      if (lang === 'English') return enLabel;
+      return '';
+    };
+
+    const pStr = getLabel(p);
+    const sStr = getLabel(s);
+
+    if (!b) return pStr || getLabel('English');
+
+    if (pStr && sStr) return `${pStr} / ${sStr}`;
+    return pStr || sStr || '';
+  };
+
+  const renderKey = (key) => {
+    const p = profile?.primaryDataLanguage || 'Tamil';
+    const s = profile?.secondaryDataLanguage || 'English';
+    const b = profile?.enableBilingual !== false;
+
+    const getStr = (lang) => {
+      if (lang === 'Tamil') return ta[key] || en[key] || key;
+      if (lang === 'English') return en[key] || ta[key] || key;
+      return '';
+    };
+
+    const pStr = getStr(p);
+    const sStr = getStr(s);
+
+    if (!b) return pStr || getStr('English');
+
+    if (pStr && sStr) return `${pStr} / ${sStr}`;
+    return pStr || sStr || '';
+  };
 
   const renderState = (val, customEn) => {
     if (!val) return '';
-    if (customEn) return `${val} / ${customEn}`;
+    if (profile?.enableBilingual !== false && customEn && customEn !== val) {
+      const primary = getBilingualStateName(val, { ...profile, returnOnlyPrimary: true });
+      return `${primary} / ${customEn}`;
+    }
     return getBilingualStateName(val, profile);
   };
 
   const renderCountry = (val, customEn) => {
     if (!val) return '';
-    if (customEn) return `${val} / ${customEn}`;
+    if (profile?.enableBilingual !== false && customEn && customEn !== val) {
+      const primary = getBilingualCountryName(val, { ...profile, returnOnlyPrimary: true });
+      return `${primary} / ${customEn}`;
+    }
     return getBilingualCountryName(val, profile);
   };
 
@@ -107,7 +153,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
   // legacy flat profile.upiId for invoices that pre-date multi-account support.
   const upiId = account?.upiId || profile?.upiId || '';
   useEffect(() => {
-    if (!showUPI || !upiId || !totals.total || currencySymbol !== 'INR') {
+    if (!showUPI || !upiId || !totals?.total || currencySymbol !== 'INR') {
       setQrDataUrl('');
       return;
     }
@@ -115,7 +161,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
     QRCode.toDataURL(upiUrl, { width: 120, margin: 1, errorCorrectionLevel: 'M' })
       .then(setQrDataUrl)
       .catch(() => setQrDataUrl(''));
-  }, [showUPI, upiId, profile?.niruvanathinPeyar, totals.total, details?.invoiceNumber, currencySymbol]);
+  }, [showUPI, upiId, profile?.niruvanathinPeyar, totals?.total, details?.invoiceNumber, currencySymbol]);
 
   const accentColors = {
     'tax-invoice': '#1e40af',
@@ -127,7 +173,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
   const pdfStyle = options.pdfStyle || 'classic';
 
   // Check if any item has discount
-  const hasAnyDiscount = showDiscount && items.some(item => (item.discount || 0) > 0);
+  const hasAnyDiscount = showDiscount && items?.some(item => (item.discount || 0) > 0);
 
   // Header renderers per style
   const renderModernHeader = () => (
@@ -143,12 +189,12 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
           )}
         </div>
         <div style={{ textAlign: 'right' }}>
-          {showniruvanathinPeyar && <h2 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 0.25rem' }}>{profile?.niruvanathinPeyar || 'Your Business'}{profile?.businessNameEn ? <><br/><span style={{fontSize: '0.85em', fontWeight: 500, color: 'rgba(255,255,255,0.9)'}}>{profile.businessNameEn}</span></> : ''}</h2>}
+          {showniruvanathinPeyar && <h2 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 0.25rem' }}>{getDynamicField(profile, 'niruvanathinPeyar', profile, true) || 'Your Business'}{profile?.enableBilingual !== false && getDynamicField(profile, 'niruvanathinPeyar', profile, false) ? <><br/><span style={{fontSize: '0.85em', fontWeight: 500, color: 'rgba(255,255,255,0.9)'}}>{getDynamicField(profile, 'niruvanathinPeyar', profile, false)}</span></> : ''}</h2>}
           <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.85)', lineHeight: 1.6 }}>
-            {showBusinessAddress && profile?.mugavari && <p style={{ margin: 0 }}>{profile.mugavari}{profile?.addressEn ? ` / ${profile.addressEn}` : ''}</p>}
-            {showBusinessAddress && (profile?.oor || profile?.pin) && <p style={{ margin: 0 }}>{[profile.oor ? profile.oor + (profile.oorEn ? ` / ${profile.oorEn}` : '') : '', profile.pin].filter(Boolean).join(' - ')}</p>}
-            {showState && profile?.maanilam && <p style={{ margin: 0 }}>{renderState(profile.maanilam, profile?.stateEn)}</p>}
-            {showDistrict && profile?.maavattam && <p style={{ margin: 0 }}>{profile.maavattam}{profile?.maavattamEn ? ` / ${profile.maavattamEn}` : ''}</p>}
+            {showBusinessAddress && getDynamicField(profile, 'mugavari', profile, true) && <p style={{ margin: 0 }}>{getDynamicField(profile, 'mugavari', profile, true)}{profile?.enableBilingual !== false && getDynamicField(profile, 'mugavari', profile, false) ? ` / ${getDynamicField(profile, 'mugavari', profile, false)}` : ''}</p>}
+            {showBusinessAddress && (getDynamicField(profile, 'oor', profile, true) || profile?.pin) && <p style={{ margin: 0 }}>{[getDynamicField(profile, 'oor', profile, true) ? getDynamicField(profile, 'oor', profile, true) + (profile?.enableBilingual !== false && getDynamicField(profile, 'oor', profile, false) ? ` / ${getDynamicField(profile, 'oor', profile, false)}` : '') : '', profile.pin].filter(Boolean).join(' - ')}</p>}
+            {showState && profile?.maanilam && <p style={{ margin: 0 }}>{renderState(profile.maanilam, profile?.maanilamEn)}</p>}
+            {showDistrict && getDynamicField(profile, 'maavattam', profile, true) && <p style={{ margin: 0 }}>{getDynamicField(profile, 'maavattam', profile, true)}{profile?.enableBilingual !== false && getDynamicField(profile, 'maavattam', profile, false) ? ` / ${getDynamicField(profile, 'maavattam', profile, false)}` : ''}</p>}
             {showCountry && profile?.country && <p style={{ margin: 0 }}>{renderCountry(profile.country, profile?.countryEn)}</p>}
             {showGSTIN && profile?.gstin && <p style={{ margin: 0 }}>{getCountryConfig(profile?.country).taxIdLabel}: {profile.gstin}</p>}
             {showBusinessEmail && profile?.email && <p style={{ margin: 0 }}>{profile.email}</p>}
@@ -176,12 +222,12 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
           {showLogo && profile?.logo && (
             <img src={profile.logo} alt="Logo" style={{ maxHeight: `${profile.logoHeight || 48}px`, maxWidth: '180px', objectFit: 'contain', marginBottom: '0.5rem', display: 'block' }} />
           )}
-          {showniruvanathinPeyar && <h2 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#1e293b', margin: 0 }}>{profile?.niruvanathinPeyar || 'Your Business'}{profile?.businessNameEn ? <><br/><span style={{fontSize: '0.85em', fontWeight: 500, color: '#64748b'}}>{profile.businessNameEn}</span></> : ''}</h2>}
+          {showniruvanathinPeyar && <h2 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#1e293b', margin: 0 }}>{getDynamicField(profile, 'niruvanathinPeyar', profile, true) || 'Your Business'}{profile?.enableBilingual !== false && getDynamicField(profile, 'niruvanathinPeyar', profile, false) ? <><br/><span style={{fontSize: '0.85em', fontWeight: 500, color: '#64748b'}}>{getDynamicField(profile, 'niruvanathinPeyar', profile, false)}</span></> : ''}</h2>}
           <div style={{ fontSize: '0.7rem', color: '#94a3b8', lineHeight: 1.6, marginTop: '0.25rem' }}>
-            {showBusinessAddress && profile?.mugavari && <p style={{ margin: 0 }}>{profile.mugavari}{profile?.addressEn ? ` / ${profile.addressEn}` : ''}</p>}
-            {showBusinessAddress && (profile?.oor || profile?.pin) && <p style={{ margin: 0 }}>{[profile.oor ? profile.oor + (profile.oorEn ? ` / ${profile.oorEn}` : '') : '', profile.pin].filter(Boolean).join(' - ')}</p>}
-            {showState && profile?.maanilam && <p style={{ margin: 0 }}>{renderState(profile.maanilam, profile?.stateEn)}</p>}
-            {showDistrict && profile?.maavattam && <p style={{ margin: 0 }}>{profile.maavattam}{profile?.maavattamEn ? ` / ${profile.maavattamEn}` : ''}</p>}
+            {showBusinessAddress && getDynamicField(profile, 'mugavari', profile, true) && <p style={{ margin: 0 }}>{getDynamicField(profile, 'mugavari', profile, true)}{profile?.enableBilingual !== false && getDynamicField(profile, 'mugavari', profile, false) ? ` / ${getDynamicField(profile, 'mugavari', profile, false)}` : ''}</p>}
+            {showBusinessAddress && (getDynamicField(profile, 'oor', profile, true) || profile?.pin) && <p style={{ margin: 0 }}>{[getDynamicField(profile, 'oor', profile, true) ? getDynamicField(profile, 'oor', profile, true) + (profile?.enableBilingual !== false && getDynamicField(profile, 'oor', profile, false) ? ` / ${getDynamicField(profile, 'oor', profile, false)}` : '') : '', profile.pin].filter(Boolean).join(' - ')}</p>}
+            {showState && profile?.maanilam && <p style={{ margin: 0 }}>{renderState(profile.maanilam, profile?.maanilamEn)}</p>}
+            {showDistrict && getDynamicField(profile, 'maavattam', profile, true) && <p style={{ margin: 0 }}>{getDynamicField(profile, 'maavattam', profile, true)}{profile?.enableBilingual !== false && getDynamicField(profile, 'maavattam', profile, false) ? ` / ${getDynamicField(profile, 'maavattam', profile, false)}` : ''}</p>}
             {showCountry && profile?.country && <p style={{ margin: 0 }}>{renderCountry(profile.country, profile?.countryEn)}</p>}
             {showGSTIN && profile?.gstin && <p style={{ margin: 0 }}>{getCountryConfig(profile?.country).taxIdLabel}: {profile.gstin}</p>}
             {showBusinessEmail && profile?.email && <p style={{ margin: 0 }}>{profile.email}</p>}
@@ -225,12 +271,12 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
           </div>
         </div>
         <div className="inv-header-right">
-          {showniruvanathinPeyar && <h2 className="inv-business-name">{profile?.niruvanathinPeyar || 'Your Business'}{profile?.businessNameEn ? <><br/><span style={{fontSize: '0.85em', fontWeight: 500, color: '#64748b'}}>{profile.businessNameEn}</span></> : ''}</h2>}
+          {showniruvanathinPeyar && <h2 className="inv-business-name">{getDynamicField(profile, 'niruvanathinPeyar', profile, true) || 'Your Business'}{profile?.enableBilingual !== false && getDynamicField(profile, 'niruvanathinPeyar', profile, false) ? <><br/><span style={{fontSize: '0.85em', fontWeight: 500, color: '#64748b'}}>{getDynamicField(profile, 'niruvanathinPeyar', profile, false)}</span></> : ''}</h2>}
           <div className="inv-business-details">
-            {showBusinessAddress && profile?.mugavari && <p>{profile.mugavari}{profile?.addressEn ? ` / ${profile.addressEn}` : ''}</p>}
-            {showBusinessAddress && (profile?.oor || profile?.pin) && <p>{[profile.oor ? profile.oor + (profile.oorEn ? ` / ${profile.oorEn}` : '') : '', profile.pin].filter(Boolean).join(' - ')}</p>}
-            {showState && profile?.maanilam && <p>{renderState(profile.maanilam, profile?.stateEn)}</p>}
-            {showDistrict && profile?.maavattam && <p>{profile.maavattam}{profile?.maavattamEn ? ` / ${profile.maavattamEn}` : ''}</p>}
+            {showBusinessAddress && getDynamicField(profile, 'mugavari', profile, true) && <p>{getDynamicField(profile, 'mugavari', profile, true)}{profile?.enableBilingual !== false && getDynamicField(profile, 'mugavari', profile, false) ? ` / ${getDynamicField(profile, 'mugavari', profile, false)}` : ''}</p>}
+            {showBusinessAddress && (getDynamicField(profile, 'oor', profile, true) || profile?.pin) && <p>{[getDynamicField(profile, 'oor', profile, true) ? getDynamicField(profile, 'oor', profile, true) + (profile?.enableBilingual !== false && getDynamicField(profile, 'oor', profile, false) ? ` / ${getDynamicField(profile, 'oor', profile, false)}` : '') : '', profile.pin].filter(Boolean).join(' - ')}</p>}
+            {showState && profile?.maanilam && <p>{renderState(profile.maanilam, profile?.maanilamEn)}</p>}
+            {showDistrict && getDynamicField(profile, 'maavattam', profile, true) && <p>{getDynamicField(profile, 'maavattam', profile, true)}{profile?.enableBilingual !== false && getDynamicField(profile, 'maavattam', profile, false) ? ` / ${getDynamicField(profile, 'maavattam', profile, false)}` : ''}</p>}
             {showCountry && profile?.country && <p>{renderCountry(profile.country, profile?.countryEn)}</p>}
             {showGSTIN && profile?.gstin && <p>{getCountryConfig(profile?.country).taxIdLabel}: <strong>{profile.gstin}</strong></p>}
             {showBusinessEmail && profile?.email && <p>{profile.email}</p>}
@@ -249,13 +295,13 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
       <div className="inv-parties" style={padStyle}>
         <div className="inv-party">
           <h4 className="inv-section-label">{renderLabel('BILL TO', 'பட்டியல் பெறுபவர்')}</h4>
-          <p className="inv-party-name">{client?.name || 'Client Name'}{client?.nameEn ? <><br/><span style={{fontSize: '0.85em', fontWeight: 500, color: '#64748b'}}>{client.nameEn}</span></> : ''}</p>
+          <p className="inv-party-name">{getDynamicField(client, 'name', profile, true) || 'Client Name'}{profile?.enableBilingual !== false && getDynamicField(client, 'name', profile, false) ? <><br/><span style={{fontSize: '0.85em', fontWeight: 500, color: '#64748b'}}>{getDynamicField(client, 'name', profile, false)}</span></> : ''}</p>
           <div className="inv-party-details">
-            {showClientAddress && client?.mugavari && <p>{client.mugavari}{client?.mugavariEn ? ` / ${client.mugavariEn}` : ''}</p>}
-            {showClientAddress && (client?.oor || client?.pin) && <p>{[client.oor ? client.oor + (client.oorEn ? ` / ${client.oorEn}` : '') : '', client.pin].filter(Boolean).join(' - ')}</p>}
-            {showState && client?.maanilam && <p>{renderState(client.maanilam, client?.maanilamEn)}</p>}
-            {showDistrict && client?.maavattam && <p>{client.maavattam}{client?.maavattamEn ? ` / ${client.maavattamEn}` : ''}</p>}
-            {showCountry && client?.country && <p>{renderCountry(client.country, client?.countryEn)}</p>}
+            {showClientAddress && getDynamicField(client, 'mugavari', profile, true) && <p>{getDynamicField(client, 'mugavari', profile, true)}{profile?.enableBilingual !== false && getDynamicField(client, 'mugavari', profile, false) ? ` / ${getDynamicField(client, 'mugavari', profile, false)}` : ''}</p>}
+            {showClientAddress && (getDynamicField(client, 'oor', profile, true) || client?.pin) && <p>{[getDynamicField(client, 'oor', profile, true) ? getDynamicField(client, 'oor', profile, true) + (profile?.enableBilingual !== false && getDynamicField(client, 'oor', profile, false) ? ` / ${getDynamicField(client, 'oor', profile, false)}` : '') : '', client?.pin].filter(Boolean).join(' - ')}</p>}
+            {showState && getDynamicField(client, 'maanilam', profile, true) && <p>{renderState(getDynamicField(client, 'maanilam', profile, true), getDynamicField(client, 'maanilam', profile, false))}</p>}
+            {showDistrict && getDynamicField(client, 'maavattam', profile, true) && <p>{getDynamicField(client, 'maavattam', profile, true)}{profile?.enableBilingual !== false && getDynamicField(client, 'maavattam', profile, false) ? ` / ${getDynamicField(client, 'maavattam', profile, false)}` : ''}</p>}
+            {showCountry && getDynamicField(client, 'country', profile, true) && <p>{renderCountry(getDynamicField(client, 'country', profile, true), getDynamicField(client, 'country', profile, false))}</p>}
             {showGSTIN && client?.gstin && <p>{getCountryConfig(profile?.country).taxIdLabel}: <strong>{client.gstin}</strong></p>}
             {showClientEmail && client?.email && <p>{client.email}</p>}
             {showClientPhone && client?.tholaipesi && <p>Ph: {client.tholaipesi}</p>}
@@ -264,10 +310,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
         {showPlaceOfSupply && (
           <div className="inv-party inv-party-right">
             <h4 className="inv-section-label">{renderLabel('PLACE OF SUPPLY', 'வழங்கும் இடம்')}</h4>
-            <p className="inv-party-name">{details?.placeOfSupply ? renderState(details.placeOfSupply, null) : (client?.maanilam ? renderState(client.maanilam, client?.maanilamEn) : '-')}</p>
-            {showGST && isIndia && isInterstate && <span className="inv-tax-badge">Interstate (IGST)</span>}
-            {showGST && isIndia && !isInterstate && businessState && clientState && <span className="inv-tax-badge inv-tax-badge-green">Intrastate (CGST + SGST)</span>}
-            {showGST && !isIndia && <span className="inv-tax-badge inv-tax-badge-green">{taxLabel}</span>}
+            <p className="inv-party-name">{details?.placeOfSupply ? renderState(details.placeOfSupply, null) : (getDynamicField(client, 'maanilam', profile, true) ? renderState(getDynamicField(client, 'maanilam', profile, true), getDynamicField(client, 'maanilam', profile, false)) : ((client?.maanilam_Tamil || client?.maanilam_English || client?.maanilam) ? renderState(client?.maanilam_Tamil || client?.maanilam_English || client?.maanilam, null) : '-'))}</p>
           </div>
         )}
       </div>
@@ -356,7 +399,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
         </thead>
         <tbody>
           {items.map((item, index) => {
-            const lineAmount = item.quantity * item.rate;
+            const lineAmount = (item.qty || item.quantity) * item.rate;
             const discount = item.discount || 0;
             const grossAfterDiscount = lineAmount - discount;
             const taxRate = item.taxPercent || 0;
@@ -369,13 +412,13 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
               <tr key={item.id} className={index % 2 === 0 ? 'inv-tr-even' : ''}>
                 <td className="inv-td inv-td-muted">{index + 1}</td>
                 <td className="inv-td inv-td-name">
-                  <div style={{ fontWeight: 500 }}>{item.name || '-'}</div>
-                  {item.nameEn && <div style={{ fontSize: '0.85em', color: '#64748b', marginTop: '2px' }}>{item.nameEn}</div>}
-                  {item.description && <div style={{ fontSize: '0.8em', color: '#94a3b8', marginTop: '2px' }}>{item.description}</div>}
-                  {item.descriptionEn && <div style={{ fontSize: '0.8em', color: '#94a3b8', marginTop: '1px' }}>{item.descriptionEn}</div>}
+                  <div style={{ fontWeight: 500 }}>{getDynamicField(item, 'name', profile, true) || '-'}</div>
+                  {profile?.enableBilingual !== false && getDynamicField(item, 'name', profile, false) && <div style={{ fontSize: '0.85em', color: '#64748b', marginTop: '2px' }}>{getDynamicField(item, 'name', profile, false)}</div>}
+                  {getDynamicField(item, 'description', profile, true) && <div style={{ fontSize: '0.8em', color: '#94a3b8', marginTop: '2px' }}>{getDynamicField(item, 'description', profile, true)}</div>}
+                  {profile?.enableBilingual !== false && getDynamicField(item, 'description', profile, false) && <div style={{ fontSize: '0.8em', color: '#94a3b8', marginTop: '1px' }}>{getDynamicField(item, 'description', profile, false)}</div>}
                 </td>
                 {showHSN && <td className="inv-td inv-td-center inv-td-muted">{item.hsn || '-'}</td>}
-                {showItemQty && <td className="inv-td inv-td-center">{item.quantity}{showItemUnit && item.unit ? ` ${item.unit}` : ''}</td>}
+                {showItemQty && <td className="inv-td inv-td-center">{item.qty || item.quantity}{showItemUnit && item.unit ? ` ${item.unit}` : ''}</td>}
                 {showRateColumn && <td className="inv-td inv-td-right">{fmt(item.rate)}</td>}
                 {hasAnyDiscount && <td className="inv-td inv-td-right">{discount > 0 ? fmt(discount) : '-'}</td>}
                 {showGST && (
@@ -433,7 +476,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
         <div className="inv-totals">
           {showSubtotal && (
             <div className="inv-total-row">
-              <span>{t('hc_subtotal')}</span>
+              <span>{renderKey('hc_subtotal')}</span>
               <span>{fmt(totals.subtotal)}</span>
             </div>
           )}
@@ -469,7 +512,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
           )}
           {totals.cess > 0 && (
             <div className="inv-total-row">
-              <span>{t('hc_gstCess')}</span>
+              <span>{renderKey('hc_gstCess')}</span>
               <span>{fmt(totals.cess)}</span>
             </div>
           )}
@@ -481,7 +524,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
           )}
           {totals.roundOff !== undefined && totals.roundOff !== 0 && (
             <div className="inv-total-row" style={{ color: '#64748b', fontStyle: 'italic' }}>
-              <span>{t('hc_roundoff')}</span>
+              <span>{renderKey('hc_roundoff')}</span>
               <span>{totals.roundOff > 0 ? '+' : ''}{fmt(totals.roundOff)}</span>
             </div>
           )}
@@ -503,7 +546,7 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items, to
                 <span>− {fmt(totals.tdsAmount)}</span>
               </div>
               <div className="inv-total-row" style={{ fontWeight: 600, color: '#0f766e', fontSize: '0.78rem' }}>
-                <span>{t('hc_netReceivable')}</span>
+                <span>{renderKey('hc_netReceivable')}</span>
                 <span>{fmt(totals.netReceivable)}</span>
               </div>
             </>

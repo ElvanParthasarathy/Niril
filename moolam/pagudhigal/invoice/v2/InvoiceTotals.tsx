@@ -62,7 +62,7 @@ export default function InvoiceTotals({
     });
 
     const isIndia = (country || 'India') === 'India';
-    const clientState = client.maanilam.primary?.trim().toLowerCase();
+    const clientState = (client?.maanilam_Tamil || client?.maanilam_English || client?.maanilam || '').trim().toLowerCase();
     const businessState = profileState?.trim().toLowerCase();
     
     // Interstate if seller state != buyer state
@@ -101,7 +101,7 @@ export default function InvoiceTotals({
       globalDiscountAmount: round2(globalDiscountAmount),
       itemDiscounts: round2(itemDiscounts),
     });
-  }, [items, client.maanilam.primary, profileState, country, globalDiscountValue, globalDiscountType]);
+  }, [items, client, profileState, country, globalDiscountValue, globalDiscountType]);
 
   return (
     <Box sx={{ width: '100%', maxWidth: { xs: '100%', sm: 400 } }}>
@@ -151,7 +151,7 @@ export default function InvoiceTotals({
       <Paper sx={{ p: 3, borderRadius: '24px', boxShadow: 'none', bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.03)' : '#FFFFFF' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
           <Typography color="text.secondary">{t('subtotal') || 'Subtotal'}</Typography>
-          <Typography>₹ {totals.subtotal.toFixed(2)}</Typography>
+          <Typography>₹ {(totals.subtotal || 0).toFixed(2)}</Typography>
         </Box>
 
         {totals.totalDiscount > 0 && (
@@ -160,45 +160,45 @@ export default function InvoiceTotals({
               <Typography color="error" variant="body2">{t('totalDiscountAmt') || 'Total Discount applied'}</Typography>
               {totals.globalDiscountType === 'percentage' && totals.globalDiscountValue && totals.globalDiscountValue > 0 ? (
                 <Typography color="error" variant="caption" sx={{ opacity: 0.8 }}>
-                  ({totals.globalDiscountValue}% of ₹{(totals.subtotal - (totals.itemDiscounts || 0)).toFixed(2)})
+                  ({totals.globalDiscountValue}% of ₹{((totals.subtotal || 0) - (totals.itemDiscounts || 0)).toFixed(2)})
                 </Typography>
               ) : null}
             </Box>
-            <Typography color="error" variant="body2">- ₹ {totals.totalDiscount.toFixed(2)}</Typography>
+            <Typography color="error" variant="body2">- ₹ {(totals.totalDiscount || 0).toFixed(2)}</Typography>
           </Box>
         )}
 
-        {totals.cgst > 0 && (
+        {(totals.cgst || 0) > 0 && (
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
             <Typography color="text.secondary">CGST</Typography>
-            <Typography>₹ {totals.cgst.toFixed(2)}</Typography>
+            <Typography>₹ {(totals.cgst || 0).toFixed(2)}</Typography>
           </Box>
         )}
 
-        {totals.sgst > 0 && (
+        {(totals.sgst || 0) > 0 && (
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
             <Typography color="text.secondary">SGST</Typography>
-            <Typography>₹ {totals.sgst.toFixed(2)}</Typography>
+            <Typography>₹ {(totals.sgst || 0).toFixed(2)}</Typography>
           </Box>
         )}
 
-        {totals.igst > 0 && (
+        {(totals.igst || 0) > 0 && (
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
             <Typography color="text.secondary">IGST</Typography>
-            <Typography>₹ {totals.igst.toFixed(2)}</Typography>
+            <Typography>₹ {(totals.igst || 0).toFixed(2)}</Typography>
           </Box>
         )}
 
-        {totals.roundOff !== 0 && (
+        {(totals.roundOff || 0) !== 0 && (
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
             <Typography color="text.secondary">{t('roundOff') || 'Round Off'}</Typography>
-            <Typography>₹ {totals.roundOff.toFixed(2)}</Typography>
+            <Typography>₹ {(totals.roundOff || 0).toFixed(2)}</Typography>
           </Box>
         )}
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2, pt: 2, borderTop: 1, borderColor: 'divider' }}>
           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{t('total') || 'Total'}</Typography>
-          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>₹ {totals.total.toFixed(2)}</Typography>
+          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>₹ {(totals.total || 0).toFixed(2)}</Typography>
         </Box>
       </Paper>
     </Box>

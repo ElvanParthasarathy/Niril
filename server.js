@@ -271,11 +271,16 @@ app.get('/api/raseedhugal', (req, res) => {
 });
 
 app.post('/api/raseedhugal', (req, res) => {
-  const receipt = req.body;
-  if (!receipt.id) receipt.id = 'rcp_' + Date.now();
-  const filePath = path.join(DATA_DIR, 'raseedhugal', safeFileName(receipt.id) + '.json');
-  writeJSON(filePath, receipt);
-  res.json({ success: true, id: receipt.id });
+  try {
+    const receipt = req.body;
+    if (!receipt.id) receipt.id = 'rcp_' + Date.now();
+    const filePath = path.join(DATA_DIR, 'raseedhugal', safeFileName(receipt.id) + '.json');
+    writeJSON(filePath, receipt);
+    res.json({ success: true, id: receipt.id });
+  } catch (err) {
+    fs.writeFileSync('error_log.txt', String(err.stack || err));
+    res.status(500).json({ error: String(err) });
+  }
 });
 
 app.delete('/api/raseedhugal/:id', (req, res) => {

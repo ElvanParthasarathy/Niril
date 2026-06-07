@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Box, Typography, IconButton, Tooltip, Stack, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 import { getAllProducts, saveProduct, deleteProduct } from '../Avanam';
-import { getCountryConfig, formatCurrency } from '../Payanpadu';
+import { getCountryConfig, formatCurrency, getDynamicField } from '../Payanpadu';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
 import ElvanCard from './ElvanCard';
@@ -40,8 +40,8 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
     if (!search.trim()) return true;
     const term = search.toLowerCase();
     const searchable = [
-      p.name, p.nameEn, p.hsn, p.rate?.toString(), p.taxPercent?.toString(),
-      p.description, p.descriptionEn, p.unit
+      getDynamicField(p, 'name', profile, true), getDynamicField(p, 'name', profile, false), p.hsn, p.rate?.toString(), p.taxPercent?.toString(),
+      getDynamicField(p, 'description', profile, true), getDynamicField(p, 'description', profile, false), p.unit
     ].filter(Boolean).join(' ').toLowerCase();
     return searchable.includes(term);
   };
@@ -67,7 +67,10 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
       let count = 0;
       for (const product of selected) {
         const { id, ...rest } = product;
-        await saveProduct({ ...rest, name: `${product.name} (Copy)` });
+        const primaryLang = profile?.primaryDataLanguage || 'Tamil';
+        const primaryField = `name_${primaryLang}`;
+        const currentName = rest[primaryField] || '';
+        await saveProduct({ ...rest, [primaryField]: `${currentName} (Copy)` });
         count++;
         if (onProgress) onProgress(count, selected.length);
       }
@@ -126,15 +129,15 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
             )}
             <Box>
               <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                {product.name}
+                {getDynamicField(product, 'name', profile, true)}
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
-                {profile?.enableBilingual !== false && product.nameEn && (
-                  <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{product.nameEn}</Typography>
+                {profile?.enableBilingual !== false && getDynamicField(product, 'name', profile, false) && (
+                  <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{getDynamicField(product, 'name', profile, false)}</Typography>
                 )}
-                {product.description && (
+                {getDynamicField(product, 'description', profile, true) && (
                   <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
-                    {product.description}
+                    {getDynamicField(product, 'description', profile, true)}
                   </Typography>
                 )}
                 {(product.hsn || product.taxPercent) && (

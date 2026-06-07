@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, TextField, IconButton, Button, Divider, List, ListItem, ListItemButton, ListItemText, InputAdornment, Select, MenuItem } from '@mui/material';
 import { Trash, Plus } from '@phosphor-icons/react';
 import { useLanguage } from '../../../mozhi/LanguageContext';
+import { getDynamicField } from '../../../Payanpadu';
+import ElvanBilingualField from '../ElvanBilingualField';
 import { LineItemState, InvoiceSettingsState, createEmptyLineItem } from './InvoiceTypes';
 import { getAllProducts } from '../../../Avanam';
 import { formatCurrency } from '../../../Payanpadu';
@@ -46,21 +48,15 @@ export default function LineItemsTable({
   }, []);
 
   const getItemField = (item: LineItemState, field: string, lang: string) => {
-    if (field === 'name' || field === 'description') {
-      const val = item[field];
-      if (typeof val === 'object' && val !== null) {
-         return lang === primaryLang ? val.primary : val.secondary;
-      }
+    if (lang === primaryLang) {
+      return (item[`${field}_${lang}` as keyof LineItemState] || (item as any)[field] || '') as string;
     }
-    return (item as any)[field] || '';
+    return (item[`${field}_${lang}` as keyof LineItemState] || '') as string;
   };
 
   const handleItemChange = (id: string, field: string, value: any) => {
     setItems(prev => prev.map(item => {
       if (item.id === id) {
-        if (field === 'name' || field === `name_${primaryLang}`) {
-          return { ...item, name: { ...item.name, primary: value } };
-        }
         if (field === 'quantity') {
           return { ...item, qty: value };
         }
@@ -76,14 +72,8 @@ export default function LineItemsTable({
         return {
           ...item,
           productId: product.id,
-          name: {
-            primary: product.name || product[`name_${primaryLang}`] || '',
-            secondary: product.descriptionEn || product.nameEn || product[`name_${secondaryLang}`] || ''
-          },
-          description: {
-            primary: product.description || product[`description_${primaryLang}`] || '',
-            secondary: product.descriptionEn || product.nameEn || product[`description_${secondaryLang}`] || ''
-          },
+          // Copy all language keys directly
+          ...Object.keys(product).filter(k => k.startsWith('name_') || k.startsWith('description_')).reduce((acc: any, key) => { acc[key] = product[key]; return acc; }, {}),
           hsn: product.hsn || '',
           rate: product.rate || 0,
           unit: product.unit || item.unit || 'Nos',
@@ -146,7 +136,7 @@ export default function LineItemsTable({
             <Box sx={{ flex: { xs: '1 1 100%', sm: '3 1 250px' }, position: 'relative' }}>
               <TextField 
                 fullWidth size="small" 
-                label={t("descriptionCol")} slotProps={{ inputLabel: { shrink: true } }}
+                label={t("descriptionCol")} 
                 placeholder={t('hc_searchSavedItems') || 'Search saved items'}
                 value={getItemField(item, 'name', primaryLang)}
                 className="suggestion-input"
@@ -158,11 +148,12 @@ export default function LineItemsTable({
                 onFocus={() => setActiveSuggestionRow(item.id)}
                 autoComplete="off"
                 helperText={item.productId ? [
-                  getItemField(item, 'name', secondaryLang),
+                  profile?.enableBilingual !== false ? getItemField(item, 'name', secondaryLang) : null,
                   item.taxPercent ? `GST ${item.taxPercent}%` : '',
                 ].filter(Boolean).join(' · ') : undefined}
-                FormHelperTextProps={{
-                  sx: { margin: 0, mt: 0.5, lineHeight: 1.2 }
+                slotProps={{ 
+                  inputLabel: { shrink: true },
+                  formHelperText: { sx: { margin: 0, mt: 0.5, lineHeight: 1.2 } }
                 }}
               />
 
@@ -172,10 +163,7 @@ export default function LineItemsTable({
                     {(() => {
                       const q = (getItemField(item, 'name', primaryLang) || '').toLowerCase();
                       const getProdName = (p: any, lang: string) => {
-                        if (typeof p.name === 'object' && p.name !== null) {
-                          return lang === primaryLang ? p.name.primary : p.name.secondary;
-                        }
-                        return lang === primaryLang ? p.name : p.nameEn;
+                        return getDynamicField(p, 'name', { primaryDataLanguage: lang, secondaryDataLanguage: '' }, true);
                       };
                       
                       const filtered = products.filter(p => {
@@ -201,7 +189,7 @@ export default function LineItemsTable({
                               <ListItemText 
                                 primary={pName}
                                 secondary={[
-                                  pNameSec,
+                                  profile?.enableBilingual !== false ? pNameSec : null,
                                   p.rate ? formatCurrency(p.rate, currency) : '',
                                 ].filter(Boolean).join(' · ')}
                               />
@@ -223,7 +211,7 @@ export default function LineItemsTable({
                               sx={{ color: 'primary.main' }}
                             >
                               <Plus size={18} weight="bold" style={{ marginRight: 8 }} />
-                              <ListItemText primary={t('hc_addNewProduct') || 'Add New Product'} primaryTypographyProps={{ fontWeight: 600 }} />
+                              <ListItemText primary={<Typography fontWeight={600}>{t('hc_addNewProduct') || 'Add New Product'}</Typography>} />
                             </ListItemButton>
                           </ListItem>
                         </>

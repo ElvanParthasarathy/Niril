@@ -30,7 +30,12 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
 
   const updateField = (field, lang, value) => {
     if (lang) {
-      setForm(prev => ({ ...prev, [`${field}_${lang}`]: value }));
+      setForm(prev => {
+        const next = { ...prev, [`${field}_${lang}`]: value };
+        if (lang === primaryLang) next[field] = value;
+        if (lang === secondaryLang) next[`${field}En`] = value;
+        return next;
+      });
     } else {
       setForm(prev => ({ ...prev, [field]: value }));
     }
@@ -50,15 +55,11 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
       const productData = {
         ...form,
         ...(isEditing ? { id: product.id } : {}),
-        name: primaryName.trim(),
-        nameEn: getField('name', secondaryLang).trim(),
         hsn: form.hsn?.trim() || '',
         rate: form.rate ? parseFloat(form.rate as any) : 0,
         taxPercent: form.taxPercent ? parseFloat(form.taxPercent as any) : 0,
         unit: form.unit || 'Nos',
         stock: form.stock ? parseFloat(form.stock as any) : 0,
-        description: getField('description', primaryLang).trim(),
-        descriptionEn: getField('description', secondaryLang).trim(),
       };
       const savedProduct = await saveProduct(productData);
       thagaval(isEditing ? (t('productUpdatedToast') || 'Updated!') : (t('productAddedToast') || 'Added!'), 'success');

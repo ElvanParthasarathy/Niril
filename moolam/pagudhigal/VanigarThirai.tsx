@@ -47,16 +47,8 @@ export default function VanigarThirai({ show, onClose, onSave, client, isEditing
   const handleSave = () => {
     if (!getField('name', primaryLang).trim()) return;
     
-    // Convert dynamic fields back to name/nameEn for compatibility with Avanam's saveClient
+    // Form already contains the language-tagged fields dynamically.
     const finalData = { ...form };
-    finalData.name = getField('name', primaryLang);
-    finalData.nameEn = getField('name', secondaryLang);
-    finalData.mugavari = getField('mugavari', primaryLang);
-    finalData.mugavariEn = getField('mugavari', secondaryLang);
-    finalData.oor = getField('oor', primaryLang);
-    finalData.oorEn = getField('oor', secondaryLang);
-    finalData.maavattam = getField('maavattam', primaryLang);
-    finalData.maavattamEn = getField('maavattam', secondaryLang);
     finalData.maanilam = form.maanilam || '';
     finalData.maanilamEn = form.maanilamEn || '';
     finalData.country = form.country || '';

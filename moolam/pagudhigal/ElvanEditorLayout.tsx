@@ -108,23 +108,29 @@ export default function ElvanEditorLayout({
       {isMobile && (
         <Button
           variant="contained"
-          color="primary"
+          disableElevation
           onClick={onSave}
           sx={{
             display: { xs: 'flex', md: 'none' },
             position: 'fixed',
-            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 40px)',
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 20px)',
             right: 20,
-            minWidth: 56,
-            width: 56,
-            height: 56,
-            borderRadius: '20px',
+            borderRadius: '50px',
             zIndex: 1100,
-            boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
-            p: 0,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+            px: 3,
+            py: 1.5,
+            bgcolor: 'background.paper',
+            color: 'text.primary',
+            fontWeight: 700,
+            textTransform: 'none',
+            border: '1px solid',
+            borderColor: 'divider',
+            '&:hover': { bgcolor: 'background.paper' }
           }}
+          startIcon={saveButtonIcon || <FloppyDisk size={20} weight="bold" />}
         >
-          {saveButtonIcon || <FloppyDisk size={24} weight="fill" />}
+          {saveButtonText}
         </Button>
       )}
     </Box>

@@ -51,14 +51,14 @@ export default function InvoiceMetadata({
               value={metadata.date ? dayjs(metadata.date) : null}
               onChange={(newValue) => updateMeta('date', newValue ? newValue.format('YYYY-MM-DD') : '')}
               slots={{ openPickerIcon: () => <CalendarBlank size={20} weight="regular" /> }}
-              slotProps={{ textField: { fullWidth: true, size: 'small', InputLabelProps: { shrink: true } } }}
+              slotProps={{ textField: { fullWidth: true, size: 'small', slotProps: { inputLabel: { shrink: true } } } }}
               format="DD/MM/YYYY"
             />
           </LocalizationProvider>
         </Grid>
         {settings.showPlaceOfSupply && (() => {
           const posOpts = getStatesForCountry(profile?.country) || [];
-          const defaultClientState = typeof client?.maanilam === 'object' ? client?.maanilam?.primary : client?.maanilam;
+          const defaultClientState = client?.maanilam_Tamil || client?.maanilam_English || client?.maanilam;
           const currentValue = metadata.placeOfSupply || defaultClientState;
 
           return (
@@ -80,7 +80,7 @@ export default function InvoiceMetadata({
                         {...params}
                         label={`${t('placeOfSupply')}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`}
                         placeholder={`Defaults to ${defaultClientState || 'Client State'}`}
-                        InputLabelProps={{ ...params.InputLabelProps, shrink: true }}
+                        InputLabelProps={{ shrink: true }}
                       />
                     )}
                   />

@@ -6,6 +6,7 @@ import { ClientState } from './InvoiceTypes';
 import { getBilingualStateName, getBilingualCountryName } from '../../../Payanpadu';
 import { getAllClients, saveClient } from '../../../Avanam';
 import { thagaval } from '../../Thagaval';
+import { getDynamicField } from '../../../Payanpadu';
 import ElvanCard from '../../ElvanCard';
 
 interface ClientSelectionProps {
@@ -43,6 +44,12 @@ export default function ClientSelection({
   }, []);
 
   useEffect(() => {
+    if (client?.id && client.id !== selectedClientId) {
+      setSelectedClientId(client.id);
+    }
+  }, [client?.id]);
+
+  useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (clientSuggestionsRef.current && !clientSuggestionsRef.current.contains(e.target as Node) &&
           clientNameRef.current && !clientNameRef.current.contains(e.target as Node)) {
@@ -54,44 +61,22 @@ export default function ClientSelection({
   }, []);
 
   const getClientField = (f: keyof ClientState, lang: string) => {
-    const field = client[f];
-    if (typeof field === 'object' && field !== null) {
-      return (lang === primaryLang ? field.primary : field.secondary) || '';
-    }
-    return (field as string) || '';
+    const exact = client[`${f}_${lang}`];
+    if (exact) return exact as string;
+    if (lang === 'English' || lang === 'Tamil') return (client[f] || '') as string;
+    return '';
   };
 
   const setClientField = (f: keyof ClientState, lang: string, v: string) => {
-    setClient(prev => {
-      const field = prev[f];
-      if (typeof field === 'object' && field !== null) {
-        return {
-          ...prev,
-          [f]: { ...field, [lang === primaryLang ? 'primary' : 'secondary']: v }
-        };
-      }
-      return { ...prev, [f]: v };
-    });
+    setClient(prev => ({
+      ...prev,
+      [`${f}_${lang}`]: v
+    }));
   };
 
-  // Convert Legacy Snapshot structure to V2 State
-  const convertFromSnapshotToV2 = (obj: any) => {
-    if (!obj) return client;
-    const result = { ...client };
-    const fields = ['name', 'mugavari', 'oor', 'maavattam', 'maanilam', 'country'];
-    fields.forEach((f: any) => {
-       result[f] = {
-         primary: obj[`${f}_${primaryLang}`] || obj[f] || '',
-         secondary: obj[`${f}_${secondaryLang}`] || obj[`${f}En`] || ''
-       };
-    });
-    result.pin = obj.pin || '';
-    result.gstin = obj.gstin || '';
-    return result;
-  };
 
   const selectSavedClient = (cli: any) => {
-    setClient(convertFromSnapshotToV2(cli));
+    setClient(cli);
     setSelectedClientId(cli.id);
     setShowClientSuggestions(false);
     thagaval(`Loaded client: ${cli.name}`, 'info');
@@ -99,8 +84,8 @@ export default function ClientSelection({
 
   const filteredClients = getClientField('name', primaryLang).trim()
     ? savedClients.filter(cli => {
-        const cliName = typeof cli.name === 'object' && cli.name !== null ? cli.name.primary : cli.name;
-        const cliNameSec = typeof cli.name === 'object' && cli.name !== null ? cli.name.secondary : (cli.nameEn || cli.peyarEn);
+        const cliName = getDynamicField(cli, 'name', profile, true);
+        const cliNameSec = getDynamicField(cli, 'name', profile, false);
         const q = getClientField('name', primaryLang).trim().toLowerCase();
         return (cliName || '').toLowerCase().includes(q) || (cliNameSec || '').toLowerCase().includes(q);
       })
@@ -136,8 +121,8 @@ export default function ClientSelection({
                   <Paper elevation={4} sx={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10, mt: 0.5, maxHeight: 300, overflow: 'auto' }} ref={clientSuggestionsRef}>
                     <List disablePadding>
                       {filteredClients.length > 0 ? filteredClients.map(cli => {
-                        const cliName = typeof cli.name === 'object' && cli.name !== null ? cli.name.primary : cli.name;
-                        const cliNameSec = typeof cli.name === 'object' && cli.name !== null ? cli.name.secondary : (cli.nameEn || cli.peyarEn);
+                        const cliName = getDynamicField(cli, 'name', profile, true);
+                        const cliNameSec = getDynamicField(cli, 'name', profile, false);
                         
                         return (
                           <ListItem key={cli.id} disablePadding>
@@ -167,24 +152,24 @@ export default function ClientSelection({
                           sx={{ color: 'primary.main' }}
                         >
                           <Plus size={18} weight="bold" style={{ marginRight: 8 }} />
-                          <ListItemText primary={t('hc_addNewClient') || 'Add New Customer'} primaryTypographyProps={{ fontWeight: 600 }} />
+                          <ListItemText primary={<Typography fontWeight={600}>{t('hc_addNewClient') || 'Add New Customer'}</Typography>} />
                         </ListItemButton>
                       </ListItem>
                     </List>
                   </Paper>
                 )}
               </Box>
-              {selectedClientId && (getClientField('mugavari', primaryLang) || getClientField('oor', primaryLang) || client.maanilam.primary || client.gstin || getClientField('name', secondaryLang)) && (
+              {selectedClientId && (getClientField('mugavari', primaryLang) || getClientField('oor', primaryLang) || client.maanilam || client.gstin || getClientField('name', secondaryLang)) && (
                 <ElvanCard sx={{ mt: 2 }} boxSx={{ p: 2 }}>
                   <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>{t('hc_savedClientDetails')}</Typography>
-                  {getClientField('mugavari', primaryLang) && <Typography variant="body2">{getClientField('mugavari', primaryLang)}{getClientField('mugavari', secondaryLang) ? ` / ${getClientField('mugavari', secondaryLang)}` : ''}</Typography>}
+                  {getClientField('mugavari', primaryLang) && <Typography variant="body2">{getClientField('mugavari', primaryLang)}{profile?.enableBilingual !== false && getClientField('mugavari', secondaryLang) ? ` / ${getClientField('mugavari', secondaryLang)}` : ''}</Typography>}
                   {(getClientField('oor', primaryLang) || getClientField('maavattam', primaryLang) || client.pin) && <Typography variant="body2">{[
-                    getClientField('oor', primaryLang) ? getClientField('oor', primaryLang) + (getClientField('oor', secondaryLang) ? ` / ${getClientField('oor', secondaryLang)}` : '') : '', 
-                    getClientField('maavattam', primaryLang) ? getClientField('maavattam', primaryLang) + (getClientField('maavattam', secondaryLang) ? ` / ${getClientField('maavattam', secondaryLang)}` : '') : '', 
+                    getClientField('oor', primaryLang) ? getClientField('oor', primaryLang) + (profile?.enableBilingual !== false && getClientField('oor', secondaryLang) ? ` / ${getClientField('oor', secondaryLang)}` : '') : '', 
+                    getClientField('maavattam', primaryLang) ? getClientField('maavattam', primaryLang) + (profile?.enableBilingual !== false && getClientField('maavattam', secondaryLang) ? ` / ${getClientField('maavattam', secondaryLang)}` : '') : '', 
                     client.pin
                   ].filter(Boolean).join(' - ')}</Typography>}
-                  {client.maanilam.primary && <Typography variant="body2">{getBilingualStateName(client.maanilam.primary, profile)}</Typography>}
-                  {client.country.primary && <Typography variant="body2">{getBilingualCountryName(client.country.primary, profile)}</Typography>}
+                  {client.maanilam && <Typography variant="body2">{getBilingualStateName(client.maanilam, profile)}</Typography>}
+                  {client.country && <Typography variant="body2">{getBilingualCountryName(client.country, profile)}</Typography>}
                   {getClientField('name', secondaryLang) && profile?.enableBilingual !== false && <Typography variant="body2" sx={{ mt: 0.5 }}>Name ({profile?.secondaryDataLanguage || 'English'}): <strong>{getClientField('name', secondaryLang)}</strong></Typography>}
                   {client.gstin && <Typography variant="body2" sx={{ mt: 0.5 }}>GSTIN: <strong>{client.gstin}</strong></Typography>}
                 </ElvanCard>

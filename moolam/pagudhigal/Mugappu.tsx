@@ -2,7 +2,7 @@
 import { CurrencyInr, Receipt, TrendUp, Package, CaretRight } from '@phosphor-icons/react';
 import { useState, useEffect } from 'react';
 import { getAllBills, getAllProducts, getAllClients } from '../Avanam';
-import { formatCurrency, INVOICE_TYPES } from '../Payanpadu';
+import { formatCurrency, INVOICE_TYPES, getDynamicField } from '../Payanpadu';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
 import {
@@ -273,9 +273,9 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
                               {bill.clientName || '-'}
                             </Typography>
                             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
-                              {profile?.enableBilingual !== false && (bill.clientNameEn || bill.data?.client?.nameEn) && (
+                              {profile?.enableBilingual !== false && (bill.clientNameEn || getDynamicField(bill.data?.client, 'name', profile, false) || bill.data?.client?.nameEn) && (
                                 <Typography variant="caption" noWrap sx={{ display: 'block', fontWeight: 500 }}>
-                                  {bill.clientNameEn || bill.data?.client?.nameEn}
+                                  {bill.clientNameEn || getDynamicField(bill.data?.client, 'name', profile, false) || bill.data?.client?.nameEn}
                                 </Typography>
                               )}
                               <Typography variant="body2" sx={{ fontSize: '0.85rem' }} noWrap>

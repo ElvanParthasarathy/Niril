@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Box, Typography, IconButton, Tooltip, Stack } from '@mui/material';
 import { getAllBills, deleteBill, saveBill } from '../../Avanam';
-import { formatCurrency, INVOICE_TYPES, getCountryConfig } from '../../Payanpadu';
+import { formatCurrency, INVOICE_TYPES, getCountryConfig, getDynamicField } from '../../Payanpadu';
 import { thagaval } from '../Thagaval';
 import { useLanguage } from '../../mozhi/LanguageContext';
 import ElvanCard from '../ElvanCard';
@@ -127,8 +127,8 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
                 {bill.clientName || '-'}
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
-                {profile?.enableBilingual !== false && (bill.clientNameEn || bill.data?.client?.nameEn) && (
-                  <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{bill.clientNameEn || bill.data?.client?.nameEn}</Typography>
+                {profile?.enableBilingual !== false && (bill.clientNameEn || getDynamicField(bill.data?.client, 'name', profile, false) || bill.data?.client?.nameEn) && (
+                  <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{bill.clientNameEn || getDynamicField(bill.data?.client, 'name', profile, false) || bill.data?.client?.nameEn}</Typography>
                 )}
                 <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
                   {bill.invoiceNumber} <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> {bill.invoiceDate ? new Date(bill.invoiceDate).toLocaleDateString('en-IN') : '-'}

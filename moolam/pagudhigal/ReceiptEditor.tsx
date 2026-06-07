@@ -4,7 +4,7 @@ import {
   Grid, MenuItem, Stack, Autocomplete 
 } from '@mui/material';
 import { saveReceipt, getAllBills, getReceiptNumberSettings, getAllReceipts } from '../Avanam';
-import { formatCurrency, getCountryConfig } from '../Payanpadu';
+import { formatCurrency, getCountryConfig, getDynamicField } from '../Payanpadu';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
 import ElvanEditorLayout from './ElvanEditorLayout';
@@ -81,9 +81,9 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
   const selectInvoice = (bill: any) => {
     setForm(prev => ({
       ...prev,
-      [`clientName_${primaryLang}`]: bill.clientName || '',
-      [`clientName_${secondaryLang}`]: bill.clientNameEn || bill.data?.client?.nameEn || '',
-      clientAddress: bill.data?.client?.mugavari || '',
+      [`clientName_${primaryLang}`]: bill.clientName || getDynamicField(bill.data?.client, 'name', profile, true) || '',
+      [`clientName_${secondaryLang}`]: bill.clientNameEn || getDynamicField(bill.data?.client, 'name', profile, false) || bill.data?.client?.nameEn || '',
+      clientAddress: getDynamicField(bill.data?.client, 'mugavari', profile, true) || bill.data?.client?.mugavari || '',
       amount: String(bill.status === 'paid' ? (bill.paidAmount || bill.totalAmount) : Math.max(0, bill.totalAmount - (bill.paidAmount || 0))),
       againstInvoice: bill.invoiceNumber || '',
     }));
@@ -126,10 +126,19 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
     
     const primaryLang = profile?.primaryDataLanguage || 'Tamil';
     const secondaryLang = profile?.secondaryDataLanguage || 'English';
+    const enableBilingual = profile?.enableBilingual !== false;
     
     const primaryVal = (dictionaries[primaryLang] || {})[mode] || mode;
     const secondaryVal = (dictionaries[secondaryLang] || {})[mode] || mode;
     
+    if (enableBilingual && (mode !== 'UPI')) {
+      return (
+        <Box>
+          <Typography variant="body1" sx={{ lineHeight: 1.2 }}>{primaryVal}</Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.2, mt: 0.2 }}>{secondaryVal}</Typography>
+        </Box>
+      );
+    }
     
     return primaryVal;
   };
@@ -185,7 +194,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
           </LocalizationProvider>
         </Grid>
         <ElvanBilingualField
-          label={t('receivedFromLabel') as string}
+          label={t('clientName') as string}
           primaryLang={primaryLang}
           secondaryLang={secondaryLang}
           isBilingual={profile?.enableBilingual !== false}
@@ -233,7 +242,11 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
             forcePopupIcon={true}
             sx={{ width: '100%', minWidth: 200 }}
             options={bills}
-            getOptionLabel={(option) => typeof option === 'string' ? option : `${option.invoiceNumber} - ${option.clientName}`}
+            getOptionLabel={(option) => {
+              if (typeof option === 'string') return option;
+              const pName = getDynamicField(option.data?.client, 'name', profile, true);
+              return pName ? `${option.invoiceNumber} - ${pName}` : option.invoiceNumber;
+            }}
             value={bills.find(b => b.invoiceNumber === form.againstInvoice) || form.againstInvoice}
             onChange={(_, newValue) => {
               if (typeof newValue === 'object' && newValue !== null) {
@@ -245,13 +258,38 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
             onInputChange={(_, newInputValue) => {
               updateField('againstInvoice', newInputValue);
             }}
+            renderOption={(props, option) => {
+              if (typeof option === 'string') return <li {...props}>{option}</li>;
+              const enableBilingual = profile?.enableBilingual !== false;
+              
+              const primaryName = getDynamicField(option.data?.client, 'name', profile, true);
+              const secondaryName = getDynamicField(option.data?.client, 'name', profile, false);
+              
+              const primaryText = primaryName ? `${option.invoiceNumber} - ${primaryName}` : option.invoiceNumber;
+              const secondaryText = secondaryName ? `${option.invoiceNumber} - ${secondaryName}` : option.invoiceNumber;
+              
+              return (
+                <li {...props} key={option.id}>
+                  <Box>
+                    <Typography variant="body1" sx={{ lineHeight: 1.2 }}>
+                      {primaryText}
+                    </Typography>
+                    {enableBilingual && (
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.2, mt: 0.2 }}>
+                        {secondaryText}
+                      </Typography>
+                    )}
+                  </Box>
+                </li>
+              );
+            }}
             renderInput={(params) => (
               <TextField 
                 {...params}
                 fullWidth size="medium" 
                 label={t('againstInvoiceLabel') as string} 
                 placeholder={t('againstInvoicePlaceholder') as string}
-                slotProps={{ inputLabel: params.InputLabelProps }}
+                InputLabelProps={{ shrink: true }}
               />
             )}
           />

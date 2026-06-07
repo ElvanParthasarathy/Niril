@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { getAllClients, getAllBills, deleteClient, saveClient } from '../Avanam';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
+import { getDynamicField } from '../Payanpadu';
 import { Typography, Box, Stack, IconButton, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import ElvanCard from './ElvanCard';
@@ -38,9 +39,9 @@ export default function Vanigargal({ onEditClient, onAddClient, profile }) {
     if (!search.trim()) return true;
     const term = search.toLowerCase();
     const searchable = [
-      c.name, c.nameEn, c.gstin, c.tholaipesi, c.email, 
-      c.mugavari, c.mugavariEn, c.oor, c.oorEn, c.pin, 
-      c.maanilam, c.maanilamEn, c.country
+      getDynamicField(c, 'name', profile, true), getDynamicField(c, 'name', profile, false), c.gstin, c.tholaipesi, c.email, 
+      getDynamicField(c, 'mugavari', profile, true), getDynamicField(c, 'mugavari', profile, false), getDynamicField(c, 'oor', profile, true), getDynamicField(c, 'oor', profile, false), c.pin, 
+      getDynamicField(c, 'maanilam', profile, true), getDynamicField(c, 'maanilam', profile, false), getDynamicField(c, 'country', profile, true)
     ].filter(Boolean).join(' ').toLowerCase();
     return searchable.includes(term);
   };
@@ -66,7 +67,10 @@ export default function Vanigargal({ onEditClient, onAddClient, profile }) {
       let count = 0;
       for (const client of selected) {
         const { id, ...rest } = client;
-        await saveClient({ ...rest, name: `${client.name} (Copy)` });
+        const primaryLang = profile?.primaryDataLanguage || 'Tamil';
+        const primaryField = `name_${primaryLang}`;
+        const currentName = rest[primaryField] || '';
+        await saveClient({ ...rest, [primaryField]: `${currentName} (Copy)` });
         count++;
         if (onProgress) onProgress(count, selected.length);
       }
@@ -121,15 +125,15 @@ export default function Vanigargal({ onEditClient, onAddClient, profile }) {
             )}
             <Box>
               <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                {client.name}
+                {getDynamicField(client, 'name', profile, true)}
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
-                {profile?.enableBilingual !== false && client.nameEn && (
-                  <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{client.nameEn}</Typography>
+                {profile?.enableBilingual !== false && getDynamicField(client, 'name', profile, false) && (
+                  <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{getDynamicField(client, 'name', profile, false)}</Typography>
                 )}
-                {client.oor && (
+                {getDynamicField(client, 'oor', profile, true) && (
                   <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
-                    {client.oor}{profile?.enableBilingual !== false && client.oorEn ? <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> : ''}{profile?.enableBilingual !== false && client.oorEn ? client.oorEn : ''}
+                    {getDynamicField(client, 'oor', profile, true)}{profile?.enableBilingual !== false && getDynamicField(client, 'oor', profile, false) ? <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> : ''}{profile?.enableBilingual !== false && getDynamicField(client, 'oor', profile, false) ? getDynamicField(client, 'oor', profile, false) : ''}
                   </Typography>
                 )}
                 {client.gstin && (

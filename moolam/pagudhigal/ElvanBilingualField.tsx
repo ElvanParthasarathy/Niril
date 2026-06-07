@@ -1,5 +1,6 @@
 import React from 'react';
 import { TextField, TextFieldProps, Autocomplete, AutocompleteProps, Grid } from '@mui/material';
+import { useLanguage } from '../mozhi/LanguageContext';
 
 export interface ElvanBilingualFieldProps {
   label: string;
@@ -43,13 +44,20 @@ export default function ElvanBilingualField({
   renderPrimary,
   renderSecondary
 }: ElvanBilingualFieldProps) {
+  const { t } = useLanguage();
   
-  const primaryLangSuffix = isBilingual ? ` (${primaryLang})` : '';
-  const secondaryLangSuffix = isBilingual ? ` (${secondaryLang})` : '';
+  const getTranslatedLang = (lang: string) => {
+    const key = lang.toLowerCase();
+    const translated = t(key as any);
+    return translated !== key ? translated : lang;
+  };
+
+  const primaryLangSuffix = isBilingual ? ` (${getTranslatedLang(primaryLang)})` : '';
+  const secondaryLangSuffix = isBilingual ? ` (${getTranslatedLang(secondaryLang)})` : '';
 
   return (
     <>
-      <Grid size={{ xs: 12, sm: isBilingual ? 6 : 12 }} sx={!isBilingual ? { gridColumn: { sm: '1 / -1' } } : undefined}>
+      <Grid size={{ xs: 12, sm: 6 }}>
         {renderPrimary ? (
           renderPrimary(primaryLang, primaryLangSuffix)
         ) : (

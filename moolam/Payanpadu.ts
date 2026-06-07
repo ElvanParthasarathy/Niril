@@ -1,6 +1,20 @@
 // @ts-nocheck
 import numberToWordsTamil from './mozhi/tamilNumbers';
 
+export const getDynamicField = (obj: any, fieldName: string, profile: any, isPrimary = true): string => {
+  if (!obj) return '';
+  const primaryLang = profile?.primaryDataLanguage || 'Tamil';
+  const secondaryLang = profile?.secondaryDataLanguage || 'English';
+  const lang = isPrimary ? primaryLang : secondaryLang;
+
+  const exactVal = obj[`${fieldName}_${lang}`];
+  const baseVal = obj[fieldName];
+
+  if (exactVal) return exactVal;
+  if (lang === 'English' || lang === 'Tamil') return baseVal || '';
+  return '';
+};
+
 export const numberToWords = (num, primaryLang = 'English', secondaryLang = 'English', enableBilingual = false) => {
   const isTamilPrimary = primaryLang === 'Tamil';
   const isTamilSecondary = secondaryLang === 'Tamil';
@@ -58,15 +72,21 @@ export const numberToWords = (num, primaryLang = 'English', secondaryLang = 'Eng
     taResult += ' மட்டும்';
   }
 
+  const getLanguageResult = (lang) => {
+    if (lang === 'English') return enResult;
+    if (lang === 'Tamil') return taResult;
+    return '';
+  };
+
+  const primaryText = getLanguageResult(primaryLang);
+  const secondaryText = getLanguageResult(secondaryLang);
+
   if (!enableBilingual) {
-    return isTamilPrimary ? taResult : enResult;
+    return primaryText || enResult;
   }
 
-  if (isTamilPrimary && !isTamilSecondary) return `${taResult} / ${enResult}`;
-  if (!isTamilPrimary && isTamilSecondary) return `${enResult} / ${taResult}`;
-  if (isTamilPrimary && isTamilSecondary) return taResult;
-
-  return enResult;
+  if (primaryText && secondaryText) return `${primaryText} / ${secondaryText}`;
+  return primaryText || secondaryText || '';
 };
 
 export const formatCurrency = (amount, currency = 'INR') => {
@@ -93,7 +113,7 @@ const finiteNonNeg = (n) => {
 };
 
 export const calculateLineItemTax = (item: any = {}, taxInclusive = false) => {
-  const qty = finiteNonNeg(item.quantity);
+  const qty = finiteNonNeg(item.qty || item.quantity);
   const rate = finiteNonNeg(item.rate);
   const discount = finiteNonNeg(item.discount);
   const taxRate = finiteNonNeg(item.taxPercent);
@@ -328,14 +348,14 @@ export const generateEWayBillJSON = (profile, client, details, items, totals, in
   if (!toPincode) throw new Error("Client PIN code is required for the E-Way Bill. Add it in the client's mugavari.");
 
   const itemList = items.map((item: any, idx: number) => {
-    const taxable = (item.quantity * item.rate) - (item.discount || 0);
+    const taxable = ((item.qty || item.quantity) * item.rate) - (item.discount || 0);
     const taxRate = item.taxPercent || 0;
     return {
       itemNo: idx + 1,
-      productName: item.name || '',
-      productDesc: item.name || '',
+      productName: getDynamicField(item, 'name', profile, true) || '',
+      productDesc: getDynamicField(item, 'name', profile, true) || '',
       hsnCode: Number(item.hsn) || 0,
-      quantity: item.quantity || 0,
+      quantity: item.qty || item.quantity || 0,
       qtyUnit: getUnitUQC(item.unit),
       taxableAmount: Math.round(taxable * 100) / 100,
       cgstRate: isInterstate ? 0 : taxRate / 2,
@@ -901,6 +921,7 @@ export const calculateRoundOff = (total) => {
   return Math.round((rounded - total) * 100) / 100;
 };
 
+
 // ========== Currency name map (for amount-in-words) ==========
 // Used by InvoicePreview when rendering "Amount in Words" footer for foreign currencies.
 export const CURRENCY_NAMES = {
@@ -1077,8 +1098,6 @@ const COUNTRY_TRANSLATIONS: Record<string, Record<string, string>> = {
 };
 
 export const getBilingualStateName = (state, opts) => {
-  if (opts?.enableBilingual === false && !opts?.returnOnlyPrimary && !opts?.returnOnlySecondary) return state;
-
   const primaryLang = opts?.primaryDataLanguage || 'Tamil';
   const secondaryLang = opts?.secondaryDataLanguage || 'English';
 
@@ -1094,12 +1113,12 @@ export const getBilingualStateName = (state, opts) => {
     return STATE_TRANSLATIONS[lang]?.[englishName] || englishName;
   };
 
-  if (opts?.returnOnlyPrimary) return getTranslated(primaryLang);
+  if (opts?.returnOnlyPrimary || (opts?.enableBilingual === false && !opts?.returnOnlySecondary)) return getTranslated(primaryLang);
   if (opts?.returnOnlySecondary) return getTranslated(secondaryLang);
 
   const primary = getTranslated(primaryLang);
   const secondary = getTranslated(secondaryLang);
-  if (primary !== secondary) return `${primary} / ${secondary}`;
+  if (opts?.enableBilingual !== false) return `${primary} / ${secondary}`;
   return primary;
 };
 
@@ -1123,8 +1142,6 @@ export const doesStateMatchSearch = (state: string, searchTerm: string): boolean
 };
 
 export const getBilingualCountryName = (country, opts) => {
-  if (opts?.enableBilingual === false && !opts?.returnOnlyPrimary && !opts?.returnOnlySecondary) return country;
-
   const primaryLang = opts?.primaryDataLanguage || 'Tamil';
   const secondaryLang = opts?.secondaryDataLanguage || 'English';
 
@@ -1140,11 +1157,11 @@ export const getBilingualCountryName = (country, opts) => {
     return COUNTRY_TRANSLATIONS[lang]?.[englishName] || englishName;
   };
 
-  if (opts?.returnOnlyPrimary) return getTranslated(primaryLang);
+  if (opts?.returnOnlyPrimary || (opts?.enableBilingual === false && !opts?.returnOnlySecondary)) return getTranslated(primaryLang);
   if (opts?.returnOnlySecondary) return getTranslated(secondaryLang);
 
   const primary = getTranslated(primaryLang);
   const secondary = getTranslated(secondaryLang);
-  if (primary !== secondary) return `${primary} / ${secondary}`;
+  if (opts?.enableBilingual !== false) return `${primary} / ${secondary}`;
   return primary;
 };

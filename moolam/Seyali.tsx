@@ -615,7 +615,7 @@ function Seyali() {
       MuiTextField: {
         defaultProps: {
           variant: 'filled',
-          InputLabelProps: { shrink: true }
+          slotProps: { inputLabel: { shrink: true } }
         },
         styleOverrides: {
           root: {

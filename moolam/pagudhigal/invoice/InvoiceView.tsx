@@ -138,7 +138,7 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
   };
 
   const handleNativeShare = async () => {
-    const amount = formatCurrency(items.reduce((s, i) => s + (i.quantity * i.rate), 0));
+    const amount = formatCurrency(items.reduce((s, i) => s + ((i.qty || i.quantity) * i.rate), 0));
     const msg = `*Invoice: ${details.invoiceNumber}*\nClient: ${client?.name || ''}\nAmount: ${amount}\nDate: ${details.invoiceDate}`;
     
     if (navigator.share) {

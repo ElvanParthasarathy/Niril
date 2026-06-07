@@ -15,7 +15,7 @@ import { TrendUp, TrendDown, Wallet, FileText, X, MagnifyingGlass } from '@phosp
 import { getSearchPaperSx, searchInputStyle } from './commonStyles';
 import ElvanCard from './ElvanCard';
 import { getAllBills, getAllExpenses, getAllPurchases } from '../Avanam';
-import { formatCurrency, INVOICE_TYPES, calculateLineItemTax, getStateCode, formatDateGST, getFilingPeriod, getUnitUQC } from '../Payanpadu';
+import { formatCurrency, INVOICE_TYPES, calculateLineItemTax, getStateCode, formatDateGST, getFilingPeriod, getUnitUQC, getDynamicField } from '../Payanpadu';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
 import * as XLSX from 'xlsx-js-style';
@@ -111,7 +111,7 @@ function buildReconciliation(twoBData, purchases) {
       matchedBookKeys.add(key);
 
       const bookTotals = (book.items || []).reduce((acc, it) => {
-        const amount = (it.quantity || 0) * (it.rate || 0);
+        const amount = (it.qty || 0) * (it.rate || 0);
         const tax = amount * (it.taxPercent || 0) / 100;
         return { taxable: acc.taxable + amount, tax: acc.tax + tax, total: acc.total + amount + tax };
       }, { taxable: 0, tax: 0, total: 0 });
@@ -142,7 +142,7 @@ function buildReconciliation(twoBData, purchases) {
     const key = `${(p.supplierGstin || '').toUpperCase()}::${normInv(p.invoiceNumber)}`;
     if (matchedBookKeys.has(key)) return;
     const totals = (p.items || []).reduce((acc, it) => {
-      const amount = (it.quantity || 0) * (it.rate || 0);
+      const amount = (it.qty || 0) * (it.rate || 0);
       const tax = amount * (it.taxPercent || 0) / 100;
       return { taxable: acc.taxable + amount, tax: acc.tax + tax, total: acc.total + amount + tax };
     }, { taxable: 0, tax: 0, total: 0 });
@@ -621,9 +621,9 @@ export default function VariArikkaigal({ profile }) {
   const b2bRows = b2bRegular.map(bill => {
     const { client, totals, details } = bill.data;
     const isInterState = billIsInterstate(bill);
-    const pos = getStateCode(details?.placeOfSupply || client?.maanilam || '');
+    const pos = getStateCode(details?.placeOfSupply || getDynamicField(client, 'maanilam', profile, true) || '');
     return {
-      gstin: client.gstin, clientName: client.name || bill.clientName || '',
+      gstin: client.gstin, clientName: getDynamicField(client, 'name', profile, true) || bill.clientName || '',
       invoiceNo: bill.invoiceNumber || '', date: bill.invoiceDate || '', pos,
       supplyType: isInterState ? 'Inter' : 'Intra',
       taxable: getTaxableAmount(totals),
@@ -656,9 +656,9 @@ export default function VariArikkaigal({ profile }) {
     const isInterState = billIsInterstate(bill);
     (items || []).forEach(item => {
       const hsn = item.hsn || 'N/A';
-      if (!hsnMap[hsn]) hsnMap[hsn] = { hsn, description: item.name || '', quantity: 0, taxable: 0, cgst: 0, sgst: 0, igst: 0, totalTax: 0 };
+      if (!hsnMap[hsn]) hsnMap[hsn] = { hsn, description: getDynamicField(item, 'name', profile, true) || '', qty: 0, taxable: 0, cgst: 0, sgst: 0, igst: 0, totalTax: 0 };
       const split = computeItemTaxSplit(item, isInterState, !!bill.data?.taxInclusive);
-      hsnMap[hsn].quantity += item.quantity || 0; hsnMap[hsn].taxable += split.taxable;
+      hsnMap[hsn].qty += item.qty || 0; hsnMap[hsn].taxable += split.taxable;
       hsnMap[hsn].cgst += split.cgst; hsnMap[hsn].sgst += split.sgst; hsnMap[hsn].igst += split.igst;
       hsnMap[hsn].totalTax += split.cgst + split.sgst + split.igst;
     });
@@ -685,7 +685,7 @@ export default function VariArikkaigal({ profile }) {
   // otherwise split CGST/SGST. Without this, an interstate purchase incorrectly added its tax
   // to CGST+SGST in the GSTR-3B Table 4(A).
   const itcFromPurchases = filteredPurchases.reduce((acc, p) => {
-    const tax = p.totalTax || (p.items || []).reduce((s, i) => s + ((i.quantity || 0) * (i.rate || 0) * (i.taxPercent || 0)) / 100, 0);
+    const tax = p.totalTax || (p.items || []).reduce((s, i) => s + ((i.qty || 0) * (i.rate || 0) * (i.taxPercent || 0)) / 100, 0);
     if (p.interstate) {
       return { cgst: acc.cgst, sgst: acc.sgst, igst: acc.igst + tax };
     }
@@ -727,11 +727,11 @@ export default function VariArikkaigal({ profile }) {
     }
     (items || []).forEach(item => {
       if (!item.hsn || item.hsn === 'N/A') {
-        warnings.push({ type: 'warning', msg: `Invoice ${bill.invoiceNumber}: Item "${item.name || 'Unnamed'}" has no HSN/SAC code` });
+        warnings.push({ type: 'warning', msg: `Invoice ${bill.invoiceNumber}: Item "${getDynamicField(item, 'name', profile, true) || 'Unnamed'}" has no HSN/SAC code` });
       }
     });
-    if (client?.gstin && !client?.maanilam) {
-      warnings.push({ type: 'warning', msg: `Invoice ${bill.invoiceNumber}: Client ${client.name} has GSTIN but no maanilam — Place of Supply may be wrong` });
+    if (client?.gstin && !getDynamicField(client, 'maanilam', profile, true)) {
+      warnings.push({ type: 'warning', msg: `Invoice ${bill.invoiceNumber}: Client ${getDynamicField(client, 'name', profile, true)} has GSTIN but no maanilam — Place of Supply may be wrong` });
     }
   });
   if (!profile?.gstin) {
@@ -786,9 +786,9 @@ export default function VariArikkaigal({ profile }) {
     ];
     
     filteredBills.forEach(bill => {
-      let cName = bill.clientName || bill.data?.client?.name || '';
+      let cName = bill.clientName || getDynamicField(bill.data?.client, 'name', profile, true) || '';
       if (isBilingual) {
-        const enName = bill.clientNameEn || bill.data?.client?.nameEn || bill.data?.client?.peyarEn || '';
+        const enName = bill.clientNameEn || getDynamicField(bill.data?.client, 'name', profile, false) || bill.data?.client?.nameEn || bill.data?.client?.peyarEn || '';
         if (enName && enName !== cName) {
            cName = cName + '\n' + enName;
         }
@@ -943,9 +943,9 @@ export default function VariArikkaigal({ profile }) {
       const isInter = billIsInterstate(bill);
       (items || []).forEach(item => {
         const hsn = item.hsn || 'N/A'; const rate = item.taxPercent || 0; const key = `${hsn}_${rate}`;
-        if (!hsnDetailed[key]) hsnDetailed[key] = { hsn, desc: item.name || '', uqc: 'NOS', qty: 0, rate, taxable: 0, cgst: 0, sgst: 0, igst: 0, totalValue: 0 };
+        if (!hsnDetailed[key]) hsnDetailed[key] = { hsn, desc: item.name?.primary || '', uqc: 'NOS', qty: 0, rate, taxable: 0, cgst: 0, sgst: 0, igst: 0, totalValue: 0 };
         const split = computeItemTaxSplit(item, isInter, !!bill.data?.taxInclusive);
-        hsnDetailed[key].qty += item.quantity || 0; hsnDetailed[key].taxable += split.taxable;
+        hsnDetailed[key].qty += item.qty || 0; hsnDetailed[key].taxable += split.taxable;
         hsnDetailed[key].cgst += split.cgst; hsnDetailed[key].sgst += split.sgst; hsnDetailed[key].igst += split.igst;
         hsnDetailed[key].totalValue += split.taxable + split.cgst + split.sgst + split.igst;
       });
@@ -1132,9 +1132,9 @@ export default function VariArikkaigal({ profile }) {
         const hsn = item.hsn || ''; const rate = item.taxPercent || 0; const key = `${hsn}_${rate}`;
         const uqc = getUnitUQC(item.unit);
         if (uqc === 'OTH' && item.unit) unknownUnitCount += 1;
-        if (!hsnJsonMap[key]) hsnJsonMap[key] = { hsn_sc: hsn, desc: item.name || '', uqc, qty: 0, rt: rate, txval: 0, iamt: 0, camt: 0, samt: 0, csamt: 0 };
+        if (!hsnJsonMap[key]) hsnJsonMap[key] = { hsn_sc: hsn, desc: item.name?.primary || '', uqc, qty: 0, rt: rate, txval: 0, iamt: 0, camt: 0, samt: 0, csamt: 0 };
         const split = computeItemTaxSplit(item, isInter, !!bill.data?.taxInclusive);
-        hsnJsonMap[key].qty += item.quantity || 0; hsnJsonMap[key].txval += split.taxable; hsnJsonMap[key].iamt += split.igst; hsnJsonMap[key].camt += split.cgst; hsnJsonMap[key].samt += split.sgst;
+        hsnJsonMap[key].qty += item.qty || 0; hsnJsonMap[key].txval += split.taxable; hsnJsonMap[key].iamt += split.igst; hsnJsonMap[key].camt += split.cgst; hsnJsonMap[key].samt += split.sgst;
       });
     });
 
@@ -1406,10 +1406,10 @@ export default function VariArikkaigal({ profile }) {
           ) : (
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
               {paginatedBills.map((b: any, index: number) => {
-                let cNamePrimary = b.clientName || b.data?.client?.name || '';
+                let cNamePrimary = b.clientName || getDynamicField(b.data?.client, 'name', profile, true) || '';
                 let cNameSecondary = '';
                 if ((profile as any)?.enableBilingual !== false) {
-                  const enName = b.clientNameEn || b.data?.client?.nameEn || b.data?.client?.peyarEn || '';
+                  const enName = b.clientNameEn || getDynamicField(b.data?.client, 'name', profile, false) || b.data?.client?.nameEn || b.data?.client?.peyarEn || '';
                   if (enName && enName !== cNamePrimary) cNameSecondary = enName;
                 }
                 const globalIndex = (safePage - 1) * itemsPerPage + index;
@@ -1563,7 +1563,7 @@ export default function VariArikkaigal({ profile }) {
                       return (
                         <TableRow key={i} hover>
                           <TableCell><Chip size="small" label={client?.gstin || 'Unregistered'} sx={{ borderRadius: 1 }} /></TableCell>
-                          <TableCell sx={{ fontWeight: 500 }}>{client?.name || bill.clientName}</TableCell>
+                          <TableCell sx={{ fontWeight: 500 }}>{getDynamicField(client, 'name', profile, true) || bill.clientName}</TableCell>
                           <TableCell>{bill.invoiceNumber}</TableCell>
                           <TableCell sx={{ color: 'text.secondary' }}>{bill.invoiceDate ? new Date(bill.invoiceDate).toLocaleDateString('en-IN') : ''}</TableCell>
                           <TableCell align="right">{formatCurrency(getTaxableAmount(totals))}</TableCell>
@@ -1658,7 +1658,7 @@ export default function VariArikkaigal({ profile }) {
                       <TableRow key={i} hover>
                         <TableCell><Chip size="small" label={r.hsn} sx={{ borderRadius: 1 }} /></TableCell>
                         <TableCell sx={{ fontWeight: 500 }}>{r.description}</TableCell>
-                        <TableCell align="right">{r.quantity}</TableCell>
+                        <TableCell align="right">{r.qty}</TableCell>
                         <TableCell align="right">{formatCurrency((r as any).taxable)}</TableCell>
                         <TableCell align="right">{formatCurrency(r.cgst)}</TableCell>
                         <TableCell align="right">{formatCurrency(r.sgst)}</TableCell>
@@ -1668,7 +1668,7 @@ export default function VariArikkaigal({ profile }) {
                     ))}
                     <TableRow sx={{ bgcolor: 'rgba(0,0,0,0.02)', '& td': { fontWeight: 'bold', borderTop: '2px solid rgba(224, 224, 224, 1)' } }}>
                       <TableCell colSpan={2}>{t('totalCol')}</TableCell>
-                      <TableCell align="right">{Number(hsnRows.reduce((s: number, r: any) => s + (Number(r.quantity) || 0), 0))}</TableCell>
+                      <TableCell align="right">{Number(hsnRows.reduce((s: number, r: any) => s + (Number(r.qty) || 0), 0))}</TableCell>
                       <TableCell align="right">{formatCurrency(Number(hsnRows.reduce((s: number, r: any) => s + (Number(r.taxable) || 0), 0)))}</TableCell>
                       <TableCell align="right">{formatCurrency(Number(hsnRows.reduce((s: number, r: any) => s + (Number(r.cgst) || 0), 0)))}</TableCell>
                       <TableCell align="right">{formatCurrency(Number(hsnRows.reduce((s: number, r: any) => s + (Number(r.sgst) || 0), 0)))}</TableCell>

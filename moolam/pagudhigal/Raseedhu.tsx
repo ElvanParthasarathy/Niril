@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Box, Typography, Button, IconButton, Tooltip, Stack, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { getAllReceipts, saveReceipt, deleteReceipt, getAllBills, getProfile } from '../Avanam';
-import { formatCurrency, numberToWords, getCountryConfig } from '../Payanpadu';
+import { formatCurrency, numberToWords, getCountryConfig, getDynamicField } from '../Payanpadu';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
 import ElvanCard from './ElvanCard';
@@ -44,7 +44,7 @@ export default function Raseedhu({ profile: parentProfile, onAddReceipt, onEditR
     if (rcp.againstInvoice) {
       const linkedBill = bills.find(b => b.invoiceNumber === rcp.againstInvoice);
       if (linkedBill) {
-        return linkedBill.clientNameEn || linkedBill.data?.client?.nameEn || linkedBill.data?.client?.peyarEn || '';
+        return linkedBill.clientNameEn || getDynamicField(linkedBill.data?.client, 'name', profile, false) || linkedBill.data?.client?.nameEn || linkedBill.data?.client?.peyarEn || '';
       }
     }
     return '';
