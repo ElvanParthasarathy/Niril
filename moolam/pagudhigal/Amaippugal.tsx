@@ -1754,9 +1754,9 @@ export default function Amaippugal({ onSaved }) {
               )}
           </AnimatePresence>
       ) : (
-          <Box sx={{ width: '100%', maxWidth: 1200, mx: 'auto', mt: 0, px: { xs: 0, md: 4 } }}>
-              <Typography variant="h5" sx={{ mb: 1, fontWeight: 700 }}>{t('settingsTitle') || 'Settings'}</Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>Manage your business profile, preferences, and data integrations.</Typography>
+          <Box sx={{ width: '100%', maxWidth: 1200, mx: 'auto', mt: 0, pt: { xs: 2, md: 4 }, pb: { xs: 2, md: 4 }, px: { xs: 0, md: 4 } }}>
+              <Typography variant="h5" sx={{ mb: 1, fontWeight: 700, ml: { xs: 1.5, md: 2 } }}>{t('settingsTitle') || 'Settings'}</Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 4, ml: { xs: 1.5, md: 2 } }}>Manage your business profile, preferences, and data integrations.</Typography>
               <Tabs 
                   value={currentView === 'hub' ? 0 : currentView} 
                   onChange={(_e, val) => handleNavigate(val)}
