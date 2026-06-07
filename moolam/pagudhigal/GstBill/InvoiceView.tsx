@@ -184,8 +184,9 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
   };
 
   return (
-    <Box sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', width: '100%', position: 'relative', bgcolor: 'background.default', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <Box className="print-wrapper" sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', width: '100%', position: 'relative', bgcolor: 'background.default', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <ViewHeader 
+        className="no-print"
         onEdit={() => onEdit(bill)}
         onPrint={handlePrint}
         onPDF={generatePDF}
@@ -196,8 +197,8 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
       />
 
       {/* Centered Preview Container */}
-      <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4 }}>
-        <Paper elevation={3} className="invoice-paper" sx={{ 
+      <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4 }}>
+        <Paper elevation={3} className="invoice-paper print-wrapper" sx={{ 
           p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto',
           zoom: { xs: 0.43, sm: 0.7, md: 0.85, lg: 1 },
           '@supports not (zoom: 1)': {

@@ -1,0 +1,500 @@
+  const handleLoadProfile = async (bp) => {
+    // Auto-save current profile before switching (so it's not lost)
+    if (profile.niruvanathinPeyar?.trim()) {
+      const existing = businessProfiles.find(p => p.niruvanathinPeyar.trim().toLowerCase() === profile.niruvanathinPeyar.trim().toLowerCase());
+      await saveBusinessProfile({ ...profile, id: existing?.id || undefined });
+    }
+    const loaded = { ...bp };
+    delete loaded.id;
+    setProfile(loaded);
+    await saveProfile(loaded);
+    if (onSaved) onSaved(loaded);
+    thagaval(`Switched to ${bp.niruvanathinPeyar}`, 'success');
+  };
+
+  const handleDeleteProfile = async (id) => {
+    if (confirm('Delete this saved business profile?')) {
+      await deleteBusinessProfile(id);
+      thagaval('Profile deleted', 'success');
+      loadBusinessProfiles();
+    }
+  };
+
+  const handleAddNewProfile = () => {
+    setProfile({
+      personName: '', personNameEn: '',
+      niruvanathinPeyar: '', niruvanathinPeyarEn: '', mugavari: '', mugavariEn: '', oor: '', oorEn: '', maavattam: '', maavattamEn: '', maanilam: '', maanilamEn: '', pin: '', country: detectCountryFromBrowser(),
+      gstin: '', pan: '', email: '', tholaipesi: '', mobileNumber: '', vangiPeyar: '', kanakkuEn: '', ifsc: '', swift: '',
+      logo: '', logoHeight: 48, signature: '', upiId: '', googleClientId: '', googleDriveFolder: 'GST Billing Invoices',
+    });
+    setTaxIdWarning('');
+    companyFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const [taxIdWarning, setTaxIdWarning] = useState('');
+  const handleTaxIdBlur = () => {
+    const result = validateTaxId(profile.country, profile.gstin);
+    setTaxIdWarning(result.ok ? '' : result.message);
+  };
+
+
+
+  const variants = {
+    enter: (direction) => ({ x: direction > 0 ? "100%" : (direction < 0 ? "-100%" : 0), opacity: 0, zIndex: 1 }),
+    center: { x: 0, opacity: 1, zIndex: 0 },
+    exit: (direction) => ({ x: direction < 0 ? "100%" : (direction > 0 ? "-100%" : 0), opacity: 0, zIndex: 0 })
+  };
+  const transition = { type: "spring", stiffness: 300, damping: 30 };
+
+  const renderDetailView = () => {
+    let content = null;
+    let title = "";
+    if (currentView === 0) { content = (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+      <Paper className="s2-group" elevation={0} sx={{ p: { xs: 0, md: 0 }, mb: { xs: 4, md: 5 }, bgcolor: 'transparent', backgroundImage: 'none' }} component="form" onSubmit={handleSave} ref={companyFormRef}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6" style={{ fontWeight: 600 }} sx={{ m: 0 }}>
+            {t('companyDetailsTitle')}
+          </Typography>
+          {!isEditingCompany ? (
+            <Button variant="outlined" size="small" onClick={() => setIsEditingCompany(true)} startIcon={<Edit sx={{ fontSize: 16 }} />}>
+              Edit Details
+            </Button>
+          ) : (
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Button variant="outlined" size="small" color="inherit" onClick={handleCancelEditCompany}>
+                Cancel
+              </Button>
+              <Button variant="contained" size="small" color="primary" onClick={() => setIsEditingCompany(false)}>
+                Done
+              </Button>
+            </Box>
+          )}
+        </Box>
+        {(() => {
+          const cc = getCountryConfig(profile.country);
+          return (
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
+                <TextField disabled={!isEditingCompany} required fullWidth size="small" label={`${t('businessNameLabel')} (${profile.primaryDataLanguage || 'Tamil'})`} name="niruvanathinPeyar" value={profile.niruvanathinPeyar} onChange={handleChange} />
+              </Grid>
+              {profile.enableBilingual !== false && (
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField disabled={!isEditingCompany} fullWidth size="small" label={`Business Name in ${profile.secondaryDataLanguage || 'English'}`} name="niruvanathinPeyarEn" value={profile.niruvanathinPeyarEn || ''} onChange={handleChange} />
+                </Grid>
+              )}
+
+              <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
+                <TextField disabled={!isEditingCompany} fullWidth multiline rows={2} size="small" label={`${t('mugavariLabel')} (${profile.primaryDataLanguage || 'Tamil'})`} name="mugavari" value={profile.mugavari} onChange={handleChange} />
+              </Grid>
+              {profile.enableBilingual !== false && (
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField disabled={!isEditingCompany} fullWidth multiline rows={2} size="small" label={`Address in ${profile.secondaryDataLanguage || 'English'}`} name="mugavariEn" value={profile.mugavariEn || ''} onChange={handleChange} />
+                </Grid>
+              )}
+
+              <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
+                <TextField disabled={!isEditingCompany} fullWidth size="small" label={`${t('oorLabel')} (${profile.primaryDataLanguage || 'Tamil'})`} name="oor" value={profile.oor || ''} onChange={handleChange} placeholder={t('e.g. Mumbai' as any)} />
+              </Grid>
+              {profile.enableBilingual !== false && (
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField disabled={!isEditingCompany} fullWidth size="small" label={`City in ${profile.secondaryDataLanguage || 'English'}`} name="oorEn" value={profile.oorEn || ''} onChange={handleChange} />
+                </Grid>
+              )}
+
+              <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
+                <TextField disabled={!isEditingCompany} fullWidth size="small" label={`மாவட்டம் (District) (${profile.primaryDataLanguage || 'Tamil'})`} name="maavattam" value={profile.maavattam || ''} onChange={handleChange} placeholder={`மாவட்டம்`} />
+              </Grid>
+              {profile.enableBilingual !== false && (
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField disabled={!isEditingCompany} fullWidth size="small" label={`District in ${profile.secondaryDataLanguage || 'English'}`} name="maavattamEn" value={profile.maavattamEn || ''} onChange={handleChange} placeholder={`District`} />
+                </Grid>
+              )}
+
+              <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
+                {(() => {
+                  const stateOpts = getStatesForCountry(profile.country || 'India');
+                  return stateOpts.length > 0 ? (
+                    <FormControl fullWidth size="small" disabled={!isEditingCompany}>
+                      <InputLabel>{t(cc.stateLabel as any)} ({profile.primaryDataLanguage || 'Tamil'})</InputLabel>
+                      <Select MenuProps={{ disableScrollLock: true }} name="maanilam" value={profile.maanilam} onChange={handleChange} label={`${t(cc.stateLabel as any)} (${profile.primaryDataLanguage || 'Tamil'})`}>
+                        <MenuItem value="">{t('Select maanilam' as any)}</MenuItem>
+                        {stateOpts.map(s => <MenuItem key={s} value={s}>{getBilingualStateName(s, { ...profile, returnOnlyPrimary: true })}</MenuItem>)}
+                      </Select>
+                    </FormControl>
+                  ) : (
+                    <TextField disabled={!isEditingCompany} fullWidth size="small" label={`${t(cc.stateLabel as any)} (${profile.primaryDataLanguage || 'Tamil'})`} name="maanilam" value={profile.maanilam || ''} onChange={handleChange} placeholder={cc.stateLabel} />
+                  );
+                })()}
+              </Grid>
+              {profile.enableBilingual !== false && (
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField fullWidth size="small" disabled={true} 
+                    label={`${t(cc.stateLabel as any)} (${profile.secondaryDataLanguage || 'English'})`} 
+                    value={profile.maanilam ? getBilingualStateName(profile.maanilam, { ...profile, returnOnlySecondary: true }) : ''} 
+                    sx={{ '& .MuiInputBase-root': { bgcolor: 'action.hover' } }} />
+                </Grid>
+              )}
+
+              <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
+                {(() => {
+                  const isCustomCountry = profile.country === 'Other' || (profile.country && !visibleCountries.some(c => c.name === profile.country));
+                  return (
+                    <Box>
+                      <FormControl fullWidth size="small" disabled={!isEditingCompany} sx={{ mb: isCustomCountry ? 2 : 0 }}>
+                        <InputLabel>{t('countryLabel')} ({profile.primaryDataLanguage || 'Tamil'})</InputLabel>
+                        <Select MenuProps={{ disableScrollLock: true }} name="country" 
+                          value={isCustomCountry ? 'Other' : (profile.country || 'India')} 
+                          onChange={(e) => {
+                            if (e.target.value === 'Other') {
+                              handleChange({ target: { name: 'country', value: 'Other' } } as any);
+                              handleChange({ target: { name: 'countryEn', value: '' } } as any);
+                            } else {
+                              handleChange(e);
+                              handleChange({ target: { name: 'countryEn', value: '' } } as any);
+                            }
+                          }} 
+                          label={`${t('countryLabel')} (${profile.primaryDataLanguage || 'Tamil'})`}>
+                          {visibleCountries.map(c => <MenuItem key={c.code} value={c.name}>{getBilingualCountryName(c.name, { ...profile, returnOnlyPrimary: true })}</MenuItem>)}
+                        </Select>
+                      </FormControl>
+                      {isCustomCountry && (
+                        <TextField fullWidth size="small" 
+                          label={`Custom Country (${profile.primaryDataLanguage || 'Tamil'})`}
+                          name="country" 
+                          value={profile.country === 'Other' ? '' : profile.country} 
+                          onChange={handleChange} 
+                          placeholder="Enter country name" 
+                          disabled={!isEditingCompany} />
+                      )}
+                    </Box>
+                  );
+                })()}
+              </Grid>
+              {profile.enableBilingual !== false && (
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  {(() => {
+                    const isCustomCountry = profile.country === 'Other' || (profile.country && !visibleCountries.some(c => c.name === profile.country));
+                    return (
+                      <Box>
+                        {isCustomCountry && <Box sx={{ height: 40, mb: 2 }} />}
+                        <TextField fullWidth size="small" disabled={!isCustomCountry || !isEditingCompany} 
+                          name={isCustomCountry ? "countryEn" : undefined}
+                          onChange={isCustomCountry ? handleChange : undefined}
+                          label={`${t('countryLabel')} (${profile.secondaryDataLanguage || 'English'})`} 
+                          value={isCustomCountry ? (profile.countryEn || '') : getBilingualCountryName(profile.country || 'India', { ...profile, returnOnlySecondary: true })} 
+                          sx={!isCustomCountry ? { '& .MuiInputBase-root': { bgcolor: 'action.hover' } } : {}} />
+                      </Box>
+                    );
+                  })()}
+                </Grid>
+              )}
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField disabled={!isEditingCompany} fullWidth size="small" label={t('tholaipesiLabel')} name="tholaipesi" value={profile.tholaipesi} onChange={handleChange} />
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField disabled={!isEditingCompany} fullWidth size="small" label={t('email') || 'Email'} name="email" value={profile.email || ''} onChange={handleChange} />
+              </Grid>
+
+              {!showMobileField && !profile.mobileNumber ? (
+                isEditingCompany ? (
+                  <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Button size="small" variant="text" onClick={() => setShowMobileField(true)} startIcon={<Add sx={{ fontSize: 16 }} />} sx={{ color: 'text.secondary', textTransform: 'none' }}>
+                      {language === 'ta' ? 'மாற்று கைபேசி எண் சேர்க்க' : 'Add Alternate Mobile'}
+                    </Button>
+                  </Grid>
+                ) : null
+              ) : (
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <TextField 
+                    disabled={!isEditingCompany} 
+                    fullWidth 
+                    size="small" 
+                    label={t('mobileLabel')} 
+                    name="mobileNumber" 
+                    value={profile.mobileNumber || ''} 
+                    onChange={handleChange} 
+                    slotProps={{
+                      input: {
+                        endAdornment: isEditingCompany ? (
+                          <InputAdornment position="end">
+                            <IconButton 
+                              size="small" 
+                              onClick={() => {
+                                setProfile(prev => ({ ...prev, mobileNumber: '' }));
+                                setShowMobileField(false);
+                              }}
+                              edge="end"
+                            >
+                              <Close sx={{ fontSize: 16 }} />
+                            </IconButton>
+                          </InputAdornment>
+                        ) : null
+                      }
+                    }}
+                  />
+                </Grid>
+              )}
+
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField 
+                  disabled={!isEditingCompany} 
+                  fullWidth 
+                  size="small" 
+                  label={cc.taxIdLabel || 'GSTIN / Tax ID'} 
+                  name="gstin" 
+                  value={profile.gstin || ''} 
+                  onChange={handleChange} 
+                  onBlur={handleTaxIdBlur} 
+                  error={!!taxIdWarning} 
+                  helperText={taxIdWarning} 
+                />
+              </Grid>
+            </Grid>
+          );
+        })()}
+        {/* Logo & Signature */}
+        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 4, mb: 2 }}>
+          {t('brandingTitle')}
+        </Typography>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Typography variant="subtitle2" gutterBottom>{t('businessLogo')}</Typography>
+            <Paper className="s2-group" variant="outlined" sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, borderStyle: 'dashed' }}>
+              {profile.logo ? (
+                <>
+                  <Box sx={{ position: 'relative' }}>
+                    <img src={profile.logo} alt="Logo" style={{ height: `${profile.logoHeight || 48}px`, maxWidth: '180px', objectFit: 'contain' }} />
+                    <IconButton size="small" color="error" onClick={() => removeImage('logo')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
+                      <Delete sx={{ fontSize: 14 }} />
+                    </IconButton>
+                  </Box>
+                  <Box sx={{ width: '100%', px: 2 }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }} gutterBottom>Logo Size on Invoice ({profile.logoHeight || 48}px)</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="caption" color="text.secondary">S</Typography>
+                      <input type="range" min="24" max="80" value={profile.logoHeight || 48} onChange={(e) => setProfile(prev => ({ ...prev, logoHeight: Number(e.target.value) }))} style={{ flex: 1, accentColor: 'var(--primary)' }} />
+                      <Typography variant="caption" color="text.secondary">L</Typography>
+                    </Box>
+                  </Box>
+                  <Button size="small" variant="outlined" onClick={() => logoInputRef.current?.click()}>Change Logo</Button>
+                </>
+              ) : (
+                <Button variant="outlined" onClick={() => logoInputRef.current?.click()} startIcon={<Image sx={{ fontSize: 20 }} />} sx={{ flexDirection: 'column', py: 3, gap: 1 }}>
+                  {t('uploadLogo')}
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{t('logoHint')}</Typography>
+                </Button>
+              )}
+              <input ref={logoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('logo', e)} />
+            </Paper>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Typography variant="subtitle2" gutterBottom>{t('signature')}</Typography>
+            <Paper className="s2-group" variant="outlined" sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, borderStyle: 'dashed', height: '100%' }}>
+              {profile.signature ? (
+                <>
+                  <Box sx={{ position: 'relative' }}>
+                    <img src={profile.signature} alt="Signature" style={{ maxHeight: '100px', maxWidth: '200px', objectFit: 'contain' }} />
+                    <IconButton size="small" color="error" onClick={() => removeImage('signature')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
+                      <Delete sx={{ fontSize: 14 }} />
+                    </IconButton>
+                  </Box>
+                </>
+              ) : (
+                <Button variant="outlined" onClick={() => sigInputRef.current?.click()} startIcon={<Create sx={{ fontSize: 20 }} />} sx={{ flexDirection: 'column', py: 3, gap: 1, height: '100%', width: '100%' }}>
+                  {t('uploadSignature')}
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{t('sigHint')}</Typography>
+                </Button>
+              )}
+              <input ref={sigInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('signature', e)} />
+            </Paper>
+          </Grid>
+        </Grid>
+
+
+      </Paper>
+
+      {/* ---- Multi-Business Profiles ---- */}
+      <Paper className="s2-group" elevation={0} sx={{ p: { xs: 0, md: 0 }, mb: { xs: 4, md: 5 }, bgcolor: 'transparent', backgroundImage: 'none' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6" style={{ fontWeight: 600 }} sx={{ m: 0 }}>
+            {t('businessProfilesTitle')}
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button variant="outlined" onClick={handleAddNewProfile} startIcon={<Add sx={{ fontSize: 16 }} />}>
+              {t('addNewProfile')}
+            </Button>
+            <Button variant="contained" onClick={handleSaveAsProfile} startIcon={<Business sx={{ fontSize: 16 }} />}>
+              {t('saveAsProfile')}
+            </Button>
+          </Box>
+        </Box>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          {t('businessProfilesDesc1')}
+        </Typography>
+        {businessProfiles.length === 0 ? (
+          <Typography variant="body2" color="text.secondary">
+            {t('businessProfilesDesc2')}
+          </Typography>
+        ) : (
+          <Grid container spacing={2}>
+            {businessProfiles.map(bp => {
+              const isActive = bp.niruvanathinPeyar?.trim().toLowerCase() === profile.niruvanathinPeyar?.trim().toLowerCase();
+              return (
+              <Grid size={{ xs: 12, sm: 6 }} key={bp.id}>
+                <Paper className="s2-group" variant="outlined" sx={{ p: 2, height: '100%', borderColor: isActive ? 'primary.main' : 'divider', borderWidth: isActive ? 2 : 1 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="subtitle2" style={{ fontWeight: 'bold' }}>{bp.niruvanathinPeyar}</Typography>
+                        {isActive && <Chip label="Active" size="small" color="primary" sx={{ height: 20, fontSize: '0.7rem' }} />}
+                      </Box>
+                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                        {bp.maanilam}{bp.gstin ? ` | ${bp.gstin}` : ''}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: 0.5 }}>
+                      <Button size="small" variant={isActive ? 'outlined' : 'contained'} onClick={() => handleLoadProfile(bp)} disabled={isActive}>
+                        {isActive ? 'Current' : 'Switch'}
+                      </Button>
+                      <IconButton size="small" color="error" onClick={() => handleDeleteProfile(bp.id)} title="Delete">
+                        <Delete sx={{ fontSize: 16 }} />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                  {bp.mugavari && (
+                    <Typography variant="caption" color="text.secondary" sx={{ mt: 1, whiteSpace: 'pre-line', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
+                      {bp.mugavari}
+                    </Typography>
+                  )}
+                </Paper>
+              </Grid>
+            );
+            })}
+          </Grid>
+        )}
+      </Paper>
+</Box>); title = "Profile & Accounts"; }
+    else if (currentView === 1) { content = (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>      {/* ---- Language Preference ---- */}
+      <Paper className="s2-group" elevation={0} sx={{ p: { xs: 0, md: 0 }, mb: { xs: 4, md: 5 }, bgcolor: 'transparent', backgroundImage: 'none' }}>
+        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0, mb: 0.5 }}>
+          {t('language')}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          {language === 'ta' ? 'பயன்பாட்டின் மொழியை மாற்றவும்.' : 'Change the language of the application.'}
+        </Typography>
+        <Grid container spacing={2}>
+          {[
+            { id: 'ta', label: 'தமிழ்', desc: 'முழுக்க தமிழில்' },
+            { id: 'en', label: 'English', desc: 'English only' },
+          ].map(opt => (
+            <Grid size={{ xs: 12, sm: 6 }} key={opt.id}>
+              <Paper
+                variant="outlined"
+                component="button"
+                onClick={() => {
+                  setLanguage(opt.id as any);
+                  thagaval(opt.id === 'ta' ? 'மொழி தமிழுக்கு மாற்றப்பட்டது' : 'Language changed to English', 'success');
+                }}
+                sx={{
+                  p: 2,
+                  width: '100%',
+                  textAlign: 'left',
+                  height: '100%',
+                  cursor: 'pointer',
+                  borderWidth: language === opt.id ? 2 : 1,
+                  borderColor: language === opt.id ? 'primary.main' : 'divider',
+                  bgcolor: language === opt.id ? 'primary.50' : 'background.paper',
+                  '&:hover': { bgcolor: language === opt.id ? 'primary.50' : 'action.hover' }
+                }}
+              >
+                <Typography variant="subtitle2" style={{ fontWeight: 'bold' }} gutterBottom color={language === opt.id ? 'primary.main' : 'text.primary'}>
+                  {opt.label}
+                </Typography>
+                <Typography variant="body2" color={language === opt.id ? 'primary.main' : 'text.secondary'}>
+                  {opt.desc}
+                </Typography>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      </Paper>
+
+        {/* App User Name */}
+        <Paper className="s2-group" elevation={0} sx={{ p: { xs: 0, md: 0 }, mb: { xs: 4, md: 5 }, bgcolor: 'transparent', backgroundImage: 'none' }}>
+          <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0, mb: 0.5 }}>
+            {language === 'ta' ? 'பயனர் பெயர் (பயன்பாடு)' : 'App User Name'}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            {language === 'ta' ? 'இந்த பெயர் பயன்பாட்டின் முகப்புத்திரையில் தோன்றும்.' : 'This name will appear on the app home screen profile pill.'}
+          </Typography>
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
+              <TextField 
+                fullWidth size="small" 
+                label={`${language === 'ta' ? 'பயனர் பெயர்' : 'User Name'} (${profile.primaryDataLanguage || 'Tamil'})`} 
+                name="personName" 
+                value={profile.personName || ''} 
+                onChange={handleChange} 
+              />
+            </Grid>
+            {profile.enableBilingual !== false && (
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField 
+                  fullWidth size="small" 
+                  label={`${language === 'ta' ? 'பயனர் பெயர்' : 'User Name'} (${profile.secondaryDataLanguage || 'English'})`} 
+                  name="personNameEn" 
+                  value={profile.personNameEn || ''} 
+                  onChange={handleChange} 
+                />
+              </Grid>
+            )}
+          </Grid>
+
+        </Paper>
+
+      {/* Data Language Settings */}
+      <Paper className="s2-group" elevation={0} sx={{ p: { xs: 0, md: 0 }, mb: { xs: 4, md: 5 }, bgcolor: 'transparent', backgroundImage: 'none' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1, mb: 3 }}>
+          <Box>
+            <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0, mb: 0.5 }}>
+              {language === 'ta' ? 'தரவு உள்ளீடு மொழிகள்' : 'Data Entry Languages'}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {language === 'ta' ? 'பட்டியல் உருவாக்கத்தில் பயன்படுத்தப்படும் மொழிகள்' : 'Languages used for billing and data entry'}
+            </Typography>
+          </Box>
+          {!editingLangSettings ? (
+            <Button variant="outlined" size="small" onClick={() => setEditingLangSettings(true)} startIcon={<Edit sx={{ fontSize: 16 }} />}>
+              {t('edit' as any) || 'Edit'}
+            </Button>
+          ) : (
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Button variant="outlined" color="inherit" onClick={() => setEditingLangSettings(false)}>{t('cancel' as any) || 'Cancel'}</Button>
+              <Button variant="contained" onClick={saveLangSettings} startIcon={<Save sx={{ fontSize: 16 }} />}>{t('save' as any) || 'Save'}</Button>
+            </Box>
+          )}
+        </Box>
+        
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            {!editingLangSettings ? (
+              <Box>
+                <Typography variant="body2" color="text.secondary" gutterBottom>{language === 'ta' ? 'முதன்மை மொழி' : 'Primary Language'}</Typography>
+                <Typography variant="body1" sx={{ p: 1.5, bgcolor: 'action.hover', borderRadius: 1 }}>{profile.primaryDataLanguage || 'Tamil'}</Typography>
+              </Box>
+            ) : (
+              <FormControl fullWidth size="small">
+                <InputLabel>{language === 'ta' ? 'முதன்மை மொழி' : 'Primary Language'}</InputLabel>
+                <Select MenuProps={{ disableScrollLock: true }} name="primaryDataLanguage" value={profile.primaryDataLanguage || 'Tamil'} onChange={handleChange} label={language === 'ta' ? 'முதன்மை மொழி' : 'Primary Language'}>
+                  <MenuItem value="Tamil">{t('langTamil')}</MenuItem>
+                  <MenuItem value="English">{t('langEnglish')}</MenuItem>
+                  <MenuItem value="Hindi">{t('langHindi')}</MenuItem>
+                  <MenuItem value="Telugu">{t('langTelugu')}</MenuItem>
+                  <MenuItem value="Kannada">{t('langKannada')}</MenuItem>
+                  <MenuItem value="Malayalam">{t('langMalayalam')}</MenuItem>
+                  <MenuItem value="Marathi">{t('langMarathi')}</MenuItem>
+                  <MenuItem value="Gujarati">{t('langGujarati')}</MenuItem>
+                  <MenuItem value="Bengali">{t('langBengali')}</MenuItem>
+                </Select>
+              </FormControl>

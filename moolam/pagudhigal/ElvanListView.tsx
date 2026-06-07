@@ -35,6 +35,7 @@ export interface ElvanListViewProps<T> {
   duplicateConfirmMessage?: (count: number) => string;
 
   itemsPerPage?: number;
+  renderBelowSearch?: ReactNode;
 }
 
 export default function ElvanListView<T extends { id: string }>(props: ElvanListViewProps<T>) {
@@ -50,7 +51,8 @@ export default function ElvanListView<T extends { id: string }>(props: ElvanList
     deleteConfirmMessage = (count) => t('deleteConfirmMessage') || `Are you sure you want to delete ${count} item(s)?`,
     duplicateConfirmTitle = t('duplicate') || 'Duplicate?',
     duplicateConfirmMessage = (count) => t('duplicateConfirmMessage') || `Are you sure you want to duplicate ${count} item(s)?`,
-    itemsPerPage = 6
+    itemsPerPage = 6,
+    renderBelowSearch
   } = props;
 
   const [search, setSearch] = useState('');
@@ -165,6 +167,11 @@ export default function ElvanListView<T extends { id: string }>(props: ElvanList
             </Button>
           )}
         </Box>
+        {renderBelowSearch && (
+          <Box sx={{ mt: 2 }}>
+            {renderBelowSearch}
+          </Box>
+        )}
       </Box>
 
       {isSelectionMode && (

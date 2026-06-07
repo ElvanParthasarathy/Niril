@@ -36,7 +36,7 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
 // Ensure data directory and sub-directories exist
-const DIRS = ['pattiyalkal', 'vanigargal', 'mathirigal', 'porulgal', 'selavugal', 'thodar_pattiyalkal', 'raseedhugal', 'suya_vivaram', 'kolmudhal'];
+const DIRS = ['pattiyalkal', 'vanigargal', 'mathirigal', 'porulgal', 'selavugal', 'thodar_pattiyalkal', 'raseedhugal', 'suya_vivaram', 'kolmudhal', 'coolie_porulgal', 'coolie_vanigargal', 'coolie_pattiyalkal', 'coolie_raseedhugal', 'coolie_suya_vivaram'];
 for (const dir of DIRS) {
   const dirPath = path.join(DATA_DIR, dir);
   if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath, { recursive: true });
@@ -160,6 +160,56 @@ app.delete('/api/vanigargal/:id', (req, res) => {
 });
 
 // ========================
+// COOLIE CLIENTS / MERCHANTS
+// ========================
+app.get('/api/coolie_vanigargal', (req, res) => {
+  const clients = readAllFromDir('coolie_vanigargal');
+  clients.sort((a, b) => {
+    const aName = a.companyName || a.name || '';
+    const bName = b.companyName || b.name || '';
+    return aName.localeCompare(bName);
+  });
+  res.json(clients);
+});
+
+app.post('/api/coolie_vanigargal', (req, res) => {
+  const client = req.body;
+  if (!client.id) client.id = 'cclient_' + Date.now();
+  const filePath = path.join(DATA_DIR, 'coolie_vanigargal', safeFileName(client.id) + '.json');
+  writeJSON(filePath, client);
+  res.json({ success: true, id: client.id });
+});
+
+app.delete('/api/coolie_vanigargal/:id', (req, res) => {
+  const filePath = path.join(DATA_DIR, 'coolie_vanigargal', safeFileName(req.params.id) + '.json');
+  deleteFile(filePath);
+  res.json({ success: true });
+});
+
+// ========================
+// COOLIE PROFILE / SETTINGS
+// ========================
+app.get('/api/coolie_suya_vivaram', (req, res) => {
+  const profiles = readAllFromDir('coolie_suya_vivaram');
+  profiles.sort((a, b) => (a.organization_name || '').localeCompare(b.organization_name || ''));
+  res.json(profiles);
+});
+
+app.post('/api/coolie_suya_vivaram', (req, res) => {
+  const prof = req.body;
+  if (!prof.id) prof.id = 'cprof_' + Date.now();
+  const filePath = path.join(DATA_DIR, 'coolie_suya_vivaram', safeFileName(prof.id) + '.json');
+  writeJSON(filePath, prof);
+  res.json({ success: true, id: prof.id });
+});
+
+app.delete('/api/coolie_suya_vivaram/:id', (req, res) => {
+  const filePath = path.join(DATA_DIR, 'coolie_suya_vivaram', safeFileName(req.params.id) + '.json');
+  deleteFile(filePath);
+  res.json({ success: true });
+});
+
+// ========================
 // TERMS TEMPLATES
 // ========================
 app.get('/api/mathirigal', (req, res) => {
@@ -211,6 +261,29 @@ app.post('/api/porulgal', (req, res) => {
 
 app.delete('/api/porulgal/:id', (req, res) => {
   const filePath = path.join(DATA_DIR, 'porulgal', safeFileName(req.params.id) + '.json');
+  deleteFile(filePath);
+  res.json({ success: true });
+});
+
+// ========================
+// COOLIE PRODUCTS / INVENTORY
+// ========================
+app.get('/api/coolie_porulgal', (req, res) => {
+  const products = readAllFromDir('coolie_porulgal');
+  products.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  res.json(products);
+});
+
+app.post('/api/coolie_porulgal', (req, res) => {
+  const product = req.body;
+  if (!product.id) product.id = 'cprod_' + Date.now();
+  const filePath = path.join(DATA_DIR, 'coolie_porulgal', safeFileName(product.id) + '.json');
+  writeJSON(filePath, product);
+  res.json({ success: true, id: product.id });
+});
+
+app.delete('/api/coolie_porulgal/:id', (req, res) => {
+  const filePath = path.join(DATA_DIR, 'coolie_porulgal', safeFileName(req.params.id) + '.json');
   deleteFile(filePath);
   res.json({ success: true });
 });
@@ -313,6 +386,29 @@ app.delete('/api/kolmudhal/:id', (req, res) => {
 });
 
 // ========================
+// COOLIE BILLS
+// ========================
+app.get('/api/coolie_pattiyalkal', (req, res) => {
+  const bills = readAllFromDir('coolie_pattiyalkal');
+  bills.sort((a, b) => new Date(b.invoiceDate) - new Date(a.invoiceDate));
+  res.json(bills);
+});
+
+app.post('/api/coolie_pattiyalkal', (req, res) => {
+  const bill = req.body;
+  if (!bill || !bill.id) return res.status(400).json({ error: 'Bill must have an id' });
+  const filePath = path.join(DATA_DIR, 'coolie_pattiyalkal', safeFileName(bill.id) + '.json');
+  writeJSON(filePath, bill);
+  res.json({ success: true });
+});
+
+app.delete('/api/coolie_pattiyalkal/:id', (req, res) => {
+  const filePath = path.join(DATA_DIR, 'coolie_pattiyalkal', safeFileName(req.params.id) + '.json');
+  deleteFile(filePath);
+  res.json({ success: true });
+});
+
+// ========================
 // BUSINESS PROFILES (multi-business)
 // ========================
 app.get('/api/suya_vivaram', (req, res) => {
@@ -372,15 +468,18 @@ app.post('/api/meta/:key/increment', (req, res) => {
 app.get('/api/export', (req, res) => {
   const data = {
     bills: readAllFromDir('pattiyalkal'),
-    profile: readJSON(PROFILE_PATH, DEFAULT_PROFILE),
+    profile: readJSON(path.join(DATA_DIR, 'suya_vivaram', 'profile.json')) || {},
     clients: readAllFromDir('vanigargal'),
+    coolieClients: readAllFromDir('coolie_vanigargal'),
     termsTemplates: readAllFromDir('mathirigal'),
     products: readAllFromDir('porulgal'),
+    coolieProducts: readAllFromDir('coolie_porulgal'),
     expenses: readAllFromDir('selavugal'),
     recurring: readAllFromDir('thodar_pattiyalkal'),
     receipts: readAllFromDir('raseedhugal'),
     profiles: readAllFromDir('suya_vivaram'),
     purchases: readAllFromDir('kolmudhal'),
+    coolieBills: readAllFromDir('coolie_pattiyalkal'),
     meta: readJSON(META_PATH, {}),
     exportedAt: new Date().toISOString(),
   };
@@ -403,10 +502,17 @@ app.post('/api/import', (req, res) => {
     }
   }
   if (data.clients && Array.isArray(data.clients)) {
-    for (const cli of data.clients) {
-      if (cli.id) {
-        writeJSON(path.join(DATA_DIR, 'vanigargal', safeFileName(cli.id) + '.json'), cli);
+    for (const client of data.clients) {
+      if (client.id) {
+        writeJSON(path.join(DATA_DIR, 'vanigargal', safeFileName(client.id) + '.json'), client);
         clientCount++;
+      }
+    }
+  }
+  if (data.coolieClients && Array.isArray(data.coolieClients)) {
+    for (const client of data.coolieClients) {
+      if (client.id) {
+        writeJSON(path.join(DATA_DIR, 'coolie_vanigargal', safeFileName(client.id) + '.json'), client);
       }
     }
   }
@@ -423,6 +529,13 @@ app.post('/api/import', (req, res) => {
       if (prod.id) {
         writeJSON(path.join(DATA_DIR, 'porulgal', safeFileName(prod.id) + '.json'), prod);
         productCount++;
+      }
+    }
+  }
+  if (data.coolieProducts && Array.isArray(data.coolieProducts)) {
+    for (const prod of data.coolieProducts) {
+      if (prod.id) {
+        writeJSON(path.join(DATA_DIR, 'coolie_porulgal', safeFileName(prod.id) + '.json'), prod);
       }
     }
   }

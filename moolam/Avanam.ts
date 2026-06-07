@@ -208,6 +208,46 @@ export const deleteClient = async (id) => {
   return apiFetch(`${API}/vanigargal/${encodeURIComponent(id)}`, { method: 'DELETE' });
 };
 
+// ---- Coolie Clients / Merchants ----
+export const getAllCoolieClients = async () => {
+  if (isBlankState()) return [];
+  const clients = await apiFetch(`${API}/coolie_vanigargal`);
+  return restoreFromStorage(clients, ['name', 'city', 'address1']);
+};
+
+export const saveCoolieClient = async (client) => {
+  const taggedClient = await prepareForStorage(client, ['name', 'city', 'address1']);
+  const res = await apiFetch(`${API}/coolie_vanigargal`, { method: 'POST', body: JSON.stringify(taggedClient) });
+  if (res.id) client.id = res.id;
+  return client;
+};
+
+export const deleteCoolieClient = async (id) => {
+  return apiFetch(`${API}/coolie_vanigargal/${encodeURIComponent(id)}`, { method: 'DELETE' });
+};
+
+// ---- Coolie Profiles / Settings ----
+export const getAllCoolieProfiles = async () => {
+  if (isBlankState()) return [];
+  const profiles = await apiFetch(`${API}/coolie_suya_vivaram`);
+  return restoreFromStorage(profiles, [
+    'name', 'address', 'city', 'district', 'bankName', 'branch', 'email'
+  ]);
+};
+
+export const saveCoolieProfile = async (profile) => {
+  const taggedProfile = await prepareForStorage(profile, [
+    'name', 'address', 'city', 'district', 'bankName', 'branch', 'email'
+  ]);
+  const res = await apiFetch(`${API}/coolie_suya_vivaram`, { method: 'POST', body: JSON.stringify(taggedProfile) });
+  if (res.id) profile.id = res.id;
+  return profile;
+};
+
+export const deleteCoolieProfile = async (id) => {
+  return apiFetch(`${API}/coolie_suya_vivaram/${encodeURIComponent(id)}`, { method: 'DELETE' });
+};
+
 
 // ---- Products / Inventory ----
 export const getAllProducts = async () => {
@@ -225,6 +265,47 @@ export const saveProduct = async (product) => {
 
 export const deleteProduct = async (id) => {
   return apiFetch(`${API}/porulgal/${encodeURIComponent(id)}`, { method: 'DELETE' });
+};
+
+// ---- Coolie Products / Inventory ----
+export const getAllCoolieProducts = async () => {
+  if (isBlankState()) return [];
+  const products = await apiFetch(`${API}/coolie_porulgal`);
+  return restoreFromStorage(products, ['name', 'description']);
+};
+
+export const saveCoolieProduct = async (product) => {
+  const taggedProduct = await prepareForStorage(product, ['name', 'description']);
+  const res = await apiFetch(`${API}/coolie_porulgal`, { method: 'POST', body: JSON.stringify(taggedProduct) });
+  if (res.id) product.id = res.id;
+  return product;
+};
+
+export const deleteCoolieProduct = async (id) => {
+  return apiFetch(`${API}/coolie_porulgal/${encodeURIComponent(id)}`, { method: 'DELETE' });
+};
+
+// ---- Coolie Bills ----
+export const getAllCoolieBills = async () => {
+  if (isBlankState()) return [];
+  const bills = await apiFetch(`${API}/coolie_pattiyalkal`);
+  return bills || [];
+};
+
+export const saveCoolieBill = async (bill) => {
+  const res = await apiFetch(`${API}/coolie_pattiyalkal`, { method: 'POST', body: JSON.stringify(bill) });
+  if (res.success && getIsOnline()) {
+    triggerSync();
+  }
+  return res;
+};
+
+export const deleteCoolieBill = async (id) => {
+  const res = await apiFetch(`${API}/coolie_pattiyalkal/${encodeURIComponent(id)}`, { method: 'DELETE' });
+  if (res.success && getIsOnline()) {
+    triggerSync();
+  }
+  return res;
 };
 
 

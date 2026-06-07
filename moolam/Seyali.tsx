@@ -7,9 +7,18 @@ import { getAllProfiles, saveProfile, getAllBills, getAllProducts } from './Avan
 import { jsPDF } from 'jspdf';
 import VariArikkaigal from './pagudhigal/VariArikkaigal';
 import Mugappu from './pagudhigal/Mugappu';
-import InvoiceEditor from './pagudhigal/invoice/InvoiceEditor';
-import InvoiceList from './pagudhigal/invoice/InvoiceList';
-import InvoiceView from './pagudhigal/invoice/InvoiceView';
+import InvoiceEditor from './pagudhigal/GstBill/InvoiceEditor';
+import InvoiceList from './pagudhigal/GstBill/InvoiceList';
+import InvoiceView from './pagudhigal/GstBill/InvoiceView';
+import CoolieInvoiceEditor from './pagudhigal/CoolieBill/CoolieInvoiceEditor';
+import CoolieInvoiceList from './pagudhigal/CoolieBill/CoolieInvoiceList';
+import CoolieInvoiceView from './pagudhigal/CoolieBill/CoolieInvoiceView';
+import CoolieDashboard from './pagudhigal/CoolieBill/CoolieDashboard';
+import CoolieMerchants from './pagudhigal/CoolieBill/CoolieMerchants';
+import CoolieItems from './pagudhigal/CoolieBill/CoolieItems';
+import CoolieReceiptList from './pagudhigal/CoolieBill/CoolieReceiptList';
+import CoolieSettings from './pagudhigal/CoolieBill/CoolieSettings';
+import ModeSelector from './pagudhigal/ModeSelector';
 import ReceiptView from './pagudhigal/ReceiptView';
 import Amaippugal from './pagudhigal/Amaippugal';
 import Vanigargal from './pagudhigal/Vanigargal';
@@ -63,7 +72,7 @@ function DevLanguageSwitcher({ profile, setProfile, language, setLanguage }: any
 
   return (
     <>
-      <Box onClick={() => setDevOpen(o => !o)} sx={{
+      <Box className="no-print" onClick={() => setDevOpen(o => !o)} sx={{
         position: 'fixed', bottom: 24, right: 24, zIndex: 9999,
         width: 48, height: 48, borderRadius: '50%',
         bgcolor: '#6366f1', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -75,7 +84,7 @@ function DevLanguageSwitcher({ profile, setProfile, language, setLanguage }: any
         {(profile.primaryDataLanguage || 'Ta').slice(0, 2)}
       </Box>
       {devOpen && (
-        <Box sx={{
+        <Box className="no-print" sx={{
           position: 'fixed', bottom: 80, right: 24, zIndex: 9999,
           bgcolor: 'background.paper', borderRadius: 2, boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
           p: 2, minWidth: 260, maxHeight: '70vh', overflowY: 'auto',
@@ -200,6 +209,10 @@ function Seyali() {
     }
   }, [currentView]);
   const [profile, setProfile] = useState(null);
+  const [appMode, setAppMode] = useState(() => localStorage.getItem('elvanniril_app_mode') || 'GST');
+  const [hasSelectedMode, setHasSelectedMode] = useState(() => {
+    return sessionStorage.getItem('session_mode_selected') === 'true';
+  });
   const [editingBill, setEditingBill] = useState(() => {
     try {
       const saved = sessionStorage.getItem('gst_editingBill');
@@ -315,61 +328,7 @@ function Seyali() {
               setShowWelcome(true);
             }
             
-            // --- SEED TEST DATA ---
-            const IS_TESTING_MODE = true; // TODO: Change to false to stop generating test data
-            if (IS_TESTING_MODE) {
-              try {
-                const { getAllClients, saveClient, getAllProducts, saveProduct, saveProfile } = await import('./Avanam');
-                const clients = await getAllClients().catch(() => []);
-                const products = await getAllProducts().catch(() => []);
-                const profiles = await getAllProfiles().catch(() => []);
-                
-                if (clients.length === 0) {
-                  await saveClient({ 
-                    name: 'ஸ்ரீ சிவராம் சில்க் சாரீஸ் ஆரணி', nameEn: 'SRI SIVARAM SILK SAREES ARANI', 
-                    mugavari: '6, NA, ஒளவையார் தெரு', mugavariEn: '6, NA, AVVAIYAAR STREET',
-                    oor: 'ஆரணி', oorEn: 'ARANI', 
-                    pin: '632301', 
-                    maanilam: 'Tamil Nadu', maanilamEn: '', 
-                    gstin: '33AYGPS0561E1ZN', 
-                    country: 'India' 
-                  });
-                }
-                if (products.length === 0) {
-                  const TEST_ITEMS = [
-                    { name: 'ஃபேன்ஸி சேலை', nameEn: 'Fancy Saree', hsn: '', rate: 7900, taxPercent: 5, cessPercent: 0, stock: 10, unit: 'Nos' },
-                    { name: 'ஃபேன்ஸி முத்து சேலை', nameEn: 'Fancy Muthu Saree', hsn: '', rate: 8100, taxPercent: 5, cessPercent: 0, stock: 10, unit: 'Nos' },
-                    { name: 'ஃபேன்ஸி முத்து முந்தி கட்டம் சேலை', nameEn: 'Fancy Muthu Mundhi Kattam Saree', hsn: '', rate: 8200, taxPercent: 5, cessPercent: 0, stock: 10, unit: 'Nos' },
-                    { name: 'ஃபேன்ஸி கட்டம் புட்டா', nameEn: 'Fancy Checked Butta', hsn: '', rate: 8500, taxPercent: 5, cessPercent: 0, stock: 10, unit: 'Nos' },
-                    { name: 'ஃபேன்ஸி கட்டம் புட்டா', nameEn: 'Fancy Checked Butta', hsn: '', rate: 8700, taxPercent: 5, cessPercent: 0, stock: 10, unit: 'Nos' },
-                  ];
-                  for (const item of TEST_ITEMS) {
-                    await saveProduct(item);
-                  }
-                }
-                if (profiles.length === 0 && (!p || !p.niruvanathinPeyar)) {
-                  const testProfile = {
-                    niruvanathinPeyar: 'ஸ்ரீ ஜெயப்பிரியா சில்க்ஸ்',
-                    businessNameEn: 'Sri Jaipriya Silks',
-                    mugavari: '6/606, முதல் தெரு, சிவசக்தி நகர்',
-                    addressEn: '6/606, First Street, Sivasakthi Nagar',
-                    oor: 'ஆரணி',
-                    pin: '632317',
-                    maanilam: 'Tamil Nadu',
-                    gstin: '33ASSPV0378E1ZD',
-                    country: 'India',
-                    tholaipesi: '8144604797, 9360779191',
-                    email: 'srijaipriyasilks@gmail.com',
-                  };
-                  await saveProfile(testProfile);
-                  setProfile(testProfile);
-                  setAllProfiles([testProfile]);
-                  setShowWelcome(false);
-                }
-              } catch (e) {
-                console.error('Failed to seed test data', e);
-              }
-            }
+
           }
           return;
         }
@@ -418,6 +377,10 @@ function Seyali() {
   useEffect(() => {
     sessionStorage.setItem('gst_currentView', currentView);
   }, [currentView]);
+
+  useEffect(() => {
+    localStorage.setItem('elvanniril_app_mode', appMode);
+  }, [appMode]);
 
   useEffect(() => {
     if (editingBill) {
@@ -869,6 +832,7 @@ function Seyali() {
       
       {/* Dev-only floating blank state toggle */}
       <IconButton 
+        className="no-print"
         onClick={() => {
           const isBlank = sessionStorage.getItem('__DEV_BLANK_STATE__') === 'true';
           sessionStorage.setItem('__DEV_BLANK_STATE__', isBlank ? 'false' : 'true');
@@ -887,6 +851,7 @@ function Seyali() {
 
       {/* Dev-only floating dark mode toggle */}
       <IconButton 
+        className="no-print"
         onClick={() => setDarkMode(!darkMode)}
         sx={{ 
           position: 'fixed', top: 12, right: 16, zIndex: 9999, 
@@ -898,8 +863,25 @@ function Seyali() {
       >
         {darkMode ? <LightMode size={16} weight="bold" color="#ffffff" /> : <DarkMode size={16} weight="bold" color="#000000" />}
       </IconButton>
+      {!hasSelectedMode && (
+        <ModeSelector 
+          currentMode={appMode}
+          onSelect={(mode) => {
+            setAppMode(mode);
+            setHasSelectedMode(true);
+            sessionStorage.setItem('session_mode_selected', 'true');
+          }} 
+        />
+      )}
       <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+      <Box className="no-print">
         <Pakkapatti
+          appMode={appMode}
+          setAppMode={setAppMode}
+          onSwitchModeRequest={() => {
+            setHasSelectedMode(false);
+            sessionStorage.removeItem('session_mode_selected');
+          }}
           mobileOpen={mobileOpen}
           handleDrawerToggle={handleDrawerToggle}
           isCollapsed={isCollapsed}
@@ -921,7 +903,8 @@ function Seyali() {
         showProfileMenu={showProfileMenu}
         setShowProfileMenu={setShowProfileMenu}
         handleSwitchProfile={handleSwitchProfile}
-      />
+        />
+      </Box>
 
 
       <Box component="main" sx={{ 
@@ -933,7 +916,7 @@ function Seyali() {
         bgcolor: { xs: darkMode ? '#000000' : '#F3F4F6', md: 'background.default' } 
       }}>
         {/* New Mobile AMOLED Top Bar */}
-        <Box sx={{ display: { xs: 'flex', md: 'none' }, px: 2, py: 1.5, alignItems: 'center', justifyContent: 'space-between', bgcolor: 'transparent', zIndex: 1100, minHeight: 64 }}>
+        <Box className="no-print" sx={{ display: { xs: 'flex', md: 'none' }, px: 2, py: 1.5, alignItems: 'center', justifyContent: 'space-between', bgcolor: 'transparent', zIndex: 1100, minHeight: 64 }}>
           <Box id="mobile-topbar-left" sx={{ display: 'flex', alignItems: 'center' }} />
           {!isEditorView && (
             <Typography variant="h6" sx={{ ml: 1.5, fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.5px', color: darkMode ? '#FFFFFF' : '#000000', flexGrow: 1 }}>
@@ -999,42 +982,71 @@ function Seyali() {
             pb: { xs: isPrintView ? 0 : 2, md: 0 } // small padding at the bottom of the scroll inside the shell
           }}>
           {currentView === 'dashboard' && (
-          <Mugappu onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onEdit={handleViewInvoice} onDuplicate={handleDuplicateInvoice} onConvert={handleConvertToInvoice} profile={profile} />
+          appMode === 'GST' ? (
+            <Mugappu onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onEdit={handleViewInvoice} onDuplicate={handleDuplicateInvoice} onConvert={handleConvertToInvoice} profile={profile} />
+          ) : (
+            <CoolieDashboard onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} />
+          )
         )}
         {currentView === 'invoice-editor' && (
-          <InvoiceEditor
-            onBack={() => {
-              if (editingBill && !editingBill._isDuplicate) {
-                setCurrentView('invoice-view');
-              } else {
-                setEditingBill(null);
-                setCurrentView('invoice-list');
-              }
-            }}
-            onSaved={(bill) => { setEditingBill(bill); setCurrentView('invoice-view'); }}
-            profile={profile} editingBill={editingBill}
-          />
+          appMode === 'GST' ? (
+            <InvoiceEditor
+              onBack={() => {
+                if (editingBill && !editingBill._isDuplicate) {
+                  setCurrentView('invoice-view');
+                } else {
+                  setEditingBill(null);
+                  setCurrentView('invoice-list');
+                }
+              }}
+              onSaved={(bill) => { setEditingBill(bill); setCurrentView('invoice-view'); }}
+              profile={profile} editingBill={editingBill}
+            />
+          ) : (
+            <CoolieInvoiceEditor 
+              existingBill={editingBill}
+              onBack={() => { setEditingBill(null); setCurrentView('invoice-list'); }}
+              onSaved={(bill) => { setEditingBill(bill); setCurrentView('invoice-view'); }}
+            />
+          )
         )}
         {currentView === 'invoice-view' && editingBill && (
-          <InvoiceView
-            bill={editingBill}
-            profile={profile}
-            onBack={() => { setEditingBill(null); setCurrentView('invoice-list'); }}
-            onEdit={handleEditInvoice}
-            onDuplicate={handleDuplicateInvoice}
-          />
+          appMode === 'GST' ? (
+            <InvoiceView
+              bill={editingBill}
+              profile={profile}
+              onBack={() => { setEditingBill(null); setCurrentView('invoice-list'); }}
+              onEdit={handleEditInvoice}
+              onDuplicate={handleDuplicateInvoice}
+            />
+          ) : (
+            <CoolieInvoiceView 
+              bill={editingBill}
+              profile={profile}
+              onClose={() => { setEditingBill(null); setCurrentView('invoice-list'); }}
+              onEdit={() => setCurrentView('invoice-editor')}
+            />
+          )
         )}
         {currentView === 'invoice-view' && !editingBill && (
            <Mugappu onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onEdit={handleViewInvoice} onDuplicate={handleDuplicateInvoice} onConvert={handleConvertToInvoice} profile={profile} />
         )}
         {currentView === 'invoice-list' && (
-          <InvoiceList onNew={handleNewInvoice} onView={handleViewInvoice} onDuplicate={handleDuplicateInvoice} profile={profile} />
+          appMode === 'GST' ? (
+            <InvoiceList onNew={handleNewInvoice} onView={handleViewInvoice} onDuplicate={handleDuplicateInvoice} profile={profile} />
+          ) : (
+            <CoolieInvoiceList onNew={handleNewInvoice} onView={handleViewInvoice} profile={profile} />
+          )
         )}
         {currentView === 'clients' && (
-          <Vanigargal onNew={handleNewInvoice} onEdit={handleEditInvoice} onDuplicate={handleDuplicateInvoice} profile={profile}
-            onAddClient={(prefill) => { setEditingClient(prefill); setCurrentView('client-editor'); }}
-            onEditClient={(client) => { setEditingClient(client); setCurrentView('client-editor'); }} 
-          />
+          appMode === 'GST' ? (
+            <Vanigargal onNew={handleNewInvoice} onEdit={handleEditInvoice} onDuplicate={handleDuplicateInvoice} profile={profile}
+              onAddClient={(prefill) => { setEditingClient(prefill); setCurrentView('client-editor'); }}
+              onEditClient={(client) => { setEditingClient(client); setCurrentView('client-editor'); }} 
+            />
+          ) : (
+            <CoolieMerchants />
+          )
         )}
         {currentView === 'client-editor' && (
           <VanigarThoguppu 
@@ -1046,11 +1058,15 @@ function Seyali() {
           />
         )}
         {currentView === 'inventory' && (
-          <Porul 
-            onAddProduct={() => { setEditingProduct(null); setCurrentView('product-editor'); }}
-            onEditProduct={(p) => { setEditingProduct(p); setCurrentView('product-editor'); }} 
-            profile={profile}
-          />
+          appMode === 'GST' ? (
+            <Porul 
+              onAddProduct={() => { setEditingProduct(null); setCurrentView('product-editor'); }}
+              onEditProduct={(p) => { setEditingProduct(p); setCurrentView('product-editor'); }} 
+              profile={profile}
+            />
+          ) : (
+            <CoolieItems />
+          )
         )}
         {currentView === 'product-editor' && (
           <PorulThoguppu 
@@ -1064,12 +1080,16 @@ function Seyali() {
 
 
         {currentView === 'receipts' && (
-          <Raseedhu 
-            profile={profile} 
-            onAddReceipt={() => { setEditingReceipt(null); setCurrentView('receipt-editor'); }} 
-            onEditReceipt={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-editor'); }} 
-            onViewReceipt={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-view'); }}
-          />
+          appMode === 'GST' ? (
+            <Raseedhu 
+              profile={profile} 
+              onAddReceipt={() => { setEditingReceipt(null); setCurrentView('receipt-editor'); }} 
+              onEditReceipt={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-editor'); }} 
+              onViewReceipt={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-view'); }}
+            />
+          ) : (
+            <CoolieReceiptList />
+          )
         )}
         {currentView === 'receipt-editor' && (
           <ReceiptEditor 
@@ -1095,7 +1115,11 @@ function Seyali() {
         )}
 
         {currentView === 'settings' && (
-          <Amaippugal onSaved={(p) => setProfile(p)} />
+          appMode === 'GST' ? (
+            <Amaippugal onSaved={(p) => setProfile(p)} />
+          ) : (
+            <CoolieSettings />
+          )
         )}
           </Box>
         </Box>

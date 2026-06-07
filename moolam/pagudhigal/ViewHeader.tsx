@@ -5,7 +5,7 @@ import { PencilSimple, Printer as PrintIcon, DownloadSimple, ShareNetwork, Spinn
 import { FloatingBackButton } from './FloatingBackButton';
 import { useLanguage } from '../mozhi/LanguageContext';
 
-export const ViewHeader = ({ onEdit, onPrint, onPDF, onShare, saving, sharing = false, title, onBack }) => {
+export const ViewHeader = ({ onEdit, onPrint, onPDF, onShare, saving, sharing = false, title, onBack, className }) => {
   const { t } = useLanguage();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -89,7 +89,7 @@ export const ViewHeader = ({ onEdit, onPrint, onPDF, onShare, saving, sharing = 
   }
 
   return (
-    <Box sx={{ px: { xs: 2, md: 0 }, mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2, position: 'relative' }}>
+    <Box className={className} sx={{ px: { xs: 2, md: 0 }, mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 2, position: 'relative' }}>
       {toolsPill}
       
       {/* Centered Title (Desktop Only) */}
