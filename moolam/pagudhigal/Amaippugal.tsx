@@ -1720,7 +1720,7 @@ export default function Amaippugal({ onSaved }) {
   );
 
   return (
-    <div className="s2-page-view" style={isMobile ? { position: 'relative', overflow: 'hidden', height: 'calc(100vh - 60px)', paddingTop: 16, fontFamily: '"Elvan Sans", sans-serif' } : { paddingTop: 24, fontFamily: '"Elvan Sans", sans-serif' }}>
+    <div className="s2-page-view" style={isMobile ? { position: 'relative', overflow: 'hidden', height: 'calc(100vh - 60px)', paddingTop: 16, fontFamily: '"Elvan Sans", sans-serif' } : { paddingTop: 0, fontFamily: '"Elvan Sans", sans-serif' }}>
       {isMobile ? (
           <AnimatePresence mode="popLayout" custom={direction} initial={false}>
               {currentView === 'hub' ? (

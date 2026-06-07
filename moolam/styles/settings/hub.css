@@ -6,26 +6,11 @@
 .s2-page-view {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 24px;
     font-family: 'ElvanSans', system-ui, -apple-system, sans-serif;
 }
 
 /* ── Two-Column Grid (desktop) ── */
 @media (min-width: 769px) {
-
-    /* Full bleed settings, no parent padding */
-    #main-viewport:has(.s2-page-view) {
-        padding: 0 !important;
-        overflow: hidden !important;
-    }
-
-    .s2-page-view {
-        height: 100vh;
-        overflow: hidden;
-        /* Standard Match for Home padding */
-        box-sizing: border-box;
-    }
-
     .s2-content-grid {
         display: grid;
         grid-template-columns: 360px 1fr;
