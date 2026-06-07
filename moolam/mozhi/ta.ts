@@ -473,7 +473,7 @@ export const ta = {
   againstInvoiceLabel: 'எந்தப் பட்டியலுக்கு',
   againstInvoicePlaceholder: 'எ.கா. INV/2025-26/0001',
   noteOptionalLabel: 'குறிப்பு (விரும்பினால்)',
-  saveReceiptBtn: 'ரசீதைச் சேமி',
+  saveReceiptBtn: 'சேமி',
   searchReceipts: 'பற்றுச்சீட்டுகளைத் தேட...',
   paymentReceiptsTableTitle: 'கட்டணப் பற்றுச்சீட்டுகள்',
   noReceiptsYet: 'பற்றுச்சீட்டுகள் இல்லை',
