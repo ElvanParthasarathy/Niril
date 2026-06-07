@@ -226,12 +226,12 @@ export const ta = {
   digits5: '5 இலக்கங்கள் (00001)',
   digits6: '6 இலக்கங்கள் (000001)',
   saving: 'சேமிக்கப்படுகிறது...',
-  saveNumberFormat: 'எண் வடிவத்தை சேமி',
+  saveNumberFormat: 'சேமி',
   uploadLogo: 'சின்னத்தை பதிவேற்று',
   logoHint: 'PNG அல்லது JPG, (அதிகபட்சம் 500KB)',
   uploadSignature: 'கையொப்பத்தை பதிவேற்று',
   sigHint: 'PNG, JPG (அதிகபட்சம் 500KB)',
-  saveProfile: 'சுயவிவரத்தை சேமி',
+  saveProfile: 'சேமி',
   
   termsTemplatesTitle: 'விதிமுறைகள் & வரையறைகள் வார்ப்புருக்கள்',
   newTemplate: 'புதிய வார்ப்புரு',
@@ -240,12 +240,12 @@ export const ta = {
   templateName: 'வார்ப்புரு பெயர்',
   templateContent: 'உள்ளடக்கம் (உங்கள் விதிமுறைகளை இங்கே ஒட்டவும்)',
 
-  saveTemplate: 'வார்ப்புருவை சேமி',
+  saveTemplate: 'சேமி',
   noTemplates: 'வார்ப்புருக்கள் இல்லை',
 
   businessProfilesTitle: 'வணிக சுயவிவரங்கள்',
   addNewProfile: 'புதிய சுயவிவரம் சேர்',
-  saveAsProfile: 'சுயவிவரமாக சேமி',
+  saveAsProfile: 'சேமி',
   businessProfilesDesc1: 'பல வணிக சுயவிவரங்களைச் சேமித்து, அவற்றை உடனடியாக மாற்றிக் கொள்ளலாம்.',
   businessProfilesDesc2: 'சுயவிவரங்கள் இல்லை',
 

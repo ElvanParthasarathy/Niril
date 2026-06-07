@@ -262,12 +262,12 @@ export const en: Record<TranslationKey, string> = {
   digits5: '5 digits (00001)',
   digits6: '6 digits (000001)',
   saving: 'Saving...',
-  saveNumberFormat: 'Save Number Format',
+  saveNumberFormat: 'Save',
   uploadLogo: 'Upload Logo',
   logoHint: 'PNG or JPG, square or wide (max 500KB)',
   uploadSignature: 'Upload Signature',
   sigHint: 'PNG, JPG (max 500KB)',
-  saveProfile: 'Save Profile',
+  saveProfile: 'Save',
   
   termsTemplatesTitle: 'Terms & Conditions Templates',
   newTemplate: 'New Template',
@@ -276,12 +276,12 @@ export const en: Record<TranslationKey, string> = {
   templateName: 'Template Name',
   templateContent: 'Content (paste your terms here)',
 
-  saveTemplate: 'Save Template',
+  saveTemplate: 'Save',
   noTemplates: 'No templates yet.',
 
   businessProfilesTitle: 'Business Profiles',
   addNewProfile: 'Add New Profile',
-  saveAsProfile: 'Save as Profile',
+  saveAsProfile: 'Save',
   businessProfilesDesc1: 'Switch instantly between saved business profiles.',
   businessProfilesDesc2: 'No saved profiles.',
 
@@ -687,7 +687,7 @@ export const en: Record<TranslationKey, string> = {
   failedToDelete: "Failed To Delete",
   editClientBtn: "Edit Client",
   deleteClientBtn: "Delete Client",
-  saveAsClientBtn: "Save As Client",
+  saveAsClientBtn: "Save",
   selectLabel: "Select",
   sezUnitTitle: "Sez Unit",
   addProductBtn: "Add Product",
