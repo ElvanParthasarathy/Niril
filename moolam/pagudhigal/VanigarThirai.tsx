@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { X } from '@phosphor-icons/react';
 import { useState, useEffect } from 'react';
-import { getCountryConfig, getStatesForCountry, getBilingualStateName, getBilingualCountryName, validateTaxId, detectCountryFromBrowser, getCountriesForRegion } from '../Payanpadu';
+import { getCountryConfig, getStatesForCountry, getBilingualStateName, getBilingualCountryName, validateTaxId, detectCountryFromBrowser, COUNTRIES } from '../Payanpadu';
 import { useLanguage } from '../mozhi/LanguageContext';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Button, IconButton, Grid, Typography, useMediaQuery, useTheme, Divider } from '@mui/material';
 
@@ -145,7 +145,7 @@ export default function VanigarThirai({ show, onClose, onSave, client, isEditing
           )}
 
           {(() => {
-            const visible = getCountriesForRegion();
+            const visible = COUNTRIES;
             const isCustomCountry = form.country === 'Other' || (form.country && !visible.some(c => c.name === form.country));
             return (
               <>

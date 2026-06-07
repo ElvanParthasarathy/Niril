@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getCountryConfig, getStatesForCountry, getBilingualStateName, getBilingualCountryName, validateTaxId, detectCountryFromBrowser, getCountriesForRegion } from '../Payanpadu';
+import { getCountryConfig, getStatesForCountry, getBilingualStateName, getBilingualCountryName, validateTaxId, detectCountryFromBrowser, COUNTRIES } from '../Payanpadu';
 import { useLanguage } from '../mozhi/LanguageContext';
 import { TextField, Box, Autocomplete } from '@mui/material';
 import { saveClient } from '../Avanam';
@@ -51,7 +51,7 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
   const formCountry = form.country || fallbackCountry;
   const cc = getCountryConfig(formCountry);
   const stateOptions = getStatesForCountry(formCountry);
-  const visibleCountries = getCountriesForRegion();
+  const visibleCountries = COUNTRIES;
   const isCustomCountry = formCountry === 'Other' || (formCountry && !visibleCountries.some(c => c.name === formCountry));
 
   const handleTaxIdBlur = () => {
