@@ -20,7 +20,6 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
 
   const [bills, setBills] = useState([]);
   const [stats, setStats] = useState({ byCurrency: {}, count: 0 });
-  const [lowStockProducts, setLowStockProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadBills = async () => {
@@ -46,9 +45,6 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
 
   useEffect(() => {
     loadBills();
-    getAllProducts().then(prods => {
-      setLowStockProducts(prods.filter(p => (p.stock ?? 0) <= 5));
-    }).catch(() => {});
   }, []);
 
   const handleView = (bill) => {
@@ -177,37 +173,7 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
 
       </Box>
 
-      {/* Low Stock Alerts */}
-      {lowStockProducts.length > 0 && (
-        <Paper elevation={0} sx={{ p: 2, mb: 4, borderRadius: '24px', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)' }}>
-          <Stack direction="row" alignItems="center" spacing={1} mb={2}>
-            <Package size={20} weight="regular" color={isDark ? "#fff" : "#000"} />
-            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-              Low Stock Alert ({lowStockProducts.length} item{lowStockProducts.length > 1 ? 's' : ''})
-            </Typography>
-          </Stack>
-          <Stack direction="row" flexWrap="wrap" gap={1}>
-            {lowStockProducts.map(p => {
-              const isOut = (p.stock ?? 0) <= 0;
-              return (
-                <Chip 
-                  key={p.id}
-                  label={
-                    <Box component="span">
-                      <Box component="strong" mr={0.5}>{p.name}</Box>
-                      {p.hsn && <Box component="span" sx={{ opacity: 0.7, mr: 0.5 }}>({p.hsn})</Box>}
-                      <Box component="span" fontWeight={700}>{isOut ? 'Out of Stock' : `Stock: ${p.stock}`}</Box>
-                    </Box>
-                  }
-                  variant="outlined"
-                  size="small"
-                  sx={{ borderColor: 'divider', color: 'text.primary', borderRadius: '999px', bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#fff' }}
-                />
-              );
-            })}
-          </Stack>
-        </Paper>
-      )}
+
 
       {/* Recent Activity Area */}
       <Paper elevation={0} sx={{ borderRadius: '24px', overflow: 'hidden', bgcolor: 'transparent' }}>

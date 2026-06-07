@@ -961,8 +961,19 @@ export const ta = {
   hc_exchangeRate: "\u0baa\u0bb0\u0bbf\u0bae\u0bbe\u0bb1\u0bcd\u0bb1 \u0bb5\u0bbf\u0b95\u0bbf\u0ba4\u0bae\u0bcd",
   hc_discardChanges: "மாற்றங்களை நிராகரி",
   hc_discardWarning: "நீங்கள் சேமிக்காத மாற்றங்களை உறுதியாக நிராகரிக்க வேண்டுமா?",
-  hc_cancel: "ரத்து செய்",
-  hc_discard: "நிராகரி"
+  hc_cancel: "கைவிடு",
+  hc_discard: "நிராகரி",
+  receiptDetails: "ரசீது விவரங்கள்",
+  paymentDetails: "கட்டண விவரங்கள்",
+  productDetails: "பொருள் விவரங்கள்",
+  pricingAndTax: "விலை மற்றும் வரி",
+  clientDetails: "வணிகர் விவரங்கள்",
+  addressDetails: "முகவரி விவரங்கள்",
+  contactAndTaxDetails: "தொடர்பு மற்றும் வரி விவரங்கள்",
+  hc_addNewProduct: "புதிய பொருளைச் சேர்",
+  hc_addNewClient: "புதிய வணிகரைச் சேர்",
+  deleteInvoiceConfirmMsg: "இந்தப் பட்டியலை நீக்க வேண்டுமா?",
+  notesAndTerms: "குறிப்புகள் / வரையறைகள்",
 };
 
 export type TranslationKey = keyof typeof ta;

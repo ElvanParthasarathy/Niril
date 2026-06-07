@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { getCountryConfig, getStatesForCountry, getBilingualStateName, getBilingualCountryName, validateTaxId, detectCountryFromBrowser, COUNTRIES } from '../Payanpadu';
+import { getCountryConfig, getStatesForCountry, getBilingualStateName, getBilingualCountryName, validateTaxId, detectCountryFromBrowser, COUNTRIES, doesStateMatchSearch, doesCountryMatchSearch } from '../Payanpadu';
 import { useLanguage } from '../mozhi/LanguageContext';
-import { TextField, Box, Autocomplete } from '@mui/material';
+import { TextField, Box, Autocomplete, Typography } from '@mui/material';
 import { saveClient } from '../Avanam';
 import { thagaval } from './Thagaval';
 import ElvanEditorLayout from './ElvanEditorLayout';
 import ElvanBilingualField from './ElvanBilingualField';
+import { useDraftAndUnsaved } from '../hooks/useDraftAndUnsaved';
 
 export default function VanigarThoguppu({ onBack, onSaved, client, profileSettings, defaultCountry }) {
   const { t } = useLanguage();
@@ -24,7 +25,7 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
   useEffect(() => {
     if (client) {
       setForm({ ...client });
-    } else {
+    } else if (!localStorage.getItem('niril_draft_client')) {
       setForm({ country: fallbackCountry, isSEZ: false });
     }
     setTaxIdWarning('');
@@ -59,6 +60,19 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
     setTaxIdWarning(result.ok ? '' : result.message);
   };
 
+  const getIsBlank = (f: any) => {
+    return !f[`name_${primaryLang}`] && !f[`name_${secondaryLang}`] && !f.gstin && !f.email && !f.tholaipesi && !f.mugavari;
+  };
+
+  const { hasUnsavedChanges, clearDraft } = useDraftAndUnsaved(
+    'niril_draft_client',
+    client || { country: fallbackCountry, isSEZ: false },
+    form,
+    setForm,
+    isEditing,
+    getIsBlank
+  );
+
   const handleSave = async () => {
     const primaryName = getField('name', primaryLang);
     if (!primaryName.trim()) { thagaval('Client name is required', 'warning'); return; }
@@ -74,6 +88,7 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
       };
       
       const savedClient = await saveClient(data);
+      clearDraft();
       thagaval(isEditing ? 'Client updated' : 'Client added', 'success');
       onSaved(savedClient);
     } catch {
@@ -87,22 +102,43 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
       onBack={onBack}
       onSave={handleSave}
       saveButtonText={(isEditing ? t('updateClientModalBtn') : t('saveClientModalBtn')) as string}
+      hasUnsavedChanges={hasUnsavedChanges}
+      onDiscard={() => {
+        clearDraft();
+        onBack();
+      }}
     >
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3 }}>
-        <ElvanBilingualField
-          label={t('clientBusinessName') as string}
-          primaryLang={primaryLang}
-          secondaryLang={secondaryLang}
-          isBilingual={isBilingual}
-          primaryValue={getField('name', primaryLang)}
-          onPrimaryChange={e => updateField('name', primaryLang, e.target.value)}
-          secondaryValue={getField('name', secondaryLang)}
-          onSecondaryChange={e => updateField('name', secondaryLang, e.target.value)}
-          placeholder={t('clientNamePlaceholder') as string}
-        />
-      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, mt: 2 }}>
+        <Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, ml: 1 }}>
+            <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', mr: 1.5, fontSize: '0.8rem', fontWeight: 'bold' }}>1</Box>
+            <Typography variant="subtitle2" color="primary.main" sx={{ fontWeight: 800, letterSpacing: '0.5px' }}>
+              {t('clientDetails') || 'Client Details'}
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3 }}>
+            <ElvanBilingualField
+              label={t('clientBusinessName') as string}
+              primaryLang={primaryLang}
+              secondaryLang={secondaryLang}
+              isBilingual={isBilingual}
+              primaryValue={getField('name', primaryLang)}
+              onPrimaryChange={e => updateField('name', primaryLang, e.target.value)}
+              secondaryValue={getField('name', secondaryLang)}
+              onSecondaryChange={e => updateField('name', secondaryLang, e.target.value)}
+              placeholder={t('clientNamePlaceholder') as string}
+            />
+          </Box>
+        </Box>
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3, mt: 8 }}>
+        <Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, ml: 1 }}>
+            <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', mr: 1.5, fontSize: '0.8rem', fontWeight: 'bold' }}>2</Box>
+            <Typography variant="subtitle2" color="primary.main" sx={{ fontWeight: 800, letterSpacing: '0.5px' }}>
+              {t('addressDetails') || 'Address Details'}
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3 }}>
         <ElvanBilingualField
           label={t('billingAddress') as string}
           primaryLang={primaryLang}
@@ -143,11 +179,12 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
           {stateOptions.length > 0 ? (
             <Autocomplete
               options={stateOptions}
+              filterOptions={(options, { inputValue }) => options.filter((option) => doesStateMatchSearch(option, inputValue))}
               getOptionLabel={(s) => getBilingualStateName(s, { ...profileSettings, returnOnlyPrimary: true }) || s}
               value={getField('maanilam', primaryLang) || null}
               onChange={(e, newValue) => updateField('maanilam', primaryLang, newValue || '')}
               renderInput={(params) => (
-                <TextField {...params} fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`} InputLabelProps={{ shrink: true }} placeholder={`${t('selectLabel')} ${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}`} />
+                <TextField {...params} fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`} InputLabelProps={{ shrink: true }} placeholder={`${t('selectLabel')} ${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}`} autoComplete="new-password" />
               )}
             />
           ) : (
@@ -162,6 +199,7 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
         <Box sx={!isBilingual ? { gridColumn: { sm: '1 / -1' } } : undefined}>
           <Autocomplete
             options={Array.from(new Set([...visibleCountries.map(c => c.name), 'Other']))}
+            filterOptions={(options, { inputValue }) => options.filter((option) => option === 'Other' ? 'Other (Custom)'.toLowerCase().includes(inputValue.toLowerCase()) : doesCountryMatchSearch(option, inputValue))}
             getOptionLabel={(c) => c === 'Other' ? 'Other (Custom)' : (getBilingualCountryName(c, { ...profileSettings, returnOnlyPrimary: true }) || c)}
             value={isCustomCountry ? 'Other' : (formCountry || null)}
             onChange={(e, newValue) => {
@@ -181,7 +219,7 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
               }
             }}
             renderInput={(params) => (
-              <TextField {...params} fullWidth size="medium" sx={{ mb: isCustomCountry ? 2 : 0 }} label={`${t('country')}${primaryLangSuffix}`} InputLabelProps={{ shrink: true }} />
+              <TextField {...params} fullWidth size="medium" sx={{ mb: isCustomCountry ? 2 : 0 }} label={`${t('country')}${primaryLangSuffix}`} InputLabelProps={{ shrink: true }} autoComplete="new-password" />
             )}
           />
           {isCustomCountry && (
@@ -207,11 +245,19 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
           </Box>
         )}
 
-        <TextField fullWidth size="medium" label={t(cc.postalLabel as any, { defaultValue: cc.postalLabel }) as string} slotProps={{ inputLabel: { shrink: true } }}
-          value={form.pin || ''} onChange={e => updateField('pin', null, e.target.value)} placeholder={cc.postalLabel} />
-      </Box>
+          <TextField fullWidth size="medium" label={t(cc.postalLabel as any, { defaultValue: cc.postalLabel }) as string} slotProps={{ inputLabel: { shrink: true } }}
+            value={form.pin || ''} onChange={e => updateField('pin', null, e.target.value)} placeholder={cc.postalLabel} />
+          </Box>
+        </Box>
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3, mt: 8 }}>
+        <Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, ml: 1 }}>
+            <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', mr: 1.5, fontSize: '0.8rem', fontWeight: 'bold' }}>3</Box>
+            <Typography variant="subtitle2" color="primary.main" sx={{ fontWeight: 800, letterSpacing: '0.5px' }}>
+              {t('contactAndTaxDetails') || 'Contact & Tax Details'}
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3 }}>
         <TextField fullWidth size="medium" label={t(cc.taxIdLabel as any) || cc.taxIdLabel}
           error={!!taxIdWarning} helperText={taxIdWarning || ' '}
           value={form.gstin || ''} onChange={e => { updateField('gstin', null, e.target.value.toUpperCase()); if (taxIdWarning) setTaxIdWarning(''); }}
@@ -220,8 +266,10 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
         <TextField fullWidth size="medium" label={t('emailLabel') as string} slotProps={{ inputLabel: { shrink: true } }} type="email"
           value={form.email || ''} onChange={e => updateField('email', null, e.target.value)} placeholder={t('emailPlaceholder') as string} />
         
-        <TextField fullWidth size="medium" label={t('phoneLabel') as string} slotProps={{ inputLabel: { shrink: true } }} type="tel"
-          value={form.tholaipesi || ''} onChange={e => updateField('tholaipesi', null, e.target.value)} placeholder={t('phonePlaceholder') as string} />
+          <TextField fullWidth size="medium" label={t('phoneLabel') as string} slotProps={{ inputLabel: { shrink: true } }} type="tel"
+            value={form.tholaipesi || ''} onChange={e => updateField('tholaipesi', null, e.target.value)} placeholder={t('phonePlaceholder') as string} />
+          </Box>
+        </Box>
       </Box>
     </ElvanEditorLayout>
   );

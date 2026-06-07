@@ -102,20 +102,12 @@ const PattiyalMunnotam = React.forwardRef(({ profile, client, details, items = [
 
   const renderState = (val, customEn) => {
     if (!val) return '';
-    if (profile?.enableBilingual !== false && customEn && customEn !== val) {
-      const primary = getBilingualStateName(val, { ...profile, returnOnlyPrimary: true });
-      return `${primary} / ${customEn}`;
-    }
-    return getBilingualStateName(val, profile);
+    return getBilingualStateName(val, { ...profile, fallbackEnglishName: customEn });
   };
 
   const renderCountry = (val, customEn) => {
     if (!val) return '';
-    if (profile?.enableBilingual !== false && customEn && customEn !== val) {
-      const primary = getBilingualCountryName(val, { ...profile, returnOnlyPrimary: true });
-      return `${primary} / ${customEn}`;
-    }
-    return getBilingualCountryName(val, profile);
+    return getBilingualCountryName(val, { ...profile, fallbackEnglishName: customEn });
   };
 
   const fmt = (amount) => {

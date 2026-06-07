@@ -57,7 +57,7 @@ export default function InvoiceMetadata({
           </LocalizationProvider>
         </Grid>
         {settings.showPlaceOfSupply && (() => {
-          const posOpts = getStatesForCountry(profile?.country) || [];
+          const posOpts = getStatesForCountry(profile?.country || 'India') || [];
           const defaultClientState = client?.maanilam_Tamil || client?.maanilam_English || client?.maanilam;
           const currentValue = metadata.placeOfSupply || defaultClientState;
 
@@ -81,6 +81,7 @@ export default function InvoiceMetadata({
                         label={`${t('placeOfSupply')}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`}
                         placeholder={`Defaults to ${defaultClientState || 'Client State'}`}
                         InputLabelProps={{ shrink: true }}
+                        autoComplete="new-password"
                       />
                     )}
                   />

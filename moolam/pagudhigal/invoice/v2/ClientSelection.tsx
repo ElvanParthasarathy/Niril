@@ -161,17 +161,47 @@ export default function ClientSelection({
               </Box>
               {selectedClientId && (getClientField('mugavari', primaryLang) || getClientField('oor', primaryLang) || client.maanilam || client.gstin || getClientField('name', secondaryLang)) && (
                 <ElvanCard sx={{ mt: 2 }} boxSx={{ p: 2 }}>
-                  <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 600, display: 'block', mb: 0.5 }}>{t('hc_savedClientDetails')}</Typography>
-                  {getClientField('mugavari', primaryLang) && <Typography variant="body2">{getClientField('mugavari', primaryLang)}{profile?.enableBilingual !== false && getClientField('mugavari', secondaryLang) ? ` / ${getClientField('mugavari', secondaryLang)}` : ''}</Typography>}
-                  {(getClientField('oor', primaryLang) || getClientField('maavattam', primaryLang) || client.pin) && <Typography variant="body2">{[
-                    getClientField('oor', primaryLang) ? getClientField('oor', primaryLang) + (profile?.enableBilingual !== false && getClientField('oor', secondaryLang) ? ` / ${getClientField('oor', secondaryLang)}` : '') : '', 
-                    getClientField('maavattam', primaryLang) ? getClientField('maavattam', primaryLang) + (profile?.enableBilingual !== false && getClientField('maavattam', secondaryLang) ? ` / ${getClientField('maavattam', secondaryLang)}` : '') : '', 
-                    client.pin
-                  ].filter(Boolean).join(' - ')}</Typography>}
-                  {client.maanilam && <Typography variant="body2">{getBilingualStateName(client.maanilam, profile)}</Typography>}
-                  {client.country && <Typography variant="body2">{getBilingualCountryName(client.country, profile)}</Typography>}
-                  {getClientField('name', secondaryLang) && profile?.enableBilingual !== false && <Typography variant="body2" sx={{ mt: 0.5 }}>Name ({profile?.secondaryDataLanguage || 'English'}): <strong>{getClientField('name', secondaryLang)}</strong></Typography>}
-                  {client.gstin && <Typography variant="body2" sx={{ mt: 0.5 }}>GSTIN: <strong>{client.gstin}</strong></Typography>}
+                  <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>{t('hc_savedClientDetails')}</Typography>
+
+                  {/* 1. Business Name English */}
+                  {getClientField('name', secondaryLang) && profile?.enableBilingual !== false && (
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>
+                      {getClientField('name', secondaryLang)}
+                    </Typography>
+                  )}
+
+                  {/* 2. Primary Language Address */}
+                  <Box sx={{ mb: profile?.enableBilingual !== false ? 1 : 0 }}>
+                    {getClientField('mugavari', primaryLang) && <Typography variant="body2">{getClientField('mugavari', primaryLang)}</Typography>}
+                    {(getClientField('oor', primaryLang) || getClientField('maavattam', primaryLang) || client.pin) && (
+                      <Typography variant="body2">
+                        {[getClientField('oor', primaryLang), getClientField('maavattam', primaryLang), client.pin].filter(Boolean).join(' - ')}
+                      </Typography>
+                    )}
+                    {client.maanilam && <Typography variant="body2">{getBilingualStateName(client.maanilam, { ...profile, returnOnlyPrimary: true })}</Typography>}
+                    {client.country && <Typography variant="body2">{getBilingualCountryName(client.country, { ...profile, returnOnlyPrimary: true })}</Typography>}
+                  </Box>
+
+                  {/* 3. Secondary Language Address (Subtle) */}
+                  {profile?.enableBilingual !== false && (getClientField('mugavari', secondaryLang) || getClientField('oor', secondaryLang) || getClientField('maavattam', secondaryLang)) && (
+                    <Box sx={{ mb: 1, color: 'text.secondary' }}>
+                      {getClientField('mugavari', secondaryLang) && <Typography variant="body2">{getClientField('mugavari', secondaryLang)}</Typography>}
+                      {(getClientField('oor', secondaryLang) || getClientField('maavattam', secondaryLang) || client.pin) && (
+                        <Typography variant="body2">
+                          {[getClientField('oor', secondaryLang), getClientField('maavattam', secondaryLang), client.pin].filter(Boolean).join(' - ')}
+                        </Typography>
+                      )}
+                      {client.maanilam && <Typography variant="body2">{getBilingualStateName(client.maanilam, { ...profile, returnOnlySecondary: true })}</Typography>}
+                      {client.country && <Typography variant="body2">{getBilingualCountryName(client.country, { ...profile, returnOnlySecondary: true })}</Typography>}
+                    </Box>
+                  )}
+
+                  {/* 4. GSTIN */}
+                  {client.gstin && (
+                    <Typography variant="body2" sx={{ mt: 0.5 }}>
+                      GSTIN: <strong>{client.gstin}</strong>
+                    </Typography>
+                  )}
                 </ElvanCard>
               )}
             </Box>

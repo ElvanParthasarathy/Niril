@@ -511,8 +511,8 @@ export default function VariArikkaigal({ profile }) {
   const [purchases, setPurchases] = useState([]);
   const [filterMode, setFilterMode] = useState('month');
   const [fyFilter, setFyFilter] = useState('');
-  const [monthFilter, setMonthFilter] = useState('');
-  const [yearFilter, setYearFilter] = useState('');
+  const [monthFilter, setMonthFilter] = useState<number | ''>('');
+  const [yearFilter, setYearFilter] = useState<number | ''>('');
   const [quarterFilter, setQuarterFilter] = useState('Q1');
   const [activeTab, setActiveTab] = useState('summary');
   const [search, setSearch] = useState('');
@@ -566,8 +566,8 @@ export default function VariArikkaigal({ profile }) {
     const now = new Date();
     const fy = fyOptions[0];
     if (fy) setFyFilter(fy.value);
-    setYearFilter(String(now.getFullYear()));
-    setMonthFilter(String(now.getMonth()));
+    setYearFilter(now.getFullYear());
+    setMonthFilter(now.getMonth());
     // Auto-detect current quarter
     const m = now.getMonth();
     const q = QUARTERS.find(q => q.months.includes(m));
@@ -1230,7 +1230,7 @@ export default function VariArikkaigal({ profile }) {
                   </TextField>
                 </Grid>
                 <Grid size={12}>
-                  <TextField select fullWidth label={t('yearLabel') as string} value={yearFilter} onChange={e => setYearFilter(e.target.value)} sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF' } }}>
+                  <TextField select fullWidth label={t('yearLabel') as string} value={yearFilter} onChange={e => setYearFilter(Number(e.target.value))} sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF' } }}>
                     {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
                   </TextField>
                 </Grid>
@@ -1238,12 +1238,12 @@ export default function VariArikkaigal({ profile }) {
             ) : (
               <>
                 <Grid size={12}>
-                  <TextField select fullWidth label={t('monthLabel') as string} value={monthFilter} onChange={e => setMonthFilter(e.target.value)} sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF' } }}>
+                  <TextField select fullWidth label={t('monthLabel') as string} value={monthFilter} onChange={e => setMonthFilter(Number(e.target.value))} sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF' } }}>
                     {(MONTHS as string[]).map((m, i) => <MenuItem key={i} value={i}>{m}</MenuItem>)}
                   </TextField>
                 </Grid>
                 <Grid size={12}>
-                  <TextField select fullWidth label={t('yearLabel') as string} value={yearFilter} onChange={e => setYearFilter(e.target.value)} sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF' } }}>
+                  <TextField select fullWidth label={t('yearLabel') as string} value={yearFilter} onChange={e => setYearFilter(Number(e.target.value))} sx={{ '& .MuiFilledInput-root': { backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF' } }}>
                     {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
                   </TextField>
                 </Grid>
@@ -1272,16 +1272,16 @@ export default function VariArikkaigal({ profile }) {
             <TextField select label="Quarter" value={quarterFilter} onChange={e => setQuarterFilter(e.target.value)} sx={{ minWidth: 200 }}>
               {QUARTERS.map(q => <MenuItem key={q.id} value={q.id}>{q.label}</MenuItem>)}
             </TextField>
-            <TextField select label={t('yearLabel') as string} value={yearFilter} onChange={e => setYearFilter(e.target.value)} sx={{ minWidth: 200 }}>
+            <TextField select label={t('yearLabel') as string} value={yearFilter} onChange={e => setYearFilter(Number(e.target.value))} sx={{ minWidth: 200 }}>
               {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
             </TextField>
           </Box>
         ) : (
           <Box sx={{ display: 'flex', gap: 2 }}>
-            <TextField select label={t('monthLabel') as string} value={monthFilter} onChange={e => setMonthFilter(e.target.value)} sx={{ minWidth: 200 }}>
+            <TextField select label={t('monthLabel') as string} value={monthFilter} onChange={e => setMonthFilter(Number(e.target.value))} sx={{ minWidth: 200 }}>
               {(MONTHS as string[]).map((m, i) => <MenuItem key={i} value={i}>{m}</MenuItem>)}
             </TextField>
-            <TextField select label={t('yearLabel') as string} value={yearFilter} onChange={e => setYearFilter(e.target.value)} sx={{ minWidth: 200 }}>
+            <TextField select label={t('yearLabel') as string} value={yearFilter} onChange={e => setYearFilter(Number(e.target.value))} sx={{ minWidth: 200 }}>
               {yearOptions.map(y => <MenuItem key={y} value={y}>{y}</MenuItem>)}
             </TextField>
           </Box>

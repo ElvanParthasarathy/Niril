@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, InputAdornment } from '@mui/material';
+import { Box, TextField, InputAdornment, Typography } from '@mui/material';
 import { saveProduct } from '../Avanam';
 import { getCountryConfig } from '../Payanpadu';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
 import ElvanEditorLayout from './ElvanEditorLayout';
 import ElvanBilingualField from './ElvanBilingualField';
+import { useDraftAndUnsaved } from '../hooks/useDraftAndUnsaved';
 
 export default function PorulThoguppu({ onBack, onSaved, product, profileSettings, defaultCountry }) {
   const { t } = useLanguage();
@@ -23,7 +24,7 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
   useEffect(() => {
     if (product) {
       setForm({ ...product });
-    } else {
+    } else if (!localStorage.getItem('niril_draft_product')) {
       setForm({ hsn: '50072010', taxPercent: '5', unit: 'Nos', rate: '', stock: '' });
     }
   }, [product]);
@@ -45,6 +46,19 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
     return form[`${field}_${lang}`] || '';
   };
 
+  const getIsBlank = (f: any) => {
+    return !f[`name_${primaryLang}`] && !f[`name_${secondaryLang}`] && (!f.rate || f.rate === '');
+  };
+
+  const { hasUnsavedChanges, clearDraft } = useDraftAndUnsaved(
+    'niril_draft_product',
+    product || { hsn: '50072010', taxPercent: '5', unit: 'Nos', rate: '', stock: '' },
+    form,
+    setForm,
+    isEditing,
+    getIsBlank
+  );
+
   const handleSave = async () => {
     const primaryName = getField('name', primaryLang);
     if (!primaryName.trim()) {
@@ -62,6 +76,7 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
         stock: form.stock ? parseFloat(form.stock as any) : 0,
       };
       const savedProduct = await saveProduct(productData);
+      clearDraft();
       thagaval(isEditing ? (t('productUpdatedToast') || 'Updated!') : (t('productAddedToast') || 'Added!'), 'success');
       onSaved(savedProduct);
     } catch {
@@ -75,6 +90,11 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
       onBack={onBack}
       onSave={handleSave}
       saveButtonText={(isEditing ? (t('updateClientModalBtn') || 'Save Changes') : (t('saveClientModalBtn') || 'Create Product')) as string}
+      hasUnsavedChanges={hasUnsavedChanges}
+      onDiscard={() => {
+        clearDraft();
+        onBack();
+      }}
     >
       <datalist id="hsn-list"><option value="50072010" /></datalist>
       <datalist id="gst-list">
@@ -85,22 +105,38 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
         <option value="28" />
       </datalist>
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3 }}>
-        <ElvanBilingualField
-          label={(t('productNameLabel') || 'Name') as string}
-          primaryLang={primaryLang}
-          secondaryLang={secondaryLang}
-          isBilingual={isBilingual}
-          primaryValue={getField('name', primaryLang)}
-          onPrimaryChange={e => updateField('name', primaryLang, e.target.value)}
-          secondaryValue={getField('name', secondaryLang)}
-          onSecondaryChange={e => updateField('name', secondaryLang, e.target.value)}
-          required
-          placeholder={(t('productNameLabel') || 'Product Name') as string}
-        />
-      </Box>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, mt: 2 }}>
+        <Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, ml: 1 }}>
+            <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', mr: 1.5, fontSize: '0.8rem', fontWeight: 'bold' }}>1</Box>
+            <Typography variant="subtitle2" color="primary.main" sx={{ fontWeight: 800, letterSpacing: '0.5px' }}>
+              {t('productDetails') || 'Product Details'}
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3 }}>
+            <ElvanBilingualField
+              label={(t('productNameLabel') || 'Name') as string}
+              primaryLang={primaryLang}
+              secondaryLang={secondaryLang}
+              isBilingual={isBilingual}
+              primaryValue={getField('name', primaryLang)}
+              onPrimaryChange={e => updateField('name', primaryLang, e.target.value)}
+              secondaryValue={getField('name', secondaryLang)}
+              onSecondaryChange={e => updateField('name', secondaryLang, e.target.value)}
+              required
+              placeholder={(t('productNameLabel') || 'Product Name') as string}
+            />
+          </Box>
+        </Box>
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3, mt: 8 }}>
+        <Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, ml: 1 }}>
+            <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', mr: 1.5, fontSize: '0.8rem', fontWeight: 'bold' }}>2</Box>
+            <Typography variant="subtitle2" color="primary.main" sx={{ fontWeight: 800, letterSpacing: '0.5px' }}>
+              {t('pricingAndTax') || 'Pricing & Tax'}
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 3 }}>
         <TextField fullWidth size="medium" label={(t('hsnCodeLabel') || 'HSN / SAC Code') as string} 
           slotProps={{ 
             inputLabel: { shrink: true }, 
@@ -123,25 +159,27 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
         <TextField fullWidth size="medium" label={(t('rateLabel') || 'Selling Rate') as string} type="number" slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: 0 }, input: { startAdornment: <InputAdornment position="start" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 24, mt: '0 !important' }}>{getCountryConfig(profileCountry).currencySymbol || getCountryConfig(profileCountry).currency}</InputAdornment> } }}
           value={form.rate || ''} onChange={e => updateField('rate', null, e.target.value)} placeholder="0.00" />
 
-        <TextField fullWidth size="medium" label={(t('gstPercentLabel') || 'GST Rate') as string} type="number" 
-          slotProps={{ 
-            inputLabel: { shrink: true }, 
-            htmlInput: { min: 0, list: "gst-list" }, 
-            input: { 
-              endAdornment: <InputAdornment position="end" sx={{ mt: '0 !important', mr: 1.5, color: 'text.secondary' }}>%</InputAdornment>,
-              sx: { 
-                '& input::-webkit-calendar-picker-indicator': { 
-                  position: 'absolute', 
-                  right: 36, 
-                  top: '50%', 
-                  transform: 'translateY(-50%)',
-                  cursor: 'pointer',
-                  opacity: 0.6
-                } 
-              }
-            } 
-          }}
-          value={form.taxPercent || ''} onChange={e => updateField('taxPercent', null, e.target.value)} placeholder="0" />
+          <TextField fullWidth size="medium" label={(t('gstPercentLabel') || 'GST Rate') as string} type="number" 
+            slotProps={{ 
+              inputLabel: { shrink: true }, 
+              htmlInput: { min: 0, list: "gst-list" }, 
+              input: { 
+                endAdornment: <InputAdornment position="end" sx={{ mt: '0 !important', mr: 1.5, color: 'text.secondary' }}>%</InputAdornment>,
+                sx: { 
+                  '& input::-webkit-calendar-picker-indicator': { 
+                    position: 'absolute', 
+                    right: 36, 
+                    top: '50%', 
+                    transform: 'translateY(-50%)',
+                    cursor: 'pointer',
+                    opacity: 0.6
+                  } 
+                }
+              } 
+            }}
+            value={form.taxPercent || ''} onChange={e => updateField('taxPercent', null, e.target.value)} placeholder="0" />
+          </Box>
+        </Box>
       </Box>
     </ElvanEditorLayout>
   );

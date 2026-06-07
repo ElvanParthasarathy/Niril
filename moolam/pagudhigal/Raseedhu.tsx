@@ -1,4 +1,4 @@
-import { X, Receipt as PhosphorReceipt, CheckSquare, Square } from '@phosphor-icons/react';
+import { X, Receipt as PhosphorReceipt, CheckSquare, Square, Trash } from '@phosphor-icons/react';
 import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Box, Typography, Button, IconButton, Tooltip, Stack, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
@@ -14,6 +14,7 @@ export default function Raseedhu({ profile: parentProfile, onAddReceipt, onEditR
   const [receipts, setReceipts] = useState<any[]>([]);
   const [bills, setBills] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [receiptToDelete, setReceiptToDelete] = useState<any>(null);
   const [localProfile, setLocalProfile] = useState<any>({});
   const profile = parentProfile || localProfile;
   const theme = useTheme();
@@ -160,6 +161,18 @@ export default function Raseedhu({ profile: parentProfile, onAddReceipt, onEditR
           </Box>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', gap: 0.5, mt: -0.5, mr: -0.5 }}>
+              {isSelectionMode && (
+                <IconButton 
+                  size="small" 
+                  color="error"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setReceiptToDelete(rcp);
+                  }}
+                >
+                  <Trash size={20} />
+                </IconButton>
+              )}
             </Box>
             <Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: 800 }}>
               {formatCurrency(rcp.amount, profileCurrency)}
@@ -185,11 +198,37 @@ export default function Raseedhu({ profile: parentProfile, onAddReceipt, onEditR
         emptyText={receipts.length === 0 ? (t('noReceiptsYet') || 'No receipts yet') : (t('noReceiptsMatch') || 'No receipts match')}
         onDeleteSelected={handleBulkDelete}
         onDuplicateSelected={handleBulkDuplicate}
-        deleteConfirmTitle={t('deleteProductsTitle') || 'Delete Receipts?'}
-        deleteConfirmMessage={() => t('deleteProductsMessage') || 'Are you sure you want to delete the selected receipt(s)? This action cannot be undone.'}
+        deleteConfirmTitle={t('delete') || 'Delete'}
+        deleteConfirmMessage={() => t('deleteReceiptConfirmMsg') || 'Are you sure you want to delete the selected receipt(s)?'}
         duplicateConfirmTitle={t('duplicateProductsTitle') || 'Duplicate Receipts?'}
         duplicateConfirmMessage={() => t('duplicateProductsMessage') || 'Are you sure you want to create copies of the selected receipt(s)?'}
       />
+
+      <Dialog open={!!receiptToDelete} onClose={() => setReceiptToDelete(null)}>
+        <DialogTitle>{t('delete') || 'Delete'}</DialogTitle>
+        <DialogContent>
+          <Typography>{t('deleteReceiptConfirmMsg') || 'Are you sure you want to delete this receipt?'}</Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 1 }}>
+          <Button onClick={() => setReceiptToDelete(null)} color="inherit">
+            {t('hc_cancel') || 'Cancel'}
+          </Button>
+          <Button 
+            onClick={() => {
+              if (receiptToDelete) {
+                handleBulkDelete([receiptToDelete.id]);
+                setReceiptToDelete(null);
+              }
+            }} 
+            color="error" 
+            variant="contained"
+            disableElevation
+            sx={{ borderRadius: 8 }}
+          >
+            {t('delete') || 'Delete'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

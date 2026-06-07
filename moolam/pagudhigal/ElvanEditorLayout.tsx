@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Box, Typography, Button, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Typography, Button, useMediaQuery, useTheme, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { FloppyDisk } from '@phosphor-icons/react';
 import { FloatingBackButton } from './FloatingBackButton';
 import { useLanguage } from '../mozhi/LanguageContext';
@@ -12,6 +12,8 @@ export interface ElvanEditorLayoutProps {
   saveButtonText: string;
   saveButtonIcon?: React.ReactNode;
   children: React.ReactNode;
+  hasUnsavedChanges?: boolean;
+  onDiscard?: () => void;
 }
 
 export default function ElvanEditorLayout({
@@ -20,14 +22,25 @@ export default function ElvanEditorLayout({
   onSave,
   saveButtonText,
   saveButtonIcon = <FloppyDisk size={20} weight="bold" />,
-  children
+  children,
+  hasUnsavedChanges = false,
+  onDiscard
 }: ElvanEditorLayoutProps) {
   const { t } = useLanguage();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mounted, setMounted] = useState(false);
+  const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
 
   useEffect(() => { setMounted(true); }, []);
+
+  const handleBackClick = () => {
+    if (hasUnsavedChanges) {
+      setShowUnsavedDialog(true);
+    } else {
+      onBack();
+    }
+  };
 
   const isEditingTitle = title.includes(t('edit')) || title.toLowerCase().includes('edit') || title.includes('திருத்து');
   const displayTitle = isMobile && isEditingTitle ? (t('edit') || 'Edit') : title;
@@ -45,7 +58,7 @@ export default function ElvanEditorLayout({
   );
 
   const backButtonElement = (
-    <FloatingBackButton onBack={onBack} label={(t('back') || 'Back') as string} className="back-pill" />
+    <FloatingBackButton onBack={handleBackClick} label={(t('back') || 'Back') as string} className="back-pill" />
   );
 
   let renderHeader = null;
@@ -87,7 +100,7 @@ export default function ElvanEditorLayout({
         <Button 
           variant="contained" 
           disableElevation 
-          onClick={onBack} 
+          onClick={handleBackClick} 
           sx={{ height: 40, minHeight: 40, maxHeight: 40, px: 3, borderRadius: '50px', bgcolor: 'background.paper', color: 'text.primary', '&:hover': { bgcolor: 'action.hover' } }}
         >
           {t('cancelModalBtn') || 'Cancel'}
@@ -127,6 +140,54 @@ export default function ElvanEditorLayout({
           {saveButtonIcon || <FloppyDisk size={24} weight="fill" />}
         </Button>
       )}
+
+      {/* Unsaved Changes Dialog */}
+      <Dialog 
+        open={showUnsavedDialog} 
+        onClose={() => setShowUnsavedDialog(false)}
+        PaperProps={{ sx: { borderRadius: 3, p: 1 } }}
+      >
+        <DialogTitle sx={{ fontWeight: 'bold' }}>
+          {t('hc_discardChanges') || 'Discard Changes'}
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">
+            {t('hc_discardWarning') || 'Are you sure you want to discard your unsaved changes?'}
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 1 }}>
+          <Button 
+            onClick={() => setShowUnsavedDialog(false)} 
+            color="inherit" 
+            sx={{ borderRadius: '50px', px: 3, textTransform: 'none' }}
+          >
+            {t('cancelModalBtn') || 'Cancel'}
+          </Button>
+          <Button 
+            onClick={() => {
+              setShowUnsavedDialog(false);
+              if (onDiscard) onDiscard();
+              else onBack();
+            }} 
+            color="error" 
+            sx={{ borderRadius: '50px', px: 3, textTransform: 'none' }}
+          >
+            {t('hc_discard') || 'Discard'}
+          </Button>
+          <Button 
+            onClick={() => {
+              setShowUnsavedDialog(false);
+              onSave();
+            }} 
+            variant="contained" 
+            color="primary" 
+            disableElevation
+            sx={{ borderRadius: '50px', px: 3, textTransform: 'none' }}
+          >
+            {t('save') || 'Save'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

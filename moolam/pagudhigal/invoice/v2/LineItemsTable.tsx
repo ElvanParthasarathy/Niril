@@ -153,7 +153,7 @@ export default function LineItemsTable({
                 ].filter(Boolean).join(' · ') : undefined}
                 slotProps={{ 
                   inputLabel: { shrink: true },
-                  formHelperText: { sx: { margin: 0, mt: 0.5, lineHeight: 1.2 } }
+                  formHelperText: { sx: { mt: 0.5, ml: 2, lineHeight: 1.2 } }
                 }}
               />
 
@@ -310,7 +310,7 @@ export default function LineItemsTable({
           }
         }}
       >
-        Add Item
+        {t('addItemBtn') as string}
       </Button>
     </Box>
   );

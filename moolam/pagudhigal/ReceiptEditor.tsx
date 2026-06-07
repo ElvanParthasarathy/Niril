@@ -9,6 +9,7 @@ import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
 import ElvanEditorLayout from './ElvanEditorLayout';
 import ElvanBilingualField from './ElvanBilingualField';
+import { useDraftAndUnsaved } from '../hooks/useDraftAndUnsaved';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -37,6 +38,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
     againstInvoice: editingReceipt?.againstInvoice || '',
     note: editingReceipt?.note || '',
   });
+  const [initialForm, setInitialForm] = useState<any>(editingReceipt ? { ...form } : { ...form });
 
   const [bills, setBills] = useState<any[]>([]);
   const unpaidBills = bills.filter(b => b.status !== 'paid');
@@ -67,7 +69,11 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
             nextNo = `${pfx}${sep}${yr}-${ny}${sep}${padded}`;
           }
           
-          setForm(prev => ({ ...prev, receiptNo: nextNo }));
+          setForm(prev => {
+            const newForm = { ...prev, receiptNo: nextNo };
+            return newForm;
+          });
+          setInitialForm((prev: any) => ({ ...prev, receiptNo: nextNo }));
         }
       } catch (err) {
         console.error(err);
@@ -89,6 +95,19 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
     }));
   };
 
+  const getIsBlank = (f: any) => {
+    return !f[`clientName_${primaryLang}`] && !f[`clientName_${secondaryLang}`] && !f.clientAddress && !f.amount && !f.note && !f.paymentMode && !f.againstInvoice;
+  };
+
+  const { hasUnsavedChanges, clearDraft } = useDraftAndUnsaved(
+    'niril_draft_receipt',
+    initialForm,
+    form,
+    setForm,
+    !!editingReceipt,
+    getIsBlank
+  );
+
   const handleSave = async () => {
     if (!form[`clientName_${primaryLang}`]?.trim()) { thagaval(t('clientNameRequiredToast') || 'Client name is required', 'warning'); return; }
     if (!form.amount || parseFloat(form.amount) <= 0) { thagaval(t('enterValidAmountToast') || 'Enter valid amount', 'warning'); return; }
@@ -105,6 +124,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
       delete receipt[`clientName_${secondaryLang}`];
       
       await saveReceipt(receipt);
+      clearDraft();
       thagaval(t('receiptSavedToast') || 'Receipt Saved!', 'success');
       onSaved();
     } catch {
@@ -149,6 +169,11 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
       onBack={onBack}
       onSave={handleSave}
       saveButtonText={(t('saveReceiptBtn') || 'Save Receipt') as string}
+      hasUnsavedChanges={hasUnsavedChanges}
+      onDiscard={() => {
+        clearDraft();
+        onBack();
+      }}
     >
       {unpaidBills.length > 0 && !form.againstInvoice && (
         <Box sx={{ mb: 4 }}>
@@ -175,6 +200,12 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
       )}
 
       <Grid container spacing={3}>
+        <Grid size={{ xs: 12 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 0, ml: 1 }}>
+            <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>1</Box>
+            <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('receiptDetails') || 'Receipt Details'}</Typography>
+          </Box>
+        </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField 
             fullWidth size="medium" label={t('receiptNoLabel') as string} 
@@ -203,6 +234,12 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
           secondaryValue={form[`clientName_${secondaryLang}`] || ''}
           onSecondaryChange={e => updateField(`clientName_${secondaryLang}`, e.target.value)}
         />
+        <Grid size={{ xs: 12 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 0, ml: 1, mt: 1 }}>
+            <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>2</Box>
+            <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('paymentDetails') || 'Payment Details'}</Typography>
+          </Box>
+        </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField 
             fullWidth size="medium" label={t('amountLabelStar') as string} type="number"
@@ -248,12 +285,21 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
             forcePopupIcon={true}
             sx={{ width: '100%', minWidth: 200 }}
             options={bills}
+            filterOptions={(options, state) => {
+              const val = state.inputValue.toLowerCase();
+              return options.filter(o => {
+                if (typeof o === 'string') return o.toLowerCase().includes(val);
+                const invNo = o.invoiceNumber?.toLowerCase() || '';
+                const pName = (getDynamicField(o.data?.client, 'name', profile, true) || '').toLowerCase();
+                const sName = (getDynamicField(o.data?.client, 'name', profile, false) || '').toLowerCase();
+                return invNo.includes(val) || pName.includes(val) || sName.includes(val);
+              });
+            }}
             getOptionLabel={(option) => {
               if (typeof option === 'string') return option;
-              const pName = getDynamicField(option.data?.client, 'name', profile, true);
-              return pName ? `${option.invoiceNumber} - ${pName}` : option.invoiceNumber;
+              return option.invoiceNumber;
             }}
-            value={bills.find(b => b.invoiceNumber === form.againstInvoice) || form.againstInvoice}
+            value={bills.find(b => b.invoiceNumber === (form.againstInvoice || '').split(' - ')[0]) || form.againstInvoice}
             onChange={(_, newValue) => {
               if (typeof newValue === 'object' && newValue !== null) {
                 selectInvoice(newValue);
@@ -272,27 +318,10 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
               updateField('againstInvoice', newInputValue);
             }}
             renderOption={(props, option) => {
-              if (typeof option === 'string') return <li {...props}>{option}</li>;
-              const enableBilingual = profile?.enableBilingual !== false;
-              
-              const primaryName = getDynamicField(option.data?.client, 'name', profile, true);
-              const secondaryName = getDynamicField(option.data?.client, 'name', profile, false);
-              
-              const primaryText = primaryName ? `${option.invoiceNumber} - ${primaryName}` : option.invoiceNumber;
-              const secondaryText = secondaryName ? `${option.invoiceNumber} - ${secondaryName}` : option.invoiceNumber;
-              
+              const text = typeof option === 'string' ? option : option.invoiceNumber;
               return (
-                <li {...props} key={option.id}>
-                  <Box>
-                    <Typography variant="body1" sx={{ lineHeight: 1.2 }}>
-                      {primaryText}
-                    </Typography>
-                    {enableBilingual && (
-                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block', lineHeight: 1.2, mt: 0.2 }}>
-                        {secondaryText}
-                      </Typography>
-                    )}
-                  </Box>
+                <li {...props} key={typeof option === 'string' ? option : option.id}>
+                  {text}
                 </li>
               );
             }}
@@ -303,9 +332,16 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
                 label={t('againstInvoiceLabel') as string} 
                 placeholder={t('againstInvoicePlaceholder') as string}
                 InputLabelProps={{ shrink: true }}
+                autoComplete="new-password"
               />
             )}
           />
+        </Grid>
+        <Grid size={{ xs: 12 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 0, ml: 1, mt: 1 }}>
+            <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>3</Box>
+            <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('notes') || 'Notes'}</Typography>
+          </Box>
         </Grid>
         <Grid size={{ xs: 12 }}>
           <TextField 

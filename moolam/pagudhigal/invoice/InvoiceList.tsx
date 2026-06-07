@@ -1,7 +1,7 @@
-import { FileText, CheckSquare, Square } from '@phosphor-icons/react';
+import { FileText, CheckSquare, Square, Trash } from '@phosphor-icons/react';
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { Box, Typography, IconButton, Tooltip, Stack } from '@mui/material';
+import { Box, Typography, IconButton, Tooltip, Stack, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 import { getAllBills, deleteBill, saveBill } from '../../Avanam';
 import { formatCurrency, INVOICE_TYPES, getCountryConfig, getDynamicField } from '../../Payanpadu';
 import { thagaval } from '../Thagaval';
@@ -15,6 +15,7 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
   const isDark = theme.palette.mode === 'dark';
   const [bills, setBills] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [invoiceToDelete, setInvoiceToDelete] = useState(null);
 
   const profileCurrency = getCountryConfig(profile?.country || 'India').currency;
 
@@ -141,6 +142,11 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
           </Box>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', gap: 0.5, mt: -0.5, mr: -0.5 }}>
+              {isSelectionMode && (
+                <IconButton size="small" onClick={(e) => { e.stopPropagation(); setInvoiceToDelete(bill); }} sx={{ color: 'error.main' }}>
+                  <Trash size={20} />
+                </IconButton>
+              )}
             </Box>
             <Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: 800 }}>
               {formatCurrency(bill.totalAmount, profileCurrency)}
@@ -171,6 +177,38 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
       duplicateConfirmTitle={t('duplicateProductsTitle') || 'Duplicate Invoices?'}
       duplicateConfirmMessage={() => t('duplicateProductsMessage') || 'Are you sure you want to create copies of the selected invoice(s)?'}
     />
+
+      <Dialog
+        open={Boolean(invoiceToDelete)}
+        onClose={() => setInvoiceToDelete(null)}
+        PaperProps={{ sx: { bgcolor: 'background.paper', backgroundImage: 'none' } }}
+      >
+        <DialogTitle sx={{ pb: 1, color: 'error.main' }}>{t('delete') || 'Delete'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>{t('deleteInvoiceConfirmMsg') || 'Are you sure you want to delete this invoice?'}</DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 3, pt: 1 }}>
+          <Button onClick={() => setInvoiceToDelete(null)} sx={{ color: 'text.secondary' }}>{t('hc_cancel') || 'Cancel'}</Button>
+          <Button 
+            variant="contained" 
+            color="error"
+            onClick={async () => {
+              if (invoiceToDelete) {
+                try {
+                  await deleteBill(invoiceToDelete.id);
+                  thagaval(t('deletedSuccessfully') || 'Deleted successfully', 'success');
+                  loadData();
+                } catch (e) {
+                  thagaval(t('errorDeleting') || 'Error deleting', 'error');
+                }
+                setInvoiceToDelete(null);
+              }
+            }}
+          >
+            {t('delete') || 'Delete'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

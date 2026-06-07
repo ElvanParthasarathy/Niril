@@ -28,7 +28,7 @@
 
     .s2-content-grid {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 360px 1fr;
         gap: 32px;
         align-items: stretch;
         height: 100%;

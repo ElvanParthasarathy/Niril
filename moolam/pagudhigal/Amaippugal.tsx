@@ -522,6 +522,7 @@ export default function Amaippugal({ onSaved }) {
 
   const handleAddNewProfile = () => {
     setProfile({
+      personName: '', personNameEn: '',
       niruvanathinPeyar: '', niruvanathinPeyarEn: '', mugavari: '', mugavariEn: '', oor: '', oorEn: '', maavattam: '', maavattamEn: '', maanilam: '', maanilamEn: '', pin: '', country: detectCountryFromBrowser(),
       gstin: '', pan: '', email: '', tholaipesi: '', mobileNumber: '', vangiPeyar: '', kanakkuEn: '', ifsc: '', swift: '',
       logo: '', logoHeight: 48, signature: '', upiId: '', googleClientId: '', googleDriveFolder: 'GST Billing Invoices',
@@ -679,7 +680,7 @@ export default function Amaippugal({ onSaved }) {
                           name={isCustomCountry ? "countryEn" : undefined}
                           onChange={isCustomCountry ? handleChange : undefined}
                           label={`${t('countryLabel')} (${profile.secondaryDataLanguage || 'English'})`} 
-                          value={isCustomCountry ? (profile.countryEn || '') : (profile.country ? getBilingualCountryName(profile.country, { ...profile, returnOnlySecondary: true }) : '')} 
+                          value={isCustomCountry ? (profile.countryEn || '') : getBilingualCountryName(profile.country || 'India', { ...profile, returnOnlySecondary: true })} 
                           sx={!isCustomCountry ? { '& .MuiInputBase-root': { bgcolor: 'action.hover' } } : {}} />
                       </Box>
                     );
@@ -689,6 +690,9 @@ export default function Amaippugal({ onSaved }) {
 
               <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField disabled={!isEditingCompany} fullWidth size="small" label={t('tholaipesiLabel')} name="tholaipesi" value={profile.tholaipesi} onChange={handleChange} />
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField disabled={!isEditingCompany} fullWidth size="small" label={t('email') || 'Email'} name="email" value={profile.email || ''} onChange={handleChange} />
               </Grid>
 
               {!showMobileField && !profile.mobileNumber ? (
@@ -916,6 +920,43 @@ export default function Amaippugal({ onSaved }) {
           ))}
         </Grid>
       </Paper>
+
+        {/* App User Name */}
+        <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
+          <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0, mb: 0.5 }}>
+            {language === 'ta' ? 'பயனர் பெயர் (பயன்பாடு)' : 'App User Name'}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            {language === 'ta' ? 'இந்த பெயர் பயன்பாட்டின் முகப்புத்திரையில் தோன்றும்.' : 'This name will appear on the app home screen profile pill.'}
+          </Typography>
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
+              <TextField 
+                fullWidth size="small" 
+                label={`${language === 'ta' ? 'பயனர் பெயர்' : 'User Name'} (${profile.primaryDataLanguage || 'Tamil'})`} 
+                name="personName" 
+                value={profile.personName || ''} 
+                onChange={handleChange} 
+              />
+            </Grid>
+            {profile.enableBilingual !== false && (
+              <Grid size={{ xs: 12, sm: 6 }}>
+                <TextField 
+                  fullWidth size="small" 
+                  label={`${language === 'ta' ? 'பயனர் பெயர்' : 'User Name'} (${profile.secondaryDataLanguage || 'English'})`} 
+                  name="personNameEn" 
+                  value={profile.personNameEn || ''} 
+                  onChange={handleChange} 
+                />
+              </Grid>
+            )}
+          </Grid>
+          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+            <Button type="button" variant="contained" color="primary" onClick={handleSave} disabled={saving} startIcon={<Save sx={{ fontSize: 18 }} />}>
+              {saving ? t('saving') : t('saveProfile')}
+            </Button>
+          </Box>
+        </Paper>
 
       {/* Data Language Settings */}
       <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>

@@ -10,7 +10,15 @@ export const getDynamicField = (obj: any, fieldName: string, profile: any, isPri
   const exactVal = obj[`${fieldName}_${lang}`];
   const baseVal = obj[fieldName];
 
-  if (exactVal) return exactVal;
+  // If a regional language field accidentally got saved with Tamil text (due to auto-save), 
+  // suppress it so it correctly shows as a blank state like the user expects.
+  if (exactVal) {
+    if (lang !== 'Tamil' && /[\u0B80-\u0BFF]/.test(exactVal)) {
+      return '';
+    }
+    return exactVal;
+  }
+  
   if (lang === 'English' || lang === 'Tamil') return baseVal || '';
   return '';
 };
@@ -1103,16 +1111,25 @@ export const getBilingualStateName = (state, opts) => {
   const primaryLang = opts?.primaryDataLanguage || 'Tamil';
   const secondaryLang = opts?.secondaryDataLanguage || 'English';
 
-  // Resolve English name (state might already be stored in a native script)
-  let englishName = state;
-  for (const [, langMap] of Object.entries(STATE_TRANSLATIONS)) {
-    const found = Object.entries(langMap).find(([, v]) => v === state);
-    if (found) { englishName = found[0]; break; }
+  // Resolve to English first
+  let englishName = opts?.fallbackEnglishName || state?.toString().trim() || '';
+  const lowerState = englishName.toLowerCase();
+
+  const isEnglishKey = Object.keys(STATE_TRANSLATIONS['Tamil'] || {}).find(k => k.toLowerCase() === lowerState);
+  if (isEnglishKey) {
+    englishName = isEnglishKey;
+  } else {
+    for (const [, langMap] of Object.entries(STATE_TRANSLATIONS)) {
+      const found = Object.entries(langMap).find(([, v]) => v.toLowerCase() === lowerState);
+      if (found) { englishName = found[0]; break; }
+    }
   }
 
   const getTranslated = (lang) => {
     if (lang === 'English') return englishName;
-    return STATE_TRANSLATIONS[lang]?.[englishName] || englishName;
+    const lowerEng = englishName.toLowerCase();
+    const foundKey = Object.keys(STATE_TRANSLATIONS[lang] || {}).find(k => k.toLowerCase() === lowerEng);
+    return foundKey ? STATE_TRANSLATIONS[lang][foundKey] : englishName;
   };
 
   if (opts?.returnOnlyPrimary || (opts?.enableBilingual === false && !opts?.returnOnlySecondary)) return getTranslated(primaryLang);
@@ -1138,6 +1155,24 @@ export const doesStateMatchSearch = (state: string, searchTerm: string): boolean
   if (englishName.toLowerCase().includes(lowerSearch)) return true;
   
   for (const langMap of Object.values(STATE_TRANSLATIONS)) {
+    if (langMap[englishName]?.toLowerCase().includes(lowerSearch)) return true;
+  }
+  return false;
+};
+
+export const doesCountryMatchSearch = (country: string, searchTerm: string): boolean => {
+  if (!searchTerm) return true;
+  const lowerSearch = searchTerm.toLowerCase();
+  
+  let englishName = country;
+  for (const [, langMap] of Object.entries(COUNTRY_TRANSLATIONS)) {
+    const found = Object.entries(langMap).find(([, v]) => v === country);
+    if (found) { englishName = found[0]; break; }
+  }
+
+  if (englishName.toLowerCase().includes(lowerSearch)) return true;
+  
+  for (const langMap of Object.values(COUNTRY_TRANSLATIONS)) {
     if (langMap[englishName]?.toLowerCase().includes(lowerSearch)) return true;
   }
   return false;

@@ -12,6 +12,7 @@ import { thagaval } from '../Thagaval';
 import { useLanguage } from '../../mozhi/LanguageContext';
 import { INVOICE_TYPES } from '../../Payanpadu';
 import ElvanEditorLayout from '../ElvanEditorLayout';
+import { useDraftAndUnsaved } from '../../hooks/useDraftAndUnsaved';
 
 export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp, editingBill }: any) {
   const { t } = useLanguage();
@@ -36,7 +37,6 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
   const [customTerms, setCustomTerms] = useState(profileProp?.invoiceTerms || '');
   const [internalNote, setInternalNote] = useState('');
   const [saving, setSaving] = useState(false);
-  const [showDiscardModal, setShowDiscardModal] = useState(false);
   
   const [settings, setSettings] = useState<InvoiceSettingsState>({
     taxInclusive: false,
@@ -121,6 +121,39 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
     }
   };
 
+  const formState = { client, items, totals, customTerms, internalNote, settings, metadata };
+  const [initialForm, setInitialForm] = useState<any>(editingBill ? formState : { ...formState });
+
+  useEffect(() => {
+    if (!editingBill && metadata.invoiceNumber) {
+      setInitialForm((prev: any) => ({ ...prev, metadata: { ...prev.metadata, invoiceNumber: metadata.invoiceNumber } }));
+    }
+  }, [metadata.invoiceNumber]);
+
+  const setFormState = (parsed: any) => {
+    if (parsed.client) setClient(parsed.client);
+    if (parsed.items) setItems(parsed.items);
+    if (parsed.totals) setTotals(parsed.totals);
+    if (parsed.customTerms !== undefined) setCustomTerms(parsed.customTerms);
+    if (parsed.internalNote !== undefined) setInternalNote(parsed.internalNote);
+    if (parsed.settings) setSettings(parsed.settings);
+    if (parsed.metadata) setMetadata(parsed.metadata);
+  };
+
+  const getIsBlank = (f: any) => {
+    if (!f) return true;
+    return f.items.length === 1 && !f.items[0].itemName && !f.client.name;
+  };
+
+  const { hasUnsavedChanges, clearDraft } = useDraftAndUnsaved(
+    'niril_draft_invoice',
+    initialForm,
+    formState,
+    setFormState,
+    !!editingBill,
+    getIsBlank
+  );
+
   const handleSave = async () => {
     try {
       setSaving(true);
@@ -136,11 +169,15 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
         };
       });
       
-      // Need a valid invoice number. If empty, generate one (simplified)
-      const invNum = metadata.invoiceNumber || `INV-${Date.now()}`;
+      // Need a valid invoice number. If empty, securely fetch the next valid one from template.
+      let invNum = metadata.invoiceNumber;
+      if (!invNum) {
+        const prefix = (INVOICE_TYPES as any)[metadata.invoiceType]?.prefix || 'INV';
+        invNum = await getNextInvoiceNumber(prefix);
+      }
       
       const bill = {
-        id: invNum,
+        id: editingBill?.id || invNum,
         clientName: client[`name_${primaryLang}`] || '',
         clientNameEn: client[`name_${secondaryLang}`] || '',
         invoiceNumber: invNum,
@@ -166,6 +203,7 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
       };
       
       await saveBill(bill);
+      clearDraft();
       thagaval(t('hc_savedSuccessfully') || 'Invoice saved successfully!', 'success');
       if (onSaved) onSaved(bill);
     } catch (err) {
@@ -179,9 +217,14 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
   return (
     <ElvanEditorLayout
       title={(editingBill ? (t('editInvoice') || 'Edit Invoice') : (t('newInvoice') || 'New Invoice')) as string}
-      onBack={() => setShowDiscardModal(true)}
+      onBack={onBack}
       onSave={handleSave}
-      saveButtonText={saving ? 'Saving...' : 'Save Invoice'}
+      saveButtonText={saving ? (t('saving') || 'Saving...') : (t('save') || 'Save')}
+      hasUnsavedChanges={hasUnsavedChanges}
+      onDiscard={() => {
+        clearDraft();
+        onBack();
+      }}
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
         
@@ -219,22 +262,33 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
       />
 
       {/* Totals Section */}
-      <InvoiceTotals
-        items={items}
-        totals={totals}
-        setTotals={setTotals}
-        settings={settings}
-        client={client}
-        profileState={profileProp?.maanilam}
-        country={profileProp?.country}
-      />
+        <InvoiceTotals
+          items={items}
+          totals={totals}
+          setTotals={setTotals}
+          settings={settings}
+          client={client}
+          profileState={profileProp?.maanilam}
+          country={profileProp?.country}
+        />
 
-      <Divider sx={{ my: 1, borderColor: 'divider', opacity: 0.5 }} />
+        <Box sx={{ mt: 3 }}>
+          <InvoiceNotes 
+            customTerms={customTerms}
+            setCustomTerms={setCustomTerms}
+            internalNote={internalNote}
+            setInternalNote={setInternalNote}
+            showTerms={settings.showTerms}
+            showNotes={settings.showNotes}
+          />
+        </Box>
+
+        <Divider sx={{ my: 1, borderColor: 'divider', opacity: 0.5 }} />
 
       {/* Invoice Type */}
       <Box sx={{ mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, ml: 2 }}>
-          <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>5</Box>
+          <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>6</Box>
           <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t("invoiceType")}</Typography>
         </Box>
         <Box sx={{ mb: 2 }}>
@@ -251,24 +305,6 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
         </Box>
       </Box>
 
-
-      {/* Discard Confirmation Modal */}
-      <Dialog open={showDiscardModal} onClose={() => setShowDiscardModal(false)}>
-        <DialogTitle>{t('hc_discardChanges') || 'Discard Changes?'}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            {t('hc_discardWarning') || 'Are you sure you want to go back? Any unsaved changes will be lost.'}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowDiscardModal(false)} color="primary">
-            {t('hc_cancel') || 'Cancel'}
-          </Button>
-          <Button onClick={() => { setShowDiscardModal(false); onBack(); }} color="error" variant="contained">
-            {t('hc_discard') || 'Discard'}
-          </Button>
-        </DialogActions>
-      </Dialog>
       </Box>
     </ElvanEditorLayout>
   );

@@ -206,9 +206,24 @@ function Seyali() {
       return saved ? JSON.parse(saved) : null;
     } catch { return null; }
   });
-  const [editingClient, setEditingClient] = useState<any>(null);
-  const [editingProduct, setEditingProduct] = useState<any>(null);
-  const [editingReceipt, setEditingReceipt] = useState<any>(null);
+  const [editingClient, setEditingClient] = useState<any>(() => {
+    try {
+      const saved = sessionStorage.getItem('niril_editingClient');
+      return saved ? JSON.parse(saved) : null;
+    } catch { return null; }
+  });
+  const [editingProduct, setEditingProduct] = useState<any>(() => {
+    try {
+      const saved = sessionStorage.getItem('niril_editingProduct');
+      return saved ? JSON.parse(saved) : null;
+    } catch { return null; }
+  });
+  const [editingReceipt, setEditingReceipt] = useState<any>(() => {
+    try {
+      const saved = sessionStorage.getItem('niril_editingReceipt');
+      return saved ? JSON.parse(saved) : null;
+    } catch { return null; }
+  });
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem('elvanniril_theme') === 'dark';
   });
@@ -411,6 +426,22 @@ function Seyali() {
       sessionStorage.removeItem('gst_editingBill');
     }
   }, [editingBill]);
+
+  useEffect(() => {
+    if (editingClient) sessionStorage.setItem('niril_editingClient', JSON.stringify(editingClient));
+    else sessionStorage.removeItem('niril_editingClient');
+  }, [editingClient]);
+
+  useEffect(() => {
+    if (editingProduct) sessionStorage.setItem('niril_editingProduct', JSON.stringify(editingProduct));
+    else sessionStorage.removeItem('niril_editingProduct');
+  }, [editingProduct]);
+
+  useEffect(() => {
+    if (editingReceipt) sessionStorage.setItem('niril_editingReceipt', JSON.stringify(editingReceipt));
+    else sessionStorage.removeItem('niril_editingReceipt');
+  }, [editingReceipt]);
+
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
