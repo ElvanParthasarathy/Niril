@@ -958,7 +958,11 @@ export const ta = {
   hc_roundoff: "\u0bae\u0bc1\u0bb4\u0bc1\u0bae\u0bc8\u0baf\u0bbe\u0b95\u0bcd\u0b95\u0bc1\u0ba4\u0bb2\u0bcd",
   hc_netReceivable: "\u0baa\u0bc6\u0bb1 \u0bb5\u0bc7\u0ba3\u0bcd\u0b9f\u0bbf\u0baf \u0ba8\u0bbf\u0b95\u0bb0\u0ba4\u0bcd \u0ba4\u0bca\u0b95\u0bc8",
   hc_reverseChargeApplicable: "\u0b8e\u0ba4\u0bbf\u0bb0\u0bcd\u0bae\u0bb1\u0bc8 \u0bb5\u0bb0\u0bbf \u0baa\u0bca\u0bb0\u0bc1\u0ba8\u0bcd\u0ba4\u0bc1\u0bae\u0bcd.",
-  hc_exchangeRate: "\u0baa\u0bb0\u0bbf\u0bae\u0bbe\u0bb1\u0bcd\u0bb1 \u0bb5\u0bbf\u0b95\u0bbf\u0ba4\u0bae\u0bcd"
+  hc_exchangeRate: "\u0baa\u0bb0\u0bbf\u0bae\u0bbe\u0bb1\u0bcd\u0bb1 \u0bb5\u0bbf\u0b95\u0bbf\u0ba4\u0bae\u0bcd",
+  hc_discardChanges: "மாற்றங்களை நிராகரி",
+  hc_discardWarning: "நீங்கள் சேமிக்காத மாற்றங்களை உறுதியாக நிராகரிக்க வேண்டுமா?",
+  hc_cancel: "ரத்து செய்",
+  hc_discard: "நிராகரி"
 };
 
 export type TranslationKey = keyof typeof ta;

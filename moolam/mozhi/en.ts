@@ -933,5 +933,9 @@ export const en: Record<TranslationKey, string> = {
   gstFilingsDueNotif: "Gst Filings Due",
   todayWord: "Today",
   lowStockNotif: "Low Stock",
-  leftWord: "Left"
+  leftWord: "Left",
+  hc_discardChanges: "Discard Changes",
+  hc_discardWarning: "Are you sure you want to discard your unsaved changes?",
+  hc_cancel: "Cancel",
+  hc_discard: "Discard"
 };
