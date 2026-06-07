@@ -722,7 +722,7 @@ export const en: Record<TranslationKey, string> = {
   againstInvoiceLabel: "Against Invoice",
   againstInvoicePlaceholder: "Against Invoice Placeholder",
   noteOptionalLabel: "Note Optional",
-  saveReceiptBtn: "Save Receipt",
+  saveReceiptBtn: "Save",
   searchReceipts: "Search Receipts",
   paymentReceiptsTableTitle: "Payment Receipts Table",
   noReceiptsYet: "No Receipts Yet",
