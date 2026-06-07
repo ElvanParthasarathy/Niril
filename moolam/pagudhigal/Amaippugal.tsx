@@ -1647,7 +1647,7 @@ export default function Amaippugal({ onSaved }) {
            </div>
         )}
         {!isMobile && (
-           <div className="s2-sub-header" style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
+           <div className="s2-sub-header" style={{ display: 'none', alignItems: 'center', marginBottom: 24 }}>
               <div className="s2-sub-title">{title}</div>
            </div>
         )}
@@ -1725,7 +1725,7 @@ export default function Amaippugal({ onSaved }) {
           <AnimatePresence mode="popLayout" custom={direction} initial={false}>
               {currentView === 'hub' ? (
                   <motion.div
-                      key="hub"
+                  key="hub"
                       custom={direction}
                       variants={variants}
                       initial="enter"
@@ -1754,14 +1754,42 @@ export default function Amaippugal({ onSaved }) {
               )}
           </AnimatePresence>
       ) : (
-          <div className="s2-content-grid">
-              <div className="s2-col-left" style={{ paddingRight: 16 }}>
-                  {renderHub()}
-              </div>
-              <div className="s2-col-right" style={{ paddingLeft: 16, borderLeft: '1px solid var(--mac-divider)' }}>
+          <Box sx={{ width: '100%', maxWidth: '900px', mx: 'auto', mt: 0 }}>
+              <Typography variant="h5" sx={{ mb: 1, fontWeight: 700 }}>{t('settingsTitle') || 'Settings'}</Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>Manage your business profile, preferences, and data integrations.</Typography>
+              <Tabs 
+                  value={currentView === 'hub' ? 0 : currentView} 
+                  onChange={(_e, val) => handleNavigate(val)}
+                  variant="scrollable"
+                  scrollButtons="auto"
+                  sx={{
+                      mb: 4,
+                      borderBottom: 1,
+                      borderColor: 'divider',
+                      '& .MuiTabs-indicator': {
+                          height: 3,
+                          borderTopLeftRadius: 3,
+                          borderTopRightRadius: 3,
+                      },
+                      '& .MuiTab-root': {
+                          textTransform: 'none',
+                          fontWeight: 600,
+                          fontSize: '0.95rem',
+                          minHeight: 48,
+                          px: 3
+                      }
+                  }}
+              >
+                  <Tab label="Profile" />
+                  <Tab label="Display & Languages" />
+                  <Tab label="Billing & Payments" />
+                  <Tab label="Storage & Cloud" />
+                  <Tab label="System & Updates" />
+              </Tabs>
+              <Box>
                   {detailContent || <div className="s2-welcome-card">Select a setting</div>}
-              </div>
-          </div>
+              </Box>
+          </Box>
       )}
 
       {/* ----------------------- Export modal ----------------------- */}
