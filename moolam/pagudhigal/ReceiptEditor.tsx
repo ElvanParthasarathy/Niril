@@ -112,7 +112,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
     }
   };
 
-  const renderPaymentModeOption = (mode: string) => {
+  const renderPaymentModeOption = (mode: string, inDropdown = true) => {
     const dictionaries: Record<string, Record<string, string>> = {
       'Tamil': { 'Cash': 'பணம்', 'UPI': 'UPI', 'Bank Transfer': 'வங்கிப் பரிமாற்றம்', 'Cheque': 'காசோலை', 'Card': 'கார்டு', 'Other': 'மற்றவை' },
       'Hindi': { 'Cash': 'नकद', 'UPI': 'UPI', 'Bank Transfer': 'बैंक ट्रांसफर', 'Cheque': 'चेक', 'Card': 'कार्ड', 'Other': 'अन्य' },
@@ -131,7 +131,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
     const primaryVal = (dictionaries[primaryLang] || {})[mode] || mode;
     const secondaryVal = (dictionaries[secondaryLang] || {})[mode] || mode;
     
-    if (enableBilingual && (mode !== 'UPI')) {
+    if (inDropdown && enableBilingual && (mode !== 'UPI')) {
       return (
         <Box>
           <Typography variant="body1" sx={{ lineHeight: 1.2 }}>{primaryVal}</Typography>
@@ -220,7 +220,13 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
             label={t('paymentModeLabel') as string} 
             value={form.paymentMode} 
             onChange={e => updateField('paymentMode', e.target.value)} 
-            slotProps={{ inputLabel: { shrink: true }, select: { displayEmpty: true } }}
+            slotProps={{ 
+              inputLabel: { shrink: true }, 
+              select: { 
+                displayEmpty: true,
+                renderValue: (selected) => selected ? renderPaymentModeOption(selected as string, false) : <em>{t('paymentModeLabel')}...</em>
+              } 
+            }}
           >
             <MenuItem value=""><em>{t('paymentModeLabel')}...</em></MenuItem>
             {PAYMENT_MODES.map(m => <MenuItem key={m} value={m}>{renderPaymentModeOption(m)}</MenuItem>)}
