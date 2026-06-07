@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Button, Grid, FormControl, Select, MenuItem, Divider, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { ArrowLeft, FloppyDisk } from '@phosphor-icons/react';
-import { ClientState, InvoiceMetadataState, LineItemState, InvoiceSettingsState, InvoiceTotalsState, createEmptyClient, createEmptyLineItem, convertClientToSnapshot, convertItemsToSnapshot } from './v2/InvoiceTypes';
+import { ClientState, InvoiceMetadataState, LineItemState, InvoiceSettingsState, InvoiceTotalsState, createEmptyClient, createEmptyLineItem, convertClientToSnapshot, convertItemsToSnapshot, convertLoadedClient, convertLoadedItem } from './v2/InvoiceTypes';
 import ClientSelection from './v2/ClientSelection';
 import InvoiceMetadata from './v2/InvoiceMetadata';
 import LineItemsTable from './v2/LineItemsTable';
@@ -68,10 +68,17 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
       const d = editingBill.data;
       
       // Load common data
-      if (d.client) setClient(d.client);
-      if (d.items?.length) setItems(d.items);
+      if (d.client) setClient(convertLoadedClient(d.client, primaryLang, secondaryLang));
+      if (d.items?.length) setItems(d.items.map((i: any) => convertLoadedItem(i, primaryLang, secondaryLang)));
       if (d.totals) setTotals(d.totals);
-      if (d.invoiceOptions) setSettings(d.invoiceOptions);
+      if (d.invoiceOptions) {
+        setSettings({
+          ...settings,
+          ...d.invoiceOptions,
+          // Fallback for legacy 'showDiscount' key
+          showDiscountColumn: d.invoiceOptions.showDiscountColumn ?? d.invoiceOptions.showDiscount ?? true,
+        });
+      }
       if (d.customTerms !== undefined) setCustomTerms(d.customTerms);
       if (d.internalNote !== undefined) setInternalNote(d.internalNote);
 
@@ -146,7 +153,7 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
           invoiceType: metadata.invoiceType, 
           customTerms, 
           internalNote, 
-          invoiceOptions: settings 
+          invoiceOptions: { ...settings, showDiscount: settings.showDiscountColumn } // Backwards compat
         }
       };
       
