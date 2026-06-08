@@ -94,10 +94,49 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
   };
 
   const executePrint = () => {
-    const origTitle = document.title;
-    document.title = receipt?.receiptNo ? `Receipt-${receipt.receiptNo}` : 'Print';
-    window.print();
-    document.title = origTitle;
+    const printContent = printRef.current;
+    if (!printContent) return;
+
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+
+    const title = receipt?.receiptNo ? `Receipt-${receipt.receiptNo}` : 'Print';
+    const headContent = document.head.innerHTML;
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>${title}</title>
+          ${headContent}
+          <style>
+            @media print {
+              body, html { background-color: white !important; margin: 0; padding: 0; }
+              .receipt-box, .invoice-paper { box-shadow: none !important; margin: 0 !important; border: none !important; width: 100% !important; }
+              .no-print { display: none !important; }
+            }
+          </style>
+        </head>
+        <body style="background-color: white; margin: 0; padding: 0;">
+          ${printContent.outerHTML}
+        </body>
+      </html>
+    `);
+    doc.close();
+
+    setTimeout(() => {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+      setTimeout(() => { document.body.removeChild(iframe); }, 1000);
+    }, 500);
   };
 
   const uploadToGoogleDrive = async (pdfBlob, fileName) => {

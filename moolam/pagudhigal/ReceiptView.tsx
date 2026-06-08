@@ -71,56 +71,49 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
   };
 
   const executePrint = () => {
-    const el = printRef.current;
-    if (!el) return;
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-    printWindow.document.write(`
-      <html><head><title>Receipt ${receipt.receiptNo}</title>
-      <style>
-        @font-face { font-family: 'Elvan Sans'; src: url('/fonts/ElvanSans-Regular.woff') format('woff'), url('/fonts/ElvanSans-Regular.ttf') format('truetype'); font-weight: 400; font-style: normal; }
-        @font-face { font-family: 'Elvan Sans'; src: url('/fonts/ElvanSans-SemiBold.woff') format('woff'), url('/fonts/ElvanSans-SemiBold.ttf') format('truetype'); font-weight: 600; font-style: normal; }
-        @font-face { font-family: 'Elvan Sans'; src: url('/fonts/ElvanSans-Bold.woff') format('woff'), url('/fonts/ElvanSans-Bold.ttf') format('truetype'); font-weight: 700; font-style: normal; }
-        * { box-sizing: border-box; }
-        body { font-family: 'Elvan Sans', -apple-system, sans-serif; margin: 0; padding: 2rem; color: #1a1a2e; }
-        .receipt-box { max-width: 600px; margin: 0 auto; border: 2px solid #e2e8f0; border-radius: 8px; padding: 2rem; display: flex; flex-direction: column; }
-        .receipt-header { text-align: center; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1rem; }
-        .receipt-title { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0; }
-        .receipt-subtitle { font-size: 0.8rem; color: #64748b; margin: 0.25rem 0 0; }
-        .receipt-row { display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 0.9rem; border-bottom: 1px solid #f1f5f9; }
-        .receipt-label { color: #64748b; font-weight: 500; }
-        .receipt-value { color: #1e293b; font-weight: 600; }
-        .receipt-amount { font-size: 1.5rem; font-weight: 800; color: #1e40af; text-align: center; margin: 1.5rem 0; padding: 1rem; background: #eff6ff; border-radius: 8px; }
-        .receipt-words { font-size: 0.85rem; color: #334155; font-style: italic; text-align: center; margin-bottom: 1.5rem; }
-        .receipt-footer { display: flex; justify-content: space-between; margin-top: 3rem; padding-top: 1rem; }
-        .receipt-sig { text-align: center; }
-        .receipt-sig-line { width: 180px; border-bottom: 1.5px solid #1e293b; margin-bottom: 0.25rem; }
-        .receipt-sig-label { font-size: 0.75rem; color: #64748b; }
-        .business-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; }
-        .business-details { font-size: 0.75rem; color: #64748b; }
-        @page { margin: 0; size: A4 portrait; }
-        @media print { 
-          html, body { height: 100%; }
-          body { margin: 0; padding: 1.5cm; width: 210mm; height: 297mm; font-size: 1.1rem; } 
-          .receipt-box { max-width: none; border: none; padding: 0; height: 100%; } 
-          .receipt-header { margin-bottom: 2rem; padding-bottom: 1.5rem; }
-          .receipt-title { font-size: 2rem; }
-          .receipt-row { padding: 0.75rem 0; font-size: 1rem; }
-          .receipt-amount { font-size: 2rem; margin: 2rem 0; padding: 1.5rem; }
-          .receipt-words { font-size: 1rem; margin-bottom: 2rem; }
-          .receipt-footer { margin-top: auto; padding-top: 2rem; }
-        }
-      </style></head><body>
-      ${el.innerHTML}
-      <script>
-        setTimeout(function() {
-          window.print();
-          window.close();
-        }, 500);
-      </script>
-      </body></html>
+    const printContent = printRef.current;
+    if (!printContent) return;
+
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+
+    const title = receipt?.receiptNo ? `Receipt-${receipt.receiptNo}` : 'Print';
+    const headContent = document.head.innerHTML;
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>${title}</title>
+          ${headContent}
+          <style>
+            @media print {
+              body, html { background-color: white !important; margin: 0; padding: 0; }
+              .receipt-box, .invoice-paper { box-shadow: none !important; margin: 0 !important; border: none !important; width: 100% !important; }
+              .no-print { display: none !important; }
+            }
+          </style>
+        </head>
+        <body style="background-color: white; margin: 0; padding: 0;">
+          ${printContent.outerHTML}
+        </body>
+      </html>
     `);
-    printWindow.document.close();
+    doc.close();
+
+    setTimeout(() => {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+      setTimeout(() => { document.body.removeChild(iframe); }, 1000);
+    }, 500);
   };
 
   // Upload PDF to Google Drive if configured
