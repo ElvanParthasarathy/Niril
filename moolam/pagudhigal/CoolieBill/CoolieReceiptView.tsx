@@ -59,7 +59,7 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
 
   const RECEIPT_LABELS = {
     'English': { hc_paymentReceipt: 'PAYMENT RECEIPT', receiptNoLabel: 'Receipt No:', dateLabel: 'Date:', receivedFromLabel: 'Received From:', paymentModeLabel: 'Payment Mode:', referenceNoLabel: 'Reference No:', againstInvoiceLabel: 'Against Invoice:', noteLabel: 'Note:', receivedBy: 'Received By:', authorizedSignatory: '(Authorized Signature)', phoneLabel: 'Phone:', mobileLabel: 'Mobile:' },
-    'Tamil': { hc_paymentReceipt: 'பண ரசீது', receiptNoLabel: 'ரசீது எண்:', dateLabel: 'தேதி:', receivedFromLabel: 'பெறுநர்:', paymentModeLabel: 'கட்டண முறை:', referenceNoLabel: 'குறிப்பு எண்:', againstInvoiceLabel: 'ரசீதிற்கு எதிராக:', noteLabel: 'குறிப்பு:', receivedBy: 'பெற்றவர்', authorizedSignatory: '(கையொப்பம்)', phoneLabel: 'தொலைபேசி:', mobileLabel: 'கைபேசி:' },
+    'Tamil': { hc_paymentReceipt: 'பண ரசீது', receiptNoLabel: 'ரசீது எண்:', dateLabel: 'தேதி:', receivedFromLabel: 'பெறுநர்:', paymentModeLabel: 'கட்டண முறை:', referenceNoLabel: 'குறிப்பு எண்:', againstInvoiceLabel: 'பில் எண்:', noteLabel: 'குறிப்பு:', receivedBy: 'பெற்றவர்', authorizedSignatory: '(கையொப்பம்)', phoneLabel: 'தொலைபேசி:', mobileLabel: 'கைபேசி:' },
     'Hindi': { hc_paymentReceipt: 'भुगतान रसीद', receiptNoLabel: 'रसीद संख्या:', dateLabel: 'दिनांक:', receivedFromLabel: 'से प्राप्त:', paymentModeLabel: 'भुगतान का प्रकार:', referenceNoLabel: 'संदर्भ संख्या:', againstInvoiceLabel: 'बिल के विरुद्ध:', noteLabel: 'नोट:', receivedBy: 'प्राप्तकर्ता', authorizedSignatory: 'अधिकृत हस्ताक्षरकर्ता', phoneLabel: 'फ़ोन:', mobileLabel: 'मोबाइल:' },
     'Telugu': { hc_paymentReceipt: 'చెల్లింపు రసీదు', receiptNoLabel: 'రసీదు నంబర్:', dateLabel: 'తేదీ:', receivedFromLabel: 'నుండి స్వీకరించబడింది:', paymentModeLabel: 'చెల్లింపు విధానం:', referenceNoLabel: 'సూచన సంఖ్య:', againstInvoiceLabel: 'ఇన్వాయిస్‌కు వ్యతిరేకంగా:', noteLabel: 'గమనిక:', receivedBy: 'స్వీకర్త', authorizedSignatory: 'అధికారిక సంతకం', phoneLabel: 'ఫోన్:', mobileLabel: 'మొబైల్:' },
     'Kannada': { hc_paymentReceipt: 'ಪಾವತಿ ರಶೀದಿ', receiptNoLabel: 'ರಶೀದಿ ಸಂಖ್ಯೆ:', dateLabel: 'ದಿನಾಂಕ:', receivedFromLabel: 'ಇವರಿಂದ ಸ್ವೀಕರಿಸಲಾಗಿದೆ:', paymentModeLabel: 'ಪಾವತಿ ವಿಧಾನ:', referenceNoLabel: 'ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ:', againstInvoiceLabel: 'ಇನ್‌ವಾಯ್ಸ್ ವಿರುದ್ಧ:', noteLabel: 'ಸೂಚನೆ:', receivedBy: 'ಸ್ವೀಕರಿಸುವವರು', authorizedSignatory: 'ಅಧಿಕೃತ ಸಹಿದಾರರು', phoneLabel: 'ಫೋನ್:', mobileLabel: 'ಮೊಬೈಲ್:' },
@@ -313,7 +313,7 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
 
       <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4 }}>
         <style>{`
-          .receipt-box { width: 210mm; min-height: 297mm; margin: 0 auto; border: 2px solid #e2e8f0; border-radius: 8px; background: white; display: flex; flex-direction: column; overflow: hidden; }
+          .receipt-box { width: 210mm; height: 297mm; max-height: 297mm; box-sizing: border-box; margin: 0 auto; border: 2px solid #e2e8f0; border-radius: 8px; background: white; display: flex; flex-direction: column; overflow: hidden; }
           .receipt-content { padding: 8mm 12mm; flex: 1; display: flex; flex-direction: column; }
           .receipt-header { text-align: center; margin-bottom: 2.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1.5rem; }
           .receipt-title { font-size: 2rem; font-weight: 800; color: #0f172a; margin: 0; }
@@ -322,7 +322,7 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
           .receipt-value { color: #1e293b; font-weight: 700; text-align: right; }
           .receipt-amount { font-size: 2rem; font-weight: 800; color: #1e40af; text-align: center; margin: 2rem 0; padding: 1.25rem; background: #eff6ff; border-radius: 8px; }
           .receipt-words { font-size: 1.05rem; color: #334155; text-align: center; margin-bottom: 2rem; }
-          .receipt-footer { display: flex; justify-content: flex-end; margin-top: auto; padding-top: 2rem; padding-bottom: 1.5rem; }
+          .receipt-footer { display: flex; justify-content: flex-end; padding-top: 2rem; padding-bottom: 1.5rem; }
           .receipt-sig { text-align: center; }
           .receipt-sig-line { width: 220px; border-bottom: 1.5px solid #1e293b; margin-bottom: 0.35rem; }
           .receipt-sig-label { font-size: 0.95rem; color: #64748b; }
@@ -351,7 +351,7 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
                     <span className="greeting-center" style={{ color: profile.themeColor || '#1e3a8a' }}>உ</span>
                     <span className="greeting-right" style={{ color: profile.themeColor || '#1e3a8a' }}>{(profile?.receiptLanguage || 'ta') === 'en' ? 'Vaazhga Valamudan' : 'வாழ்க வளமுடன்'}</span>
                 </div>
-                <div className="print-header-new" style={{ borderBottom: '2px solid #e2e8f0', paddingBottom: '1.5rem', marginBottom: '5rem' }}>
+                <div className="print-header-new" style={{ borderBottom: '2px solid #e2e8f0', paddingBottom: '1.5rem', marginBottom: '3rem' }}>
                   <div className="header-left">
                     {profile.logo && <img src={profile.logo} alt="Logo" style={{ maxHeight: '80px' }} />}
                     <div className="header-company-info">
@@ -377,7 +377,7 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
               <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('paymentModeLabel', 'Payment Mode:', 'செலுத்தும் முறை:')}</span><span className="receipt-value">{renderPaymentMode(receipt.paymentMode)}</span></div>
 
               {receipt.againstInvoice && <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('againstInvoiceLabel', 'Against Invoice:', 'விலைப்பட்டியலுக்கு எதிராக:')}</span><span className="receipt-value">{receipt.againstInvoice}</span></div>}
-              <div style={{ marginTop: '3.5rem', marginBottom: '1.5rem' }}>
+              <div style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                 <div className="receipt-amount" style={{ color: profile.themeColor || '#1e3a8a', backgroundColor: profile.themeColor ? `${profile.themeColor}15` : '#f0f9ff' }}>{formatCurrency(receipt.amount, profileCurrency)}</div>
                 <p className="receipt-words">{numberToWords(receipt.amount, (profile?.receiptLanguage || 'ta') === 'ta' ? 'Tamil' : 'English', (profile?.receiptLanguage || 'ta') === 'ta' ? 'Tamil' : 'English', false)}</p>
               </div>
