@@ -12,6 +12,7 @@ import { Box, Paper } from '@mui/material';
 import { ViewHeader } from '../ViewHeader';
 import { thagaval } from '../Thagaval';
 import { getAllCoolieProfiles } from '../../Avanam';
+import './print.css';
 
 const IconPhone = ({ size = 14, className = '', style = {} }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} style={style}>
@@ -93,65 +94,10 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
   };
 
   const executePrint = () => {
-    const el = printRef.current;
-    if (!el) return;
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-    printWindow.document.write(`
-      <html><head><title>Receipt ${receipt.receiptNo}</title>
-      <style>
-        @font-face { font-family: 'Elvan Sans'; src: url('/fonts/ElvanSans-Regular.woff') format('woff'), url('/fonts/ElvanSans-Regular.ttf') format('truetype'); font-weight: 400; font-style: normal; }
-        @font-face { font-family: 'Elvan Sans'; src: url('/fonts/ElvanSans-SemiBold.woff') format('woff'), url('/fonts/ElvanSans-SemiBold.ttf') format('truetype'); font-weight: 600; font-style: normal; }
-        @font-face { font-family: 'Elvan Sans'; src: url('/fonts/ElvanSans-Bold.woff') format('woff'), url('/fonts/ElvanSans-Bold.ttf') format('truetype'); font-weight: 700; font-style: normal; }
-        * { box-sizing: border-box; }
-        body { font-family: 'Elvan Sans', -apple-system, sans-serif; margin: 0; padding: 2rem; color: #1a1a2e; }
-        .receipt-box { width: 210mm; min-height: 297mm; margin: 0 auto; border: 2px solid #e2e8f0; border-radius: 8px; display: flex; flex-direction: column; overflow: hidden; background: white; }
-        .receipt-content { padding: 2rem; flex: 1; display: flex; flex-direction: column; }
-        .receipt-header { text-align: center; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1rem; }
-        .receipt-title { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0; }
-        .receipt-subtitle { font-size: 0.8rem; color: #64748b; margin: 0.25rem 0 0; }
-        .receipt-row { display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 0.9rem; border-bottom: 1px solid #f1f5f9; }
-        .receipt-label { color: #64748b; font-weight: 500; }
-        .receipt-value { color: #1e293b; font-weight: 600; }
-        .receipt-amount { font-size: 1.5rem; font-weight: 800; color: #1e40af; text-align: center; margin: 1.5rem 0; padding: 1rem; background: #eff6ff; border-radius: 8px; }
-        .receipt-words { font-size: 0.85rem; color: #334155; font-style: italic; text-align: center; margin-bottom: 1.5rem; }
-        .receipt-footer { display: flex; justify-content: space-between; margin-top: auto; padding-top: 1rem; padding-bottom: 1rem; }
-        .receipt-sig { text-align: center; }
-        .receipt-sig-line { width: 180px; border-bottom: 1.5px solid #1e293b; margin-bottom: 0.25rem; }
-        .receipt-sig-label { font-size: 0.75rem; color: #64748b; }
-        .business-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; }
-        .business-details { font-size: 0.75rem; color: #64748b; }
-        .rcpt-contact-section { padding: 1.5rem 2rem; border-top: 2px solid #e2e8f0; }
-        .rcpt-contact-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .rcpt-contact-row { display: flex; justify-content: space-between; align-items: flex-start; }
-        .rcpt-contact-left { display: flex; flex-direction: column; gap: 4px; }
-        .rcpt-contact-address { font-size: 0.8rem; color: #334155; font-weight: 500; }
-        .rcpt-contact-email, .rcpt-phone-item-new { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; color: #444; }
-        @page { margin: 0; size: A4 portrait; }
-        @media print { 
-          html, body { height: 100%; }
-          body { margin: 0; padding: 1.5cm; width: 210mm; height: 297mm; font-size: 1.1rem; } 
-          .receipt-box { width: 100%; max-width: none; border: none; padding: 0; height: auto; min-height: 100%; overflow: visible; background: transparent; } 
-          .receipt-content { padding: 0; }
-          .rcpt-contact-section { padding: 1.5rem 0; border: none; }
-          .receipt-header { margin-bottom: 2rem; padding-bottom: 1.5rem; }
-          .receipt-title { font-size: 2rem; }
-          .receipt-row { padding: 0.75rem 0; font-size: 1rem; }
-          .receipt-amount { font-size: 2rem; margin: 2rem 0; padding: 1.5rem; }
-          .receipt-words { font-size: 1rem; margin-bottom: 2rem; }
-          .receipt-footer { margin-top: auto; padding-top: 2rem; }
-        }
-      </style></head><body>
-      ${el.innerHTML}
-      <script>
-        setTimeout(function() {
-          window.print();
-          window.close();
-        }, 500);
-      </script>
-      </body></html>
-    `);
-    printWindow.document.close();
+    const origTitle = document.title;
+    document.title = receipt?.receiptNo ? `Receipt-${receipt.receiptNo}` : 'Print';
+    window.print();
+    document.title = origTitle;
   };
 
   const uploadToGoogleDrive = async (pdfBlob, fileName) => {
@@ -333,6 +279,16 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
           .rcpt-contact-left { display: flex; flex-direction: column; gap: 5px; }
           .rcpt-contact-address { font-size: 0.95rem; color: #334155; font-weight: 500; }
           .rcpt-contact-email, .rcpt-phone-item-new { display: flex; align-items: center; gap: 6px; font-size: 0.95rem; font-weight: 600; color: #444; }
+          @media print {
+            .receipt-box {
+              border: none !important;
+              border-radius: 0 !important;
+              box-shadow: none !important;
+              width: 100% !important;
+              height: 297mm !important;
+              margin: 0 !important;
+            }
+          }
         `}</style>
         <Paper elevation={3} className="invoice-paper print-wrapper" sx={{ 
           p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto',
