@@ -1021,7 +1021,7 @@ function Seyali() {
           '@media print': { mx: 0, mb: 0, borderRadius: 0, boxShadow: 'none' }
         }}>
           {/* Inner scrollable area inside the shell */}
-          <Box id="main-scroll-container" className={['invoice-editor', 'invoice-view'].includes(currentView as string) ? 'no-print' : ''} sx={{ 
+          <Box id="main-scroll-container" className={['invoice-editor', 'invoice-view', 'receipt-editor', 'receipt-view'].includes(currentView as string) ? 'no-print' : ''} sx={{ 
             flexGrow: 1, 
             overflowY: 'scroll',
             pb: { xs: 2, md: 0 }, // small padding at the bottom of the scroll inside the shell

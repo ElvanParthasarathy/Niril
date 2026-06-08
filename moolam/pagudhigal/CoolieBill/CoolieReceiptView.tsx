@@ -245,7 +245,7 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
   }
 
   return (
-    <Box className="print-wrapper" sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', width: '100%', position: 'relative', bgcolor: 'background.default', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <Box className="print-wrapper" sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', width: '100%', position: 'relative', bgcolor: 'background.default', minHeight: '100vh', display: 'flex', flexDirection: 'column', '@media print': { bgcolor: 'white !important', minHeight: 'auto', py: 0, px: 0 } }}>
       <ViewHeader 
         onEdit={onEdit ? () => onEdit(receipt) : undefined}
         onPrint={executePrint}
@@ -291,12 +291,20 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
           }
         `}</style>
         <Paper elevation={3} className="invoice-paper print-wrapper" sx={{ 
-          p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto',
+          p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto', bgcolor: 'white', color: 'black',
           zoom: { xs: 0.43, sm: 0.7, md: 0.85, lg: 1 },
           '@supports not (zoom: 1)': {
             transformOrigin: 'top center',
             transform: { xs: 'scale(0.43)', sm: 'scale(0.7)', md: 'scale(0.85)', lg: 'none' },
             mb: { xs: '-55%', sm: '-25%', md: '-10%', lg: 0 }
+          },
+          '@media print': { 
+            zoom: '1 !important', 
+            transform: 'none !important',
+            mb: '0 !important',
+            boxShadow: 'none !important',
+            bgcolor: 'white !important',
+            color: 'black !important'
           }
         }}>
           <div ref={printRef} className="print-area">
