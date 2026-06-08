@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Box, Typography, Paper, Grid, TextField, Button, List, ListItem, ListItemButton, ListItemText, Divider } from '@mui/material';
-import { Plus } from '@phosphor-icons/react';
+import { Box, Typography, Paper, Grid, TextField, Button, List, ListItem, ListItemButton, ListItemText, Divider, IconButton, InputAdornment } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import { Plus, X } from '@phosphor-icons/react';
 import { useLanguage } from '../../../mozhi/LanguageContext';
 import { ClientState } from './InvoiceTypes';
 import { getBilingualStateName, getBilingualCountryName } from '../../../Payanpadu';
@@ -110,12 +111,33 @@ export default function ClientSelection({
               <Box sx={{ position: 'relative' }}>
                 <TextField fullWidth size="small" label="" margin="none" sx={{ m: 0, '& .MuiInputBase-root': { mt: 0 } }} value={getClientField('name', primaryLang)} inputRef={clientNameRef}
                   onChange={(e) => {
-                    setClientField('name', primaryLang, e.target.value);
+                    const newVal = e.target.value;
+                    if (selectedClientId) {
+                      // Clear all other fields if modifying a previously selected client
+                      setClient({ [`name_${primaryLang}`]: newVal } as any);
+                    } else {
+                      setClientField('name', primaryLang, newVal);
+                    }
                     setSelectedClientId(null);
                     setShowClientSuggestions(true);
                   }}
                   onFocus={() => { if (savedClients.length > 0) setShowClientSuggestions(true); }}
                   placeholder={`${t("typeClientName")}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`} autoComplete="off" />
+                
+                {getClientField('name', primaryLang) && (
+                  <IconButton 
+                    size="small" 
+                    onClick={() => {
+                      setClient({} as any);
+                      setSelectedClientId(null);
+                      setShowClientSuggestions(false);
+                      if (clientNameRef.current) clientNameRef.current.focus();
+                    }}
+                    sx={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', zIndex: 2 }}
+                  >
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                )}
 
                 {showClientSuggestions && (
                   <Paper elevation={4} sx={{ position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 10, mt: 0.5, maxHeight: 300, overflow: 'auto' }} ref={clientSuggestionsRef}>

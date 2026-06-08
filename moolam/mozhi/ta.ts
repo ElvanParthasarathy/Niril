@@ -91,7 +91,7 @@ export const ta = {
   price: 'விலை',
   amount: 'தொகை',
   total: 'மொத்தம்',
-  subTotal: 'கூடுதல்',
+  subTotal: 'உள் மொத்தம்',
   addAnotherItem: 'புதிய வரிசை',
   notes: 'குறிப்புகள்',
   terms: 'வரையறைகள்',
@@ -974,6 +974,20 @@ export const ta = {
   hc_addNewClient: "புதிய வணிகரைச் சேர்",
   deleteInvoiceConfirmMsg: "இந்தப் பட்டியலை நீக்க வேண்டுமா?",
   notesAndTerms: "குறிப்புகள் / வரையறைகள்",
+  customer: "வாடிக்கையாளர்",
+  company: "நிறுவனம்",
+  quantity: "எடை",
+  addAnotherItem: "புதிய பொருளைச் சேர்",
+  addOtherCharges: "கூடுதல் கட்டணம் சேர்",
+  chargeName: "கட்டணத்தின் பெயர்",
+  otherCharges: "கூடுதல் கட்டணங்கள்",
+  setharam: "சேதாரம்",
+  ahimsaSilk: "அகிம்சா பட்டு",
+  courier: "கூரியர்",
+  totalWeight: "மொத்த எடை",
+  grams: "கிராம்",
+  hc_savedClientDetails: "சேமிக்கப்பட்ட வாடிக்கையாளர் விவரங்கள்",
+  searchBillsPlaceholder: "தேடுக..."
 };
 
 export type TranslationKey = keyof typeof ta;

@@ -69,19 +69,19 @@ const pickTamilPart = (text) => {
 export default function CoolieInvoiceView({ bill, profile: globalProfile, onClose, onEdit }) {
     const { t } = useLanguage();
     const printRef = useRef(null);
-    const [companyProfile, setCompanyProfile] = useState(null);
+    const [companyProfile, setCompanyProfile] = useState(bill._companyProfile || null);
     const [printLang, setPrintLang] = useState('ta');
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
-        if (bill?.company_id) {
+        if (!companyProfile && bill?.company_id) {
             getAllCoolieProfiles().then(profiles => {
                 const p = profiles.find(pr => pr.id === bill.company_id);
                 setCompanyProfile(p);
                 if (p?.defaultPrintLanguage) setPrintLang(p.defaultPrintLanguage);
             });
         }
-    }, [bill?.company_id]);
+    }, [bill?.company_id, companyProfile]);
 
     if (!bill) return null;
 
@@ -263,6 +263,19 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
         show_ifsc: showIfsc
     } = bill;
 
+    let otherCharges: { name: string, amount: string | number }[] = [];
+    if (customChargeName) {
+      try {
+        if (customChargeName.startsWith('[')) {
+          otherCharges = JSON.parse(customChargeName);
+        } else {
+          otherCharges = [{ name: customChargeName, amount: customChargeRs }];
+        }
+      } catch (e) {
+        otherCharges = [{ name: customChargeName, amount: customChargeRs }];
+      }
+    }
+
     const isEng = printLang === 'en';
     const customerName = isEng && customerNameEn ? customerNameEn : customerNameTa;
     const address = isEng && addressEn ? addressEn : addressTa;
@@ -422,14 +435,17 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
                             </tr>
                         )}
 
-                        {customChargeRs && (
-                            <tr>
-                                <td className="text-center">-</td>
-                                <td className="text-left"><div>{customChargeName || (isEng ? 'Custom Charges' : 'பிற விவரம்')}</div></td>
-                                <td className="text-center">-</td>
-                                <td className="text-center">{formatCurrency(customChargeRs)}</td>
-                            </tr>
-                        )}
+                        {otherCharges.map((charge, i) => {
+                            if (!charge.amount || parseFloat(String(charge.amount)) === 0) return null;
+                            return (
+                                <tr key={`oc-${i}`}>
+                                    <td className="text-center">-</td>
+                                    <td className="text-left"><div>{charge.name || (isEng ? 'Custom Charges' : 'பிற விவரம்')}</div></td>
+                                    <td className="text-center">-</td>
+                                    <td className="text-center">{formatCurrency(charge.amount)}</td>
+                                </tr>
+                            );
+                        })}
 
                         {setharamGrams && (
                             <tr className={items.length % 2 === 1 ? 'row-alt' : ''}>

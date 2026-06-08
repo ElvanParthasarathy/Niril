@@ -61,7 +61,17 @@ export default function CoolieInvoiceList({ onView, onNew, profile }) {
   const consonantSkeleton = (text) => normalizeTanglish(text).replace(/[aeiou]/g, '');
 
   const buildHaystack = (b) => {
-      const raw = [b.customer_name, b.bill_no, b.city].filter(Boolean).join(' ');
+      const parts = [
+        b.customer_name, b.customer_name_en, b.bill_no, b.city, b.city_en, b.date, b.grand_total, b.total_weight,
+        b.sub_total, b.ahimsa_silk_rs, b.courier_rs, b.setharam_grams,
+        b.other_charges_name, b.other_charges_amount, b.notes, b.terms
+      ];
+      if (b.items && Array.isArray(b.items)) {
+        b.items.forEach(item => {
+            parts.push(item.porul, item.name_tamil, item.name_english, item.kg, item.coolie);
+        });
+      }
+      const raw = parts.filter(Boolean).join(' ');
       return [raw.toLowerCase(), normalizeBasic(raw), normalizeTanglish(raw), consonantSkeleton(raw)].filter(Boolean);
   };
 
@@ -128,7 +138,15 @@ export default function CoolieInvoiceList({ onView, onNew, profile }) {
           cursor: 'pointer',
           ...(isSelectionMode && isSelected ? { bgcolor: isDark ? 'rgba(255,255,255,0.06) !important' : 'rgba(0,0,0,0.04) !important' } : {})
         }}
-        onClick={() => isSelectionMode ? toggleSelection(bill.id) : (onView && onView(bill))}
+        onClick={() => {
+          if (isSelectionMode) {
+            toggleSelection(bill.id);
+          } else if (onView) {
+            const p = profiles.find(pr => pr.id === bill.company_id);
+            if (p) bill._companyProfile = p;
+            onView(bill);
+          }
+        }}
       >
         <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
@@ -158,12 +176,21 @@ export default function CoolieInvoiceList({ onView, onNew, profile }) {
                 {bill.customer_name ? (
                   bill.customer_name.includes('/') ? (
                     <>
-                      {bill.customer_name.split('/')[0].trim()}
-                      <span style={{ fontSize: '0.85em', opacity: 0.7, marginLeft: '6px', fontWeight: 'normal' }}>
-                        / {bill.customer_name.split('/').slice(1).join('/').trim()}
-                      </span>
+                      <Box component="span" sx={{ display: 'block' }}>{bill.customer_name.split('/')[0].trim()}</Box>
+                      <Box component="span" sx={{ display: 'block', fontSize: '0.85em', opacity: 0.7, fontWeight: 'normal', mt: -0.2 }}>
+                        {bill.customer_name.split('/').slice(1).join('/').trim()}
+                      </Box>
                     </>
-                  ) : bill.customer_name
+                  ) : (
+                    <>
+                      <Box component="span" sx={{ display: 'block' }}>{bill.customer_name}</Box>
+                      {bill.customer_name_en && (
+                        <Box component="span" sx={{ display: 'block', fontSize: '0.85em', opacity: 0.7, fontWeight: 'normal', mt: -0.2 }}>
+                          {bill.customer_name_en}
+                        </Box>
+                      )}
+                    </>
+                  )
                 ) : '-'}
               </Typography>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
@@ -193,9 +220,29 @@ export default function CoolieInvoiceList({ onView, onNew, profile }) {
     );
   };
 
+  const parseDate = (dString: string) => {
+    if (!dString) return 0;
+    const parts = dString.split('/');
+    if (parts.length === 3) {
+      return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).getTime();
+    }
+    return new Date(dString).getTime() || 0;
+  };
+
   const tabFilteredBills = bills.filter(b => {
     if (activeTab === 'all') return true;
     return b.company_id === activeTab;
+  }).sort((a, b) => {
+    const timeA = parseDate(a.date);
+    const timeB = parseDate(b.date);
+    if (timeA !== timeB) return timeB - timeA;
+    
+    // Tie-breaker: bill number descending
+    const getNum = (n: string) => {
+      const match = String(n || '').match(/\d+/);
+      return match ? parseInt(match[0], 10) : 0;
+    };
+    return getNum(b.bill_no) - getNum(a.bill_no);
   });
 
   const legacyExists = bills.some(b => b.company_id === 'legacy');
@@ -269,9 +316,10 @@ export default function CoolieInvoiceList({ onView, onNew, profile }) {
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
       <Box sx={{ flex: 1 }}>
         <ElvanListView 
+          key={activeTab}
           title={t('coolieBills') || 'Coolie Bills'}
           renderBelowSearch={filterChips}
-          searchPlaceholder={t('searchCustomer') || 'Search bills by name, city, or bill no...'}
+          searchPlaceholder={t('searchBillsPlaceholder') || 'Search anything...'}
           addButtonText={t('newBill') || 'New Bill'}
           onAdd={() => onNew()}
           items={tabFilteredBills}

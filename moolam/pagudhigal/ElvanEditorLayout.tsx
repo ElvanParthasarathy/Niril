@@ -89,7 +89,7 @@ export default function ElvanEditorLayout({
   }
 
   return (
-    <Box sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', position: 'relative' }}>
+    <Box sx={{ pt: { xs: 1.5, md: 4 }, pb: { xs: '120px', md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', position: 'relative' }}>
       {renderHeader}
 
       <Box sx={{ px: 0 }}>

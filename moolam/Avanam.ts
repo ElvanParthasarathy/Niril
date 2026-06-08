@@ -295,24 +295,34 @@ export const getAllCoolieBills = async () => {
 export const getNextCoolieBillNumber = async (companyId: string) => {
   if (isBlankState()) return '1';
   try {
-    const bills = await apiFetch(`${API}/coolie_pattiyalkal`);
+    const profiles = await getAllCoolieProfiles();
+    const profile = profiles.find((p: any) => p.id === companyId);
+    const prefix = profile?.shortBusinessName || profile?.name || 'CB';
 
-    if (!bills || !Array.isArray(bills)) return '1';
-    
+    const bills = await apiFetch(`${API}/coolie_pattiyalkal`);
+    if (!bills || !Array.isArray(bills)) {
+      return `${prefix}-01`;
+    }
+
     const companyBills = bills.filter((b: any) => b.company_id === companyId);
-    if (companyBills.length === 0) return '1';
-    
+    if (companyBills.length === 0) {
+      return `${prefix}-01`;
+    }
+
     const maxNo = Math.max(...companyBills.map((b: any) => {
       const match = String(b.bill_no).match(/\d+/);
       return match ? parseInt(match[0], 10) : 0;
     }));
+
+    const next = maxNo + 1;
+    const paddedNext = next < 10 ? `0${next}` : `${next}`;
     
-    return (maxNo + 1).toString();
-  } catch (err) {
-    console.error(err);
+    return `${prefix}-${paddedNext}`;
+  } catch (e) {
     return '1';
   }
 };
+
 
 export const saveCoolieBill = async (bill) => {
   const res = await apiFetch(`${API}/coolie_pattiyalkal`, { method: 'POST', body: JSON.stringify(bill) });

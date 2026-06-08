@@ -1,5 +1,5 @@
-import { Box, Typography, Card, CardActionArea, CardContent, useTheme, Fade, Zoom } from '@mui/material';
-import { FileText, Truck } from '@phosphor-icons/react';
+import { Box, Typography, Card, CardActionArea, CardContent, useTheme, Fade, Zoom, useMediaQuery } from '@mui/material';
+import { Invoice, HandCoins } from '@phosphor-icons/react';
 import { useState, useEffect } from 'react';
 import { useLanguage } from '../mozhi/LanguageContext';
 
@@ -7,6 +7,7 @@ export default function ModeSelector({ onSelect, currentMode }) {
   const { language } = useLanguage();
   const theme = useTheme();
   const darkMode = theme.palette.mode === 'dark';
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -33,43 +34,50 @@ export default function ModeSelector({ onSelect, currentMode }) {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 99999, // Ensure it covers everything
+          overflow: 'hidden',
+          px: 2,
+          zIndex: 99999,
         }}
       >
         <Zoom in={mounted} timeout={1000}>
-          <Box sx={{ textAlign: 'center', mb: 8 }}>
+          <Box sx={{ textAlign: 'center', mb: { xs: 4, sm: 8 } }}>
             <Typography
               variant="h3"
               sx={{
+                fontSize: { xs: '2rem', sm: '3rem' },
                 fontWeight: 800,
                 color: darkMode ? '#ffffff' : '#111827',
                 letterSpacing: '-0.02em',
-                mb: 1,
+                lineHeight: 1.2,
+                mb: 1.5,
               }}
             >
-              Who's working today?
+              {language === 'ta' ? 'இன்று எந்தக் கணக்கு?' : "Who's working today?"}
             </Typography>
             <Typography
-              variant="h6"
+              variant="subtitle1"
               sx={{
+                fontSize: { xs: '0.95rem', sm: '1.25rem' },
                 fontWeight: 500,
                 color: darkMode ? '#9ca3af' : '#6b7280',
+                px: 2,
               }}
             >
-              Select your operating mode
+              {language === 'ta' ? 'உங்கள் கணக்குப் பகுதியைத் தேர்ந்தெடுக்கவும்' : 'Select your operating mode'}
             </Typography>
           </Box>
         </Zoom>
 
-        <Box sx={{ display: 'flex', gap: { xs: 4, md: 8 }, flexWrap: 'wrap', justifyContent: 'center' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', gap: { xs: 2, sm: 8 }, alignItems: 'center', justifyContent: 'center', flexWrap: 'nowrap' }}>
           {/* GST Mode Card */}
           <Zoom in={mounted} timeout={1200}>
             <Card
               elevation={0}
               sx={{
-                width: 240,
-                height: 280,
+                width: { xs: 130, sm: 240 },
+                height: { xs: 160, sm: 280 },
                 bgcolor: 'transparent',
                 borderRadius: 4,
                 overflow: 'visible',
@@ -89,9 +97,9 @@ export default function ModeSelector({ onSelect, currentMode }) {
                     transform: 'scale(1.05) translateY(-8px)',
                     '& .icon-box': {
                       boxShadow: darkMode 
-                        ? '0 20px 40px rgba(99, 102, 241, 0.3)' 
-                        : '0 20px 40px rgba(99, 102, 241, 0.2)',
-                      border: '2px solid #6366f1',
+                        ? '0 20px 40px rgba(255, 255, 255, 0.1)' 
+                        : '0 20px 40px rgba(0, 0, 0, 0.1)',
+                      border: `2px solid ${darkMode ? '#ffffff' : '#000000'}`,
                     },
                     '& .card-text': {
                       color: darkMode ? '#ffffff' : '#111827',
@@ -102,32 +110,33 @@ export default function ModeSelector({ onSelect, currentMode }) {
                 <Box
                   className="icon-box"
                   sx={{
-                    width: 140,
-                    height: 140,
+                    width: { xs: 80, sm: 140 },
+                    height: { xs: 80, sm: 140 },
                     borderRadius: '50%',
-                    bgcolor: darkMode ? '#1f2937' : '#ffffff',
+                    bgcolor: darkMode ? '#333333' : '#eeeeee',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     mb: 3,
-                    border: `2px solid ${darkMode ? '#374151' : '#e5e7eb'}`,
+                    border: '2px solid transparent',
                     transition: 'all 0.3s ease',
                     boxShadow: darkMode ? '0 8px 16px rgba(0,0,0,0.4)' : '0 8px 16px rgba(0,0,0,0.05)',
                   }}
                 >
-                  <FileText size={64} weight="duotone" color="#6366f1" />
+                  <Invoice size={isMobile ? 40 : 64} weight="fill" color={darkMode ? '#ffffff' : '#000000'} />
                 </Box>
                 <CardContent sx={{ p: 0, textAlign: 'center' }}>
                   <Typography
                     className="card-text"
-                    variant="h5"
+                    variant="h6"
                     sx={{
+                      fontSize: { xs: '1rem', sm: '1.5rem' },
                       fontWeight: 700,
                       color: darkMode ? '#9ca3af' : '#4b5563',
                       transition: 'color 0.3s ease',
                     }}
                   >
-                    {language === 'ta' ? 'Niril Pattu' : 'Niril Silk'}
+                    {language === 'ta' ? 'நிறில் பட்டு' : 'Niril Silk'}
                   </Typography>
                 </CardContent>
               </CardActionArea>
@@ -139,8 +148,8 @@ export default function ModeSelector({ onSelect, currentMode }) {
             <Card
               elevation={0}
               sx={{
-                width: 240,
-                height: 280,
+                width: { xs: 130, sm: 240 },
+                height: { xs: 160, sm: 280 },
                 bgcolor: 'transparent',
                 borderRadius: 4,
                 overflow: 'visible',
@@ -160,9 +169,9 @@ export default function ModeSelector({ onSelect, currentMode }) {
                     transform: 'scale(1.05) translateY(-8px)',
                     '& .icon-box': {
                       boxShadow: darkMode 
-                        ? '0 20px 40px rgba(16, 185, 129, 0.3)' 
-                        : '0 20px 40px rgba(16, 185, 129, 0.2)',
-                      border: '2px solid #10b981',
+                        ? '0 20px 40px rgba(255, 255, 255, 0.1)' 
+                        : '0 20px 40px rgba(0, 0, 0, 0.1)',
+                      border: `2px solid ${darkMode ? '#ffffff' : '#000000'}`,
                     },
                     '& .card-text': {
                       color: darkMode ? '#ffffff' : '#111827',
@@ -173,32 +182,33 @@ export default function ModeSelector({ onSelect, currentMode }) {
                 <Box
                   className="icon-box"
                   sx={{
-                    width: 140,
-                    height: 140,
+                    width: { xs: 80, sm: 140 },
+                    height: { xs: 80, sm: 140 },
                     borderRadius: '50%',
-                    bgcolor: darkMode ? '#1f2937' : '#ffffff',
+                    bgcolor: darkMode ? '#333333' : '#eeeeee',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     mb: 3,
-                    border: `2px solid ${darkMode ? '#374151' : '#e5e7eb'}`,
+                    border: '2px solid transparent',
                     transition: 'all 0.3s ease',
                     boxShadow: darkMode ? '0 8px 16px rgba(0,0,0,0.4)' : '0 8px 16px rgba(0,0,0,0.05)',
                   }}
                 >
-                  <Truck size={64} weight="duotone" color="#10b981" />
+                  <HandCoins size={isMobile ? 40 : 64} weight="fill" color={darkMode ? '#ffffff' : '#000000'} />
                 </Box>
                 <CardContent sx={{ p: 0, textAlign: 'center' }}>
                   <Typography
                     className="card-text"
-                    variant="h5"
+                    variant="h6"
                     sx={{
+                      fontSize: { xs: '1rem', sm: '1.5rem' },
                       fontWeight: 700,
                       color: darkMode ? '#9ca3af' : '#4b5563',
                       transition: 'color 0.3s ease',
                     }}
                   >
-                    Niril Coolie
+                    {language === 'ta' ? 'நிறில் கூலி' : 'Niril Coolie'}
                   </Typography>
                 </CardContent>
               </CardActionArea>

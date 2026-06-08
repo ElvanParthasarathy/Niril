@@ -1,6 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, Stack, Autocomplete, IconButton, Divider, Select, MenuItem, FormControl, InputLabel, useTheme, Switch, FormControlLabel, createFilterOptions } from '@mui/material';
+import { Box, Typography, TextField, Button, Stack, Autocomplete, IconButton, Divider, Select, MenuItem, FormControl, InputLabel, useTheme, Switch, FormControlLabel, createFilterOptions, Paper, ListItemButton, ListItemText } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+dayjs.extend(customParseFormat);
+
+const parseDateSafe = (dateStr) => {
+  if (!dateStr) return null;
+  const formats = ['DD/MM/YYYY', 'DD/MM/YY', 'YYYY-MM-DD'];
+  for (const fmt of formats) {
+    const d = dayjs(dateStr, fmt, true);
+    if (d.isValid()) return d;
+  }
+  const fallback = dayjs(dateStr);
+  return fallback.isValid() ? fallback : null;
+};
 
 const MD3Switch = styled(Switch)(({ theme }) => ({
   width: 52,
@@ -51,7 +69,7 @@ const MD3Switch = styled(Switch)(({ theme }) => ({
     border: '2px solid transparent',
   }
 }));
-import { X, Plus, FloppyDisk } from '@phosphor-icons/react';
+import { X, Plus, FloppyDisk, CalendarBlank, Trash } from '@phosphor-icons/react';
 import { getAllCoolieClients, getAllCoolieProducts, getAllCoolieProfiles, saveCoolieBill, getNextCoolieBillNumber } from '../../Avanam';
 import { thagaval } from '../Thagaval';
 import { useLanguage } from '../../mozhi/LanguageContext';
@@ -91,8 +109,7 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
   const [setharamGrams, setSetharamGrams] = useState('');
   const [courierRs, setCourierRs] = useState('');
   const [ahimsaSilkRs, setAhimsaSilkRs] = useState('');
-  const [customChargeName, setCustomChargeName] = useState('');
-  const [customChargeRs, setCustomChargeRs] = useState('');
+  const [otherCharges, setOtherCharges] = useState<{ name: string, amount: string }[]>([]);
   const [bankDetails, setBankDetails] = useState('');
   const [accountNo, setAccountNo] = useState('');
   const [ifsc, setIfsc] = useState('');
@@ -107,8 +124,8 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
 
   const formState = {
     billNo, date, companyId, customerName, customerNameEn,
-    address, addressEn, city, cityEn, items, setharamGrams, courierRs, ahimsaSilkRs, customChargeName,
-    customChargeRs, bankDetails, accountNo, ifsc, showBankDetails, showIfsc
+    address, addressEn, city, cityEn, items, setharamGrams, courierRs, ahimsaSilkRs, otherCharges,
+    bankDetails, accountNo, ifsc, showBankDetails, showIfsc
   };
 
   const setFormState = (s) => {
@@ -125,8 +142,11 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
     if (s.setharamGrams !== undefined) setSetharamGrams(s.setharamGrams);
     if (s.courierRs !== undefined) setCourierRs(s.courierRs);
     if (s.ahimsaSilkRs !== undefined) setAhimsaSilkRs(s.ahimsaSilkRs);
-    if (s.customChargeName !== undefined) setCustomChargeName(s.customChargeName);
-    if (s.customChargeRs !== undefined) setCustomChargeRs(s.customChargeRs);
+    if (s.otherCharges !== undefined) setOtherCharges(s.otherCharges);
+    // Backward compatibility for old local drafts
+    if (s.customChargeName !== undefined && s.otherCharges === undefined) { 
+      setOtherCharges([{ name: s.customChargeName, amount: s.customChargeRs || '' }]); 
+    }
     if (s.bankDetails !== undefined) setBankDetails(s.bankDetails);
     if (s.accountNo !== undefined) setAccountNo(s.accountNo);
     if (s.ifsc !== undefined) setIfsc(s.ifsc);
@@ -165,8 +185,21 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
         
         if (existingBill) {
           const compProfile = (profiles || []).find(p => p.id === existingBill.company_id);
+          let parsedOtherCharges = [];
+          if (existingBill.custom_charge_name) {
+            try {
+              if (existingBill.custom_charge_name.startsWith('[')) {
+                parsedOtherCharges = JSON.parse(existingBill.custom_charge_name);
+              } else {
+                parsedOtherCharges = [{ name: existingBill.custom_charge_name, amount: existingBill.custom_charge_rs || '' }];
+              }
+            } catch (e) {
+              parsedOtherCharges = [{ name: existingBill.custom_charge_name, amount: existingBill.custom_charge_rs || '' }];
+            }
+          }
+
           setFormState({
-            billNo: existingBill.bill_no || '',
+            billNo: existingBill.bill_no,
             date: existingBill.date || new Date().toLocaleDateString('en-GB'),
             companyId: existingBill.company_id || (profiles && profiles.length > 0 ? profiles[0].id : ''),
             customerName: existingBill.customer_name || '',
@@ -179,8 +212,7 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
             setharamGrams: existingBill.setharam_grams || '',
             courierRs: existingBill.courier_rs || '',
             ahimsaSilkRs: existingBill.ahimsa_silk_rs || '',
-            customChargeName: existingBill.custom_charge_name || '',
-            customChargeRs: existingBill.custom_charge_rs || '',
+            otherCharges: parsedOtherCharges,
             bankDetails: existingBill.bank_details || '',
             accountNo: existingBill.account_no || '',
             ifsc: existingBill.ifsc || compProfile?.ifsc || '',
@@ -188,17 +220,7 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
             showIfsc: existingBill.show_ifsc !== false
           });
         } else if (profiles && profiles.length > 0) {
-          setCompanyId(profiles[0].id);
-          const bankName = profiles[0].bankNameTamil || profiles[0].bankName || '';
-          const branch = profiles[0].branchTamil || profiles[0].branch || '';
-          setBankDetails([bankName, branch].filter(Boolean).join(', '));
-          setAccountNo(profiles[0].accountNo || '');
-          setIfsc(profiles[0].ifsc || '');
-          
-          if (!existingBill) {
-            const nextNum = await getNextCoolieBillNumber(profiles[0].id);
-            setBillNo(nextNum);
-          }
+          // Do not auto-select companyId by default. Wait for user selection.
         }
       } catch (e) {
         console.error(e);
@@ -208,6 +230,33 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
     }
     loadData();
   }, []);
+
+  // Fix legacy dates automatically (e.g. 27/05/26 -> 27/05/2026)
+  useEffect(() => {
+    if (date) {
+      const parsed = parseDateSafe(date);
+      if (parsed && parsed.isValid() && date !== parsed.format('DD/MM/YYYY')) {
+        setDate(parsed.format('DD/MM/YYYY'));
+      }
+    }
+  }, [date]);
+
+  useEffect(() => {
+    if (!isEditMode) {
+      if (companyId) {
+        if (!billNo) {
+          getNextCoolieBillNumber(companyId).then(nextNum => {
+            setBillNo(nextNum);
+          }).catch(() => {});
+        }
+      } else {
+        setBillNo('');
+        setBankDetails('');
+        setAccountNo('');
+        setIfsc('');
+      }
+    }
+  }, [companyId, isEditMode]);
 
   const handleCompanyChange = (e) => {
     const pId = e.target.value;
@@ -219,10 +268,18 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
       setBankDetails([bankName, branch].filter(Boolean).join(', '));
       setAccountNo(profile.accountNo || '');
       setIfsc(profile.ifsc || '');
+    } else {
+      setBankDetails('');
+      setAccountNo('');
+      setIfsc('');
     }
     
     if (!isEditMode) {
-      getNextCoolieBillNumber(pId).then(nextNum => setBillNo(nextNum));
+      if (pId) {
+        getNextCoolieBillNumber(pId).then(nextNum => setBillNo(nextNum));
+      } else {
+        setBillNo('');
+      }
     }
   };
 
@@ -245,16 +302,27 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
   };
 
   const calculateGrandTotal = () => {
-    const subtotal = calculateSubtotal();
-    const courier = Math.floor(parseFloat(courierRs) || 0);
-    const ahimsa = Math.floor(parseFloat(ahimsaSilkRs) || 0);
-    const other = Math.floor(parseFloat(customChargeRs) || 0);
-    return Math.floor(subtotal + courier + ahimsa + other);
+    const totalItems = items.reduce((sum, item) => sum + calculateRowTotal(item), 0);
+    const courier = parseFloat(courierRs) || 0;
+    const ahimsaSilk = parseFloat(ahimsaSilkRs) || 0;
+    const totalOtherCharges = otherCharges.reduce((sum, charge) => sum + (parseFloat(charge.amount) || 0), 0);
+    return totalItems + courier + ahimsaSilk + totalOtherCharges;
   };
 
   const handleSave = async () => {
-    if (!billNo || !customerName) {
-      alert("Bill Number and Customer Name are required");
+    if (!companyId) {
+      alert("Company is required");
+      return;
+    }
+
+    let finalBillNo = billNo;
+    if (!finalBillNo) {
+      finalBillNo = await getNextCoolieBillNumber(companyId);
+      setBillNo(finalBillNo);
+    }
+    
+    if (!customerName) {
+      alert("Customer Name is required");
       return;
     }
     
@@ -262,7 +330,7 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
     
     const billData = {
       id: existingBill?.id || `cbill_${Date.now()}`,
-      bill_no: billNo,
+      bill_no: finalBillNo,
       date,
       customer_name: customerName,
       customer_name_en: customerNameEn,
@@ -274,8 +342,8 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
       setharam_grams: setharamGrams,
       courier_rs: courierRs,
       ahimsa_silk_rs: ahimsaSilkRs,
-      custom_charge_name: customChargeName,
-      custom_charge_rs: customChargeRs,
+      custom_charge_name: otherCharges.length > 0 ? JSON.stringify(otherCharges) : '',
+      custom_charge_rs: otherCharges.reduce((sum, charge) => sum + (parseFloat(charge.amount) || 0), 0),
       bank_details: bankDetails,
       account_no: accountNo,
       ifsc: ifsc,
@@ -299,6 +367,10 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
   };
 
   const handleCustomerSelect = (e, val) => {
+    if (val && val.isAddButton) {
+      window.location.href = window.location.pathname + '?view=client-editor';
+      return;
+    }
     if (!val) {
       setCustomerName('');
       setCustomerNameEn('');
@@ -337,69 +409,52 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
     >
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
         
-        {/* Section 1: Metadata */}
-        <Box sx={{ mb: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, ml: 2 }}>
+        {/* Section 1: Customer */}
+        <Box sx={{ py: 3, mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, ml: 1.5 }}>
             <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>1</Box>
-            <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('invoiceDetails') || 'Invoice Details'}</Typography>
-          </Box>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' }, gap: 3, mb: 2 }}>
-            <TextField 
-              label={t('billNo') || 'Bill No'} 
-              value={billNo} 
-              onChange={e => setBillNo(e.target.value)} 
-              size="small" 
-              fullWidth
-              required
-            />
-            <TextField 
-              label={t('date') || 'Date'} 
-              value={date} 
-              onChange={e => setDate(e.target.value)} 
-              size="small" 
-              placeholder="DD/MM/YYYY"
-              fullWidth
-              required
-            />
-            <FormControl size="small" fullWidth>
-              <InputLabel>{t('company') || 'Company'}</InputLabel>
-              <Select value={companyId} onChange={handleCompanyChange} label={t('company') || 'Company'}>
-                {profileOptions.map(p => (
-                  <MenuItem key={p.id} value={p.id}>{p.nameTamil || p.name || 'Unknown'}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
-        </Box>
-
-        <Divider sx={{ my: 1, borderColor: 'divider', opacity: 0.5 }} />
-
-        {/* Section 2: Customer */}
-        <Box sx={{ mb: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, ml: 2 }}>
-            <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>2</Box>
             <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('customer') || 'Customer'}</Typography>
           </Box>
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '2fr 1fr 1fr' }, gap: 3, mb: 2 }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '5fr 7fr', lg: '4fr 8fr' }, gap: 3, mb: 2 }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Autocomplete
-                freeSolo
+              <Box>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', ml: 1.5, mb: 0.5 }}>
+                  {t('clientName') || 'Client Name'}
+                </Typography>
+                <Autocomplete
+                  freeSolo
                 options={clientOptions}
-                filterOptions={clientFilter}
+                filterOptions={(options, params) => {
+                  const filtered = clientFilter(options, params) as any[];
+                  filtered.push({ id: 'ADD_NEW', isAddButton: true, name: 'Add New' });
+                  return filtered;
+                }}
                 getOptionLabel={(option) => typeof option === 'string' ? option : (option.name || option.nameEn || '')}
                 onChange={handleCustomerSelect}
-                value={customerName || ''}
+                value={customerName || null}
                 inputValue={customerName || ''}
                 onInputChange={(e, val) => setCustomerName(val || '')}
                 renderOption={(props, option, { index }) => {
                     const { key, ...optionProps } = props as any;
+                    
+                    if (option.isAddButton) {
+                      return (
+                        <li key="add-new-client" {...optionProps} style={{ padding: 0 }}>
+                          <Box sx={{ p: 1.5, width: '100%', color: 'primary.main', display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Plus size={18} weight="bold" />
+                            <Typography fontWeight={600}>{t('hc_addNewClient') || 'Add New Client'}</Typography>
+                          </Box>
+                        </li>
+                      );
+                    }
+
                     if (typeof option === 'string') {
                       return <li key={`client-opt-${index}`} {...optionProps}><Typography variant="body1">{option}</Typography></li>;
                     }
                     return (
                       <li key={`client-opt-${index}`} {...optionProps} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', borderBottom: '1px solid rgba(128,128,128,0.1)' }}>
                         <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
-                          <Typography variant="body1" color="primary" sx={{ fontWeight: 700 }}>{option.name}</Typography>
+                          <Typography variant="body1" color="primary" sx={{ fontWeight: 500 }}>{option.name}</Typography>
                           {option.nameEn && <Typography variant="body2" sx={{ color: 'text.secondary' }}>{option.nameEn}</Typography>}
                         </Box>
                         {(option.city || option.cityEn) && (
@@ -411,269 +466,451 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
                       </li>
                     );
                 }}
-                renderInput={(params) => <TextField {...params} label={t('name') || 'Name'} size="small" required />}
+                renderInput={(params) => <TextField {...params} label="" margin="none" sx={{ m: 0, '& .MuiInputBase-root': { mt: 0 } }} size="small" required placeholder={`${t("typeClientName") || 'Type Client Name'}...`} />}
               />
+              </Box>
+
+
+              {(address || city || customerNameEn) && (
+                <ElvanCard sx={{ mt: 2 }} boxSx={{ p: 2 }}>
+                  <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 600, display: 'block', mb: 1 }}>
+                    {t('hc_savedClientDetails') || 'Saved Details'}
+                  </Typography>
+                  {customerNameEn && (
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>
+                      {customerNameEn}
+                    </Typography>
+                  )}
+                  <Box sx={{ mb: 1 }}>
+                    {address && <Typography variant="body2">{address}</Typography>}
+                    {city && <Typography variant="body2">{city}</Typography>}
+                  </Box>
+                  {(addressEn || cityEn) && (
+                    <Box sx={{ color: 'text.secondary' }}>
+                      {addressEn && <Typography variant="body2">{addressEn}</Typography>}
+                      {cityEn && <Typography variant="body2">{cityEn}</Typography>}
+                    </Box>
+                  )}
+                </ElvanCard>
+              )}
+
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', ml: 1.5, mb: 0.5 }}>
+                  {t('company') || 'company'}
+                </Typography>
+                <Autocomplete
+                  options={profileOptions}
+                  getOptionLabel={(option) => typeof option === 'string' ? option : (option.name || option.nameEn || '')}
+                  onChange={(e, val) => {
+                    const pId = val ? val.id : '';
+                    handleCompanyChange({ target: { value: pId } });
+                  }}
+                  value={profileOptions.find(p => p.id === companyId) || null}
+                  renderOption={(props, option, { index }) => {
+                    const { key, ...optionProps } = props as any;
+                    return (
+                      <li key={`company-opt-${option.id}`} {...optionProps} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', borderBottom: '1px solid rgba(128,128,128,0.1)' }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                          <Typography variant="body1" color="primary" sx={{ fontWeight: 500 }}>{option.name}</Typography>
+                          {option.nameEn && <Typography variant="body2" sx={{ color: 'text.secondary' }}>{option.nameEn}</Typography>}
+                        </Box>
+                      </li>
+                    );
+                  }}
+                  renderInput={(params) => <TextField {...params} label="" margin="none" sx={{ m: 0, '& .MuiInputBase-root': { mt: 0 } }} size="small" required placeholder={`${t('company') || 'Select Company'}...`} />}
+                />
+              </Box>
             </Box>
-            <TextField 
-              label={t('address') || 'Address'} 
-              value={address} 
-              onChange={e => setAddress(e.target.value)} 
-              size="small" 
-              fullWidth 
-            />
-            <TextField 
-              label={t('city') || 'City'} 
-              value={city} 
-              onChange={e => setCity(e.target.value)} 
-              size="small" 
-              fullWidth 
-            />
           </Box>
         </Box>
 
-        <Divider sx={{ my: 1, borderColor: 'divider', opacity: 0.5 }} />
+        <Box sx={{ 
+          pointerEvents: companyId ? 'auto' : 'none', 
+          opacity: companyId ? 1 : 0.4, 
+          transition: 'all 0.3s ease',
+          position: 'relative'
+        }}>
+          {!companyId && (
+            <Box sx={{
+              position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+              zIndex: 10, cursor: 'not-allowed'
+            }} />
+          )}
+
+
+        {/* Section 2: Metadata */}
+        <Box sx={{ mb: 2, pb: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, ml: 1.5 }}>
+            <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>2</Box>
+            <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('invoiceDetails') || 'Invoice Details'}</Typography>
+          </Box>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3, mb: 2 }}>
+            <TextField 
+              label={t('billNo') || 'Bill No'} 
+              value={billNo} 
+              onChange={e => setBillNo(e.target.value)} 
+              size="small" 
+              fullWidth
+            />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DesktopDatePicker
+                label={t('date') || 'Date'}
+                value={parseDateSafe(date)}
+                onChange={(newValue) => setDate(newValue ? newValue.format('DD/MM/YYYY') : '')}
+                slots={{ openPickerIcon: () => <CalendarBlank size={20} weight="regular" /> }}
+                slotProps={{ textField: { fullWidth: true, size: 'small' } }}
+                format="DD/MM/YYYY"
+              />
+            </LocalizationProvider>
+          </Box>
+        </Box>
+
+
 
         {/* Section 3: Items Table */}
-        <Box sx={{ mb: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, ml: 2 }}>
+        <Box sx={{ mb: 2, pb: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, ml: 1.5 }}>
             <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>3</Box>
             <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('itemsList') || 'Items'}</Typography>
           </Box>
-          
-          <Box sx={{ display: { xs: 'none', md: 'block' }, bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.02)' : '#fcfcfc', border: '1px solid', borderColor: 'divider', borderRadius: 2, p: 2 }}>
-            <Box sx={{ display: 'grid', gridTemplateColumns: '40% 15% 15% 20% 5%', gap: 2, mb: 2, px: 1 }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.secondary' }}>{t('itemName') || 'Item Details'}</Typography>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, textAlign: 'right', color: 'text.secondary' }}>{t('quantity') || 'Weight'}</Typography>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, textAlign: 'right', color: 'text.secondary' }}>{t('rate') || 'Rate'}</Typography>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, textAlign: 'right', color: 'text.secondary' }}>{t('amount') || 'Amount'}</Typography>
-            </Box>
-            
-            <Divider sx={{ mb: 2 }} />
-
-            {items.map((item, index) => (
-              <Box key={index} sx={{ display: 'grid', gridTemplateColumns: '40% 15% 15% 20% 5%', gap: 2, alignItems: 'center', mb: 2, px: 1 }}>
-                <Autocomplete
-                  freeSolo
-                  options={productOptions}
-                  filterOptions={filter}
-                  getOptionLabel={(option) => typeof option === 'string' ? option : (option.name || option.nameEn || '')}
-                  onChange={(e, val) => {
-                    setItems(prev => {
-                      const newItems = [...prev];
-                      const updatedItem = { ...newItems[index] };
-                      if (typeof val === 'string') {
-                        updatedItem.porul = val;
-                      } else if (val) {
-                        updatedItem.porul = val.name || val.nameEn || '';
-                        updatedItem.name_tamil = val.name || '';
-                        updatedItem.name_english = val.nameEn || '';
-                        if (val.rate) updatedItem.coolie = val.rate;
-                      } else {
-                        updatedItem.porul = '';
+          {items.map((item, index) => (
+            <Box key={index} sx={{ mb: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1, px: 1.5 }}>
+                <Typography variant="subtitle2" color="text.secondary">
+                  {t('item') || 'Item'} #{index + 1}
+                </Typography>
+                <IconButton 
+                  onClick={() => setItems(items.length > 1 ? items.filter((_, i) => i !== index) : items)} 
+                  title={t('hc_remove') || 'Remove'}
+                  sx={{ 
+                    bgcolor: 'action.hover',
+                    color: 'text.secondary',
+                    '&:hover': { bgcolor: 'action.selected' }
+                  }}
+                >
+                  <Trash size={20} weight="regular" />
+                </IconButton>
+              </Box>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, p: 2, bgcolor: 'action.hover', borderRadius: '16px' }}>
+                
+                {/* Product Search */}
+                <Box sx={{ flex: { xs: '1 1 100%', sm: '3 1 250px' } }}>
+                  <Autocomplete
+                    freeSolo
+                    options={productOptions}
+                    filterOptions={(options, params) => {
+                      const filtered = filter(options, params);
+                      filtered.push({ isAddButton: true });
+                      return filtered;
+                    }}
+                    getOptionLabel={(option) => {
+                      if (option.isAddButton) return '';
+                      return typeof option === 'string' ? option : (option.name || option.nameEn || '');
+                    }}
+                    onChange={(e, val) => {
+                      if (val && val.isAddButton) {
+                        window.location.href = window.location.pathname + '?view=product-editor';
+                        return;
                       }
-                      newItems[index] = updatedItem;
-                      return newItems;
-                    });
-                  }}
-                  value={item.porul || ''}
-                  inputValue={item.porul || ''}
-                  onInputChange={(e, val) => {
-                    setItems(prev => {
-                      const newItems = [...prev];
-                      newItems[index] = { ...newItems[index], porul: val || '' };
-                      return newItems;
-                    });
-                  }}
-                  renderOption={(props, option, { index }) => {
-                      const { key, ...optionProps } = props as any;
-                      if (typeof option === 'string') {
+                      setItems(prev => {
+                        const newItems = [...prev];
+                        const updatedItem = { ...newItems[index] };
+                        if (typeof val === 'string') {
+                          updatedItem.porul = val;
+                        } else if (val) {
+                          updatedItem.porul = val.name || val.nameEn || '';
+                          updatedItem.name_tamil = val.name || '';
+                          updatedItem.name_english = val.nameEn || '';
+                          if (val.rate) updatedItem.coolie = val.rate;
+                        } else {
+                          updatedItem.porul = '';
+                        }
+                        newItems[index] = updatedItem;
+                        return newItems;
+                      });
+                    }}
+                    value={item.porul ? item.porul : null}
+                    inputValue={item.porul || ''}
+                    onInputChange={(e, val) => {
+                      setItems(prev => {
+                        const newItems = [...prev];
+                        newItems[index] = { ...newItems[index], porul: val };
+                        return newItems;
+                      });
+                    }}
+                    renderOption={(props, option, { index }) => {
+                        const { key, ...optionProps } = props as any;
+                        if (option.isAddButton) {
+                          return (
+                            <div key={`item-opt-add-${index}`}>
+                              {index > 0 && <Divider />}
+                              <li {...optionProps} style={{...optionProps.style, padding: 0}}>
+                                <ListItemButton 
+                                  sx={{ color: 'primary.main', width: '100%' }}
+                                >
+                                  <Plus size={18} weight="bold" style={{ marginRight: 8 }} />
+                                  <ListItemText primary={<Typography fontWeight={600}>{t('hc_addNewProduct') || 'Add New Product'}</Typography>} />
+                                </ListItemButton>
+                              </li>
+                            </div>
+                          );
+                        }
+                        if (typeof option === 'string') {
+                          return (
+                            <li key={`item-opt-${index}`} {...optionProps}>
+                              <Typography variant="body2">{option}</Typography>
+                            </li>
+                          );
+                        }
                         return (
-                          <li key={`item-opt-d-${index}`} {...optionProps}>
-                            <Typography variant="body2">{option}</Typography>
+                          <li key={`item-opt-${index}`} {...optionProps} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                            <Typography variant="body2" sx={{ fontWeight: 500 }}>{option.name}</Typography>
+                            {option.nameEn && <Typography variant="caption" sx={{ color: 'text.secondary' }}>{option.nameEn}</Typography>}
                           </li>
                         );
-                      }
-                      return (
-                        <li key={`item-opt-d-${index}`} {...optionProps} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                          <Typography variant="body2" sx={{ fontWeight: 500 }}>{option.name}</Typography>
-                          {option.nameEn && <Typography variant="caption" sx={{ color: 'text.secondary' }}>{option.nameEn}</Typography>}
-                        </li>
-                      );
-                  }}
-                  renderInput={(params) => <TextField {...params} size="small" placeholder={t('typeItemName') || 'Type Item Name'} />}
-                />
-                
-                <TextField size="small" type="number" inputProps={{ step: '0.001', style: { textAlign: 'right' } }} value={item.kg} onChange={e => { const i = [...items]; i[index].kg = e.target.value; setItems(i); }} />
-                <TextField size="small" type="number" inputProps={{ style: { textAlign: 'right' } }} value={item.coolie} onChange={e => { const i = [...items]; i[index].coolie = e.target.value; setItems(i); }} />
-                
-                <Typography sx={{ textAlign: 'right', fontWeight: 600 }}>{calculateRowTotal(item)}</Typography>
-                <IconButton color="error" onClick={() => setItems(items.filter((_, i) => i !== index))}><X size={18} weight="bold" /></IconButton>
-              </Box>
-            ))}
-            
-            <Button startIcon={<Plus />} onClick={() => setItems([...items, { porul: '', coolie: '', kg: '', name_english: '', name_tamil: '' }])} sx={{ mt: 1 }}>
-              {t('addAnotherItem') || 'Add Item'}
-            </Button>
-          </Box>
-          
-          {/* Mobile view for items */}
-          <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 3 }}>
-            {items.map((item, index) => (
-              <Box key={index} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, p: 2 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                  <Typography variant="subtitle2" color="primary" fontWeight={700}>Item #{index + 1}</Typography>
-                  <IconButton color="error" size="small" onClick={() => setItems(items.filter((_, i) => i !== index))}><X size={16} weight="bold" /></IconButton>
-                </Box>
-                <Autocomplete
-                  freeSolo
-                  options={productOptions}
-                  filterOptions={filter}
-                  getOptionLabel={(option) => typeof option === 'string' ? option : (option.name || option.nameEn || '')}
-                  onChange={(e, val) => {
-                    setItems(prev => {
-                      const newItems = [...prev];
-                      const updatedItem = { ...newItems[index] };
-                      if (typeof val === 'string') {
-                        updatedItem.porul = val;
-                      } else if (val) {
-                        updatedItem.porul = val.name || val.nameEn || '';
-                        updatedItem.name_tamil = val.name || '';
-                        updatedItem.name_english = val.nameEn || '';
-                        if (val.rate) updatedItem.coolie = val.rate;
-                      } else {
-                        updatedItem.porul = '';
-                      }
-                      newItems[index] = updatedItem;
-                      return newItems;
-                    });
-                  }}
-                  value={item.porul || ''}
-                  inputValue={item.porul || ''}
-                  onInputChange={(e, val) => {
-                    setItems(prev => {
-                      const newItems = [...prev];
-                      newItems[index] = { ...newItems[index], porul: val || '' };
-                      return newItems;
-                    });
-                  }}
-                  renderOption={(props, option, { index }) => {
-                      const { key, ...optionProps } = props as any;
-                      if (typeof option === 'string') {
-                        return (
-                          <li key={`item-opt-m-${index}`} {...optionProps}>
-                            <Typography variant="body2">{option}</Typography>
-                          </li>
-                        );
-                      }
-                      return (
-                        <li key={`item-opt-m-${index}`} {...optionProps} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                          <Typography variant="body2" sx={{ fontWeight: 500 }}>{option.name}</Typography>
-                          {option.nameEn && <Typography variant="caption" sx={{ color: 'text.secondary' }}>{option.nameEn}</Typography>}
-                        </li>
-                      );
-                  }}
-                  renderInput={(params) => <TextField {...params} size="small" fullWidth label={t('itemName') || 'Item Name'} sx={{ mb: 2 }} />}
-                />
-                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 2 }}>
-                  <TextField size="small" label={t('quantity') || 'Weight'} type="number" inputProps={{ step: '0.001' }} value={item.kg} onChange={e => { const i = [...items]; i[index].kg = e.target.value; setItems(i); }} />
-                  <TextField size="small" label={t('rate') || 'Rate'} type="number" value={item.coolie} onChange={e => { const i = [...items]; i[index].coolie = e.target.value; setItems(i); }} />
-                </Box>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: 1, borderTop: '1px dashed', borderColor: 'divider' }}>
-                  <Typography variant="body2">{t('amount') || 'Amount'}</Typography>
-                  <Typography variant="subtitle1" fontWeight={700}>₹ {calculateRowTotal(item)}</Typography>
-                </Box>
-              </Box>
-            ))}
-            <Button startIcon={<Plus />} onClick={() => setItems([...items, { porul: '', coolie: '', kg: '', name_english: '', name_tamil: '' }])}>
-              {t('addAnotherItem') || 'Add Item'}
-            </Button>
-          </Box>
-        </Box>
-
-        <Divider sx={{ my: 1, borderColor: 'divider', opacity: 0.5 }} />
-
-        {/* Section 4: Totals and Bank */}
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4, mb: 2 }}>
-          {/* Bank Details */}
-          <Box sx={{ flex: 1 }}>
-            <Box sx={{ gridColumn: { xs: '1', md: 'span 1' } }}>
-              <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: 3, bgcolor: 'background.paper', mb: 3 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography variant="subtitle1" color="primary" fontWeight={700}>
-                    <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 24, height: 24, borderRadius: '50%', bgcolor: 'text.primary', color: 'background.paper', mr: 1.5, fontSize: '0.85rem' }}>4</Box>
-                    {t('bankDetails') || 'Bank Details'}
-                  </Typography>
-                  <FormControlLabel 
-                    control={<MD3Switch checked={showBankDetails} onChange={(e) => setShowBankDetails(e.target.checked)} />} 
-                    label={<Typography variant="caption" sx={{ ml: 1, fontWeight: 600 }}>{showBankDetails ? 'Show' : 'Hide'}</Typography>}
+                    }}
+                    renderInput={(params) => <TextField {...params} size="small" fullWidth label={t('itemName') || 'Item Name'} placeholder={t('hc_searchSavedItems') || 'Search saved items'} InputLabelProps={{ ...params.InputLabelProps, shrink: true }} inputProps={{ ...params.inputProps, autoComplete: 'new-password' }} />}
                   />
                 </Box>
-                {/* The details are always visible in the editor so the user can verify them, but opacity reflects print status */}
-                <Stack spacing={2.5} sx={{ mt: 2 }}>
-                  <Box sx={{ opacity: showBankDetails ? 1 : 0.5, transition: 'opacity 0.2s' }}>
-                    <Typography variant="caption" color="text.secondary">{t('bankNamePlace') || 'Bank Name & Place'}</Typography>
-                    <Typography variant="body1" fontWeight={500}>{bankDetails || '-'}</Typography>
-                  </Box>
-                  <Box sx={{ opacity: showBankDetails ? 1 : 0.5, transition: 'opacity 0.2s' }}>
-                    <Typography variant="caption" color="text.secondary">{t('accountNo') || 'Account Number'}</Typography>
-                    <Typography variant="body1" fontWeight={500} sx={{ fontFamily: 'monospace', fontSize: '1rem' }}>{accountNo || '-'}</Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', opacity: showIfsc ? 1 : 0.5, transition: 'opacity 0.2s' }}>
-                    <Box>
-                      <Typography variant="caption" color="text.secondary">{t('ifscCode') || 'IFSC Code'}</Typography>
-                      <Typography variant="body1" fontWeight={500}>{ifsc || '-'}</Typography>
-                    </Box>
-                    <FormControlLabel 
-                      control={<MD3Switch checked={showIfsc} onChange={(e) => setShowIfsc(e.target.checked)} />} 
-                      label={<Typography variant="caption" sx={{ ml: 1, fontWeight: 600 }}>{showIfsc ? 'Show IFSC' : 'Hide IFSC'}</Typography>}
-                    />
-                  </Box>
-                </Stack>
+
+                {/* Qty */}
+                <Box sx={{ flex: { xs: '1 1 40%', sm: '1 1 120px' } }}>
+                  <TextField fullWidth size="small" label={t('quantity') || 'Weight'} type="number" slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: 0, step: "any" } }} 
+                    value={item.kg} onChange={e => { const i = [...items]; i[index].kg = e.target.value; setItems(i); }} />
+                </Box>
+
+                {/* Rate */}
+                <Box sx={{ flex: { xs: '1 1 40%', sm: '1 1 120px' } }}>
+                  <TextField fullWidth size="small" label={t('rate') || 'Rate'} type="number" slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: 0, step: "any" } }} 
+                    value={item.coolie} onChange={e => { const i = [...items]; i[index].coolie = e.target.value; setItems(i); }} />
+                </Box>
+
+                {/* Line Total */}
+                <Box sx={{ flex: { xs: '1 1 40%', sm: '1 1 120px' } }}>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    label={t('total') || 'Total'}
+                    value={`₹ ${calculateRowTotal(item)}`}
+                    slotProps={{ 
+                      inputLabel: { shrink: true },
+                      htmlInput: { readOnly: true, style: { fontWeight: 600 } }
+                    }}
+                  />
+                </Box>
+
               </Box>
             </Box>
+          ))}
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 1, mb: otherCharges.length > 0 ? 4 : 1 }}>
+            <Button 
+              variant="text" 
+              startIcon={<Plus size={18} weight="regular" />} 
+              onClick={() => setItems([...items, { porul: '', coolie: '', kg: '', name_english: '', name_tamil: '' }])}
+              sx={{ 
+                bgcolor: 'action.hover',
+                color: 'text.primary',
+                borderRadius: '24px',
+                px: 3,
+                py: 1,
+                boxShadow: (theme) => theme.palette.mode === 'dark' ? 'none' : 1,
+                '&:hover': { bgcolor: 'action.selected' }
+              }}
+            >
+              {t('addAnotherItem') || 'Add Item'}
+            </Button>
+            
+            {otherCharges.length === 0 && (
+              <Button 
+                variant="text" 
+                startIcon={<Plus size={18} weight="regular" />} 
+                onClick={() => setOtherCharges([...otherCharges, { name: '', amount: '' }])}
+                sx={{ 
+                  bgcolor: 'action.hover',
+                  color: 'text.primary',
+                  borderRadius: '24px',
+                  px: 3,
+                  py: 1,
+                  boxShadow: (theme) => theme.palette.mode === 'dark' ? 'none' : 1,
+                  '&:hover': { bgcolor: 'action.selected' }
+                }}
+              >
+                {t('addOtherCharges') || 'Add Other Charges'}
+              </Button>
+            )}
           </Box>
-          
-          {/* Totals */}
-          <Box sx={{ flex: 1.5, bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.02)' : '#fcfcfc', border: '1px solid', borderColor: 'divider', borderRadius: 2, p: 3 }}>
-            <Stack spacing={2}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="subtitle2" color="text.secondary">{t('subTotal') || 'Sub Total'}</Typography>
-                <Typography variant="subtitle1" fontWeight={600}>₹ {calculateSubtotal().toLocaleString('en-IN')}</Typography>
+
+          {/* Other Charges Boxes */}
+          {otherCharges.map((charge, index) => (
+            <Box key={`oc-${index}`} sx={{ width: '100%', mb: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1, px: 1.5 }}>
+                <Typography variant="subtitle2" color="text.secondary" fontWeight={600}>
+                  {t('otherCharges') || 'Other Charges'} #{index + 1}
+                </Typography>
+                <IconButton 
+                  size="small" 
+                  onClick={() => setOtherCharges(otherCharges.filter((_, i) => i !== index))} 
+                  title={t('hc_remove') || 'Remove'}
+                  sx={{ 
+                    bgcolor: 'action.hover',
+                    color: 'text.secondary',
+                    '&:hover': { bgcolor: 'action.selected' }
+                  }}
+                >
+                  <Trash size={20} weight="regular" />
+                </IconButton>
               </Box>
-              
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2 }}>
-                <Typography variant="subtitle2" color="text.secondary" sx={{ flex: 1 }}>{t('setharam') || 'Setharam'} (Grams)</Typography>
-                <TextField size="small" type="number" inputProps={{ step: '0.001', style: { textAlign: 'right' } }} value={setharamGrams} onChange={e => setSetharamGrams(e.target.value)} sx={{ width: '120px' }} />
-              </Box>
-              
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2 }}>
-                <Typography variant="subtitle2" color="text.secondary" sx={{ flex: 1 }}>{t('ahimsaSilk') || 'Ahimsa Silk (Rs)'}</Typography>
-                <TextField size="small" type="number" inputProps={{ style: { textAlign: 'right' } }} value={ahimsaSilkRs} onChange={e => setAhimsaSilkRs(e.target.value)} sx={{ width: '120px' }} />
-              </Box>
-              
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2 }}>
-                <Typography variant="subtitle2" color="text.secondary" sx={{ flex: 1 }}>{t('courier') || 'Courier Charge'}</Typography>
-                <TextField size="small" type="number" inputProps={{ style: { textAlign: 'right' } }} value={courierRs} onChange={e => setCourierRs(e.target.value)} sx={{ width: '120px' }} />
-              </Box>
-              
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2 }}>
-                <TextField size="small" placeholder={t('otherCharges') || 'Other Charges'} value={customChargeName} onChange={e => setCustomChargeName(e.target.value)} sx={{ flex: 1 }} />
-                <TextField size="small" type="number" inputProps={{ style: { textAlign: 'right' } }} value={customChargeRs} onChange={e => setCustomChargeRs(e.target.value)} sx={{ width: '120px' }} />
-              </Box>
-              
-              <Divider sx={{ my: 1 }} />
-              
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h6" fontWeight={700}>{t('total') || 'Total'}</Typography>
-                <Box sx={{ textAlign: 'right' }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600, mb: 0.5 }}>{calculateTotalKg().toFixed(3)} Kg</Typography>
-                  <Typography variant="h5" color="primary" fontWeight={800}>₹ {calculateGrandTotal().toLocaleString('en-IN')}</Typography>
+              <ElvanCard boxSx={{ p: 2 }} sx={{ borderRadius: '16px' }}>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '2fr 1fr' }, gap: 2 }}>
+                  <TextField 
+                    size="small" fullWidth 
+                    label={t('chargeName') || 'Charge Name'}
+                    slotProps={{ inputLabel: { shrink: true } }} 
+                    value={charge.name} onChange={e => {
+                      const newCharges = [...otherCharges];
+                      newCharges[index].name = e.target.value;
+                      setOtherCharges(newCharges);
+                    }} 
+                    sx={{ '& fieldset': { border: 'none' } }}
+                  />
+                  
+                  <TextField 
+                    size="small" fullWidth type="number" 
+                    label={`${t('amount') || 'Amount'} (₹)`}
+                    slotProps={{ inputLabel: { shrink: true } }} 
+                    value={charge.amount} onChange={e => {
+                      const newCharges = [...otherCharges];
+                      newCharges[index].amount = e.target.value;
+                      setOtherCharges(newCharges);
+                    }} 
+                    sx={{ '& fieldset': { border: 'none' } }}
+                  />
                 </Box>
-              </Box>
-            </Stack>
-          </Box>
+              </ElvanCard>
+            </Box>
+          ))}
+
+          {otherCharges.length > 0 && (
+            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 1 }}>
+              <Button 
+                variant="text" 
+                startIcon={<Plus size={18} weight="regular" />} 
+                onClick={() => setOtherCharges([...otherCharges, { name: '', amount: '' }])}
+                sx={{ 
+                  bgcolor: 'action.hover',
+                  color: 'text.primary',
+                  borderRadius: '24px',
+                  px: 3,
+                  py: 1,
+                  boxShadow: (theme) => theme.palette.mode === 'dark' ? 'none' : 1,
+                  '&:hover': { bgcolor: 'action.selected' }
+                }}
+              >
+                {t('addOtherCharges') || 'Add Other Charges'}
+              </Button>
+            </Box>
+          )}
         </Box>
 
+        {/* Extra Charges Section (Bento Style) */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mb: 4 }}>
+          {/* Bento Boxes for Extra Charges */}
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr 1fr' }, gap: 3 }}>
+            <ElvanCard boxSx={{ p: 2, display: 'flex', alignItems: 'center' }} sx={{ gridColumn: { xs: '1 / -1', md: 'auto' }, borderRadius: '16px' }}>
+              <TextField 
+                size="small" fullWidth type="number" 
+                label={`${t('setharam') || 'Setharam'} (Grams)`}
+                slotProps={{ inputLabel: { shrink: true }, htmlInput: { step: '0.001' } }} 
+                value={setharamGrams} onChange={e => setSetharamGrams(e.target.value)} 
+                sx={{ '& fieldset': { border: 'none' } }}
+              />
+            </ElvanCard>
+            
+            <ElvanCard boxSx={{ p: 2, display: 'flex', alignItems: 'center' }} sx={{ borderRadius: '16px' }}>
+              <TextField 
+                size="small" fullWidth type="number" 
+                label={`${t('ahimsaSilk') || 'Ahimsa Silk'} (₹)`}
+                slotProps={{ inputLabel: { shrink: true } }} 
+                value={ahimsaSilkRs} onChange={e => setAhimsaSilkRs(e.target.value)} 
+                sx={{ '& fieldset': { border: 'none' } }}
+              />
+            </ElvanCard>
+            
+            <ElvanCard boxSx={{ p: 2, display: 'flex', alignItems: 'center' }} sx={{ borderRadius: '16px' }}>
+              <TextField 
+                size="small" fullWidth type="number" 
+                label={`${t('courier') || 'Courier Charge'} (₹)`}
+                slotProps={{ inputLabel: { shrink: true } }} 
+                value={courierRs} onChange={e => setCourierRs(e.target.value)} 
+                sx={{ '& fieldset': { border: 'none' } }}
+              />
+            </ElvanCard>
+          </Box>
+
+
+        </Box>
+
+        {/* Section 4: Totals and Bank */}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, mb: 2 }}>
+          {/* Totals Section */}
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: { xs: 'stretch', md: 'flex-start' } }}>
+            {/* Static Totals Box */}
+            <Box sx={{ width: '100%', maxWidth: { xs: '100%', sm: 400 } }}>
+              <ElvanCard boxSx={{ p: 3 }} sx={{ borderRadius: '24px' }}>
+                <Stack spacing={1.5}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant="subtitle2" color="text.secondary" fontWeight={600}>{t('subTotal') || 'Sub Total'}</Typography>
+                    <Typography variant="subtitle1" fontWeight={700}>₹ {calculateSubtotal().toLocaleString('en-IN')}</Typography>
+                  </Box>
+
+                  {(parseFloat(ahimsaSilkRs) || 0) > 0 && (
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="subtitle2" color="text.secondary" fontWeight={500}>{t('ahimsaSilk') || 'Ahimsa Silk'}</Typography>
+                      <Typography variant="subtitle2" fontWeight={600}>₹ {parseFloat(ahimsaSilkRs).toLocaleString('en-IN')}</Typography>
+                    </Box>
+                  )}
+                  
+                  {(parseFloat(courierRs) || 0) > 0 && (
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="subtitle2" color="text.secondary" fontWeight={500}>{t('courier') || 'Courier'}</Typography>
+                      <Typography variant="subtitle2" fontWeight={600}>₹ {parseFloat(courierRs).toLocaleString('en-IN')}</Typography>
+                    </Box>
+                  )}
+
+                  {otherCharges.map((charge, i) => (parseFloat(charge.amount) || 0) > 0 && (
+                    <Box key={i} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="subtitle2" color="text.secondary" fontWeight={500}>{charge.name || 'Other Charge'}</Typography>
+                      <Typography variant="subtitle2" fontWeight={600}>₹ {parseFloat(charge.amount).toLocaleString('en-IN')}</Typography>
+                    </Box>
+                  ))}
+                  
+                  <Box sx={{ mt: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant="subtitle2" color="text.secondary" fontWeight={600}>{t('totalWeight') || 'Total Weight'}</Typography>
+                    <Typography variant="subtitle1" fontWeight={700}>{calculateTotalKg().toFixed(3)} Kg</Typography>
+                  </Box>
+
+                  {(parseFloat(setharamGrams) || 0) > 0 && (
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="subtitle2" color="text.secondary" fontWeight={500}>+ {t('setharam') || 'Setharam'}</Typography>
+                      <Typography variant="subtitle2" fontWeight={600}>{setharamGrams} {t('grams') || 'g'}</Typography>
+                    </Box>
+                  )}
+                  
+                  <Divider sx={{ my: 0.5 }} />
+                  
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant="h6" fontWeight={700} color="primary.main">{t('total') || 'Total'}</Typography>
+                    <Typography variant="h5" color="primary" fontWeight={800}>₹ {calculateGrandTotal().toLocaleString('en-IN')}</Typography>
+                  </Box>
+                </Stack>
+              </ElvanCard>
+            </Box>
+          </Box>
+
+
+        </Box>
+
+        </Box>
       </Box>
     </ElvanEditorLayout>
   );

@@ -1,12 +1,209 @@
-import React from 'react';
-import { Box, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { useLanguage } from '../../mozhi/LanguageContext';
+import { Box, Typography, Card, CardContent, Stack, useTheme, Avatar } from '@mui/material';
+import { CurrencyInr, Receipt, TrendUp, CaretRight, Storefront, HandCoins } from '@phosphor-icons/react';
+import { getAllCoolieBills, getAllCoolieProfiles } from '../../Avanam';
+import { formatCurrency } from '../../Payanpadu';
+import { thagaval } from '../Thagaval';
+import MugappuLayout from '../MugappuLayout';
+import ElvanCard from '../ElvanCard';
 
-export default function CoolieDashboard(props) {
+export default function CoolieDashboard({ onViewAll, onNew, onView, profile, onSwitchModeRequest }: any) {
+  const { t, language } = useLanguage();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
+  const [bills, setBills] = useState([]);
+  const [profiles, setProfiles] = useState([]);
+  const [stats, setStats] = useState({ overallTotal: 0, byCompany: {}, count: 0 });
+  const [isLoading, setIsLoading] = useState(true);
+
+  const loadData = async () => {
+    setIsLoading(true);
+    try {
+      const [allBills, allProfiles] = await Promise.all([
+        getAllCoolieBills(),
+        getAllCoolieProfiles()
+      ]);
+      setBills(allBills || []);
+      setProfiles(allProfiles || []);
+
+      let overallTotal = 0;
+      const byCompany = {};
+      
+      for (const p of allProfiles || []) {
+        byCompany[p.id] = { name: p.shortBusinessName || p.name, total: 0, count: 0 };
+      }
+
+      for (const b of allBills || []) {
+        const amount = Number(b.grand_total || 0);
+        overallTotal += amount;
+        if (b.company_id && byCompany[b.company_id]) {
+          byCompany[b.company_id].total += amount;
+          byCompany[b.company_id].count += 1;
+        } else if (b.company_id) {
+          byCompany[b.company_id] = { name: 'Unknown', total: amount, count: 1 };
+        }
+      }
+
+      setStats({ overallTotal, byCompany, count: (allBills || []).length });
+    } catch {
+      thagaval('Failed to load coolie dashboard', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const handleView = (bill) => {
+    const p = profiles.find(pr => pr.id === bill.company_id);
+    if (p) bill._companyProfile = p;
+    onEdit(bill);
+  };
+
+  const parseDate = (dString: string) => {
+    if (!dString) return 0;
+    const parts = dString.split('/');
+    if (parts.length === 3) {
+      return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`).getTime();
+    }
+    return new Date(dString).getTime() || 0;
+  };
+
+  const recentBills = [...bills]
+    .sort((a, b) => parseDate(b.date) - parseDate(a.date))
+    .slice(0, 6);
+
+  const greetingTitle = language === 'ta' ? 'வணக்கம்! ✨' : 'Vanakkam! ✨';
+  const greetingSubtitle = language === 'ta' ? 'நிறில் கூலி' : 'Niril Coolie';
+  const profileInitial = <HandCoins weight="fill" size={24} />;
+
+  const statsCards = (
+    <>
+      <Card sx={{ borderRadius: '24px', boxShadow: 'none', border: 'none', display: 'flex', flexDirection: 'column', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF', userSelect: 'none' }}>
+        <CardContent sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'flex-start', p: { xs: 2, sm: 3 }, flexGrow: 1 }}>
+          <Box sx={{ width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, borderRadius: '16px', bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#f5f5f5', color: 'text.primary', mr: { xs: 0, sm: 2 }, mb: { xs: 1.5, sm: 0 } }}>
+            <CurrencyInr size={24} weight="regular" />
+          </Box>
+          <Box>
+            <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>{t('totalInvoiced') || 'Total Amount'}</Typography>
+            <Typography variant="h5" color="text.primary" sx={{ fontWeight: 800 }}>
+              {formatCurrency(stats.overallTotal, 'INR')}
+            </Typography>
+          </Box>
+        </CardContent>
+      </Card>
+      
+      <Card sx={{ borderRadius: '24px', boxShadow: 'none', border: 'none', display: 'flex', flexDirection: 'column', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF', userSelect: 'none' }}>
+        <CardContent sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'flex-start', p: { xs: 2, sm: 3 }, flexGrow: 1 }}>
+          <Box sx={{ width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, borderRadius: '16px', bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#f5f5f5', color: 'text.primary', mr: { xs: 0, sm: 2 }, mb: { xs: 1.5, sm: 0 } }}>
+            <Storefront size={24} weight="regular" />
+          </Box>
+          <Box sx={{ width: '100%' }}>
+            <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>
+              {language === 'ta' ? 'நிறுவனங்கள்' : 'Companies'}
+            </Typography>
+            <Typography variant="h6" color="text.primary" sx={{ fontWeight: 800, lineHeight: 1.4 }}>
+              {Object.entries(stats.byCompany)
+                .filter(([id, data]: any) => data.total > 0)
+                .map(([id, data]: any) => data.name)
+                .join(', ') || '—'}
+            </Typography>
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* Third Card: Invoice Count */}
+      <Card sx={{ display: 'flex', gridColumn: { xs: 'span 2', md: 'auto' }, borderRadius: '24px', boxShadow: 'none', border: 'none', flexDirection: 'column', bgcolor: isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF', userSelect: 'none' }}>
+        <CardContent sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', p: { xs: 2, sm: 3 }, flexGrow: 1 }}>
+          <Box sx={{ width: 48, height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, borderRadius: '16px', bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#f5f5f5', color: 'text.primary', mr: 2 }}>
+            <Receipt size={24} weight="regular" />
+          </Box>
+          <Box>
+            <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>
+              {language === 'ta' ? 'பட்டியல் எண்ணிக்கை' : 'Total Bills'}
+            </Typography>
+            <Typography variant="h6" color="text.primary" sx={{ fontWeight: 800 }}>
+              {(() => {
+                const activeCompanies = Object.values(stats.byCompany).filter((c: any) => c.count > 0);
+                if (activeCompanies.length === 1) return `${activeCompanies[0].count} · ${activeCompanies[0].name}`;
+                if (activeCompanies.length > 1) return activeCompanies.map((c: any) => `${c.count} · ${c.name}`).join('  +  ') + `  =  ${stats.count}`;
+                return stats.count;
+              })()}
+            </Typography>
+          </Box>
+        </CardContent>
+      </Card>
+    </>
+  );
+
+  const renderRecentItem = (bill, index) => {
+    return (
+      <ElvanCard key={bill.id} onClick={() => onView && onView(bill)} sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}>
+        <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
+          <Box sx={{ 
+            display: 'flex', alignItems: 'center', justifyContent: 'center', 
+            width: 28, height: 28, mt: 0.15, 
+            borderRadius: '50%',
+            bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
+            flexShrink: 0
+          }}>
+            <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
+              {(index + 1).toString().padStart(2, '0')}
+            </Typography>
+          </Box>
+          <Box sx={{ minWidth: 0, flex: 1 }}>
+            <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700 }}>
+              {bill.customer_name ? (bill.customer_name.includes('/') ? bill.customer_name.split('/')[0].trim() : bill.customer_name) : '-'}
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
+              {bill.customer_name_en && (
+                <Typography variant="caption" noWrap sx={{ display: 'block', fontWeight: 500 }}>
+                  {bill.customer_name_en}
+                </Typography>
+              )}
+              <Typography variant="body2" sx={{ fontSize: '0.85rem' }} noWrap>
+                {bill.bill_no} <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> {bill.date ? bill.date : '-'}
+              </Typography>
+              {bill.city && (
+                <Typography variant="body2" sx={{ fontSize: '0.82rem', opacity: 0.8 }} noWrap>
+                  {bill.city}
+                </Typography>
+              )}
+            </Box>
+          </Box>
+        </Box>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'space-between', flexShrink: 0 }}>
+          <CaretRight size={18} weight="regular" color={isDark ? "#555" : "#aaa"} style={{ marginTop: '2px', marginRight: '-4px' }} />
+          <Typography variant="subtitle2" sx={{ fontWeight: 800, color: 'primary.main' }}>
+            {formatCurrency(Number(bill.grand_total || 0), 'INR')}
+          </Typography>
+        </Box>
+      </Stack>
+      </ElvanCard>
+    );
+  };
+
   return (
-    <Box sx={{ p: 4, height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <Typography variant="h5" color="text.secondary" sx={{ opacity: 0.5 }}>
-        Dashboard coming soon...
-      </Typography>
-    </Box>
+    <MugappuLayout 
+      title={language === 'ta' ? 'முகப்பு' : 'Dashboard'}
+      greetingTitle={greetingTitle}
+      greetingSubtitle={greetingSubtitle}
+      profileAvatar={profile?.logo}
+      profileInitial={profileInitial}
+      onNew={onNew}
+      onViewAll={onViewAll}
+      statsCards={statsCards}
+      recentActivityTitle={t('recentActivity')}
+      recentItems={recentBills}
+      isLoading={isLoading}
+      emptyStateText={t('noInvoicesYet')}
+      renderRecentItem={renderRecentItem}
+      onProfileClick={onSwitchModeRequest}
+    />
   );
 }

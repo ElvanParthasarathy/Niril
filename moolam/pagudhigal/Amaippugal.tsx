@@ -1484,6 +1484,7 @@ export default function Amaippugal({ onSaved }) {
             ]},
             { group: 'Footer', items: [
               ['showBankDetails', 'Bank details'],
+              ['showIfsc', 'IFSC code'],
               ['showAccountLabel', 'Show Pay via label'],
               ['showUPI', 'UPI QR (India only)'],
               ['showSignature', 'Signature block'],

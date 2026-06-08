@@ -218,7 +218,16 @@ export default function ElvanListView<T extends { id: string }>(props: ElvanList
       )}
 
       {isLoading ? (
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
+        <Box sx={{ 
+          columnCount: { xs: 1, md: 2 }, 
+          columnGap: '16px', 
+          '& > *': { 
+            breakInside: 'avoid', 
+            mb: 2, 
+            display: 'block', 
+            width: '100%' 
+          } 
+        }}>
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <ElvanCard key={i} sx={{ height: '100%', p: 2 }}>
               <Stack direction="row" spacing={2} sx={{ alignItems: 'center', height: '100%' }}>
@@ -240,7 +249,16 @@ export default function ElvanListView<T extends { id: string }>(props: ElvanList
           <Typography color="text.secondary">{emptyText}</Typography>
         </ElvanCard>
       ) : (
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
+        <Box sx={{ 
+          columnCount: { xs: 1, md: 2 }, 
+          columnGap: '16px', 
+          '& > *': { 
+            breakInside: 'avoid', 
+            mb: 2, 
+            display: 'block', 
+            width: '100%' 
+          } 
+        }}>
           {paginatedItems.map((item, index) => {
             const globalIndex = (safePage - 1) * itemsPerPage + index;
             const isSelected = selectedIds.includes(item.id);

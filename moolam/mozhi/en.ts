@@ -949,4 +949,18 @@ export const en: Record<TranslationKey, string> = {
   hc_addNewClient: "Add New Customer",
   deleteInvoiceConfirmMsg: "Are you sure you want to delete this invoice?",
   notesAndTerms: "Notes / Terms",
+  customer: "Customer",
+  company: "Company",
+  quantity: "Weight",
+  addAnotherItem: "Add Item",
+  addOtherCharges: "Add Other Charges",
+  chargeName: "Charge Name",
+  otherCharges: "Other Charges",
+  setharam: "Setharam",
+  ahimsaSilk: "Ahimsa Silk",
+  courier: "Courier",
+  totalWeight: "Total Weight",
+  grams: "Grams",
+  hc_savedClientDetails: "Saved Client Details",
+  searchBillsPlaceholder: "Search anything..."
 };

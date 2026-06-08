@@ -120,56 +120,6 @@ export default function Pakkapatti({
           )}
         </Box>
 
-        {/* Mode Switcher */}
-        <Box sx={{ px: isCollapsed ? 1 : 2, mb: 1, mt: 1, display: 'flex', justifyContent: 'center' }}>
-          <Tooltip title={isCollapsed ? (appMode === 'GST' ? 'Switch to Coolie Mode' : 'Switch to GST Mode') : ''} placement="right" arrow>
-            <ListItemButton
-              onClick={() => {
-                if (onSwitchModeRequest) onSwitchModeRequest();
-              }}
-              sx={{
-                borderRadius: 3,
-                backgroundColor: darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
-                border: `1px solid ${darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'}`,
-                py: isCollapsed ? 1 : 0.75,
-                px: isCollapsed ? 1 : 2,
-                minHeight: isCollapsed ? 48 : 'auto',
-                justifyContent: 'center',
-                width: '100%',
-                transition: 'all 0.2s ease-in-out',
-                '&:hover': {
-                  backgroundColor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
-                  transform: 'translateY(-1px)',
-                },
-                '&:active': {
-                  transform: 'translateY(1px)',
-                }
-              }}
-            >
-              {!isCollapsed && (
-                <ListItemText
-                  primary={
-                    <Typography variant="caption" sx={{ fontWeight: 600, color: 'text.secondary', display: 'block', mb: 0.1, fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                      Operating Mode
-                    </Typography>
-                  }
-                  secondary={
-                    <Typography variant="body2" sx={{ fontWeight: 800, color: 'primary.main', fontSize: '0.95rem' }}>
-                      {appMode === 'GST' ? 'GST Bills' : 'Coolie Bills'}
-                    </Typography>
-                  }
-                  sx={{ m: 0 }}
-                />
-              )}
-              {isCollapsed && (
-                <Typography variant="caption" sx={{ fontWeight: 800, color: 'primary.main', fontSize: '0.7rem' }}>
-                  {appMode === 'GST' ? 'GST' : 'COL'}
-                </Typography>
-              )}
-              {!isCollapsed && <CaretUpDown size={20} color={darkMode ? '#aaaaaa' : '#666666'} />}
-            </ListItemButton>
-          </Tooltip>
-        </Box>
 
         {/* Nav */}
         <List sx={{ flex: 1, overflowY: 'auto', px: 1.5, py: 1, '&::-webkit-scrollbar': { display: 'none' } }}>

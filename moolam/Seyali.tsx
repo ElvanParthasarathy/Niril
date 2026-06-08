@@ -826,6 +826,11 @@ function Seyali() {
     return navItem ? navItem.label : t('appName');
   };
 
+  const handleSwitchModeRequest = () => {
+    setHasSelectedMode(false);
+    sessionStorage.removeItem('session_mode_selected');
+  };
+
   return (
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />
@@ -878,10 +883,7 @@ function Seyali() {
         <Pakkapatti
           appMode={appMode}
           setAppMode={setAppMode}
-          onSwitchModeRequest={() => {
-            setHasSelectedMode(false);
-            sessionStorage.removeItem('session_mode_selected');
-          }}
+          onSwitchModeRequest={handleSwitchModeRequest}
           mobileOpen={mobileOpen}
           handleDrawerToggle={handleDrawerToggle}
           isCollapsed={isCollapsed}
@@ -969,74 +971,110 @@ function Seyali() {
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
-          mx: { xs: isPrintView ? 0 : 1.5, md: 0 },
-          mb: { xs: isPrintView ? 0 : (isEditorView ? 1.5 : (['reports', 'gst-returns', 'settings'].includes(currentView as string) ? 1.5 : '85px')), md: 0 },
-          borderRadius: { xs: isPrintView ? 0 : '24px', md: 0 },
+          mx: { xs: ['reports', 'gst-returns', 'settings'].includes(currentView as string) ? 0 : 1.5, md: 0 },
+          mb: { xs: ['reports', 'gst-returns', 'settings'].includes(currentView as string) ? 1.5 : '85px', md: 0 },
+          borderRadius: { xs: ['reports', 'gst-returns', 'settings'].includes(currentView as string) ? 0 : '24px', md: 0 },
           bgcolor: { xs: darkMode ? '#000000' : '#F3F4F6', md: 'transparent' },
-          boxShadow: { xs: darkMode ? 'none' : '0 8px 30px rgba(0,0,0,0.04)', md: 'none' }
+          boxShadow: { xs: darkMode ? 'none' : '0 8px 30px rgba(0,0,0,0.04)', md: 'none' },
+          position: 'relative',
+          '@media print': { mx: 0, mb: 0, borderRadius: 0, boxShadow: 'none' }
         }}>
           {/* Inner scrollable area inside the shell */}
-          <Box sx={{ 
+          <Box id="main-scroll-container" className={['invoice-editor', 'invoice-view'].includes(currentView as string) ? 'no-print' : ''} sx={{ 
             flexGrow: 1, 
             overflowY: 'scroll',
-            pb: { xs: isPrintView ? 0 : 2, md: 0 } // small padding at the bottom of the scroll inside the shell
+            pb: { xs: 2, md: 0 }, // small padding at the bottom of the scroll inside the shell
+            '@media print': { overflowY: 'visible', pb: 0 }
           }}>
           {currentView === 'dashboard' && (
           appMode === 'GST' ? (
-            <Mugappu onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onEdit={handleViewInvoice} onDuplicate={handleDuplicateInvoice} onConvert={handleConvertToInvoice} profile={profile} />
+            <Mugappu onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onEdit={handleViewInvoice} onDuplicate={handleDuplicateInvoice} onConvert={handleConvertToInvoice} profile={profile} onSwitchModeRequest={handleSwitchModeRequest} />
           ) : (
-            <CoolieDashboard onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} />
+            <CoolieDashboard onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onView={handleViewInvoice} onSwitchModeRequest={handleSwitchModeRequest} />
           )
         )}
-        {currentView === 'invoice-editor' && (
-          appMode === 'GST' ? (
-            <InvoiceEditor
-              onBack={() => {
-                if (editingBill && !editingBill._isDuplicate) {
-                  setCurrentView('invoice-view');
-                } else {
-                  setEditingBill(null);
-                  setCurrentView('invoice-list');
-                }
-              }}
-              onSaved={(bill) => { setEditingBill(bill); setCurrentView('invoice-view'); }}
-              profile={profile} editingBill={editingBill}
-            />
-          ) : (
-            <CoolieInvoiceEditor 
-              existingBill={editingBill}
-              onBack={() => { setEditingBill(null); setCurrentView('invoice-list'); }}
-              onSaved={(bill) => { setEditingBill(bill); setCurrentView('invoice-view'); }}
-            />
-          )
-        )}
-        {currentView === 'invoice-view' && editingBill && (
-          appMode === 'GST' ? (
-            <InvoiceView
-              bill={editingBill}
-              profile={profile}
-              onBack={() => { setEditingBill(null); setCurrentView('invoice-list'); }}
-              onEdit={handleEditInvoice}
-              onDuplicate={handleDuplicateInvoice}
-            />
-          ) : (
-            <CoolieInvoiceView 
-              bill={editingBill}
-              profile={profile}
-              onClose={() => { setEditingBill(null); setCurrentView('invoice-list'); }}
-              onEdit={() => setCurrentView('invoice-editor')}
-            />
-          )
-        )}
-        {currentView === 'invoice-view' && !editingBill && (
-           <Mugappu onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onEdit={handleViewInvoice} onDuplicate={handleDuplicateInvoice} onConvert={handleConvertToInvoice} profile={profile} />
-        )}
-        {currentView === 'invoice-list' && (
+        {/* Always render the list when in any invoice view so it maintains state and DOM */}
+        {['invoice-list', 'invoice-editor', 'invoice-view'].includes(currentView as string) && (
           appMode === 'GST' ? (
             <InvoiceList onNew={handleNewInvoice} onView={handleViewInvoice} onDuplicate={handleDuplicateInvoice} profile={profile} />
           ) : (
             <CoolieInvoiceList onNew={handleNewInvoice} onView={handleViewInvoice} profile={profile} />
           )
+        )}
+
+        {/* Render Editor on top as a modal inner shell */}
+        {currentView === 'invoice-editor' && (
+          <Box sx={{ 
+            position: { xs: 'fixed', md: 'absolute' }, 
+            top: { xs: '64px', md: 0 }, 
+            left: { xs: '12px', md: 0 }, 
+            right: { xs: '12px', md: 0 }, 
+            bottom: { xs: '12px', md: 0 }, 
+            borderRadius: { xs: '24px', md: 0 },
+            bgcolor: 'background.default', 
+            zIndex: 1200, 
+            overflowY: 'auto', 
+            overscrollBehavior: 'contain',
+            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+          }}>
+            {appMode === 'GST' ? (
+              <InvoiceEditor
+                onBack={() => {
+                  if (editingBill && !editingBill._isDuplicate) {
+                    setCurrentView('invoice-view');
+                  } else {
+                    setEditingBill(null);
+                    setCurrentView('invoice-list');
+                  }
+                }}
+                onSaved={(bill) => { setEditingBill(bill); setCurrentView('invoice-view'); }}
+                profile={profile} editingBill={editingBill}
+              />
+            ) : (
+              <CoolieInvoiceEditor 
+                existingBill={editingBill}
+                onBack={() => { setEditingBill(null); setCurrentView('invoice-list'); }}
+                onSaved={(bill) => { setEditingBill(bill); setCurrentView('invoice-view'); }}
+              />
+            )}
+          </Box>
+        )}
+
+        {/* Render View on top as a modal inner shell */}
+        {currentView === 'invoice-view' && editingBill && (
+          <Box sx={{ 
+            position: { xs: 'fixed', md: 'absolute' }, 
+            top: { xs: '64px', md: 0 }, 
+            left: { xs: '12px', md: 0 }, 
+            right: { xs: '12px', md: 0 }, 
+            bottom: { xs: '12px', md: 0 }, 
+            borderRadius: { xs: '24px', md: 0 },
+            bgcolor: 'background.default', 
+            zIndex: 1200, 
+            overflowY: 'auto', 
+            overscrollBehavior: 'contain',
+            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+          }}>
+            {appMode === 'GST' ? (
+              <InvoiceView
+                bill={editingBill}
+                profile={profile}
+                onBack={() => { setEditingBill(null); setCurrentView('invoice-list'); }}
+                onEdit={handleEditInvoice}
+                onDuplicate={handleDuplicateInvoice}
+              />
+            ) : (
+              <CoolieInvoiceView 
+                bill={editingBill}
+                profile={profile}
+                onClose={() => { setEditingBill(null); setCurrentView('invoice-list'); }}
+                onEdit={() => setCurrentView('invoice-editor')}
+              />
+            )}
+          </Box>
+        )}
+        {currentView === 'invoice-view' && !editingBill && (
+           <Mugappu onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onEdit={handleViewInvoice} onDuplicate={handleDuplicateInvoice} onConvert={handleConvertToInvoice} profile={profile} />
         )}
         {currentView === 'clients' && (
           appMode === 'GST' ? (
