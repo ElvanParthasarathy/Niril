@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Box, Button, IconButton, Paper } from '@mui/material';
+import { Box, Button, IconButton, Paper, ToggleButtonGroup, ToggleButton } from '@mui/material';
 import { Printer, X, PencilSimple } from '@phosphor-icons/react';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -10,6 +10,7 @@ import { ensureToken, findOrCreateFolder, uploadPDF } from '../../sevaigal/googl
 import './print.css'; // The exact print.css copied from Kananam
 import { getAllCoolieProfiles } from '../../Avanam';
 import numberToWordsTamil from '../../mozhi/tamilNumbers';
+import numberToWordsEnglish from '../../mozhi/englishNumbers';
 
 const IconPhone = ({ size = 14, className = '', style = {} }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} style={style}>
@@ -69,6 +70,7 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
     const { t } = useLanguage();
     const printRef = useRef(null);
     const [companyProfile, setCompanyProfile] = useState(null);
+    const [printLang, setPrintLang] = useState('ta');
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
@@ -76,6 +78,7 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
             getAllCoolieProfiles().then(profiles => {
                 const p = profiles.find(pr => pr.id === bill.company_id);
                 setCompanyProfile(p);
+                if (p?.defaultPrintLanguage) setPrintLang(p.defaultPrintLanguage);
             });
         }
     }, [bill?.company_id]);
@@ -83,7 +86,7 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
     if (!bill) return null;
 
     const activeProfile = companyProfile || globalProfile || {};
-    const displayBillNo = activeProfile.shortBusinessName ? `${activeProfile.shortBusinessName}-${bill.bill_no}` : bill.bill_no;
+    const displayBillNo = bill.bill_no;
 
     const handlePrint = () => {
         const origTitle = document.title;
@@ -240,10 +243,13 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
     const {
         bill_no: billNo,
         date,
-        customer_name: customerName,
+        customer_name: customerNameTa,
+        customer_name_en: customerNameEn,
         contact_person: contactPerson,
-        address,
-        city,
+        address: addressTa,
+        address_en: addressEn,
+        city: cityTa,
+        city_en: cityEn,
         items = [],
         setharam_grams: setharamGrams,
         courier_rs: courierRs,
@@ -252,8 +258,15 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
         custom_charge_rs: customChargeRs,
         bank_details: bankDetails,
         account_no: accountNo,
-        ifsc: billIfsc
+        ifsc: billIfsc,
+        show_bank_details: showBankDetails = true,
+        show_ifsc: showIfsc
     } = bill;
+
+    const isEng = printLang === 'en';
+    const customerName = isEng && customerNameEn ? customerNameEn : customerNameTa;
+    const address = isEng && addressEn ? addressEn : addressTa;
+    const city = isEng && cityEn ? cityEn : cityTa;
 
     const ifsc = billIfsc || companyProfile?.ifsc || globalProfile?.ifsc || '';
 
@@ -268,21 +281,18 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
     const email = p.email || 'info@elvan.com';
     const phone = p.phone ? (Array.isArray(p.phone) ? p.phone : String(p.phone).split(',')) : ['9999999999'];
     const contactAddress = {
-        line1: p.address || p.addressLine1 || '',
-        line2: p.addressLine2 || '',
-        line3: p.city || '',
+        line1: isEng && p.addressEn ? p.addressEn : (p.address || p.addressLine1 || ''),
+        line2: isEng && p.districtEn ? p.districtEn : (p.district || p.addressLine2 || ''),
+        line3: isEng && p.cityEn ? p.cityEn : (p.city || ''),
         pincode: p.pincode || ''
     };
 
-    const addressParts = [];
-    if (contactAddress.line1) addressParts.push(contactAddress.line1);
-    if (contactAddress.line2) addressParts.push(contactAddress.line2);
     let cityPin = contactAddress.line3;
     if (contactAddress.pincode) {
         cityPin = cityPin ? `${cityPin} - ${contactAddress.pincode}` : contactAddress.pincode;
     }
-    if (cityPin) addressParts.push(cityPin);
-    const formattedAddress = addressParts.join(', ');
+    const addressLine1 = [contactAddress.line1, cityPin].filter(Boolean).join(', ');
+    const addressLine2 = contactAddress.line2;
 
     const getThemeStyles = (hexColor) => {
         if (!hexColor) return {};
@@ -340,9 +350,9 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
                 
                 {/* Top Greeting Row */}
                 <div className="top-greeting-row">
-                    <span className="greeting-left">வாழ்க வையகம்</span>
+                    <span className="greeting-left">{isEng ? 'Vaazhga Vaiyagam' : 'வாழ்க வையகம்'}</span>
                     <span className="greeting-center">உ</span>
-                    <span className="greeting-right">வாழ்க வளமுடன்</span>
+                    <span className="greeting-right">{isEng ? 'Vaazhga Valamudan' : 'வாழ்க வளமுடன்'}</span>
                 </div>
 
                 {/* Header */}
@@ -352,11 +362,11 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
                             <div className="company-name font-display">
                                 {name.english}
                             </div>
-                            <div className="company-subtitle">{name.tamil}</div>
+                            <div className="company-subtitle font-tamil">{name.tamil}</div>
                         </div>
                     </div>
                     <div className="header-right">
-                        <div className="bill-type-badge font-tamil">கூலி பில்</div>
+                        <div className="bill-type-badge font-tamil">{isEng ? 'Coolie Bill' : 'கூலி பில்'}</div>
                     </div>
                 </div>
 
@@ -366,19 +376,19 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
                 {/* Bill Info Section */}
                 <div className="bill-info-section">
                     <div className="bill-meta-row">
-                        <span className="bill-meta">பில் எண் : <strong style={{ textTransform: 'uppercase' }}>{displayBillNo}</strong></span>
-                        <span className="bill-meta">நாள் : <strong>{date}</strong></span>
+                        <span className="bill-meta">{isEng ? 'Bill No:' : 'பில் எண் :'} <strong style={{ textTransform: 'uppercase' }}>{displayBillNo}</strong></span>
+                        <span className="bill-meta">{isEng ? 'Date:' : 'நாள் :'} <strong>{date}</strong></span>
                     </div>
                     <div className="customer-info">
                         <div className="customer-name-simple">
-                            <span className="customer-label">திரு:</span>
+                            <span className="customer-label">{isEng ? 'Thiru:' : 'திரு:'}</span>
                             <span style={{ fontWeight: '600' }}>
-                                {contactPerson ? `${pickTamilPart(contactPerson)}, ${pickTamilPart(customerName)}` : pickTamilPart(customerName)}
+                                {contactPerson ? `${pickTamilPart(contactPerson)}, ${customerName}` : customerName}
                             </span>
                         </div>
                         <div className="customer-city-simple">
-                            <span className="customer-label">ஊர்:</span>
-                            {address && city ? `${pickTamilPart(address)}, ${pickTamilPart(city)}` : (pickTamilPart(address) || pickTamilPart(city) || '')}
+                            <span className="customer-label">{isEng ? 'Place:' : 'ஊர்:'}</span>
+                            <span>{address && city ? `${address}, ${city}` : (address || city || '')}</span>
                         </div>
                     </div>
                 </div>
@@ -387,17 +397,17 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
                 <table className="bill-table-new">
                     <thead>
                         <tr>
-                            <th style={{ width: '15%' }}><div>கூலி</div></th>
-                            <th style={{ width: '45%', textAlign: 'left', paddingLeft: '15px' }}><div>பொருள் பெயர்</div></th>
-                            <th style={{ width: '15%' }}><div>எடை (Kg)</div></th>
-                            <th style={{ width: '25%' }}><div>தொகை</div></th>
+                            <th style={{ width: '15%' }}><div>{isEng ? 'Coolie' : 'கூலி'}</div></th>
+                            <th style={{ width: '45%', textAlign: 'left', paddingLeft: '15px' }}><div>{isEng ? 'Item Name' : 'பொருள் பெயர்'}</div></th>
+                            <th style={{ width: '15%' }}><div>{isEng ? 'Weight (Kg)' : 'எடை (Kg)'}</div></th>
+                            <th style={{ width: '25%' }}><div>{isEng ? 'Amount' : 'தொகை'}</div></th>
                         </tr>
                     </thead>
                     <tbody>
                         {items.map((item, i) => (
                             <tr key={i} className={i % 2 === 1 ? 'row-alt' : ''}>
                                 <td className="text-center">{item.coolie || ''}</td>
-                                <td className="text-left">{pickTamilPart(item.porul)}</td>
+                                <td className="text-left">{isEng && item.name_english ? item.name_english : pickTamilPart(item.porul)}</td>
                                 <td className="text-center">{item.kg ? formatWeight(item.kg) : ''}</td>
                                 <td className="text-center">{item.kg ? formatCurrency(calcItemAmount(item.coolie, item.kg)) : ''}</td>
                             </tr>
@@ -406,7 +416,7 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
                         {ahimsaSilkRs && (
                             <tr>
                                 <td className="text-center">-</td>
-                                <td className="text-left"><div>அகிம்சா பட்டு</div></td>
+                                <td className="text-left"><div>{isEng ? 'Ahimsa Silk' : 'அகிம்சா பட்டு'}</div></td>
                                 <td className="text-center">-</td>
                                 <td className="text-center">{formatCurrency(ahimsaSilkRs)}</td>
                             </tr>
@@ -415,7 +425,7 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
                         {customChargeRs && (
                             <tr>
                                 <td className="text-center">-</td>
-                                <td className="text-left"><div>{customChargeName || 'பிற விவரம்'}</div></td>
+                                <td className="text-left"><div>{customChargeName || (isEng ? 'Custom Charges' : 'பிற விவரம்')}</div></td>
                                 <td className="text-center">-</td>
                                 <td className="text-center">{formatCurrency(customChargeRs)}</td>
                             </tr>
@@ -424,7 +434,7 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
                         {setharamGrams && (
                             <tr className={items.length % 2 === 1 ? 'row-alt' : ''}>
                                 <td className="text-center">-</td>
-                                <td className="text-left"><div>சேதாரம்</div></td>
+                                <td className="text-left"><div>{isEng ? 'Wastage' : 'சேதாரம்'}</div></td>
                                 <td className="text-center">{formatWeight(setharamKg)}</td>
                                 <td className="text-center">-</td>
                             </tr>
@@ -433,7 +443,7 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
                         {courierRs && (
                             <tr>
                                 <td className="text-center">-</td>
-                                <td className="text-left"><div>கொரியர் கட்டணம்</div></td>
+                                <td className="text-left"><div>{isEng ? 'Courier Charges' : 'கொரியர் கட்டணம்'}</div></td>
                                 <td className="text-center">-</td>
                                 <td className="text-center">{formatCurrency(courierRs)}</td>
                             </tr>
@@ -441,38 +451,44 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
                     </tbody>
                     <tfoot>
                         <tr className="total-footer-row">
-                            <td colSpan="2" className="text-right total-label-cell">மொத்தம்</td>
+                            <td colSpan="2" className="text-right total-label-cell">{isEng ? 'Total' : 'மொத்தம்'}</td>
                             <td className="text-center total-weight-cell">{formatWeight(totalKg)} Kg</td>
                             <td className="text-center total-amount-cell">₹ {formatCurrency(totalRs)}</td>
                         </tr>
                     </tfoot>
                 </table>
 
-                {/* Amount in Words */}
-                <div className="words-section">
-                    எழுத்தில் மொத்தத் தொகை: <span className="words-line">{numberToWordsTamil(totalRs)}</span>
-                </div>
-
-                <div style={{ flexGrow: 1 }}></div>
+                {totalRs > 0 && (
+                    <div className="amount-in-words font-tamil mt-3 text-center">
+                        <span className="words-label" style={{ fontSize: '12px', fontWeight: '600', color: 'var(--bill-text)', marginRight: '6px' }}>
+                            {isEng ? 'Amount in words:' : 'எழுத்தில் மொத்தத் தொகை:'}
+                        </span>
+                        <span className="words-line">
+                            {isEng ? numberToWordsEnglish(totalRs) : numberToWordsTamil(totalRs)}
+                        </span>
+                    </div>
+                )}  <div style={{ flexGrow: 1 }}></div>
 
                 {/* Footer */}
                 <div className="bill-footer-new">
                     <div className="footer-left">
-                        {(bankDetails || accountNo) && (
+                        {( (showBankDetails && (bankDetails || accountNo)) || (showIfsc && ifsc) ) && (
                             <div style={{ marginBottom: '10px', color: 'var(--bill-text-dark)', fontSize: '0.9rem', lineHeight: '1.4', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                                {bankDetails && (
+                                {showBankDetails && (
                                     <div style={{ display: 'flex', gap: '5px' }}>
-                                        <div style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>வங்கி விவரம் :</div>
-                                        <div style={{ color: '#000' }}>{bankDetails}</div>
+                                        <div style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>{isEng ? 'Bank Details :' : 'வங்கி விவரம் :'}</div>
+                                        <div style={{ color: '#000' }}>
+                                            {isEng && p.bankNameEn ? `${p.bankNameEn}${p.branchEn ? ', ' + p.branchEn : ''}` : bankDetails}
+                                        </div>
                                     </div>
                                 )}
-                                {accountNo && (
+                                {showBankDetails && accountNo && (
                                     <div style={{ display: 'flex', gap: '5px' }}>
-                                        <div style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>கணக்கு எண் :</div>
+                                        <div style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>{isEng ? 'A/C No :' : 'கணக்கு எண் :'}</div>
                                         <div style={{ color: '#000' }}>{accountNo}</div>
                                     </div>
                                 )}
-                                {ifsc && (
+                                {showIfsc && ifsc && (
                                     <div style={{ display: 'flex', gap: '5px' }}>
                                         <div style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>IFSC :</div>
                                         <div style={{ color: '#000' }}>{ifsc}</div>
@@ -480,22 +496,23 @@ export default function CoolieInvoiceView({ bill, profile: globalProfile, onClos
                                 )}
                             </div>
                         )}
-                        <div className="thank-you font-tamil">நன்றி</div>
+                        <div className="thank-you font-tamil">{isEng ? 'Thank You' : 'நன்றி'}</div>
                     </div>
                     <div className="preview-footer-right">
                         <div className="sign-company font-display">{name.english}</div>
                         <div className="sign-space"></div>
-                        <div className="sign-label">(கையொப்பம்)</div>
+                        <div className="sign-label">{isEng ? '(Authorized Signature)' : '(கையொப்பம்)'}</div>
                     </div>
                 </div>
 
                 {/* Contact Section */}
                 <div className="contact-section">
-                    <div className="contact-title">தொடர்பு கொள்ள</div>
+                    <div className="contact-title">{isEng ? 'Contact Us' : 'தொடர்பு கொள்ள'}</div>
                     <div className="contact-row">
                         <div className="contact-left">
                             <div className="contact-address">
-                                {formattedAddress}
+                                <div>{addressLine1}</div>
+                                {addressLine2 && <div>{addressLine2}</div>}
                             </div>
                             <div className="contact-email" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', marginTop: '-2px' }}>

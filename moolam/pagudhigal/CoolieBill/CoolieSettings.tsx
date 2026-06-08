@@ -30,7 +30,8 @@ export default function CoolieSettings({ profile }) {
     branch: '', branchEn: '',
     email: '',
     logo: '',
-    themeColor: '#388e3c'
+    themeColor: '#388e3c',
+    defaultPrintLanguage: 'ta'
   });
 
   const loadProfiles = async () => {
@@ -71,7 +72,8 @@ export default function CoolieSettings({ profile }) {
       branch: p.branch || '', branchEn: p.branchEn || '',
       email: p.email || '',
       logo: p.logo || '',
-      themeColor: p.themeColor || '#388e3c'
+      themeColor: p.themeColor || '#388e3c',
+      defaultPrintLanguage: p.defaultPrintLanguage || 'ta'
     });
     setPhones(p.phone ? p.phone.split(',').filter(Boolean) : ['']);
   };
@@ -89,7 +91,8 @@ export default function CoolieSettings({ profile }) {
       branch: '', branchEn: '',
       email: '',
       logo: '',
-      themeColor: '#388e3c'
+      themeColor: '#388e3c',
+      defaultPrintLanguage: 'ta'
     });
     setPhones(['']);
   };
@@ -223,6 +226,21 @@ export default function CoolieSettings({ profile }) {
                   />
                 ))}
               </Box>
+            </Box>
+
+            <Box sx={{ gridColumn: 'span 2' }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.secondary', mb: 1 }}>
+                {t('defaultPrintLanguage') || 'Default Print Language'}
+              </Typography>
+              <FormControl size="small" sx={{ width: 200 }}>
+                <Select
+                  value={formData.defaultPrintLanguage || 'ta'}
+                  onChange={e => setFormData({ ...formData, defaultPrintLanguage: e.target.value })}
+                >
+                  <MenuItem value="ta">{t('tamil') || 'Tamil'}</MenuItem>
+                  <MenuItem value="en">{t('english') || 'English'}</MenuItem>
+                </Select>
+              </FormControl>
             </Box>
           </Box>
         </ElvanCard>

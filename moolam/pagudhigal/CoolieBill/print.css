@@ -118,7 +118,7 @@
 
 /* ========== BILL INFO SECTION ========== */
 .bill-info-section {
-    margin-bottom: 20px;
+    margin-bottom: 5px;
 }
 
 .bill-meta-row {
@@ -143,34 +143,39 @@
 
 .customer-info {
     padding-left: 15px;
-    /* Matched to PDF marginLeft: 15 */
+    padding-right: 15px;
     margin-top: 15px;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
 }
 
 .customer-name-simple {
+    display: flex;
+    align-items: flex-start;
     font-size: 14px;
-    /* Matched to PDF 12pt approx */
     font-weight: 600;
-    /* Matched to PDF 600 */
     color: #000;
     margin-bottom: 6px;
-    /* Matched to PDF marginBottom: 6 */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .customer-city-simple {
+    display: flex;
+    align-items: flex-start;
     font-size: 14px;
-    /* Matched to PDF 12pt approx */
     font-weight: 600;
     color: #000;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 .customer-label {
     font-weight: 700;
-    /* Matched to PDF 700 */
     color: var(--bill-primary);
     margin-right: 4px;
-    /* Matched to PDF single space */
+    white-space: nowrap;
 }
 
 .customer-address {
@@ -184,7 +189,7 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    margin-top: 20px;
+    margin-top: 5px;
     margin-bottom: 10px;
     border-radius: 8px;
     overflow: hidden;
@@ -198,13 +203,12 @@
     font-size: 14px;
     text-align: center;
     padding: 12px 10px;
-    text-transform: uppercase;
     letter-spacing: 0.5px;
+    border-right: 1px solid rgba(0, 0, 0, 0.04);
 }
 
-/* English bill headers - normal case */
-.a4-paper:not(.font-tamil) .bill-table-new th {
-    text-transform: none;
+.bill-table-new th:last-child {
+    border-right: none;
 }
 
 /* ========== BILINGUAL BILL STYLING ========== */
@@ -276,7 +280,12 @@
     font-size: 15px;
     color: #333;
     border-bottom: 1px solid #eee;
+    border-right: 1px solid rgba(0, 0, 0, 0.04);
     font-family: var(--font-primary);
+}
+
+.bill-table-new td:last-child {
+    border-right: none;
 }
 
 .bill-table-new tbody tr:last-child td {
@@ -381,6 +390,18 @@
     font-weight: 700;
     color: var(--bill-primary);
     margin-bottom: 5px;
+}
+
+.customer-simple {
+    display: flex;
+    align-items: flex-start;
+}
+
+.customer-label {
+    font-weight: 700;
+    color: var(--bill-primary);
+    margin-right: 4px;
+    white-space: nowrap;
 }
 
 .sign-space {

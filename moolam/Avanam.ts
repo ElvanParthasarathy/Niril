@@ -292,19 +292,35 @@ export const getAllCoolieBills = async () => {
   return bills || [];
 };
 
+export const getNextCoolieBillNumber = async (companyId: string) => {
+  if (isBlankState()) return '1';
+  try {
+    const bills = await apiFetch(`${API}/coolie_pattiyalkal`);
+
+    if (!bills || !Array.isArray(bills)) return '1';
+    
+    const companyBills = bills.filter((b: any) => b.company_id === companyId);
+    if (companyBills.length === 0) return '1';
+    
+    const maxNo = Math.max(...companyBills.map((b: any) => {
+      const match = String(b.bill_no).match(/\d+/);
+      return match ? parseInt(match[0], 10) : 0;
+    }));
+    
+    return (maxNo + 1).toString();
+  } catch (err) {
+    console.error(err);
+    return '1';
+  }
+};
+
 export const saveCoolieBill = async (bill) => {
   const res = await apiFetch(`${API}/coolie_pattiyalkal`, { method: 'POST', body: JSON.stringify(bill) });
-  if (res.success && getIsOnline()) {
-    triggerSync();
-  }
   return res;
 };
 
 export const deleteCoolieBill = async (id) => {
   const res = await apiFetch(`${API}/coolie_pattiyalkal/${encodeURIComponent(id)}`, { method: 'DELETE' });
-  if (res.success && getIsOnline()) {
-    triggerSync();
-  }
   return res;
 };
 

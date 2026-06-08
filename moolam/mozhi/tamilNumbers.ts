@@ -105,8 +105,7 @@ function convertUnder100000(n: number): string {
     return thousandPart + ' ' + convertUnder1000(remainder);
 }
 
-function convert(n: number): string {
-    if (n === 0) return 'சுழியம்';
+function convertUnderCrore(n: number): string {
     if (n < 100000) return convertUnder100000(n);
 
     const lakhs = Math.floor(n / 100000);
@@ -127,8 +126,31 @@ function convert(n: number): string {
     return lakhPart + ' ' + convertUnder100000(remainder);
 }
 
+function convert(n: number): string {
+    if (n === 0) return 'சுழியம்';
+    if (n < 10000000) return convertUnderCrore(n); // Less than 1 Crore
+
+    const crores = Math.floor(n / 10000000);
+    const remainder = n % 10000000;
+
+    let crorePart = '';
+    
+    if (crores === 1) {
+        crorePart = (remainder === 0) ? 'ஒரு கோடி' : 'ஒரு கோடியே';
+    } else {
+        // Recursive call allows for 'நூறு கோடி', 'லட்சம் கோடி', 'கோடி கோடி', etc.
+        let croresStr = convert(crores); 
+        let suffix = (remainder === 0) ? 'கோடி' : 'கோடியே';
+        crorePart = joinTamil(croresStr, suffix);
+    }
+
+    if (remainder === 0) return crorePart;
+
+    return crorePart + ' ' + convertUnderCrore(remainder);
+}
+
 export function numberToWordsTamil(num: number, suffix = 'ரூபாய் மட்டும்'): string {
-    if (num === 0) return 'பூஜ்ஜியம்';
+    if (num === 0) return 'சுழியம்';
     if (typeof num !== 'number' || isNaN(num)) return '';
 
     const intPart = Math.floor(Math.abs(num));

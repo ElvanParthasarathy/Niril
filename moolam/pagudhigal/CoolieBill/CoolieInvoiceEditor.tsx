@@ -1,12 +1,77 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, Stack, Autocomplete, IconButton, Divider, Select, MenuItem, FormControl, InputLabel, useTheme } from '@mui/material';
+import { Box, Typography, TextField, Button, Stack, Autocomplete, IconButton, Divider, Select, MenuItem, FormControl, InputLabel, useTheme, Switch, FormControlLabel, createFilterOptions } from '@mui/material';
+import { styled } from '@mui/material/styles';
+
+const MD3Switch = styled(Switch)(({ theme }) => ({
+  width: 52,
+  height: 32,
+  padding: 0,
+  '& .MuiSwitch-switchBase': {
+    padding: 0,
+    margin: 4,
+    transitionDuration: '300ms',
+    '&.Mui-checked': {
+      transform: 'translateX(20px)',
+      color: theme.palette.primary.contrastText,
+      '& + .MuiSwitch-track': {
+        backgroundColor: theme.palette.primary.main,
+        opacity: 1,
+        border: 0,
+      },
+      '& .MuiSwitch-thumb': {
+        width: 24,
+        height: 24,
+        margin: 0,
+        backgroundColor: theme.palette.primary.contrastText,
+      },
+    },
+  },
+  '& .MuiSwitch-thumb': {
+    boxSizing: 'border-box',
+    width: 16,
+    height: 16,
+    margin: 4,
+    boxShadow: 'none',
+    backgroundColor: theme.palette.mode === 'dark' ? '#cfd8dc' : '#fff',
+    transition: theme.transitions.create(['width', 'height', 'margin'], {
+      duration: 200,
+    }),
+  },
+  '& .MuiSwitch-track': {
+    borderRadius: 32 / 2,
+    backgroundColor: theme.palette.mode === 'dark' ? '#39393D' : '#E9E9EA',
+    opacity: 1,
+    transition: theme.transitions.create(['background-color', 'border'], {
+      duration: 300,
+    }),
+    border: `2px solid ${theme.palette.mode === 'dark' ? '#8f9bb3' : '#8f9bb3'}`,
+    boxSizing: 'border-box',
+  },
+  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+    border: '2px solid transparent',
+  }
+}));
 import { X, Plus, FloppyDisk } from '@phosphor-icons/react';
-import { getAllCoolieClients, getAllCoolieProducts, getAllCoolieProfiles, saveCoolieBill } from '../../Avanam';
+import { getAllCoolieClients, getAllCoolieProducts, getAllCoolieProfiles, saveCoolieBill, getNextCoolieBillNumber } from '../../Avanam';
 import { thagaval } from '../Thagaval';
 import { useLanguage } from '../../mozhi/LanguageContext';
 import ElvanCard from '../ElvanCard';
 import ElvanEditorLayout from '../ElvanEditorLayout';
 import { useDraftAndUnsaved } from '../../hooks/useDraftAndUnsaved';
+
+const filter = createFilterOptions({
+  stringify: (option: any) => {
+    if (typeof option === 'string') return option;
+    return `${option.name || ''} ${option.nameEn || ''}`;
+  }
+});
+
+const clientFilter = createFilterOptions({
+  stringify: (option: any) => {
+    if (typeof option === 'string') return option;
+    return `${option.name || ''} ${option.nameEn || ''} ${option.city || ''} ${option.cityEn || ''}`;
+  }
+});
 
 export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
   const { t, language } = useLanguage();
@@ -17,9 +82,12 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
   const [date, setDate] = useState(new Date().toLocaleDateString('en-GB')); // DD/MM/YYYY
   const [companyId, setCompanyId] = useState('');
   const [customerName, setCustomerName] = useState('');
+  const [customerNameEn, setCustomerNameEn] = useState('');
   const [address, setAddress] = useState('');
+  const [addressEn, setAddressEn] = useState('');
   const [city, setCity] = useState('');
-  const [items, setItems] = useState([{ porul: '', coolie: '', kg: '', name_english: '', name_tamil: '' }]);
+  const [cityEn, setCityEn] = useState('');
+  const [items, setItems] = useState<any[]>([{ porul: '', kg: '', coolie: '', name_tamil: '', name_english: '' }]);
   const [setharamGrams, setSetharamGrams] = useState('');
   const [courierRs, setCourierRs] = useState('');
   const [ahimsaSilkRs, setAhimsaSilkRs] = useState('');
@@ -28,6 +96,8 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
   const [bankDetails, setBankDetails] = useState('');
   const [accountNo, setAccountNo] = useState('');
   const [ifsc, setIfsc] = useState('');
+  const [showBankDetails, setShowBankDetails] = useState(true);
+  const [showIfsc, setShowIfsc] = useState(true);
   
   // Options
   const [clientOptions, setClientOptions] = useState<any[]>([]);
@@ -36,9 +106,9 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const formState = {
-    billNo, date, companyId, customerName,
-    address, city, items, setharamGrams, courierRs, ahimsaSilkRs, customChargeName,
-    customChargeRs, bankDetails, accountNo, ifsc
+    billNo, date, companyId, customerName, customerNameEn,
+    address, addressEn, city, cityEn, items, setharamGrams, courierRs, ahimsaSilkRs, customChargeName,
+    customChargeRs, bankDetails, accountNo, ifsc, showBankDetails, showIfsc
   };
 
   const setFormState = (s) => {
@@ -46,8 +116,11 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
     if (s.date !== undefined) setDate(s.date);
     if (s.companyId !== undefined) setCompanyId(s.companyId);
     if (s.customerName !== undefined) setCustomerName(s.customerName);
+    if (s.customerNameEn !== undefined) setCustomerNameEn(s.customerNameEn);
     if (s.address !== undefined) setAddress(s.address);
+    if (s.addressEn !== undefined) setAddressEn(s.addressEn);
     if (s.city !== undefined) setCity(s.city);
+    if (s.cityEn !== undefined) setCityEn(s.cityEn);
     if (s.items !== undefined) setItems(s.items);
     if (s.setharamGrams !== undefined) setSetharamGrams(s.setharamGrams);
     if (s.courierRs !== undefined) setCourierRs(s.courierRs);
@@ -57,6 +130,8 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
     if (s.bankDetails !== undefined) setBankDetails(s.bankDetails);
     if (s.accountNo !== undefined) setAccountNo(s.accountNo);
     if (s.ifsc !== undefined) setIfsc(s.ifsc);
+    if (s.showBankDetails !== undefined) setShowBankDetails(s.showBankDetails);
+    if (s.showIfsc !== undefined) setShowIfsc(s.showIfsc);
   };
 
   const getIsBlank = (f) => {
@@ -89,14 +164,18 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
         setProfileOptions(profiles || []);
         
         if (existingBill) {
+          const compProfile = (profiles || []).find(p => p.id === existingBill.company_id);
           setFormState({
             billNo: existingBill.bill_no || '',
             date: existingBill.date || new Date().toLocaleDateString('en-GB'),
             companyId: existingBill.company_id || (profiles && profiles.length > 0 ? profiles[0].id : ''),
             customerName: existingBill.customer_name || '',
+            customerNameEn: existingBill.customer_name_en || '',
             address: existingBill.address || '',
+            addressEn: existingBill.address_en || '',
             city: existingBill.city || '',
-            items: existingBill.items && existingBill.items.length > 0 ? existingBill.items : [{ porul: '', coolie: '', kg: '', name_english: '', name_tamil: '' }],
+            cityEn: existingBill.city_en || '',
+            items: Array.isArray(existingBill.items) && existingBill.items.length > 0 ? existingBill.items : [{ porul: '', coolie: '', kg: '', name_english: '', name_tamil: '' }],
             setharamGrams: existingBill.setharam_grams || '',
             courierRs: existingBill.courier_rs || '',
             ahimsaSilkRs: existingBill.ahimsa_silk_rs || '',
@@ -104,7 +183,9 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
             customChargeRs: existingBill.custom_charge_rs || '',
             bankDetails: existingBill.bank_details || '',
             accountNo: existingBill.account_no || '',
-            ifsc: existingBill.ifsc || ''
+            ifsc: existingBill.ifsc || compProfile?.ifsc || '',
+            showBankDetails: existingBill.show_bank_details !== false,
+            showIfsc: existingBill.show_ifsc !== false
           });
         } else if (profiles && profiles.length > 0) {
           setCompanyId(profiles[0].id);
@@ -113,6 +194,11 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
           setBankDetails([bankName, branch].filter(Boolean).join(', '));
           setAccountNo(profiles[0].accountNo || '');
           setIfsc(profiles[0].ifsc || '');
+          
+          if (!existingBill) {
+            const nextNum = await getNextCoolieBillNumber(profiles[0].id);
+            setBillNo(nextNum);
+          }
         }
       } catch (e) {
         console.error(e);
@@ -134,6 +220,10 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
       setAccountNo(profile.accountNo || '');
       setIfsc(profile.ifsc || '');
     }
+    
+    if (!isEditMode) {
+      getNextCoolieBillNumber(pId).then(nextNum => setBillNo(nextNum));
+    }
   };
 
   // Calculations (Exact Logic Ported from Kananam)
@@ -146,6 +236,12 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
 
   const calculateSubtotal = () => {
     return items.reduce((sum, item) => sum + (parseFloat(calculateRowTotal(item).toString()) || 0), 0);
+  };
+
+  const calculateTotalKg = () => {
+    const itemKg = items.reduce((sum, item) => sum + (parseFloat(item.kg) || 0), 0);
+    const setharamKg = (parseFloat(setharamGrams) || 0) / 1000;
+    return itemKg + setharamKg;
   };
 
   const calculateGrandTotal = () => {
@@ -169,8 +265,11 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
       bill_no: billNo,
       date,
       customer_name: customerName,
+      customer_name_en: customerNameEn,
       address,
+      address_en: addressEn,
       city,
+      city_en: cityEn,
       items,
       setharam_grams: setharamGrams,
       courier_rs: courierRs,
@@ -181,7 +280,9 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
       account_no: accountNo,
       ifsc: ifsc,
       company_id: companyId,
-      grand_total: grandTotal
+      grand_total: grandTotal,
+      show_bank_details: showBankDetails,
+      show_ifsc: showIfsc
     };
     
     await saveCoolieBill(billData);
@@ -200,19 +301,26 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
   const handleCustomerSelect = (e, val) => {
     if (!val) {
       setCustomerName('');
+      setCustomerNameEn('');
       setAddress('');
+      setAddressEn('');
       setCity('');
+      setCityEn('');
       return;
     }
     
     if (typeof val === 'string') {
       setCustomerName(val);
+      setCustomerNameEn('');
       return;
     }
     
     setCustomerName(val.name || '');
+    setCustomerNameEn(val.nameEn || '');
     setAddress(val.address || '');
+    setAddressEn(val.addressEn || '');
     setCity(val.city || '');
+    setCityEn(val.cityEn || '');
   };
 
   return (
@@ -227,12 +335,15 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
         if (onBack) onBack();
       }}
     >
-      <Stack spacing={4}>
-        {/* Card 1: Invoice Meta & Customer Details */}
-        <ElvanCard sx={{ p: 3 }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>{t('invoiceDetails') || 'Invoice Details'}</Typography>
-          
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' }, gap: 3, mb: 4 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        
+        {/* Section 1: Metadata */}
+        <Box sx={{ mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, ml: 2 }}>
+            <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>1</Box>
+            <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('invoiceDetails') || 'Invoice Details'}</Typography>
+          </Box>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' }, gap: 3, mb: 2 }}>
             <TextField 
               label={t('billNo') || 'Bill No'} 
               value={billNo} 
@@ -259,30 +370,50 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
               </Select>
             </FormControl>
           </Box>
+        </Box>
 
-          <Divider sx={{ mb: 4 }} />
+        <Divider sx={{ my: 1, borderColor: 'divider', opacity: 0.5 }} />
 
-          <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2 }}>{t('customer') || 'Customer'}</Typography>
-          
+        {/* Section 2: Customer */}
+        <Box sx={{ mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, ml: 2 }}>
+            <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>2</Box>
+            <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('customer') || 'Customer'}</Typography>
+          </Box>
           <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '2fr 1fr 1fr' }, gap: 3, mb: 2 }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               <Autocomplete
                 freeSolo
                 options={clientOptions}
-                getOptionLabel={(option) => typeof option === 'string' ? option : (option.name || '')}
+                filterOptions={clientFilter}
+                getOptionLabel={(option) => typeof option === 'string' ? option : (option.name || option.nameEn || '')}
                 onChange={handleCustomerSelect}
-                renderOption={(props, option) => (
-                    <li {...props}>
-                        <Box>
-                          <Typography variant="body1">{option.name}</Typography>
-                          {option.city && <Typography variant="caption" color="text.secondary">{option.city}</Typography>}
+                value={customerName || ''}
+                inputValue={customerName || ''}
+                onInputChange={(e, val) => setCustomerName(val || '')}
+                renderOption={(props, option, { index }) => {
+                    const { key, ...optionProps } = props as any;
+                    if (typeof option === 'string') {
+                      return <li key={`client-opt-${index}`} {...optionProps}><Typography variant="body1">{option}</Typography></li>;
+                    }
+                    return (
+                      <li key={`client-opt-${index}`} {...optionProps} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', borderBottom: '1px solid rgba(128,128,128,0.1)' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
+                          <Typography variant="body1" color="primary" sx={{ fontWeight: 700 }}>{option.name}</Typography>
+                          {option.nameEn && <Typography variant="body2" sx={{ color: 'text.secondary' }}>{option.nameEn}</Typography>}
                         </Box>
-                    </li>
-                )}
+                        {(option.city || option.cityEn) && (
+                          <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5, mt: 0.5 }}>
+                            {option.city && <Typography variant="caption" sx={{ color: 'text.secondary' }}>{option.city}</Typography>}
+                            {option.cityEn && <Typography variant="caption" sx={{ color: 'text.secondary' }}>({option.cityEn})</Typography>}
+                          </Box>
+                        )}
+                      </li>
+                    );
+                }}
                 renderInput={(params) => <TextField {...params} label={t('name') || 'Name'} size="small" required />}
               />
             </Box>
-            
             <TextField 
               label={t('address') || 'Address'} 
               value={address} 
@@ -298,45 +429,76 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
               fullWidth 
             />
           </Box>
-        </ElvanCard>
+        </Box>
 
-        {/* Card 2: Items Table */}
-        <ElvanCard sx={{ p: { xs: 2, md: 3 } }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>{t('itemsList') || 'Items'}</Typography>
+        <Divider sx={{ my: 1, borderColor: 'divider', opacity: 0.5 }} />
+
+        {/* Section 3: Items Table */}
+        <Box sx={{ mb: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, ml: 2 }}>
+            <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>3</Box>
+            <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('itemsList') || 'Items'}</Typography>
+          </Box>
           
-          <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-            <Box sx={{ display: 'grid', gridTemplateColumns: '40% 15% 15% 20% 5%', gap: 2, mb: 2, px: 2 }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>{t('itemName') || 'Item Details'}</Typography>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, textAlign: 'right' }}>{t('quantity') || 'Weight'}</Typography>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, textAlign: 'right' }}>{t('rate') || 'Rate'}</Typography>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, textAlign: 'right' }}>{t('amount') || 'Amount'}</Typography>
+          <Box sx={{ display: { xs: 'none', md: 'block' }, bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.02)' : '#fcfcfc', border: '1px solid', borderColor: 'divider', borderRadius: 2, p: 2 }}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: '40% 15% 15% 20% 5%', gap: 2, mb: 2, px: 1 }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.secondary' }}>{t('itemName') || 'Item Details'}</Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, textAlign: 'right', color: 'text.secondary' }}>{t('quantity') || 'Weight'}</Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, textAlign: 'right', color: 'text.secondary' }}>{t('rate') || 'Rate'}</Typography>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, textAlign: 'right', color: 'text.secondary' }}>{t('amount') || 'Amount'}</Typography>
             </Box>
             
+            <Divider sx={{ mb: 2 }} />
+
             {items.map((item, index) => (
-              <Box key={index} sx={{ display: 'grid', gridTemplateColumns: '40% 15% 15% 20% 5%', gap: 2, alignItems: 'center', mb: 2, px: 2 }}>
+              <Box key={index} sx={{ display: 'grid', gridTemplateColumns: '40% 15% 15% 20% 5%', gap: 2, alignItems: 'center', mb: 2, px: 1 }}>
                 <Autocomplete
                   freeSolo
                   options={productOptions}
-                  getOptionLabel={(option) => typeof option === 'string' ? option : (option.nameTamil || option.nameEnglish || '')}
+                  filterOptions={filter}
+                  getOptionLabel={(option) => typeof option === 'string' ? option : (option.name || option.nameEn || '')}
                   onChange={(e, val) => {
-                    const newItems = [...items];
-                    if (typeof val === 'string') {
-                      newItems[index].porul = val;
-                    } else if (val) {
-                      newItems[index].porul = val.nameTamil || val.nameEnglish || '';
-                      newItems[index].name_tamil = val.nameTamil || '';
-                      newItems[index].name_english = val.nameEnglish || '';
-                      if (val.rate) newItems[index].coolie = val.rate;
-                    } else {
-                      newItems[index].porul = '';
-                    }
-                    setItems(newItems);
+                    setItems(prev => {
+                      const newItems = [...prev];
+                      const updatedItem = { ...newItems[index] };
+                      if (typeof val === 'string') {
+                        updatedItem.porul = val;
+                      } else if (val) {
+                        updatedItem.porul = val.name || val.nameEn || '';
+                        updatedItem.name_tamil = val.name || '';
+                        updatedItem.name_english = val.nameEn || '';
+                        if (val.rate) updatedItem.coolie = val.rate;
+                      } else {
+                        updatedItem.porul = '';
+                      }
+                      newItems[index] = updatedItem;
+                      return newItems;
+                    });
                   }}
-                  inputValue={item.porul}
+                  value={item.porul || ''}
+                  inputValue={item.porul || ''}
                   onInputChange={(e, val) => {
-                    const newItems = [...items];
-                    newItems[index].porul = val;
-                    setItems(newItems);
+                    setItems(prev => {
+                      const newItems = [...prev];
+                      newItems[index] = { ...newItems[index], porul: val || '' };
+                      return newItems;
+                    });
+                  }}
+                  renderOption={(props, option, { index }) => {
+                      const { key, ...optionProps } = props as any;
+                      if (typeof option === 'string') {
+                        return (
+                          <li key={`item-opt-d-${index}`} {...optionProps}>
+                            <Typography variant="body2">{option}</Typography>
+                          </li>
+                        );
+                      }
+                      return (
+                        <li key={`item-opt-d-${index}`} {...optionProps} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>{option.name}</Typography>
+                          {option.nameEn && <Typography variant="caption" sx={{ color: 'text.secondary' }}>{option.nameEn}</Typography>}
+                        </li>
+                      );
                   }}
                   renderInput={(params) => <TextField {...params} size="small" placeholder={t('typeItemName') || 'Type Item Name'} />}
                 />
@@ -348,8 +510,13 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
                 <IconButton color="error" onClick={() => setItems(items.filter((_, i) => i !== index))}><X size={18} weight="bold" /></IconButton>
               </Box>
             ))}
+            
+            <Button startIcon={<Plus />} onClick={() => setItems([...items, { porul: '', coolie: '', kg: '', name_english: '', name_tamil: '' }])} sx={{ mt: 1 }}>
+              {t('addAnotherItem') || 'Add Item'}
+            </Button>
           </Box>
           
+          {/* Mobile view for items */}
           <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 3 }}>
             {items.map((item, index) => (
               <Box key={index} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 2, p: 2 }}>
@@ -360,26 +527,50 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
                 <Autocomplete
                   freeSolo
                   options={productOptions}
-                  getOptionLabel={(option) => typeof option === 'string' ? option : (option.nameTamil || option.nameEnglish || '')}
+                  filterOptions={filter}
+                  getOptionLabel={(option) => typeof option === 'string' ? option : (option.name || option.nameEn || '')}
                   onChange={(e, val) => {
-                    const newItems = [...items];
-                    if (typeof val === 'string') {
-                      newItems[index].porul = val;
-                    } else if (val) {
-                      newItems[index].porul = val.nameTamil || val.nameEnglish || '';
-                      newItems[index].name_tamil = val.nameTamil || '';
-                      newItems[index].name_english = val.nameEnglish || '';
-                      if (val.rate) newItems[index].coolie = val.rate;
-                    } else {
-                      newItems[index].porul = '';
-                    }
-                    setItems(newItems);
+                    setItems(prev => {
+                      const newItems = [...prev];
+                      const updatedItem = { ...newItems[index] };
+                      if (typeof val === 'string') {
+                        updatedItem.porul = val;
+                      } else if (val) {
+                        updatedItem.porul = val.name || val.nameEn || '';
+                        updatedItem.name_tamil = val.name || '';
+                        updatedItem.name_english = val.nameEn || '';
+                        if (val.rate) updatedItem.coolie = val.rate;
+                      } else {
+                        updatedItem.porul = '';
+                      }
+                      newItems[index] = updatedItem;
+                      return newItems;
+                    });
                   }}
-                  inputValue={item.porul}
+                  value={item.porul || ''}
+                  inputValue={item.porul || ''}
                   onInputChange={(e, val) => {
-                    const newItems = [...items];
-                    newItems[index].porul = val;
-                    setItems(newItems);
+                    setItems(prev => {
+                      const newItems = [...prev];
+                      newItems[index] = { ...newItems[index], porul: val || '' };
+                      return newItems;
+                    });
+                  }}
+                  renderOption={(props, option, { index }) => {
+                      const { key, ...optionProps } = props as any;
+                      if (typeof option === 'string') {
+                        return (
+                          <li key={`item-opt-m-${index}`} {...optionProps}>
+                            <Typography variant="body2">{option}</Typography>
+                          </li>
+                        );
+                      }
+                      return (
+                        <li key={`item-opt-m-${index}`} {...optionProps} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>{option.name}</Typography>
+                          {option.nameEn && <Typography variant="caption" sx={{ color: 'text.secondary' }}>{option.nameEn}</Typography>}
+                        </li>
+                      );
                   }}
                   renderInput={(params) => <TextField {...params} size="small" fullWidth label={t('itemName') || 'Item Name'} sx={{ mb: 2 }} />}
                 />
@@ -393,32 +584,57 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
                 </Box>
               </Box>
             ))}
+            <Button startIcon={<Plus />} onClick={() => setItems([...items, { porul: '', coolie: '', kg: '', name_english: '', name_tamil: '' }])}>
+              {t('addAnotherItem') || 'Add Item'}
+            </Button>
+          </Box>
+        </Box>
+
+        <Divider sx={{ my: 1, borderColor: 'divider', opacity: 0.5 }} />
+
+        {/* Section 4: Totals and Bank */}
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4, mb: 2 }}>
+          {/* Bank Details */}
+          <Box sx={{ flex: 1 }}>
+            <Box sx={{ gridColumn: { xs: '1', md: 'span 1' } }}>
+              <Box sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3, p: 3, bgcolor: 'background.paper', mb: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                  <Typography variant="subtitle1" color="primary" fontWeight={700}>
+                    <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 24, height: 24, borderRadius: '50%', bgcolor: 'text.primary', color: 'background.paper', mr: 1.5, fontSize: '0.85rem' }}>4</Box>
+                    {t('bankDetails') || 'Bank Details'}
+                  </Typography>
+                  <FormControlLabel 
+                    control={<MD3Switch checked={showBankDetails} onChange={(e) => setShowBankDetails(e.target.checked)} />} 
+                    label={<Typography variant="caption" sx={{ ml: 1, fontWeight: 600 }}>{showBankDetails ? 'Show' : 'Hide'}</Typography>}
+                  />
+                </Box>
+                {/* The details are always visible in the editor so the user can verify them, but opacity reflects print status */}
+                <Stack spacing={2.5} sx={{ mt: 2 }}>
+                  <Box sx={{ opacity: showBankDetails ? 1 : 0.5, transition: 'opacity 0.2s' }}>
+                    <Typography variant="caption" color="text.secondary">{t('bankNamePlace') || 'Bank Name & Place'}</Typography>
+                    <Typography variant="body1" fontWeight={500}>{bankDetails || '-'}</Typography>
+                  </Box>
+                  <Box sx={{ opacity: showBankDetails ? 1 : 0.5, transition: 'opacity 0.2s' }}>
+                    <Typography variant="caption" color="text.secondary">{t('accountNo') || 'Account Number'}</Typography>
+                    <Typography variant="body1" fontWeight={500} sx={{ fontFamily: 'monospace', fontSize: '1rem' }}>{accountNo || '-'}</Typography>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', opacity: showIfsc ? 1 : 0.5, transition: 'opacity 0.2s' }}>
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">{t('ifscCode') || 'IFSC Code'}</Typography>
+                      <Typography variant="body1" fontWeight={500}>{ifsc || '-'}</Typography>
+                    </Box>
+                    <FormControlLabel 
+                      control={<MD3Switch checked={showIfsc} onChange={(e) => setShowIfsc(e.target.checked)} />} 
+                      label={<Typography variant="caption" sx={{ ml: 1, fontWeight: 600 }}>{showIfsc ? 'Show IFSC' : 'Hide IFSC'}</Typography>}
+                    />
+                  </Box>
+                </Stack>
+              </Box>
+            </Box>
           </Box>
           
-          <Button startIcon={<Plus />} onClick={() => setItems([...items, { porul: '', coolie: '', kg: '', name_english: '', name_tamil: '' }])} sx={{ mt: 3 }}>
-            {t('addAnotherItem') || 'Add Item'}
-          </Button>
-        </ElvanCard>
-
-        {/* Card 3: Footer Calculations */}
-        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3 }}>
-          <ElvanCard sx={{ flex: 1, p: 3 }}>
-            <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>{t('bankDetails') || 'Bank Details'}</Typography>
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="caption" color="text.secondary">{t('bankNamePlace') || 'Bank & Branch'}</Typography>
-              <Typography variant="body1" fontWeight={500}>{bankDetails || '-'}</Typography>
-            </Box>
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="caption" color="text.secondary">{t('accountNo') || 'Account Number'}</Typography>
-              <Typography variant="body1" fontWeight={500}>{accountNo || '-'}</Typography>
-            </Box>
-            <Box>
-              <Typography variant="caption" color="text.secondary">{t('ifscCode') || 'IFSC Code'}</Typography>
-              <Typography variant="body1" fontWeight={500}>{ifsc || '-'}</Typography>
-            </Box>
-          </ElvanCard>
-          
-          <ElvanCard sx={{ flex: 1.5, p: 3, bgcolor: theme.palette.mode === 'dark' ? 'background.paper' : '#fcfcfc' }}>
+          {/* Totals */}
+          <Box sx={{ flex: 1.5, bgcolor: theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.02)' : '#fcfcfc', border: '1px solid', borderColor: 'divider', borderRadius: 2, p: 3 }}>
             <Stack spacing={2}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="subtitle2" color="text.secondary">{t('subTotal') || 'Sub Total'}</Typography>
@@ -448,13 +664,17 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
               <Divider sx={{ my: 1 }} />
               
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography variant="h6" fontWeight={700}>{t('total') || 'Total Amount'}</Typography>
-                <Typography variant="h5" color="primary" fontWeight={800}>₹ {calculateGrandTotal().toLocaleString('en-IN')}</Typography>
+                <Typography variant="h6" fontWeight={700}>{t('total') || 'Total'}</Typography>
+                <Box sx={{ textAlign: 'right' }}>
+                  <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600, mb: 0.5 }}>{calculateTotalKg().toFixed(3)} Kg</Typography>
+                  <Typography variant="h5" color="primary" fontWeight={800}>₹ {calculateGrandTotal().toLocaleString('en-IN')}</Typography>
+                </Box>
               </Box>
             </Stack>
-          </ElvanCard>
+          </Box>
         </Box>
-      </Stack>
+
+      </Box>
     </ElvanEditorLayout>
   );
 }

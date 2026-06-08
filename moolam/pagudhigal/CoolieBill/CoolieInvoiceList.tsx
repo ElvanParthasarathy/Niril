@@ -26,8 +26,10 @@ export default function CoolieInvoiceList({ onView, onNew, profile }) {
         getAllCoolieProfiles()
       ]);
       const sortedBills = (b || []).sort((a, b) => {
-        const aNo = parseInt(a.bill_no, 10) || 0;
-        const bNo = parseInt(b.bill_no, 10) || 0;
+        const aMatch = String(a.bill_no || '').match(/\d+/);
+        const bMatch = String(b.bill_no || '').match(/\d+/);
+        const aNo = aMatch ? parseInt(aMatch[0], 10) : 0;
+        const bNo = bMatch ? parseInt(bMatch[0], 10) : 0;
         return bNo - aNo;
       });
       setBills(sortedBills);
@@ -164,10 +166,10 @@ export default function CoolieInvoiceList({ onView, onNew, profile }) {
                   ) : bill.customer_name
                 ) : '-'}
               </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
-                <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5, fontWeight: 600, color: 'text.primary' }}>
-                  {companyShortName}-{bill.bill_no} <span style={{ opacity: 0.6, margin: '0 6px', fontWeight: 400, color: 'text.secondary' }}>•</span> <span style={{ fontWeight: 400, color: 'text.secondary' }}>{bill.date ? bill.date : '-'}</span>
-                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
+                  <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5, fontWeight: 600, color: 'text.primary' }}>
+                    {bill.bill_no} <span style={{ opacity: 0.6, margin: '0 6px', fontWeight: 400, color: 'text.secondary' }}>•</span> <span style={{ fontWeight: 400, color: 'text.secondary' }}>{bill.date ? bill.date : '-'}</span>
+                  </Typography>
                 <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
                   {bill.city && bill.city}
                 </Typography>
