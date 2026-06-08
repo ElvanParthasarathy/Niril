@@ -268,7 +268,17 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
 
       {/* Centered Preview Container */}
       <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4 }}>
-        <style>{`
+        <Paper elevation={3} sx={{ 
+          p: 0, overflow: 'hidden', minWidth: 'min(100%, 600px)', m: '0 auto',
+          zoom: { xs: 0.8, sm: 1 },
+          '@supports not (zoom: 1)': {
+            transformOrigin: 'top center',
+            transform: { xs: 'scale(0.8)', sm: 'none' },
+            mb: { xs: '-20%', sm: 0 }
+          }
+        }}>
+          <div ref={printRef} style={{ width: '100%' }}>
+          <style>{`
           .receipt-box { width: 100%; max-width: 600px; margin: 0 auto; border: 2px solid #e2e8f0; border-radius: 8px; padding: 2rem; background: white; }
           .receipt-header { text-align: center; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1rem; }
           .receipt-title { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0; }
@@ -285,16 +295,6 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
           .business-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; color: #000; }
           .business-details { font-size: 0.75rem; color: #64748b; }
         `}</style>
-        <Paper elevation={3} sx={{ 
-          p: 0, overflow: 'hidden', minWidth: 'min(100%, 600px)', m: '0 auto',
-          zoom: { xs: 0.8, sm: 1 },
-          '@supports not (zoom: 1)': {
-            transformOrigin: 'top center',
-            transform: { xs: 'scale(0.8)', sm: 'none' },
-            mb: { xs: '-20%', sm: 0 }
-          }
-        }}>
-          <div ref={printRef} style={{ width: '100%' }}>
             <div className="receipt-box">
               <div className="receipt-header">
                 {profile.logo && <img src={profile.logo} alt="Logo" style={{ maxHeight: '80px', marginBottom: '1rem' }} />}

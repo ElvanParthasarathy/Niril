@@ -297,7 +297,25 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
       />
 
       <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4 }}>
-        <style>{`
+        <Paper elevation={3} className="invoice-paper print-wrapper" sx={{ 
+          p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto', bgcolor: 'white', color: 'black',
+          zoom: { xs: 0.43, sm: 0.7, md: 0.85, lg: 1 },
+          '@supports not (zoom: 1)': {
+            transformOrigin: 'top center',
+            transform: { xs: 'scale(0.43)', sm: 'scale(0.7)', md: 'scale(0.85)', lg: 'none' },
+            mb: { xs: '-55%', sm: '-25%', md: '-10%', lg: 0 }
+          },
+          '@media print': { 
+            zoom: '1 !important', 
+            transform: 'none !important',
+            mb: '0 !important',
+            boxShadow: 'none !important',
+            bgcolor: 'white !important',
+            color: 'black !important'
+          }
+        }}>
+          <div ref={printRef} className="print-area">
+          <style>{`
           .receipt-box { width: 210mm; height: 297mm; max-height: 297mm; box-sizing: border-box; margin: 0 auto; border: 2px solid #e2e8f0; border-radius: 8px; background: white; display: flex; flex-direction: column; overflow: hidden; }
           .receipt-content { padding: 8mm 12mm; flex: 1; display: flex; flex-direction: column; }
           .receipt-header { text-align: center; margin-bottom: 2.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1.5rem; }
@@ -329,24 +347,6 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
             }
           }
         `}</style>
-        <Paper elevation={3} className="invoice-paper print-wrapper" sx={{ 
-          p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto', bgcolor: 'white', color: 'black',
-          zoom: { xs: 0.43, sm: 0.7, md: 0.85, lg: 1 },
-          '@supports not (zoom: 1)': {
-            transformOrigin: 'top center',
-            transform: { xs: 'scale(0.43)', sm: 'scale(0.7)', md: 'scale(0.85)', lg: 'none' },
-            mb: { xs: '-55%', sm: '-25%', md: '-10%', lg: 0 }
-          },
-          '@media print': { 
-            zoom: '1 !important', 
-            transform: 'none !important',
-            mb: '0 !important',
-            boxShadow: 'none !important',
-            bgcolor: 'white !important',
-            color: 'black !important'
-          }
-        }}>
-          <div ref={printRef} className="print-area">
             <div className="receipt-box">
               <div className="receipt-content">
                 <div className="top-greeting-row">
