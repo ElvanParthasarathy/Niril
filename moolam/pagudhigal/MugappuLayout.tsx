@@ -53,7 +53,6 @@ export default function MugappuLayout({
           width: { xs: '100%', sm: 'auto' }
         }}>
           <Avatar 
-            src={profileAvatar || undefined} 
             onClick={onProfileClick}
             sx={{ 
               width: { xs: 60, sm: 48 }, height: { xs: 60, sm: 48 }, mr: { xs: 2.5, sm: 2 }, 

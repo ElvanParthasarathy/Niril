@@ -6,7 +6,7 @@ import { thagaval } from '../Thagaval';
 import { useLanguage } from '../../mozhi/LanguageContext';
 import ElvanCard from '../ElvanCard';
 
-export default function CoolieSettings({ profile }) {
+export default function CoolieSettings() {
   const { t, language } = useLanguage();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
@@ -31,7 +31,8 @@ export default function CoolieSettings({ profile }) {
     email: '',
     logo: '',
     themeColor: '#388e3c',
-    defaultPrintLanguage: 'ta'
+    defaultPrintLanguage: 'ta',
+    receiptLanguage: 'ta'
   });
 
   const loadProfiles = async () => {
@@ -73,7 +74,8 @@ export default function CoolieSettings({ profile }) {
       email: p.email || '',
       logo: p.logo || '',
       themeColor: p.themeColor || '#388e3c',
-      defaultPrintLanguage: p.defaultPrintLanguage || 'ta'
+      defaultPrintLanguage: p.defaultPrintLanguage || 'ta',
+      receiptLanguage: p.receiptLanguage || 'ta'
     });
     setPhones(p.phone ? p.phone.split(',').filter(Boolean) : ['']);
   };
@@ -92,7 +94,8 @@ export default function CoolieSettings({ profile }) {
       email: '',
       logo: '',
       themeColor: '#388e3c',
-      defaultPrintLanguage: 'ta'
+      defaultPrintLanguage: 'ta',
+      receiptLanguage: 'ta'
     });
     setPhones(['']);
   };
@@ -132,8 +135,12 @@ export default function CoolieSettings({ profile }) {
 
   const useTamilFirst = language === 'ta_mixed' || language === 'ta_only';
 
+  if (isLoading) {
+    return <Box sx={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}></Box>;
+  }
+
   return (
-    <Box sx={{ p: isMobile ? 2 : 4, maxWidth: '900px', margin: '0 auto', pb: isMobile ? 12 : 4 }}>
+    <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
       
       {/* Header */}
       <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'center', mb: 4, gap: 2 }}>
@@ -228,19 +235,35 @@ export default function CoolieSettings({ profile }) {
               </Box>
             </Box>
 
-            <Box sx={{ gridColumn: 'span 2' }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.secondary', mb: 1 }}>
-                {t('defaultPrintLanguage') || 'Default Print Language'}
-              </Typography>
-              <FormControl size="small" sx={{ width: 200 }}>
-                <Select
-                  value={formData.defaultPrintLanguage || 'ta'}
-                  onChange={e => setFormData({ ...formData, defaultPrintLanguage: e.target.value })}
-                >
-                  <MenuItem value="ta">{t('tamil') || 'Tamil'}</MenuItem>
-                  <MenuItem value="en">{t('english') || 'English'}</MenuItem>
-                </Select>
-              </FormControl>
+            <Box sx={{ gridColumn: 'span 2', display: 'flex', gap: 4 }}>
+              <Box>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.secondary', mb: 1 }}>
+                  {t('defaultPrintLanguage') || 'Default Print Language'}
+                </Typography>
+                <FormControl size="small" sx={{ width: 200 }}>
+                  <Select
+                    value={formData.defaultPrintLanguage || 'ta'}
+                    onChange={e => setFormData({ ...formData, defaultPrintLanguage: e.target.value })}
+                  >
+                    <MenuItem value="ta">{t('tamil') || 'Tamil'}</MenuItem>
+                    <MenuItem value="en">{t('english') || 'English'}</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+              <Box>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.secondary', mb: 1 }}>
+                  Receipt Language
+                </Typography>
+                <FormControl size="small" sx={{ width: 200 }}>
+                  <Select
+                    value={formData.receiptLanguage || 'ta'}
+                    onChange={e => setFormData({ ...formData, receiptLanguage: e.target.value })}
+                  >
+                    <MenuItem value="ta">{t('tamil') || 'Tamil'}</MenuItem>
+                    <MenuItem value="en">{t('english') || 'English'}</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
             </Box>
           </Box>
         </ElvanCard>

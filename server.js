@@ -409,6 +409,34 @@ app.delete('/api/coolie_pattiyalkal/:id', (req, res) => {
 });
 
 // ========================
+// COOLIE RECEIPTS
+// ========================
+app.get('/api/coolie_raseedhugal', (req, res) => {
+  const receipts = readAllFromDir('coolie_raseedhugal');
+  receipts.sort((a, b) => new Date(b.date) - new Date(a.date));
+  res.json(receipts);
+});
+
+app.post('/api/coolie_raseedhugal', (req, res) => {
+  try {
+    const receipt = req.body;
+    if (!receipt.id) receipt.id = 'crcp_' + Date.now();
+    const filePath = path.join(DATA_DIR, 'coolie_raseedhugal', safeFileName(receipt.id) + '.json');
+    writeJSON(filePath, receipt);
+    res.json({ success: true, id: receipt.id });
+  } catch (err) {
+    fs.writeFileSync('error_log.txt', String(err.stack || err));
+    res.status(500).json({ error: String(err) });
+  }
+});
+
+app.delete('/api/coolie_raseedhugal/:id', (req, res) => {
+  const filePath = path.join(DATA_DIR, 'coolie_raseedhugal', safeFileName(req.params.id) + '.json');
+  deleteFile(filePath);
+  res.json({ success: true });
+});
+
+// ========================
 // BUSINESS PROFILES (multi-business)
 // ========================
 app.get('/api/suya_vivaram', (req, res) => {
@@ -480,6 +508,7 @@ app.get('/api/export', (req, res) => {
     profiles: readAllFromDir('suya_vivaram'),
     purchases: readAllFromDir('kolmudhal'),
     coolieBills: readAllFromDir('coolie_pattiyalkal'),
+    coolieReceipts: readAllFromDir('coolie_raseedhugal'),
     meta: readJSON(META_PATH, {}),
     exportedAt: new Date().toISOString(),
   };
@@ -576,6 +605,13 @@ app.post('/api/import', (req, res) => {
   }
   if (data.meta) {
     writeJSON(META_PATH, data.meta);
+  }
+  if (data.coolieReceipts && Array.isArray(data.coolieReceipts)) {
+    for (const rcp of data.coolieReceipts) {
+      if (rcp.id) {
+        writeJSON(path.join(DATA_DIR, 'coolie_raseedhugal', safeFileName(rcp.id) + '.json'), rcp);
+      }
+    }
   }
 
   res.json({ billCount, clientCount, templateCount, productCount, hasProfile: !!data.profile });

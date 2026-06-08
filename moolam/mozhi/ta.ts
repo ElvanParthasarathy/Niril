@@ -18,6 +18,9 @@ export const ta = {
   add: 'சேர்',
   search: 'தேடுக...',
   print: 'அச்சிடு',
+  done: 'முடிந்தது',
+  selectInvoices: 'பட்டியலைத் தேர்ந்தெடு',
+  searchInvoices: 'தேடவும்...',
   preview: 'முன்னோட்டம்',
   actions: 'செயல்கள்',
   yes: 'ஆம்',
@@ -964,6 +967,9 @@ export const ta = {
   hc_cancel: "கைவிடு",
   hc_discard: "நிராகரி",
   receiptDetails: "ரசீது விவரங்கள்",
+  invoiceData: "பட்டியல் தரவுகள்",
+  receiptData: "பற்றுச்சீட்டு தரவுகள்",
+  invoicesSelected: "பட்டியல்(கள்) தேர்ந்தெடுக்கப்பட்டன",
   paymentDetails: "கட்டண விவரங்கள்",
   productDetails: "பொருள் விவரங்கள்",
   pricingAndTax: "விலை மற்றும் வரி",
@@ -977,7 +983,6 @@ export const ta = {
   customer: "வாடிக்கையாளர்",
   company: "நிறுவனம்",
   quantity: "எடை",
-  addAnotherItem: "புதிய பொருளைச் சேர்",
   addOtherCharges: "கூடுதல் கட்டணம் சேர்",
   chargeName: "கட்டணத்தின் பெயர்",
   otherCharges: "கூடுதல் கட்டணங்கள்",
@@ -986,7 +991,6 @@ export const ta = {
   courier: "கூரியர்",
   totalWeight: "மொத்த எடை",
   grams: "கிராம்",
-  hc_savedClientDetails: "சேமிக்கப்பட்ட வாடிக்கையாளர் விவரங்கள்",
   searchBillsPlaceholder: "தேடுக..."
 };
 

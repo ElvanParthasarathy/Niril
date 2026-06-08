@@ -67,6 +67,12 @@ export default function Raseedhu({ profile: parentProfile, onAddReceipt, onEditR
 
   useEffect(() => {
     loadData();
+    
+    // Listen for custom event from Seyali to refresh data after a save
+    const handleRefresh = () => loadData();
+    window.addEventListener('refreshReceipts', handleRefresh);
+    
+    return () => window.removeEventListener('refreshReceipts', handleRefresh);
   }, []);
 
   const filterFn = (r, search) => {

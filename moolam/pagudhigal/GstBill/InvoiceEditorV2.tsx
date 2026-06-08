@@ -14,7 +14,7 @@ import { INVOICE_TYPES } from '../../Payanpadu';
 import ElvanEditorLayout from '../ElvanEditorLayout';
 import { useDraftAndUnsaved } from '../../hooks/useDraftAndUnsaved';
 
-export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp, editingBill }: any) {
+export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp, editingBill, onRequestAddClient, onRequestAddProduct, dataVersion }: any) {
   const { t } = useLanguage();
   const [client, setClient] = useState<ClientState>(createEmptyClient());
   const [items, setItems] = useState<LineItemState[]>([createEmptyLineItem()]);
@@ -237,6 +237,8 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
         secondaryLang={secondaryLang}
         profile={profileProp}
         invoiceOptions={settings}
+        onRequestAddClient={onRequestAddClient}
+        dataVersion={dataVersion}
       />
 
       {/* Metadata Section */}
@@ -259,6 +261,8 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
         primaryLang={primaryLang}
         secondaryLang={secondaryLang}
         profile={profileProp}
+        onRequestAddProduct={onRequestAddProduct}
+        dataVersion={dataVersion}
       />
 
       {/* Totals Section */}

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { CaretLeft, CaretDoubleLeft as KeyboardDoubleArrowLeft, CaretDoubleRight as KeyboardDoubleArrowRight, House as Home, FileText as Description, GearSix as Settings, Plus as Add, Users as People, Package as Inventory, ChartBar as BarChart, Wallet as AccountBalanceWallet, ArrowsClockwise as Refresh, Receipt, BookOpen as MenuBook, Moon as DarkMode, Sun as LightMode, DownloadSimple as Download, X as Close, ShoppingCart, CaretDown as KeyboardArrowDown, CaretRight as KeyboardArrowRight, Buildings as Business, PencilSimple as Edit, Question as HelpOutlined, MagnifyingGlass as Search, Command as KeyboardCommandKey, Bell as Notifications, List as Menu, CalendarDots } from '@phosphor-icons/react';
-import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback, startTransition } from 'react';
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Badge, Box, Typography, Avatar, Divider, Tooltip, IconButton, Collapse, CssBaseline, Dialog, DialogTitle, DialogContent, DialogActions, Button, Backdrop, CircularProgress, InputBase, AppBar, Toolbar, useMediaQuery, Stack } from '@mui/material';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { getAllProfiles, saveProfile, getAllBills, getAllProducts } from './Avanam';
@@ -16,9 +16,14 @@ import CoolieInvoiceView from './pagudhigal/CoolieBill/CoolieInvoiceView';
 import CoolieDashboard from './pagudhigal/CoolieBill/CoolieDashboard';
 import CoolieMerchants from './pagudhigal/CoolieBill/CoolieMerchants';
 import CoolieItems from './pagudhigal/CoolieBill/CoolieItems';
+import CoolieItemEditor from './pagudhigal/CoolieBill/CoolieItemEditor';
 import CoolieReceiptList from './pagudhigal/CoolieBill/CoolieReceiptList';
+import CoolieReceiptEditor from './pagudhigal/CoolieBill/CoolieReceiptEditor';
+import CoolieReceiptView from './pagudhigal/CoolieBill/CoolieReceiptView';
 import CoolieSettings from './pagudhigal/CoolieBill/CoolieSettings';
 import ModeSelector from './pagudhigal/ModeSelector';
+import ElvanListView from './pagudhigal/ElvanListView';
+import CoolieClientEditor from './pagudhigal/CoolieBill/CoolieClientEditor';
 import ReceiptView from './pagudhigal/ReceiptView';
 import Amaippugal from './pagudhigal/Amaippugal';
 import Vanigargal from './pagudhigal/Vanigargal';
@@ -237,6 +242,11 @@ function Seyali() {
       return saved ? JSON.parse(saved) : null;
     } catch { return null; }
   });
+  // Inline overlay for opening client/product editors from inside the bill editor
+  const [inlineOverlay, setInlineOverlay] = useState<{ type: 'client-editor' | 'product-editor'; data?: any } | null>(null);
+  const [dataVersion, setDataVersion] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const dismissOverlay = (saved?: boolean) => { setInlineOverlay(null); if (saved) setDataVersion(v => v + 1); };
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem('elvanniril_theme') === 'dark';
   });
@@ -447,6 +457,9 @@ function Seyali() {
   const handleEditInvoice = (bill) => {
     sessionStorage.removeItem('gst_invoiceDraft');
     setEditingBill(bill);
+    if (currentView === 'dashboard' || currentView === 'invoice-list') {
+      sessionStorage.setItem('gst_backTo', currentView);
+    }
     setCurrentView('invoice-editor');
   };
 
@@ -461,6 +474,9 @@ function Seyali() {
   const handleViewInvoice = (bill) => {
     sessionStorage.removeItem('gst_invoiceDraft');
     setEditingBill(bill);
+    if (currentView === 'dashboard' || currentView === 'invoice-list') {
+      sessionStorage.setItem('gst_backTo', currentView);
+    }
     setCurrentView('invoice-view');
   };
 
@@ -606,6 +622,27 @@ function Seyali() {
           }
         }
       },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundColor: darkMode ? '#1C1C1E' : '#FFFFFF',
+          },
+          elevation: {
+            boxShadow: darkMode ? 'none' : '0px 2px 6px rgba(0,0,0,0.04)',
+            border: 'none',
+          }
+        }
+      },
+      MuiDialog: {
+        styleOverrides: {
+          paper: {
+            backgroundColor: darkMode ? '#1A1A1A' : '#FFFFFF',
+            backgroundImage: 'none',
+            boxShadow: darkMode ? '0 4px 24px rgba(0,0,0,0.4)' : '0 2px 12px rgba(0,0,0,0.06)',
+          }
+        }
+      },
+
       MuiTextField: {
         defaultProps: {
           variant: 'filled',
@@ -705,6 +742,10 @@ function Seyali() {
       MuiButton: {
         styleOverrides: {
           root: {
+            boxShadow: 'none',
+            '&:hover': {
+              boxShadow: 'none',
+            },
             borderRadius: 50,
             textTransform: 'none',
             fontWeight: 600,
@@ -986,19 +1027,19 @@ function Seyali() {
             pb: { xs: 2, md: 0 }, // small padding at the bottom of the scroll inside the shell
             '@media print': { overflowY: 'visible', pb: 0 }
           }}>
-          {currentView === 'dashboard' && (
+        {(currentView === 'dashboard' || (['invoice-editor', 'invoice-view'].includes(currentView as string) && sessionStorage.getItem('gst_backTo') === 'dashboard')) && (
           appMode === 'GST' ? (
-            <Mugappu onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onEdit={handleViewInvoice} onDuplicate={handleDuplicateInvoice} onConvert={handleConvertToInvoice} profile={profile} onSwitchModeRequest={handleSwitchModeRequest} />
+            <Mugappu key={refreshKey} onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onEdit={handleViewInvoice} onDuplicate={handleDuplicateInvoice} onConvert={handleConvertToInvoice} profile={profile} onSwitchModeRequest={handleSwitchModeRequest} />
           ) : (
-            <CoolieDashboard onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onView={handleViewInvoice} onSwitchModeRequest={handleSwitchModeRequest} />
+            <CoolieDashboard key={refreshKey} onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onView={handleViewInvoice} onSwitchModeRequest={handleSwitchModeRequest} />
           )
         )}
-        {/* Always render the list when in any invoice view so it maintains state and DOM */}
-        {['invoice-list', 'invoice-editor', 'invoice-view'].includes(currentView as string) && (
+        {/* Always render the list when in any invoice view (unless coming from dashboard) so it maintains state and DOM */}
+        {(currentView === 'invoice-list' || (['invoice-editor', 'invoice-view'].includes(currentView as string) && sessionStorage.getItem('gst_backTo') !== 'dashboard')) && (
           appMode === 'GST' ? (
-            <InvoiceList onNew={handleNewInvoice} onView={handleViewInvoice} onDuplicate={handleDuplicateInvoice} profile={profile} />
+            <InvoiceList key={refreshKey} onNew={handleNewInvoice} onView={handleViewInvoice} onDuplicate={handleDuplicateInvoice} profile={profile} />
           ) : (
-            <CoolieInvoiceList onNew={handleNewInvoice} onView={handleViewInvoice} profile={profile} />
+            <CoolieInvoiceList key={refreshKey} onNew={handleNewInvoice} onView={handleViewInvoice} />
           )
         )}
 
@@ -1024,18 +1065,76 @@ function Seyali() {
                     setCurrentView('invoice-view');
                   } else {
                     setEditingBill(null);
-                    setCurrentView('invoice-list');
+                    setCurrentView(sessionStorage.getItem('gst_backTo') === 'dashboard' ? 'dashboard' : 'invoice-list');
                   }
                 }}
-                onSaved={(bill) => { setEditingBill(bill); setCurrentView('invoice-view'); }}
+                onSaved={(bill) => { setEditingBill(bill); setCurrentView('invoice-view'); setRefreshKey(k => k + 1); }}
                 profile={profile} editingBill={editingBill}
+                onRequestAddClient={() => setInlineOverlay({ type: 'client-editor' })}
+                onRequestAddProduct={() => setInlineOverlay({ type: 'product-editor' })}
+                dataVersion={dataVersion}
               />
             ) : (
               <CoolieInvoiceEditor 
                 existingBill={editingBill}
-                onBack={() => { setEditingBill(null); setCurrentView('invoice-list'); }}
-                onSaved={(bill) => { setEditingBill(bill); setCurrentView('invoice-view'); }}
+                onBack={() => { setEditingBill(null); setCurrentView(sessionStorage.getItem('gst_backTo') === 'dashboard' ? 'dashboard' : 'invoice-list'); }}
+                onSaved={(bill) => { setEditingBill(bill); setCurrentView('invoice-view'); setRefreshKey(k => k + 1); }}
+                onRequestAddClient={() => setInlineOverlay({ type: 'client-editor' })}
+                onRequestAddProduct={() => setInlineOverlay({ type: 'product-editor' })}
+                dataVersion={dataVersion}
               />
+            )}
+          </Box>
+        )}
+
+        {/* Inline overlay for Add Client / Add Product from inside invoice editor */}
+        {currentView === 'invoice-editor' && inlineOverlay && (
+          <Box sx={{ 
+            position: { xs: 'fixed', md: 'absolute' }, 
+            top: { xs: '64px', md: 0 }, 
+            left: { xs: '12px', md: 0 }, 
+            right: { xs: '12px', md: 0 }, 
+            bottom: { xs: '12px', md: 0 }, 
+            borderRadius: { xs: '24px', md: 0 },
+            bgcolor: 'background.default', 
+            zIndex: 1300, 
+            overflowY: 'auto', 
+            overscrollBehavior: 'contain',
+            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+          }}>
+            {inlineOverlay.type === 'client-editor' && (
+              appMode === 'GST' ? (
+                <VanigarThoguppu 
+                  client={null} 
+                  onBack={() => dismissOverlay(false)} 
+                  onSaved={() => { dismissOverlay(true); setRefreshKey(k => k + 1); }} 
+                  profileSettings={profile} 
+                  defaultCountry={profile?.country}
+                />
+              ) : (
+                <CoolieClientEditor 
+                  client={null} 
+                  onBack={() => dismissOverlay(false)} 
+                  onSaved={() => { dismissOverlay(true); setRefreshKey(k => k + 1); }} 
+                />
+              )
+            )}
+            {inlineOverlay.type === 'product-editor' && (
+              appMode === 'GST' ? (
+                <PorulThoguppu 
+                  product={null} 
+                  onBack={() => dismissOverlay(false)} 
+                  onSaved={() => { dismissOverlay(true); setRefreshKey(k => k + 1); }} 
+                  profileSettings={profile} 
+                  defaultCountry={profile?.country}
+                />
+              ) : (
+                <CoolieItemEditor 
+                  product={null} 
+                  onBack={() => dismissOverlay(false)} 
+                  onSaved={() => { dismissOverlay(true); setRefreshKey(k => k + 1); }} 
+                />
+              )
             )}
           </Box>
         )}
@@ -1059,91 +1158,191 @@ function Seyali() {
               <InvoiceView
                 bill={editingBill}
                 profile={profile}
-                onBack={() => { setEditingBill(null); setCurrentView('invoice-list'); }}
+                onBack={() => { setEditingBill(null); setCurrentView(sessionStorage.getItem('gst_backTo') === 'dashboard' ? 'dashboard' : 'invoice-list'); }}
                 onEdit={handleEditInvoice}
                 onDuplicate={handleDuplicateInvoice}
               />
             ) : (
               <CoolieInvoiceView 
                 bill={editingBill}
-                profile={profile}
-                onClose={() => { setEditingBill(null); setCurrentView('invoice-list'); }}
+                onClose={() => { setEditingBill(null); setCurrentView(sessionStorage.getItem('gst_backTo') === 'dashboard' ? 'dashboard' : 'invoice-list'); }}
                 onEdit={() => setCurrentView('invoice-editor')}
               />
             )}
           </Box>
         )}
-        {currentView === 'invoice-view' && !editingBill && (
-           <Mugappu onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onEdit={handleViewInvoice} onDuplicate={handleDuplicateInvoice} onConvert={handleConvertToInvoice} profile={profile} />
-        )}
-        {currentView === 'clients' && (
+
+        {['clients', 'client-editor'].includes(currentView as string) && (
           appMode === 'GST' ? (
-            <Vanigargal onNew={handleNewInvoice} onEdit={handleEditInvoice} onDuplicate={handleDuplicateInvoice} profile={profile}
+            <Vanigargal key={refreshKey} onNew={handleNewInvoice} onEdit={handleEditInvoice} onDuplicate={handleDuplicateInvoice} profile={profile}
               onAddClient={(prefill) => { setEditingClient(prefill); setCurrentView('client-editor'); }}
               onEditClient={(client) => { setEditingClient(client); setCurrentView('client-editor'); }} 
             />
           ) : (
-            <CoolieMerchants />
+            <CoolieMerchants 
+              key={refreshKey}
+              onAddClient={(prefill) => { setEditingClient(prefill); setCurrentView('client-editor'); }}
+              onEditClient={(client) => { setEditingClient(client); setCurrentView('client-editor'); }} 
+            />
           )
         )}
         {currentView === 'client-editor' && (
-          <VanigarThoguppu 
-            client={editingClient} 
-            onBack={() => { setEditingClient(null); setCurrentView('clients'); }} 
-            onSaved={(client) => { setEditingClient(null); setCurrentView('clients'); }} 
-            profileSettings={profile} 
-            defaultCountry={profile?.country}
-          />
+          <Box sx={{ 
+            position: { xs: 'fixed', md: 'absolute' }, 
+            top: { xs: '64px', md: 0 }, 
+            left: { xs: '12px', md: 0 }, 
+            right: { xs: '12px', md: 0 }, 
+            bottom: { xs: '12px', md: 0 }, 
+            borderRadius: { xs: '24px', md: 0 },
+            bgcolor: 'background.default', 
+            zIndex: 1200, 
+            overflowY: 'auto', 
+            overscrollBehavior: 'contain',
+            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+          }}>
+            {appMode === 'GST' ? (
+              <VanigarThoguppu 
+                client={editingClient} 
+                onBack={() => { setEditingClient(null); setCurrentView('clients'); }} 
+                onSaved={(client) => { setEditingClient(null); setCurrentView('clients'); setRefreshKey(k => k + 1); }} 
+                profileSettings={profile} 
+                defaultCountry={profile?.country}
+              />
+            ) : (
+              <CoolieClientEditor 
+                client={editingClient} 
+                onBack={() => { setEditingClient(null); setCurrentView('clients'); }} 
+                onSaved={(client) => { setEditingClient(null); setCurrentView('clients'); setRefreshKey(k => k + 1); }} 
+              />
+            )}
+          </Box>
         )}
-        {currentView === 'inventory' && (
+        {['inventory', 'product-editor'].includes(currentView as string) && (
           appMode === 'GST' ? (
             <Porul 
+              key={refreshKey}
               onAddProduct={() => { setEditingProduct(null); setCurrentView('product-editor'); }}
               onEditProduct={(p) => { setEditingProduct(p); setCurrentView('product-editor'); }} 
               profile={profile}
             />
           ) : (
-            <CoolieItems />
+            <CoolieItems 
+              key={refreshKey}
+              onAddProduct={() => { setEditingProduct(null); setCurrentView('product-editor'); }}
+              onEditProduct={(p) => { setEditingProduct(p); setCurrentView('product-editor'); }} 
+            />
           )
         )}
         {currentView === 'product-editor' && (
-          <PorulThoguppu 
-            product={editingProduct} 
-            onBack={() => { setEditingProduct(null); setCurrentView('inventory'); }} 
-            onSaved={(p) => { setEditingProduct(null); setCurrentView('inventory'); }} 
-            profileSettings={profile} 
-            defaultCountry={profile?.country}
-          />
+          <Box sx={{ 
+            position: { xs: 'fixed', md: 'absolute' }, 
+            top: { xs: '64px', md: 0 }, 
+            left: { xs: '12px', md: 0 }, 
+            right: { xs: '12px', md: 0 }, 
+            bottom: { xs: '12px', md: 0 }, 
+            borderRadius: { xs: '24px', md: 0 },
+            bgcolor: 'background.default', 
+            zIndex: 1200, 
+            overflowY: 'auto', 
+            overscrollBehavior: 'contain',
+            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+          }}>
+            {appMode === 'GST' ? (
+              <PorulThoguppu 
+                product={editingProduct} 
+                onBack={() => { setEditingProduct(null); setCurrentView('inventory'); }} 
+                onSaved={(p) => { setEditingProduct(null); setCurrentView('inventory'); setRefreshKey(k => k + 1); }} 
+                profileSettings={profile} 
+                defaultCountry={profile?.country}
+              />
+            ) : (
+              <CoolieItemEditor 
+                product={editingProduct} 
+                onBack={() => { setEditingProduct(null); setCurrentView('inventory'); }} 
+                onSaved={(p) => { setEditingProduct(null); setCurrentView('inventory'); setRefreshKey(k => k + 1); }} 
+              />
+            )}
+          </Box>
         )}
 
 
-        {currentView === 'receipts' && (
+        {['receipts', 'receipt-editor', 'receipt-view'].includes(currentView as string) && (
           appMode === 'GST' ? (
             <Raseedhu 
+              key={refreshKey}
               profile={profile} 
               onAddReceipt={() => { setEditingReceipt(null); setCurrentView('receipt-editor'); }} 
               onEditReceipt={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-editor'); }} 
               onViewReceipt={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-view'); }}
             />
           ) : (
-            <CoolieReceiptList />
+            <CoolieReceiptList 
+              key={refreshKey}
+              onAddReceipt={() => { setEditingReceipt(null); setCurrentView('receipt-editor'); }} 
+              onEditReceipt={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-editor'); }} 
+              onViewReceipt={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-view'); }}
+            />
           )
         )}
         {currentView === 'receipt-editor' && (
-          <ReceiptEditor 
-            profile={profile} 
-            editingReceipt={editingReceipt} 
-            onBack={() => { setEditingReceipt(null); setCurrentView('receipts'); }} 
-            onSaved={() => { setEditingReceipt(null); setCurrentView('receipts'); }} 
-          />
+          <Box sx={{ 
+            position: { xs: 'fixed', md: 'absolute' }, 
+            top: { xs: '64px', md: 0 }, 
+            left: { xs: '12px', md: 0 }, 
+            right: { xs: '12px', md: 0 }, 
+            bottom: { xs: '12px', md: 0 }, 
+            borderRadius: { xs: '24px', md: 0 },
+            bgcolor: 'background.default', 
+            zIndex: 1200, 
+            overflowY: 'auto', 
+            overscrollBehavior: 'contain',
+            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+          }}>
+            {appMode === 'GST' ? (
+              <ReceiptEditor 
+                profile={profile} 
+                editingReceipt={editingReceipt} 
+                onBack={() => { setEditingReceipt(null); setCurrentView('receipts'); }} 
+                onSaved={() => { setEditingReceipt(null); setCurrentView('receipts'); setRefreshKey(k => k + 1); }} 
+              />
+            ) : (
+              <CoolieReceiptEditor 
+                editingReceipt={editingReceipt} 
+                onBack={() => { setEditingReceipt(null); setCurrentView('receipts'); }} 
+                onSaved={() => { setEditingReceipt(null); setCurrentView('receipts'); setRefreshKey(k => k + 1); }} 
+              />
+            )}
+          </Box>
         )}
         {currentView === 'receipt-view' && editingReceipt && (
-          <ReceiptView
-            receipt={editingReceipt}
-            profile={profile}
-            onBack={() => { setEditingReceipt(null); setCurrentView('receipts'); }}
-            onEdit={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-editor'); }}
-          />
+          <Box sx={{ 
+            position: { xs: 'fixed', md: 'absolute' }, 
+            top: { xs: '64px', md: 0 }, 
+            left: { xs: '12px', md: 0 }, 
+            right: { xs: '12px', md: 0 }, 
+            bottom: { xs: '12px', md: 0 }, 
+            borderRadius: { xs: '24px', md: 0 },
+            bgcolor: 'background.default', 
+            zIndex: 1200, 
+            overflowY: 'auto', 
+            overscrollBehavior: 'contain',
+            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+          }}>
+            {appMode === 'GST' ? (
+              <ReceiptView
+                receipt={editingReceipt}
+                profile={profile}
+                onBack={() => { setEditingReceipt(null); setCurrentView('receipts'); }}
+                onEdit={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-editor'); }}
+              />
+            ) : (
+              <CoolieReceiptView
+                receipt={editingReceipt}
+                onBack={() => { setEditingReceipt(null); setCurrentView('receipts'); }}
+                onEdit={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-editor'); }}
+              />
+            )}
+          </Box>
         )}
         {currentView === 'reports' && (
           <Arikkaigal />

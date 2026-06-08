@@ -6,7 +6,7 @@ import { useLanguage } from '../mozhi/LanguageContext';
 export default function ModeSelector({ onSelect, currentMode }) {
   const { language } = useLanguage();
   const theme = useTheme();
-  const darkMode = theme.palette.mode === 'dark';
+  const darkMode = true; // Always lock to dark mode for a cinematic, premium entry screen
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [mounted, setMounted] = useState(false);
 
@@ -33,7 +33,6 @@ export default function ModeSelector({ onSelect, currentMode }) {
           bgcolor: darkMode ? '#0a0a0a' : '#f0f2f5',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
           alignItems: 'center',
           justifyContent: 'center',
           overflow: 'hidden',

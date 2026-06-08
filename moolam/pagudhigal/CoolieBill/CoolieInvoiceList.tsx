@@ -8,7 +8,7 @@ import { useLanguage } from '../../mozhi/LanguageContext';
 import ElvanCard from '../ElvanCard';
 import ElvanListView from '../ElvanListView';
 
-export default function CoolieInvoiceList({ onView, onNew, profile }) {
+export default function CoolieInvoiceList({ onView, onNew }) {
   const { t } = useLanguage();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
@@ -312,12 +312,14 @@ export default function CoolieInvoiceList({ onView, onNew, profile }) {
     </Box>
   );
 
+
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
       <Box sx={{ flex: 1 }}>
         <ElvanListView 
           key={activeTab}
-          title={t('coolieBills') || 'Coolie Bills'}
+          title={t('invoicesCount') || 'Invoices'}
           renderBelowSearch={filterChips}
           searchPlaceholder={t('searchBillsPlaceholder') || 'Search anything...'}
           addButtonText={t('newBill') || 'New Bill'}

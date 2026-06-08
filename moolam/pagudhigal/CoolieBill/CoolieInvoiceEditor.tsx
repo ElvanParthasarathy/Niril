@@ -91,9 +91,10 @@ const clientFilter = createFilterOptions({
   }
 });
 
-export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
+export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onRequestAddClient, onRequestAddProduct, dataVersion }) {
   const { t, language } = useLanguage();
   const theme = useTheme();
+  const skipNextInputChangeRef = React.useRef(false);
   
   // State from Kananam Coolie Bill
   const [billNo, setBillNo] = useState('');
@@ -230,6 +231,16 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
     }
     loadData();
   }, []);
+
+  // Refresh dropdown options when returning from inline editor overlay
+  useEffect(() => {
+    if (dataVersion > 0) {
+      Promise.all([getAllCoolieClients(), getAllCoolieProducts()]).then(([clients, products]) => {
+        setClientOptions(clients || []);
+        setProductOptions(products || []);
+      });
+    }
+  }, [dataVersion]);
 
   // Fix legacy dates automatically (e.g. 27/05/26 -> 27/05/2026)
   useEffect(() => {
@@ -368,7 +379,8 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
 
   const handleCustomerSelect = (e, val) => {
     if (val && val.isAddButton) {
-      window.location.href = window.location.pathname + '?view=client-editor';
+      skipNextInputChangeRef.current = true;
+      if (onRequestAddClient) { onRequestAddClient(); } else { window.location.href = window.location.pathname + '?view=client-editor'; }
       return;
     }
     if (!val) {
@@ -394,6 +406,7 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
     setCity(val.city || '');
     setCityEn(val.cityEn || '');
   };
+
 
   return (
     <ElvanEditorLayout
@@ -429,11 +442,24 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
                   filtered.push({ id: 'ADD_NEW', isAddButton: true, name: 'Add New' });
                   return filtered;
                 }}
-                getOptionLabel={(option) => typeof option === 'string' ? option : (option.name || option.nameEn || '')}
+                getOptionLabel={(option) => {
+                  if (option.isAddButton) return customerName || '';
+                  return typeof option === 'string' ? option : (option.name || option.nameEn || '');
+                }}
                 onChange={handleCustomerSelect}
                 value={customerName || null}
                 inputValue={customerName || ''}
-                onInputChange={(e, val) => setCustomerName(val || '')}
+                onInputChange={(e, val, reason) => {
+                  if (skipNextInputChangeRef.current) { skipNextInputChangeRef.current = false; return; }
+                  setCustomerName(val || '');
+                  if (reason === 'input' || reason === 'clear') {
+                    setCustomerNameEn('');
+                    setAddress('');
+                    setAddressEn('');
+                    setCity('');
+                    setCityEn('');
+                  }
+                }}
                 renderOption={(props, option, { index }) => {
                     const { key, ...optionProps } = props as any;
                     
@@ -604,12 +630,13 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
                       return filtered;
                     }}
                     getOptionLabel={(option) => {
-                      if (option.isAddButton) return '';
+                      if (option.isAddButton) return item.porul || '';
                       return typeof option === 'string' ? option : (option.name || option.nameEn || '');
                     }}
                     onChange={(e, val) => {
                       if (val && val.isAddButton) {
-                        window.location.href = window.location.pathname + '?view=product-editor';
+                        skipNextInputChangeRef.current = true;
+                        if (onRequestAddProduct) { onRequestAddProduct(); } else { window.location.href = window.location.pathname + '?view=product-editor'; }
                         return;
                       }
                       setItems(prev => {
@@ -631,7 +658,8 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill }) {
                     }}
                     value={item.porul ? item.porul : null}
                     inputValue={item.porul || ''}
-                    onInputChange={(e, val) => {
+                    onInputChange={(e, val, reason) => {
+                      if (skipNextInputChangeRef.current) { skipNextInputChangeRef.current = false; return; }
                       setItems(prev => {
                         const newItems = [...prev];
                         newItems[index] = { ...newItems[index], porul: val };

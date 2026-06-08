@@ -8,7 +8,7 @@ import { thagaval } from '../Thagaval';
 import MugappuLayout from '../MugappuLayout';
 import ElvanCard from '../ElvanCard';
 
-export default function CoolieDashboard({ onViewAll, onNew, onView, profile, onSwitchModeRequest }: any) {
+export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchModeRequest }: any) {
   const { t, language } = useLanguage();
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
@@ -193,7 +193,7 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, profile, onS
       title={language === 'ta' ? 'முகப்பு' : 'Dashboard'}
       greetingTitle={greetingTitle}
       greetingSubtitle={greetingSubtitle}
-      profileAvatar={profile?.logo}
+      profileAvatar={profiles[0]?.logo}
       profileInitial={profileInitial}
       onNew={onNew}
       onViewAll={onViewAll}

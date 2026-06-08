@@ -5,7 +5,10 @@
 const API = '/api';
 
 async function apiFetch(url, options = {}) {
-  const res = await fetch(url, {
+  const isGet = !options.method || options.method === 'GET';
+  const finalUrl = isGet ? (url.includes('?') ? `${url}&_t=${Date.now()}` : `${url}?_t=${Date.now()}`) : url;
+  
+  const res = await fetch(finalUrl, {
     headers: { 'Content-Type': 'application/json' },
     ...options,
   });
@@ -349,6 +352,22 @@ export const saveReceipt = async (receipt) => {
 
 export const deleteReceipt = async (id) => {
   return apiFetch(`${API}/raseedhugal/${encodeURIComponent(id)}`, { method: 'DELETE' });
+};
+
+// ---- Coolie Receipts ----
+export const getAllCoolieReceipts = async () => {
+  if (isBlankState()) return [];
+  return apiFetch(`${API}/coolie_raseedhugal`);
+};
+
+export const saveCoolieReceipt = async (receipt) => {
+  const res = await apiFetch(`${API}/coolie_raseedhugal`, { method: 'POST', body: JSON.stringify(receipt) });
+  if (res.id) receipt.id = res.id;
+  return receipt;
+};
+
+export const deleteCoolieReceipt = async (id) => {
+  return apiFetch(`${API}/coolie_raseedhugal/${encodeURIComponent(id)}`, { method: 'DELETE' });
 };
 
 // ---- Business Profiles (multi-business) ----

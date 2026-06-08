@@ -66,26 +66,32 @@ const pickTamilPart = (text) => {
     return str;
 };
 
-export default function CoolieInvoiceView({ bill, profile: globalProfile, onClose, onEdit }) {
+export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
     const { t } = useLanguage();
     const printRef = useRef(null);
     const [companyProfile, setCompanyProfile] = useState(bill._companyProfile || null);
+    const [isLoadingProfile, setIsLoadingProfile] = useState(!bill._companyProfile);
     const [printLang, setPrintLang] = useState('ta');
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         if (!companyProfile && bill?.company_id) {
             getAllCoolieProfiles().then(profiles => {
-                const p = profiles.find(pr => pr.id === bill.company_id);
+                const p = profiles.find(pr => pr.id === bill.company_id) || profiles[0];
                 setCompanyProfile(p);
                 if (p?.defaultPrintLanguage) setPrintLang(p.defaultPrintLanguage);
+                setIsLoadingProfile(false);
             });
+        } else {
+            setIsLoadingProfile(false);
         }
     }, [bill?.company_id, companyProfile]);
 
-    if (!bill) return null;
+    if (isLoadingProfile || !bill) {
+        return <Box sx={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}></Box>;
+    }
 
-    const activeProfile = companyProfile || globalProfile || {};
+    const activeProfile = companyProfile || {};
     const displayBillNo = bill.bill_no;
 
     const handlePrint = () => {

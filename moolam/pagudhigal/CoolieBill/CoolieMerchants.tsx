@@ -1,132 +1,206 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Chip } from '@mui/material';
-import { Plus, Trash, PencilSimple, Users } from '@phosphor-icons/react';
-import { getAllCoolieClients, saveCoolieClient, deleteCoolieClient } from '../../Avanam';
+import { Users, Trash, CheckSquare, Square } from '@phosphor-icons/react';
+import { useState, useEffect } from 'react';
+import { getAllCoolieClients, getAllCoolieBills, deleteCoolieClient, saveCoolieClient, getAllCoolieProfiles } from '../../Avanam';
+import { thagaval } from '../Thagaval';
 import { useLanguage } from '../../mozhi/LanguageContext';
+import { getDynamicField } from '../../Payanpadu';
+import { Typography, Box, Stack, IconButton, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import ElvanCard from '../ElvanCard';
+import ElvanListView from '../ElvanListView';
 
-export default function CoolieMerchants() {
+export default function CoolieMerchants({ onEditClient, onAddClient }) {
   const { t } = useLanguage();
-  const [clients, setClients] = useState<any[]>([]);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingClient, setEditingClient] = useState<any>(null);
-  
-  // Form state
-  const [name, setName] = useState('');
-  const [nameEn, setNameEn] = useState('');
-  const [city, setCity] = useState('');
-  const [cityEn, setCityEn] = useState('');
-  const [address, setAddress] = useState('');
-  const [addressEn, setAddressEn] = useState('');
-  const [phone, setPhone] = useState('');
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const [clients, setClients] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [bills, setBills] = useState([]);
+  const [coolieProfile, setCoolieProfile] = useState<any>(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
+  const [confirmDialog, setConfirmDialog] = useState({ open: false, title: '', message: '', action: null as any });
+
+  const loadData = async () => {
+    setIsLoading(true);
+    try {
+      const [c, b, p] = await Promise.all([
+        getAllCoolieClients(), 
+        getAllCoolieBills(),
+        getAllCoolieProfiles()
+      ]);
+      setClients(c);
+      setBills(b);
+      if (p && p.length > 0) setCoolieProfile(p[0]);
+    } catch {
+      thagaval(t('errorLoadingCustomers') || 'Error loading customers', 'error');
+    } finally {
+      setIsLoading(false);
+      setIsLoadingProfile(false);
+    }
+  };
 
   useEffect(() => {
-    fetchClients();
+    loadData();
   }, []);
 
-  const fetchClients = async () => {
-    const data = await getAllCoolieClients();
-    setClients(data || []);
+  const activeProfile = coolieProfile || {};
+
+  const filterFn = (c, search) => {
+    if (!search.trim()) return true;
+    const term = search.toLowerCase();
+    const searchable = [
+      getDynamicField(c, 'name', activeProfile, true), getDynamicField(c, 'name', activeProfile, false),
+      getDynamicField(c, 'address', activeProfile, true), getDynamicField(c, 'address', activeProfile, false), getDynamicField(c, 'city', activeProfile, true), getDynamicField(c, 'city', activeProfile, false)
+    ].filter(Boolean).join(' ').toLowerCase();
+    return searchable.includes(term);
   };
 
-  const handleOpen = (client = null) => {
-    if (client) {
-      setEditingClient(client);
-      setName(client.name || client.companyName || '');
-      setNameEn(client.nameEn || client.companyNameEn || '');
-      setCity(client.city || '');
-      setCityEn(client.cityEn || '');
-      setAddress(client.address || '');
-      setAddressEn(client.addressEn || '');
-      setPhone(client.phone || '');
-    } else {
-      setEditingClient(null);
-      setName('');
-      setNameEn('');
-      setCity('');
-      setCityEn('');
-      setAddress('');
-      setAddressEn('');
-      setPhone('');
-    }
-    setIsDialogOpen(true);
-  };
-
-  const handleSave = async () => {
-    const clientData = {
-      id: editingClient?.id || Date.now().toString(),
-      name,
-      nameEn,
-      city,
-      cityEn,
-      address,
-      addressEn,
-      phone
-    };
-    
-    await saveCoolieClient(clientData);
-    setIsDialogOpen(false);
-    fetchClients();
-  };
-
-  const handleDelete = async (id) => {
-    if (window.confirm("Delete this customer?")) {
-      await deleteCoolieClient(id);
-      fetchClients();
+  const handleBulkDelete = async (ids, onProgress) => {
+    try {
+      let count = 0;
+      for (const id of ids) {
+        await deleteCoolieClient(id);
+        count++;
+        if (onProgress) onProgress(count, ids.length);
+      }
+      thagaval(t('deletedSuccessfully') || 'Deleted successfully', 'success');
+      loadData();
+    } catch (e) {
+      thagaval(t('errorDeleting') || 'Error deleting', 'error');
     }
   };
+
+  const handleBulkDuplicate = async (ids, onProgress) => {
+    try {
+      const selected = clients.filter(c => ids.includes(c.id));
+      let count = 0;
+      for (const client of selected) {
+        const { id, ...rest } = client;
+        const primaryLang = activeProfile?.primaryDataLanguage || 'Tamil';
+        const primaryField = `name_${primaryLang}`;
+        const fallbackField = `name`;
+        const currentName = rest[primaryField] || rest[fallbackField] || '';
+        
+        // We set both to ensure backwards compatibility 
+        await saveCoolieClient({ ...rest, [primaryField]: `${currentName} (Copy)`, [fallbackField]: `${currentName} (Copy)` });
+        count++;
+        if (onProgress) onProgress(count, selected.length);
+      }
+      loadData();
+      thagaval(t('customersDuplicatedSuccess') || 'Customers duplicated successfully', 'success');
+    } catch (e) {
+      thagaval(t('errorDuplicating') || 'Error duplicating customers', 'error');
+    }
+  };
+
+  const handleDeleteSingle = (id) => {
+    setConfirmDialog({
+      open: true,
+      title: t('delete') || 'Delete?',
+      message: t('removeSavedClientConfirm') || 'Are you sure you want to remove this client?',
+      action: async () => {
+        await deleteCoolieClient(id);
+        thagaval(t('clientRemoved') || 'Client removed', 'success');
+        loadData();
+      }
+    });
+  };
+
+  const renderCard = (client, globalIndex, isSelectionMode, isSelected, toggleSelection) => {
+    return (
+      <ElvanCard 
+        key={client.id}
+        sx={{ 
+          height: '100%',
+          ...(isSelectionMode && isSelected ? { bgcolor: isDark ? 'rgba(255,255,255,0.06) !important' : 'rgba(0,0,0,0.04) !important' } : {})
+        }}
+        onClick={() => isSelectionMode ? toggleSelection(client.id) : onEditClient(client)}
+      >
+        <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
+            {!isSelectionMode ? (
+              <Box sx={{ 
+                display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                width: 28, height: 28, mt: 0.15, 
+                borderRadius: '50%',
+                bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
+                flexShrink: 0
+              }}>
+                <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
+                  {(globalIndex + 1).toString().padStart(2, '0')}
+                </Typography>
+              </Box>
+            ) : (
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, mt: 0.15, color: isSelected ? 'primary.main' : 'text.secondary', flexShrink: 0 }}>
+                {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} weight="regular" />}
+              </Box>
+            )}
+            <Box>
+              <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                {getDynamicField(client, 'name', activeProfile, true) || client.name || client.nameEn || client.companyName || 'Unknown'}
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
+                {(getDynamicField(client, 'name', activeProfile, false) || client.nameEn) && (
+                  <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{getDynamicField(client, 'name', activeProfile, false) || client.nameEn}</Typography>
+                )}
+                {(getDynamicField(client, 'city', activeProfile, true) || client.city) && (
+                  <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
+                    {getDynamicField(client, 'city', activeProfile, true) || client.city}
+                  </Typography>
+                )}
+                {(getDynamicField(client, 'city', activeProfile, false) || client.cityEn) && (
+                  <Typography variant="body2" sx={{ fontSize: '0.8rem', opacity: 0.6 }}>
+                    {getDynamicField(client, 'city', activeProfile, false) || client.cityEn}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+          </Box>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+            {isSelectionMode && (
+              <Tooltip title={t('delete') || 'Delete'}>
+                <IconButton color="error" onClick={(e) => { e.stopPropagation(); handleDeleteSingle(client.id); }}>
+                  <Trash size={20} weight="regular" />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Box>
+        </Stack>
+      </ElvanCard>
+    );
+  };
+
 
   return (
-    <Box sx={{ maxWidth: '1200px', margin: '0 auto', p: { xs: 2, md: 4 } }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 800 }}>{t('merchants') || 'Merchants'}</Typography>
-        <Button variant="contained" startIcon={<Plus />} onClick={() => handleOpen()}>{t('addClient') || 'Add Merchant'}</Button>
-      </Box>
-
-      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 3 }}>
-        {clients.map(client => (
-          <ElvanCard key={client.id} sx={{ p: 3, position: 'relative' }}>
-            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
-              <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: '#e3f2fd', color: '#1976d2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Users size={20} />
-              </Box>
-              <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>{client.name || client.nameEn || client.companyName || client.companyNameEn || 'Unknown'}</Typography>
-                <Typography variant="body2" color="text.secondary">{client.city || client.cityEn || 'No City'}</Typography>
-              </Box>
-            </Box>
-            
-            <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-              {client.phone && <Chip size="small" variant="outlined" label={client.phone} />}
-            </Box>
-            
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2, borderTop: '1px solid', borderColor: 'divider', pt: 2 }}>
-              <IconButton size="small" color="primary" onClick={() => handleOpen(client)}><PencilSimple /></IconButton>
-              <IconButton size="small" color="error" onClick={() => handleDelete(client.id)}><Trash /></IconButton>
-            </Box>
-          </ElvanCard>
-        ))}
-      </Box>
-
-      {/* Editor Dialog */}
-      <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>{editingClient ? t('editClientTitle') || 'Edit Merchant' : t('addNewClientTitle') || 'Add New Merchant'}</DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mt: 1 }}>
-            <TextField label="Name (Tamil)" size="small" value={name} onChange={e => setName(e.target.value)} />
-            <TextField label="Name (English)" size="small" value={nameEn} onChange={e => setNameEn(e.target.value)} />
-            <TextField label="City (Tamil)" size="small" value={city} onChange={e => setCity(e.target.value)} />
-            <TextField label="City (English)" size="small" value={cityEn} onChange={e => setCityEn(e.target.value)} />
-          </Box>
-          <TextField label="Address (Tamil)" size="small" fullWidth value={address} onChange={e => setAddress(e.target.value)} />
-          <TextField label="Address (English)" size="small" fullWidth value={addressEn} onChange={e => setAddressEn(e.target.value)} />
-          <TextField label="Phone Number" size="small" fullWidth value={phone} onChange={e => setPhone(e.target.value)} />
+    <>
+      <ElvanListView 
+        title={t('merchants')}
+        searchPlaceholder={t('search')}
+        addButtonText={t('addClient')}
+        onAdd={() => onAddClient(null)}
+        items={clients}
+        isLoading={isLoading || isLoadingProfile}
+        filterFn={filterFn}
+        renderCard={renderCard}
+        emptyIcon={<Users size={48} weight="regular" style={{ opacity: 0.5 }} />}
+        emptyText={t('noClientsFound')}
+        onDeleteSelected={handleBulkDelete}
+        onDuplicateSelected={handleBulkDuplicate}
+        deleteConfirmTitle={t('deleteMerchantsTitle') || 'Delete Merchants?'}
+        deleteConfirmMessage={(count) => (t('deleteMerchantsMessage') || 'Are you sure you want to delete {count} merchant(s)?').replace('{count}', count.toString())}
+        duplicateConfirmTitle={t('duplicateCustomersTitle') || 'Duplicate Customers?'}
+        duplicateConfirmMessage={(count) => (t('duplicateCustomersMessage') || 'Are you sure you want to create copies of the {count} selected customer(s)?').replace('{count}', count.toString())}
+      />
+      <Dialog open={confirmDialog.open} onClose={() => setConfirmDialog({ ...confirmDialog, open: false })} slotProps={{ paper: { elevation: 8, sx: { borderRadius: '24px', p: 1 } } }}>
+        <DialogTitle sx={{ fontWeight: 800 }}>{confirmDialog.title}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>{confirmDialog.message}</DialogContentText>
         </DialogContent>
-        <DialogActions sx={{ p: 3 }}>
-          <Button onClick={() => setIsDialogOpen(false)}>Cancel</Button>
-          <Button variant="contained" onClick={handleSave}>Save</Button>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setConfirmDialog({ ...confirmDialog, open: false })} color="inherit" sx={{ borderRadius: '50px', textTransform: 'none', px: 3 }}>{t('cancel') || 'Cancel'}</Button>
+          <Button onClick={async () => { try { await confirmDialog.action(); } catch(e){} setConfirmDialog({ ...confirmDialog, open: false }); }} variant="contained" color="primary" sx={{ borderRadius: '50px', textTransform: 'none', px: 3, boxShadow: 'none' }}>{t('delete') || 'Delete'}</Button>
         </DialogActions>
       </Dialog>
-    </Box>
+    </>
   );
 }

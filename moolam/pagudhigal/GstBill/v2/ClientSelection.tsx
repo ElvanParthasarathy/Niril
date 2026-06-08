@@ -18,6 +18,8 @@ interface ClientSelectionProps {
   secondaryLang: string;
   profile: any;
   invoiceOptions: any;
+  onRequestAddClient?: () => void;
+  dataVersion?: number;
 }
 
 export default function ClientSelection({
@@ -28,6 +30,8 @@ export default function ClientSelection({
   secondaryLang,
   profile,
   invoiceOptions,
+  onRequestAddClient,
+  dataVersion,
 }: ClientSelectionProps) {
   const { t } = useLanguage();
   
@@ -43,6 +47,14 @@ export default function ClientSelection({
       setSavedClients(clients);
     });
   }, []);
+
+  useEffect(() => {
+    if (dataVersion && dataVersion > 0) {
+      getAllClients().then(clients => {
+        setSavedClients(clients);
+      });
+    }
+  }, [dataVersion]);
 
   useEffect(() => {
     if (client?.id && client.id !== selectedClientId) {
@@ -169,7 +181,8 @@ export default function ClientSelection({
                       <ListItem disablePadding>
                         <ListItemButton 
                           onClick={() => {
-                             window.location.href = window.location.pathname + '?view=client-editor';
+                             setShowClientSuggestions(false);
+                             if (onRequestAddClient) { onRequestAddClient(); } else { window.location.href = window.location.pathname + '?view=client-editor'; }
                           }} 
                           sx={{ color: 'primary.main' }}
                         >

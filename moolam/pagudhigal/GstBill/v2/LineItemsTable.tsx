@@ -16,6 +16,8 @@ interface LineItemsTableProps {
   primaryLang: string;
   secondaryLang: string;
   profile: any;
+  onRequestAddProduct?: () => void;
+  dataVersion?: number;
 }
 
 export default function LineItemsTable({
@@ -25,7 +27,9 @@ export default function LineItemsTable({
   isBilingual,
   primaryLang,
   secondaryLang,
-  profile
+  profile,
+  onRequestAddProduct,
+  dataVersion,
 }: LineItemsTableProps) {
   const { t } = useLanguage();
   
@@ -35,6 +39,12 @@ export default function LineItemsTable({
   useEffect(() => {
     getAllProducts().then(setProducts);
   }, []);
+
+  useEffect(() => {
+    if (dataVersion && dataVersion > 0) {
+      getAllProducts().then(setProducts);
+    }
+  }, [dataVersion]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -205,8 +215,8 @@ export default function LineItemsTable({
                           <ListItem disablePadding>
                             <ListItemButton 
                               onClick={() => {
-                                // Navigate to product editor
-                                window.location.href = window.location.pathname + '?view=product-editor';
+                                setActiveSuggestionRow(null);
+                                if (onRequestAddProduct) { onRequestAddProduct(); } else { window.location.href = window.location.pathname + '?view=product-editor'; }
                               }} 
                               sx={{ color: 'primary.main' }}
                             >
