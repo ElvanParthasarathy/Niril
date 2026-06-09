@@ -31,6 +31,7 @@ export default function CoolieSettings() {
     email: '',
     logo: '',
     signature: '',
+    authorizedSignatoryName: '',
     themeColor: '#388e3c',
     defaultPrintLanguage: 'ta',
     receiptLanguage: 'ta'
@@ -75,6 +76,7 @@ export default function CoolieSettings() {
       email: p.email || '',
       logo: p.logo || '',
       signature: p.signature || '',
+      authorizedSignatoryName: p.authorizedSignatoryName || '',
       themeColor: p.themeColor || '#388e3c',
       defaultPrintLanguage: p.defaultPrintLanguage || 'ta',
       receiptLanguage: p.receiptLanguage || 'ta'
@@ -96,6 +98,7 @@ export default function CoolieSettings() {
       email: '',
       logo: '',
       signature: '',
+      authorizedSignatoryName: '',
       themeColor: '#388e3c',
       defaultPrintLanguage: 'ta',
       receiptLanguage: 'ta'
@@ -244,6 +247,19 @@ export default function CoolieSettings() {
                   <input type="file" hidden accept="image/*" onChange={handleSignatureChange} />
                 </Button>
               </Box>
+            </Box>
+
+            <Box sx={{ gridColumn: 'span 2' }}>
+              <TextField
+                fullWidth
+                label={t('authorizedSignatoryName') || 'Authorized Signatory Name (e.g. V.R.M. Elvan)'}
+                value={formData.authorizedSignatoryName}
+                onChange={(e) => handleChange('authorizedSignatoryName', e.target.value)}
+                placeholder="(Authorized Signature)"
+                sx={{
+                  '& .MuiOutlinedInput-root': { borderRadius: 2, bgcolor: 'background.paper' }
+                }}
+              />
             </Box>
 
             <Box sx={{ gridColumn: 'span 2' }}>

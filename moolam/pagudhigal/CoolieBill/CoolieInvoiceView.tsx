@@ -566,7 +566,7 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
                                 <img src={p.signature} alt="Signature" style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: '-10px', maxHeight: '95px', maxWidth: '200px', objectFit: 'contain', pointerEvents: 'none' }} />
                             )}
                         </div>
-                        <div className="sign-label" style={{ position: 'relative', zIndex: 10 }}>{isEng ? '(Authorized Signature)' : '(கையொப்பம்)'}</div>
+                        <div className="sign-label" style={{ position: 'relative', zIndex: 10 }}>{p.authorizedSignatoryName ? `(${p.authorizedSignatoryName})` : isEng ? '(Authorized Signature)' : '(கையொப்பம்)'}</div>
                     </div>
                 </div>
 
