@@ -246,6 +246,8 @@ export default function CoolieReceiptEditor({ onBack, onSaved, editingReceipt }:
   };
 
   const renderPaymentModeOption = (mode: string, inDropdown = true) => {
+    if (mode === 'UPI' || mode === 'Card') return mode;
+
     const dictionaries: Record<string, Record<string, string>> = {
       'Tamil': { 'Cash': 'பணம்', 'UPI': 'UPI', 'Bank Transfer': 'வங்கிப் பரிமாற்றம்', 'Cheque': 'காசோலை', 'Card': 'கார்டு', 'Other': 'மற்றவை' },
       'Hindi': { 'Cash': 'नकद', 'UPI': 'UPI', 'Bank Transfer': 'बैंक ट्रांसफर', 'Cheque': 'चेक', 'Card': 'कार्ड', 'Other': 'अन्य' },
