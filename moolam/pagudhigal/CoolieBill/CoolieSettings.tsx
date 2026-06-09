@@ -254,7 +254,7 @@ export default function CoolieSettings() {
                 fullWidth
                 label={t('authorizedSignatoryName') || 'Authorized Signatory Name (e.g. V.R.M. Elvan)'}
                 value={formData.authorizedSignatoryName}
-                onChange={(e) => handleChange('authorizedSignatoryName', e.target.value)}
+                onChange={(e) => setFormData(prev => ({ ...prev, authorizedSignatoryName: e.target.value }))}
                 placeholder="(Authorized Signature)"
                 sx={{
                   '& .MuiOutlinedInput-root': { borderRadius: 2, bgcolor: 'background.paper' }
