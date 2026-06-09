@@ -388,7 +388,11 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
               <div className="receipt-footer">
                 <div className="preview-footer-right">
                   <div className="sign-company font-display" style={{ color: profile.themeColor || '#1e3a8a' }}>{profile?.nameEn || profile?.name}</div>
-                  <div className="sign-space"></div>
+                  <div className="sign-space" style={{ position: 'relative' }}>
+                    {profile?.signature && (
+                        <img src={profile.signature} alt="Signature" style={{ position: 'absolute', bottom: 0, right: 0, maxHeight: '65px', maxWidth: '160px', objectFit: 'contain', pointerEvents: 'none', mixBlendMode: 'multiply' }} />
+                    )}
+                  </div>
                   <div className="sign-label">{renderKey('authorizedSignatory', '(Authorized Signature)', '(கையொப்பம்)')}</div>
                 </div>
               </div>
