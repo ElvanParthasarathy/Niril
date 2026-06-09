@@ -425,6 +425,7 @@
     background: var(--bill-primary-light);
     border-radius: 0;
     border: none;
+    width: calc(100% + 24mm);
 }
 
 .contact-title {
