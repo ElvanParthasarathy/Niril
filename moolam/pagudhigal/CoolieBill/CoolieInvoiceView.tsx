@@ -561,7 +561,11 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
                     </div>
                     <div className="preview-footer-right">
                         <div className="sign-company font-display">{name.english}</div>
-                        <div className="sign-space"></div>
+                        <div className="sign-space" style={{ position: 'relative' }}>
+                            {p.signature && (
+                                <img src={p.signature} alt="Signature" style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', maxHeight: '65px', maxWidth: '160px', objectFit: 'contain', pointerEvents: 'none' }} />
+                            )}
+                        </div>
                         <div className="sign-label">{isEng ? '(Authorized Signature)' : '(கையொப்பம்)'}</div>
                     </div>
                 </div>
