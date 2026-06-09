@@ -633,19 +633,7 @@ export default function CoolieReceiptEditor({ onBack, onSaved, editingReceipt }:
           </TextField>
         </Grid>
 
-        <Grid size={{ xs: 12 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 0, ml: 1, mt: 1 }}>
-            <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>4</Box>
-            <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('notes') || 'Notes'}</Typography>
-          </Box>
-        </Grid>
-        <Grid size={{ xs: 12 }}>
-          <TextField 
-            fullWidth size="medium" label={t('noteOptionalLabel') as string} multiline rows={2}
-            value={form.note} onChange={e => updateField('note', e.target.value)} 
-            slotProps={{ inputLabel: { shrink: true } }}
-          />
-        </Grid>
+
       </Grid>
     </ElvanEditorLayout>
   );
