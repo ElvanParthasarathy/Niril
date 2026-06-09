@@ -143,8 +143,8 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
     // Upload PDF to Google Drive if configured
     const uploadToGoogleDrive = async (pdfBlob, fileName) => {
       try {
-        const clientId = globalProfile?.googleClientId;
-        const folderName = globalProfile?.googleDriveFolder || 'Coolie Bills';
+        const clientId = activeProfile?.googleClientId;
+        const folderName = activeProfile?.googleDriveFolder || 'Coolie Bills';
         if (!clientId) return;
   
         const hasToken = await ensureToken(clientId);
@@ -326,7 +326,7 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
     const address = isEng && addressEn ? addressEn : addressTa;
     const city = isEng && cityEn ? cityEn : cityTa;
 
-    const ifsc = billIfsc || companyProfile?.ifsc || globalProfile?.ifsc || '';
+    const ifsc = billIfsc || activeProfile?.ifsc || '';
 
     // Calculations
     const setharamKg = gramsToKg(setharamGrams);
@@ -334,7 +334,7 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
     const totalRs = calcTotalRs(items, courierRs, ahimsaSilkRs, customChargeRs);
 
     // Profile Fallbacks (Kananam config format)
-    const p = companyProfile || globalProfile || {};
+    const p = activeProfile;
     const name = { english: p.nameEn || p.nameEnglish || 'ELVAN', tamil: p.name || p.nameTamil || 'எல்வன்' };
     const email = p.email || 'info@elvan.com';
     const phone = p.phone ? (Array.isArray(p.phone) ? p.phone : String(p.phone).split(',')) : ['9999999999'];
