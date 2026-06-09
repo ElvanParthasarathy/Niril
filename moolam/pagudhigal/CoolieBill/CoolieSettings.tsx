@@ -30,6 +30,7 @@ export default function CoolieSettings() {
     branch: '', branchEn: '',
     email: '',
     logo: '',
+    signature: '',
     themeColor: '#388e3c',
     defaultPrintLanguage: 'ta',
     receiptLanguage: 'ta'
@@ -73,6 +74,7 @@ export default function CoolieSettings() {
       branch: p.branch || '', branchEn: p.branchEn || '',
       email: p.email || '',
       logo: p.logo || '',
+      signature: p.signature || '',
       themeColor: p.themeColor || '#388e3c',
       defaultPrintLanguage: p.defaultPrintLanguage || 'ta',
       receiptLanguage: p.receiptLanguage || 'ta'
@@ -93,6 +95,7 @@ export default function CoolieSettings() {
       branch: '', branchEn: '',
       email: '',
       logo: '',
+      signature: '',
       themeColor: '#388e3c',
       defaultPrintLanguage: 'ta',
       receiptLanguage: 'ta'
@@ -106,6 +109,17 @@ export default function CoolieSettings() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormData(prev => ({ ...prev, logo: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSignatureChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData(prev => ({ ...prev, signature: reader.result }));
       };
       reader.readAsDataURL(file);
     }
@@ -208,6 +222,26 @@ export default function CoolieSettings() {
                 <Button variant="outlined" component="label" sx={{ borderRadius: '50px', textTransform: 'none', px: 3 }}>
                   Upload Logo
                   <input type="file" hidden accept="image/*" onChange={handleLogoChange} />
+                </Button>
+              </Box>
+            </Box>
+
+            <Box sx={{ gridColumn: 'span 2' }}>
+              <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.secondary', mb: 1 }}>
+                {t('signature') || 'Signature'}
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                {formData.signature && (
+                  <Box sx={{ height: 80, width: 120, border: '1px solid', borderColor: 'divider', borderRadius: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', bgcolor: 'background.paper', position: 'relative' }}>
+                    <img src={formData.signature} alt="Signature" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
+                    <Button size="small" color="error" onClick={() => setFormData(prev => ({ ...prev, signature: '' }))} sx={{ position: 'absolute', top: -10, right: -10, minWidth: 'auto', p: 0.5, bgcolor: 'background.paper', borderRadius: '50%', '&:hover': { bgcolor: 'error.light', color: 'white' } }}>
+                      <X size={14} weight="bold" />
+                    </Button>
+                  </Box>
+                )}
+                <Button variant="outlined" component="label" sx={{ borderRadius: '50px', textTransform: 'none', px: 3 }}>
+                  Upload Signature
+                  <input type="file" hidden accept="image/*" onChange={handleSignatureChange} />
                 </Button>
               </Box>
             </Box>
