@@ -330,12 +330,12 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
           .receipt-sig-line { width: 220px; border-bottom: 1.5px solid #1e293b; margin-bottom: 0.35rem; }
           .receipt-sig-label { font-size: 0.95rem; color: #64748b; }
           .business-name { font-size: 1.35rem; font-weight: 700; margin-bottom: 0.35rem; color: #000; }
-          .rcpt-contact-section { padding: 1.5rem 12mm; }
-          .rcpt-contact-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem; }
+          .rcpt-contact-section { padding: 1rem 12mm; }
+          .rcpt-contact-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
           .rcpt-contact-row { display: flex; justify-content: space-between; align-items: flex-start; }
-          .rcpt-contact-left { display: flex; flex-direction: column; gap: 5px; }
-          .rcpt-contact-address { font-size: 0.95rem; color: #334155; font-weight: 500; }
-          .rcpt-contact-email, .rcpt-phone-item-new { display: flex; align-items: center; gap: 6px; font-size: 0.95rem; font-weight: 600; color: #444; }
+          .rcpt-contact-left { display: flex; flex-direction: column; gap: 4px; }
+          .rcpt-contact-address { font-size: 0.85rem; color: #334155; font-weight: 500; }
+          .rcpt-contact-email, .rcpt-phone-item-new { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 500; color: #334155; }
           @media print {
             .receipt-box {
               border: none !important;
