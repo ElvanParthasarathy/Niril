@@ -11,6 +11,20 @@ import { formatCurrency, numberToWords, getCountryConfig, getDynamicField, getBi
 import { Box, Paper } from '@mui/material';
 import { ViewHeader } from './ViewHeader';
 import { thagaval } from './Thagaval';
+import './print.css';
+
+const IconPhone = ({ size = 14, className = '', style = {} }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} style={style}>
+        <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+    </svg>
+);
+
+const IconMail = ({ size = 14, className = '', style = {} }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} style={style}>
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+        <polyline points="22,6 12,13 2,6"></polyline>
+    </svg>
+);
 
 export default function ReceiptView({ receipt: receiptProp, profile: profileProp, onBack, onEdit }) {
   const profile = profileProp || {};
@@ -254,7 +268,7 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
   };
 
   return (
-    <Box sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', width: '100%', position: 'relative', bgcolor: 'background.default', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <Box className="print-wrapper" sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', width: '100%', position: 'relative', bgcolor: 'background.default', minHeight: '100vh', display: 'flex', flexDirection: 'column', '@media print': { bgcolor: 'white !important', minHeight: 'auto', py: 0, px: 0 } }}>
       <ViewHeader 
         onEdit={onEdit ? () => onEdit(receipt) : undefined}
         onPrint={executePrint}
@@ -266,83 +280,155 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
         onBack={onBack}
       />
 
-      {/* Centered Preview Container */}
-      <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4 }}>
-        <Paper elevation={3} sx={{ 
-          p: 0, overflow: 'hidden', minWidth: 'min(100%, 600px)', m: '0 auto',
-          zoom: { xs: 0.8, sm: 1 },
+      <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4 }}>
+        <Paper elevation={3} className="invoice-paper print-wrapper" sx={{ 
+          p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto', bgcolor: 'white', color: 'black',
+          zoom: { xs: 0.43, sm: 0.7, md: 0.85, lg: 1 },
           '@supports not (zoom: 1)': {
             transformOrigin: 'top center',
-            transform: { xs: 'scale(0.8)', sm: 'none' },
-            mb: { xs: '-20%', sm: 0 }
+            transform: { xs: 'scale(0.43)', sm: 'scale(0.7)', md: 'scale(0.85)', lg: 'none' },
+            mb: { xs: '-55%', sm: '-25%', md: '-10%', lg: 0 }
+          },
+          '@media print': { 
+            zoom: '1 !important', 
+            transform: 'none !important',
+            mb: '0 !important',
+            boxShadow: 'none !important',
+            bgcolor: 'white !important',
+            color: 'black !important'
           }
         }}>
-          <div ref={printRef} style={{ width: '100%' }}>
+          <div ref={printRef} className="print-area">
           <style>{`
-          .receipt-box { width: 100%; max-width: 600px; margin: 0 auto; border: 2px solid #e2e8f0; border-radius: 8px; padding: 2rem; background: white; }
-          .receipt-header { text-align: center; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1rem; }
-          .receipt-title { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin: 0; }
-          .receipt-subtitle { font-size: 0.8rem; color: #64748b; margin: 0.25rem 0 0; }
-          .receipt-row { display: flex; justify-content: space-between; padding: 0.5rem 0; font-size: 0.9rem; border-bottom: 1px solid #f1f5f9; }
-          .receipt-label { color: #64748b; font-weight: 500; }
-          .receipt-value { color: #1e293b; font-weight: 600; text-align: right; }
-          .receipt-amount { font-size: 1.5rem; font-weight: 800; color: #1e40af; text-align: center; margin: 1.5rem 0; padding: 1rem; background: #eff6ff; border-radius: 8px; }
-          .receipt-words { font-size: 0.85rem; color: #334155; font-style: italic; text-align: center; margin-bottom: 1.5rem; }
-          .receipt-footer { display: flex; justify-content: space-between; margin-top: 3rem; padding-top: 1rem; }
+          .receipt-box { width: 210mm; height: 297mm; max-height: 297mm; box-sizing: border-box; margin: 0 auto; border: 2px solid #e2e8f0; border-radius: 8px; background: white; display: flex; flex-direction: column; overflow: hidden; }
+          .receipt-content { padding: 8mm 12mm; flex: 1; display: flex; flex-direction: column; }
+          .receipt-header { text-align: center; margin-bottom: 2.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1.5rem; }
+          .receipt-title { font-size: 2rem; font-weight: 800; color: #0f172a; margin: 0; }
+          .receipt-row { display: flex; justify-content: space-between; padding: 0.85rem 0; font-size: 1.1rem; border-bottom: 1px solid #f1f5f9; }
+          .receipt-label { color: #64748b; font-weight: 600; }
+          .receipt-value { color: #1e293b; font-weight: 700; text-align: right; }
+          .receipt-amount { font-size: 2rem; font-weight: 800; color: #1e40af; text-align: center; margin: 2rem 0; padding: 1.25rem; background: #eff6ff; border-radius: 8px; }
+          .receipt-words { font-size: 1.05rem; color: #334155; text-align: center; margin-bottom: 2rem; }
+          .receipt-footer { display: flex; justify-content: flex-end; padding-top: 2rem; padding-bottom: 1.5rem; }
           .receipt-sig { text-align: center; }
-          .receipt-sig-line { width: 180px; border-bottom: 1.5px solid #1e293b; margin-bottom: 0.25rem; }
-          .receipt-sig-label { font-size: 0.75rem; color: #64748b; }
-          .business-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem; color: #000; }
-          .business-details { font-size: 0.75rem; color: #64748b; }
+          .receipt-sig-line { width: 220px; border-bottom: 1.5px solid #1e293b; margin-bottom: 0.35rem; }
+          .receipt-sig-label { font-size: 0.95rem; color: #64748b; }
+          .business-name { font-size: 1.35rem; font-weight: 700; margin-bottom: 0.35rem; color: #000; }
+          .rcpt-contact-section { padding: 1rem 12mm; }
+          .rcpt-contact-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+          .rcpt-contact-row { display: flex; justify-content: space-between; align-items: flex-start; }
+          .rcpt-contact-left { display: flex; flex-direction: column; gap: 4px; }
+          .rcpt-contact-address { font-size: 0.85rem; color: #334155; font-weight: 500; }
+          .rcpt-contact-email, .rcpt-phone-item-new { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 500; color: #334155; }
+          @media print {
+            .receipt-box {
+              border: none !important;
+              border-radius: 0 !important;
+              box-shadow: none !important;
+              width: 100% !important;
+              height: 297mm !important;
+              margin: 0 !important;
+            }
+          }
         `}</style>
             <div className="receipt-box">
-              <div className="receipt-header">
-                {profile.logo && <img src={profile.logo} alt="Logo" style={{ maxHeight: '80px', marginBottom: '1rem' }} />}
-                <p className="business-name" style={{ lineHeight: '1.4' }}>
-                  {getDynamicField(profile, 'niruvanathinPeyar', profile, true) || 'Your Business'}
-                  {profile.enableBilingual !== false && getDynamicField(profile, 'niruvanathinPeyar', profile, false) && (
-                    <><br /><span style={{ fontSize: '0.9rem', color: '#475569', fontWeight: 600 }}>{getDynamicField(profile, 'niruvanathinPeyar', profile, false)}</span></>
-                  )}
-                </p>
-                
-                <p className="business-details">
-                  {[getDynamicField(profile, 'mugavari', profile, true), getDynamicField(profile, 'oor', profile, true), getDynamicField(profile, 'maavattam', profile, true), getBilingualStateName(profile.maanilam, { ...profile, returnOnlyPrimary: true }), profile.pin].filter(Boolean).join(', ')}
-                </p>
-                
-                {profile.enableBilingual !== false && (getDynamicField(profile, 'mugavari', profile, false) || getDynamicField(profile, 'oor', profile, false) || getDynamicField(profile, 'maavattam', profile, false) || getBilingualStateName(profile.maanilam, { ...profile, returnOnlySecondary: true, fallbackEnglishName: profile.maanilamEn })) && (
-                  <p className="business-details" style={{ marginTop: '2px' }}>
-                    {[getDynamicField(profile, 'mugavari', profile, false), getDynamicField(profile, 'oor', profile, false), getDynamicField(profile, 'maavattam', profile, false), getBilingualStateName(profile.maanilam, { ...profile, returnOnlySecondary: true, fallbackEnglishName: profile.maanilamEn }), profile.pin].filter(Boolean).join(', ')}
-                  </p>
-                )}
-                
-                <p className="business-details" style={{ marginTop: '4px' }}>
-                  {profile.tholaipesi && <span>{renderKey('phoneLabel', 'Phone:', 'தொலைபேசி:')} {profile.tholaipesi}</span>}
-                  {profile.tholaipesi && profile.gstin && <span> | </span>}
-                  {profile.gstin && <span>GSTIN: {profile.gstin}</span>}
-                </p>
-
-                {profile.enableBilingual !== false && getLangStr(profile?.primaryDataLanguage || 'Tamil', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது') !== getLangStr(profile?.secondaryDataLanguage || 'English', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது') ? (
-                  <div style={{ textAlign: 'center', marginTop: '1.5rem', marginBottom: '1.5rem' }}>
-                    <h2 className="receipt-title" style={{ margin: 0, padding: 0 }}>{getLangStr(profile?.primaryDataLanguage || 'Tamil', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது')}</h2>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#64748b', marginTop: '2px', letterSpacing: '0.05em' }}>{getLangStr(profile?.secondaryDataLanguage || 'English', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது')}</div>
+              <div className="receipt-content">
+                <div className="top-greeting-row">
+                    <span className="greeting-left" style={{ color: profile.themeColor || '#1e3a8a' }}>{(profile?.primaryDataLanguage || 'Tamil') === 'English' ? 'Vaazhga Vaiyagam' : 'வாழ்க வையகம்'}</span>
+                    <span className="greeting-center" style={{ color: profile.themeColor || '#1e3a8a' }}>உ</span>
+                    <span className="greeting-right" style={{ color: profile.themeColor || '#1e3a8a' }}>{(profile?.primaryDataLanguage || 'Tamil') === 'English' ? 'Vaazhga Valamudan' : 'வாழ்க வளமுடன்'}</span>
+                </div>
+                <div className="print-header-new" style={{ borderBottom: '2px solid #e2e8f0', paddingBottom: '1.5rem', marginBottom: '3rem' }}>
+                  <div className="header-left">
+                    {profile.logo && <img src={profile.logo} alt="Logo" style={{ maxHeight: '80px' }} />}
+                    <div className="header-company-info">
+                      <div className="company-name font-display" style={{ color: profile.themeColor || '#1e3a8a' }}>
+                        {getDynamicField(profile, 'niruvanathinPeyar', profile, true) || 'Your Business'}
+                      </div>
+                      {profile?.enableBilingual !== false && getDynamicField(profile, 'niruvanathinPeyar', profile, false) && (
+                        <div className="company-subtitle font-tamil" style={{ color: '#475569' }}>
+                          {getDynamicField(profile, 'niruvanathinPeyar', profile, false)}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                ) : (
-                  <h2 className="receipt-title" style={{ marginTop: '1.5rem', marginBottom: '1.5rem' }}>{getLangStr(profile?.enableBilingual === false ? (profile?.primaryDataLanguage || 'Tamil') : 'English', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது')}</h2>
-                )}
+                  <div className="header-right">
+                    <div className="bill-type-badge font-tamil" style={{ color: profile.themeColor || '#1e3a8a' }}>
+                      {renderKey('hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது')}
+                    </div>
+                  </div>
+                </div>
+              <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('receiptNoLabel', 'Receipt No:', 'ரசீது எண்:')}</span><span className="receipt-value">{receipt.receiptNo}</span></div>
+              <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('dateLabel', 'Date:', 'தேதி:')}</span><span className="receipt-value">{new Date(receipt.date).toLocaleDateString('en-IN')}</span></div>
+              <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('receivedFromLabel', 'Received From:', 'பெறப்பட்டது:')}</span><span className="receipt-value">{receipt.clientName}{profile?.enableBilingual !== false && receipt.clientNameEn ? ` / ${receipt.clientNameEn}` : ''}</span></div>
+              <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('paymentModeLabel', 'Payment Mode:', 'செலுத்தும் முறை:')}</span><span className="receipt-value">{renderPaymentMode(receipt.paymentMode)}</span></div>
+              {receipt.referenceNo && <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('referenceNoLabel', 'Reference No:', 'குறிப்பு எண்:')}</span><span className="receipt-value">{receipt.referenceNo}</span></div>}
+              {receipt.againstInvoice && <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('againstInvoiceLabel', 'Against Invoice:', 'விலைப்பட்டியலுக்கு எதிராக:')}</span><span className="receipt-value">{receipt.againstInvoice}</span></div>}
+              <div style={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                <div className="receipt-amount" style={{ color: profile.themeColor || '#1e3a8a', backgroundColor: profile.themeColor ? `${profile.themeColor}15` : '#f0f9ff' }}>{formatCurrency(receipt.amount, profileCurrency)}</div>
+                <p className="receipt-words">{numberToWords(receipt.amount, profile?.primaryDataLanguage || 'English', profile?.secondaryDataLanguage || 'English', profile?.enableBilingual !== false)}</p>
               </div>
-              <div className="receipt-row"><span className="receipt-label">{renderKey('receiptNoLabel', 'Receipt No:', 'ரசீது எண்:')}</span><span className="receipt-value">{receipt.receiptNo}</span></div>
-              <div className="receipt-row"><span className="receipt-label">{renderKey('dateLabel', 'Date:', 'தேதி:')}</span><span className="receipt-value">{new Date(receipt.date).toLocaleDateString('en-IN')}</span></div>
-              <div className="receipt-row"><span className="receipt-label">{renderKey('receivedFromLabel', 'Received From:', 'பெறப்பட்டது:')}</span><span className="receipt-value">{receipt.clientName}{profile?.enableBilingual !== false && receipt.clientNameEn ? ` / ${receipt.clientNameEn}` : ''}</span></div>
-              <div className="receipt-row"><span className="receipt-label">{renderKey('paymentModeLabel', 'Payment Mode:', 'செலுத்தும் முறை:')}</span><span className="receipt-value">{renderPaymentMode(receipt.paymentMode)}</span></div>
-              {receipt.referenceNo && <div className="receipt-row"><span className="receipt-label">{renderKey('referenceNoLabel', 'Reference No:', 'குறிப்பு எண்:')}</span><span className="receipt-value">{receipt.referenceNo}</span></div>}
-              {receipt.againstInvoice && <div className="receipt-row"><span className="receipt-label">{renderKey('againstInvoiceLabel', 'Against Invoice:', 'விலைப்பட்டியலுக்கு எதிராக:')}</span><span className="receipt-value">{receipt.againstInvoice}</span></div>}
-              <div className="receipt-amount">{formatCurrency(receipt.amount, profileCurrency)}</div>
-              <p className="receipt-words">{numberToWords(receipt.amount, profile?.primaryDataLanguage || 'English', profile?.secondaryDataLanguage || 'English', profile?.enableBilingual !== false)}</p>
               {receipt.note && <p style={{ fontSize: '0.85rem', color: '#64748b' }}>{renderKey('noteLabel', 'Note:', 'குறிப்பு:')} {receipt.note}</p>}
               <div className="receipt-footer">
-                <div className="receipt-sig"><div className="receipt-sig-line"></div><span className="receipt-sig-label">{renderKey('receivedBy', 'Received By', 'பெற்றவர்')}</span></div>
-                <div className="receipt-sig"><div className="receipt-sig-line"></div><span className="receipt-sig-label">{renderKey('authorizedSignatory', 'Authorized Signatory', 'அங்கீகரிக்கப்பட்ட கையொப்பம்')}</span></div>
+                <div className="preview-footer-right">
+                  <div className="sign-company font-display" style={{ color: profile.themeColor || '#1e3a8a', position: 'relative', zIndex: 10 }}>{getDynamicField(profile, 'niruvanathinPeyar', profile, true) || 'Your Business'}</div>
+                  <div className="sign-space" style={{ position: 'relative' }}>
+                    {profile?.signature && (
+                        <img src={profile.signature} alt="Signature" style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: '-10px', maxHeight: '95px', maxWidth: '200px', objectFit: 'contain', pointerEvents: 'none' }} />
+                    )}
+                  </div>
+                  <div className="sign-label" style={{ position: 'relative', zIndex: 10 }}>{profile?.authorizedSignatoryName ? `(${profile.authorizedSignatoryName})` : renderKey('authorizedSignatory', '(Authorized Signature)', '(கையொப்பம்)')}</div>
+                </div>
               </div>
+              </div>
+
+              {/* Contact Section */}
+              {(() => {
+                const addr1 = [getDynamicField(profile, 'mugavari', profile, true), getDynamicField(profile, 'oor', profile, true)].filter(Boolean).join(', ') 
+                  + (profile.enableBilingual !== false && (getDynamicField(profile, 'mugavari', profile, false) || getDynamicField(profile, 'oor', profile, false)) ? ' / ' + [getDynamicField(profile, 'mugavari', profile, false), getDynamicField(profile, 'oor', profile, false)].filter(Boolean).join(', ') : '');
+                
+                const dist1 = [getDynamicField(profile, 'maavattam', profile, true), getBilingualStateName(profile.maanilam, { ...profile, returnOnlyPrimary: true })].filter(Boolean).join(', ');
+                const dist2 = profile.enableBilingual !== false ? [getDynamicField(profile, 'maavattam', profile, false), getBilingualStateName(profile.maanilam, { ...profile, returnOnlySecondary: true, fallbackEnglishName: profile.maanilamEn })].filter(Boolean).join(', ') : '';
+                const dist = dist1 + (dist2 ? ` / ${dist2}` : '');
+                const addr2 = dist ? `${dist}${profile?.pin ? ` - ${profile.pin}` : ''}` : (profile?.pin ? `PIN: ${profile.pin}` : '');
+                
+                const email = profile?.minnanjal || '';
+                const phone = profile?.tholaipesi ? (Array.isArray(profile.tholaipesi) ? profile.tholaipesi : String(profile.tholaipesi).split(',')) : [];
+
+                return (
+                  <div className="rcpt-contact-section" style={{ background: profile.themeColor ? `${profile.themeColor}15` : '#f8fafc' }}>
+                    <div className="rcpt-contact-title" style={{ color: profile.themeColor || '#1e293b' }}>{renderKey('contactUsLabel', 'Contact Us', 'தொடர்பு கொள்ள')}</div>
+                    <div className="rcpt-contact-row">
+                      <div className="rcpt-contact-left">
+                        <div className="rcpt-contact-address">
+                          <div>{addr1}</div>
+                          {addr2 && <div>{addr2}</div>}
+                        </div>
+                        {email && (
+                          <div className="rcpt-contact-email">
+                            <div style={{ display: 'flex', alignItems: 'center', color: profile.themeColor || '#3b82f6' }}>
+                              <IconMail size={14} />
+                            </div>
+                            <span>{email}</span>
+                          </div>
+                        )}
+                      </div>
+                      {phone.length > 0 && (
+                        <div className="rcpt-contact-phones">
+                          {phone.map((num, i) => (
+                            <div key={i} className="rcpt-phone-item-new">
+                              <div style={{ display: 'flex', alignItems: 'center', color: profile.themeColor || '#3b82f6' }}>
+                                <IconPhone size={14} />
+                              </div>
+                              <span>{num}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </Paper>
