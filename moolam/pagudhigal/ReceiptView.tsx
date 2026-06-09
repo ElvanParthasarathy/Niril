@@ -11,7 +11,7 @@ import { formatCurrency, numberToWords, getCountryConfig, getDynamicField, getBi
 import { Box, Paper } from '@mui/material';
 import { ViewHeader } from './ViewHeader';
 import { thagaval } from './Thagaval';
-import './print.css';
+import './CoolieBill/print.css';
 
 const IconPhone = ({ size = 14, className = '', style = {} }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} style={style}>
