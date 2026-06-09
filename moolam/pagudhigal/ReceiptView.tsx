@@ -353,8 +353,15 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
                     </div>
                   </div>
                   <div className="header-right">
-                    <div className="bill-type-badge font-tamil" style={{ color: profile.themeColor || '#1e3a8a' }}>
-                      {renderKey('hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது')}
+                    <div className="bill-type-badge font-tamil" style={{ color: profile.themeColor || '#1e3a8a', display: 'inline-flex', flexDirection: 'column', alignItems: 'center' }}>
+                      {profile.enableBilingual !== false && getLangStr(profile?.primaryDataLanguage || 'Tamil', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது') !== getLangStr(profile?.secondaryDataLanguage || 'English', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது') ? (
+                        <>
+                          <div>{getLangStr(profile?.primaryDataLanguage || 'Tamil', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது')}</div>
+                          <div style={{ fontSize: '0.7em', fontWeight: 600, opacity: 0.8, letterSpacing: '0.02em', marginTop: '2px' }}>{getLangStr(profile?.secondaryDataLanguage || 'English', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது')}</div>
+                        </>
+                      ) : (
+                        getLangStr(profile?.enableBilingual === false ? (profile?.primaryDataLanguage || 'Tamil') : 'English', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது')
+                      )}
                     </div>
                   </div>
                 </div>
