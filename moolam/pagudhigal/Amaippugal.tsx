@@ -132,6 +132,7 @@ export default function Amaippugal({ onSaved }) {
 
   const fileInputRef = useRef(null);
   const logoInputRef = useRef(null);
+  const wideLogoInputRef = useRef(null);
   const sigInputRef = useRef(null);
   const companyFormRef = useRef(null);
   const visibleCountries = getCountriesForRegion();
@@ -525,7 +526,7 @@ export default function Amaippugal({ onSaved }) {
       personName: '', personNameEn: '',
       niruvanathinPeyar: '', niruvanathinPeyarEn: '', mugavari: '', mugavariEn: '', oor: '', oorEn: '', maavattam: '', maavattamEn: '', maanilam: '', maanilamEn: '', pin: '', country: detectCountryFromBrowser(),
       gstin: '', pan: '', email: '', tholaipesi: '', mobileNumber: '', vangiPeyar: '', kanakkuEn: '', ifsc: '', swift: '',
-      logo: '', logoHeight: 48, signature: '', upiId: '', googleClientId: '', googleDriveFolder: 'GST Billing Invoices',
+      logo: '', wideLogo: '', logoHeight: 48, signature: '', upiId: '', googleClientId: '', googleDriveFolder: 'GST Billing Invoices',
     });
     setTaxIdWarning('');
     companyFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -756,13 +757,13 @@ export default function Amaippugal({ onSaved }) {
           {t('brandingTitle')}
         </Typography>
         <Grid container spacing={3}>
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <Typography variant="subtitle2" gutterBottom>{t('businessLogo')}</Typography>
-            <Paper className="s2-group" variant="outlined" sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, borderStyle: 'dashed' }}>
+            <Paper className="s2-group" variant="outlined" sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, borderStyle: 'dashed', height: '100%' }}>
               {profile.logo ? (
                 <>
                   <Box sx={{ position: 'relative' }}>
-                    <img src={profile.logo} alt="Logo" style={{ height: `${profile.logoHeight || 48}px`, maxWidth: '180px', objectFit: 'contain' }} />
+                    <img src={profile.logo} alt="Logo" style={{ maxHeight: '100px', maxWidth: '180px', objectFit: 'contain' }} />
                     <IconButton size="small" color="error" onClick={() => removeImage('logo')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
                       <Delete sx={{ fontSize: 14 }} />
                     </IconButton>
@@ -771,7 +772,7 @@ export default function Amaippugal({ onSaved }) {
                   <Button size="small" variant="outlined" onClick={() => logoInputRef.current?.click()}>Change Logo</Button>
                 </>
               ) : (
-                <Button variant="outlined" onClick={() => logoInputRef.current?.click()} startIcon={<Image sx={{ fontSize: 20 }} />} sx={{ flexDirection: 'column', py: 3, gap: 1 }}>
+                <Button variant="outlined" onClick={() => logoInputRef.current?.click()} startIcon={<Image sx={{ fontSize: 20 }} />} sx={{ flexDirection: 'column', py: 3, gap: 1, height: '100%', width: '100%' }}>
                   {t('uploadLogo')}
                   <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{t('logoHint')}</Typography>
                 </Button>
@@ -779,7 +780,32 @@ export default function Amaippugal({ onSaved }) {
               <input ref={logoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('logo', e)} />
             </Paper>
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
+
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <Typography variant="subtitle2" gutterBottom>Vertical / Wide Logo</Typography>
+            <Paper className="s2-group" variant="outlined" sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, borderStyle: 'dashed', height: '100%' }}>
+              {profile.wideLogo ? (
+                <>
+                  <Box sx={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center' }}>
+                    <img src={profile.wideLogo} alt="Wide Logo" style={{ maxHeight: '100px', maxWidth: '100%', objectFit: 'contain' }} />
+                    <IconButton size="small" color="error" onClick={() => removeImage('wideLogo')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
+                      <Delete sx={{ fontSize: 14 }} />
+                    </IconButton>
+                  </Box>
+
+                  <Button size="small" variant="outlined" onClick={() => wideLogoInputRef.current?.click()}>Change Logo</Button>
+                </>
+              ) : (
+                <Button variant="outlined" onClick={() => wideLogoInputRef.current?.click()} startIcon={<Image sx={{ fontSize: 20 }} />} sx={{ flexDirection: 'column', py: 3, gap: 1, height: '100%', width: '100%' }}>
+                  Upload Wide Logo
+                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>Replaces company name in header</Typography>
+                </Button>
+              )}
+              <input ref={wideLogoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('wideLogo', e)} />
+            </Paper>
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 4 }}>
             <Typography variant="subtitle2" gutterBottom>{t('signature')}</Typography>
             <Paper className="s2-group" variant="outlined" sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, borderStyle: 'dashed', height: '100%' }}>
               {profile.signature ? (
