@@ -767,14 +767,7 @@ export default function Amaippugal({ onSaved }) {
                       <Delete sx={{ fontSize: 14 }} />
                     </IconButton>
                   </Box>
-                  <Box sx={{ width: '100%', px: 2 }}>
-                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }} gutterBottom>Logo Size on Invoice ({profile.logoHeight || 48}px)</Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="caption" color="text.secondary">S</Typography>
-                      <input type="range" min="24" max="80" value={profile.logoHeight || 48} onChange={(e) => setProfile(prev => ({ ...prev, logoHeight: Number(e.target.value) }))} style={{ flex: 1, accentColor: 'var(--primary)' }} />
-                      <Typography variant="caption" color="text.secondary">L</Typography>
-                    </Box>
-                  </Box>
+
                   <Button size="small" variant="outlined" onClick={() => logoInputRef.current?.click()}>Change Logo</Button>
                 </>
               ) : (

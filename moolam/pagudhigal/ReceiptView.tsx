@@ -340,7 +340,7 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
                 </div>
                 <div className="print-header-new" style={{ borderBottom: '2px solid #e2e8f0', paddingBottom: '1.5rem', marginBottom: '3rem' }}>
                   <div className="header-left">
-                    {profile.logo && <img src={profile.logo} alt="Logo" style={{ maxHeight: '80px' }} />}
+                    {profile.logo && <img src={profile.logo} alt="Logo" style={{ maxHeight: '140px' }} />}
                     <div className="header-company-info">
                       <div className="company-name font-display" style={{ color: profile.themeColor || '#1e3a8a' }}>
                         {getDynamicField(profile, 'niruvanathinPeyar', profile, true) || 'Your Business'}
