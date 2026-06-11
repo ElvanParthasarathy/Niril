@@ -59,6 +59,7 @@ export interface InvoiceSettingsState {
   showSignature: boolean;
   showCess?: boolean;
   currency?: string;
+  measureMode?: 'weight' | 'quantity';
 }
 
 export interface InvoiceDocumentState {

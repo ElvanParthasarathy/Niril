@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Box, Typography, Paper, TextField, InputAdornment, 
-  Grid, MenuItem, Stack, Autocomplete 
+  Grid, MenuItem, Stack, Chip, Button, Dialog, DialogTitle, 
+  DialogContent, DialogActions, Checkbox, IconButton, Divider, Autocomplete, useTheme, useMediaQuery 
 } from '@mui/material';
-import { saveReceipt, getAllBills, getReceiptNumberSettings, getAllReceipts } from '../Avanam';
+import { saveReceipt, getAllBills, getAllReceipts, getAllProfiles, getAllClients } from '../Avanam';
+import { createFilterOptions } from '@mui/material';
+import { Plus, X, Receipt, MagnifyingGlass } from '@phosphor-icons/react';
 import { formatCurrency, getCountryConfig, getDynamicField } from '../Payanpadu';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
 import ElvanEditorLayout from './ElvanEditorLayout';
+import ElvanCard from './ElvanCard';
 import ElvanBilingualField from './ElvanBilingualField';
 import { useDraftAndUnsaved } from '../hooks/useDraftAndUnsaved';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -19,11 +23,15 @@ const PAYMENT_MODES = ['Bank Transfer', 'UPI', 'Cash', 'Cheque', 'Card', 'Other'
 
 export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt }: { profile: any, onBack: () => void, onSaved: () => void, editingReceipt?: any }) {
   const { t } = useLanguage();
-  const profileCurrency = getCountryConfig(profile?.country || 'India').currency;
-  const currencySymbol = getCountryConfig(profile?.country || 'India').currencySymbol || profileCurrency;
-  
-  const primaryLang = profile?.primaryDataLanguage || 'Tamil';
-  const secondaryLang = profile?.secondaryDataLanguage || 'English';
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  const activeProfile = profile || {};
+
+  const profileCurrency = getCountryConfig(activeProfile?.country || 'India').currency;
+  const currencySymbol = getCountryConfig(activeProfile?.country || 'India').currencySymbol || profileCurrency;
+
+  const primaryLang = activeProfile?.primaryDataLanguage || 'Tamil';
+  const secondaryLang = activeProfile?.secondaryDataLanguage || 'English';
   
   const [form, setForm] = useState({
     id: editingReceipt?.id || '',
@@ -42,38 +50,81 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
 
   const [bills, setBills] = useState<any[]>([]);
   const unpaidBills = bills.filter(b => b.status !== 'paid');
+  const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
+
+  // Scroll masking state
+  const [showLeftFade, setShowLeftFade] = useState(false);
+  const [showRightFade, setShowRightFade] = useState(true);
+
+  const handleChipScroll = (e: React.UIEvent<HTMLElement>) => {
+    const target = e.currentTarget;
+    const isAtStart = target.scrollLeft <= 0;
+    const isAtEnd = target.scrollWidth - target.clientWidth <= target.scrollLeft + 1;
+    
+    setShowLeftFade(!isAtStart);
+    setShowRightFade(!isAtEnd);
+  };
+
+  const calculateMask = () => {
+    if (showLeftFade && showRightFade) {
+      return 'linear-gradient(to right, transparent, black 8px, black calc(100% - 8px), transparent)';
+    } else if (showLeftFade) {
+      return 'linear-gradient(to right, transparent, black 8px, black 100%)';
+    } else if (showRightFade) {
+      return 'linear-gradient(to left, transparent, black 8px, black 100%)';
+    }
+    return 'none';
+  };
+
+  const [dialogSearch, setDialogSearch] = useState('');
+  
+  const [allProfiles, setAllProfiles] = useState<any[]>([]);
+  const [allReceipts, setAllReceipts] = useState<any[]>([]);
+  const [clientOptions, setClientOptions] = useState<any[]>([]);
+  const clientFilter = createFilterOptions({
+    stringify: (option: any) => {
+      if (typeof option === 'string') return option;
+      return `${option.name || ''} ${option.nameEn || ''} ${option.city || ''} ${option.cityEn || ''}`;
+    }
+  });
+
+  const generateReceiptNo = (profileToUse: any, allRecs: any[]) => {
+    let bizInitialsStr = profileToUse?.shortBusinessName?.trim()?.toUpperCase() || '';
+    let bizInitials = bizInitialsStr;
+    
+    if (!bizInitials) {
+      const bizName = profileToUse?.name || getDynamicField(profileToUse, 'niruvanathinPeyar', profileToUse, false) || getDynamicField(profileToUse, 'niruvanathinPeyar', profileToUse, true) || 'BIZ';
+      bizInitials = bizName.split(' ').filter((w: string) => w.trim().length > 0).map((w: string) => w[0]).join('').toUpperCase().slice(0, 4) || 'BIZ';
+    }
+
+    const count = allRecs.filter(r => r.company_id === profileToUse?.id || (r.receiptNo || '').includes(`/${bizInitials}/`)).length + 1;
+    const pfx = 'RCP';
+    const sep = '/';
+
+    const padded = String(count).padStart(2, '0');
+    return `${pfx}${sep}${bizInitials}${sep}${padded}`;
+  };
 
   useEffect(() => {
     const init = async () => {
       try {
-        const [recs, bls, settings] = await Promise.all([
+        const [recs, bls, coolieProfiles, clients] = await Promise.all([
           getAllReceipts(),
           getAllBills(),
-          getReceiptNumberSettings()
+          getAllProfiles(),
+          getAllClients()
         ]);
         setBills(bls || []);
+        setAllProfiles(coolieProfiles || []);
+        setAllReceipts(recs || []);
+        setClientOptions(clients || []);
         
         if (!editingReceipt) {
-          // Generate new receipt number
-          const count = (recs || []).length + (settings.startNumber || 1);
-          const pfx = settings.brandPrefix || 'RCP';
-          const sep = settings.separator || '/';
-          const padded = String(count).padStart(settings.padDigits || 4, '0');
-          let nextNo = `${pfx}${sep}${padded}`;
-          
-          if (settings.format === 'random') {
-            nextNo = `${pfx}${sep}${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-          } else if (settings.showFinYear) {
-            const yr = new Date().getFullYear();
-            const ny = (yr + 1).toString().slice(-2);
-            nextNo = `${pfx}${sep}${yr}-${ny}${sep}${padded}`;
-          }
-          
           setForm(prev => {
-            const newForm = { ...prev, receiptNo: nextNo };
+            const newForm = { ...prev, receiptNo: '' };
             return newForm;
           });
-          setInitialForm((prev: any) => ({ ...prev, receiptNo: nextNo }));
+          setInitialForm((prev: any) => ({ ...prev, receiptNo: '' }));
         }
       } catch (err) {
         console.error(err);
@@ -84,14 +135,73 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
 
   const updateField = (field: string, value: any) => setForm(prev => ({ ...prev, [field]: value }));
 
-  const selectInvoice = (bill: any) => {
+  const selectInvoices = (selectedItems: any[]) => {
+    let nextNo = form.receiptNo;
+    
+    if (selectedItems.length === 0) {
+      setForm(prev => ({
+        ...prev,
+        againstInvoice: '',
+        [`clientName_${primaryLang}`]: '',
+        [`clientName_${secondaryLang}`]: '',
+        clientAddress: '',
+        amount: '',
+        receiptNo: ''
+      }));
+      return;
+    }
+
+    const invoicesStr = selectedItems.map(b => typeof b === 'string' ? b : b.invoiceNumber).join(', ');
+    const actualBills = selectedItems.filter(b => typeof b !== 'string');
+
+    if (actualBills.length === 0) {
+      setForm(prev => ({ ...prev, againstInvoice: invoicesStr, receiptNo: '' }));
+      return;
+    }
+
+    const firstBill = actualBills[0];
+    if (!editingReceipt) {
+      const selectedProfile = allProfiles.find(p => p.id === firstBill.profileId) || allProfiles[0] || profile;
+      nextNo = generateReceiptNo(selectedProfile, allReceipts);
+    }
+
+    const totalAmount = actualBills.reduce((sum, bill) => {
+      return sum + (bill.status === 'paid' ? (bill.paidAmount || bill.totalAmount) : Math.max(0, (bill.totalAmount || 0) - (bill.paidAmount || 0)));
+    }, 0);
+
+    const clientNameTamil = firstBill.clientName || '';
+    const clientNameEn = firstBill.clientNameEn || '';
+    const clientAddress = firstBill.client?.mugavari || firstBill.clientAddress || '';
+
     setForm(prev => ({
       ...prev,
-      [`clientName_${primaryLang}`]: getDynamicField(bill.data?.client, 'name', profile, true) || '',
-      [`clientName_${secondaryLang}`]: getDynamicField(bill.data?.client, 'name', profile, false) || '',
-      clientAddress: getDynamicField(bill.data?.client, 'mugavari', profile, true) || bill.data?.client?.mugavari || '',
-      amount: String(bill.status === 'paid' ? (bill.paidAmount || bill.totalAmount) : Math.max(0, bill.totalAmount - (bill.paidAmount || 0))),
-      againstInvoice: bill.invoiceNumber || '',
+      receiptNo: nextNo,
+      [`clientName_${primaryLang}`]: clientNameTamil,
+      [`clientName_${secondaryLang}`]: clientNameEn,
+      clientAddress: clientAddress,
+      amount: String(totalAmount),
+      againstInvoice: invoicesStr,
+    }));
+  };
+
+  const handleCustomerSelect = (e: any, val: any) => {
+    if (val && val.isAddButton) {
+      window.location.href = window.location.pathname + '?view=client-editor';
+      return;
+    }
+    if (!val) {
+      setForm(prev => ({ ...prev, [`clientName_${primaryLang}`]: '', [`clientName_${secondaryLang}`]: '', clientAddress: '' }));
+      return;
+    }
+    if (typeof val === 'string') {
+      setForm(prev => ({ ...prev, [`clientName_${primaryLang}`]: val, [`clientName_${secondaryLang}`]: '' }));
+      return;
+    }
+    setForm(prev => ({
+      ...prev,
+      [`clientName_${primaryLang}`]: val.name || '',
+      [`clientName_${secondaryLang}`]: val.nameEn || '',
+      clientAddress: [val.address || val.addressEn, val.city || val.cityEn].filter(Boolean).join(', ')
     }));
   };
 
@@ -146,9 +256,9 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
       'Bengali': { 'Cash': 'নগদ', 'UPI': 'UPI', 'Bank Transfer': 'ব্যাঙ্ক ট্রান্সফার', 'Cheque': 'চেক', 'Card': 'কার্ড', 'Other': 'অন্য' }
     };
     
-    const primaryLang = profile?.primaryDataLanguage || 'Tamil';
-    const secondaryLang = profile?.secondaryDataLanguage || 'English';
-    const enableBilingual = profile?.enableBilingual !== false;
+    const primaryLang = activeProfile?.primaryDataLanguage || 'Tamil';
+    const secondaryLang = activeProfile?.secondaryDataLanguage || 'English';
+    const enableBilingual = activeProfile?.enableBilingual !== false;
     
     const primaryVal = (dictionaries[primaryLang] || {})[mode] || mode;
     const secondaryVal = (dictionaries[secondaryLang] || {})[mode] || mode;
@@ -165,6 +275,8 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
     return primaryVal;
   };
 
+
+
   return (
     <ElvanEditorLayout
       title={(editingReceipt ? (t('editReceiptTitle') || 'Edit Receipt') : t('newPaymentReceiptTitle')) as string}
@@ -177,43 +289,243 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
         onBack();
       }}
     >
-      {unpaidBills.length > 0 && !form.againstInvoice && (
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="subtitle2" color="primary" sx={{ mb: 2, fontWeight: 'bold' }}>
-            {t('quickSelectUnpaid') || 'Quick Select Unpaid Invoices'}
-          </Typography>
-          <Stack direction="row" spacing={2} sx={{ overflowX: 'auto', pb: 1 }}>
-            {unpaidBills.slice(0, 10).map(bill => (
-              <Paper 
-                key={bill.id} 
-                variant="outlined" 
-                sx={{ p: 2, minWidth: 200, cursor: 'pointer', '&:hover': { borderColor: 'primary.main', bgcolor: 'primary.50' }, borderRadius: 2 }}
-                onClick={() => selectInvoice(bill)}
-              >
-                <Typography variant="body2" noWrap sx={{ fontWeight: "bold" }}>{bill.clientName}</Typography>
-                <Typography variant="caption" color="text.secondary" gutterBottom sx={{ display: "block" }}>{bill.invoiceNumber}</Typography>
-                <Typography variant="body1" color="primary" sx={{ fontWeight: "bold" }}>
-                  {formatCurrency(bill.totalAmount - (bill.paidAmount || 0), profileCurrency)}
-                </Typography>
-              </Paper>
-            ))}
-          </Stack>
-        </Box>
-      )}
+
 
       <Grid container spacing={3}>
         <Grid size={{ xs: 12 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 0, ml: 1 }}>
             <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>1</Box>
-            <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('receiptDetails') || 'Receipt Details'}</Typography>
+            <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('invoiceData') || 'பட்டியல் தரவுகள்'}</Typography>
           </Box>
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
-          <TextField 
-            fullWidth size="medium" label={t('receiptNoLabel') as string} 
-            value={form.receiptNo} onChange={e => updateField('receiptNo', e.target.value)} 
-            slotProps={{ inputLabel: { shrink: true } }}
-          />
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', ml: 1.5, mb: 0.5 }}>
+            {t('againstInvoiceLabel') || 'எந்தப் பட்டியலுக்கு'}
+          </Typography>
+          <Button
+            variant="contained"
+            disableElevation
+            fullWidth
+            onClick={() => { setDialogSearch(''); setInvoiceDialogOpen(true); }}
+            sx={{
+              justifyContent: 'flex-start',
+              textTransform: 'none',
+              py: 1.5,
+              px: 2,
+              bgcolor: 'action.hover', // Darker filled look matching the subtle inputs below it
+              color: 'text.primary',
+              borderRadius: 50,
+              '&:hover': { bgcolor: 'action.selected' }
+            }}
+            startIcon={<Receipt size={20} />}
+          >
+            {form.againstInvoice
+              ? `${form.againstInvoice.split(', ').filter(Boolean).length} ${t('invoicesSelected') || 'பட்டியல்கள்'}`
+              : (t('selectInvoices') || 'பட்டியலைத் தேர்ந்தெடு')}
+          </Button>
+
+          {/* Selected Invoices - Chips */}
+          <Box sx={{ minHeight: 52 }}>
+            {form.againstInvoice && form.againstInvoice.split(', ').filter(Boolean).length > 0 && (
+              <Box 
+              onScroll={handleChipScroll}
+              sx={{ 
+                mt: 1.5, 
+                display: 'flex', 
+                gap: 1, 
+                overflowX: 'auto',
+                pb: 1, // slightly more padding for the scrollbar
+                scrollbarWidth: 'none', // Hide by default (Firefox mobile)
+                '&::-webkit-scrollbar': { display: 'none' }, // Hide by default (Webkit mobile)
+                '@media (pointer: fine)': {
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: 'transparent transparent', // Invisible by default
+                  '&:hover': {
+                    scrollbarColor: 'rgba(128,128,128,0.3) transparent', // Show on hover for Firefox
+                  },
+                  '&::-webkit-scrollbar': {
+                    display: 'block',
+                    height: 4, // Very thin
+                  },
+                  '&::-webkit-scrollbar-track': {
+                    background: 'transparent',
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    background: 'transparent', // Invisible by default
+                    borderRadius: 4,
+                  },
+                  '&:hover::-webkit-scrollbar-thumb': {
+                    background: 'rgba(128,128,128,0.3)', // Show when mouse enters container
+                  },
+                  '&::-webkit-scrollbar-thumb:hover': {
+                    background: 'rgba(128,128,128,0.5)', // Darker when hovering the scrollbar itself
+                  }
+                },
+                WebkitMaskImage: calculateMask(),
+                maskImage: calculateMask(),
+                transition: 'mask-image 0.3s ease-in-out, -webkit-mask-image 0.3s ease-in-out'
+              }}
+            >
+              {form.againstInvoice.split(', ').filter(Boolean).map(invNo => {
+                return (
+                  <Chip
+                    key={invNo}
+                    label={invNo}
+                    onDelete={() => {
+                      const updatedArr = form.againstInvoice.split(', ').filter(Boolean).filter(v => v !== invNo);
+                      const newItems = updatedArr.map(n => bills.find(b => b.invoiceNumber === n) || n);
+                      selectInvoices(newItems);
+                    }}
+                    color="default"
+                    sx={{ fontWeight: 600 }}
+                  />
+                );
+              })}
+            </Box>
+          )}
+          </Box>
+
+          {/* Invoice Picker Dialog */}
+          <Dialog
+            open={invoiceDialogOpen}
+            onClose={() => setInvoiceDialogOpen(false)}
+            fullWidth
+            fullScreen={fullScreen}
+            maxWidth="sm"
+            PaperProps={{ sx: { borderRadius: fullScreen ? 0 : 3, maxHeight: fullScreen ? '100dvh' : '80vh' } }}
+          >
+            <DialogTitle sx={{ pb: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>{t('selectInvoices') || 'Select Invoices'}</Typography>
+              <IconButton 
+                onClick={() => setInvoiceDialogOpen(false)} 
+                sx={{ bgcolor: 'action.hover', width: 40, height: 40 }}
+              >
+                <X size={20} />
+              </IconButton>
+            </DialogTitle>
+            <Box sx={{ px: 3, pb: 1.5 }}>
+              <TextField
+                fullWidth
+                size="small"
+                placeholder={t('searchInvoices') || 'Search by invoice no. or customer...'}
+                value={dialogSearch}
+                onChange={e => setDialogSearch(e.target.value)}
+                InputProps={{ startAdornment: <InputAdornment position="start"><MagnifyingGlass size={18} /></InputAdornment> }}
+                autoComplete="off"
+              />
+            </Box>
+            <Divider />
+            <DialogContent sx={{ p: 0 }}>
+              {(() => {
+                const selectedBillNos = form.againstInvoice ? form.againstInvoice.split(', ').filter(Boolean) : [];
+                const selectedBills = selectedBillNos.map(invNo => bills.find(b => b.invoiceNumber === invNo)).filter(Boolean);
+                const firstSelected = selectedBills.length > 0 ? selectedBills[0] : null;
+
+                const availableBills = firstSelected
+                  ? bills.filter(b =>
+                      (b.clientName || '') === (firstSelected.clientName || '') &&
+                      (b.clientNameEn || '') === (firstSelected.clientNameEn || '')
+                    )
+                  : bills;
+
+                const searchVal = dialogSearch.toLowerCase().replace(/[^a-z0-9]/g, '');
+                const filtered = searchVal
+                  ? availableBills.filter(b => {
+                      const invNo = (b.invoiceNumber || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                      const pName = (b.clientName || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                      const sName = (b.clientNameEn || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                      return invNo.includes(searchVal) || pName.includes(searchVal) || sName.includes(searchVal);
+                    })
+                  : availableBills;
+
+                if (filtered.length === 0) {
+                  return (
+                    <Box sx={{ py: 6, textAlign: 'center' }}>
+                      <Typography color="text.secondary">{t('noInvoicesFound') || 'No unpaid invoices found'}</Typography>
+                    </Box>
+                  );
+                }
+
+                return filtered.map((bill, idx) => {
+                  const isSelected = selectedBillNos.includes(bill.invoiceNumber);
+                  const pendingAmt = bill.status === 'paid' ? (bill.paidAmount || bill.totalAmount) : Math.max(0, (bill.totalAmount || 0) - (bill.paidAmount || 0));
+                  
+                  const cNameTamil = bill.clientName || '';
+                  const cNameEn = bill.clientNameEn || '';
+                  const cMugavari = bill.client?.mugavari || bill.clientAddress || '';
+
+                  return (
+                    <Box
+                      key={bill.id || bill.invoiceNumber}
+                      onClick={() => {
+                        let newItems;
+                        if (isSelected) {
+                          const updatedArr = selectedBillNos.filter(v => v !== bill.invoiceNumber);
+                          newItems = updatedArr.map(n => bills.find(b => b.invoiceNumber === n) || n);
+                        } else {
+                          newItems = [...selectedBills, bill];
+                        }
+                        selectInvoices(newItems);
+                      }}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        px: 2,
+                        py: 1.25,
+                        cursor: 'pointer',
+                        borderBottom: idx < filtered.length - 1 ? '1px solid' : 'none',
+                        borderColor: 'divider',
+                        bgcolor: isSelected ? 'action.selected' : 'transparent',
+                        '&:hover': { bgcolor: isSelected ? 'action.selected' : 'action.hover' },
+                        transition: 'background-color 0.15s'
+                      }}
+                    >
+                      <Checkbox checked={isSelected} size="small" sx={{ p: 0.5 }} />
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                            {bill.invoiceNumber} <Box component="span" sx={{ opacity: 0.6, fontWeight: 400, ml: 1, fontSize: '0.75rem' }}>{bill.date || ''}</Box>
+                          </Typography>
+                          {(cNameTamil || cNameEn) && (
+                            <Typography variant="caption" color="text.primary" sx={{ opacity: 0.9 }} noWrap>
+                              {cNameTamil || cNameEn}
+                            </Typography>
+                          )}
+                          {(cMugavari) && (
+                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }} noWrap>
+                              {cMugavari}
+                            </Typography>
+                          )}
+                        </Box>
+                      </Box>
+                      <Typography variant="body2" sx={{ fontWeight: 500, color: 'primary.main', whiteSpace: 'nowrap' }}>
+                        {formatCurrency(pendingAmt, profileCurrency)}
+                      </Typography>
+                    </Box>
+                  );
+                });
+              })()}
+            </DialogContent>
+            <Divider />
+            <DialogActions sx={{ px: 3, pt: 2.5, pb: 2.5 }}>
+              <Button 
+                onClick={() => setInvoiceDialogOpen(false)} 
+                variant="contained" 
+                size="small" 
+                sx={{ borderRadius: 50, textTransform: 'none', minHeight: '36px !important', px: 3 }}
+              >
+                {t('done') || 'Done'}
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6 }} sx={{ display: { xs: 'none', sm: 'block' } }} />
+        <Grid size={{ xs: 12 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 0, ml: 1, mt: 1 }}>
+            <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>2</Box>
+            <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('receiptData') || 'பற்றுச்சீட்டு தரவுகள்'}</Typography>
+          </Box>
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -226,19 +538,68 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
             />
           </LocalizationProvider>
         </Grid>
-        <ElvanBilingualField
-          label={t('clientName') as string}
-          primaryLang={primaryLang}
-          secondaryLang={secondaryLang}
-          isBilingual={profile?.enableBilingual !== false}
-          primaryValue={form[`clientName_${primaryLang}`] || ''}
-          onPrimaryChange={e => updateField(`clientName_${primaryLang}`, e.target.value)}
-          secondaryValue={form[`clientName_${secondaryLang}`] || ''}
-          onSecondaryChange={e => updateField(`clientName_${secondaryLang}`, e.target.value)}
-        />
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <Autocomplete
+            freeSolo
+            options={clientOptions}
+            filterOptions={clientFilter}
+            getOptionLabel={(option) => {
+              return typeof option === 'string' ? option : (option.name || option.nameEn || '');
+            }}
+            onChange={handleCustomerSelect}
+            value={form[`clientName_${primaryLang}`] || null}
+            inputValue={form[`clientName_${primaryLang}`] || ''}
+            onInputChange={(e, val, reason) => {
+              updateField(`clientName_${primaryLang}`, val || '');
+              if (reason === 'input' || reason === 'clear') {
+                updateField(`clientName_${secondaryLang}`, '');
+                updateField('clientAddress', '');
+              }
+            }}
+            renderOption={(props, option, { index }) => {
+              const { key, ...optionProps } = props as any;
+                            if (typeof option === 'string') {
+                return <li key={`client-opt-${index}`} {...optionProps}><Typography variant="body1">{option}</Typography></li>;
+              }
+              return (
+                <li key={`client-opt-${index}`} {...optionProps} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', borderBottom: '1px solid rgba(128,128,128,0.1)' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
+                    <Typography variant="body1" color="primary" sx={{ fontWeight: 500 }}>{option.name}</Typography>
+                    {option.nameEn && <Typography variant="body2" sx={{ color: 'text.secondary' }}>{option.nameEn}</Typography>}
+                  </Box>
+                  {(option.city || option.cityEn) && (
+                    <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5, mt: 0.5 }}>
+                      {option.city && <Typography variant="caption" sx={{ color: 'text.secondary' }}>{option.city}</Typography>}
+                      {option.cityEn && <Typography variant="caption" sx={{ color: 'text.secondary' }}>({option.cityEn})</Typography>}
+                    </Box>
+                  )}
+                </li>
+              );
+            }}
+            renderInput={(params) => (
+              <TextField 
+                {...params} 
+                fullWidth 
+                label={t('clientName') as string}
+                sx={{
+                  '& .MuiOutlinedInput-root': { borderRadius: '8px', bgcolor: 'rgba(0,0,0,0.02)' }
+                }}
+              />
+            )}
+          />
+
+
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <TextField 
+            fullWidth size="medium" label={t('receiptNoLabel') as string} 
+            value={form.receiptNo} onChange={e => updateField('receiptNo', e.target.value)} 
+            slotProps={{ inputLabel: { shrink: true } }}
+          />
+        </Grid>
         <Grid size={{ xs: 12 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 0, ml: 1, mt: 1 }}>
-            <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>2</Box>
+            <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>3</Box>
             <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('paymentDetails') || 'Payment Details'}</Typography>
           </Box>
         </Grid>
@@ -263,6 +624,11 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
               inputLabel: { shrink: true }, 
               select: { 
                 displayEmpty: true,
+                MenuProps: {
+                  disableScrollLock: true,
+                  anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
+                  transformOrigin: { vertical: 'top', horizontal: 'left' }
+                },
                 renderValue: (selected) => selected ? renderPaymentModeOption(selected as string, false) : <em>{t('paymentModeLabel')}...</em>
               } 
             }}
@@ -271,74 +637,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
             {PAYMENT_MODES.map(m => <MenuItem key={m} value={m}>{renderPaymentModeOption(m)}</MenuItem>)}
           </TextField>
         </Grid>
-        {form.paymentMode !== 'Cash' && (
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField 
-              fullWidth size="medium" label={t('referenceNoLabel') as string} 
-              value={form.referenceNo} onChange={e => updateField('referenceNo', e.target.value)} 
-              slotProps={{ inputLabel: { shrink: true } }}
-            />
-          </Grid>
-        )}
-        <Grid size={{ xs: 12, sm: form.paymentMode === 'Cash' ? 12 : 6 }}>
-          <Autocomplete
-            fullWidth
-            freeSolo
-            forcePopupIcon={true}
-            sx={{ width: '100%', minWidth: 200 }}
-            options={bills}
-            filterOptions={(options, state) => {
-              const val = state.inputValue.toLowerCase();
-              return options.filter(o => {
-                if (typeof o === 'string') return o.toLowerCase().includes(val);
-                const invNo = o.invoiceNumber?.toLowerCase() || '';
-                const pName = (getDynamicField(o.data?.client, 'name', profile, true) || '').toLowerCase();
-                const sName = (getDynamicField(o.data?.client, 'name', profile, false) || '').toLowerCase();
-                return invNo.includes(val) || pName.includes(val) || sName.includes(val);
-              });
-            }}
-            getOptionLabel={(option) => {
-              if (typeof option === 'string') return option;
-              return option.invoiceNumber;
-            }}
-            value={bills.find(b => b.invoiceNumber === (form.againstInvoice || '').split(' - ')[0]) || form.againstInvoice}
-            onChange={(_, newValue) => {
-              if (typeof newValue === 'object' && newValue !== null) {
-                selectInvoice(newValue);
-              } else {
-                setForm(prev => ({
-                  ...prev,
-                  againstInvoice: typeof newValue === 'string' ? newValue : '',
-                  [`clientName_${primaryLang}`]: '',
-                  [`clientName_${secondaryLang}`]: '',
-                  clientAddress: '',
-                  amount: ''
-                }));
-              }
-            }}
-            onInputChange={(_, newInputValue) => {
-              updateField('againstInvoice', newInputValue);
-            }}
-            renderOption={(props, option) => {
-              const text = typeof option === 'string' ? option : option.invoiceNumber;
-              return (
-                <li {...props} key={typeof option === 'string' ? option : option.id}>
-                  {text}
-                </li>
-              );
-            }}
-            renderInput={(params) => (
-              <TextField 
-                {...params}
-                fullWidth size="medium" 
-                label={t('againstInvoiceLabel') as string} 
-                placeholder={t('againstInvoicePlaceholder') as string}
-                InputLabelProps={{ shrink: true }}
-                autoComplete="new-password"
-              />
-            )}
-          />
-        </Grid>
+
 
       </Grid>
     </ElvanEditorLayout>

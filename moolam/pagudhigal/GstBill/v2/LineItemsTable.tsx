@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper, TextField, IconButton, Button, Divider, List, ListItem, ListItemButton, ListItemText, InputAdornment, Select, MenuItem } from '@mui/material';
+import { Box, Typography, Paper, TextField, IconButton, Button, Divider, List, ListItem, ListItemButton, ListItemText, InputAdornment, Select, MenuItem, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { Trash, Plus } from '@phosphor-icons/react';
 import { useLanguage } from '../../../mozhi/LanguageContext';
 import { getDynamicField } from '../../../Payanpadu';
@@ -12,6 +12,7 @@ interface LineItemsTableProps {
   items: LineItemState[];
   setItems: (items: LineItemState[] | ((prev: LineItemState[]) => LineItemState[])) => void;
   settings: InvoiceSettingsState;
+  setSettings?: React.Dispatch<React.SetStateAction<InvoiceSettingsState>>;
   isBilingual: boolean;
   primaryLang: string;
   secondaryLang: string;
@@ -24,6 +25,7 @@ export default function LineItemsTable({
   items,
   setItems,
   settings,
+  setSettings,
   isBilingual,
   primaryLang,
   secondaryLang,
@@ -31,7 +33,7 @@ export default function LineItemsTable({
   onRequestAddProduct,
   dataVersion,
 }: LineItemsTableProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   const [products, setProducts] = useState<any[]>([]);
   const [activeSuggestionRow, setActiveSuggestionRow] = useState<string | null>(null);
@@ -120,6 +122,46 @@ export default function LineItemsTable({
           <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px' }}>3</Box>
           <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('lineItems')}</Typography>
         </Box>
+        {setSettings && (
+          <ToggleButtonGroup
+            color="primary"
+            value={settings.measureMode || 'quantity'}
+            exclusive
+            onChange={(e, newVal) => {
+              if (newVal) {
+                setSettings(prev => ({ ...prev, measureMode: newVal }));
+              }
+            }}
+            sx={{ 
+              height: '36px',
+              bgcolor: 'action.hover',
+              borderRadius: '50px',
+              p: 0.5,
+              '.MuiToggleButton-root': {
+                border: 'none',
+                borderRadius: '50px !important',
+                color: 'text.secondary',
+                mx: 0.25,
+                px: 2,
+                '&.Mui-selected': {
+                  bgcolor: 'primary.main',
+                  color: 'primary.contrastText',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                  '&:hover': {
+                    bgcolor: 'primary.dark',
+                  }
+                }
+              }
+            }}
+          >
+            <ToggleButton value="quantity" sx={{ textTransform: 'none', fontWeight: 600 }}>
+              {language === 'ta' ? 'அளவு' : 'Quantity'}
+            </ToggleButton>
+            <ToggleButton value="weight" sx={{ textTransform: 'none', fontWeight: 600 }}>
+              {language === 'ta' ? 'எடை' : 'Weight'}
+            </ToggleButton>
+          </ToggleButtonGroup>
+        )}
       </Box>
       
       {items.map((item: any, index) => (
@@ -179,7 +221,9 @@ export default function LineItemsTable({
                       const filtered = products.filter(p => {
                         const pName = getProdName(p, primaryLang) || '';
                         const pNameSec = getProdName(p, secondaryLang) || '';
-                        return !q || (pName.toLowerCase().includes(q) || pNameSec.toLowerCase().includes(q) || p.hsn?.toLowerCase().includes(q));
+                        const matchesQuery = !q || (pName.toLowerCase().includes(q) || pNameSec.toLowerCase().includes(q) || p.hsn?.toLowerCase().includes(q));
+                        const matchesMeasureType = (settings.measureMode || 'quantity') === (p.measureType || 'quantity');
+                        return matchesQuery && matchesMeasureType;
                       });
                       
                       if (filtered.length === 0) {
@@ -235,8 +279,27 @@ export default function LineItemsTable({
 
             {/* Qty */}
             <Box sx={{ flex: { xs: '1 1 40%', sm: '1 1 120px' } }}>
-              <TextField fullWidth size="small" label={t('qty')} type="number" slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: 0, step: "any" } }} 
-                value={item.qty} onChange={(e) => handleItemChange(item.id, 'quantity', clampNonNeg(e.target.value))} />
+              <TextField 
+                fullWidth 
+                size="small" 
+                label={settings.measureMode === 'weight' ? (language === 'ta' ? 'எடை' : 'Weight') : (language === 'ta' ? 'அளவு' : 'Quantity')} 
+                type="number" 
+                slotProps={{ 
+                  inputLabel: { shrink: true }, 
+                  htmlInput: { min: 0, step: "any" },
+                  input: settings.measureMode === 'weight' ? { endAdornment: <InputAdornment position="end" sx={{ mt: '0 !important' }}>kg</InputAdornment> } : undefined
+                }} 
+                value={item.qty} 
+                onChange={(e) => handleItemChange(item.id, 'quantity', clampNonNeg(e.target.value))} 
+                onBlur={(e) => {
+                  if (settings.measureMode === 'weight' && item.qty) {
+                    const parsed = parseFloat(item.qty);
+                    if (!isNaN(parsed)) {
+                      handleItemChange(item.id, 'quantity', parsed.toFixed(3));
+                    }
+                  }
+                }}
+              />
             </Box>
 
             {/* Rate */}

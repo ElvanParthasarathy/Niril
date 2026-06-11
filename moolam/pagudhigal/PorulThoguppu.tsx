@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, InputAdornment, Typography } from '@mui/material';
+import { Box, TextField, InputAdornment, Typography, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { saveProduct } from '../Avanam';
 import { getCountryConfig } from '../Payanpadu';
 import { thagaval } from './Thagaval';
@@ -9,7 +9,7 @@ import ElvanBilingualField from './ElvanBilingualField';
 import { useDraftAndUnsaved } from '../hooks/useDraftAndUnsaved';
 
 export default function PorulThoguppu({ onBack, onSaved, product, profileSettings, defaultCountry }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [form, setForm] = useState({});
   const profileCountry = defaultCountry || 'India';
   const isEditing = !!product?.id;
@@ -25,7 +25,7 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
     if (product) {
       setForm({ ...product });
     } else if (!localStorage.getItem('niril_draft_product')) {
-      setForm({ hsn: '50072010', taxPercent: '5', unit: 'Nos', rate: '', stock: '' });
+      setForm({ hsn: '50072010', taxPercent: '5', measureType: 'quantity', unit: 'Nos', rate: '', stock: '' });
     }
   }, [product]);
 
@@ -52,7 +52,7 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
 
   const { hasUnsavedChanges, clearDraft } = useDraftAndUnsaved(
     'niril_draft_product',
-    product || { hsn: '50072010', taxPercent: '5', unit: 'Nos', rate: '', stock: '' },
+    product || { hsn: '50072010', taxPercent: '5', measureType: 'quantity', unit: 'Nos', rate: '', stock: '' },
     form,
     setForm,
     isEditing,
@@ -72,7 +72,8 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
         hsn: form.hsn?.trim() || '',
         rate: form.rate ? parseFloat(form.rate as any) : 0,
         taxPercent: form.taxPercent ? parseFloat(form.taxPercent as any) : 0,
-        unit: form.unit || 'Nos',
+        unit: form.measureType === 'weight' ? 'kg' : (form.unit || 'Nos'),
+        measureType: form.measureType || 'quantity',
         stock: form.stock ? parseFloat(form.stock as any) : 0,
       };
       const savedProduct = await saveProduct(productData);
@@ -126,6 +127,48 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
               required
               placeholder={(t('productNameLabel') || 'Product Name') as string}
             />
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1, fontWeight: 500, ml: 2.5 }}>
+                {language === 'ta' ? 'அளவீடு முறை' : 'Measure Type'}
+              </Typography>
+              <ToggleButtonGroup
+                color="primary"
+                value={form.measureType || 'quantity'}
+                exclusive
+                onChange={(e, newVal) => {
+                  if (newVal) {
+                    updateField('measureType', null, newVal);
+                  }
+                }}
+                sx={{ 
+                  height: '40px',
+                  bgcolor: 'action.hover',
+                  borderRadius: '50px',
+                  p: 0.5,
+                  '.MuiToggleButton-root': {
+                    border: 'none',
+                    borderRadius: '50px !important',
+                    color: 'text.secondary',
+                    mx: 0.25,
+                    '&.Mui-selected': {
+                      bgcolor: 'primary.main',
+                      color: 'primary.contrastText',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                      '&:hover': {
+                        bgcolor: 'primary.dark',
+                      }
+                    }
+                  }
+                }}
+              >
+                <ToggleButton value="quantity" sx={{ flex: 1, textTransform: 'none', fontWeight: 600 }}>
+                  {language === 'ta' ? 'அளவு' : 'Quantity'}
+                </ToggleButton>
+                <ToggleButton value="weight" sx={{ flex: 1, textTransform: 'none', fontWeight: 600 }}>
+                  {language === 'ta' ? 'எடை' : 'Weight'}
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Box>
           </Box>
         </Box>
 

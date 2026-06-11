@@ -1,7 +1,7 @@
-import { Package, Trash, CheckSquare, Square } from '@phosphor-icons/react';
+import { Package, Trash, CheckSquare, Square, Scales, Hash, SquaresFour } from '@phosphor-icons/react';
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
-import { Box, Typography, IconButton, Tooltip, Stack, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
+import { Box, Typography, IconButton, Tooltip, Stack, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { getAllProducts, saveProduct, deleteProduct } from '../Avanam';
 import { getCountryConfig, formatCurrency, getDynamicField } from '../Payanpadu';
 import { thagaval } from './Thagaval';
@@ -16,6 +16,8 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [confirmDialog, setConfirmDialog] = useState({ open: false, title: '', message: '', action: null });
+  const [activeTab, setActiveTab] = useState('all');
+  const { language } = useLanguage();
 
   const profileCountry = profile?.country || 'India';
   const profileCurrency = getCountryConfig(profileCountry).currency;
@@ -147,6 +149,9 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
                     {product.taxPercent ? `Tax: ${product.taxPercent}%` : ''}
                   </Typography>
                 )}
+                <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5, color: 'primary.main', fontWeight: 500 }}>
+                  {(product.measureType === 'weight') ? 'எடை • Weight' : 'அளவு • Quantity'}
+                </Typography>
               </Box>
             </Box>
           </Box>
@@ -167,14 +172,77 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
     );
   };
 
+  const tabFilteredProducts = products.filter(p => {
+    if (activeTab === 'all') return true;
+    return (p.measureType || 'quantity') === activeTab;
+  });
+
+  const filterChips = (
+    <Box sx={{ display: 'flex', width: '100%', justifyContent: 'flex-start', alignItems: 'center', gap: 1.5, mt: 3, mb: 1.5 }}>
+      <ToggleButtonGroup
+        value={activeTab}
+        exclusive
+        onChange={(e, newTab) => {
+          if (newTab !== null) {
+            setActiveTab(newTab);
+          }
+        }}
+        aria-label="measure type filter"
+        sx={{ 
+          bgcolor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
+          p: 0.5,
+          borderRadius: '50px',
+          display: 'flex',
+          gap: 1,
+          width: { xs: '100%', sm: '360px' },
+          '& .MuiToggleButtonGroup-grouped': {
+            flex: 1,
+            whiteSpace: 'nowrap',
+            justifyContent: 'center',
+            border: 0,
+            borderRadius: '50px !important',
+            px: 2,
+            py: 0.5,
+            textTransform: 'uppercase',
+            fontWeight: 600,
+            fontSize: '0.85rem',
+            color: 'text.secondary',
+            '&.Mui-selected': {
+              bgcolor: 'background.paper',
+              color: 'text.primary',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+              '&:hover': {
+                bgcolor: 'background.paper',
+              }
+            }
+          }
+        }}
+      >
+        <ToggleButton value="all" sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}>
+          <SquaresFour size={18} weight="duotone" style={{ marginBottom: '2px' }} />
+          {language === 'ta' ? 'யாவை' : 'All'}
+        </ToggleButton>
+        <ToggleButton value="quantity" sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}>
+          <Hash size={18} weight="duotone" style={{ marginBottom: '2px' }} />
+          {language === 'ta' ? 'அளவு' : 'Quantity'}
+        </ToggleButton>
+        <ToggleButton value="weight" sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}>
+          <Scales size={18} weight="duotone" style={{ marginBottom: '2px' }} />
+          {language === 'ta' ? 'எடை' : 'Weight'}
+        </ToggleButton>
+      </ToggleButtonGroup>
+    </Box>
+  );
+
   return (
     <>
       <ElvanListView 
         title={t('inventoryTitle') || 'Products'}
         searchPlaceholder={t('searchProducts') || 'Search products...'}
         addButtonText={t('addProductBtn') || 'Add Product'}
+        renderBelowSearch={filterChips}
         onAdd={() => onAddProduct(null)}
-        items={products}
+        items={tabFilteredProducts}
         isLoading={isLoading}
         filterFn={filterFn}
         renderCard={renderCard}

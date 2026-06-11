@@ -23,8 +23,16 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
     setIsLoading(true);
     try {
       const b = await getAllBills();
-      // sort bills by date
-      setBills(b.sort((a, b) => new Date(b.invoiceDate).getTime() - new Date(a.invoiceDate).getTime()));
+      setBills(b.sort((a, b) => {
+        const timeDiff = new Date(b.invoiceDate).getTime() - new Date(a.invoiceDate).getTime();
+        if (timeDiff !== 0) return timeDiff;
+        const getNum = (inv) => {
+          if (!inv) return 0;
+          const match = inv.match(/\d+/g);
+          return match ? parseInt(match[match.length - 1], 10) : 0;
+        };
+        return getNum(b.invoiceNumber) - getNum(a.invoiceNumber);
+      }));
     } catch {
       thagaval(t('errorLoadingInvoices') || 'Failed to load invoices', 'error');
     } finally {

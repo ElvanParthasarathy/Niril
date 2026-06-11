@@ -256,6 +256,7 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
         items={items}
         setItems={setItems}
         settings={settings}
+        setSettings={setSettings}
         isBilingual={isBilingual}
         primaryLang={primaryLang}
         secondaryLang={secondaryLang}

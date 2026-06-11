@@ -448,8 +448,8 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
 
       {/* Items table & Totals Unified Box */}
       {(() => {
-        const qtyLabelEn = (!showGST || !showItemizedTax) ? 'Quantity' : 'Qty';
-        const qtyLabelTa = (!showGST || !showItemizedTax) ? 'அளவு' : 'எண்';
+        const qtyLabelEn = options?.measureMode === 'weight' ? 'Weight' : ((!showGST || !showItemizedTax) ? 'Quantity' : 'Qty');
+        const qtyLabelTa = options?.measureMode === 'weight' ? 'எடை' : ((!showGST || !showItemizedTax) ? 'அளவு' : 'எண்');
         return (
       <div className="unified-table-box">
         <table className="inv-table" style={{ tableLayout: 'auto' }}>
@@ -544,7 +544,7 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
                   {profile?.enableBilingual !== false && getDynamicField(item, 'description', profile, false) && <div style={{ fontSize: '0.8em', color: '#94a3b8', marginTop: '1px' }}>{getDynamicField(item, 'description', profile, false)}</div>}
                 </td>
                 {showHSN && <td className="inv-td inv-td-center inv-td-muted">{item.hsn || '-'}</td>}
-                {showItemQty && <td className="inv-td inv-td-center">{item.qty || item.quantity}</td>}
+                {showItemQty && <td className="inv-td inv-td-center">{(item.qty || item.quantity)}{options?.measureMode === 'weight' ? ' Kg' : ''}</td>}
                 {showRateColumn && <td className="inv-td inv-td-right">{fmt(item.rate)}</td>}
                 {hasAnyDiscount && <td className="inv-td inv-td-right">{discount > 0 ? fmt(discount) : '-'}</td>}
                 {showGST && showItemizedTax && (
@@ -577,9 +577,11 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
       {/* Totals section */}
       <div className="inv-totals-section" style={{ margin: 0, padding: 0, alignItems: 'stretch', borderTop: '1px solid #e2e8f0', background: '#fff' }}>
         <div className="inv-words" style={{ padding: '0.75rem 0.5rem', borderRight: '1px solid #e2e8f0', flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <div style={{ marginBottom: '0.2rem', color: '#64748b', fontWeight: 400, fontSize: '0.8rem' }}>
-            {profile?.enableBilingual !== false ? (profile?.primaryDataLanguage === 'Tamil' || !profile?.primaryDataLanguage ? 'மொத்த அளவு • Total Items' : 'Total Items • மொத்த அளவு') : (profile?.primaryDataLanguage === 'Tamil' || !profile?.primaryDataLanguage ? 'மொத்த அளவு' : 'Total Items')}: <span style={{ fontWeight: 600, color: '#334155' }}>{parseFloat(items.reduce((acc, item) => acc + (Number(item.qty) || Number(item.quantity) || 0), 0).toFixed(2))}</span>
-          </div>
+          {options?.measureMode !== 'weight' && (
+            <div style={{ marginBottom: '0.2rem', color: '#64748b', fontWeight: 400, fontSize: '0.8rem' }}>
+              {profile?.enableBilingual !== false ? (profile?.primaryDataLanguage === 'Tamil' || !profile?.primaryDataLanguage ? 'மொத்த அளவு • Total Items' : 'Total Items • மொத்த அளவு') : (profile?.primaryDataLanguage === 'Tamil' || !profile?.primaryDataLanguage ? 'மொத்த அளவு' : 'Total Items')}: <span style={{ fontWeight: 600, color: '#334155' }}>{parseFloat(items.reduce((acc, item) => acc + (Number(item.qty) || Number(item.quantity) || 0), 0).toFixed(2))}</span>
+            </div>
+          )}
           {commonHSN && (
             <div style={{ marginBottom: '0.2rem', color: '#64748b', fontWeight: 400, fontSize: '0.8rem' }}>
               HSN Code: <span style={{ fontWeight: 600, color: '#334155' }}>{commonHSN}</span>
@@ -629,13 +631,18 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
             </div>
           )}
           {totals.totalDiscount > 0 && (
-            <div className="inv-total-row" style={{ color: '#dc2626' }}>
+            <div className="inv-total-row">
               <span>Discount</span>
               <span>- {fmt(totals.totalDiscount)}</span>
             </div>
           )}
           {showGST && (
-            isIndia && isInterstate ? (
+            (totals.cgst === 0 && totals.sgst === 0 && totals.igst === 0) ? (
+              <div className="inv-total-row">
+                <span>Tax</span>
+                <span>Nil</span>
+              </div>
+            ) : isIndia && isInterstate ? (
               <div className="inv-total-row">
                 <span>IGST</span>
                 <span>{fmt(totals.igst)}</span>
@@ -735,31 +742,31 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
                 )}
                 <div style={{ display: 'flex', gap: '4px' }}>
                   <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.82rem', color: accent }}>வங்கி விவரம் :</div>
-                  <div style={{ color: '#000', fontWeight: 600 }}>
+                  <div style={{ color: '#334155', fontWeight: 600 }}>
                     {(account?.vangiPeyarEn || profile.vangiPeyarEn || account?.vangiPeyar || profile.vangiPeyar)}
                     {(account?.bankBranchEn || profile.bankBranchEn || account?.bankBranch || profile.bankBranch) ? `, ${account?.bankBranchEn || profile.bankBranchEn || account?.bankBranch || profile.bankBranch}` : ''}
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: '4px' }}>
                   <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.82rem', color: accent }}>கணக்கு எண் :</div>
-                  <div style={{ color: '#000', fontWeight: 600 }}>{account?.kanakkuEn || profile.kanakkuEn}</div>
+                  <div style={{ color: '#334155', fontWeight: 600 }}>{account?.kanakkuEn || profile.kanakkuEn}</div>
                 </div>
                 {(account?.ifsc || profile.ifsc) && (
                   <div style={{ display: 'flex', gap: '4px' }}>
                     <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.82rem', color: accent }}>IFSC :</div>
-                    <div style={{ color: '#000', fontWeight: 600 }}>{account?.ifsc || profile.ifsc}</div>
+                    <div style={{ color: '#334155', fontWeight: 600 }}>{account?.ifsc || profile.ifsc}</div>
                   </div>
                 )}
                 {(account?.swift || profile.swift) && (
                   <div style={{ display: 'flex', gap: '4px' }}>
                     <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.82rem', color: accent }}>SWIFT/BIC :</div>
-                    <div style={{ color: '#000', fontWeight: 600 }}>{account?.swift || profile.swift}</div>
+                    <div style={{ color: '#334155', fontWeight: 600 }}>{account?.swift || profile.swift}</div>
                   </div>
                 )}
                 {profile.pan && isIndia && (
                   <div style={{ display: 'flex', gap: '4px' }}>
                     <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.82rem', color: accent }}>PAN :</div>
-                    <div style={{ color: '#000', fontWeight: 600 }}>{profile.pan}</div>
+                    <div style={{ color: '#334155', fontWeight: 600 }}>{profile.pan}</div>
                   </div>
                 )}
               </div>

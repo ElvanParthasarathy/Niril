@@ -189,6 +189,13 @@ export default function InvoiceTotals({
           </Box>
         )}
 
+        {((totals.cgst || 0) === 0 && (totals.sgst || 0) === 0 && (totals.igst || 0) === 0) && (
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+            <Typography color="text.secondary">Tax</Typography>
+            <Typography>Nil</Typography>
+          </Box>
+        )}
+
         {(totals.roundOff || 0) !== 0 && (
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
             <Typography color="text.secondary">{t('roundOff') || 'Round Off'}</Typography>
