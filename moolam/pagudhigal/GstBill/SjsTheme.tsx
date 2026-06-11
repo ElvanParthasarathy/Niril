@@ -406,7 +406,7 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
         }
         #invoice-preview .inv-footer {
           border-top: none !important;
-          padding: 0.5rem 0 0.5rem !important;
+          padding: 0.5rem !important;
         }
         #invoice-preview .grand-total-row span {
           color: ${accent} !important;
@@ -720,74 +720,89 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
       )}
 
       {/* Footer */}
-      <div className="inv-footer" style={{ alignItems: 'flex-start', marginTop: '1.5rem' }}>
-        <div className="inv-footer-left" style={{ paddingLeft: '0.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', paddingTop: '5px' }}>
-          {showBankDetails && (account?.vangiPeyar || profile?.vangiPeyar) && (
-          <div style={{ marginBottom: '10px', color: '#475569', fontSize: '0.78rem', lineHeight: '1.35', display: 'flex', flexDirection: 'column', gap: '3px' }}>
-              {showAccountLabel && account?.label && (
-                <div style={{ fontSize: '0.7rem', fontStyle: 'italic', marginBottom: '1px' }}>
-                  Pay via: <strong style={{ color: '#334155' }}>{account.label}</strong>
+      <div className="inv-footer" style={{ display: 'flex', flexDirection: 'column', marginTop: '1.5rem', paddingLeft: '0.5rem', paddingRight: '0.5rem' }}>
+        
+        {/* Top Row: Bank Details & Signature Image */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
+          {/* Left: Bank Details */}
+          <div style={{ display: 'flex', flexDirection: 'column', paddingTop: '5px' }}>
+            {showBankDetails && (account?.vangiPeyar || profile?.vangiPeyar) && (
+              <div style={{ marginBottom: '15px', color: '#475569', fontSize: '0.85rem', lineHeight: '1.45', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                {showAccountLabel && account?.label && (
+                  <div style={{ fontSize: '0.75rem', fontStyle: 'italic', marginBottom: '1px' }}>
+                    Pay via: <strong style={{ color: '#334155' }}>{account.label}</strong>
+                  </div>
+                )}
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.82rem', color: accent }}>வங்கி விவரம் :</div>
+                  <div style={{ color: '#000', fontWeight: 600 }}>
+                    {(account?.vangiPeyarEn || profile.vangiPeyarEn || account?.vangiPeyar || profile.vangiPeyar)}
+                    {(account?.bankBranchEn || profile.bankBranchEn || account?.bankBranch || profile.bankBranch) ? `, ${account?.bankBranchEn || profile.bankBranchEn || account?.bankBranch || profile.bankBranch}` : ''}
+                  </div>
                 </div>
-              )}
-              <div style={{ display: 'flex', gap: '4px' }}>
-                <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.75rem', color: accent }}>வங்கி விவரம் :</div>
-                <div style={{ color: '#000', fontWeight: 600 }}>
-                  {(account?.vangiPeyarEn || profile.vangiPeyarEn || account?.vangiPeyar || profile.vangiPeyar)}
-                  {(account?.bankBranchEn || profile.bankBranchEn || account?.bankBranch || profile.bankBranch) ? `, ${account?.bankBranchEn || profile.bankBranchEn || account?.bankBranch || profile.bankBranch}` : ''}
+                <div style={{ display: 'flex', gap: '4px' }}>
+                  <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.82rem', color: accent }}>கணக்கு எண் :</div>
+                  <div style={{ color: '#000', fontWeight: 600 }}>{account?.kanakkuEn || profile.kanakkuEn}</div>
                 </div>
+                {(account?.ifsc || profile.ifsc) && (
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.82rem', color: accent }}>IFSC :</div>
+                    <div style={{ color: '#000', fontWeight: 600 }}>{account?.ifsc || profile.ifsc}</div>
+                  </div>
+                )}
+                {(account?.swift || profile.swift) && (
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.82rem', color: accent }}>SWIFT/BIC :</div>
+                    <div style={{ color: '#000', fontWeight: 600 }}>{account?.swift || profile.swift}</div>
+                  </div>
+                )}
+                {profile.pan && isIndia && (
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.82rem', color: accent }}>PAN :</div>
+                    <div style={{ color: '#000', fontWeight: 600 }}>{profile.pan}</div>
+                  </div>
+                )}
               </div>
-              <div style={{ display: 'flex', gap: '4px' }}>
-                <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.75rem', color: accent }}>கணக்கு எண் :</div>
-                <div style={{ color: '#000', fontWeight: 600 }}>{account?.kanakkuEn || profile.kanakkuEn}</div>
-              </div>
-              {(account?.ifsc || profile.ifsc) && (
-                <div style={{ display: 'flex', gap: '4px' }}>
-                  <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.75rem', color: accent }}>IFSC :</div>
-                  <div style={{ color: '#000', fontWeight: 600 }}>{account?.ifsc || profile.ifsc}</div>
-                </div>
-              )}
-              {(account?.swift || profile.swift) && (
-                <div style={{ display: 'flex', gap: '4px' }}>
-                  <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.75rem', color: accent }}>SWIFT/BIC :</div>
-                  <div style={{ color: '#000', fontWeight: 600 }}>{account?.swift || profile.swift}</div>
-                </div>
-              )}
-              {profile.pan && isIndia && (
-                <div style={{ display: 'flex', gap: '4px' }}>
-                  <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.75rem', color: accent }}>PAN :</div>
-                  <div style={{ color: '#000', fontWeight: 600 }}>{profile.pan}</div>
-                </div>
-              )}
-            </div>
-          )}
-          {options.exchangeRate && currencySymbol !== 'INR' && (
-            <div className="inv-footer-block" style={{ marginBottom: '15px' }}>
-              <h4 className="inv-section-label">{t('hc_exchangeRate')}</h4>
-              <p className="inv-terms">{formatExchangeRateLine(currencySymbol, options.exchangeRate, profile?.country === 'India' || !profile?.country ? 'INR' : sellerCC.currency)}</p>
-            </div>
-          )}
-          <div style={{ fontFamily: 'inherit', fontSize: '0.875rem', fontWeight: 700, color: accent }}>
-            {profile?.primaryDataLanguage === 'Tamil' || !profile?.primaryDataLanguage ? 'நன்றி' : 'Thank You'}
-          </div>
-        </div>
-        {showSignature && (
-          <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', minWidth: '220px', paddingRight: '0.5rem' }}>
-
-            <div style={{ color: accent, position: 'relative', zIndex: 10, fontSize: '1.05rem', fontWeight: 700, marginBottom: '5px' }}>
-              {getDynamicField(profile, 'niruvanathinPeyar', profile, false) || getDynamicField(profile, 'niruvanathinPeyar', profile, true) || 'Your Business'}
-            </div>
-            <div style={{ position: 'relative', height: '55px', width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
-              {profile?.signature && (
-                <img crossOrigin={profile.signature?.startsWith('http') ? 'anonymous' : undefined} src={profile.signature} alt="Signature" height={95} style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: '-10px', maxHeight: '95px', maxWidth: '200px', objectFit: 'contain', pointerEvents: 'none' }} />
-              )}
-            </div>
-            {showSignatoryText && (
-              <div style={{ position: 'relative', zIndex: 10, fontSize: '0.75rem', fontWeight: 600, color: '#555', marginTop: '5px' }}>
-                {profile?.authorizedSignatoryName ? `(${profile.authorizedSignatoryName})` : (profile?.primaryDataLanguage === 'Tamil' || !profile?.primaryDataLanguage ? '(கையொப்பம்)' : '(Authorized Signatory)')}
+            )}
+            {options.exchangeRate && currencySymbol !== 'INR' && (
+              <div className="inv-footer-block" style={{ marginBottom: '15px' }}>
+                <h4 className="inv-section-label">{t('hc_exchangeRate')}</h4>
+                <p className="inv-terms">{formatExchangeRateLine(currencySymbol, options.exchangeRate, profile?.country === 'India' || !profile?.country ? 'INR' : sellerCC.currency)}</p>
               </div>
             )}
           </div>
-        )}
+
+          {/* Right: Business Name & Image */}
+          {showSignature && (
+            <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', minWidth: '220px' }}>
+              <div style={{ color: accent, position: 'relative', zIndex: 10, fontSize: '1.05rem', fontWeight: 700, marginBottom: '5px', lineHeight: 1 }}>
+                {getDynamicField(profile, 'niruvanathinPeyar', profile, false) || getDynamicField(profile, 'niruvanathinPeyar', profile, true) || 'Your Business'}
+              </div>
+              <div style={{ position: 'relative', height: '55px', width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
+                {profile?.signature && (
+                  <img crossOrigin={profile.signature?.startsWith('http') ? 'anonymous' : undefined} src={profile.signature} alt="Signature" style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: '-10px', maxHeight: '95px', maxWidth: '200px', objectFit: 'contain', pointerEvents: 'none' }} />
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Bottom Row: Nandri & Signatory Text */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '10px' }}>
+          <div style={{ fontFamily: 'inherit', fontSize: '0.85rem', fontWeight: 700, color: accent, lineHeight: 1 }}>
+            {profile?.primaryDataLanguage === 'Tamil' || !profile?.primaryDataLanguage ? 'நன்றி' : 'Thank You'}
+          </div>
+          
+          {showSignature && (
+            <div style={{ minWidth: '220px', textAlign: 'right' }}>
+              {showSignatoryText && (
+                <div style={{ position: 'relative', zIndex: 10, fontSize: '0.75rem', fontWeight: 600, color: '#555', lineHeight: 1 }}>
+                  {profile?.authorizedSignatoryName ? `(${profile.authorizedSignatoryName})` : (profile?.primaryDataLanguage === 'Tamil' || !profile?.primaryDataLanguage ? '(கையொப்பம்)' : '(Authorized Signatory)')}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Contact Section */}
@@ -812,7 +827,7 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
         const phone = phoneArr.map(p => p.trim()).filter(Boolean);
 
         return (
-          <div className="inv-contact-block" style={{ marginTop: 'auto', padding: '10px 2.5rem 14px 2.5rem', background: accent ? `${accent}15` : '#e8f5e9', marginBottom: 0 }}>
+          <div className="inv-contact-block" style={{ marginTop: 'auto', padding: '10px 1.5rem 14px 1.5rem', background: accent ? `${accent}15` : '#e8f5e9', marginBottom: 0 }}>
             <div style={{ padding: '0 0.5rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>

@@ -207,7 +207,7 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
           <style>
             @media print {
               @page { size: A4; margin: 0; }
-              html { font-size: 13.5px !important; }
+              html { font-size: 16px !important; }
               body, html { background-color: white !important; margin: 0; padding: 0; }
               .invoice-paper, .a4-paper { box-shadow: none !important; margin: 0 !important; border: none !important; width: 100% !important; }
               .no-print { display: none !important; }

@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import fs from 'fs'
 import path from 'path'
 
@@ -23,6 +24,10 @@ export default defineConfig(({ command }) => ({
         return html.replace(/<meta\s+http-equiv="Content-Security-Policy"[^>]*\/?>/, '');
       },
     },
+    nodePolyfills({
+      include: ['stream', 'util', 'buffer'],
+      globals: { Buffer: true, global: true, process: true },
+    }),
     react(),
     VitePWA({
       registerType: 'autoUpdate',
