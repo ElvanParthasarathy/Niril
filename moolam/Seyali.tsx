@@ -60,7 +60,7 @@ function ResponsiveDialog({ open, onClose, children, maxWidth = 'sm' }: any) {
 function DevLanguageSwitcher({ profile, setProfile, language, setLanguage }: any) {
   const { t } = useLanguage();
   const [devOpen, setDevOpen] = useState(false);
-  const LANGS = ['Tamil', 'English', 'Hindi', 'Telugu', 'Kannada', 'Malayalam', 'Marathi', 'Gujarati', 'Bengali'];
+  const LANGS = ['Tamil', 'English']; // Archived: 'Hindi', 'Telugu', 'Kannada', 'Malayalam', 'Marathi', 'Gujarati', 'Bengali'
 
   if (!profile) return null;
 

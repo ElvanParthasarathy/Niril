@@ -35,22 +35,7 @@ import {
   List, ListItem, ListItemText, ListItemSecondaryAction, Tabs, Tab
 } from '@mui/material';
 
-const ACCENT_PRESETS = [
-  { color: '#1e40af', label: 'Blue' },
-  { color: '#7c3aed', label: 'Purple' },
-  { color: '#0f766e', label: 'Teal' },
-  { color: '#be123c', label: 'Red' },
-  { color: '#c2410c', label: 'Orange' },
-  { color: '#15803d', label: 'Green' },
-  { color: '#0369a1', label: 'Sky' },
-  { color: '#1e293b', label: 'Dark' },
-];
 
-const PDF_STYLES = [
-  { id: 'classic', label: 'Classic', desc: 'Clean with top accent bar' },
-  { id: 'modern', label: 'Modern', desc: 'Bold header with color block' },
-  { id: 'minimal', label: 'Minimal', desc: 'Simple, borderless layout' },
-];
 
 export default function Amaippugal({ onSaved }) {
   const { language, setLanguage, t } = useLanguage();
@@ -583,6 +568,10 @@ export default function Amaippugal({ onSaved }) {
                 </Grid>
               )}
 
+              <Grid size={{ xs: 12, sm: 12 }}>
+                <TextField disabled={!isEditingCompany} fullWidth size="small" label={language === 'ta' ? 'குறுகிய வணிக பெயர் (பில் எண்ணுக்கு)' : 'Short Business Name (for Bill No)'} name="shortBusinessName" value={profile.shortBusinessName || ''} onChange={handleChange} placeholder="e.g. SJS" helperText={language === 'ta' ? 'இது தானியங்கி பில் எண்ணில் முன்னொட்டாக பயன்படுத்தப்படும் (உதாரணமாக SJS/2026-27/0001).' : 'Used as the default prefix for your invoice numbers (e.g. SJS/2026-27/0001).'} />
+              </Grid>
+
               <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
                 <TextField disabled={!isEditingCompany} fullWidth multiline rows={2} size="small" label={`${t('mugavariLabel')} (${profile.primaryDataLanguage || 'Tamil'})`} name="mugavari" value={profile.mugavari} onChange={handleChange} />
               </Grid>
@@ -787,13 +776,30 @@ export default function Amaippugal({ onSaved }) {
               {profile.wideLogo ? (
                 <>
                   <Box sx={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center' }}>
-                    <img src={profile.wideLogo} alt="Wide Logo" style={{ maxHeight: '100px', maxWidth: '100%', objectFit: 'contain' }} />
+                    <img src={profile.wideLogo} alt="Wide Logo" style={{ height: '100px', width: '100%', objectFit: 'contain' }} />
                     <IconButton size="small" color="error" onClick={() => removeImage('wideLogo')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
                       <Delete sx={{ fontSize: 14 }} />
                     </IconButton>
                   </Box>
 
-                  <Button size="small" variant="outlined" onClick={() => wideLogoInputRef.current?.click()}>Change Logo</Button>
+                  <Box sx={{ width: '100%', mt: 2, p: 1.5, bgcolor: '#f8fafc', borderRadius: 1, border: '1px solid #e2e8f0' }}>
+                    <Typography variant="caption" sx={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600, color: '#475569' }}>
+                      Logo Size <span>{profile.wideLogoScale || 1}x</span>
+                    </Typography>
+                    <input type="range" min="0.3" max="3" step="0.05" value={profile.wideLogoScale || 1} onChange={(e) => setProfile({ ...profile, wideLogoScale: parseFloat(e.target.value) })} style={{ width: '100%', marginBottom: '8px' }} />
+                    
+                    <Typography variant="caption" sx={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600, color: '#475569' }}>
+                      Move Left / Right <span>{profile.wideLogoX || 0}px</span>
+                    </Typography>
+                    <input type="range" min="-200" max="200" step="1" value={profile.wideLogoX || 0} onChange={(e) => setProfile({ ...profile, wideLogoX: parseInt(e.target.value) })} style={{ width: '100%', marginBottom: '8px' }} />
+                    
+                    <Typography variant="caption" sx={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600, color: '#475569' }}>
+                      Move Up / Down <span>{profile.wideLogoY || 0}px</span>
+                    </Typography>
+                    <input type="range" min="-200" max="200" step="1" value={profile.wideLogoY || 0} onChange={(e) => setProfile({ ...profile, wideLogoY: parseInt(e.target.value) })} style={{ width: '100%' }} />
+                  </Box>
+
+                  <Button size="small" variant="outlined" sx={{ mt: 1 }} onClick={() => wideLogoInputRef.current?.click()}>Change Logo</Button>
                 </>
               ) : (
                 <Button variant="outlined" onClick={() => wideLogoInputRef.current?.click()} startIcon={<Image sx={{ fontSize: 20 }} />} sx={{ flexDirection: 'column', py: 3, gap: 1, height: '100%', width: '100%' }}>
@@ -825,6 +831,7 @@ export default function Amaippugal({ onSaved }) {
               )}
               <input ref={sigInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('signature', e)} />
             </Paper>
+            <TextField fullWidth size="small" sx={{ mt: 2 }} label={language === 'ta' ? 'அங்கீகரிக்கப்பட்ட கையொப்பத்தின் பெயர்' : 'Authorized Signatory Name'} name="authorizedSignatoryName" value={profile.authorizedSignatoryName || ''} onChange={handleChange} placeholder="e.g. V.R.M. Elvan" />
           </Grid>
         </Grid>
 \n        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end' }}>
@@ -1013,6 +1020,7 @@ export default function Amaippugal({ onSaved }) {
                 <Select MenuProps={{ disableScrollLock: true }} name="primaryDataLanguage" value={profile.primaryDataLanguage || 'Tamil'} onChange={handleChange} label={language === 'ta' ? 'முதன்மை மொழி' : 'Primary Language'}>
                   <MenuItem value="Tamil">{t('langTamil')}</MenuItem>
                   <MenuItem value="English">{t('langEnglish')}</MenuItem>
+                  {/* Archived Languages:
                   <MenuItem value="Hindi">{t('langHindi')}</MenuItem>
                   <MenuItem value="Telugu">{t('langTelugu')}</MenuItem>
                   <MenuItem value="Kannada">{t('langKannada')}</MenuItem>
@@ -1020,6 +1028,7 @@ export default function Amaippugal({ onSaved }) {
                   <MenuItem value="Marathi">{t('langMarathi')}</MenuItem>
                   <MenuItem value="Gujarati">{t('langGujarati')}</MenuItem>
                   <MenuItem value="Bengali">{t('langBengali')}</MenuItem>
+                  */}
                 </Select>
               </FormControl>
             )}
@@ -1036,6 +1045,7 @@ export default function Amaippugal({ onSaved }) {
                 <Select MenuProps={{ disableScrollLock: true }} name="secondaryDataLanguage" value={profile.secondaryDataLanguage || 'English'} onChange={handleChange} label={language === 'ta' ? 'இரண்டாம் மொழி' : 'Secondary Language'}>
                   <MenuItem value="English">{t('langEnglish')}</MenuItem>
                   <MenuItem value="Tamil">{t('langTamil')}</MenuItem>
+                  {/* Archived Languages:
                   <MenuItem value="Hindi">{t('langHindi')}</MenuItem>
                   <MenuItem value="Telugu">{t('langTelugu')}</MenuItem>
                   <MenuItem value="Kannada">{t('langKannada')}</MenuItem>
@@ -1043,6 +1053,7 @@ export default function Amaippugal({ onSaved }) {
                   <MenuItem value="Marathi">{t('langMarathi')}</MenuItem>
                   <MenuItem value="Gujarati">{t('langGujarati')}</MenuItem>
                   <MenuItem value="Bengali">{t('langBengali')}</MenuItem>
+                  */}
                 </Select>
               </FormControl>
             )}
@@ -1073,304 +1084,38 @@ export default function Amaippugal({ onSaved }) {
 </Box>); title = "Display & Languages"; }
     else if (currentView === 2) { content = (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
       <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
-        {/* ---- Payment Accounts ---- */}
-        {(() => {
-          const bankCC = getCountryConfig(profile.country);
-          const isIndia = (profile.country || 'India') === 'India';
-          const accounts = (profile.paymentAccounts || []).filter(a => a && a.id !== 'legacy');
-          const hasLegacyFlat = !accounts.length && (profile.vangiPeyar || profile.kanakkuEn || profile.ifsc || profile.swift || profile.upiId);
-          return (
-            <Box sx={{ mt: 4 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                <Box>
-                  <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ m: 0 }}>
-                    {t('paymentAccountsTitle')}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                    Multiple bank / UPI accounts per profile. Pick one per invoice in the Customize panel.
-                    The ⭐ default account is preselected on new invoices.
-                  </Typography>
-                </Box>
-                <Button variant="contained" onClick={openAddAccount} startIcon={<Add sx={{ fontSize: 16 }} />}>
-                  Add account
-                </Button>
-              </Box>
-
-              {/* Migration banner */}
-              {hasLegacyFlat && (
-                <Paper className="s2-group" elevation={0} sx={{ p: 2, mb: 2, bgcolor: 'warning.light', color: 'warning.contrastText', display: 'flex', gap: 2 }}>
-                  <Typography variant="h6">📋</Typography>
-                  <Box sx={{ flex: 1 }}>
-                    <Typography variant="body2" style={{ fontWeight: 'bold' }}>Your existing bank details are still on this profile.</Typography>
-                    <Typography variant="body2">Click below to import them as the first Payment Account, then add more.</Typography>
-                    <Button variant="contained" color="inherit" size="small" onClick={importLegacyAsAccount} sx={{ mt: 1, color: 'text.primary' }}>
-                      Import &amp; continue →
-                    </Button>
-                  </Box>
-                </Paper>
-              )}
-
-              {/* Empty state */}
-              {accounts.length === 0 && !hasLegacyFlat && (
-                <Paper className="s2-group" variant="outlined" sx={{ p: 3, textAlign: 'center', mb: 2, bgcolor: 'action.hover' }}>
-                  <Typography variant="body2" color="text.secondary">
-                    No payment accounts yet. Add the first one — it's auto-marked ⭐ Primary.
-                  </Typography>
-                </Paper>
-              )}
-
-              {/* Account list */}
-              {accounts.length > 0 && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, mb: 2 }}>
-                  {accounts.map((a, idx) => (
-                    <Paper className="s2-group" key={a.id} variant="outlined" sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1.5, flexWrap: 'wrap', opacity: a.isActive === false ? 0.55 : 1, bgcolor: 'background.paper' }}>
-                      <Box sx={{ flex: 1, minWidth: 220 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-                          {a.isDefault && <Typography title="Default account" sx={{ fontSize: '1rem' }}>⭐</Typography>}
-                          <Typography variant="subtitle2" style={{ fontWeight: 'bold' }}>{a.label || a.vangiPeyar || 'Untitled account'}</Typography>
-                          {a.isActive === false && <Chip label="Inactive" size="small" variant="outlined" />}
-                        </Box>
-                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.5, lineHeight: 1.5 }}>
-                          {a.vangiPeyar && <span>{a.vangiPeyar} · </span>}
-                          {a.kanakkuEn && <span>A/C {maskkanakkuEn(a.kanakkuEn)} · </span>}
-                          {a.ifsc && <span>{bankCC.bankLabel || 'IFSC'} {a.ifsc}</span>}
-                          {a.swift && <span> · SWIFT {a.swift}</span>}
-                          {a.upiId && <span> · 📱 {a.upiId}</span>}
-                        </Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                        {!a.isDefault && (
-                          <IconButton size="small" onClick={() => markDefault(a)} title="Set as default"><Typography>⭐</Typography></IconButton>
-                        )}
-                        <IconButton size="small" onClick={() => moveAccountIdx(idx, -1)} disabled={idx === 0} title="Move up"><KeyboardArrowUp sx={{ fontSize: 18 }} /></IconButton>
-                        <IconButton size="small" onClick={() => moveAccountIdx(idx, 1)} disabled={idx === accounts.length - 1} title="Move down"><KeyboardArrowDown sx={{ fontSize: 18 }} /></IconButton>
-                        <IconButton size="small" onClick={() => toggleAccountActive(a)} title={a.isActive === false ? 'Activate' : 'Deactivate'}>
-                          <Typography variant="body2" style={{ fontWeight: 'bold' }}>{a.isActive === false ? '✓' : '∅'}</Typography>
-                        </IconButton>
-                        <IconButton size="small" color="primary" onClick={() => openEditAccount(a)} title="Edit"><Edit sx={{ fontSize: 16 }} /></IconButton>
-                        <IconButton size="small" color="error" onClick={() => removeAccount(a)} title="Delete"><Delete sx={{ fontSize: 16 }} /></IconButton>
-                      </Box>
-                    </Paper>
-                  ))}
-                </Box>
-              )}
-
-              {/* PAN Number */}
-              {isIndia && (
-                <Box sx={{ mt: 2, maxWidth: 300 }}>
-                  <TextField fullWidth size="small" label="PAN Number (business-level)" name="pan" value={profile.pan || ''} onChange={handleChange} placeholder="e.g. AAAAA1234A" slotProps={{ htmlInput: { maxLength: 10 } }} />
-                </Box>
-              )}
-
-              {/* Add/Edit modal */}
-              <Dialog open={!!editingAccount} onClose={cancelAccount} maxWidth="sm" fullWidth>
-                <DialogTitle>{getPaymentAccounts(profile).some(a => a.id === editingAccount?.id) ? 'Edit account' : 'Add account'}</DialogTitle>
-                <DialogContent dividers>
-                  {editingAccount && (
-                    <Grid container spacing={3} sx={{ pt: 1 }}>
-                      <Grid size={{ xs: 12 }}>
-                        <TextField fullWidth size="small" label="Label (shown in the dropdown)" value={editingAccount.label || ''} onChange={e => setEditingAccount(a => ({ ...a, label: e.target.value }))} placeholder="e.g. HDFC Current — 1234" />
-                      </Grid>
-                      <Grid size={{ xs: 12, sm: 6 }}>
-                        <TextField fullWidth size="small" label="Bank Name" value={editingAccount.vangiPeyar || ''} onChange={e => setEditingAccount(a => ({ ...a, vangiPeyar: e.target.value }))} />
-                      </Grid>
-                      <Grid size={{ xs: 12, sm: 6 }}>
-                        <TextField fullWidth size="small" label={`Account Number ${!isIndia ? '/ IBAN' : ''}`} value={editingAccount.kanakkuEn || ''} onChange={e => setEditingAccount(a => ({ ...a, kanakkuEn: e.target.value }))} />
-                      </Grid>
-                      <Grid size={{ xs: 12, sm: 6 }}>
-                        <TextField fullWidth size="small" label={bankCC.bankLabel || 'IFSC Code'} value={editingAccount.ifsc || ''} onChange={e => setEditingAccount(a => ({ ...a, ifsc: e.target.value }))} placeholder={bankCC.bankLabel} />
-                      </Grid>
-                      <Grid size={{ xs: 12, sm: 6 }}>
-                        <TextField fullWidth size="small" label="SWIFT / BIC (optional)" value={editingAccount.swift || ''} onChange={e => setEditingAccount(a => ({ ...a, swift: e.target.value }))} placeholder="e.g. HDFCINBB" />
-                      </Grid>
-                      <Grid size={{ xs: 12 }}>
-                        <TextField fullWidth size="small" label="UPI ID (optional — drives the QR for this account)" value={editingAccount.upiId || ''} 
-                          onChange={e => { setEditingAccount(a => ({ ...a, upiId: e.target.value })); if (accountUpiWarning) setAccountUpiWarning(''); }}
-                          onBlur={() => {
-                            const v = (editingAccount.upiId || '').trim();
-                            setAccountUpiWarning(v && !isValidUpiId(v) ? "Doesn't look like a UPI ID. Expected like merchant@hdfcbank or 9876543210@paytm." : '');
-                          }}
-                          placeholder="e.g. yourbusiness@hdfcbank"
-                          error={!!accountUpiWarning}
-                          helperText={accountUpiWarning}
-                        />
-                      </Grid>
-                      <Grid size={{ xs: 12 }}>
-                        <TextField fullWidth multiline rows={2} size="small" label="Internal notes (not printed on the PDF)" value={editingAccount.notes || ''} onChange={e => setEditingAccount(a => ({ ...a, notes: e.target.value }))} placeholder="e.g. Use for export clients only" />
-                      </Grid>
-                      <Grid size={{ xs: 12 }}>
-                        <FormControlLabel
-                          control={
-                            <Checkbox 
-                              checked={!!editingAccount.isDefault} 
-                              onChange={e => setEditingAccount(a => ({ ...a, isDefault: e.target.checked }))} 
-                            />
-                          }
-                          label={
-                            <Typography variant="body2">
-                              <strong>⭐ Set as default account</strong> — preselected on every new invoice
-                            </Typography>
-                          }
-                        />
-                      </Grid>
-                    </Grid>
-                  )}
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={cancelAccount} color="inherit">{t('cancel')}</Button>
-                  <Button onClick={saveAccountForm} variant="contained" startIcon={<Save sx={{ fontSize: 16 }} />}>
-                    Save account
-                  </Button>
-                </DialogActions>
-              </Dialog>
-            </Box>
-          );
-        })()}
-      </Paper>
-
-
-      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
-        {/* Invoice Number Format */}
-        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 4, display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Tag sx={{ fontSize: 18 }} /> {t('invoiceNumberFormatTitle')}
+        {/* ---- Bank Details (Simple — same as Coolie) ---- */}
+        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ m: 0 }}>
+          {t('paymentAccountsTitle')}
         </Typography>
-        <Paper className="s2-group" variant="outlined" sx={{ p: 2, mb: 3, bgcolor: 'background.default' }}>
-          <Typography variant="body2" color="text.secondary" gutterBottom>Preview:</Typography>
-          <Typography variant="h6" sx={{ fontFamily: 'monospace', color: 'primary.main', m: 0 }}>{getInvNumPreview()}</Typography>
-        </Paper>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 3 }}>
+          {language === 'ta' ? 'பில்களில் காட்டப்படும் வங்கி விவரங்கள்.' : 'Bank details shown on your invoices.'}
+        </Typography>
         <Grid container spacing={3}>
-          <Grid size={{ xs: 12 }}>
-            <Typography variant="subtitle2" gutterBottom>Format Style</Typography>
-            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-              {[
-                { id: 'branded', label: 'Branded Sequential', desc: 'PREFIX/2026-27/0001' },
-                { id: 'sequential', label: 'Simple Sequential', desc: 'PREFIX/0001' },
-                { id: 'random', label: 'Random', desc: 'PREFIX/A3X9K2' },
-              ].map(f => (
-                <Button key={f.id} variant={invNumSettings.format === f.id ? 'contained' : 'outlined'} size="small"
-                  onClick={() => {
-                    const updates: any = { format: f.id };
-                    if (f.id === 'sequential') updates.showFinYear = false;
-                    if (f.id === 'branded') updates.showFinYear = true;
-                    setInvNumSettings(prev => ({ ...prev, ...updates }));
-                  }}>
-                  {f.label}
-                </Button>
-              ))}
-            </Box>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField fullWidth size="small" label={language === 'ta' ? 'வங்கி பெயர் (தமிழ்)' : 'Bank Name (Tamil)'} name="vangiPeyar" value={profile.vangiPeyar || ''} onChange={handleChange} />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth size="small" label="Brand Prefix" value={invNumSettings.brandPrefix} onChange={e => handleInvNumChange('brandPrefix', e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))} placeholder="e.g. ACME, BK" slotProps={{ htmlInput: { maxLength: 10 } }} helperText="Your brand name or abbreviation. Leave empty to use default type prefix (INV, EST, CN, BOS)." />
+            <TextField fullWidth size="small" label={language === 'ta' ? 'வங்கி பெயர் (ஆங்கிலம்)' : 'Bank Name (English)'} name="vangiPeyarEn" value={profile.vangiPeyarEn || ''} onChange={handleChange} />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <Typography variant="subtitle2" gutterBottom>Separator</Typography>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              {['/', '-', '#'].map(sep => (
-                <Button key={sep} variant={invNumSettings.separator === sep ? 'contained' : 'outlined'} size="small" sx={{ minWidth: 44, fontFamily: 'monospace', fontWeight: 700 }} onClick={() => handleInvNumChange('separator', sep)}>
-                  {sep}
-                </Button>
-              ))}
-            </Box>
+            <TextField fullWidth size="small" label={language === 'ta' ? 'கிளை பெயர் (தமிழ்)' : 'Branch Name (Tamil)'} name="bankBranch" value={profile.bankBranch || ''} onChange={handleChange} />
           </Grid>
-          {invNumSettings.format !== 'random' && (
-            <>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Typography variant="subtitle2" gutterBottom>{t('includeFinancialYear')}</Typography>
-                <Box sx={{ display: 'flex', gap: 1 }}>
-                  <Button variant={invNumSettings.showFinYear ? 'contained' : 'outlined'} size="small" onClick={() => handleInvNumChange('showFinYear', true)}>{t('yesFinYear')}</Button>
-                  <Button variant={!invNumSettings.showFinYear ? 'contained' : 'outlined'} size="small" onClick={() => handleInvNumChange('showFinYear', false)}>{t('no')}</Button>
-                </Box>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <FormControl fullWidth size="small">
-                  <InputLabel>{t('numberPadding')}</InputLabel>
-                  <Select MenuProps={{ disableScrollLock: true }} value={invNumSettings.padDigits} onChange={e => handleInvNumChange('padDigits', Number(e.target.value))} label={t('numberPadding')}>
-                    <MenuItem value={3}>{t('digits3')}</MenuItem>
-                    <MenuItem value={4}>{t('digits4')}</MenuItem>
-                    <MenuItem value={5}>{t('digits5')}</MenuItem>
-                    <MenuItem value={6}>{t('digits6')}</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-            </>
-          )}
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField fullWidth size="small" label={language === 'ta' ? 'கிளை பெயர் (ஆங்கிலம்)' : 'Branch Name (English)'} name="bankBranchEn" value={profile.bankBranchEn || ''} onChange={handleChange} />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField fullWidth size="small" label={language === 'ta' ? 'கணக்கு எண்' : 'Account Number'} name="kanakkuEn" value={profile.kanakkuEn || ''} onChange={handleChange} />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField fullWidth size="small" label="IFSC Code" name="ifsc" value={profile.ifsc || ''} onChange={handleChange} />
+          </Grid>
         </Grid>
-        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-          <Button variant="contained" onClick={handleSaveInvNumSettings} disabled={invNumSaving} startIcon={<Save sx={{ fontSize: 16 }} />}>
-            {invNumSaving ? t('saving') : t('saveNumberFormat')}
+        <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+          <Button type="button" variant="contained" color="primary" onClick={handleSave} disabled={saving} startIcon={<Save sx={{ fontSize: 18 }} />}>
+            {saving ? t('saving') : t('saveProfile')}
           </Button>
         </Box>
-\n\n        {/* Receipt Number Format */}
-        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 4, display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Tag sx={{ fontSize: 18 }} /> Receipt Number Format
-        </Typography>
-        <Paper className="s2-group" variant="outlined" sx={{ p: 2, mb: 3, bgcolor: 'background.default' }}>
-          <Typography variant="body2" color="text.secondary" gutterBottom>Preview:</Typography>
-          <Typography variant="h6" sx={{ fontFamily: 'monospace', color: 'primary.main', m: 0 }}>{getRcpNumPreview()}</Typography>
-        </Paper>
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12 }}>
-            <Typography variant="subtitle2" gutterBottom>Format Style</Typography>
-            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-              {[
-                { id: 'branded', label: 'Branded Sequential', desc: 'PREFIX/2026-27/0001' },
-                { id: 'sequential', label: 'Simple Sequential', desc: 'PREFIX/0001' },
-                { id: 'random', label: 'Random', desc: 'PREFIX/A3X9K2' },
-              ].map(f => (
-                <Button key={f.id} variant={rcpNumSettings.format === f.id ? 'contained' : 'outlined'} size="small"
-                  onClick={() => {
-                    const updates: any = { format: f.id };
-                    if (f.id === 'sequential') updates.showFinYear = false;
-                    if (f.id === 'branded') updates.showFinYear = true;
-                    setRcpNumSettings(prev => ({ ...prev, ...updates }));
-                  }}>
-                  {f.label}
-                </Button>
-              ))}
-            </Box>
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth size="small" label="Prefix" value={rcpNumSettings.brandPrefix} onChange={e => handleRcpNumChange('brandPrefix', e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ''))} placeholder="e.g. RCP, R" slotProps={{ htmlInput: { maxLength: 10 } }} helperText="Your receipt prefix. Leave empty to use default (RCP)." />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <Typography variant="subtitle2" gutterBottom>Separator</Typography>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              {['/', '-', '#'].map(sep => (
-                <Button key={sep} variant={rcpNumSettings.separator === sep ? 'contained' : 'outlined'} size="small" sx={{ minWidth: 44, fontFamily: 'monospace', fontWeight: 700 }} onClick={() => handleRcpNumChange('separator', sep)}>
-                  {sep}
-                </Button>
-              ))}
-            </Box>
-          </Grid>
-          {rcpNumSettings.format !== 'random' && (
-            <>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Typography variant="subtitle2" gutterBottom>{t('includeFinancialYear')}</Typography>
-                <Box sx={{ display: 'flex', gap: 1 }}>
-                  <Button variant={rcpNumSettings.showFinYear ? 'contained' : 'outlined'} size="small" onClick={() => handleRcpNumChange('showFinYear', true)}>{t('yesFinYear')}</Button>
-                  <Button variant={!rcpNumSettings.showFinYear ? 'contained' : 'outlined'} size="small" onClick={() => handleRcpNumChange('showFinYear', false)}>{t('no')}</Button>
-                </Box>
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <FormControl fullWidth size="small">
-                  <InputLabel>{t('numberPadding')}</InputLabel>
-                  <Select MenuProps={{ disableScrollLock: true }} value={rcpNumSettings.padDigits} onChange={e => handleRcpNumChange('padDigits', Number(e.target.value))} label={t('numberPadding')}>
-                    <MenuItem value={3}>{t('digits3')}</MenuItem>
-                    <MenuItem value={4}>{t('digits4')}</MenuItem>
-                    <MenuItem value={5}>{t('digits5')}</MenuItem>
-                    <MenuItem value={6}>{t('digits6')}</MenuItem>
-                  </Select>
-                </FormControl>
-              </Grid>
-            </>
-          )}
-        </Grid>
-        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-          <Button variant="contained" onClick={handleSaveRcpNumSettings} disabled={rcpNumSaving} startIcon={<Save sx={{ fontSize: 16 }} />}>
-            {rcpNumSaving ? t('saving') : t('saveNumberFormat')}
-          </Button>
-        </Box>
-
       </Paper>
 
       {/* ---- Invoice Terms & Conditions ---- */}
@@ -1435,40 +1180,6 @@ export default function Amaippugal({ onSaved }) {
         </Grid>
         )}
         
-        <Grid container spacing={3} sx={{ mb: 3 }}>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Typography variant="body2" gutterBottom sx={{ fontWeight: 600 }}>{t('hc_pdfStyle')}</Typography>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              {PDF_STYLES.map(s => (
-                <Chip key={s.id} 
-                  label={s.label} 
-                  color={(invoiceTemplate.pdfStyle || 'classic') === s.id ? "primary" : "default"} 
-                  variant={(invoiceTemplate.pdfStyle || 'classic') === s.id ? "filled" : "outlined"} 
-                  onClick={() => handleTemplateChange('pdfStyle', s.id)} 
-                  clickable 
-                  title={s.desc} 
-                />
-              ))}
-            </Box>
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Typography variant="body2" gutterBottom sx={{ fontWeight: 600 }}>{t('hc_accentColor')}</Typography>
-            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
-              <Box component="button" type="button" title="Auto (match invoice type)"
-                sx={{ width: 28, height: 28, borderRadius: '50%', border: !invoiceTemplate.accentColor ? '2.5px solid #334155' : '2px solid #cbd5e1', background: 'conic-gradient(#1e40af, #7c3aed, #0f766e, #be123c, #1e40af)', cursor: 'pointer', position: 'relative' }}
-                onClick={() => handleTemplateChange('accentColor', '')}>
-                {!invoiceTemplate.accentColor && <Box component="span" sx={{ position: 'absolute', inset: '3px', borderRadius: '50%', border: '2px solid white' }} />}
-              </Box>
-              {ACCENT_PRESETS.map(p => (
-                <Box key={p.color} component="button" type="button" title={p.label}
-                  sx={{ width: 28, height: 28, borderRadius: '50%', backgroundColor: p.color, border: invoiceTemplate.accentColor === p.color ? '2.5px solid #334155' : '2px solid #cbd5e1', cursor: 'pointer', position: 'relative' }}
-                  onClick={() => handleTemplateChange('accentColor', p.color)}>
-                  {invoiceTemplate.accentColor === p.color && <Box component="span" sx={{ position: 'absolute', inset: '3px', borderRadius: '50%', border: '2px solid white' }} />}
-                </Box>
-              ))}
-            </Box>
-          </Grid>
-        </Grid>
 
         <Grid container spacing={3}>
           {[

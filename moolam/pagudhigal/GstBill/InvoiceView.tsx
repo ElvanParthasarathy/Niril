@@ -1,10 +1,11 @@
 // @ts-nocheck
-import { ArrowLeft, PencilSimple, DownloadSimple, ShareNetwork, Printer as PrintIcon, Copy, DotsThreeVertical } from '@phosphor-icons/react';
+import { ArrowLeft, PencilSimple, DownloadSimple, ShareNetwork, Printer as PrintIcon, Copy, DotsThreeVertical, SlidersHorizontal } from '@phosphor-icons/react';
 import { useRef, useState } from 'react';
 import { FloatingBackButton } from '../FloatingBackButton';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import InvoicePreview from './InvoicePreview';
+import SjsTheme from './SjsTheme';
 import { thagaval } from '../Thagaval';
 import { useLanguage } from '../../mozhi/LanguageContext';
 import { formatCurrency, INVOICE_TYPES } from '../../Payanpadu';
@@ -79,7 +80,7 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
       onclone: (clonedDoc) => {
         clonedDoc.querySelectorAll('*').forEach(n => { n.style.letterSpacing = '0px'; n.style.wordSpacing = '0px'; });
         const inv = clonedDoc.getElementById('invoice-preview');
-        if (inv) { inv.style.width = '210mm'; inv.style.overflow = 'visible'; inv.style.minHeight = 'unset'; inv.style.border = 'none'; inv.style.boxShadow = 'none'; inv.style.borderRadius = '0'; }
+        if (inv) { inv.style.width = '210mm'; inv.style.overflow = 'visible'; inv.style.minHeight = '297mm'; inv.style.border = 'none'; inv.style.boxShadow = 'none'; inv.style.borderRadius = '0'; }
         clonedDoc.querySelectorAll('[data-pdf-page]').forEach(el => el.style.display = 'none');
       }
     });
@@ -205,9 +206,17 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
           ${headContent}
           <style>
             @media print {
+              @page { size: A4; margin: 0; }
+              html { font-size: 13.5px !important; }
               body, html { background-color: white !important; margin: 0; padding: 0; }
               .invoice-paper, .a4-paper { box-shadow: none !important; margin: 0 !important; border: none !important; width: 100% !important; }
               .no-print { display: none !important; }
+              #invoice-preview { padding: 0 !important; }
+              #invoice-preview .inv-classic-header { padding-left: 1.5rem !important; padding-right: 1.5rem !important; padding-top: 1rem !important; }
+              #invoice-preview .inv-parties { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
+              #invoice-preview .unified-table-box { margin-left: 1.5rem !important; margin-right: 1.5rem !important; }
+              #invoice-preview .inv-footer { margin-left: 1.5rem !important; margin-right: 1.5rem !important; }
+              #invoice-preview .inv-contact-block { padding-left: 1.5rem !important; padding-right: 1.5rem !important; }
             }
           </style>
         </head>
@@ -249,9 +258,15 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
             mb: { xs: '-55%', sm: '-25%', md: '-10%', lg: 0 }
           }
         }}>
-          <InvoicePreview ref={printRef} profile={profile} client={client} details={details}
-            items={items} totals={totals} invoiceType={invoiceType} customTerms={customTerms}
-            options={invoiceOptions} />
+          {profile?.invoiceTheme === 'sjs' ? (
+            <SjsTheme ref={printRef} profile={profile} client={client} details={details}
+              items={items} totals={totals} invoiceType={invoiceType} customTerms={customTerms}
+              options={invoiceOptions} />
+          ) : (
+            <InvoicePreview ref={printRef} profile={profile} client={client} details={details}
+              items={items} totals={totals} invoiceType={invoiceType} customTerms={customTerms}
+              options={invoiceOptions} />
+          )}
         </Paper>
       </Box>
     </Box>

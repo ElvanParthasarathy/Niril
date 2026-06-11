@@ -129,27 +129,14 @@ export const saveInvoiceDisplayOptions = async (options) => {
 // Uses the atomic /meta/:key/increment endpoint so two concurrent saves can't both
 // read 5 and both write 6 (= duplicate invoice numbers, which is a GST audit failure).
 export const getNextInvoiceNumber = async (prefix = 'INV') => {
-  const settings = await getInvoiceNumberSettings();
+  const profile = await getProfile();
   const key = `counter_${prefix}`;
   const { value: next } = await apiFetch(`${API}/meta/${key}/increment`, { method: 'POST', body: JSON.stringify({}) });
 
-  if (settings.format === 'random') {
-    const rand = Math.random().toString(36).substring(2, 8).toUpperCase();
-    const pfx = settings.brandPrefix || prefix;
-    return `${pfx}${settings.separator}${rand}`;
-  }
+  const pfx = profile.shortBusinessName || prefix;
+  const padded = String(next).padStart(2, '0');
 
-  const sep = settings.separator || '/';
-  const pfx = settings.brandPrefix || prefix;
-  const padded = String(next).padStart(settings.padDigits || 4, '0');
-
-  if (settings.showFinYear) {
-    const currentYear = new Date().getFullYear();
-    const nextYear = (currentYear + 1).toString().slice(-2);
-    return `${pfx}${sep}${currentYear}-${nextYear}${sep}${padded}`;
-  }
-
-  return `${pfx}${sep}${padded}`;
+  return `${pfx}-${padded}`;
 };
 
 // ---- Bills ----
@@ -181,7 +168,7 @@ export const deleteBill = async (id) => {
 
 // ---- Profile ----
 export const saveProfile = async (profile) => {
-  const taggedProfile = await prepareForStorage(profile, ['niruvanathinPeyar', 'mugavari', 'oor', 'maavattam', 'maanilam', 'country', 'bankName', 'branch', 'terms']);
+  const taggedProfile = await prepareForStorage(profile, ['niruvanathinPeyar', 'shortBusinessName', 'mugavari', 'oor', 'maavattam', 'maanilam', 'country', 'bankName', 'branch', 'terms']);
   const result = await apiFetch(`${API}/profile`, { method: 'POST', body: JSON.stringify(taggedProfile) });
   window.dispatchEvent(new Event('profileUpdated'));
   return result;
@@ -190,7 +177,7 @@ export const saveProfile = async (profile) => {
 export const getProfile = async () => {
   if (isBlankState()) return {};
   const profile = await apiFetch(`${API}/profile`);
-  return restoreSingleFromStorage(profile, ['niruvanathinPeyar', 'mugavari', 'oor', 'maavattam', 'maanilam', 'country', 'bankName', 'branch', 'terms']);
+  return restoreSingleFromStorage(profile, ['niruvanathinPeyar', 'shortBusinessName', 'mugavari', 'oor', 'maavattam', 'maanilam', 'country', 'bankName', 'branch', 'terms']);
 };
 
 // ---- Saved Clients ----

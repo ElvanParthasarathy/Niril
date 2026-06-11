@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { ArrowLeft, Printer as PrintIcon, ShareNetwork, Spinner, DownloadSimple, PencilSimple, DotsThreeVertical } from '@phosphor-icons/react';
 import { FloatingBackButton } from './FloatingBackButton';
 import { jsPDF } from 'jspdf';
@@ -7,7 +7,7 @@ import { ensureToken, findOrCreateFolder, uploadPDF } from '../sevaigal/googleDr
 import { useLanguage } from '../mozhi/LanguageContext';
 import { en } from '../mozhi/en';
 import { ta } from '../mozhi/ta';
-import { formatCurrency, numberToWords, getCountryConfig, getDynamicField, getBilingualStateName } from '../Payanpadu';
+import { formatCurrency, numberToWords, getCountryConfig, getDynamicField, getBilingualStateName, getBilingualCountryName } from '../Payanpadu';
 import { Box, Paper } from '@mui/material';
 import { ViewHeader } from './ViewHeader';
 import { thagaval } from './Thagaval';
@@ -26,6 +26,8 @@ const IconMail = ({ size = 14, className = '', style = {} }) => (
     </svg>
 );
 
+import { saveProfile } from '../Avanam';
+
 export default function ReceiptView({ receipt: receiptProp, profile: profileProp, onBack, onEdit }) {
   const profile = profileProp || {};
   const receipt = receiptProp || {};
@@ -33,6 +35,30 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
   const printRef = useRef(null);
   const [sharing, setSharing] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  // Dynamic logo layout states
+  const [logoX, setLogoX] = useState(profile?.wideLogoX || 0);
+  const [logoY, setLogoY] = useState(profile?.wideLogoY || 0);
+  const [logoScale, setLogoScale] = useState(profile?.wideLogoScale || 1);
+
+  // Sync state when profile loads or updates
+  useEffect(() => {
+    if (profileProp) {
+      if (profileProp.wideLogoX !== undefined) setLogoX(profileProp.wideLogoX);
+      if (profileProp.wideLogoY !== undefined) setLogoY(profileProp.wideLogoY);
+      if (profileProp.wideLogoScale !== undefined) setLogoScale(profileProp.wideLogoScale);
+    }
+  }, [profileProp]);
+
+  const handleSaveLogoPosition = async () => {
+    try {
+      const updatedProfile = { ...profile, wideLogoX: logoX, wideLogoY: logoY, wideLogoScale: logoScale };
+      await saveProfile(updatedProfile);
+      thagaval('Logo layout saved successfully!', 'success');
+    } catch (e) {
+      thagaval('Failed to save layout', 'error');
+    }
+  };
 
   const profileCurrency = getCountryConfig(profile?.country || 'India').currency;
 
@@ -46,13 +72,20 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
 
     if (!b) return pStr || getLangStr('English', key, enDefault, taDefault);
 
-    if (pStr && sStr && pStr !== sStr) return `${pStr} / ${sStr}`;
+    if (pStr && sStr && pStr !== sStr) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <span>{pStr}</span>
+          <span style={{ fontSize: '0.6em', fontWeight: 500, opacity: 0.85, letterSpacing: '0.02em', marginTop: '-1px' }}>{sStr}</span>
+        </div>
+      );
+    }
     return pStr || sStr || '';
   };
 
   const RECEIPT_LABELS = {
-    'English': { hc_paymentReceipt: 'PAYMENT RECEIPT', receiptNoLabel: 'Receipt No:', dateLabel: 'Date:', receivedFromLabel: 'Received From:', paymentModeLabel: 'Payment Mode:', referenceNoLabel: 'Reference No:', againstInvoiceLabel: 'Against Invoice:', noteLabel: 'Note:', receivedBy: 'Received By:', authorizedSignatory: 'Authorized Signatory', phoneLabel: 'Phone:', mobileLabel: 'Mobile:' },
-    'Tamil': { hc_paymentReceipt: 'பண ரசீது', receiptNoLabel: 'ரசீது எண்:', dateLabel: 'நாள்:', receivedFromLabel: 'இவரிடமிருந்து பெறப்பட்டது:', paymentModeLabel: 'கட்டண முறை:', referenceNoLabel: 'குறிப்பு எண்:', againstInvoiceLabel: 'பில் எண்:', noteLabel: 'குறிப்பு:', receivedBy: 'பெற்றவர்', authorizedSignatory: 'அங்கீகரிக்கப்பட்ட கையொப்பம்', phoneLabel: 'தொலைபேசி:', mobileLabel: 'கைபேசி:' },
+    'English': { hc_paymentReceipt: 'Payment Receipt', receiptNoLabel: 'Receipt No:', dateLabel: 'Date:', receivedFromLabel: 'Received From:', paymentModeLabel: 'Payment Mode:', referenceNoLabel: 'Reference No:', againstInvoiceLabel: 'Against Invoice:', noteLabel: 'Note:', receivedBy: 'Received By:', authorizedSignatory: '(Authorized Signatory)', phoneLabel: 'Phone:', mobileLabel: 'Mobile:' },
+    'Tamil': { hc_paymentReceipt: 'பண ரசீது', receiptNoLabel: 'ரசீது எண்:', dateLabel: 'நாள்:', receivedFromLabel: 'இவரிடமிருந்து பெறப்பட்டது:', paymentModeLabel: 'கட்டண முறை:', referenceNoLabel: 'குறிப்பு எண்:', againstInvoiceLabel: 'பில் எண்:', noteLabel: 'குறிப்பு:', receivedBy: 'பெற்றவர்', authorizedSignatory: '(கையொப்பம்)', phoneLabel: 'தொலைபேசி:', mobileLabel: 'கைபேசி:' },
     'Hindi': { hc_paymentReceipt: 'भुगतान रसीद', receiptNoLabel: 'रसीद संख्या:', dateLabel: 'दिनांक:', receivedFromLabel: 'से प्राप्त:', paymentModeLabel: 'भुगतान का प्रकार:', referenceNoLabel: 'संदर्भ संख्या:', againstInvoiceLabel: 'बिल के विरुद्ध:', noteLabel: 'नोट:', receivedBy: 'प्राप्तकर्ता', authorizedSignatory: 'अधिकृत हस्ताक्षरकर्ता', phoneLabel: 'फ़ोन:', mobileLabel: 'मोबाइल:' },
     'Telugu': { hc_paymentReceipt: 'చెల్లింపు రసీదు', receiptNoLabel: 'రసీదు నంబర్:', dateLabel: 'తేదీ:', receivedFromLabel: 'నుండి స్వీకరించబడింది:', paymentModeLabel: 'చెల్లింపు విధానం:', referenceNoLabel: 'సూచన సంఖ్య:', againstInvoiceLabel: 'ఇన్వాయిస్‌కు వ్యతిరేకంగా:', noteLabel: 'గమనిక:', receivedBy: 'స్వీకర్త', authorizedSignatory: 'అధికారిక సంతకం', phoneLabel: 'ఫోన్:', mobileLabel: 'మొబైల్:' },
     'Kannada': { hc_paymentReceipt: 'ಪಾವತಿ ರಶೀದಿ', receiptNoLabel: 'ರಶೀದಿ ಸಂಖ್ಯೆ:', dateLabel: 'ದಿನಾಂಕ:', receivedFromLabel: 'ಇವರಿಂದ ಸ್ವೀಕರಿಸಲಾಗಿದೆ:', paymentModeLabel: 'ಪಾವತಿ ವಿಧಾನ:', referenceNoLabel: 'ಉಲ್ಲೇಖ ಸಂಖ್ಯೆ:', againstInvoiceLabel: 'ಇನ್‌ವಾಯ್ಸ್ ವಿರುದ್ಧ:', noteLabel: 'ಸೂಚನೆ:', receivedBy: 'ಸ್ವೀಕರಿಸುವವರು', authorizedSignatory: 'ಅಧಿಕೃತ ಸಹಿದಾರರು', phoneLabel: 'ಫೋನ್:', mobileLabel: 'ಮೊಬೈಲ್:' },
@@ -81,7 +114,19 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
       'Bengali': { 'Cash': 'নগদ', 'UPI': 'UPI', 'Bank Transfer': 'ব্যাঙ্ক ট্রান্সফার', 'Cheque': 'চেক', 'Card': 'কার্ড', 'Other': 'অন্য' }
     };
     const primaryLang = profile?.primaryDataLanguage || 'Tamil';
-    return (dictionaries[primaryLang] || {})[mode] || mode;
+    const secondaryLang = profile?.secondaryDataLanguage || 'English';
+    const pStr = (dictionaries[primaryLang] || {})[mode] || mode;
+    const sStr = secondaryLang === 'English' ? mode : ((dictionaries[secondaryLang] || {})[mode] || mode);
+
+    if (profile?.enableBilingual !== false && pStr !== sStr) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+          <span>{pStr}</span>
+          <span style={{ fontSize: '0.6em', fontWeight: 500, opacity: 0.85, letterSpacing: '0.02em', marginTop: '-1px' }}>{sStr}</span>
+        </div>
+      );
+    }
+    return pStr;
   };
 
   const executePrint = () => {
@@ -280,6 +325,8 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
         onBack={onBack}
       />
 
+
+
       <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4 }}>
         <Paper elevation={3} className="invoice-paper print-wrapper" sx={{ 
           p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto', bgcolor: 'white', color: 'black',
@@ -303,11 +350,14 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
           .receipt-box { width: 210mm; height: 297mm; max-height: 297mm; box-sizing: border-box; margin: 0 auto; border: 2px solid #e2e8f0; border-radius: 8px; background: white; display: flex; flex-direction: column; overflow: hidden; }
           .receipt-content { padding: 8mm 12mm; flex: 1; display: flex; flex-direction: column; }
           .receipt-header { text-align: center; margin-bottom: 2.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 1.5rem; }
+          .print-header-new { display: flex; justify-content: space-between; align-items: flex-start; position: relative; min-height: 70px; }
+          .header-left { display: flex; align-items: center; justify-content: flex-start; gap: 1rem; position: relative; }
+          .header-right { text-align: right; z-index: 5; position: relative; }
           .receipt-title { font-size: 2rem; font-weight: 800; color: #0f172a; margin: 0; }
-          .receipt-row { display: flex; justify-content: space-between; padding: 0.85rem 0; font-size: 1.1rem; border-bottom: 1px solid #f1f5f9; }
+          .receipt-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 0.85rem 0; font-size: 1.1rem; border-bottom: 1px solid #f1f5f9; }
           .receipt-label { color: #64748b; font-weight: 600; }
-          .receipt-value { color: #1e293b; font-weight: 700; text-align: right; }
-          .receipt-amount { font-size: 2rem; font-weight: 800; color: #1e40af; text-align: center; margin: 2rem 0; padding: 1.25rem; background: #eff6ff; border-radius: 8px; }
+          .receipt-value { color: #334155; font-weight: 600; text-align: right; }
+          .receipt-amount { font-size: 2rem; font-weight: 800; color: #388e3c; text-align: center; margin: 2rem 0; padding: 1.25rem; background: #e8f5e9; border-radius: 8px; }
           .receipt-words { font-size: 1.05rem; color: #334155; text-align: center; margin-bottom: 2rem; }
           .receipt-footer { display: flex; justify-content: flex-end; padding-top: 2rem; padding-bottom: 1.5rem; }
           .receipt-sig { text-align: center; }
@@ -334,19 +384,33 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
             <div className="receipt-box">
               <div className="receipt-content">
                 <div className="top-greeting-row">
-                    <span className="greeting-left" style={{ color: profile.themeColor || '#1e3a8a' }}>{(profile?.primaryDataLanguage || 'Tamil') === 'English' ? 'Vaazhga Vaiyagam' : 'வாழ்க வையகம்'}</span>
-                    <span className="greeting-center" style={{ color: profile.themeColor || '#1e3a8a' }}>உ</span>
-                    <span className="greeting-right" style={{ color: profile.themeColor || '#1e3a8a' }}>{(profile?.primaryDataLanguage || 'Tamil') === 'English' ? 'Vaazhga Valamudan' : 'வாழ்க வளமுடன்'}</span>
+                    <span className="greeting-left" style={{ color: profile.themeColor || '#388e3c' }}>{(profile?.primaryDataLanguage || 'Tamil') === 'English' ? 'Vaazhga Vaiyagam' : 'வாழ்க வையகம்'}</span>
+                    <span className="greeting-center" style={{ color: profile.themeColor || '#388e3c' }}>உ</span>
+                    <span className="greeting-right" style={{ color: profile.themeColor || '#388e3c' }}>{(profile?.primaryDataLanguage || 'Tamil') === 'English' ? 'Vaazhga Valamudan' : 'வாழ்க வளமுடன்'}</span>
                 </div>
                 <div className="print-header-new" style={{ borderBottom: '2px solid #e2e8f0', paddingBottom: '1.5rem', marginBottom: '3rem' }}>
                   <div className="header-left">
                     {profile.wideLogo ? (
-                      <img src={profile.wideLogo} alt="Wide Logo" style={{ maxHeight: '140px', maxWidth: '400px', objectFit: 'contain' }} />
+                      <img 
+                        src={profile.wideLogo} 
+                        alt="Wide Logo" 
+                        style={{ 
+                          position: 'absolute',
+                          left: 0,
+                          top: -20,
+                          height: '140px', 
+                          width: '400px', 
+                          objectFit: 'contain', 
+                          objectPosition: 'left center',
+                          transform: `translate(${logoX}px, ${logoY}px) scale(${logoScale})`,
+                          transformOrigin: 'left center'
+                        }} 
+                      />
                     ) : (
                       <>
                         {profile.logo && <img src={profile.logo} alt="Logo" style={{ maxHeight: '140px' }} />}
                         <div className="header-company-info">
-                          <div className="company-name font-display" style={{ color: profile.themeColor || '#1e3a8a' }}>
+                          <div className="company-name font-display" style={{ color: profile.themeColor || '#388e3c' }}>
                             {getDynamicField(profile, 'niruvanathinPeyar', profile, true) || 'Your Business'}
                           </div>
                           {profile?.enableBilingual !== false && getDynamicField(profile, 'niruvanathinPeyar', profile, false) && (
@@ -359,67 +423,97 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
                     )}
                   </div>
                   <div className="header-right">
-                    <div className="font-tamil" style={{ color: profile.themeColor || '#1e3a8a', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', fontWeight: 700, fontSize: '1.2rem' }}>
-                      {profile.enableBilingual !== false && getLangStr(profile?.primaryDataLanguage || 'Tamil', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது') !== getLangStr(profile?.secondaryDataLanguage || 'English', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது') ? (
+                    <div className="font-tamil" style={{ color: profile.themeColor || '#388e3c', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', fontWeight: 700, fontSize: '1.2rem' }}>
+                      {profile.enableBilingual !== false && getLangStr(profile?.primaryDataLanguage || 'Tamil', 'hc_paymentReceipt', 'Payment Receipt', 'பண ரசீது') !== getLangStr(profile?.secondaryDataLanguage || 'English', 'hc_paymentReceipt', 'Payment Receipt', 'பண ரசீது') ? (
                         <>
-                          <div>{getLangStr(profile?.primaryDataLanguage || 'Tamil', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது')}</div>
-                          <div style={{ fontSize: '0.65em', fontWeight: 600, opacity: 0.85, letterSpacing: '0.02em', marginTop: '2px', textTransform: 'uppercase' }}>{getLangStr(profile?.secondaryDataLanguage || 'English', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது')}</div>
+                          <div>{getLangStr(profile?.primaryDataLanguage || 'Tamil', 'hc_paymentReceipt', 'Payment Receipt', 'பண ரசீது')}</div>
+                          <div style={{ fontSize: '0.55em', fontWeight: 500, opacity: 0.85, letterSpacing: '0.02em', marginTop: '2px' }}>{getLangStr(profile?.secondaryDataLanguage || 'English', 'hc_paymentReceipt', 'Payment Receipt', 'பண ரசீது')}</div>
                         </>
                       ) : (
-                        getLangStr(profile?.enableBilingual === false ? (profile?.primaryDataLanguage || 'Tamil') : 'English', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது')
+                        getLangStr(profile?.enableBilingual === false ? (profile?.primaryDataLanguage || 'Tamil') : 'English', 'hc_paymentReceipt', 'Payment Receipt', 'பண ரசீது')
                       )}
                     </div>
                   </div>
                 </div>
-              <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('receiptNoLabel', 'Receipt No:', 'ரசீது எண்:')}</span><span className="receipt-value">{receipt.receiptNo}</span></div>
-              <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('dateLabel', 'Date:', 'தேதி:')}</span><span className="receipt-value">{new Date(receipt.date).toLocaleDateString('en-IN')}</span></div>
-              <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('receivedFromLabel', 'Received From:', 'பெறப்பட்டது:')}</span><span className="receipt-value">{receipt.clientName}{profile?.enableBilingual !== false && receipt.clientNameEn ? ` / ${receipt.clientNameEn}` : ''}</span></div>
-              <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('paymentModeLabel', 'Payment Mode:', 'செலுத்தும் முறை:')}</span><span className="receipt-value">{renderPaymentMode(receipt.paymentMode)}</span></div>
-              {receipt.referenceNo && <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('referenceNoLabel', 'Reference No:', 'குறிப்பு எண்:')}</span><span className="receipt-value">{receipt.referenceNo}</span></div>}
-              {receipt.againstInvoice && <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('againstInvoiceLabel', 'Against Invoice:', 'விலைப்பட்டியலுக்கு எதிராக:')}</span><span className="receipt-value">{receipt.againstInvoice}</span></div>}
+              <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#388e3c' }}>{renderKey('receiptNoLabel', 'Receipt No:', 'ரசீது எண்:')}</span><span className="receipt-value">{receipt.receiptNo}</span></div>
+              <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#388e3c' }}>{renderKey('dateLabel', 'Date:', 'தேதி:')}</span><span className="receipt-value">{new Date(receipt.date).toLocaleDateString('en-IN')}</span></div>
+              <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#388e3c' }}>{renderKey('receivedFromLabel', 'Received From:', 'பெறப்பட்டது:')}</span><span className="receipt-value">
+                {profile?.enableBilingual !== false && receipt.clientNameEn ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                    <span>{receipt.clientName}</span>
+                    <span style={{ fontSize: '0.6em', fontWeight: 500, opacity: 0.85, letterSpacing: '0.02em', marginTop: '-1px' }}>{receipt.clientNameEn}</span>
+                  </div>
+                ) : receipt.clientName}
+              </span></div>
+              <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#388e3c' }}>{renderKey('paymentModeLabel', 'Payment Mode:', 'செலுத்தும் முறை:')}</span><span className="receipt-value">{renderPaymentMode(receipt.paymentMode)}</span></div>
+              {receipt.referenceNo && <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#388e3c' }}>{renderKey('referenceNoLabel', 'Reference No:', 'குறிப்பு எண்:')}</span><span className="receipt-value">{receipt.referenceNo}</span></div>}
+              {receipt.againstInvoice && <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#388e3c' }}>{renderKey('againstInvoiceLabel', 'Against Invoice:', 'விலைப்பட்டியலுக்கு எதிராக:')}</span><span className="receipt-value">{receipt.againstInvoice}</span></div>}
               <div style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                <div className="receipt-amount" style={{ color: profile.themeColor || '#1e3a8a', backgroundColor: profile.themeColor ? `${profile.themeColor}15` : '#f0f9ff' }}>{formatCurrency(receipt.amount, profileCurrency)}</div>
-                <p className="receipt-words">{numberToWords(receipt.amount, profile?.primaryDataLanguage || 'English', profile?.secondaryDataLanguage || 'English', profile?.enableBilingual !== false)}</p>
+                <div className="receipt-amount" style={{ color: profile.themeColor || '#388e3c', backgroundColor: profile.themeColor ? `${profile.themeColor}15` : '#e8f5e9' }}>{formatCurrency(receipt.amount, profileCurrency)}</div>
+                <div className="receipt-words" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  {(() => {
+                    const words = numberToWords(receipt.amount, profile?.primaryDataLanguage || 'English', profile?.secondaryDataLanguage || 'English', profile?.enableBilingual !== false);
+                    if (words.includes(' / ')) {
+                      const [pStr, sStr] = words.split(' / ');
+                      return (
+                        <>
+                          <span>{pStr}</span>
+                          <span style={{ fontSize: '0.65em', fontWeight: 400, opacity: 0.85, letterSpacing: '0.02em', marginTop: '3px' }}>{sStr}</span>
+                        </>
+                      );
+                    }
+                    return words;
+                  })()}
+                </div>
               </div>
               {receipt.note && <p style={{ fontSize: '0.85rem', color: '#64748b' }}>{renderKey('noteLabel', 'Note:', 'குறிப்பு:')} {receipt.note}</p>}
               <div className="receipt-footer">
                 <div className="preview-footer-right">
-                  <div className="sign-company font-display" style={{ color: profile.themeColor || '#1e3a8a', position: 'relative', zIndex: 10 }}>{getDynamicField(profile, 'niruvanathinPeyar', profile, true) || 'Your Business'}</div>
+                  <div className="sign-company" style={{ color: profile.themeColor || '#388e3c', position: 'relative', zIndex: 10, fontSize: '1.05rem', fontWeight: 600 }}>
+                    {getDynamicField(profile, 'niruvanathinPeyar', profile, false) || getDynamicField(profile, 'niruvanathinPeyar', profile, true) || 'Your Business'}
+                  </div>
                   <div className="sign-space" style={{ position: 'relative' }}>
                     {profile?.signature && (
                         <img src={profile.signature} alt="Signature" style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: '-10px', maxHeight: '95px', maxWidth: '200px', objectFit: 'contain', pointerEvents: 'none' }} />
                     )}
                   </div>
-                  <div className="sign-label" style={{ position: 'relative', zIndex: 10 }}>{profile?.authorizedSignatoryName ? `(${profile.authorizedSignatoryName})` : renderKey('authorizedSignatory', '(Authorized Signature)', '(கையொப்பம்)')}</div>
+                  <div className="sign-label" style={{ position: 'relative', zIndex: 10 }}>{profile?.authorizedSignatoryName ? `(${profile.authorizedSignatoryName})` : getLangStr(profile?.primaryDataLanguage || 'Tamil', 'authorizedSignatory', '(Authorized Signatory)', '(கையொப்பம்)')}</div>
                 </div>
               </div>
               </div>
 
               {/* Contact Section */}
               {(() => {
-                const addr1 = [getDynamicField(profile, 'mugavari', profile, true), getDynamicField(profile, 'oor', profile, true)].filter(Boolean).join(', ') 
-                  + (profile.enableBilingual !== false && (getDynamicField(profile, 'mugavari', profile, false) || getDynamicField(profile, 'oor', profile, false)) ? ' / ' + [getDynamicField(profile, 'mugavari', profile, false), getDynamicField(profile, 'oor', profile, false)].filter(Boolean).join(', ') : '');
+                const addr1_eng = [getDynamicField(profile, 'mugavari', profile, false), getDynamicField(profile, 'oor', profile, false)].filter(Boolean).join(', ');
+                const addr1_tam = [getDynamicField(profile, 'mugavari', profile, true), getDynamicField(profile, 'oor', profile, true)].filter(Boolean).join(', ');
+                const addr1 = (addr1_eng || addr1_tam) + (profile?.pin ? ` - ${profile.pin}` : '');
                 
-                const dist1 = [getDynamicField(profile, 'maavattam', profile, true), getBilingualStateName(profile.maanilam, { ...profile, returnOnlyPrimary: true })].filter(Boolean).join(', ');
-                const dist2 = profile.enableBilingual !== false ? [getDynamicField(profile, 'maavattam', profile, false), getBilingualStateName(profile.maanilam, { ...profile, returnOnlySecondary: true, fallbackEnglishName: profile.maanilamEn })].filter(Boolean).join(', ') : '';
-                const dist = dist1 + (dist2 ? ` / ${dist2}` : '');
-                const addr2 = dist ? `${dist}${profile?.pin ? ` - ${profile.pin}` : ''}` : (profile?.pin ? `PIN: ${profile.pin}` : '');
+                const country_eng = getBilingualCountryName(profile?.country, { ...profile, returnOnlySecondary: true, fallbackEnglishName: profile?.country_English }) || profile?.country_English || profile?.country;
+                const country_tam = getBilingualCountryName(profile?.country, { ...profile, returnOnlyPrimary: true }) || profile?.country;
+
+                const dist_eng = [getDynamicField(profile, 'maavattam', profile, false), getBilingualStateName(profile.maanilam, { ...profile, returnOnlySecondary: true, fallbackEnglishName: profile.maanilamEn }), country_eng].filter(Boolean).join(', ');
+                const dist_tam = [getDynamicField(profile, 'maavattam', profile, true), getBilingualStateName(profile.maanilam, { ...profile, returnOnlyPrimary: true }), country_tam].filter(Boolean).join(', ');
+                const dist = dist_eng || dist_tam;
+                const addr2 = dist;
                 
-                const email = profile?.minnanjal || '';
-                const phone = profile?.tholaipesi ? (Array.isArray(profile.tholaipesi) ? profile.tholaipesi : String(profile.tholaipesi).split(',')) : [];
+                const email = profile?.email || profile?.minnanjal || '';
+                const phoneArr = [];
+                if (profile?.tholaipesi) phoneArr.push(...(Array.isArray(profile.tholaipesi) ? profile.tholaipesi : String(profile.tholaipesi).split(',')));
+                if (profile?.mobileNumber) phoneArr.push(...(Array.isArray(profile.mobileNumber) ? profile.mobileNumber : String(profile.mobileNumber).split(',')));
+                const phone = phoneArr.map(p => p.trim()).filter(Boolean);
 
                 return (
-                  <div className="rcpt-contact-section" style={{ background: profile.themeColor ? `${profile.themeColor}15` : '#f8fafc' }}>
-                    <div className="rcpt-contact-title" style={{ color: profile.themeColor || '#1e293b' }}>{renderKey('contactUsLabel', 'Contact Us', 'தொடர்பு கொள்ள')}</div>
+                  <div className="rcpt-contact-section" style={{ background: profile.themeColor ? `${profile.themeColor}15` : '#e8f5e9' }}>
+                    <div className="rcpt-contact-title" style={{ color: profile.themeColor || '#388e3c' }}>{getLangStr(profile?.primaryDataLanguage || 'Tamil', 'contactUsLabel', 'Contact Us', 'தொடர்பு கொள்ள')}</div>
                     <div className="rcpt-contact-row">
                       <div className="rcpt-contact-left">
                         <div className="rcpt-contact-address">
-                          <div>{addr1}</div>
+                          <div style={{ marginBottom: '4px' }}>{addr1}</div>
                           {addr2 && <div>{addr2}</div>}
                         </div>
                         {email && (
                           <div className="rcpt-contact-email">
-                            <div style={{ display: 'flex', alignItems: 'center', color: profile.themeColor || '#3b82f6' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '16px', color: profile.themeColor || '#388e3c', marginTop: '-2px' }}>
                               <IconMail size={14} />
                             </div>
                             <span>{email}</span>
@@ -427,13 +521,13 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
                         )}
                       </div>
                       {phone.length > 0 && (
-                        <div className="rcpt-contact-phones">
+                        <div className="rcpt-contact-phones" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                           {phone.map((num, i) => (
                             <div key={i} className="rcpt-phone-item-new">
-                              <div style={{ display: 'flex', alignItems: 'center', color: profile.themeColor || '#3b82f6' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '16px', color: profile.themeColor || '#388e3c', marginTop: '-2px' }}>
                                 <IconPhone size={14} />
                               </div>
-                              <span>{num}</span>
+                              <span style={{ fontVariantNumeric: 'tabular-nums', letterSpacing: '0.02em' }}>{num}</span>
                             </div>
                           ))}
                         </div>

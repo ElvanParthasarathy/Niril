@@ -6,7 +6,6 @@ import ClientSelection from './v2/ClientSelection';
 import InvoiceMetadata from './v2/InvoiceMetadata';
 import LineItemsTable from './v2/LineItemsTable';
 import InvoiceTotals from './v2/InvoiceTotals';
-import InvoiceNotes from './v2/InvoiceNotes';
 import { saveBill, getNextInvoiceNumber } from '../../Avanam';
 import { thagaval } from '../Thagaval';
 import { useLanguage } from '../../mozhi/LanguageContext';
@@ -276,23 +275,12 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
           country={profileProp?.country}
         />
 
-        <Box sx={{ mt: 3 }}>
-          <InvoiceNotes 
-            customTerms={customTerms}
-            setCustomTerms={setCustomTerms}
-            internalNote={internalNote}
-            setInternalNote={setInternalNote}
-            showTerms={settings.showTerms}
-            showNotes={settings.showNotes}
-          />
-        </Box>
 
-        <Divider sx={{ my: 1, borderColor: 'divider', opacity: 0.5 }} />
 
       {/* Invoice Type */}
       <Box sx={{ mb: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, ml: 2 }}>
-          <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>6</Box>
+          <Box sx={{ width: 24, height: 24, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem', fontWeight: 'bold', lineHeight: 1, pt: '1px', mr: 1.5 }}>5</Box>
           <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 600 }}>{t("invoiceType")}</Typography>
         </Box>
         <Box sx={{ mb: 2 }}>
