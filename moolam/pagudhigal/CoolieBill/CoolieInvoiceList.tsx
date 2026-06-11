@@ -342,7 +342,7 @@ export default function CoolieInvoiceList({ onView, onNew }) {
       <Dialog
         open={Boolean(invoiceToDelete)}
         onClose={() => setInvoiceToDelete(null)}
-        PaperProps={{ sx: { bgcolor: 'background.paper', backgroundImage: 'none' } }}
+        slotProps={{ paper: { sx: { bgcolor: 'background.paper', backgroundImage: 'none' } } }}
       >
         <DialogTitle sx={{ pb: 1, color: 'error.main' }}>{t('delete') || 'Delete'}</DialogTitle>
         <DialogContent>

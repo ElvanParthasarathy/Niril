@@ -697,7 +697,7 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                           </li>
                         );
                     }}
-                    renderInput={(params) => <TextField {...params} size="small" fullWidth label={t('itemName') || 'Item Name'} placeholder={t('hc_searchSavedItems') || 'Search saved items'} InputLabelProps={{ ...params.InputLabelProps, shrink: true }} inputProps={{ ...params.inputProps, autoComplete: 'new-password' }} />}
+                    renderInput={(params) => <TextField {...params} size="small" fullWidth label={t('itemName') || 'Item Name'} placeholder={t('hc_searchSavedItems') || 'Search saved items'} slotProps={{ inputLabel: { ...params.InputLabelProps, shrink: true }, htmlInput: { ...params.inputProps, autoComplete: 'new-password' } }} />}
                   />
                 </Box>
 

@@ -145,7 +145,7 @@ export default function ElvanEditorLayout({
       <Dialog 
         open={showUnsavedDialog} 
         onClose={() => setShowUnsavedDialog(false)}
-        PaperProps={{ sx: { borderRadius: 3, p: 1 } }}
+        slotProps={{ paper: { sx: { borderRadius: 3, p: 1 } } }}
       >
         <DialogTitle sx={{ fontWeight: 'bold' }}>
           {t('hc_discardChanges') || 'Discard Changes'}

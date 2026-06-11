@@ -80,7 +80,7 @@ export default function InvoiceMetadata({
                         {...params}
                         label={`${t('placeOfSupply')}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`}
                         placeholder={`Defaults to ${defaultClientState || 'Client State'}`}
-                        InputLabelProps={{ shrink: true }}
+                        slotProps={{ inputLabel: { shrink: true } }}
                         autoComplete="new-password"
                       />
                     )}

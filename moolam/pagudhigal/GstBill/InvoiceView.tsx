@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { ArrowLeft, PencilSimple, DownloadSimple, ShareNetwork, Printer as PrintIcon, Copy, DotsThreeVertical, SlidersHorizontal } from '@phosphor-icons/react';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { FloatingBackButton } from '../FloatingBackButton';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -9,8 +9,7 @@ import SjsTheme from './SjsTheme';
 import { thagaval } from '../Thagaval';
 import { useLanguage } from '../../mozhi/LanguageContext';
 import { formatCurrency, INVOICE_TYPES } from '../../Payanpadu';
-import { saveBill } from '../../Avanam';
-import { ensureToken, findOrCreateFolder, uploadPDF } from '../../sevaigal/googleDrive';
+import { getInvoiceDisplayOptions } from '../../Avanam';
 import { Box, Paper } from '@mui/material';
 import { ViewHeader } from '../ViewHeader';
 
@@ -18,6 +17,16 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
   const { t } = useLanguage();
   const printRef = useRef(null);
   const [saving, setSaving] = useState(false);
+  const [displayOptions, setDisplayOptions] = useState<any>({});
+
+  useEffect(() => {
+    const savedLocal = localStorage.getItem('elvanniril_invoiceOptions');
+    const local = savedLocal ? JSON.parse(savedLocal) : {};
+    setDisplayOptions(local);
+    getInvoiceDisplayOptions().then(serverOpts => {
+      if (serverOpts) setDisplayOptions(prev => ({ ...prev, ...serverOpts }));
+    });
+  }, []);
 
   const {
     profile: snapshotProfile, client, details, items, totals, invoiceType = 'tax-invoice',
@@ -258,15 +267,18 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
             mb: { xs: '-55%', sm: '-25%', md: '-10%', lg: 0 }
           }
         }}>
-          {profile?.invoiceTheme === 'sjs' ? (
-            <SjsTheme ref={printRef} profile={profile} client={client} details={details}
-              items={items} totals={totals} invoiceType={invoiceType} customTerms={customTerms}
-              options={invoiceOptions} />
-          ) : (
-            <InvoicePreview ref={printRef} profile={profile} client={client} details={details}
-              items={items} totals={totals} invoiceType={invoiceType} customTerms={customTerms}
-              options={invoiceOptions} />
-          )}
+          {(() => {
+            const mergedOptions = { ...displayOptions, ...invoiceOptions };
+            return profile?.invoiceTheme === 'sjs' ? (
+              <SjsTheme ref={printRef} profile={profile} client={client} details={details}
+                items={items} totals={totals} invoiceType={invoiceType} customTerms={customTerms}
+                options={mergedOptions} />
+            ) : (
+              <InvoicePreview ref={printRef} profile={profile} client={client} details={details}
+                items={items} totals={totals} invoiceType={invoiceType} customTerms={customTerms}
+                options={mergedOptions} />
+            );
+          })()}
         </Paper>
       </Box>
     </Box>

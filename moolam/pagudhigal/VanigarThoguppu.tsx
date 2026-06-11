@@ -184,7 +184,7 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
               value={getField('maanilam', primaryLang) || null}
               onChange={(e, newValue) => updateField('maanilam', primaryLang, newValue || '')}
               renderInput={(params) => (
-                <TextField {...params} fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`} InputLabelProps={{ shrink: true }} placeholder={`${t('selectLabel')} ${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}`} autoComplete="new-password" />
+                <TextField {...params} fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }} placeholder={`${t('selectLabel')} ${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}`} autoComplete="new-password" />
               )}
             />
           ) : (
@@ -219,7 +219,7 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
               }
             }}
             renderInput={(params) => (
-              <TextField {...params} fullWidth size="medium" sx={{ mb: isCustomCountry ? 2 : 0 }} label={`${t('country')}${primaryLangSuffix}`} InputLabelProps={{ shrink: true }} autoComplete="new-password" />
+              <TextField {...params} fullWidth size="medium" sx={{ mb: isCustomCountry ? 2 : 0 }} label={`${t('country')}${primaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }} autoComplete="new-password" />
             )}
           />
           {isCustomCountry && (

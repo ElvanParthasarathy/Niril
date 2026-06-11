@@ -1,5 +1,6 @@
 // @ts-nocheck
 import Save from '@mui/icons-material/Save';
+import { Table as TableIcon } from '@phosphor-icons/react';
 import Upload from '@mui/icons-material/Upload';
 import Download from '@mui/icons-material/Download';
 import Add from '@mui/icons-material/Add';
@@ -16,15 +17,17 @@ import Close from '@mui/icons-material/Close';
 import KeyboardArrowUp from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import { useState, useEffect, useRef } from 'react';
-import { getProfile, saveProfile, exportAllData, importData, inspectBackup, getAllProfiles, saveBusinessProfile, deleteBusinessProfile, getInvoiceNumberSettings, saveInvoiceNumberSettings, getReceiptNumberSettings, saveReceiptNumberSettings, getInvoiceDisplayOptions, saveInvoiceDisplayOptions } from '../Avanam';
+import { getProfile, saveProfile, exportAllData, importData, inspectBackup, getAllProfiles, saveBusinessProfile, deleteBusinessProfile, getInvoiceNumberSettings, saveInvoiceNumberSettings, getReceiptNumberSettings, saveReceiptNumberSettings } from '../Avanam';
 import { ensureToken, findOrCreateFolder, uploadJSON } from '../sevaigal/googleDrive';
 import { getCountryConfig, getStatesForCountry, getBilingualStateName, getBilingualCountryName, validateTaxId, detectCountryFromBrowser, getCountriesForRegion, getPaymentAccounts, createEmptyAccount, maskkanakkuEn, reorderAccounts, setDefaultAccount, isValidUpiId, tamilNaduDistricts } from '../Payanpadu';
 import { initGoogleDrive, isConnected, disconnect } from '../sevaigal/googleDrive';
+import { SettingsSection, SettingsRow } from './ElvanSettingsSection';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import '../styles/settings/shared.css';
 import '../styles/settings/hub.css';
+import GstSettings from './GstSettings';
 
 // MUI Imports
 import { 
@@ -35,9 +38,9 @@ import {
   List, ListItem, ListItemText, ListItemSecondaryAction, Tabs, Tab
 } from '@mui/material';
 
+import CoolieSettings from './CoolieBill/CoolieSettings';
 
-
-export default function Amaippugal({ onSaved }) {
+export default function Amaippugal({ onSaved, appMode }) {
   const { language, setLanguage, t } = useLanguage();
   const [profile, setProfile] = useState<any>({
     niruvanathinPeyar: '', niruvanathinPeyarEn: '', mugavari: '', mugavariEn: '', oor: '', oorEn: '', maavattam: '', maavattamEn: '', maanilam: '', maanilamEn: '', gstin: '', pan: '',
@@ -55,22 +58,9 @@ export default function Amaippugal({ onSaved }) {
   });
   const [invNumSaving, setInvNumSaving] = useState(false);
 
-  const [invoiceTemplate, setInvoiceTemplate] = useState<any>({});
-  
-  useEffect(() => {
-    const savedLocal = localStorage.getItem('elvanniril_invoiceOptions');
-    const local = savedLocal ? JSON.parse(savedLocal) : {};
-    getInvoiceDisplayOptions().then(serverOpts => {
-      setInvoiceTemplate({ ...local, ...(serverOpts || {}) });
-    });
-  }, []);
-
-  const handleTemplateChange = (key, val) => {
-    const newOpts = { ...invoiceTemplate, [key]: val };
-    setInvoiceTemplate(newOpts);
-    localStorage.setItem('elvanniril_invoiceOptions', JSON.stringify(newOpts));
-    saveInvoiceDisplayOptions(newOpts);
-  };
+  const [showNewProfileModal, setShowNewProfileModal] = useState(false);
+  const [newProfileData, setNewProfileData] = useState({ niruvanathinPeyar: '', gstin: '', mugavari: '' });
+  const [creatingProfile, setCreatingProfile] = useState(false);
 
 
   const [rcpNumSettings, setRcpNumSettings] = useState({
@@ -110,6 +100,7 @@ export default function Amaippugal({ onSaved }) {
 
   const saveLangSettings = async () => {
     await saveProfile(profile);
+    if (onSaved) onSaved(profile);
     setEditingLangSettings(false);
     thagaval(language === 'ta' ? 'அமைப்புகள் சேமிக்கப்பட்டன' : 'Language settings saved!', 'success');
   };
@@ -475,14 +466,7 @@ export default function Amaippugal({ onSaved }) {
   };
 
   // Multi-business profiles
-  const handleSaveAsProfile = async () => {
-    if (!profile.niruvanathinPeyar.trim()) { thagaval('Business name required', 'warning'); return; }
-    // Update existing profile with same name, or create new
-    const existing = businessProfiles.find(bp => bp.niruvanathinPeyar.trim().toLowerCase() === profile.niruvanathinPeyar.trim().toLowerCase());
-    await saveBusinessProfile({ ...profile, id: existing?.id || undefined });
-    thagaval(existing ? 'Profile updated!' : 'Profile saved!', 'success');
-    loadBusinessProfiles();
-  };
+
 
   const handleLoadProfile = async (bp) => {
     // Auto-save current profile before switching (so it's not lost)
@@ -506,15 +490,40 @@ export default function Amaippugal({ onSaved }) {
     }
   };
 
-  const handleAddNewProfile = () => {
-    setProfile({
-      personName: '', personNameEn: '',
-      niruvanathinPeyar: '', niruvanathinPeyarEn: '', mugavari: '', mugavariEn: '', oor: '', oorEn: '', maavattam: '', maavattamEn: '', maanilam: '', maanilamEn: '', pin: '', country: detectCountryFromBrowser(),
-      gstin: '', pan: '', email: '', tholaipesi: '', mobileNumber: '', vangiPeyar: '', kanakkuEn: '', ifsc: '', swift: '',
-      logo: '', wideLogo: '', logoHeight: 48, signature: '', upiId: '', googleClientId: '', googleDriveFolder: 'GST Billing Invoices',
-    });
-    setTaxIdWarning('');
-    companyFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const handleCreateNewProfile = async () => {
+    if (!newProfileData.niruvanathinPeyar.trim()) { thagaval('Business name required', 'warning'); return; }
+    setCreatingProfile(true);
+    try {
+      const freshProfile = {
+        niruvanathinPeyar: newProfileData.niruvanathinPeyar,
+        niruvanathinPeyarEn: '', mugavari: newProfileData.mugavari, mugavariEn: '', oor: '', oorEn: '', maavattam: '', maavattamEn: '', maanilam: '', maanilamEn: '', pin: '', country: detectCountryFromBrowser(),
+        gstin: newProfileData.gstin, pan: '', email: '', tholaipesi: '', mobileNumber: '', vangiPeyar: '', kanakkuEn: '', ifsc: '', swift: '',
+        logo: '', wideLogo: '', logoHeight: 48, signature: '', upiId: '', googleClientId: '', googleDriveFolder: 'GST Billing Invoices',
+      };
+      
+      const saved = await saveBusinessProfile(freshProfile);
+      
+      // Auto-save current profile before switching
+      if (profile.niruvanathinPeyar?.trim()) {
+        const existing = businessProfiles.find(p => p.niruvanathinPeyar.trim().toLowerCase() === profile.niruvanathinPeyar.trim().toLowerCase());
+        await saveBusinessProfile({ ...profile, id: existing?.id || undefined });
+      }
+      
+      const loaded = { ...saved };
+      delete loaded.id;
+      setProfile(loaded);
+      await saveProfile(loaded);
+      if (onSaved) onSaved(loaded);
+      
+      await loadBusinessProfiles();
+      setShowNewProfileModal(false);
+      setNewProfileData({ niruvanathinPeyar: '', gstin: '', mugavari: '' });
+      thagaval(`Created and switched to ${saved.niruvanathinPeyar}`, 'success');
+    } catch (err) {
+      thagaval('Failed to create profile', 'error');
+    } finally {
+      setCreatingProfile(false);
+    }
   };
 
   const [taxIdWarning, setTaxIdWarning] = useState('');
@@ -535,834 +544,137 @@ export default function Amaippugal({ onSaved }) {
   const renderDetailView = () => {
     let content = null;
     let title = "";
-    if (currentView === 0) { content = (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }} component="form" onSubmit={handleSave} ref={companyFormRef}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" style={{ fontWeight: 600 }} sx={{ m: 0 }}>
-            {t('companyDetailsTitle')}
-          </Typography>
-          {!isEditingCompany ? (
-            <Button variant="outlined" size="small" onClick={() => setIsEditingCompany(true)} startIcon={<Edit sx={{ fontSize: 16 }} />}>
-              Edit Details
-            </Button>
-          ) : (
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button variant="outlined" size="small" color="inherit" onClick={handleCancelEditCompany}>
-                Cancel
-              </Button>
-              <Button variant="contained" size="small" color="primary" onClick={handleSave} startIcon={<Save sx={{ fontSize: 16 }} />}>
-                Save Details
-              </Button>
-            </Box>
-          )}
-        </Box>\n        {(() => {
-          const cc = getCountryConfig(profile.country);
-          return (
-            <Grid container spacing={3}>
-              <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
-                <TextField disabled={!isEditingCompany} required fullWidth size="small" label={`${t('businessNameLabel')} (${profile.primaryDataLanguage || 'Tamil'})`} name="niruvanathinPeyar" value={profile.niruvanathinPeyar} onChange={handleChange} />
-              </Grid>
-              {profile.enableBilingual !== false && (
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField disabled={!isEditingCompany} fullWidth size="small" label={`Business Name in ${profile.secondaryDataLanguage || 'English'}`} name="niruvanathinPeyarEn" value={profile.niruvanathinPeyarEn || ''} onChange={handleChange} />
-                </Grid>
-              )}
-
-              <Grid size={{ xs: 12, sm: 12 }}>
-                <TextField disabled={!isEditingCompany} fullWidth size="small" label={language === 'ta' ? 'குறுகிய வணிக பெயர் (பில் எண்ணுக்கு)' : 'Short Business Name (for Bill No)'} name="shortBusinessName" value={profile.shortBusinessName || ''} onChange={handleChange} placeholder="e.g. SJS" helperText={language === 'ta' ? 'இது தானியங்கி பில் எண்ணில் முன்னொட்டாக பயன்படுத்தப்படும் (உதாரணமாக SJS/2026-27/0001).' : 'Used as the default prefix for your invoice numbers (e.g. SJS/2026-27/0001).'} />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
-                <TextField disabled={!isEditingCompany} fullWidth multiline rows={2} size="small" label={`${t('mugavariLabel')} (${profile.primaryDataLanguage || 'Tamil'})`} name="mugavari" value={profile.mugavari} onChange={handleChange} />
-              </Grid>
-              {profile.enableBilingual !== false && (
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField disabled={!isEditingCompany} fullWidth multiline rows={2} size="small" label={`Address in ${profile.secondaryDataLanguage || 'English'}`} name="mugavariEn" value={profile.mugavariEn || ''} onChange={handleChange} />
-                </Grid>
-              )}
-
-              <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
-                <TextField disabled={!isEditingCompany} fullWidth size="small" label={`${t('oorLabel')} (${profile.primaryDataLanguage || 'Tamil'})`} name="oor" value={profile.oor || ''} onChange={handleChange} placeholder={t('e.g. Mumbai' as any)} />
-              </Grid>
-              {profile.enableBilingual !== false && (
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField disabled={!isEditingCompany} fullWidth size="small" label={`City in ${profile.secondaryDataLanguage || 'English'}`} name="oorEn" value={profile.oorEn || ''} onChange={handleChange} />
-                </Grid>
-              )}
-
-              <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
-                <TextField disabled={!isEditingCompany} fullWidth size="small" label={`மாவட்டம் (District) (${profile.primaryDataLanguage || 'Tamil'})`} name="maavattam" value={profile.maavattam || ''} onChange={handleChange} placeholder={`மாவட்டம்`} />
-              </Grid>
-              {profile.enableBilingual !== false && (
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField disabled={!isEditingCompany} fullWidth size="small" label={`District in ${profile.secondaryDataLanguage || 'English'}`} name="maavattamEn" value={profile.maavattamEn || ''} onChange={handleChange} placeholder={`District`} />
-                </Grid>
-              )}
-
-              <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
-                {(() => {
-                  const stateOpts = getStatesForCountry(profile.country || 'India');
-                  return stateOpts.length > 0 ? (
-                    <FormControl fullWidth size="small" disabled={!isEditingCompany}>
-                      <InputLabel>{t(cc.stateLabel as any)} ({profile.primaryDataLanguage || 'Tamil'})</InputLabel>
-                      <Select MenuProps={{ disableScrollLock: true }} name="maanilam" value={profile.maanilam} onChange={handleChange} label={`${t(cc.stateLabel as any)} (${profile.primaryDataLanguage || 'Tamil'})`}>
-                        <MenuItem value="">{t('Select maanilam' as any)}</MenuItem>
-                        {stateOpts.map(s => <MenuItem key={s} value={s}>{getBilingualStateName(s, { ...profile, returnOnlyPrimary: true })}</MenuItem>)}
-                      </Select>
-                    </FormControl>
-                  ) : (
-                    <TextField disabled={!isEditingCompany} fullWidth size="small" label={`${t(cc.stateLabel as any)} (${profile.primaryDataLanguage || 'Tamil'})`} name="maanilam" value={profile.maanilam || ''} onChange={handleChange} placeholder={cc.stateLabel} />
-                  );
-                })()}
-              </Grid>
-              {profile.enableBilingual !== false && (
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField fullWidth size="small" disabled={true} 
-                    label={`${t(cc.stateLabel as any)} (${profile.secondaryDataLanguage || 'English'})`} 
-                    value={profile.maanilam ? getBilingualStateName(profile.maanilam, { ...profile, returnOnlySecondary: true }) : ''} 
-                    sx={{ '& .MuiInputBase-root': { bgcolor: 'action.hover' } }} />
-                </Grid>
-              )}
-
-              <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
-                {(() => {
-                  const isCustomCountry = profile.country === 'Other' || (profile.country && !visibleCountries.some(c => c.name === profile.country));
-                  return (
-                    <Box>
-                      <FormControl fullWidth size="small" disabled={!isEditingCompany} sx={{ mb: isCustomCountry ? 2 : 0 }}>
-                        <InputLabel>{t('countryLabel')} ({profile.primaryDataLanguage || 'Tamil'})</InputLabel>
-                        <Select MenuProps={{ disableScrollLock: true }} name="country" 
-                          value={isCustomCountry ? 'Other' : (profile.country || 'India')} 
-                          onChange={(e) => {
-                            if (e.target.value === 'Other') {
-                              handleChange({ target: { name: 'country', value: 'Other' } } as any);
-                              handleChange({ target: { name: 'countryEn', value: '' } } as any);
-                            } else {
-                              handleChange(e);
-                              handleChange({ target: { name: 'countryEn', value: '' } } as any);
-                            }
-                          }} 
-                          label={`${t('countryLabel')} (${profile.primaryDataLanguage || 'Tamil'})`}>
-                          {visibleCountries.map(c => <MenuItem key={c.code} value={c.name}>{getBilingualCountryName(c.name, { ...profile, returnOnlyPrimary: true })}</MenuItem>)}
-                        </Select>
-                      </FormControl>
-                      {isCustomCountry && (
-                        <TextField fullWidth size="small" 
-                          label={`Custom Country (${profile.primaryDataLanguage || 'Tamil'})`}
-                          name="country" 
-                          value={profile.country === 'Other' ? '' : profile.country} 
-                          onChange={handleChange} 
-                          placeholder="Enter country name" 
-                          disabled={!isEditingCompany} />
-                      )}
-                    </Box>
-                  );
-                })()}
-              </Grid>
-              {profile.enableBilingual !== false && (
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  {(() => {
-                    const isCustomCountry = profile.country === 'Other' || (profile.country && !visibleCountries.some(c => c.name === profile.country));
-                    return (
-                      <Box>
-                        {isCustomCountry && <Box sx={{ height: 40, mb: 2 }} />}
-                        <TextField fullWidth size="small" disabled={!isCustomCountry || !isEditingCompany} 
-                          name={isCustomCountry ? "countryEn" : undefined}
-                          onChange={isCustomCountry ? handleChange : undefined}
-                          label={`${t('countryLabel')} (${profile.secondaryDataLanguage || 'English'})`} 
-                          value={isCustomCountry ? (profile.countryEn || '') : getBilingualCountryName(profile.country || 'India', { ...profile, returnOnlySecondary: true })} 
-                          sx={!isCustomCountry ? { '& .MuiInputBase-root': { bgcolor: 'action.hover' } } : {}} />
-                      </Box>
-                    );
-                  })()}
-                </Grid>
-              )}
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField disabled={!isEditingCompany} fullWidth size="small" label={t('tholaipesiLabel')} name="tholaipesi" value={profile.tholaipesi} onChange={handleChange} />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField disabled={!isEditingCompany} fullWidth size="small" label={t('email') || 'Email'} name="email" value={profile.email || ''} onChange={handleChange} />
-              </Grid>
-
-              {!showMobileField && !profile.mobileNumber ? (
-                isEditingCompany ? (
-                  <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Button size="small" variant="text" onClick={() => setShowMobileField(true)} startIcon={<Add sx={{ fontSize: 16 }} />} sx={{ color: 'text.secondary', textTransform: 'none' }}>
-                      {language === 'ta' ? 'மாற்று கைபேசி எண் சேர்க்க' : 'Add Alternate Mobile'}
-                    </Button>
-                  </Grid>
-                ) : null
-              ) : (
-                <Grid size={{ xs: 12, sm: 6 }}>
-                  <TextField 
-                    disabled={!isEditingCompany} 
-                    fullWidth 
-                    size="small" 
-                    label={t('mobileLabel')} 
-                    name="mobileNumber" 
-                    value={profile.mobileNumber || ''} 
-                    onChange={handleChange} 
-                    slotProps={{
-                      input: {
-                        endAdornment: isEditingCompany ? (
-                          <InputAdornment position="end">
-                            <IconButton 
-                              size="small" 
-                              onClick={() => {
-                                setProfile(prev => ({ ...prev, mobileNumber: '' }));
-                                setShowMobileField(false);
-                              }}
-                              edge="end"
-                            >
-                              <Close sx={{ fontSize: 16 }} />
-                            </IconButton>
-                          </InputAdornment>
-                        ) : null
-                      }
-                    }}
-                  />
-                </Grid>
-              )}
-
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField 
-                  disabled={!isEditingCompany} 
-                  fullWidth 
-                  size="small" 
-                  label={cc.taxIdLabel || 'GSTIN / Tax ID'} 
-                  name="gstin" 
-                  value={profile.gstin || ''} 
-                  onChange={handleChange} 
-                  onBlur={handleTaxIdBlur} 
-                  error={!!taxIdWarning} 
-                  helperText={taxIdWarning} 
-                />
-              </Grid>
-            </Grid>
-          );
-        })()}\n        {/* Logo & Signature */}
-        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 4, mb: 2 }}>
-          {t('brandingTitle')}
-        </Typography>
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, sm: 4 }}>
-            <Typography variant="subtitle2" gutterBottom>{t('businessLogo')}</Typography>
-            <Paper className="s2-group" variant="outlined" sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, borderStyle: 'dashed', height: '100%' }}>
-              {profile.logo ? (
-                <>
-                  <Box sx={{ position: 'relative' }}>
-                    <img src={profile.logo} alt="Logo" style={{ maxHeight: '100px', maxWidth: '180px', objectFit: 'contain' }} />
-                    <IconButton size="small" color="error" onClick={() => removeImage('logo')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
-                      <Delete sx={{ fontSize: 14 }} />
-                    </IconButton>
-                  </Box>
-
-                  <Button size="small" variant="outlined" onClick={() => logoInputRef.current?.click()}>Change Logo</Button>
-                </>
-              ) : (
-                <Button variant="outlined" onClick={() => logoInputRef.current?.click()} startIcon={<Image sx={{ fontSize: 20 }} />} sx={{ flexDirection: 'column', py: 3, gap: 1, height: '100%', width: '100%' }}>
-                  {t('uploadLogo')}
-                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{t('logoHint')}</Typography>
-                </Button>
-              )}
-              <input ref={logoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('logo', e)} />
-            </Paper>
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 4 }}>
-            <Typography variant="subtitle2" gutterBottom>Vertical / Wide Logo</Typography>
-            <Paper className="s2-group" variant="outlined" sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, borderStyle: 'dashed', height: '100%' }}>
-              {profile.wideLogo ? (
-                <>
-                  <Box sx={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center' }}>
-                    <img src={profile.wideLogo} alt="Wide Logo" style={{ height: '100px', width: '100%', objectFit: 'contain' }} />
-                    <IconButton size="small" color="error" onClick={() => removeImage('wideLogo')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
-                      <Delete sx={{ fontSize: 14 }} />
-                    </IconButton>
-                  </Box>
-
-                  <Box sx={{ width: '100%', mt: 2, p: 1.5, bgcolor: '#f8fafc', borderRadius: 1, border: '1px solid #e2e8f0' }}>
-                    <Typography variant="caption" sx={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600, color: '#475569' }}>
-                      Logo Size <span>{profile.wideLogoScale || 1}x</span>
-                    </Typography>
-                    <input type="range" min="0.3" max="3" step="0.05" value={profile.wideLogoScale || 1} onChange={(e) => setProfile({ ...profile, wideLogoScale: parseFloat(e.target.value) })} style={{ width: '100%', marginBottom: '8px' }} />
-                    
-                    <Typography variant="caption" sx={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600, color: '#475569' }}>
-                      Move Left / Right <span>{profile.wideLogoX || 0}px</span>
-                    </Typography>
-                    <input type="range" min="-200" max="200" step="1" value={profile.wideLogoX || 0} onChange={(e) => setProfile({ ...profile, wideLogoX: parseInt(e.target.value) })} style={{ width: '100%', marginBottom: '8px' }} />
-                    
-                    <Typography variant="caption" sx={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600, color: '#475569' }}>
-                      Move Up / Down <span>{profile.wideLogoY || 0}px</span>
-                    </Typography>
-                    <input type="range" min="-200" max="200" step="1" value={profile.wideLogoY || 0} onChange={(e) => setProfile({ ...profile, wideLogoY: parseInt(e.target.value) })} style={{ width: '100%' }} />
-                  </Box>
-
-                  <Button size="small" variant="outlined" sx={{ mt: 1 }} onClick={() => wideLogoInputRef.current?.click()}>Change Logo</Button>
-                </>
-              ) : (
-                <Button variant="outlined" onClick={() => wideLogoInputRef.current?.click()} startIcon={<Image sx={{ fontSize: 20 }} />} sx={{ flexDirection: 'column', py: 3, gap: 1, height: '100%', width: '100%' }}>
-                  Upload Wide Logo
-                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>Replaces company name in header</Typography>
-                </Button>
-              )}
-              <input ref={wideLogoInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('wideLogo', e)} />
-            </Paper>
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 4 }}>
-            <Typography variant="subtitle2" gutterBottom>{t('signature')}</Typography>
-            <Paper className="s2-group" variant="outlined" sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, borderStyle: 'dashed', height: '100%' }}>
-              {profile.signature ? (
-                <>
-                  <Box sx={{ position: 'relative' }}>
-                    <img src={profile.signature} alt="Signature" style={{ maxHeight: '100px', maxWidth: '200px', objectFit: 'contain' }} />
-                    <IconButton size="small" color="error" onClick={() => removeImage('signature')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
-                      <Delete sx={{ fontSize: 14 }} />
-                    </IconButton>
-                  </Box>
-                </>
-              ) : (
-                <Button variant="outlined" onClick={() => sigInputRef.current?.click()} startIcon={<Create sx={{ fontSize: 20 }} />} sx={{ flexDirection: 'column', py: 3, gap: 1, height: '100%', width: '100%' }}>
-                  {t('uploadSignature')}
-                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{t('sigHint')}</Typography>
-                </Button>
-              )}
-              <input ref={sigInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(e) => handleImageUpload('signature', e)} />
-            </Paper>
-            <TextField fullWidth size="small" sx={{ mt: 2 }} label={language === 'ta' ? 'அங்கீகரிக்கப்பட்ட கையொப்பத்தின் பெயர்' : 'Authorized Signatory Name'} name="authorizedSignatoryName" value={profile.authorizedSignatoryName || ''} onChange={handleChange} placeholder="e.g. V.R.M. Elvan" />
-          </Grid>
-        </Grid>
-\n        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end' }}>
-          <Button type="submit" variant="contained" color="primary" disabled={saving} startIcon={<Save sx={{ fontSize: 18 }} />}>
-            {saving ? t('saving') : t('saveProfile')}
-          </Button>
-        </Box>
-      </Paper>
-
-      {/* ---- Multi-Business Profiles ---- */}
-      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" style={{ fontWeight: 600 }} sx={{ m: 0 }}>
-            {t('businessProfilesTitle')}
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button variant="outlined" onClick={handleAddNewProfile} startIcon={<Add sx={{ fontSize: 16 }} />}>
-              {t('addNewProfile')}
-            </Button>
-            <Button variant="contained" onClick={handleSaveAsProfile} startIcon={<Business sx={{ fontSize: 16 }} />}>
-              {t('saveAsProfile')}
-            </Button>
-          </Box>
-        </Box>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {t('businessProfilesDesc1')}
-        </Typography>
-        {businessProfiles.length === 0 ? (
-          <Typography variant="body2" color="text.secondary">
-            {t('businessProfilesDesc2')}
-          </Typography>
-        ) : (
-          <Grid container spacing={2}>
-            {businessProfiles.map(bp => {
-              const isActive = bp.niruvanathinPeyar?.trim().toLowerCase() === profile.niruvanathinPeyar?.trim().toLowerCase();
-              return (
-              <Grid size={{ xs: 12, sm: 6 }} key={bp.id}>
-                <Paper className="s2-group" variant="outlined" sx={{ p: 2, height: '100%', borderColor: isActive ? 'primary.main' : 'divider', borderWidth: isActive ? 2 : 1 }}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
-                    <Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography variant="subtitle2" style={{ fontWeight: 'bold' }}>{bp.niruvanathinPeyar}</Typography>
-                        {isActive && <Chip label="Active" size="small" color="primary" sx={{ height: 20, fontSize: '0.7rem' }} />}
-                      </Box>
-                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
-                        {bp.maanilam}{bp.gstin ? ` | ${bp.gstin}` : ''}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', gap: 0.5 }}>
-                      <Button size="small" variant={isActive ? 'outlined' : 'contained'} onClick={() => handleLoadProfile(bp)} disabled={isActive}>
-                        {isActive ? 'Current' : 'Switch'}
-                      </Button>
-                      <IconButton size="small" color="error" onClick={() => handleDeleteProfile(bp.id)} title="Delete">
-                        <Delete sx={{ fontSize: 16 }} />
-                      </IconButton>
-                    </Box>
-                  </Box>
-                  {bp.mugavari && (
-                    <Typography variant="caption" color="text.secondary" sx={{ mt: 1, whiteSpace: 'pre-line', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                      {bp.mugavari}
-                    </Typography>
-                  )}
-                </Paper>
-              </Grid>
-            );
-            })}
-          </Grid>
-        )}
-      </Paper>
-</Box>); title = "Profile & Accounts"; }
+    if (currentView === 0) { 
+      content = (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+      {appMode === 'COOLIE' ? (
+        <CoolieSettings />
+      ) : (
+        <>
+          <GstSettings 
+            profile={profile} 
+            setProfile={setProfile} 
+            onSaved={onSaved} 
+            businessProfiles={businessProfiles} 
+            loadBusinessProfiles={loadBusinessProfiles} 
+            saving={saving} 
+            setSaving={setSaving} 
+          />
+        </>
+      )}
+      </Box>); title = appMode === 'COOLIE' ? "Coolie Settings" : "GST Settings"; }
     else if (currentView === 1) { content = (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>      {/* ---- Language Preference ---- */}
-      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
-        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0, mb: 0.5 }}>
-          {t('language')}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {language === 'ta' ? 'பயன்பாட்டின் மொழியை மாற்றவும்.' : 'Change the language of the application.'}
-        </Typography>
-        <Grid container spacing={2}>
-          {[
-            { id: 'ta', label: 'தமிழ்', desc: 'முழுக்க தமிழில்' },
-            { id: 'en', label: 'English', desc: 'English only' },
-          ].map(opt => (
-            <Grid size={{ xs: 12, sm: 6 }} key={opt.id}>
-              <Paper
-                variant="outlined"
-                component="button"
-                onClick={() => {
-                  setLanguage(opt.id as any);
-                  thagaval(opt.id === 'ta' ? 'மொழி தமிழுக்கு மாற்றப்பட்டது' : 'Language changed to English', 'success');
-                }}
-                sx={{
-                  p: 2,
-                  width: '100%',
-                  textAlign: 'left',
-                  height: '100%',
-                  cursor: 'pointer',
-                  borderWidth: language === opt.id ? 2 : 1,
-                  borderColor: language === opt.id ? 'primary.main' : 'divider',
-                  bgcolor: language === opt.id ? 'primary.50' : 'background.paper',
-                  '&:hover': { bgcolor: language === opt.id ? 'primary.50' : 'action.hover' }
-                }}
-              >
-                <Typography variant="subtitle2" style={{ fontWeight: 'bold' }} gutterBottom color={language === opt.id ? 'primary.main' : 'text.primary'}>
-                  {opt.label}
-                </Typography>
-                <Typography variant="body2" color={language === opt.id ? 'primary.main' : 'text.secondary'}>
-                  {opt.desc}
-                </Typography>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-      </Paper>
-
-        {/* App User Name */}
-        <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
-          <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0, mb: 0.5 }}>
-            {language === 'ta' ? 'பயனர் பெயர் (பயன்பாடு)' : 'App User Name'}
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            {language === 'ta' ? 'இந்த பெயர் பயன்பாட்டின் முகப்புத்திரையில் தோன்றும்.' : 'This name will appear on the app home screen profile pill.'}
-          </Typography>
-          <Grid container spacing={3}>
-            <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
-              <TextField 
-                fullWidth size="small" 
-                label={`${language === 'ta' ? 'பயனர் பெயர்' : 'User Name'} (${profile.primaryDataLanguage || 'Tamil'})`} 
-                name="personName" 
-                value={profile.personName || ''} 
-                onChange={handleChange} 
-              />
-            </Grid>
-            {profile.enableBilingual !== false && (
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField 
-                  fullWidth size="small" 
-                  label={`${language === 'ta' ? 'பயனர் பெயர்' : 'User Name'} (${profile.secondaryDataLanguage || 'English'})`} 
-                  name="personNameEn" 
-                  value={profile.personNameEn || ''} 
-                  onChange={handleChange} 
-                />
-              </Grid>
-            )}
-          </Grid>
-          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-            <Button type="button" variant="contained" color="primary" onClick={handleSave} disabled={saving} startIcon={<Save sx={{ fontSize: 18 }} />}>
-              {saving ? t('saving') : t('saveProfile')}
-            </Button>
-          </Box>
-        </Paper>
-
-      {/* Data Language Settings */}
-      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1, mb: 3 }}>
-          <Box>
-            <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0, mb: 0.5 }}>
-              {language === 'ta' ? 'தரவு உள்ளீடு மொழிகள்' : 'Data Entry Languages'}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {language === 'ta' ? 'பட்டியல் உருவாக்கத்தில் பயன்படுத்தப்படும் மொழிகள்' : 'Languages used for billing and data entry'}
-            </Typography>
-          </Box>
-          {!editingLangSettings ? (
-            <Button variant="outlined" size="small" onClick={() => setEditingLangSettings(true)} startIcon={<Edit sx={{ fontSize: 16 }} />}>
-              {t('edit' as any) || 'Edit'}
-            </Button>
-          ) : (
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button variant="outlined" color="inherit" onClick={() => setEditingLangSettings(false)}>{t('cancel' as any) || 'Cancel'}</Button>
-              <Button variant="contained" onClick={saveLangSettings} startIcon={<Save sx={{ fontSize: 16 }} />}>{t('save' as any) || 'Save'}</Button>
+      <SettingsSection title="Language Preferences" description="Select the language for the user interface.">
+        <SettingsRow
+          title="தமிழ் (Tamil)"
+          description="முழுக்க தமிழில்"
+          control={
+            <Box sx={{ width: 24, height: 24, borderRadius: '50%', border: '2px solid', borderColor: language === 'ta' ? 'primary.main' : 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: language === 'ta' ? 'primary.main' : 'transparent' }}>
+              {language === 'ta' && <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: 'white' }} />}
             </Box>
-          )}
-        </Box>
-        
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            {!editingLangSettings ? (
-              <Box>
-                <Typography variant="body2" color="text.secondary" gutterBottom>{language === 'ta' ? 'முதன்மை மொழி' : 'Primary Language'}</Typography>
-                <Typography variant="body1" sx={{ p: 1.5, bgcolor: 'action.hover', borderRadius: 1 }}>{profile.primaryDataLanguage || 'Tamil'}</Typography>
-              </Box>
-            ) : (
-              <FormControl fullWidth size="small">
-                <InputLabel>{language === 'ta' ? 'முதன்மை மொழி' : 'Primary Language'}</InputLabel>
-                <Select MenuProps={{ disableScrollLock: true }} name="primaryDataLanguage" value={profile.primaryDataLanguage || 'Tamil'} onChange={handleChange} label={language === 'ta' ? 'முதன்மை மொழி' : 'Primary Language'}>
-                  <MenuItem value="Tamil">{t('langTamil')}</MenuItem>
-                  <MenuItem value="English">{t('langEnglish')}</MenuItem>
-                  {/* Archived Languages:
-                  <MenuItem value="Hindi">{t('langHindi')}</MenuItem>
-                  <MenuItem value="Telugu">{t('langTelugu')}</MenuItem>
-                  <MenuItem value="Kannada">{t('langKannada')}</MenuItem>
-                  <MenuItem value="Malayalam">{t('langMalayalam')}</MenuItem>
-                  <MenuItem value="Marathi">{t('langMarathi')}</MenuItem>
-                  <MenuItem value="Gujarati">{t('langGujarati')}</MenuItem>
-                  <MenuItem value="Bengali">{t('langBengali')}</MenuItem>
-                  */}
-                </Select>
-              </FormControl>
-            )}
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            {!editingLangSettings ? (
-              <Box>
-                <Typography variant="body2" color="text.secondary" gutterBottom>{language === 'ta' ? 'இரண்டாம் மொழி' : 'Secondary Language'}</Typography>
-                <Typography variant="body1" sx={{ p: 1.5, bgcolor: 'action.hover', borderRadius: 1 }}>{profile.secondaryDataLanguage || 'English'}</Typography>
-              </Box>
-            ) : (
-              <FormControl fullWidth size="small">
-                <InputLabel>{language === 'ta' ? 'இரண்டாம் மொழி' : 'Secondary Language'}</InputLabel>
-                <Select MenuProps={{ disableScrollLock: true }} name="secondaryDataLanguage" value={profile.secondaryDataLanguage || 'English'} onChange={handleChange} label={language === 'ta' ? 'இரண்டாம் மொழி' : 'Secondary Language'}>
-                  <MenuItem value="English">{t('langEnglish')}</MenuItem>
-                  <MenuItem value="Tamil">{t('langTamil')}</MenuItem>
-                  {/* Archived Languages:
-                  <MenuItem value="Hindi">{t('langHindi')}</MenuItem>
-                  <MenuItem value="Telugu">{t('langTelugu')}</MenuItem>
-                  <MenuItem value="Kannada">{t('langKannada')}</MenuItem>
-                  <MenuItem value="Malayalam">{t('langMalayalam')}</MenuItem>
-                  <MenuItem value="Marathi">{t('langMarathi')}</MenuItem>
-                  <MenuItem value="Gujarati">{t('langGujarati')}</MenuItem>
-                  <MenuItem value="Bengali">{t('langBengali')}</MenuItem>
-                  */}
-                </Select>
-              </FormControl>
-            )}
-          </Grid>
-          <Grid size={{ xs: 12 }}>
-            <Paper className="s2-group" variant="outlined" sx={{ p: 2, display: 'flex', alignItems: 'center', opacity: editingLangSettings ? 1 : 0.7, pointerEvents: editingLangSettings ? 'auto' : 'none', bgcolor: 'action.hover' }}>
-              <FormControlLabel
-                control={
-                  <Switch 
-                    checked={profile.enableBilingual !== false} 
-                    onChange={e => setProfile(prev => ({ ...prev, enableBilingual: e.target.checked }))} 
-                    disabled={!editingLangSettings} 
-                    color="primary"
-                  />
-                }
-                label={
-                  <Box>
-                    <Typography variant="body1" style={{ fontWeight: 500 }}>{language === 'ta' ? 'இருமொழிப் பதிவு' : 'Enable Bilingual Bills'}</Typography>
-                    <Typography variant="body2" color="text.secondary">{language === 'ta' ? 'இரு மொழிகளிலும் தரவை உள்ளிட அனுமதிக்கவும்' : 'Allow data entry in two languages'}</Typography>
-                  </Box>
-                }
-                sx={{ m: 0, width: '100%' }}
-              />
-            </Paper>
-          </Grid>
-        </Grid>
-      </Paper>
-</Box>); title = "Display & Languages"; }
-    else if (currentView === 2) { content = (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
-        {/* ---- Bank Details (Simple — same as Coolie) ---- */}
-        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ m: 0 }}>
-          {t('paymentAccountsTitle')}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 3 }}>
-          {language === 'ta' ? 'பில்களில் காட்டப்படும் வங்கி விவரங்கள்.' : 'Bank details shown on your invoices.'}
-        </Typography>
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth size="small" label={language === 'ta' ? 'வங்கி பெயர் (தமிழ்)' : 'Bank Name (Tamil)'} name="vangiPeyar" value={profile.vangiPeyar || ''} onChange={handleChange} />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth size="small" label={language === 'ta' ? 'வங்கி பெயர் (ஆங்கிலம்)' : 'Bank Name (English)'} name="vangiPeyarEn" value={profile.vangiPeyarEn || ''} onChange={handleChange} />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth size="small" label={language === 'ta' ? 'கிளை பெயர் (தமிழ்)' : 'Branch Name (Tamil)'} name="bankBranch" value={profile.bankBranch || ''} onChange={handleChange} />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth size="small" label={language === 'ta' ? 'கிளை பெயர் (ஆங்கிலம்)' : 'Branch Name (English)'} name="bankBranchEn" value={profile.bankBranchEn || ''} onChange={handleChange} />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth size="small" label={language === 'ta' ? 'கணக்கு எண்' : 'Account Number'} name="kanakkuEn" value={profile.kanakkuEn || ''} onChange={handleChange} />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth size="small" label="IFSC Code" name="ifsc" value={profile.ifsc || ''} onChange={handleChange} />
-          </Grid>
-        </Grid>
-        <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
-          <Button type="button" variant="contained" color="primary" onClick={handleSave} disabled={saving} startIcon={<Save sx={{ fontSize: 18 }} />}>
-            {saving ? t('saving') : t('saveProfile')}
-          </Button>
-        </Box>
-      </Paper>
-
-      {/* ---- Invoice Terms & Conditions ---- */}
-      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
-        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0 }}>
-          {t('termsTemplatesTitle')}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          Default Terms and Conditions that will appear on your invoices.
-        </Typography>
-        <TextField 
-          fullWidth 
-          multiline 
-          rows={6} 
-          size="small" 
-          label="Terms & Conditions" 
-          name="invoiceTerms" 
-          value={profile.invoiceTerms || ''} 
-          onChange={handleChange} 
-          placeholder="Paste or type your terms & conditions..." 
+          }
+          onClick={() => {
+            setLanguage('ta');
+            thagaval('மொழி தமிழுக்கு மாற்றப்பட்டது', 'success');
+          }}
         />
-        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-          <Button type="button" variant="contained" color="primary" onClick={handleSave} disabled={saving} startIcon={<Save sx={{ fontSize: 18 }} />}>
-            {saving ? t('saving') : t('saveProfile')}
-          </Button>
-        </Box>
-      </Paper>
-
-      {/* ---- Invoice Template ---- */}
-      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
-        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0 }}>
-          {t('hc_invoiceTemplate')}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          Configure default styling and optional fields for all your invoices.
-        </Typography>
-
-        {Array.from(new Map(getCountriesForRegion().map(c => [c.currency, c])).values()).length > 1 && (
-        <Grid container spacing={3} sx={{ mb: 3 }}>
-          <Grid size={{ xs: 12, md: invoiceTemplate.currency !== 'INR' ? 6 : 12 }}>
-            <FormControl fullWidth size="small">
-              <InputLabel shrink>{t('hc_currency')}</InputLabel>
-              <Select value={invoiceTemplate.currency || 'INR'} label={t('hc_currency')} displayEmpty
-                onChange={(e) => handleTemplateChange('currency', e.target.value)}>
-                {Array.from(new Map(getCountriesForRegion().map(c => [c.currency, c])).values()).map(c => (
-                  <MenuItem key={c.currency} value={c.currency}>{c.currency} ({c.currencySymbol === c.currency ? c.name : c.currencySymbol})</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          {invoiceTemplate.currency !== 'INR' && (
-            <Grid size={{ xs: 12, md: 6 }}>
-              <TextField fullWidth size="small" label="Exchange Rate (optional, snapshot)" 
-                type="number" slotProps={{ htmlInput: { step: "any", min: 0 } }}
-                value={invoiceTemplate.exchangeRate || ''}
-                onChange={(e) => handleTemplateChange('exchangeRate', e.target.value)}
-                placeholder={`1 ${invoiceTemplate.currency} = ? INR`}
-                helperText="Stored on this invoice — historical reports stay accurate even if rates change."
-              />
-            </Grid>
-          )}
-        </Grid>
-        )}
-        
-
-        <Grid container spacing={3}>
-          {[
-            { group: 'Header & branding', items: [
-              ['showLogo', 'Logo'],
-              ['showBusinessAddress', 'Business mugavari'],
-              ['showBusinessPhone', 'Business tholaipesi'],
-              ['showBusinessEmail', 'Business email'],
-              ['showState', 'Business maanilam'],
-              ['showDistrict', 'Business district'],
-              ['showCountry', 'Business country'],
-              ['showGSTIN', 'Tax ID (GSTIN/VAT/etc.)'],
-            ]},
-            { group: 'Client / Bill-to', items: [
-              ['showClientAddress', 'Client mugavari'],
-              ['showClientPhone', 'Client tholaipesi'],
-              ['showClientEmail', 'Client email'],
-              ['showPlaceOfSupply', 'Place of Supply'],
-            ]},
-            { group: 'Items table', items: [
-              ['showHSN', 'HSN/SAC column'],
-              ['showItemUnit', 'Unit column'],
-              ['showDiscount', 'Discount column'],
-              ['showCess', 'GST Cess % column'],
-            ]},
-            { group: 'Totals', items: [
-              ['showAmountWords', 'Amount in words'],
-              ['showRoundOff', 'Round-off line'],
-            ]},
-            { group: 'Compliance', items: [
-              ['reverseCharge', 'Reverse Charge applies'],
-            ]},
-            { group: 'Footer', items: [
-              ['showBankDetails', 'Bank details'],
-              ['showIfsc', 'IFSC code'],
-              ['showAccountLabel', 'Show Pay via label'],
-              ['showUPI', 'UPI QR (India only)'],
-              ['showSignature', 'Signature block'],
-              ['showSignatoryText', 'Authorized Signatory caption'],
-              ['showTerms', 'Terms & Conditions'],
-              ['showNotes', 'Notes / Remarks'],
-            ]},
-          ].map(section => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={section.group}>
-              <Typography variant="overline" color="text.secondary" sx={{ fontWeight: 700, display: 'block', mb: 1 }}>{section.group}</Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                {section.items.map(([key, label]) => {
-                  const offByDefault = key === 'showRoundOff' || key === 'showAccountLabel' || key === 'showCess' || key === 'reverseCharge';
-                  const checked = offByDefault ? !!invoiceTemplate[key] : invoiceTemplate[key] !== false;
-                  return (
-                    <FormControlLabel key={key} control={<Checkbox size="small" checked={checked} onChange={(e) => handleTemplateChange(key, !checked)} />} label={<Typography variant="body2">{label}</Typography>} />
-                  );
-                })}
-              </Box>
-            </Grid>
-          ))}
-        </Grid>
-      </Paper>
-
-</Box>); title = "Billing & Payments"; }
-    else if (currentView === 3) { content = (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>      {/* ---- Advanced Settings ---- */}
-      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
-        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0, mb: 0.5 }}>
-          Advanced Settings
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          API Integrations and advanced configuration.
-        </Typography>
-
-        <details>
-          <summary style={{ cursor: 'pointer', color: 'var(--text-muted)', fontSize: '0.9rem', padding: '0.5rem 0', fontWeight: 500 }}>
-            Google Drive Backup API
-          </summary>
-          <Box sx={{ pt: 2 }}>
-            <Grid container spacing={3}>
-              <Grid size={{ xs: 12 }}>
-                <TextField fullWidth size="small" label="Google OAuth Client ID" name="googleClientId" value={profile.googleClientId} onChange={handleChange} placeholder="xxxx.apps.googleusercontent.com" 
-                  helperText={
-                    <Typography component="span" variant="caption">
-                      <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)' }}>Open Google Cloud Console</a> &rarr; Create Project &rarr; Enable Drive API &rarr; Create OAuth Client ID (Web app) &rarr; Add <code>http://localhost:5173</code> as origin.
-                    </Typography>
-                  }
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField fullWidth size="small" label="Drive Folder Name" name="googleDriveFolder" value={profile.googleDriveFolder} onChange={handleChange} placeholder="GST Billing Invoices" />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }} gutterBottom>Status</Typography>
-                <Box sx={{ display: 'flex', gap: 1 }}>
-                  {driveConnected ? (
-                    <>
-                      <Chip icon={<Cloud sx={{ fontSize: 14 }} />} label="Connected" color="success" variant="outlined" sx={{ bgcolor: 'success.50' }} />
-                      <Button variant="outlined" size="small" color="inherit" onClick={handleDisconnectDrive} startIcon={<CloudOff sx={{ fontSize: 14 }} />}>
-                        Disconnect
-                      </Button>
-                    </>
-                  ) : (
-                    <Button variant="contained" size="small" onClick={handleConnectDrive} disabled={connecting} startIcon={<Cloud sx={{ fontSize: 16 }} />}>
-                      {connecting ? 'Connecting...' : 'Connect Google Drive'}
-                    </Button>
-                  )}
-                </Box>
-              </Grid>
-            </Grid>
-          </Box>
-        </details>
-      </Paper>
-
-      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
-        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0 }}>
-          {t('dataManagementTitle')}
-        </Typography>
-
-        <Paper className="s2-group" elevation={0} sx={{ p: 2, mb: 2, bgcolor: 'info.light', color: 'info.contrastText', display: 'flex', gap: 2 }}>
-          <Typography variant="h6" sx={{ m: 0 }}>🔒</Typography>
-          <Typography variant="body2" dangerouslySetInnerHTML={{ __html: t('dataNoticeText') as string }} />
-        </Paper>
-
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          {t('dataManagementDesc')}
-        </Typography>
-        
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-          <Button variant="contained" onClick={() => setShowExportModal(true)} startIcon={<Download sx={{ fontSize: 18 }} />}>
-            {t('exportBackup')}
-          </Button>
-          <Button variant="outlined" onClick={() => fileInputRef.current?.click()} startIcon={<Upload sx={{ fontSize: 18 }} />}>
-            {t('importBackup')}
-          </Button>
-          <input ref={fileInputRef} type="file" accept=".json" onChange={handleImportPick} style={{ display: 'none' }} />
-        </Box>
-      </Paper>
-</Box>); title = "Storage & Cloud"; }
-    else if (currentView === 4) { content = (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>      {/* ---- Data Management ---- */}
-      <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
-        <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0, mb: 0.5 }}>
-          {t('appUpdatesTitle')}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {t('appUpdatesDesc')}
-        </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-          <Button variant="outlined" disabled={checkingUpdate} onClick={async () => {
-            setCheckingUpdate(true);
-            try {
-              const res = await fetch('/api/check-update');
-              const data = await res.json();
-              setUpdateInfo(data);
-              if (data.updateAvailable) {
-                thagaval(`Update available: v${data.latest}`, 'info');
-              } else if (data.error) {
-                thagaval('Could not check for updates. Check internet connection.', 'warning');
-              } else {
-                thagaval('You are on the latest version!', 'success');
-              }
-            } catch {
-              thagaval('Could not check for updates.', 'error');
-            }
-            setCheckingUpdate(false);
-          }} startIcon={
-            <Box component="span" sx={{ display: 'flex', animation: checkingUpdate ? 'spin 1s linear infinite' : 'none', '@keyframes spin': { '100%': { transform: 'rotate(360deg)' } } }}>
-              <Refresh sx={{ fontSize: 18 }} />
+        <SettingsRow
+          title="English"
+          description="English only"
+          control={
+            <Box sx={{ width: 24, height: 24, borderRadius: '50%', border: '2px solid', borderColor: language === 'en' ? 'primary.main' : 'divider', display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: language === 'en' ? 'primary.main' : 'transparent' }}>
+              {language === 'en' && <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: 'white' }} />}
             </Box>
-          }>
-            {checkingUpdate ? t('checkingUpdate') : t('checkForUpdates')}
-          </Button>
-          {updateInfo && (
-            <Typography variant="body2" color="text.secondary">
-              Current: v{updateInfo.current}{updateInfo.latest ? ` | Latest: v${updateInfo.latest}` : ''}
-            </Typography>
-          )}
-        </Box>
-        {updateInfo?.updateAvailable && (
-          <Paper className="s2-group" elevation={0} sx={{ p: 2, bgcolor: 'primary.50', color: 'primary.900', borderRadius: 2 }}>
-            <Typography variant="subtitle2" style={{ fontWeight: 'bold' }}>New version v{updateInfo.latest} is available!</Typography>
-            <Typography variant="body2" sx={{ mb: 1 }}>Your data will not be affected. Click below to update:</Typography>
-            <Button component="a" href="elvanniril-update://run" variant="contained" color="primary" startIcon={<Download sx={{ fontSize: 18 }} />}>
-              Update Now
+          }
+          onClick={() => {
+            setLanguage('en');
+            thagaval('Language changed to English', 'success');
+          }}
+        />
+      </SettingsSection>
+      </Box>); title = "App Preferences"; }
+    else if (currentView === 2) { content = (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+      <SettingsSection title={t('dataManagementTitle')} description={<span dangerouslySetInnerHTML={{ __html: t('dataNoticeText') as string }} />}>
+        <SettingsRow
+          icon={<Download />}
+          title={t('exportBackup')}
+          description="Save all your profiles and settings to a JSON file."
+          control={
+            <Button variant="outlined" size="small" onClick={() => setShowExportModal(true)}>
+              Export
             </Button>
-          </Paper>
+          }
+        />
+        <SettingsRow
+          icon={<Upload />}
+          title={t('importBackup')}
+          description="Restore your data from a previous backup file."
+          control={
+            <>
+              <Button variant="outlined" size="small" onClick={() => fileInputRef.current?.click()}>
+                Import
+              </Button>
+              <input ref={fileInputRef} type="file" accept=".json" onChange={handleImportPick} style={{ display: 'none' }} />
+            </>
+          }
+        />
+      </SettingsSection>
+      </Box>); title = "Storage & Cloud"; }
+    else if (currentView === 3) { content = (<Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+      <SettingsSection title={t('appUpdatesTitle')} description={t('appUpdatesDesc')}>
+        <SettingsRow
+          icon={<Refresh />}
+          title="App Version"
+          description={updateInfo ? `Current: v${updateInfo.current}${updateInfo.latest ? ` | Latest: v${updateInfo.latest}` : ''}` : "Checking for updates manually."}
+          control={
+            <Button variant="outlined" size="small" disabled={checkingUpdate} onClick={async () => {
+              setCheckingUpdate(true);
+              try {
+                const res = await fetch('/api/check-update');
+                const data = await res.json();
+                setUpdateInfo(data);
+                if (data.updateAvailable) {
+                  thagaval(`Update available: v${data.latest}`, 'info');
+                } else if (data.error) {
+                  thagaval('Could not check for updates. Check internet connection.', 'warning');
+                } else {
+                  thagaval('You are on the latest version!', 'success');
+                }
+              } catch {
+                thagaval('Could not check for updates.', 'error');
+              }
+              setCheckingUpdate(false);
+            }}>
+              {checkingUpdate ? t('checkingUpdate') : t('checkForUpdates')}
+            </Button>
+          }
+        />
+        {updateInfo?.updateAvailable && (
+          <SettingsRow
+            title="New Version Available"
+            description={`v${updateInfo.latest} is ready to install.`}
+            control={
+              <Button component="a" href="elvanniril-update://run" variant="contained" color="primary" size="small">
+                Update Now
+              </Button>
+            }
+          />
         )}
-      </Paper>
+        <SettingsRow
+          icon={<Delete />}
+          title={t('clearCacheTitle')}
+          description={t('clearCacheDesc')}
+          control={
+            <Button variant="contained" color="error" size="small" onClick={() => {
+              if (confirm('Clear local cache and reload? You will need to log in again if using Google Drive.')) {
+                localStorage.clear();
+                window.location.reload();
+              }
+            }}>
+              {t('clearCacheBtn')}
+            </Button>
+          }
+        />
+      </SettingsSection>
 </Box>); title = "System & Updates"; }
 
     return (
@@ -1415,23 +727,15 @@ export default function Amaippugal({ onSaved }) {
           <div className="s2-item" onClick={() => handleNavigate(1)}>
               <div className="s2-icon-circle blue"><Tag fontSize="small" /></div>
               <div className="s2-item-text">
-                  <div className="s2-item-title">Display & Languages</div>
-                  <div className="s2-item-desc">UI language, Data languages</div>
-              </div>
-          </div>
-          <div className="s2-divider"></div>
-          <div className="s2-item" onClick={() => handleNavigate(2)}>
-              <div className="s2-icon-circle green"><Tag fontSize="small" /></div>
-              <div className="s2-item-text">
-                  <div className="s2-item-title">Billing & Payments</div>
-                  <div className="s2-item-desc">Accounts, Invoice formats, Terms</div>
+                  <div className="s2-item-title">App Preferences</div>
+                  <div className="s2-item-desc">UI language, Theme</div>
               </div>
           </div>
        </div>
 
        <div className="s2-section-label">Advanced</div>
        <div className="s2-group" style={{ marginBottom: 32 }}>
-          <div className="s2-item" onClick={() => handleNavigate(3)}>
+          <div className="s2-item" onClick={() => handleNavigate(2)}>
               <div className="s2-icon-circle purple"><Cloud fontSize="small" /></div>
               <div className="s2-item-text">
                   <div className="s2-item-title">Storage & Cloud</div>
@@ -1439,7 +743,7 @@ export default function Amaippugal({ onSaved }) {
               </div>
           </div>
           <div className="s2-divider"></div>
-          <div className="s2-item" onClick={() => handleNavigate(4)}>
+          <div className="s2-item" onClick={() => handleNavigate(3)}>
               <div className="s2-icon-circle orange"><Refresh fontSize="small" /></div>
               <div className="s2-item-text">
                   <div className="s2-item-title">System & Updates</div>
@@ -1510,11 +814,10 @@ export default function Amaippugal({ onSaved }) {
                       }
                   }}
               >
-                  <Tab label="Profile" />
-                  <Tab label="Display & Languages" />
-                  <Tab label="Billing & Payments" />
-                  <Tab label="Storage & Cloud" />
-                  <Tab label="System & Updates" />
+                  <Tab value={0} label={appMode === 'COOLIE' ? 'Coolie Settings' : 'GST Settings'} />
+                  <Tab value={1} label="App Preferences" />
+                  <Tab value={2} label="Storage & Cloud" />
+                  <Tab value={3} label="System & Updates" />
               </Tabs>
               <Box>
                   {detailContent || <div className="s2-welcome-card">Select a setting</div>}
@@ -1543,14 +846,6 @@ export default function Amaippugal({ onSaved }) {
               } />
             ))}
           </Box>
-          <FormControlLabel sx={{ mt: 2 }} control={<Checkbox checked={exportToDrive} onChange={e => setExportToDrive(e.target.checked)} />} label={
-            <Box>
-              <Typography variant="body2" style={{ fontWeight: 'bold' }}>Also save a copy to my Google Drive</Typography>
-              <Typography variant="caption" color="text.secondary">
-                Uploads to <em>{(profile.googleDriveFolder || 'GST Billing Invoices')} - Backups</em> in your Drive. Requires Google Client ID configured above. The file always downloads to your computer too.
-              </Typography>
-            </Box>
-          } />
         </DialogContent>
         <DialogActions>
           <Button color="inherit" onClick={() => setShowExportModal(false)} disabled={drivePending}>{t('cancel')}</Button>
@@ -1606,6 +901,41 @@ export default function Amaippugal({ onSaved }) {
           </DialogActions>
         </Dialog>
       )}
+      {/* ----------------------- New Profile Modal ----------------------- */}
+      <Dialog open={showNewProfileModal} onClose={() => setShowNewProfileModal(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>{language === 'ta' ? 'புதிய வணிக சுயவிவரத்தை உருவாக்கு' : 'Create New Business Profile'}</DialogTitle>
+        <DialogContent dividers>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, py: 1 }}>
+            <TextField 
+              fullWidth size="small" autoFocus required
+              label={language === 'ta' ? 'நிறுவனத்தின் பெயர் (Business Name)' : 'Business Name'} 
+              value={newProfileData.niruvanathinPeyar} 
+              onChange={(e) => setNewProfileData(prev => ({ ...prev, niruvanathinPeyar: e.target.value }))} 
+            />
+            <TextField 
+              fullWidth size="small" 
+              label={language === 'ta' ? 'GSTIN (விரும்பினால்)' : 'GSTIN (Optional)'} 
+              value={newProfileData.gstin} 
+              onChange={(e) => setNewProfileData(prev => ({ ...prev, gstin: e.target.value }))} 
+            />
+            <TextField 
+              fullWidth size="small" multiline rows={3}
+              label={language === 'ta' ? 'முகவரி (Address)' : 'Address (Optional)'} 
+              value={newProfileData.mugavari} 
+              onChange={(e) => setNewProfileData(prev => ({ ...prev, mugavari: e.target.value }))} 
+            />
+            <Typography variant="caption" color="text.secondary">
+              {language === 'ta' ? 'பிற விவரங்களை பின்னர் அமைப்புகள் மூலம் சேர்க்கலாம்.' : 'You can fill in the rest of the details later from Settings.'}
+            </Typography>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button color="inherit" onClick={() => setShowNewProfileModal(false)} disabled={creatingProfile}>{t('cancel' as any) || 'Cancel'}</Button>
+          <Button variant="contained" onClick={handleCreateNewProfile} disabled={creatingProfile || !newProfileData.niruvanathinPeyar.trim()}>
+            {creatingProfile ? (language === 'ta' ? 'உருவாக்குகிறது...' : 'Creating...') : (language === 'ta' ? 'உருவாக்கு' : 'Create')}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

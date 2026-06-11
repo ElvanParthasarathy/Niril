@@ -48,6 +48,7 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
     showBank: true,
     showNotes: true,
     showSignature: true,
+    ...(profileProp?.invoiceOptions || {})
   });
   
   const [metadata, setMetadata] = useState<InvoiceMetadataState>({

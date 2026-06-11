@@ -189,7 +189,7 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
       <Dialog
         open={Boolean(invoiceToDelete)}
         onClose={() => setInvoiceToDelete(null)}
-        PaperProps={{ sx: { bgcolor: 'background.paper', backgroundImage: 'none' } }}
+        slotProps={{ paper: { sx: { bgcolor: 'background.paper', backgroundImage: 'none' } } }}
       >
         <DialogTitle sx={{ pb: 1, color: 'error.main' }}>{t('delete') || 'Delete'}</DialogTitle>
         <DialogContent>

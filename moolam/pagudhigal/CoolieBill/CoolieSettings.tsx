@@ -4,7 +4,7 @@ import { Box, Typography, Button, TextField, Select, MenuItem, useTheme, useMedi
 import { getAllCoolieProfiles, saveCoolieProfile } from '../../Avanam';
 import { thagaval } from '../Thagaval';
 import { useLanguage } from '../../mozhi/LanguageContext';
-import ElvanCard from '../ElvanCard';
+import { SettingsSection, SettingsRow } from '../ElvanSettingsSection';
 
 export default function CoolieSettings() {
   const { t, language } = useLanguage();
@@ -157,7 +157,7 @@ export default function CoolieSettings() {
   }
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
       
       {/* Header */}
       <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'center', mb: 4, gap: 2 }}>
@@ -206,16 +206,13 @@ export default function CoolieSettings() {
 
       <Stack spacing={3}>
         {/* 1. Identity & Appearance */}
-        <ElvanCard sx={{ p: 3 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-            <Palette size={24} color={theme.palette.primary.main} weight="fill" />
-            <Typography variant="h6" sx={{ fontWeight: 700 }}>{t('appearance') || 'Identity & Appearance'}</Typography>
-          </Box>
-          <Box sx={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 3 }}>
-            <Box sx={{ gridColumn: 'span 2' }}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.secondary', mb: 1 }}>
-                {t('organizationLogo') || 'Organization Logo'}
-              </Typography>
+        <SettingsSection title={t('appearance') || 'Identity & Appearance'} sx={{ p: 0 }}>
+          <Box sx={{ p: { xs: 2, md: 3 }, display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 3 }}>
+              <Box sx={{ gridColumn: 'span 2' }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.secondary', mb: 1 }}>
+                  {t('organizationLogo') || 'Organization Logo'}
+                </Typography>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                 {formData.logo && (
                   <Box sx={{ height: 80, width: 120, border: '1px solid', borderColor: 'divider', borderRadius: 2, display: 'flex', justifyContent: 'center', alignItems: 'center', bgcolor: 'background.paper' }}>
@@ -315,29 +312,22 @@ export default function CoolieSettings() {
                 </FormControl>
               </Box>
             </Box>
+            </Box>
           </Box>
-        </ElvanCard>
+        </SettingsSection>
 
         {/* 2. Basic Info */}
-        <ElvanCard sx={{ p: 3 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-            <Storefront size={24} color={theme.palette.primary.main} weight="fill" />
-            <Typography variant="h6" sx={{ fontWeight: 700 }}>{t('basicInfo') || 'Basic Information'}</Typography>
-          </Box>
-          <Box sx={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 3 }}>
+        <SettingsSection title={t('basicInfo') || 'Basic Information'} sx={{ p: 0 }}>
+          <Box sx={{ p: { xs: 2, md: 3 }, display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 3 }}>
             <TextField label={t('companyNameTamil') || 'Organization Name (Tamil)'} value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} fullWidth size="small" sx={{ gridColumn: 'span 2' }} />
             <TextField label={t('companyNameEnglish') || 'Organization Name (English)'} value={formData.nameEn} onChange={e => setFormData({ ...formData, nameEn: e.target.value })} fullWidth size="small" sx={{ gridColumn: 'span 2' }} />
             <TextField label={t('shortBusinessName') || 'Short Business Name (For Filters)'} value={formData.shortBusinessName} onChange={e => setFormData({ ...formData, shortBusinessName: e.target.value })} fullWidth size="small" sx={{ gridColumn: 'span 2' }} placeholder="e.g., VRM, PVS" />
           </Box>
-        </ElvanCard>
+        </SettingsSection>
 
         {/* 3. Address Details */}
-        <ElvanCard sx={{ p: 3 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-            <MapPin size={24} color={theme.palette.primary.main} weight="fill" />
-            <Typography variant="h6" sx={{ fontWeight: 700 }}>{t('addressDetails') || 'Address Details'}</Typography>
-          </Box>
-          <Box sx={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 3 }}>
+        <SettingsSection title={t('addressDetails') || 'Address Details'} sx={{ p: 0 }}>
+          <Box sx={{ p: { xs: 2, md: 3 }, display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 3 }}>
             <TextField label={t('addressTamil') || 'Address (Tamil)'} value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} fullWidth multiline rows={2} size="small" sx={{ gridColumn: 'span 2' }} />
             <TextField label={t('addressEnglish') || 'Address (English)'} value={formData.addressEn} onChange={e => setFormData({ ...formData, addressEn: e.target.value })} fullWidth multiline rows={2} size="small" sx={{ gridColumn: 'span 2' }} />
             
@@ -349,15 +339,11 @@ export default function CoolieSettings() {
 
             <TextField label={t('pincode') || 'Pincode'} value={formData.pincode} onChange={e => setFormData({ ...formData, pincode: e.target.value })} fullWidth size="small" sx={{ gridColumn: 'span 2' }} />
           </Box>
-        </ElvanCard>
+        </SettingsSection>
 
         {/* 4. Bank & Contact */}
-        <ElvanCard sx={{ p: 3 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-            <Bank size={24} color={theme.palette.primary.main} weight="fill" />
-            <Typography variant="h6" sx={{ fontWeight: 700 }}>{t('bankAndContact') || 'Bank Details'}</Typography>
-          </Box>
-          <Box sx={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 3 }}>
+        <SettingsSection title={t('bankAndContact') || 'Bank Details'} sx={{ p: 0 }}>
+          <Box sx={{ p: { xs: 2, md: 3 }, display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 3 }}>
             <TextField label={t('bankNameTamil') || 'Bank Name (Tamil)'} value={formData.bankName} onChange={e => setFormData({ ...formData, bankName: e.target.value })} fullWidth size="small" />
             <TextField label={t('bankNameEnglish') || 'Bank Name (English)'} value={formData.bankNameEn} onChange={e => setFormData({ ...formData, bankNameEn: e.target.value })} fullWidth size="small" />
             
@@ -367,15 +353,11 @@ export default function CoolieSettings() {
             <TextField label={t('accountNo') || 'Account Number'} value={formData.accountNo} onChange={e => setFormData({ ...formData, accountNo: e.target.value })} fullWidth size="small" />
             <TextField label={t('ifscCode') || 'IFSC Code'} value={formData.ifsc} onChange={e => setFormData({ ...formData, ifsc: e.target.value })} fullWidth size="small" />
           </Box>
-        </ElvanCard>
+        </SettingsSection>
 
         {/* 5. Contact Info */}
-        <ElvanCard sx={{ p: 3 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-            <AddressBook size={24} color={theme.palette.primary.main} weight="fill" />
-            <Typography variant="h6" sx={{ fontWeight: 700 }}>{t('contactInformation') || 'Contact Information'}</Typography>
-          </Box>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        <SettingsSection title={t('contactInformation') || 'Contact Information'} sx={{ p: 0 }}>
+          <Box sx={{ p: { xs: 2, md: 3 }, display: 'flex', flexDirection: 'column', gap: 3 }}>
             <Box>
               <Typography variant="subtitle2" sx={{ fontWeight: 600, color: 'text.secondary', mb: 1 }}>
                 {t('phoneNumbers') || 'Phone Numbers'}
@@ -428,7 +410,7 @@ export default function CoolieSettings() {
               />
             </Box>
           </Box>
-        </ElvanCard>
+        </SettingsSection>
       </Stack>
     </Box>
   );

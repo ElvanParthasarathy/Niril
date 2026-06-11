@@ -1352,11 +1352,7 @@ function Seyali() {
         )}
 
         {currentView === 'settings' && (
-          appMode === 'GST' ? (
-            <Amaippugal onSaved={(p) => setProfile(p)} />
-          ) : (
-            <CoolieSettings />
-          )
+          <Amaippugal appMode={appMode} onSaved={(p) => setProfile(p)} />
         )}
           </Box>
         </Box>
@@ -1594,8 +1590,7 @@ function Seyali() {
 
       <Thagaval />
 
-      {/* ── DEV: Floating bilingual language switcher ── */}
-      <DevLanguageSwitcher profile={profile} setProfile={setProfile} language={language} setLanguage={setLanguage} />
+
 
       </Box>
     </ThemeProvider>

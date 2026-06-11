@@ -392,7 +392,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
             fullWidth
             fullScreen={fullScreen}
             maxWidth="sm"
-            PaperProps={{ sx: { borderRadius: fullScreen ? 0 : 3, maxHeight: fullScreen ? '100dvh' : '80vh' } }}
+            slotProps={{ paper: { sx: { borderRadius: fullScreen ? 0 : 3, maxHeight: fullScreen ? '100dvh' : '80vh' } } }}
           >
             <DialogTitle sx={{ pb: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>{t('selectInvoices') || 'Select Invoices'}</Typography>

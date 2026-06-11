@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { SidebarSimple, FileText, GearSix, DownloadSimple, Moon, Sun, CaretDown, CaretRight, Question, Bell, SignOut, CaretUpDown } from '@phosphor-icons/react';
+import { SidebarSimple, FileText, GearSix, DownloadSimple, Moon, Sun, CaretDown, CaretRight, Question, Bell, SignOut, CaretUpDown, Invoice, HandCoins } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Badge, Box, Typography, Avatar, Divider, Tooltip, IconButton, Collapse, Popover, Switch } from '@mui/material';
 import { useLanguage } from '../mozhi/LanguageContext';

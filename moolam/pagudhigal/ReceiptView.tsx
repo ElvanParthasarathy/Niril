@@ -223,7 +223,7 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
       onclone: (clonedDoc) => {
         clonedDoc.querySelectorAll('*').forEach(n => { n.style.letterSpacing = '0px'; n.style.wordSpacing = '0px'; });
         const inv = clonedDoc.querySelector('.receipt-box');
-        if (inv) { inv.style.width = '100%'; inv.style.maxWidth = '190mm'; inv.style.overflow = 'visible'; inv.style.minHeight = 'unset'; inv.style.border = 'none'; inv.style.boxShadow = 'none'; inv.style.borderRadius = '0'; }
+        if (inv) { inv.style.width = '210mm'; inv.style.maxWidth = '210mm'; inv.style.overflow = 'visible'; inv.style.minHeight = 'unset'; inv.style.border = 'none'; inv.style.boxShadow = 'none'; inv.style.borderRadius = '0'; }
       }
     });
 

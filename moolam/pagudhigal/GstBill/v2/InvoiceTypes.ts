@@ -57,6 +57,7 @@ export interface InvoiceSettingsState {
   showBank: boolean;
   showNotes: boolean;
   showSignature: boolean;
+  showItemizedTax?: boolean;
   showCess?: boolean;
   currency?: string;
   measureMode?: 'weight' | 'quantity';
