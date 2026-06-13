@@ -36,7 +36,7 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
 // Ensure data directory and sub-directories exist
-const DIRS = ['pattiyalkal', 'vanigargal', 'mathirigal', 'porulgal', 'selavugal', 'thodar_pattiyalkal', 'raseedhugal', 'suya_vivaram', 'kolmudhal', 'coolie_porulgal', 'coolie_vanigargal', 'coolie_pattiyalkal', 'coolie_raseedhugal', 'coolie_suya_vivaram'];
+const DIRS = ['pattiyalkal', 'vanigargal', 'mathirigal', 'porulgal', 'selavugal', 'thodar_pattiyalkal', 'patrugal', 'thannilai', 'kolmudhal', 'coolie_porulgal', 'coolie_vanigargal', 'coolie_pattiyalkal', 'coolie_patrugal', 'coolie_thannilai'];
 for (const dir of DIRS) {
   const dirPath = path.join(DATA_DIR, dir);
   if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath, { recursive: true });
@@ -189,22 +189,22 @@ app.delete('/api/coolie_vanigargal/:id', (req, res) => {
 // ========================
 // COOLIE PROFILE / SETTINGS
 // ========================
-app.get('/api/coolie_suya_vivaram', (req, res) => {
-  const profiles = readAllFromDir('coolie_suya_vivaram');
+app.get('/api/coolie_thannilai', (req, res) => {
+  const profiles = readAllFromDir('coolie_thannilai');
   profiles.sort((a, b) => (a.organization_name || '').localeCompare(b.organization_name || ''));
   res.json(profiles);
 });
 
-app.post('/api/coolie_suya_vivaram', (req, res) => {
+app.post('/api/coolie_thannilai', (req, res) => {
   const prof = req.body;
   if (!prof.id) prof.id = 'cprof_' + Date.now();
-  const filePath = path.join(DATA_DIR, 'coolie_suya_vivaram', safeFileName(prof.id) + '.json');
+  const filePath = path.join(DATA_DIR, 'coolie_thannilai', safeFileName(prof.id) + '.json');
   writeJSON(filePath, prof);
   res.json({ success: true, id: prof.id });
 });
 
-app.delete('/api/coolie_suya_vivaram/:id', (req, res) => {
-  const filePath = path.join(DATA_DIR, 'coolie_suya_vivaram', safeFileName(req.params.id) + '.json');
+app.delete('/api/coolie_thannilai/:id', (req, res) => {
+  const filePath = path.join(DATA_DIR, 'coolie_thannilai', safeFileName(req.params.id) + '.json');
   deleteFile(filePath);
   res.json({ success: true });
 });
@@ -337,17 +337,17 @@ app.delete('/api/thodar_pattiyalkal/:id', (req, res) => {
 // ========================
 // RECEIPTS / PAYMENT VOUCHERS
 // ========================
-app.get('/api/raseedhugal', (req, res) => {
-  const receipts = readAllFromDir('raseedhugal');
+app.get('/api/patrugal', (req, res) => {
+  const receipts = readAllFromDir('patrugal');
   receipts.sort((a, b) => new Date(b.date) - new Date(a.date));
   res.json(receipts);
 });
 
-app.post('/api/raseedhugal', (req, res) => {
+app.post('/api/patrugal', (req, res) => {
   try {
     const receipt = req.body;
     if (!receipt.id) receipt.id = 'rcp_' + Date.now();
-    const filePath = path.join(DATA_DIR, 'raseedhugal', safeFileName(receipt.id) + '.json');
+    const filePath = path.join(DATA_DIR, 'patrugal', safeFileName(receipt.id) + '.json');
     writeJSON(filePath, receipt);
     res.json({ success: true, id: receipt.id });
   } catch (err) {
@@ -356,8 +356,8 @@ app.post('/api/raseedhugal', (req, res) => {
   }
 });
 
-app.delete('/api/raseedhugal/:id', (req, res) => {
-  const filePath = path.join(DATA_DIR, 'raseedhugal', safeFileName(req.params.id) + '.json');
+app.delete('/api/patrugal/:id', (req, res) => {
+  const filePath = path.join(DATA_DIR, 'patrugal', safeFileName(req.params.id) + '.json');
   deleteFile(filePath);
   res.json({ success: true });
 });
@@ -411,17 +411,17 @@ app.delete('/api/coolie_pattiyalkal/:id', (req, res) => {
 // ========================
 // COOLIE RECEIPTS
 // ========================
-app.get('/api/coolie_raseedhugal', (req, res) => {
-  const receipts = readAllFromDir('coolie_raseedhugal');
+app.get('/api/coolie_patrugal', (req, res) => {
+  const receipts = readAllFromDir('coolie_patrugal');
   receipts.sort((a, b) => new Date(b.date) - new Date(a.date));
   res.json(receipts);
 });
 
-app.post('/api/coolie_raseedhugal', (req, res) => {
+app.post('/api/coolie_patrugal', (req, res) => {
   try {
     const receipt = req.body;
     if (!receipt.id) receipt.id = 'crcp_' + Date.now();
-    const filePath = path.join(DATA_DIR, 'coolie_raseedhugal', safeFileName(receipt.id) + '.json');
+    const filePath = path.join(DATA_DIR, 'coolie_patrugal', safeFileName(receipt.id) + '.json');
     writeJSON(filePath, receipt);
     res.json({ success: true, id: receipt.id });
   } catch (err) {
@@ -430,8 +430,8 @@ app.post('/api/coolie_raseedhugal', (req, res) => {
   }
 });
 
-app.delete('/api/coolie_raseedhugal/:id', (req, res) => {
-  const filePath = path.join(DATA_DIR, 'coolie_raseedhugal', safeFileName(req.params.id) + '.json');
+app.delete('/api/coolie_patrugal/:id', (req, res) => {
+  const filePath = path.join(DATA_DIR, 'coolie_patrugal', safeFileName(req.params.id) + '.json');
   deleteFile(filePath);
   res.json({ success: true });
 });
@@ -439,22 +439,22 @@ app.delete('/api/coolie_raseedhugal/:id', (req, res) => {
 // ========================
 // BUSINESS PROFILES (multi-business)
 // ========================
-app.get('/api/suya_vivaram', (req, res) => {
-  const profiles = readAllFromDir('suya_vivaram');
+app.get('/api/thannilai', (req, res) => {
+  const profiles = readAllFromDir('thannilai');
   profiles.sort((a, b) => (a.businessName || '').localeCompare(b.businessName || ''));
   res.json(profiles);
 });
 
-app.post('/api/suya_vivaram', (req, res) => {
+app.post('/api/thannilai', (req, res) => {
   const prof = req.body;
   if (!prof.id) prof.id = 'biz_' + Date.now();
-  const filePath = path.join(DATA_DIR, 'suya_vivaram', safeFileName(prof.id) + '.json');
+  const filePath = path.join(DATA_DIR, 'thannilai', safeFileName(prof.id) + '.json');
   writeJSON(filePath, prof);
   res.json({ success: true, id: prof.id });
 });
 
-app.delete('/api/suya_vivaram/:id', (req, res) => {
-  const filePath = path.join(DATA_DIR, 'suya_vivaram', safeFileName(req.params.id) + '.json');
+app.delete('/api/thannilai/:id', (req, res) => {
+  const filePath = path.join(DATA_DIR, 'thannilai', safeFileName(req.params.id) + '.json');
   deleteFile(filePath);
   res.json({ success: true });
 });
@@ -496,7 +496,7 @@ app.post('/api/meta/:key/increment', (req, res) => {
 app.get('/api/export', (req, res) => {
   const data = {
     bills: readAllFromDir('pattiyalkal'),
-    profile: readJSON(path.join(DATA_DIR, 'suya_vivaram', 'profile.json')) || {},
+    profile: readJSON(path.join(DATA_DIR, 'thannilai', 'profile.json')) || {},
     clients: readAllFromDir('vanigargal'),
     coolieClients: readAllFromDir('coolie_vanigargal'),
     termsTemplates: readAllFromDir('mathirigal'),
@@ -504,11 +504,11 @@ app.get('/api/export', (req, res) => {
     coolieProducts: readAllFromDir('coolie_porulgal'),
     expenses: readAllFromDir('selavugal'),
     recurring: readAllFromDir('thodar_pattiyalkal'),
-    receipts: readAllFromDir('raseedhugal'),
-    profiles: readAllFromDir('suya_vivaram'),
+    receipts: readAllFromDir('patrugal'),
+    profiles: readAllFromDir('thannilai'),
     purchases: readAllFromDir('kolmudhal'),
     coolieBills: readAllFromDir('coolie_pattiyalkal'),
-    coolieReceipts: readAllFromDir('coolie_raseedhugal'),
+    coolieReceipts: readAllFromDir('coolie_patrugal'),
     meta: readJSON(META_PATH, {}),
     exportedAt: new Date().toISOString(),
   };
@@ -585,14 +585,14 @@ app.post('/api/import', (req, res) => {
   if (data.receipts && Array.isArray(data.receipts)) {
     for (const rcp of data.receipts) {
       if (rcp.id) {
-        writeJSON(path.join(DATA_DIR, 'raseedhugal', safeFileName(rcp.id) + '.json'), rcp);
+        writeJSON(path.join(DATA_DIR, 'patrugal', safeFileName(rcp.id) + '.json'), rcp);
       }
     }
   }
   if (data.profiles && Array.isArray(data.profiles)) {
     for (const prof of data.profiles) {
       if (prof.id) {
-        writeJSON(path.join(DATA_DIR, 'suya_vivaram', safeFileName(prof.id) + '.json'), prof);
+        writeJSON(path.join(DATA_DIR, 'thannilai', safeFileName(prof.id) + '.json'), prof);
       }
     }
   }
@@ -609,7 +609,7 @@ app.post('/api/import', (req, res) => {
   if (data.coolieReceipts && Array.isArray(data.coolieReceipts)) {
     for (const rcp of data.coolieReceipts) {
       if (rcp.id) {
-        writeJSON(path.join(DATA_DIR, 'coolie_raseedhugal', safeFileName(rcp.id) + '.json'), rcp);
+        writeJSON(path.join(DATA_DIR, 'coolie_patrugal', safeFileName(rcp.id) + '.json'), rcp);
       }
     }
   }
@@ -999,7 +999,7 @@ function processDueRecurring() {
     try {
       // Resolve a LIVE profile by id or businessName (mirrors v1.4.2
       // company-name-auto-update behaviour for recurring fires).
-      const profiles = readAllFromDir('suya_vivaram');
+      const profiles = readAllFromDir('thannilai');
       let profile = profiles.find(p => p.id && tpl.profileId && p.id === tpl.profileId)
                  || profiles.find(p => p.businessName === tpl.profileBusinessName)
                  || readJSON(PROFILE_PATH, {});

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Palette } from '@phosphor-icons/react';
-import { Box, Typography, FormControl, Select, MenuItem } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { SettingsPillContainer, SettingsPillRow } from '../../ElvanSettingsSection';
+import ElvanPillAutocomplete from '../../ElvanPillAutocomplete';
 
 export default function AppearanceSettings({ formData, setFormData, handleAutoSaveSetting, t, language, handleSave, handleDiscard }) {
   const [editingSection, setEditingSection] = useState<string | null>(null);
@@ -19,8 +20,6 @@ export default function AppearanceSettings({ formData, setFormData, handleAutoSa
   };
 
   const onPillSave = async () => {
-    // We can use handleAutoSaveSetting to do the final save and snapshot update
-    // But since handleAutoSaveSetting only takes key/value, we can just use handleSave()
     if (handleSave) await handleSave();
     setEditingSection(null);
   };
@@ -29,6 +28,11 @@ export default function AppearanceSettings({ formData, setFormData, handleAutoSa
     if (handleDiscard) await handleDiscard();
     setEditingSection(null);
   };
+
+  const langOptions = [
+    { id: 'ta', label: t('tamil') || 'Tamil' },
+    { id: 'en', label: t('english') || 'English' }
+  ];
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
@@ -86,17 +90,12 @@ export default function AppearanceSettings({ formData, setFormData, handleAutoSa
             <Typography sx={{ fontSize: '13px', color: 'var(--mac-text-secondary, #aaaaaa)', fontWeight: 500 }}>
               {t('defaultPrintLanguage') || 'Default Print Language'}
             </Typography>
-            <FormControl size="small" fullWidth>
-              <Select
-                value={formData.defaultPrintLanguage || 'ta'}
-                onChange={e => setFormData({ ...formData, defaultPrintLanguage: e.target.value })}
-                sx={{ bgcolor: 'rgba(255,255,255,0.03)' }}
-                MenuProps={{ disableScrollLock: true }}
-              >
-                <MenuItem value="ta">{t('tamil') || 'Tamil'}</MenuItem>
-                <MenuItem value="en">{t('english') || 'English'}</MenuItem>
-              </Select>
-            </FormControl>
+            <ElvanPillAutocomplete
+              options={langOptions}
+              value={langOptions.find(o => o.id === (formData.defaultPrintLanguage || 'ta')) || null}
+              disableClearable
+              onChange={(e, val: any) => setFormData({ ...formData, defaultPrintLanguage: val?.id || 'ta' })}
+            />
           </Box>
         </SettingsPillRow>
 
@@ -112,17 +111,12 @@ export default function AppearanceSettings({ formData, setFormData, handleAutoSa
             <Typography sx={{ fontSize: '13px', color: 'var(--mac-text-secondary, #aaaaaa)', fontWeight: 500 }}>
               {t('receiptLanguage') || 'Receipt Language'}
             </Typography>
-            <FormControl size="small" fullWidth>
-              <Select
-                value={formData.receiptLanguage || 'ta'}
-                onChange={e => setFormData({ ...formData, receiptLanguage: e.target.value })}
-                sx={{ bgcolor: 'rgba(255,255,255,0.03)' }}
-                MenuProps={{ disableScrollLock: true }}
-              >
-                <MenuItem value="ta">{t('tamil') || 'Tamil'}</MenuItem>
-                <MenuItem value="en">{t('english') || 'English'}</MenuItem>
-              </Select>
-            </FormControl>
+            <ElvanPillAutocomplete
+              options={langOptions}
+              value={langOptions.find(o => o.id === (formData.receiptLanguage || 'ta')) || null}
+              disableClearable
+              onChange={(e, val: any) => setFormData({ ...formData, receiptLanguage: val?.id || 'ta' })}
+            />
           </Box>
         </SettingsPillRow>
       </SettingsPillContainer>

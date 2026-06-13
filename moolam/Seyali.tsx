@@ -700,7 +700,7 @@ function Seyali() {
               WebkitBoxShadow: darkMode ? '0 0 0 100px #262626 inset' : '0 0 0 100px #E8E8E8 inset',
               WebkitTextFillColor: darkMode ? '#fff' : '#000',
               caretColor: darkMode ? '#fff' : '#000',
-              borderRadius: 0,
+              borderRadius: 50,
               border: 'none',
               outline: 'none',
             }
@@ -1185,7 +1185,7 @@ function Seyali() {
           appMode === 'GST' ? (
             <Vanigargal key={refreshKey} onAddClient={() => { setEditingClient(null); setCurrentView('client-editor'); }} onEditClient={(c) => { setEditingClient(c); setCurrentView('client-editor'); }} profile={profile} />
           ) : (
-            <CoolieMerchants key={refreshKey} onNew={() => { setEditingClient(null); setCurrentView('client-editor'); }} onEdit={(c) => { setEditingClient(c); setCurrentView('client-editor'); }} />
+            <CoolieMerchants key={refreshKey} onAddClient={() => { setEditingClient(null); setCurrentView('client-editor'); }} onEditClient={(c) => { setEditingClient(c); setCurrentView('client-editor'); }} />
           )
         )}
         {currentView === 'client-editor' && (

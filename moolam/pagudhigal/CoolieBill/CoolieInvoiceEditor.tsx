@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, Stack, IconButton, Divider, Select, MenuItem, FormControl, InputLabel, useTheme, Switch, FormControlLabel, createFilterOptions, Paper, ListItemButton, ListItemText } from '@mui/material';
+import { Box, Typography, TextField, Button, Stack, IconButton, Divider, Select, MenuItem, FormControl, InputLabel, useTheme, Switch, FormControlLabel, createFilterOptions, Paper, ListItemButton, ListItemText, Autocomplete } from '@mui/material';
 import ElvanPillAutocomplete from '../ElvanPillAutocomplete';
 import { styled } from '@mui/material/styles';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
@@ -617,18 +617,18 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                   onClick={() => setItems(items.length > 1 ? items.filter((_, i) => i !== index) : items)} 
                   title={t('hc_remove') || 'Remove'}
                   sx={{ 
-                    bgcolor: 'action.hover',
+                    bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.hover' : 'background.paper',
                     color: 'text.secondary',
-                    '&:hover': { bgcolor: 'action.selected' }
+                    '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'error.light', color: (theme) => theme.palette.mode === 'dark' ? 'error.main' : 'error.main' }
                   }}
                 >
                   <Trash size={20} weight="regular" />
                 </IconButton>
               </Box>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, p: 2, bgcolor: 'action.hover', borderRadius: '16px' }}>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, p: 2, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.hover' : 'background.paper', borderRadius: '16px' }}>
                 
                 {/* Product Search */}
-                <Box sx={{ flex: { xs: '1 1 100%', sm: '3 1 250px' } }}>
+                <Box sx={{ flex: { xs: '1 1 100%', sm: '3 1 250px' }, minWidth: 0 }}>
                   <ElvanPillAutocomplete
                     freeSolo
                     options={productOptions}
@@ -708,17 +708,11 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                           </li>
                         );
                     }}
-                    renderInput={(params) => (
-                      <TextField 
-                        {...params} 
-                        size="small" 
-                        fullWidth 
-                        label={t('itemName') || 'Item Name'} 
-                        placeholder={t('hc_searchSavedItems') || 'Search saved items'} 
-                        InputLabelProps={{ ...params.InputLabelProps, shrink: true }}
-                        inputProps={{ ...params.inputProps, autoComplete: 'new-password' }}
-                      />
-                    )}
+                    label={t('itemName') || 'Item Name'}
+                    placeholder={t('hc_searchSavedItems') || 'Search saved items'}
+                    textFieldProps={{
+                      inputProps: { autoComplete: 'new-password' }
+                    }}
                   />
                 </Box>
 
@@ -756,14 +750,15 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
               variant="text" 
               startIcon={<Plus size={18} weight="regular" />} 
               onClick={() => setItems([...items, { porul: '', coolie: '', kg: '', name_english: '', name_tamil: '' }])}
-              sx={{ 
-                bgcolor: 'action.hover',
+              sx={{
+                bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.hover' : 'background.paper',
                 color: 'text.primary',
                 borderRadius: '24px',
                 px: 3,
                 py: 1,
-                boxShadow: (theme) => theme.palette.mode === 'dark' ? 'none' : 1,
-                '&:hover': { bgcolor: 'action.selected' }
+                boxShadow: 'none',
+                border: 'none',
+                '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'rgba(0,0,0,0.04)' }
               }}
             >
               {t('addAnotherItem') || 'Add Item'}
@@ -774,14 +769,15 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                 variant="text" 
                 startIcon={<Plus size={18} weight="regular" />} 
                 onClick={() => setOtherCharges([...otherCharges, { name: '', amount: '' }])}
-                sx={{ 
-                  bgcolor: 'action.hover',
+                sx={{
+                  bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.hover' : 'background.paper',
                   color: 'text.primary',
                   borderRadius: '24px',
                   px: 3,
                   py: 1,
-                  boxShadow: (theme) => theme.palette.mode === 'dark' ? 'none' : 1,
-                  '&:hover': { bgcolor: 'action.selected' }
+                  boxShadow: 'none',
+                  border: 'none',
+                  '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'rgba(0,0,0,0.04)' }
                 }}
               >
                 {t('addOtherCharges') || 'Add Other Charges'}
@@ -801,9 +797,9 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                   onClick={() => setOtherCharges(otherCharges.filter((_, i) => i !== index))} 
                   title={t('hc_remove') || 'Remove'}
                   sx={{ 
-                    bgcolor: 'action.hover',
+                    bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.hover' : 'background.paper',
                     color: 'text.secondary',
-                    '&:hover': { bgcolor: 'action.selected' }
+                    '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'error.light', color: (theme) => theme.palette.mode === 'dark' ? 'error.main' : 'error.main' }
                   }}
                 >
                   <Trash size={20} weight="regular" />
@@ -845,14 +841,15 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                 variant="text" 
                 startIcon={<Plus size={18} weight="regular" />} 
                 onClick={() => setOtherCharges([...otherCharges, { name: '', amount: '' }])}
-                sx={{ 
-                  bgcolor: 'action.hover',
+                sx={{
+                  bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.hover' : 'background.paper',
                   color: 'text.primary',
                   borderRadius: '24px',
                   px: 3,
                   py: 1,
-                  boxShadow: (theme) => theme.palette.mode === 'dark' ? 'none' : 1,
-                  '&:hover': { bgcolor: 'action.selected' }
+                  boxShadow: 'none',
+                  border: 'none',
+                  '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'rgba(0,0,0,0.04)' }
                 }}
               >
                 {t('addOtherCharges') || 'Add Other Charges'}

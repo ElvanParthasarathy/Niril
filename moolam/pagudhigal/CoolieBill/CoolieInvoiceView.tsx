@@ -384,7 +384,7 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
         <Box className="print-wrapper" sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', width: '100%', position: 'relative', bgcolor: 'background.default', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
             <ViewHeader 
                 className="no-print"
-                onEdit={onEdit}
+                onEdit={() => onEdit(bill)}
                 onPrint={handlePrint}
                 onPDF={generatePDF}
                 onShare={handleNativeShare}

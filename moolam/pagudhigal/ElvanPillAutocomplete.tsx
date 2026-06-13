@@ -35,6 +35,21 @@ export default function ElvanPillAutocomplete({
           ...params.slotProps,
           inputLabel: { ...params.slotProps?.inputLabel, shrink: true },
         };
+        // Merge textFieldProps safely so we don't overwrite params
+        const finalTextFieldProps = { ...textFieldProps };
+        const finalInputProps = {
+          ...params.inputProps,
+          ...(textFieldProps?.inputProps || {})
+        };
+        const finalInputLabelProps = {
+          ...params.InputLabelProps,
+          ...(textFieldProps?.InputLabelProps || {})
+        };
+        
+        // Remove them from finalTextFieldProps so we don't duplicate
+        delete finalTextFieldProps.inputProps;
+        delete finalTextFieldProps.InputLabelProps;
+
         return (
           <TextField
             {...params}
@@ -44,7 +59,9 @@ export default function ElvanPillAutocomplete({
             label={label}
             placeholder={placeholder}
             slotProps={mergedSlotProps}
-            {...textFieldProps}
+            inputProps={finalInputProps}
+            InputLabelProps={finalInputLabelProps}
+            {...finalTextFieldProps}
             sx={{
               // Scoped overrides that fix the Autocomplete padding conflict
               '& .MuiFilledInput-root': {
