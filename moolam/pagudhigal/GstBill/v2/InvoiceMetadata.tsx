@@ -2,12 +2,14 @@ import React from 'react';
 import { Box, Typography, Grid, TextField, FormControl, InputLabel, Select, MenuItem, Autocomplete } from '@mui/material';
 import { useLanguage } from '../../../mozhi/LanguageContext';
 import { InvoiceMetadataState } from './InvoiceTypes';
-import { getStatesForCountry, getBilingualStateName, doesStateMatchSearch } from '../../../Payanpadu';
+import { getBilingualStateName, getStatesForCountry, doesStateMatchSearch } from '../../../Payanpadu';
+import ElvanPillAutocomplete from '../../ElvanPillAutocomplete';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { CalendarBlank } from '@phosphor-icons/react';
+
 interface InvoiceMetadataProps {
   metadata: InvoiceMetadataState;
   setMetadata: (meta: InvoiceMetadataState) => void;
@@ -65,25 +67,17 @@ export default function InvoiceMetadata({
             <>
               <Grid size={{ xs: 12, md: 6 }}>
                 {posOpts.length > 0 ? (
-                  <Autocomplete
-                    fullWidth
-                    size="small"
+                  <ElvanPillAutocomplete
                     options={posOpts}
                     value={currentValue || null}
-                    onChange={(_, newValue) => updateMeta('placeOfSupply', newValue || '')}
-                    filterOptions={(options, { inputValue }) => {
-                      return options.filter((option) => doesStateMatchSearch(option, inputValue));
+                    onChange={(_: any, newValue: any) => updateMeta('placeOfSupply', newValue || '')}
+                    filterOptions={(options: any[], { inputValue }: any) => {
+                      return options.filter((option: any) => doesStateMatchSearch(option, inputValue));
                     }}
-                    getOptionLabel={(option) => getBilingualStateName(option, { ...profile, returnOnlyPrimary: true })}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label={`${t('placeOfSupply')}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`}
-                        placeholder={`Defaults to ${defaultClientState || 'Client State'}`}
-                        slotProps={{ inputLabel: { shrink: true } }}
-                        autoComplete="new-password"
-                      />
-                    )}
+                    getOptionLabel={(option: any) => getBilingualStateName(option, { ...profile, returnOnlyPrimary: true }) || option}
+                    label={`${t('placeOfSupply')}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`}
+                    placeholder={`Defaults to ${defaultClientState || 'Client State'}`}
+                    textFieldProps={{ autoComplete: "new-password" }}
                   />
                 ) : (
                   <TextField fullWidth size="small" label={`${t('placeOfSupply')}${profile?.enableBilingual !== false ? ` (${profile?.primaryDataLanguage || 'Tamil'})` : ''}`} slotProps={{ inputLabel: { shrink: true } }}

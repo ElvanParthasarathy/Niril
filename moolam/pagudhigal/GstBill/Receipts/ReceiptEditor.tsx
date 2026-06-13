@@ -4,16 +4,17 @@ import {
   Grid, MenuItem, Stack, Chip, Button, Dialog, DialogTitle, 
   DialogContent, DialogActions, Checkbox, IconButton, Divider, Autocomplete, useTheme, useMediaQuery 
 } from '@mui/material';
-import { saveReceipt, getAllBills, getAllReceipts, getAllProfiles, getAllClients } from '../Avanam';
+import { saveReceipt, getAllBills, getAllReceipts, getAllProfiles, getAllClients } from '../../../Avanam';
+import ElvanPillAutocomplete from '../../ElvanPillAutocomplete';
 import { createFilterOptions } from '@mui/material';
 import { Plus, X, Receipt, MagnifyingGlass } from '@phosphor-icons/react';
-import { formatCurrency, getCountryConfig, getDynamicField } from '../Payanpadu';
-import { thagaval } from './Thagaval';
-import { useLanguage } from '../mozhi/LanguageContext';
-import ElvanEditorLayout from './ElvanEditorLayout';
-import ElvanCard from './ElvanCard';
-import ElvanBilingualField from './ElvanBilingualField';
-import { useDraftAndUnsaved } from '../hooks/useDraftAndUnsaved';
+import { formatCurrency, getCountryConfig, getDynamicField } from '../../../Payanpadu';
+import { thagaval } from '../../Thagaval';
+import { useLanguage } from '../../../mozhi/LanguageContext';
+import ElvanEditorLayout from '../../ElvanEditorLayout';
+import ElvanCard from '../../ElvanCard';
+import ElvanBilingualField from '../../ElvanBilingualField';
+import { useDraftAndUnsaved } from '../../../hooks/useDraftAndUnsaved';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -405,6 +406,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
             </DialogTitle>
             <Box sx={{ px: 3, pb: 1.5 }}>
               <TextField
+                variant="outlined"
                 fullWidth
                 size="small"
                 placeholder={t('searchInvoices') || 'Search by invoice no. or customer...'}
@@ -539,33 +541,35 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
           </LocalizationProvider>
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
-          <Autocomplete
+          <ElvanPillAutocomplete
             freeSolo
             options={clientOptions}
             filterOptions={clientFilter}
-            getOptionLabel={(option) => {
+            getOptionLabel={(option: any) => {
               return typeof option === 'string' ? option : (option.name || option.nameEn || '');
             }}
             onChange={handleCustomerSelect}
             value={form[`clientName_${primaryLang}`] || null}
             inputValue={form[`clientName_${primaryLang}`] || ''}
-            onInputChange={(e, val, reason) => {
+            onInputChange={(e: any, val: any, reason: any) => {
               updateField(`clientName_${primaryLang}`, val || '');
               if (reason === 'input' || reason === 'clear') {
                 updateField(`clientName_${secondaryLang}`, '');
                 updateField('clientAddress', '');
               }
             }}
-            renderOption={(props, option, { index }) => {
+            label={t('clientName') as string}
+            placeholder={(t as any)('hc_enterCustomerName') || 'Enter Customer Name'}
+            renderOption={(props: any, option: any, { index }: any) => {
               const { key, ...optionProps } = props as any;
                             if (typeof option === 'string') {
                 return <li key={`client-opt-${index}`} {...optionProps}><Typography variant="body1">{option}</Typography></li>;
               }
               return (
                 <li key={`client-opt-${index}`} {...optionProps} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', borderBottom: '1px solid rgba(128,128,128,0.1)' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
-                    <Typography variant="body1" color="primary" sx={{ fontWeight: 500 }}>{option.name}</Typography>
-                    {option.nameEn && <Typography variant="body2" sx={{ color: 'text.secondary' }}>{option.nameEn}</Typography>}
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                    <Typography variant="body1" color="primary" sx={{ fontWeight: 500, lineHeight: 1.2 }}>{option.name}</Typography>
+                    {option.nameEn && <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>{option.nameEn}</Typography>}
                   </Box>
                   {(option.city || option.cityEn) && (
                     <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5, mt: 0.5 }}>
@@ -576,16 +580,6 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
                 </li>
               );
             }}
-            renderInput={(params) => (
-              <TextField 
-                {...params} 
-                fullWidth 
-                label={t('clientName') as string}
-                sx={{
-                  '& .MuiOutlinedInput-root': { borderRadius: '8px', bgcolor: 'rgba(0,0,0,0.02)' }
-                }}
-              />
-            )}
           />
 
 

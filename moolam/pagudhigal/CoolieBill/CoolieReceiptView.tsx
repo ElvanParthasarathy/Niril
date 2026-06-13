@@ -3,7 +3,7 @@ import { ArrowLeft, Printer as PrintIcon, ShareNetwork, Spinner, DownloadSimple,
 import { FloatingBackButton } from '../FloatingBackButton';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
-import { ensureToken, findOrCreateFolder, uploadPDF } from '../../sevaigal/googleDrive';
+import { ensureToken, findOrCreateFolder, uploadPDF } from '../../panigal/googleDrive';
 import { useLanguage } from '../../mozhi/LanguageContext';
 import { en } from '../../mozhi/en';
 import { ta } from '../../mozhi/ta';

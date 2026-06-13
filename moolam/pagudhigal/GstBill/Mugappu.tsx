@@ -1,19 +1,19 @@
 // @ts-nocheck
 import { CurrencyInr, Receipt, TrendUp, Package, CaretRight, Invoice } from '@phosphor-icons/react';
 import { useState, useEffect } from 'react';
-import { getAllBills, getAllProducts, getAllClients } from '../Avanam';
-import { formatCurrency, INVOICE_TYPES, getDynamicField } from '../Payanpadu';
-import { thagaval } from './Thagaval';
-import { useLanguage } from '../mozhi/LanguageContext';
+import { getAllBills, getAllProducts, getAllClients } from '../../Avanam';
+import { formatCurrency, INVOICE_TYPES, getDynamicField } from '../../Payanpadu';
+import { thagaval } from '../Thagaval';
+import { useLanguage } from '../../mozhi/LanguageContext';
 import {
   Box, Typography, Button, Card, CardContent,
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Paper, Chip, Stack,
   useTheme, Divider, Avatar, Skeleton
 } from '@mui/material';
-import ElvanCard from './ElvanCard';
+import ElvanCard from '../ElvanCard';
 
-import MugappuLayout from './MugappuLayout';
+import MugappuLayout from '../MugappuLayout';
 
 export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConvert, profile, onSwitchModeRequest }: any) {
   const { t, language } = useLanguage();
@@ -67,16 +67,12 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
     </Box>
   );
 
-  const greetingTitle = language === 'ta' ? (
+  const greetingTitle = (
     <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center' }}>
-      வணக்கம்!{customSparkle}
-    </Box>
-  ) : (
-    <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center' }}>
-      Vanakkam!{customSparkle}
+      {t('vanakkamTitle')}{customSparkle}
     </Box>
   );
-  const greetingSubtitle = language === 'ta' ? 'நிறில் பட்டு' : 'Niril Silk';
+  const greetingSubtitle = t('nirilSilk');
   const profileInitial = <Invoice weight="fill" size={24} />;
 
   const statsCards = (
@@ -123,7 +119,7 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
           </Box>
           <Box>
             <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>
-              {language === 'ta' ? 'பட்டியல் எண்ணிக்கை' : 'Invoice Count'}
+              {t('invoiceCount')}
             </Typography>
             <Typography variant="h5" color="text.primary" sx={{ fontWeight: 800 }}>
               {stats.count}
@@ -183,7 +179,7 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
 
   return (
     <MugappuLayout 
-      title={language === 'ta' ? 'முகப்பு' : 'Dashboard'}
+      title={t('dashboard')}
       greetingTitle={greetingTitle}
       greetingSubtitle={greetingSubtitle}
       profileAvatar={profile?.logo}

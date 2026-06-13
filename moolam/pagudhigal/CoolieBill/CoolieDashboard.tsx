@@ -86,16 +86,12 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchMode
     </Box>
   );
 
-  const greetingTitle = language === 'ta' ? (
+  const greetingTitle = (
     <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center' }}>
-      வணக்கம்!{customSparkle}
-    </Box>
-  ) : (
-    <Box component="span" sx={{ display: 'inline-flex', alignItems: 'center' }}>
-      Vanakkam!{customSparkle}
+      {t('greeting')}!{customSparkle}
     </Box>
   );
-  const greetingSubtitle = language === 'ta' ? 'நிறில் கூலி' : 'Niril Coolie';
+  const greetingSubtitle = t('nirilCoolie');
   const profileInitial = <HandCoins weight="fill" size={24} />;
 
   const statsCards = (
@@ -121,7 +117,7 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchMode
           </Box>
           <Box sx={{ width: '100%' }}>
             <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>
-              {language === 'ta' ? 'நிறுவனங்கள்' : 'Companies'}
+              {t('companies')}
             </Typography>
             <Typography variant="h6" color="text.primary" sx={{ fontWeight: 800, lineHeight: 1.4 }}>
               {Object.entries(stats.byCompany)
@@ -141,7 +137,7 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchMode
           </Box>
           <Box>
             <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>
-              {language === 'ta' ? 'பட்டியல் எண்ணிக்கை' : 'Total Bills'}
+              {t('totalBills')}
             </Typography>
             <Typography variant="h6" color="text.primary" sx={{ fontWeight: 800 }}>
               {(() => {
@@ -207,7 +203,7 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchMode
 
   return (
     <MugappuLayout 
-      title={language === 'ta' ? 'முகப்பு' : 'Dashboard'}
+      title={t('dashboard')}
       greetingTitle={greetingTitle}
       greetingSubtitle={greetingSubtitle}
       profileAvatar={profiles[0]?.logo}

@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { X } from '@phosphor-icons/react';
 import { useState, useEffect } from 'react';
-import { getCountryConfig, getStatesForCountry, getBilingualStateName, getBilingualCountryName, validateTaxId, detectCountryFromBrowser, COUNTRIES } from '../Payanpadu';
-import { useLanguage } from '../mozhi/LanguageContext';
+import { getCountryConfig, getStatesForCountry, getBilingualStateName, getBilingualCountryName, validateTaxId, detectCountryFromBrowser, COUNTRIES } from '../../../Payanpadu';
+import { useLanguage } from '../../../mozhi/LanguageContext';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, MenuItem, Button, IconButton, Grid, Typography, useMediaQuery, useTheme, Divider } from '@mui/material';
 
 export default function VanigarThirai({ show, onClose, onSave, client, isEditing, defaultCountry, profileSettings }) {
@@ -14,7 +14,7 @@ export default function VanigarThirai({ show, onClose, onSave, client, isEditing
   const secondaryLang = profileSettings?.secondaryDataLanguage || 'English';
   const enableBilingual = profileSettings?.enableBilingual !== false;
   
-  const fallbackCountry = defaultCountry || detectCountryFromBrowser();
+  const fallbackCountry = 'India';
 
   const [form, setForm] = useState({});
   const [taxIdWarning, setTaxIdWarning] = useState('');

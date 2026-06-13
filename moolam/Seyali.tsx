@@ -1,12 +1,12 @@
 // @ts-nocheck
 import { CaretLeft, CaretDoubleLeft as KeyboardDoubleArrowLeft, CaretDoubleRight as KeyboardDoubleArrowRight, House as Home, FileText as Description, GearSix as Settings, Plus as Add, Users as People, Package as Inventory, ChartBar as BarChart, Wallet as AccountBalanceWallet, ArrowsClockwise as Refresh, Receipt, BookOpen as MenuBook, Moon as DarkMode, Sun as LightMode, DownloadSimple as Download, X as Close, ShoppingCart, CaretDown as KeyboardArrowDown, CaretRight as KeyboardArrowRight, Buildings as Business, PencilSimple as Edit, Question as HelpOutlined, MagnifyingGlass as Search, Command as KeyboardCommandKey, Bell as Notifications, List as Menu, CalendarDots } from '@phosphor-icons/react';
 import { useState, useEffect, useRef, useMemo, useCallback, startTransition } from 'react';
-import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Badge, Box, Typography, Avatar, Divider, Tooltip, IconButton, Collapse, CssBaseline, Dialog, DialogTitle, DialogContent, DialogActions, Button, Backdrop, CircularProgress, InputBase, AppBar, Toolbar, useMediaQuery, Stack } from '@mui/material';
+import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Badge, Box, Typography, Avatar, Divider, Tooltip, IconButton, Collapse, CssBaseline, Dialog, DialogTitle, DialogContent, DialogActions, Button, Backdrop, CircularProgress, InputBase, AppBar, Toolbar, useMediaQuery, Stack, Select, MenuItem, Paper, Popover } from '@mui/material';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { getAllProfiles, saveProfile, getAllBills, getAllProducts } from './Avanam';
 import { jsPDF } from 'jspdf';
-import VariArikkaigal from './pagudhigal/VariArikkaigal';
-import Mugappu from './pagudhigal/Mugappu';
+import VariArikkaigal from './pagudhigal/GstBill/Reports/VariArikkaigal';
+import Mugappu from './pagudhigal/GstBill/Mugappu';
 import InvoiceEditor from './pagudhigal/GstBill/InvoiceEditor';
 import InvoiceList from './pagudhigal/GstBill/InvoiceList';
 import InvoiceView from './pagudhigal/GstBill/InvoiceView';
@@ -24,20 +24,21 @@ import CoolieSettings from './pagudhigal/CoolieBill/CoolieSettings';
 import ModeSelector from './pagudhigal/ModeSelector';
 import ElvanListView from './pagudhigal/ElvanListView';
 import CoolieClientEditor from './pagudhigal/CoolieBill/CoolieClientEditor';
-import ReceiptView from './pagudhigal/ReceiptView';
+import ReceiptView from './pagudhigal/GstBill/Receipts/ReceiptView';
 import Amaippugal from './pagudhigal/Amaippugal';
-import Vanigargal from './pagudhigal/Vanigargal';
-import VanigarThoguppu from './pagudhigal/VanigarThoguppu';
-import Porul from './pagudhigal/Porul';
-import PorulThoguppu from './pagudhigal/PorulThoguppu';
-import Arikkaigal from './pagudhigal/Arikkaigal';
-import Raseedhu from './pagudhigal/Raseedhu';
-import ReceiptEditor from './pagudhigal/ReceiptEditor';
+import Vanigargal from './pagudhigal/GstBill/Merchants/Vanigargal';
+import VanigarThoguppu from './pagudhigal/GstBill/Merchants/VanigarThoguppu';
+import Porul from './pagudhigal/GstBill/Items/Porul';
+import PorulThoguppu from './pagudhigal/GstBill/Items/PorulThoguppu';
+import Arikkaigal from './pagudhigal/GstBill/Reports/Arikkaigal';
+import Patru from './pagudhigal/GstBill/Receipts/Patru';
+import ReceiptEditor from './pagudhigal/GstBill/Receipts/ReceiptEditor';
 
 import Nalvaravu from './pagudhigal/Nalvaravu';
 import Thagaval from './pagudhigal/Thagaval';
 import Pakkapatti from './pagudhigal/Pakkapatti';
 import { useLanguage } from './mozhi/LanguageContext';
+import { Material3Switch } from './pagudhigal/Amaippugal/Material3Switch';
 
 
 function ResponsiveDialog({ open, onClose, children, maxWidth = 'sm' }: any) {
@@ -213,7 +214,21 @@ function Seyali() {
       window.history.pushState({ view: currentView }, '', newUrl);
     }
   }, [currentView]);
-  const [profile, setProfile] = useState(null);
+  
+  const [dbProfile, setProfile] = useState<any>(null);
+  const [devBilingualToggle, setDevBilingualToggle] = useState<boolean | null>(null);
+  const [devPrimaryLang, setDevPrimaryLang] = useState<string | null>(null);
+  const [devSecondaryLang, setDevSecondaryLang] = useState<string | null>(null);
+  const [devPanelAnchorEl, setDevPanelAnchorEl] = useState<HTMLDivElement | null>(null);
+  const devPanelOpen = Boolean(devPanelAnchorEl);
+  
+  const profile = dbProfile ? { 
+    ...dbProfile, 
+    enableBilingual: devBilingualToggle !== null ? devBilingualToggle : dbProfile.enableBilingual !== false,
+    primaryDataLanguage: devPrimaryLang !== null ? devPrimaryLang : (dbProfile.primaryDataLanguage || 'Tamil'),
+    secondaryDataLanguage: devSecondaryLang !== null ? devSecondaryLang : (dbProfile.secondaryDataLanguage || 'English')
+  } : null;
+  
   const [appMode, setAppMode] = useState(() => localStorage.getItem('elvanniril_app_mode') || 'GST');
   const [hasSelectedMode, setHasSelectedMode] = useState(() => {
     return sessionStorage.getItem('session_mode_selected') === 'true';
@@ -667,7 +682,6 @@ function Seyali() {
         styleOverrides: {
           root: {
             borderRadius: 50,
-            overflow: 'hidden',
             backgroundColor: 'action.hover',
             '&::before, &::after': {
               display: 'none',
@@ -762,16 +776,6 @@ function Seyali() {
             '@media (max-width:600px)': {
               minHeight: 48,
             }
-          }
-        }
-      },
-      MuiAutocomplete: {
-        styleOverrides: {
-          inputRoot: {
-            paddingTop: '0px !important',
-            paddingBottom: '0px !important',
-            paddingLeft: '0px !important',
-            paddingRight: '40px !important',
           }
         }
       },
@@ -993,7 +997,13 @@ function Seyali() {
               </Stack>
             )}
             {['reports', 'gst-returns', 'settings'].includes(currentView as string) && (
-              <IconButton onClick={() => setCurrentView('dashboard')} sx={{ 
+              <IconButton onClick={() => {
+                if (window.history.length > 1) {
+                  window.history.back();
+                } else {
+                  setCurrentView('dashboard');
+                }
+              }} sx={{ 
                 bgcolor: 'background.paper', 
                 color: 'text.primary',
                 p: 1.5,
@@ -1012,9 +1022,9 @@ function Seyali() {
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
-          mx: { xs: ['reports', 'gst-returns', 'settings'].includes(currentView as string) ? 0 : 1.5, md: 0 },
-          mb: { xs: ['reports', 'gst-returns', 'settings'].includes(currentView as string) ? 1.5 : '85px', md: 0 },
-          borderRadius: { xs: ['reports', 'gst-returns', 'settings'].includes(currentView as string) ? 0 : '24px', md: 0 },
+          mx: { xs: 1.5, md: 0 },
+          mb: { xs: ['reports', 'settings', 'gst-returns'].includes(currentView as string) ? 1.5 : '85px', md: 0 },
+          borderRadius: { xs: '24px', md: 0 },
           bgcolor: { xs: darkMode ? '#000000' : '#F3F4F6', md: 'transparent' },
           boxShadow: { xs: darkMode ? 'none' : '0 8px 30px rgba(0,0,0,0.04)', md: 'none' },
           position: 'relative',
@@ -1027,12 +1037,14 @@ function Seyali() {
             pb: { xs: 2, md: 0 }, // small padding at the bottom of the scroll inside the shell
             '@media print': { overflowY: 'visible', pb: 0 }
           }}>
-        {(currentView === 'dashboard' || (['invoice-editor', 'invoice-view'].includes(currentView as string) && sessionStorage.getItem('gst_backTo') === 'dashboard')) && (
-          appMode === 'GST' ? (
-            <Mugappu key={refreshKey} onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onEdit={handleViewInvoice} onDuplicate={handleDuplicateInvoice} onConvert={handleConvertToInvoice} profile={profile} onSwitchModeRequest={handleSwitchModeRequest} />
-          ) : (
-            <CoolieDashboard key={refreshKey} onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onView={handleViewInvoice} onSwitchModeRequest={handleSwitchModeRequest} />
-          )
+        {(currentView === 'dashboard' || currentView === 'settings' || (['invoice-editor', 'invoice-view'].includes(currentView as string) && sessionStorage.getItem('gst_backTo') === 'dashboard')) && (
+          <Box sx={{ display: currentView === 'settings' ? { xs: 'block', md: 'none' } : 'block' }}>
+            {appMode === 'GST' ? (
+              <Mugappu key={refreshKey} onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onEdit={handleViewInvoice} onDuplicate={handleDuplicateInvoice} onConvert={handleConvertToInvoice} profile={profile} onSwitchModeRequest={handleSwitchModeRequest} />
+            ) : (
+              <CoolieDashboard key={refreshKey} onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onView={handleViewInvoice} onSwitchModeRequest={handleSwitchModeRequest} />
+            )}
+          </Box>
         )}
         {/* Always render the list when in any invoice view (unless coming from dashboard) so it maintains state and DOM */}
         {(currentView === 'invoice-list' || (['invoice-editor', 'invoice-view'].includes(currentView as string) && sessionStorage.getItem('gst_backTo') !== 'dashboard')) && (
@@ -1099,43 +1111,40 @@ function Seyali() {
             bgcolor: 'background.default', 
             zIndex: 1300, 
             overflowY: 'auto', 
-            overscrollBehavior: 'contain',
-            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+            overscrollBehavior: 'contain'
           }}>
-            {inlineOverlay.type === 'client-editor' && (
+            {inlineOverlay.type === 'client-editor' ? (
               appMode === 'GST' ? (
                 <VanigarThoguppu 
                   client={null} 
-                  onBack={() => dismissOverlay(false)} 
-                  onSaved={() => { dismissOverlay(true); setRefreshKey(k => k + 1); }} 
+                  onBack={() => setInlineOverlay(null)} 
+                  onSaved={(c) => { setInlineOverlay(null); setRefreshKey(k => k + 1); }} 
                   profileSettings={profile} 
-                  defaultCountry={profile?.country}
                 />
               ) : (
                 <CoolieClientEditor 
                   client={null} 
-                  onBack={() => dismissOverlay(false)} 
-                  onSaved={() => { dismissOverlay(true); setRefreshKey(k => k + 1); }} 
+                  onBack={() => setInlineOverlay(null)} 
+                  onSaved={(c) => { setInlineOverlay(null); setRefreshKey(k => k + 1); }} 
                 />
               )
-            )}
-            {inlineOverlay.type === 'product-editor' && (
+            ) : inlineOverlay.type === 'product-editor' ? (
               appMode === 'GST' ? (
                 <PorulThoguppu 
                   product={null} 
-                  onBack={() => dismissOverlay(false)} 
-                  onSaved={() => { dismissOverlay(true); setRefreshKey(k => k + 1); }} 
+                  onBack={() => setInlineOverlay(null)} 
+                  onSaved={(p) => { setInlineOverlay(null); setRefreshKey(k => k + 1); }} 
                   profileSettings={profile} 
                   defaultCountry={profile?.country}
                 />
               ) : (
                 <CoolieItemEditor 
                   product={null} 
-                  onBack={() => dismissOverlay(false)} 
-                  onSaved={() => { dismissOverlay(true); setRefreshKey(k => k + 1); }} 
+                  onBack={() => setInlineOverlay(null)} 
+                  onSaved={(p) => { setInlineOverlay(null); setRefreshKey(k => k + 1); }} 
                 />
               )
-            )}
+            ) : null}
           </Box>
         )}
 
@@ -1155,35 +1164,28 @@ function Seyali() {
             '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
           }}>
             {appMode === 'GST' ? (
-              <InvoiceView
-                bill={editingBill}
-                profile={profile}
-                onBack={() => { setEditingBill(null); setCurrentView(sessionStorage.getItem('gst_backTo') === 'dashboard' ? 'dashboard' : 'invoice-list'); }}
-                onEdit={handleEditInvoice}
-                onDuplicate={handleDuplicateInvoice}
+              <InvoiceView 
+                bill={editingBill} 
+                profile={profile} 
+                onBack={() => { setEditingBill(null); setCurrentView(sessionStorage.getItem('gst_backTo') === 'dashboard' ? 'dashboard' : 'invoice-list'); }} 
+                onEdit={(bill) => { setEditingBill(bill); setCurrentView('invoice-editor'); }} 
               />
             ) : (
               <CoolieInvoiceView 
-                bill={editingBill}
-                onClose={() => { setEditingBill(null); setCurrentView(sessionStorage.getItem('gst_backTo') === 'dashboard' ? 'dashboard' : 'invoice-list'); }}
-                onEdit={() => setCurrentView('invoice-editor')}
+                bill={editingBill} 
+                onBack={() => { setEditingBill(null); setCurrentView(sessionStorage.getItem('gst_backTo') === 'dashboard' ? 'dashboard' : 'invoice-list'); }} 
+                onEdit={(bill) => { setEditingBill(bill); setCurrentView('invoice-editor'); }} 
               />
             )}
           </Box>
         )}
 
-        {['clients', 'client-editor'].includes(currentView as string) && (
+        {/* Global screens rendering inline */}
+        {currentView === 'clients' && (
           appMode === 'GST' ? (
-            <Vanigargal key={refreshKey} onNew={handleNewInvoice} onEdit={handleEditInvoice} onDuplicate={handleDuplicateInvoice} profile={profile}
-              onAddClient={(prefill) => { setEditingClient(prefill); setCurrentView('client-editor'); }}
-              onEditClient={(client) => { setEditingClient(client); setCurrentView('client-editor'); }} 
-            />
+            <Vanigargal key={refreshKey} onAddClient={() => { setEditingClient(null); setCurrentView('client-editor'); }} onEditClient={(c) => { setEditingClient(c); setCurrentView('client-editor'); }} profile={profile} />
           ) : (
-            <CoolieMerchants 
-              key={refreshKey}
-              onAddClient={(prefill) => { setEditingClient(prefill); setCurrentView('client-editor'); }}
-              onEditClient={(client) => { setEditingClient(client); setCurrentView('client-editor'); }} 
-            />
+            <CoolieMerchants key={refreshKey} onNew={() => { setEditingClient(null); setCurrentView('client-editor'); }} onEdit={(c) => { setEditingClient(c); setCurrentView('client-editor'); }} />
           )
         )}
         {currentView === 'client-editor' && (
@@ -1204,33 +1206,24 @@ function Seyali() {
               <VanigarThoguppu 
                 client={editingClient} 
                 onBack={() => { setEditingClient(null); setCurrentView('clients'); }} 
-                onSaved={(client) => { setEditingClient(null); setCurrentView('clients'); setRefreshKey(k => k + 1); }} 
+                onSaved={(c) => { setEditingClient(null); setCurrentView('clients'); setRefreshKey(k => k + 1); }} 
                 profileSettings={profile} 
-                defaultCountry={profile?.country}
               />
             ) : (
               <CoolieClientEditor 
                 client={editingClient} 
                 onBack={() => { setEditingClient(null); setCurrentView('clients'); }} 
-                onSaved={(client) => { setEditingClient(null); setCurrentView('clients'); setRefreshKey(k => k + 1); }} 
+                onSaved={(c) => { setEditingClient(null); setCurrentView('clients'); setRefreshKey(k => k + 1); }} 
               />
             )}
           </Box>
         )}
-        {['inventory', 'product-editor'].includes(currentView as string) && (
+
+        {currentView === 'inventory' && (
           appMode === 'GST' ? (
-            <Porul 
-              key={refreshKey}
-              onAddProduct={() => { setEditingProduct(null); setCurrentView('product-editor'); }}
-              onEditProduct={(p) => { setEditingProduct(p); setCurrentView('product-editor'); }} 
-              profile={profile}
-            />
+            <Porul key={refreshKey} onAddProduct={() => { setEditingProduct(null); setCurrentView('product-editor'); }} onEditProduct={(p) => { setEditingProduct(p); setCurrentView('product-editor'); }} profile={profile} />
           ) : (
-            <CoolieItems 
-              key={refreshKey}
-              onAddProduct={() => { setEditingProduct(null); setCurrentView('product-editor'); }}
-              onEditProduct={(p) => { setEditingProduct(p); setCurrentView('product-editor'); }} 
-            />
+            <CoolieItems key={refreshKey} onAddProduct={() => { setEditingProduct(null); setCurrentView('product-editor'); }} onEditProduct={(p) => { setEditingProduct(p); setCurrentView('product-editor'); }} />
           )
         )}
         {currentView === 'product-editor' && (
@@ -1268,7 +1261,7 @@ function Seyali() {
 
         {['receipts', 'receipt-editor', 'receipt-view'].includes(currentView as string) && (
           appMode === 'GST' ? (
-            <Raseedhu 
+            <Patru 
               key={refreshKey}
               profile={profile} 
               onAddReceipt={() => { setEditingReceipt(null); setCurrentView('receipt-editor'); }} 
@@ -1352,13 +1345,27 @@ function Seyali() {
         )}
 
         {currentView === 'settings' && (
-          <Amaippugal appMode={appMode} onSaved={(p) => setProfile(p)} />
+          <Box sx={{ 
+            position: { xs: 'fixed', md: 'static' }, 
+            top: { xs: '64px', md: 'auto' }, 
+            left: { xs: '12px', md: 'auto' }, 
+            right: { xs: '12px', md: 'auto' }, 
+            bottom: { xs: '12px', md: 'auto' }, 
+            borderRadius: { xs: '24px', md: 0 },
+            bgcolor: 'background.default', 
+            zIndex: { xs: 1200, md: 'auto' }, 
+            overflowY: { xs: 'auto', md: 'visible' }, 
+            overscrollBehavior: 'contain',
+            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+          }}>
+            <Amaippugal appMode={appMode} onSaved={(p) => setProfile(p)} onSwitchModeRequest={handleSwitchModeRequest} darkMode={darkMode} setDarkMode={setDarkMode} />
+          </Box>
         )}
           </Box>
         </Box>
         
         {/* New Mobile AMOLED Bottom Navigation */}
-        {!isEditorView && !['reports', 'gst-returns', 'settings'].includes(currentView as string) && (
+        {!isEditorView && !['reports', 'settings', 'gst-returns'].includes(currentView as string) && (
         <Box sx={{ 
           display: { xs: 'flex', md: 'none' }, 
           position: 'fixed', bottom: 0, left: 0, right: 0, 
@@ -1589,8 +1596,142 @@ function Seyali() {
       )}
 
       <Thagaval />
+      {/* GLOBAL DEV TOGGLE FOR BILINGUAL TESTING */}
+      {profile && (
+        <>
+          <Box 
+            onClick={(e) => setDevPanelAnchorEl(e.currentTarget)}
+            sx={{ 
+              position: 'fixed', 
+              bottom: 24, 
+              right: 24, 
+              zIndex: 99999, 
+              bgcolor: 'rgba(30, 30, 30, 0.4)', 
+              backdropFilter: 'blur(10px)',
+              p: '10px 20px', 
+              borderRadius: 8, 
+              boxShadow: '0 8px 32px rgba(0,0,0,0.2)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              cursor: 'pointer',
+              border: '1px solid rgba(255,255,255,0.1)',
+              transition: 'all 0.2s ease-in-out',
+              '&:hover': { bgcolor: 'rgba(30, 30, 30, 0.6)' }
+            }}
+          >
+            <Typography sx={{ fontSize: '13px', fontWeight: 800, color: '#fff', letterSpacing: '1px' }}>
+              🛠️ DEV
+            </Typography>
+          </Box>
 
+          <Popover
+            open={devPanelOpen}
+            anchorEl={devPanelAnchorEl}
+            onClose={() => setDevPanelAnchorEl(null)}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            slotProps={{
+              paper: {
+                sx: { 
+                  borderRadius: 4, 
+                  p: 2, 
+                  mb: 1.5,
+                  bgcolor: 'rgba(25, 25, 25, 0.95)', 
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: '#fff',
+                  minWidth: '320px'
+                }
+              }
+            }}
+          >
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+              <Typography sx={{ fontSize: '16px', fontWeight: 700, letterSpacing: '0.5px' }}>
+                DEV: Language Controls
+              </Typography>
+              <IconButton size="small" onClick={() => setDevPanelAnchorEl(null)} sx={{ color: '#aaa' }}>
+                <Close size={20} />
+              </IconButton>
+            </Box>
 
+            <Stack spacing={3}>
+              <Box>
+                <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#aaa', mb: 1, textTransform: 'uppercase' }}>
+                  UI Language
+                </Typography>
+                <Select 
+                  fullWidth 
+                  size="small" 
+                  value={language} 
+                  onChange={(e) => setLanguage(e.target.value as any)}
+                  sx={{ color: '#fff', '.MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.2)' }, '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.4)' }, '.MuiSvgIcon-root': { color: '#fff' } }}
+                >
+                  <MenuItem value="ta">Tamil</MenuItem>
+                  <MenuItem value="en">English</MenuItem>
+                </Select>
+              </Box>
+
+              <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+
+              <Box>
+                <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#aaa', mb: 1, textTransform: 'uppercase' }}>
+                  Bill: Primary Lang
+                </Typography>
+                <Select 
+                  fullWidth 
+                  size="small" 
+                  value={profile.primaryDataLanguage} 
+                  onChange={(e) => setDevPrimaryLang(e.target.value)}
+                  sx={{ color: '#fff', '.MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.2)' }, '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.4)' }, '.MuiSvgIcon-root': { color: '#fff' } }}
+                >
+                  <MenuItem value="Tamil">Tamil</MenuItem>
+                  <MenuItem value="English">English</MenuItem>
+                </Select>
+              </Box>
+
+              <Box>
+                <Typography sx={{ fontSize: '12px', fontWeight: 600, color: '#aaa', mb: 1, textTransform: 'uppercase' }}>
+                  Bill: Secondary Lang
+                </Typography>
+                <Select 
+                  fullWidth 
+                  size="small" 
+                  value={profile.secondaryDataLanguage} 
+                  onChange={(e) => setDevSecondaryLang(e.target.value)}
+                  sx={{ color: '#fff', '.MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.2)' }, '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.4)' }, '.MuiSvgIcon-root': { color: '#fff' } }}
+                >
+                  <MenuItem value="English">English</MenuItem>
+                  <MenuItem value="Tamil">Tamil</MenuItem>
+                </Select>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', bgcolor: 'rgba(0,0,0,0.2)', p: 1.5, borderRadius: 2 }}>
+                <Typography sx={{ fontSize: '14px', fontWeight: 600 }}>
+                  Bilingual Mode
+                </Typography>
+                <Material3Switch 
+                  checked={profile.enableBilingual} 
+                  onChange={(e) => setDevBilingualToggle(e.target.checked)} 
+                />
+              </Box>
+
+              <Button 
+                variant="outlined" 
+                fullWidth 
+                onClick={() => {
+                  setDevPrimaryLang(null);
+                  setDevSecondaryLang(null);
+                  setDevBilingualToggle(null);
+                }}
+                sx={{ color: '#aaa', borderColor: 'rgba(255,255,255,0.2)', textTransform: 'none' }}
+              >
+                Reset Bill Overrides
+              </Button>
+            </Stack>
+          </Popover>
+        </>
+      )}
 
       </Box>
     </ThemeProvider>

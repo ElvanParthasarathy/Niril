@@ -88,6 +88,12 @@
   --purple-light: rgba(124, 58, 237, 0.08);
   --radius: 10px;
   --radius-lg: 14px;
+  
+  --mac-card-bg: #ffffff;
+  --mac-selection-hover: rgba(0, 0, 0, 0.05);
+  --mac-divider: rgba(0, 0, 0, 0.1);
+  --mac-text: #000000;
+  --mac-text-secondary: #666666;
 }
 
 /* Dark Mode */
@@ -122,6 +128,12 @@
   --danger-light: rgba(255, 255, 255, 0.1);
   --purple: #ffffff;
   --purple-light: rgba(255, 255, 255, 0.1);
+
+  --mac-card-bg: #111111;
+  --mac-selection-hover: rgba(255, 255, 255, 0.08);
+  --mac-divider: rgba(255, 255, 255, 0.1);
+  --mac-text: #ffffff;
+  --mac-text-secondary: #aaaaaa;
 }
 [data-theme="dark"] .form-input { background-color: #1e293b; border-color: #334155; color: #f1f5f9; }
 [data-theme="dark"] .form-input::placeholder { color: #64748b; }

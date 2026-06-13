@@ -31,7 +31,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   const t = (key: TranslationKey): string => {
     const dictionary = language === 'en' ? en : ta;
-    return dictionary[key] || key;
+    return dictionary[key] || en[key] || key;
   };
 
   return (

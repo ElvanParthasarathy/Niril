@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, TextField, Button, Stack, Autocomplete, IconButton, Divider, Select, MenuItem, FormControl, InputLabel, useTheme, Switch, FormControlLabel, createFilterOptions, Paper, ListItemButton, ListItemText } from '@mui/material';
+import { Box, Typography, TextField, Button, Stack, IconButton, Divider, Select, MenuItem, FormControl, InputLabel, useTheme, Switch, FormControlLabel, createFilterOptions, Paper, ListItemButton, ListItemText } from '@mui/material';
+import ElvanPillAutocomplete from '../ElvanPillAutocomplete';
 import { styled } from '@mui/material/styles';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -434,7 +435,7 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block', ml: 1.5, mb: 0.5 }}>
                   {t('clientName') || 'Client Name'}
                 </Typography>
-                <Autocomplete
+                <ElvanPillAutocomplete
                   freeSolo
                 options={clientOptions}
                 filterOptions={(options, params) => {
@@ -443,8 +444,13 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                   return filtered;
                 }}
                 getOptionLabel={(option) => {
-                  if (option.isAddButton) return customerName || '';
+                  if (option.isAddButton) return '';
                   return typeof option === 'string' ? option : (option.name || option.nameEn || '');
+                }}
+                isOptionEqualToValue={(option, value) => {
+                  if (typeof option === 'string' && typeof value === 'string') return option === value;
+                  if (typeof value === 'string') return option.name === value || option.nameEn === value;
+                  return option.id === value.id;
                 }}
                 onChange={handleCustomerSelect}
                 value={customerName || null}
@@ -492,7 +498,8 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                       </li>
                     );
                 }}
-                renderInput={(params) => <TextField {...params} label="" margin="none" sx={{ m: 0, '& .MuiInputBase-root': { mt: 0 } }} size="small" required placeholder={`${t("typeClientName") || 'Type Client Name'}...`} />}
+                placeholder={`${t("typeClientName") || 'Type Client Name'}...`}
+                textFieldProps={{ required: true, sx: { m: 0, '& .MuiInputBase-root': { mt: 0 } } }}
               />
               </Box>
 
@@ -524,7 +531,7 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block', ml: 1.5, mb: 0.5 }}>
                   {t('company') || 'company'}
                 </Typography>
-                <Autocomplete
+                <ElvanPillAutocomplete
                   options={profileOptions}
                   getOptionLabel={(option) => typeof option === 'string' ? option : (option.name || option.nameEn || '')}
                   onChange={(e, val) => {
@@ -543,7 +550,8 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                       </li>
                     );
                   }}
-                  renderInput={(params) => <TextField {...params} label="" margin="none" sx={{ m: 0, '& .MuiInputBase-root': { mt: 0 } }} size="small" required placeholder={`${t('company') || 'Select Company'}...`} />}
+                  placeholder={`${t('company') || 'Select Company'}...`}
+                  textFieldProps={{ required: true, sx: { m: 0, '& .MuiInputBase-root': { mt: 0 } } }}
                 />
               </Box>
             </Box>
@@ -621,7 +629,7 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                 
                 {/* Product Search */}
                 <Box sx={{ flex: { xs: '1 1 100%', sm: '3 1 250px' } }}>
-                  <Autocomplete
+                  <ElvanPillAutocomplete
                     freeSolo
                     options={productOptions}
                     filterOptions={(options, params) => {
@@ -630,8 +638,13 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                       return filtered;
                     }}
                     getOptionLabel={(option) => {
-                      if (option.isAddButton) return item.porul || '';
+                      if (option.isAddButton) return '';
                       return typeof option === 'string' ? option : (option.name || option.nameEn || '');
+                    }}
+                    isOptionEqualToValue={(option, value) => {
+                      if (typeof option === 'string' && typeof value === 'string') return option === value;
+                      if (typeof value === 'string') return option.name === value || option.nameEn === value;
+                      return option.id === value.id;
                     }}
                     onChange={(e, val) => {
                       if (val && val.isAddButton) {
@@ -670,17 +683,15 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                         const { key, ...optionProps } = props as any;
                         if (option.isAddButton) {
                           return (
-                            <div key={`item-opt-add-${index}`}>
-                              {index > 0 && <Divider />}
-                              <li {...optionProps} style={{...optionProps.style, padding: 0}}>
-                                <ListItemButton 
-                                  sx={{ color: 'primary.main', width: '100%' }}
-                                >
+                            <li key={`item-opt-add-${index}`} {...optionProps} style={{...optionProps.style, padding: 0}}>
+                              <Box sx={{ width: '100%' }}>
+                                {index > 0 && <Divider />}
+                                <ListItemButton sx={{ color: 'primary.main', width: '100%', py: 1.5 }}>
                                   <Plus size={18} weight="bold" style={{ marginRight: 8 }} />
-                                  <ListItemText primary={<Typography fontWeight={600}>{t('hc_addNewProduct') || 'Add New Product'}</Typography>} />
+                                  <Typography fontWeight={600}>{t('hc_addNewProduct') || 'Add New Product'}</Typography>
                                 </ListItemButton>
-                              </li>
-                            </div>
+                              </Box>
+                            </li>
                           );
                         }
                         if (typeof option === 'string') {
@@ -697,7 +708,17 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                           </li>
                         );
                     }}
-                    renderInput={(params) => <TextField {...params} size="small" fullWidth label={t('itemName') || 'Item Name'} placeholder={t('hc_searchSavedItems') || 'Search saved items'} slotProps={{ inputLabel: { ...params.InputLabelProps, shrink: true }, htmlInput: { ...params.inputProps, autoComplete: 'new-password' } }} />}
+                    renderInput={(params) => (
+                      <TextField 
+                        {...params} 
+                        size="small" 
+                        fullWidth 
+                        label={t('itemName') || 'Item Name'} 
+                        placeholder={t('hc_searchSavedItems') || 'Search saved items'} 
+                        InputLabelProps={{ ...params.InputLabelProps, shrink: true }}
+                        inputProps={{ ...params.inputProps, autoComplete: 'new-password' }}
+                      />
+                    )}
                   />
                 </Box>
 

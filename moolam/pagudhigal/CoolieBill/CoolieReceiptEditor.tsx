@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { 
   Box, Typography, Paper, TextField, InputAdornment, 
   Grid, MenuItem, Stack, Chip, Button, Dialog, DialogTitle, 
-  DialogContent, DialogActions, Checkbox, IconButton, Divider, Autocomplete, useTheme, useMediaQuery 
+  DialogContent, DialogActions, Checkbox, IconButton, Divider, useTheme, useMediaQuery 
 } from '@mui/material';
+import ElvanPillAutocomplete from '../ElvanPillAutocomplete';
 import { saveCoolieReceipt, getAllCoolieBills, getAllCoolieReceipts, getAllCoolieProfiles, getAllCoolieClients } from '../../Avanam';
 import { createFilterOptions } from '@mui/material';
 import { Plus, X, Receipt, MagnifyingGlass } from '@phosphor-icons/react';
@@ -541,7 +542,7 @@ export default function CoolieReceiptEditor({ onBack, onSaved, editingReceipt }:
           </LocalizationProvider>
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
-          <Autocomplete
+          <ElvanPillAutocomplete
             freeSolo
             options={clientOptions}
             filterOptions={clientFilter}
@@ -578,16 +579,7 @@ export default function CoolieReceiptEditor({ onBack, onSaved, editingReceipt }:
                 </li>
               );
             }}
-            renderInput={(params) => (
-              <TextField 
-                {...params} 
-                fullWidth 
-                label={t('clientName') as string}
-                sx={{
-                  '& .MuiOutlinedInput-root': { borderRadius: '8px', bgcolor: 'rgba(0,0,0,0.02)' }
-                }}
-              />
-            )}
+            label={t('clientName') as string}
           />
 
 

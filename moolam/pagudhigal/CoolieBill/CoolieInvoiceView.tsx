@@ -6,7 +6,7 @@ import html2canvas from 'html2canvas';
 import { ViewHeader } from '../ViewHeader';
 import { thagaval } from '../Thagaval';
 import { useLanguage } from '../../mozhi/LanguageContext';
-import { ensureToken, findOrCreateFolder, uploadPDF } from '../../sevaigal/googleDrive';
+import { ensureToken, findOrCreateFolder, uploadPDF } from '../../panigal/googleDrive';
 import './print.css'; // The exact print.css copied from Kananam
 import { getAllCoolieProfiles } from '../../Avanam';
 import numberToWordsTamil from '../../mozhi/tamilNumbers';

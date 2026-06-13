@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Paper, TextField, IconButton, Button, Divider, List, ListItem, ListItemButton, ListItemText, InputAdornment, Select, MenuItem, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { Trash, Plus } from '@phosphor-icons/react';
+import { Trash, Plus, X } from '@phosphor-icons/react';
 import { useLanguage } from '../../../mozhi/LanguageContext';
 import { getDynamicField } from '../../../Payanpadu';
-import ElvanBilingualField from '../ElvanBilingualField';
+import ElvanBilingualField from '../../ElvanBilingualField';
 import { LineItemState, InvoiceSettingsState, createEmptyLineItem } from './InvoiceTypes';
 import { getAllProducts } from '../../../Avanam';
 import { formatCurrency } from '../../../Payanpadu';
@@ -134,7 +134,7 @@ export default function LineItemsTable({
             }}
             sx={{ 
               height: '36px',
-              bgcolor: 'action.hover',
+              bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.hover' : 'background.paper',
               borderRadius: '50px',
               p: 0.5,
               '.MuiToggleButton-root': {
@@ -146,7 +146,7 @@ export default function LineItemsTable({
                 '&.Mui-selected': {
                   bgcolor: 'primary.main',
                   color: 'primary.contrastText',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                  boxShadow: (theme) => theme.palette.mode === 'dark' ? '0 2px 8px rgba(0,0,0,0.2)' : 'none',
                   '&:hover': {
                     bgcolor: 'primary.dark',
                   }
@@ -155,10 +155,10 @@ export default function LineItemsTable({
             }}
           >
             <ToggleButton value="quantity" sx={{ textTransform: 'none', fontWeight: 600 }}>
-              {language === 'ta' ? 'அளவு' : 'Quantity'}
+              {t('quantity')}
             </ToggleButton>
             <ToggleButton value="weight" sx={{ textTransform: 'none', fontWeight: 600 }}>
-              {language === 'ta' ? 'எடை' : 'Weight'}
+              {t('weight')}
             </ToggleButton>
           </ToggleButtonGroup>
         )}
@@ -174,15 +174,15 @@ export default function LineItemsTable({
               onClick={() => removeItem(item.id)} 
               title={t('hc_remove')}
               sx={{ 
-                bgcolor: 'action.hover',
+                bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.hover' : 'background.paper',
                 color: 'text.secondary',
-                '&:hover': { bgcolor: 'action.selected' }
+                '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'error.light', color: (theme) => theme.palette.mode === 'dark' ? 'error.main' : 'error.main' }
               }}
             >
               <Trash size={20} weight="regular" />
             </IconButton>
           </Box>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, p: 2, bgcolor: 'action.hover', borderRadius: '16px' }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, p: 2, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.hover' : 'background.paper', borderRadius: '16px' }}>
             
             {/* Product Search */}
             <Box sx={{ flex: { xs: '1 1 100%', sm: '3 1 250px' }, position: 'relative' }}>
@@ -205,7 +205,28 @@ export default function LineItemsTable({
                 ].filter(Boolean).join(' · ') : undefined}
                 slotProps={{ 
                   inputLabel: { shrink: true },
-                  formHelperText: { sx: { mt: 0.5, ml: 2, lineHeight: 1.2 } }
+                  formHelperText: { sx: { mt: 0.5, ml: 2, lineHeight: 1.2 } },
+                  input: getItemField(item, 'name', primaryLang) ? {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleItemChange(item.id, 'productId', null);
+                            handleItemChange(item.id, `name_${primaryLang}`, '');
+                            handleItemChange(item.id, `name_${secondaryLang}`, '');
+                            handleItemChange(item.id, 'name', ''); // Clear generic name too just in case
+                            setActiveSuggestionRow(item.id);
+                          }}
+                          edge="end"
+                          sx={{ color: 'text.secondary' }}
+                        >
+                          <X size={18} weight="bold" />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  } : undefined
                 }}
               />
 
@@ -265,7 +286,7 @@ export default function LineItemsTable({
                               sx={{ color: 'primary.main' }}
                             >
                               <Plus size={18} weight="bold" style={{ marginRight: 8 }} />
-                              <ListItemText primary={<Typography fontWeight={600}>{t('hc_addNewProduct') || 'Add New Product'}</Typography>} />
+                              <ListItemText primary={<Typography sx={{ fontWeight: 600 }}>{t('hc_addNewProduct') || 'Add New Product'}</Typography>} />
                             </ListItemButton>
                           </ListItem>
                         </>
@@ -282,7 +303,7 @@ export default function LineItemsTable({
               <TextField 
                 fullWidth 
                 size="small" 
-                label={settings.measureMode === 'weight' ? (language === 'ta' ? 'எடை' : 'Weight') : (language === 'ta' ? 'அளவு' : 'Quantity')} 
+                label={settings.measureMode === 'weight' ? (t('weight')) : (t('quantity'))} 
                 type="number" 
                 slotProps={{ 
                   inputLabel: { shrink: true }, 
@@ -372,14 +393,14 @@ export default function LineItemsTable({
         onClick={addItem} 
         sx={{ 
           mt: 1,
-          bgcolor: 'action.hover',
+          bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.hover' : 'background.paper',
           color: 'text.primary',
           borderRadius: '24px',
           px: 3,
           py: 1,
-          boxShadow: (theme) => theme.palette.mode === 'dark' ? 'none' : 1,
+          boxShadow: 'none',
           '&:hover': { 
-            bgcolor: 'action.selected'
+            bgcolor: 'action.hover'
           }
         }}
       >

@@ -2,14 +2,14 @@ import { X, Receipt as PhosphorReceipt, CheckSquare, Square, Trash } from '@phos
 import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Box, Typography, Button, IconButton, Tooltip, Stack, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import { getAllReceipts, saveReceipt, deleteReceipt, getAllBills, getProfile } from '../Avanam';
-import { formatCurrency, numberToWords, getCountryConfig, getDynamicField } from '../Payanpadu';
-import { thagaval } from './Thagaval';
-import { useLanguage } from '../mozhi/LanguageContext';
-import ElvanCard from './ElvanCard';
-import ElvanListView from './ElvanListView';
+import { getAllReceipts, saveReceipt, deleteReceipt, getAllBills, getProfile } from '../../../Avanam';
+import { formatCurrency, numberToWords, getCountryConfig, getDynamicField } from '../../../Payanpadu';
+import { thagaval } from '../../Thagaval';
+import { useLanguage } from '../../../mozhi/LanguageContext';
+import ElvanCard from '../../ElvanCard';
+import ElvanListView from '../../ElvanListView';
 
-export default function Raseedhu({ profile: parentProfile, onAddReceipt, onEditReceipt, onViewReceipt }: { profile?: any, onAddReceipt?: () => void, onEditReceipt?: (rcp: any) => void, onViewReceipt?: (rcp: any) => void } = {}) {
+export default function Patru({ profile: parentProfile, onAddReceipt, onEditReceipt, onViewReceipt }: { profile?: any, onAddReceipt?: () => void, onEditReceipt?: (rcp: any) => void, onViewReceipt?: (rcp: any) => void } = {}) {
   const { t } = useLanguage();
   const [receipts, setReceipts] = useState<any[]>([]);
   const [bills, setBills] = useState<any[]>([]);

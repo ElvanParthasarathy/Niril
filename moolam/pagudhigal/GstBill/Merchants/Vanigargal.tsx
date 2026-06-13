@@ -1,13 +1,13 @@
 import { Users, Trash, CheckSquare, Square } from '@phosphor-icons/react';
 import { useState, useEffect } from 'react';
-import { getAllClients, getAllBills, deleteClient, saveClient } from '../Avanam';
-import { thagaval } from './Thagaval';
-import { useLanguage } from '../mozhi/LanguageContext';
-import { getDynamicField } from '../Payanpadu';
+import { getAllClients, getAllBills, deleteClient, saveClient } from '../../../Avanam';
+import { thagaval } from '../../Thagaval';
+import { useLanguage } from '../../../mozhi/LanguageContext';
+import { getDynamicField } from '../../../Payanpadu';
 import { Typography, Box, Stack, IconButton, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import ElvanCard from './ElvanCard';
-import ElvanListView from './ElvanListView';
+import ElvanCard from '../../ElvanCard';
+import ElvanListView from '../../ElvanListView';
 
 export default function Vanigargal({ onEditClient, onAddClient, profile }) {
   const { t } = useLanguage();
@@ -96,65 +96,79 @@ export default function Vanigargal({ onEditClient, onAddClient, profile }) {
 
   const renderCard = (client, globalIndex, isSelectionMode, isSelected, toggleSelection) => {
     return (
-      <ElvanCard 
-        key={client.id}
-        sx={{ 
-          height: '100%',
-          ...(isSelectionMode && isSelected ? { bgcolor: isDark ? 'rgba(255,255,255,0.06) !important' : 'rgba(0,0,0,0.04) !important' } : {})
-        }}
-        onClick={() => isSelectionMode ? toggleSelection(client.id) : onEditClient(client)}
-      >
-        <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
-          <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
-            {!isSelectionMode ? (
-              <Box sx={{ 
-                display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                width: 28, height: 28, mt: 0.15, 
-                borderRadius: '50%',
-                bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
-                flexShrink: 0
-              }}>
-                <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
-                  {(globalIndex + 1).toString().padStart(2, '0')}
+      <Box sx={{ position: 'relative', height: '100%' }} key={client.id}>
+        <ElvanCard
+          sx={{ 
+            height: '100%',
+            ...(isSelectionMode && isSelected ? { bgcolor: isDark ? 'rgba(255,255,255,0.06) !important' : 'rgba(0,0,0,0.04) !important' } : {})
+          }}
+          onClick={() => isSelectionMode ? toggleSelection(client.id) : onEditClient(client)}
+        >
+          <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
+              {!isSelectionMode ? (
+                <Box sx={{ 
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                  width: 28, height: 28, mt: 0.15, 
+                  borderRadius: '50%',
+                  bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
+                  flexShrink: 0
+                }}>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
+                    {(globalIndex + 1).toString().padStart(2, '0')}
+                  </Typography>
+                </Box>
+              ) : (
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, mt: 0.15, color: isSelected ? 'primary.main' : 'text.secondary', flexShrink: 0 }}>
+                  {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} weight="regular" />}
+                </Box>
+              )}
+              <Box>
+                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                  {getDynamicField(client, 'name', profile, true)}
                 </Typography>
-              </Box>
-            ) : (
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, mt: 0.15, color: isSelected ? 'primary.main' : 'text.secondary', flexShrink: 0 }}>
-                {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} weight="regular" />}
-              </Box>
-            )}
-            <Box>
-              <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                {getDynamicField(client, 'name', profile, true)}
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
-                {profile?.enableBilingual !== false && getDynamicField(client, 'name', profile, false) && (
-                  <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{getDynamicField(client, 'name', profile, false)}</Typography>
-                )}
-                {getDynamicField(client, 'oor', profile, true) && (
-                  <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
-                    {getDynamicField(client, 'oor', profile, true)}{profile?.enableBilingual !== false && getDynamicField(client, 'oor', profile, false) ? <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> : ''}{profile?.enableBilingual !== false && getDynamicField(client, 'oor', profile, false) ? getDynamicField(client, 'oor', profile, false) : ''}
-                  </Typography>
-                )}
-                {client.gstin && (
-                  <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500, mt: 0.5 }}>
-                    GSTIN: {client.gstin}
-                  </Typography>
-                )}
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
+                  {profile?.enableBilingual !== false && getDynamicField(client, 'name', profile, false) && (
+                    <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{getDynamicField(client, 'name', profile, false)}</Typography>
+                  )}
+                  {getDynamicField(client, 'oor', profile, true) && (
+                    <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
+                      {getDynamicField(client, 'oor', profile, true)}{profile?.enableBilingual !== false && getDynamicField(client, 'oor', profile, false) ? <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> : ''}{profile?.enableBilingual !== false && getDynamicField(client, 'oor', profile, false) ? getDynamicField(client, 'oor', profile, false) : ''}
+                    </Typography>
+                  )}
+                  {client.gstin && (
+                    <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500, mt: 0.5 }}>
+                      GSTIN: {client.gstin}
+                    </Typography>
+                  )}
+                </Box>
               </Box>
             </Box>
-          </Box>
-          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            {isSelectionMode && (
-              <Tooltip title={t('delete') || 'Delete'}>
-                <IconButton color="error" onClick={(e) => { e.stopPropagation(); handleDeleteSingle(client.id); }}>
-                  <Trash size={20} weight="regular" />
-                </IconButton>
-              </Tooltip>
-            )}
-          </Box>
-        </Stack>
-      </ElvanCard>
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+              {isSelectionMode && (
+                <Box sx={{ width: 40, height: 40 }} />
+              )}
+            </Box>
+          </Stack>
+        </ElvanCard>
+        {isSelectionMode && (
+          <Tooltip title={t('delete') || 'Delete'}>
+            <IconButton 
+              color="error" 
+              onClick={(e) => { e.stopPropagation(); handleDeleteSingle(client.id); }}
+              sx={{ 
+                position: 'absolute',
+                top: '50%',
+                right: '16px',
+                transform: 'translateY(-50%)',
+                zIndex: 10
+              }}
+            >
+              <Trash size={20} weight="regular" />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Box>
     );
   };
 

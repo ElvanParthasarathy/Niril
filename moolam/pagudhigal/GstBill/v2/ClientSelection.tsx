@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography, Paper, Grid, TextField, Button, List, ListItem, ListItemButton, ListItemText, Divider, IconButton, InputAdornment } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
 import { Plus, X } from '@phosphor-icons/react';
 import { useLanguage } from '../../../mozhi/LanguageContext';
 import { ClientState } from './InvoiceTypes';
@@ -147,7 +146,7 @@ export default function ClientSelection({
                     }}
                     sx={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', zIndex: 2 }}
                   >
-                    <CloseIcon fontSize="small" />
+                    <X size={18} weight="bold" />
                   </IconButton>
                 )}
 
@@ -187,7 +186,7 @@ export default function ClientSelection({
                           sx={{ color: 'primary.main' }}
                         >
                           <Plus size={18} weight="bold" style={{ marginRight: 8 }} />
-                          <ListItemText primary={<Typography fontWeight={600}>{t('hc_addNewClient') || 'Add New Customer'}</Typography>} />
+                          <ListItemText primary={<Typography sx={{ fontWeight: 600 }}>{t('hc_addNewClient') || 'Add New Customer'}</Typography>} />
                         </ListItemButton>
                       </ListItem>
                     </List>

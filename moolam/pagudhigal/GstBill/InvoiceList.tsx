@@ -99,69 +99,83 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
     const invoiceTypeLabel = t(`invoiceTypes_${invoiceTypeKey}`, { defaultValue: INVOICE_TYPES[bill.invoiceType || 'tax-invoice']?.label });
     
     return (
-      <ElvanCard
-        key={bill.id}
-        sx={{
-          height: '100%',
-          cursor: 'pointer',
-          ...(isSelectionMode && isSelected ? { bgcolor: isDark ? 'rgba(255,255,255,0.06) !important' : 'rgba(0,0,0,0.04) !important' } : {})
-        }}
-        onClick={() => isSelectionMode ? toggleSelection(bill.id) : (onView && onView(bill))}
-      >
-        <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
-          <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
-            {isSelectionMode ? (
-              <IconButton
-                size="small"
-                onClick={(e) => { e.stopPropagation(); toggleSelection(bill.id); }}
-                sx={{ color: isSelected ? 'primary.main' : 'text.disabled', p: 0, mt: 0.2 }}
-              >
-                {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} />}
-              </IconButton>
-            ) : (
-              <Box sx={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                width: 28, height: 28, mt: 0.15,
-                borderRadius: '50%',
-                bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
-                flexShrink: 0
-              }}>
-                <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
-                  {(globalIndex + 1).toString().padStart(2, '0')}
-                </Typography>
-              </Box>
-            )}
-            <Box>
-              <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                {bill.clientName || '-'}
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
-                {profile?.enableBilingual !== false && (bill.clientNameEn || getDynamicField(bill.data?.client, 'name', profile, false) || bill.data?.client?.nameEn) && (
-                  <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{bill.clientNameEn || getDynamicField(bill.data?.client, 'name', profile, false) || bill.data?.client?.nameEn}</Typography>
-                )}
-                <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
-                  {bill.invoiceNumber} <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> {bill.invoiceDate ? new Date(bill.invoiceDate).toLocaleDateString('en-IN') : '-'}
-                </Typography>
-                <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
-                  {invoiceTypeLabel}
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
-          <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'space-between' }}>
-            <Box sx={{ display: 'flex', gap: 0.5, mt: -0.5, mr: -0.5 }}>
-              {isSelectionMode && (
-                <IconButton size="small" onClick={(e) => { e.stopPropagation(); setInvoiceToDelete(bill); }} sx={{ color: 'error.main' }}>
-                  <Trash size={20} />
+      <Box sx={{ position: 'relative', height: '100%' }} key={bill.id}>
+        <ElvanCard
+          sx={{
+            height: '100%',
+            cursor: 'pointer',
+            ...(isSelectionMode && isSelected ? { bgcolor: isDark ? 'rgba(255,255,255,0.06) !important' : 'rgba(0,0,0,0.04) !important' } : {})
+          }}
+          onClick={() => isSelectionMode ? toggleSelection(bill.id) : (onView && onView(bill))}
+        >
+          <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
+              {isSelectionMode ? (
+                <IconButton
+                  size="small"
+                  onClick={(e) => { e.stopPropagation(); toggleSelection(bill.id); }}
+                  sx={{ color: isSelected ? 'primary.main' : 'text.disabled', p: 0, mt: 0.2 }}
+                >
+                  {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} />}
                 </IconButton>
+              ) : (
+                <Box sx={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  width: 28, height: 28, mt: 0.15,
+                  borderRadius: '50%',
+                  bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
+                  flexShrink: 0
+                }}>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
+                    {(globalIndex + 1).toString().padStart(2, '0')}
+                  </Typography>
+                </Box>
               )}
+              <Box>
+                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                  {bill.clientName || '-'}
+                </Typography>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
+                  {profile?.enableBilingual !== false && (bill.clientNameEn || getDynamicField(bill.data?.client, 'name', profile, false) || bill.data?.client?.nameEn) && (
+                    <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{bill.clientNameEn || getDynamicField(bill.data?.client, 'name', profile, false) || bill.data?.client?.nameEn}</Typography>
+                  )}
+                  <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
+                    {bill.invoiceNumber} <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> {bill.invoiceDate ? new Date(bill.invoiceDate).toLocaleDateString('en-IN') : '-'}
+                  </Typography>
+                  <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
+                    {invoiceTypeLabel}
+                  </Typography>
+                </Box>
+              </Box>
             </Box>
-            <Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: 800 }}>
-              {formatCurrency(bill.totalAmount, profileCurrency)}
-            </Typography>
-          </Box>
-        </Stack>
-      </ElvanCard>
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'space-between' }}>
+              <Box sx={{ display: 'flex', gap: 0.5, mt: -0.5, mr: -0.5 }}>
+                {isSelectionMode && (
+                  <Box sx={{ width: 34, height: 34 }} />
+                )}
+              </Box>
+              <Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: 800 }}>
+                {formatCurrency(bill.totalAmount, profileCurrency)}
+              </Typography>
+            </Box>
+          </Stack>
+        </ElvanCard>
+        {isSelectionMode && (
+          <IconButton 
+            size="small" 
+            onClick={(e) => { e.stopPropagation(); setInvoiceToDelete(bill); }} 
+            sx={{ 
+              position: 'absolute',
+              top: '12px',
+              right: '12px',
+              zIndex: 10,
+              color: 'error.main'
+            }}
+          >
+            <Trash size={20} />
+          </IconButton>
+        )}
+      </Box>
     );
   };
 

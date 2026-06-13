@@ -2,11 +2,11 @@
 import { TrendUp, TrendDown, Wallet, ChartBar, Clock, MagnifyingGlass, X } from '@phosphor-icons/react';
 import { useState, useEffect } from 'react';
 import { Box, Typography, Paper, Grid, TextField, InputAdornment, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Stack, Skeleton, useTheme } from '@mui/material';
-import { getAllBills } from '../Avanam';
-import { formatCurrency } from '../Payanpadu';
-import ElvanCard from './ElvanCard';
-import { thagaval } from './Thagaval';
-import { useLanguage } from '../mozhi/LanguageContext';
+import { getAllBills } from '../../../Avanam';
+import { formatCurrency } from '../../../Payanpadu';
+import ElvanCard from '../../ElvanCard';
+import { thagaval } from '../../Thagaval';
+import { useLanguage } from '../../../mozhi/LanguageContext';
 
 
 
@@ -106,7 +106,7 @@ export default function Arikkaigal() {
 
 
   return (
-    <Box sx={{ pt: { xs: 2, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', pb: { xs: 10, md: 4 } }}>
+    <Box sx={{ pt: { xs: 1.5, md: 4 }, pb: { xs: 0, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
       {/* Page Header (Hidden on Mobile) */}
       <Box sx={{ mb: 4, display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <Box>

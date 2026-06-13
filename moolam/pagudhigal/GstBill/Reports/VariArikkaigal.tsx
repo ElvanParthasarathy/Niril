@@ -11,13 +11,13 @@ import MenuBook from '@mui/icons-material/MenuBook';
 import BarChart from '@mui/icons-material/BarChart';
 import { useState, useEffect, useRef } from 'react';
 import { Box, Typography, Link, ButtonBase, Button, Paper, TextField, Select, MenuItem, FormControl, InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Stack, InputAdornment, Grid, Card, CardContent, Alert, useTheme, Pagination, Tooltip } from '@mui/material';
-import { TrendUp, TrendDown, Wallet, FileText, X, MagnifyingGlass } from '@phosphor-icons/react';
-import { getSearchPaperSx, searchInputStyle } from './commonStyles';
-import ElvanCard from './ElvanCard';
-import { getAllBills, getAllExpenses, getAllPurchases } from '../Avanam';
-import { formatCurrency, INVOICE_TYPES, calculateLineItemTax, getStateCode, formatDateGST, getFilingPeriod, getUnitUQC, getDynamicField } from '../Payanpadu';
-import { thagaval } from './Thagaval';
-import { useLanguage } from '../mozhi/LanguageContext';
+import { TrendUp, TrendDown, Wallet, FileText, X, MagnifyingGlass, DownloadSimple } from '@phosphor-icons/react';
+import { getSearchPaperSx, searchInputStyle } from '../../commonStyles';
+import ElvanCard from '../../ElvanCard';
+import { getAllBills, getAllExpenses, getAllPurchases } from '../../../Avanam';
+import { formatCurrency, INVOICE_TYPES, calculateLineItemTax, getStateCode, formatDateGST, getFilingPeriod, getUnitUQC, getDynamicField } from '../../../Payanpadu';
+import { thagaval } from '../../Thagaval';
+import { useLanguage } from '../../../mozhi/LanguageContext';
 import * as XLSX from 'xlsx-js-style';
 
 const GST_TYPES = ['tax-invoice', 'credit-note'];
@@ -479,12 +479,12 @@ function StepList({ steps, title }: { steps: any[], title: string }) {
                   '&:hover': { opacity: 1, bgcolor: checked[i] ? 'success.light' : 'action.hover' }
                 }}
               >
-                <CheckCircle sx={{ fontSize: 18 }} />
+                <CheckCircle size={20} weight="fill" sx={{ fontSize: 18 }} />
               </Box>
               <Typography sx={{ flex: 1, fontWeight: 600, fontSize: '0.85rem', color: checked[i] ? 'success.main' : 'text.primary', textDecoration: checked[i] ? 'line-through' : 'none' }}>
                 Step {i + 1}: {step.title}
               </Typography>
-              {expanded[i] ? <KeyboardArrowDown sx={{ fontSize: 16 }} htmlColor="gray" /> : <KeyboardArrowRight sx={{ fontSize: 16 }} htmlColor="gray" />}
+              {expanded[i] ? <CaretDown size={20} weight="fill" sx={{ fontSize: 16 }} htmlColor="gray" /> : <CaretRight size={20} weight="fill" sx={{ fontSize: 16 }} htmlColor="gray" />}
             </Box>
             {expanded[i] && (
               <Box sx={{ pl: 6.5, pr: 2, pb: 2, typography: 'body2', color: 'text.secondary', whiteSpace: 'pre-wrap' }}>
@@ -1184,7 +1184,7 @@ export default function VariArikkaigal({ profile }) {
   const paginatedBills = searchedBills.slice((safePage - 1) * itemsPerPage, safePage * itemsPerPage);
 
   return (
-    <Box sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
+    <Box sx={{ pt: { xs: 1.5, md: 4 }, pb: { xs: 0, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
       {/* Page Header (Hidden on Mobile) */}
       <Box sx={{ mb: 4, display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <Box sx={{ ml: { xs: 0, md: 2 } }}>
@@ -1390,7 +1390,7 @@ export default function VariArikkaigal({ profile }) {
               </Paper>
               <Tooltip title="Download Excel" placement="top">
                 <IconButton onClick={exportSimpleCSV} sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF', width: 48, height: 48, flexShrink: 0, transition: 'background 0.3s ease', '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.12)' : '#F5F5F5' } }}>
-                  <Download sx={{ fontSize: 20 }} />
+                  <DownloadSimple size={20} weight="fill" sx={{ fontSize: 20 }} />
                 </IconButton>
               </Tooltip>
             </Box>
@@ -1468,14 +1468,14 @@ export default function VariArikkaigal({ profile }) {
         <>
           {/* Actions bar */}
           <Stack direction="row" spacing={1} sx={{ mb: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-            <Button variant="contained" onClick={exportGSTR1JSON} startIcon={<Upload sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none', px: 2, py: 0.5, boxShadow: 'none' }}>JSON Export</Button>
-            <Button variant="outlined" onClick={exportB2B} startIcon={<Download sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none', px: 2, py: 0.5 }}>B2B</Button>
-            <Button variant="outlined" onClick={exportB2C} startIcon={<Download sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none', px: 2, py: 0.5 }}>B2C</Button>
-            <Button variant="outlined" onClick={exportHSN} startIcon={<Download sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none', px: 2, py: 0.5 }}>HSN</Button>
-            <Button variant="outlined" onClick={exportCDNR} startIcon={<Download sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none', px: 2, py: 0.5 }}>CDNR</Button>
-            <Button variant="outlined" onClick={exportDocSummary} startIcon={<Download sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none', px: 2, py: 0.5 }}>Docs</Button>
+            <Button variant="contained" onClick={exportGSTR1JSON} startIcon={<UploadSimple size={20} weight="fill" sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none', px: 2, py: 0.5, boxShadow: 'none' }}>JSON Export</Button>
+            <Button variant="outlined" onClick={exportB2B} startIcon={<DownloadSimple size={20} weight="fill" sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none', px: 2, py: 0.5 }}>B2B</Button>
+            <Button variant="outlined" onClick={exportB2C} startIcon={<DownloadSimple size={20} weight="fill" sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none', px: 2, py: 0.5 }}>B2C</Button>
+            <Button variant="outlined" onClick={exportHSN} startIcon={<DownloadSimple size={20} weight="fill" sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none', px: 2, py: 0.5 }}>HSN</Button>
+            <Button variant="outlined" onClick={exportCDNR} startIcon={<DownloadSimple size={20} weight="fill" sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none', px: 2, py: 0.5 }}>CDNR</Button>
+            <Button variant="outlined" onClick={exportDocSummary} startIcon={<DownloadSimple size={20} weight="fill" sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none', px: 2, py: 0.5 }}>Docs</Button>
             {!periodFiling.gstr1 && (
-              <Button variant="outlined" color="success" onClick={() => markFiled('gstr1')} startIcon={<CheckCircle sx={{ fontSize: 14 }} />} sx={{ ml: 'auto', borderRadius: 5, textTransform: 'none', px: 2, py: 0.5 }}>
+              <Button variant="outlined" color="success" onClick={() => markFiled('gstr1')} startIcon={<CheckCircle size={20} weight="fill" sx={{ fontSize: 14 }} />} sx={{ ml: 'auto', borderRadius: 5, textTransform: 'none', px: 2, py: 0.5 }}>
                 Mark Filed
               </Button>
             )}
@@ -1768,10 +1768,10 @@ export default function VariArikkaigal({ profile }) {
         <Stack spacing={3}>
           {/* Actions */}
           <Stack direction="row" spacing={1} sx={{ mb: 2, alignItems: 'center' }}>
-            <Button variant="outlined" onClick={exportGSTR3B} startIcon={<Download sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none', px: 2, py: 0.5 }}>3B CSV</Button>
-            <Button variant="contained" onClick={exportGSTR3BJSON} startIcon={<Upload sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none', px: 2, py: 0.5, boxShadow: 'none' }}>3B JSON</Button>
+            <Button variant="outlined" onClick={exportGSTR3B} startIcon={<DownloadSimple size={20} weight="fill" sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none', px: 2, py: 0.5 }}>3B CSV</Button>
+            <Button variant="contained" onClick={exportGSTR3BJSON} startIcon={<UploadSimple size={20} weight="fill" sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none', px: 2, py: 0.5, boxShadow: 'none' }}>3B JSON</Button>
             {!periodFiling.gstr3b && (
-              <Button variant="outlined" color="success" onClick={() => markFiled('gstr3b')} startIcon={<CheckCircle sx={{ fontSize: 14 }} />} sx={{ ml: 'auto', borderRadius: 5, textTransform: 'none', px: 2, py: 0.5 }}>
+              <Button variant="outlined" color="success" onClick={() => markFiled('gstr3b')} startIcon={<CheckCircle size={20} weight="fill" sx={{ fontSize: 14 }} />} sx={{ ml: 'auto', borderRadius: 5, textTransform: 'none', px: 2, py: 0.5 }}>
                 Mark Filed
               </Button>
             )}
@@ -2009,10 +2009,10 @@ export default function VariArikkaigal({ profile }) {
             {/* Actions */}
             <Stack direction="row"   spacing={1} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
               <input ref={gstr2bInputRef} type="file" accept=".json,application/json" onChange={handleImport2B} style={{ display: 'none' }} />
-              <Button variant="contained" onClick={() => gstr2bInputRef.current?.click()} startIcon={<Upload sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none' }}>{t('hc_import2bJson')}</Button>
+              <Button variant="contained" onClick={() => gstr2bInputRef.current?.click()} startIcon={<UploadSimple size={20} weight="fill" sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none' }}>{t('hc_import2bJson')}</Button>
               {gstr2bData && (
                 <>
-                  <Button variant="outlined" onClick={exportReconCSV} startIcon={<Download sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none' }}>
+                  <Button variant="outlined" onClick={exportReconCSV} startIcon={<DownloadSimple size={20} weight="fill" sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none' }}>
                     Export reconciliation CSV
                   </Button>
                   <Button variant="outlined" color="error" onClick={() => { setGstr2bData(null); setGstr2bFilter('all'); }} sx={{ borderRadius: 5, textTransform: 'none' }}>
@@ -2027,7 +2027,7 @@ export default function VariArikkaigal({ profile }) {
 
             {!gstr2bData && (
               <Paper elevation={0} sx={{ p: 4, textAlign: 'center', bgcolor: 'background.paper', borderRadius: 3, border: '1px solid', borderColor: 'divider' }}>
-                <CheckCircle sx={{ fontSize: 48 }} htmlColor="var(--mui-palette-text-disabled)" style={{ marginBottom: 16 }} />
+                <CheckCircle size={20} weight="fill" sx={{ fontSize: 48 }} htmlColor="var(--mui-palette-text-disabled)" style={{ marginBottom: 16 }} />
                 <Typography variant="body1" color="text.secondary">{t('hc_importYourGstr2bJsonTo')}</Typography>
                 {purchases.length === 0 && (
                   <Typography variant="body2" color="warning.main" sx={{ mt: 2 }}>
@@ -2210,7 +2210,7 @@ export default function VariArikkaigal({ profile }) {
                     Total TDS your clients should have deducted. You can claim this as credit against your own income tax.
                   </Typography>
                 </Box>
-                <Button variant="outlined" onClick={exportTDSCSV} disabled={tdsRows.length === 0} startIcon={<Download sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none' }}>
+                <Button variant="outlined" onClick={exportTDSCSV} disabled={tdsRows.length === 0} startIcon={<DownloadSimple size={20} weight="fill" sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none' }}>
                   Export TDS CSV
                 </Button>
               </Stack>
@@ -2269,7 +2269,7 @@ export default function VariArikkaigal({ profile }) {
                     TCS you collected from buyers. Must be deposited to the Income Tax Department and reported in Form 27EQ quarterly.
                   </Typography>
                 </Box>
-                <Button variant="outlined" onClick={exportTCSCSV} disabled={tcsRows.length === 0} startIcon={<Download sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none' }}>
+                <Button variant="outlined" onClick={exportTCSCSV} disabled={tcsRows.length === 0} startIcon={<DownloadSimple size={20} weight="fill" sx={{ fontSize: 14 }} />} sx={{ borderRadius: 5, textTransform: 'none' }}>
                   Export TCS CSV
                 </Button>
               </Stack>

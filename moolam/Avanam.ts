@@ -219,7 +219,7 @@ export const deleteCoolieClient = async (id) => {
 // ---- Coolie Profiles / Settings ----
 export const getAllCoolieProfiles = async () => {
   if (isBlankState()) return [];
-  const profiles = await apiFetch(`${API}/coolie_suya_vivaram`);
+  const profiles = await apiFetch(`${API}/coolie_thannilai`);
   return restoreFromStorage(profiles, [
     'name', 'address', 'city', 'district', 'bankName', 'branch', 'email'
   ]);
@@ -229,13 +229,13 @@ export const saveCoolieProfile = async (profile) => {
   const taggedProfile = await prepareForStorage(profile, [
     'name', 'address', 'city', 'district', 'bankName', 'branch', 'email'
   ]);
-  const res = await apiFetch(`${API}/coolie_suya_vivaram`, { method: 'POST', body: JSON.stringify(taggedProfile) });
+  const res = await apiFetch(`${API}/coolie_thannilai`, { method: 'POST', body: JSON.stringify(taggedProfile) });
   if (res.id) profile.id = res.id;
   return profile;
 };
 
 export const deleteCoolieProfile = async (id) => {
-  return apiFetch(`${API}/coolie_suya_vivaram/${encodeURIComponent(id)}`, { method: 'DELETE' });
+  return apiFetch(`${API}/coolie_thannilai/${encodeURIComponent(id)}`, { method: 'DELETE' });
 };
 
 
@@ -328,49 +328,49 @@ export const deleteCoolieBill = async (id) => {
 // ---- Receipts / Payment Vouchers ----
 export const getAllReceipts = async () => {
   if (isBlankState()) return [];
-  return apiFetch(`${API}/raseedhugal`);
+  return apiFetch(`${API}/patrugal`);
 };
 
 export const saveReceipt = async (receipt) => {
-  const res = await apiFetch(`${API}/raseedhugal`, { method: 'POST', body: JSON.stringify(receipt) });
+  const res = await apiFetch(`${API}/patrugal`, { method: 'POST', body: JSON.stringify(receipt) });
   if (res.id) receipt.id = res.id;
   return receipt;
 };
 
 export const deleteReceipt = async (id) => {
-  return apiFetch(`${API}/raseedhugal/${encodeURIComponent(id)}`, { method: 'DELETE' });
+  return apiFetch(`${API}/patrugal/${encodeURIComponent(id)}`, { method: 'DELETE' });
 };
 
 // ---- Coolie Receipts ----
 export const getAllCoolieReceipts = async () => {
   if (isBlankState()) return [];
-  return apiFetch(`${API}/coolie_raseedhugal`);
+  return apiFetch(`${API}/coolie_patrugal`);
 };
 
 export const saveCoolieReceipt = async (receipt) => {
-  const res = await apiFetch(`${API}/coolie_raseedhugal`, { method: 'POST', body: JSON.stringify(receipt) });
+  const res = await apiFetch(`${API}/coolie_patrugal`, { method: 'POST', body: JSON.stringify(receipt) });
   if (res.id) receipt.id = res.id;
   return receipt;
 };
 
 export const deleteCoolieReceipt = async (id) => {
-  return apiFetch(`${API}/coolie_raseedhugal/${encodeURIComponent(id)}`, { method: 'DELETE' });
+  return apiFetch(`${API}/coolie_patrugal/${encodeURIComponent(id)}`, { method: 'DELETE' });
 };
 
 // ---- Business Profiles (multi-business) ----
 export const getAllProfiles = async () => {
   if (isBlankState()) return [];
-  return apiFetch(`${API}/suya_vivaram`);
+  return apiFetch(`${API}/thannilai`);
 };
 
 export const saveBusinessProfile = async (profile) => {
-  const res = await apiFetch(`${API}/suya_vivaram`, { method: 'POST', body: JSON.stringify(profile) });
+  const res = await apiFetch(`${API}/thannilai`, { method: 'POST', body: JSON.stringify(profile) });
   if (res.id) profile.id = res.id;
   return profile;
 };
 
 export const deleteBusinessProfile = async (id) => {
-  return apiFetch(`${API}/suya_vivaram/${encodeURIComponent(id)}`, { method: 'DELETE' });
+  return apiFetch(`${API}/thannilai/${encodeURIComponent(id)}`, { method: 'DELETE' });
 };
 
 // ---- Export / Import ----

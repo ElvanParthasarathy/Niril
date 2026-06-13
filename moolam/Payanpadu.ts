@@ -3,6 +3,14 @@ import numberToWordsTamil from './mozhi/tamilNumbers';
 
 export const getDynamicField = (obj: any, fieldName: string, profile: any, isPrimary = true): string => {
   if (!obj) return '';
+  const enableBilingual = profile?.enableBilingual !== false;
+  
+  // SHIELD: If bilingual mode is OFF, never return secondary fields.
+  // This enforces strict single language across the entire bill rendering logic.
+  if (!enableBilingual && !isPrimary) {
+    return '';
+  }
+
   const primaryLang = profile?.primaryDataLanguage || 'Tamil';
   const secondaryLang = profile?.secondaryDataLanguage || 'English';
   const lang = isPrimary ? primaryLang : secondaryLang;
@@ -19,7 +27,23 @@ export const getDynamicField = (obj: any, fieldName: string, profile: any, isPri
     return exactVal;
   }
   
-  if (lang === 'English' || lang === 'Tamil') return baseVal || '';
+  if (baseVal && typeof baseVal === 'string') {
+    if (lang !== 'Tamil' && /[\u0B80-\u0BFF]/.test(baseVal)) {
+      return ''; // baseVal has Tamil text, but we asked for English
+    }
+    return baseVal;
+  }
+
+  // CRITICAL FIX: If we still have NO data, but the user requested the primary language,
+  // we should check if the secondary language has data! Otherwise, single-language mode 
+  // causes data to magically disappear if they only filled out the secondary fields!
+  if (!enableBilingual && isPrimary) {
+    const fallbackVal = obj[`${fieldName}_${secondaryLang}`];
+    if (fallbackVal) {
+      return fallbackVal;
+    }
+  }
+  
   return '';
 };
 
@@ -562,6 +586,7 @@ export const detectCountryFromBrowser = () => {
   try {
     const locale = (navigator?.language || 'en-IN').split('-');
     const region = locale[1]?.toUpperCase() || '';
+    if (region === 'GB' || region === 'US') return 'India';
     const match = COUNTRIES.find(c => c.code === region);
     return match?.name || 'India';
   } catch { return 'India'; }
@@ -1133,6 +1158,10 @@ export const getBilingualStateName = (state, opts) => {
   };
 
   if (opts?.returnOnlyPrimary || (opts?.enableBilingual === false && !opts?.returnOnlySecondary)) return getTranslated(primaryLang);
+  
+  // SHIELD: If bilingual mode is OFF and they ask for secondary, return empty string
+  if (opts?.enableBilingual === false && opts?.returnOnlySecondary) return '';
+  
   if (opts?.returnOnlySecondary) return getTranslated(secondaryLang);
 
   const primary = getTranslated(primaryLang);
@@ -1195,6 +1224,10 @@ export const getBilingualCountryName = (country, opts) => {
   };
 
   if (opts?.returnOnlyPrimary || (opts?.enableBilingual === false && !opts?.returnOnlySecondary)) return getTranslated(primaryLang);
+  
+  // SHIELD: If bilingual mode is OFF and they ask for secondary, return empty string
+  if (opts?.enableBilingual === false && opts?.returnOnlySecondary) return '';
+  
   if (opts?.returnOnlySecondary) return getTranslated(secondaryLang);
 
   const primary = getTranslated(primaryLang);

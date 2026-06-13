@@ -238,7 +238,7 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
         {/* Header Row - identical to receipt: padding 15px 0, borderBottom, paddingBottom 1.5rem, marginBottom 1.5rem */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', position: 'relative', minHeight: '70px', borderBottom: 'none', padding: '15px 0', marginBottom: '15px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '1rem', position: 'relative' }}>
-          {showLogo && profile?.wideLogo ? (
+          {showLogo && (profile?.billHeaderStyle === 'wide' || (!profile?.billHeaderStyle && profile?.wideLogo)) && profile?.wideLogo ? (
             <img
               crossOrigin={profile.wideLogo?.startsWith('http') ? 'anonymous' : undefined}
               src={profile.wideLogo}
@@ -258,21 +258,29 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
               }}
             />
           ) : (
-            <>
-              {showLogo && profile?.logo && <img crossOrigin={profile.logo?.startsWith('http') ? 'anonymous' : undefined} src={profile.logo} alt="Logo" height={140} style={{ maxHeight: '140px' }} />}
-              <div>
+            <div style={{
+              position: 'absolute',
+              left: 0,
+              top: -40,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1rem',
+              height: '140px'
+            }}>
+              {showLogo && profile?.logo && <img crossOrigin={profile.logo?.startsWith('http') ? 'anonymous' : undefined} src={profile.logo} alt="Logo" style={{ maxHeight: `${profile.logoHeight || 120}px`, maxWidth: '160px', objectFit: 'contain' }} />}
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 {showniruvanathinPeyar && (
-                  <div style={{ fontSize: '1.35rem', fontWeight: 700, color: accent }}>
+                  <div style={{ fontSize: '1.35rem', fontWeight: 700, color: accent, whiteSpace: 'nowrap' }}>
                     {getDynamicField(profile, 'niruvanathinPeyar', profile, true) || 'Your Business'}
                   </div>
                 )}
                 {showniruvanathinPeyar && profile?.enableBilingual !== false && getDynamicField(profile, 'niruvanathinPeyar', profile, false) && (
-                  <div style={{ fontSize: '1rem', fontWeight: 500, color: '#475569' }}>
+                  <div style={{ fontSize: '1rem', fontWeight: 500, color: '#475569', whiteSpace: 'nowrap' }}>
                     {getDynamicField(profile, 'niruvanathinPeyar', profile, false)}
                   </div>
                 )}
               </div>
-            </>
+            </div>
           )}
         </div>
         <div style={{ textAlign: 'right', zIndex: 5, position: 'relative' }}>
@@ -316,12 +324,22 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
               
               const maavattam = showDistrict ? (getDynamicField(client, 'maavattam', profile, false) || getDynamicField(client, 'maavattam', profile, true)) : '';
               const stateRaw = getDynamicField(client, 'maanilam', profile, true) || getDynamicField(client, 'maanilam', profile, false);
-              const maanilam = showState ? (getBilingualStateName(stateRaw, { ...profile, fallbackEnglishName: getDynamicField(client, 'maanilam', profile, false), returnOnlySecondary: true }) || getDynamicField(client, 'maanilam', profile, false) || getDynamicField(client, 'maanilam', profile, true)) : '';
+              const maanilam = showState ? (
+                profile?.enableBilingual === false
+                  ? (getBilingualStateName(stateRaw, { ...profile, fallbackEnglishName: getDynamicField(client, 'maanilam', profile, false), returnOnlyPrimary: true }) || getDynamicField(client, 'maanilam', profile, true))
+                  : (getBilingualStateName(stateRaw, { ...profile, fallbackEnglishName: getDynamicField(client, 'maanilam', profile, false), returnOnlySecondary: true }) || getDynamicField(client, 'maanilam', profile, false) || getDynamicField(client, 'maanilam', profile, true))
+              ) : '';
               
-              const distString = maavattam ? (maavattam.toLowerCase().includes('district') ? maavattam : `${maavattam} District`) : '';
+              const isTamil = maavattam && /[\u0B80-\u0BFF]/.test(maavattam);
+              const distLabel = profile?.enableBilingual === false ? (isTamil ? 'மாவட்டம்' : 'District') : 'District';
+              const distString = maavattam ? (maavattam.toLowerCase().includes('district') || maavattam.includes('மாவட்டம்') ? maavattam : `${maavattam} ${distLabel}`) : '';
               
               const countryRaw = getDynamicField(client, 'country', profile, true) || getDynamicField(client, 'country', profile, false);
-              const country = showCountry ? (getBilingualCountryName(countryRaw, { ...profile, fallbackEnglishName: getDynamicField(client, 'country', profile, false), returnOnlySecondary: true }) || getDynamicField(client, 'country', profile, false) || getDynamicField(client, 'country', profile, true)) : '';
+              const country = showCountry ? (
+                profile?.enableBilingual === false
+                  ? (getBilingualCountryName(countryRaw, { ...profile, fallbackEnglishName: getDynamicField(client, 'country', profile, false), returnOnlyPrimary: true }) || getDynamicField(client, 'country', profile, true))
+                  : (getBilingualCountryName(countryRaw, { ...profile, fallbackEnglishName: getDynamicField(client, 'country', profile, false), returnOnlySecondary: true }) || getDynamicField(client, 'country', profile, false) || getDynamicField(client, 'country', profile, true))
+              ) : '';
 
               const addr2 = [distString, maanilam, country].filter(Boolean).join(', ');
 
@@ -624,25 +642,29 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
         </div>
 
         <div className="inv-totals" style={{ padding: '0.75rem 0.5rem', alignSelf: 'center', minWidth: '220px', width: 'auto', whiteSpace: 'nowrap' }}>
-          {showSubtotal && (
-            <div className="inv-total-row">
-              <span>Subtotal</span>
-              <span>{fmt(totals.subtotal)}</span>
-            </div>
-          )}
-          {totals.totalDiscount > 0 && (
-            <div className="inv-total-row">
-              <span>Discount</span>
-              <span>- {fmt(totals.totalDiscount)}</span>
-            </div>
-          )}
-          {showGST && (
-            (totals.cgst === 0 && totals.sgst === 0 && totals.igst === 0) ? (
-              <div className="inv-total-row">
-                <span>Tax</span>
-                <span>Nil</span>
-              </div>
-            ) : isIndia && isInterstate ? (
+          {(() => {
+            const isTamilTotals = profile?.enableBilingual === false && profile?.primaryDataLanguage === 'Tamil';
+            return (
+              <>
+                {showSubtotal && (
+                  <div className="inv-total-row">
+                    <span>{isTamilTotals ? 'உபமொத்தம்' : 'Subtotal'}</span>
+                    <span>{fmt(totals.subtotal)}</span>
+                  </div>
+                )}
+                {totals.totalDiscount > 0 && (
+                  <div className="inv-total-row">
+                    <span>{isTamilTotals ? 'தள்ளுபடி' : 'Discount'}</span>
+                    <span>- {fmt(totals.totalDiscount)}</span>
+                  </div>
+                )}
+                {showGST && (
+                  (totals.cgst === 0 && totals.sgst === 0 && totals.igst === 0) ? (
+                    <div className="inv-total-row">
+                      <span>{isTamilTotals ? 'வரி' : 'Tax'}</span>
+                      <span>{isTamilTotals ? 'இல்லை' : 'Nil'}</span>
+                    </div>
+                  ) : isIndia && isInterstate ? (
               <div className="inv-total-row">
                 <span>IGST</span>
                 <span>{fmt(totals.igst)}</span>
@@ -702,6 +724,9 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
               </div>
             </>
           )}
+              </>
+            );
+          })()}
         </div>
       </div>
       </div>
@@ -733,7 +758,17 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
           {/* Left: Bank Details */}
           <div style={{ display: 'flex', flexDirection: 'column', paddingTop: '5px' }}>
-            {showBankDetails && (account?.vangiPeyar || profile?.vangiPeyar) && (
+            {(() => {
+              const isTamilPrimary = profile?.enableBilingual === false && profile?.primaryDataLanguage === 'Tamil';
+              const bankNameTa = account?.vangiPeyar || profile?.vangiPeyar;
+              const bankNameEn = account?.vangiPeyarEn || profile?.vangiPeyarEn;
+              const bankName = isTamilPrimary ? (bankNameTa || bankNameEn) : (bankNameEn || bankNameTa);
+              
+              const branchTa = account?.bankBranch || profile?.bankBranch;
+              const branchEn = account?.bankBranchEn || profile?.bankBranchEn;
+              const branch = isTamilPrimary ? (branchTa || branchEn) : (branchEn || branchTa);
+
+              return showBankDetails && (bankName) && (
               <div style={{ marginBottom: '15px', color: '#475569', fontSize: '0.85rem', lineHeight: '1.45', display: 'flex', flexDirection: 'column', gap: '3px' }}>
                 {showAccountLabel && account?.label && (
                   <div style={{ fontSize: '0.75rem', fontStyle: 'italic', marginBottom: '1px' }}>
@@ -741,14 +776,14 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
                   </div>
                 )}
                 <div style={{ display: 'flex', gap: '4px' }}>
-                  <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.82rem', color: accent }}>வங்கி விவரம் :</div>
+                  <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.82rem', color: accent }}>{profile?.primaryDataLanguage === 'English' ? 'Bank Details' : 'வங்கி விவரம்'} :</div>
                   <div style={{ color: '#334155', fontWeight: 600 }}>
-                    {(account?.vangiPeyarEn || profile.vangiPeyarEn || account?.vangiPeyar || profile.vangiPeyar)}
-                    {(account?.bankBranchEn || profile.bankBranchEn || account?.bankBranch || profile.bankBranch) ? `, ${account?.bankBranchEn || profile.bankBranchEn || account?.bankBranch || profile.bankBranch}` : ''}
+                    {bankName}
+                    {branch ? `, ${branch}` : ''}
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: '4px' }}>
-                  <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.82rem', color: accent }}>கணக்கு எண் :</div>
+                  <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.82rem', color: accent }}>{profile?.primaryDataLanguage === 'English' ? 'Account No' : 'கணக்கு எண்'} :</div>
                   <div style={{ color: '#334155', fontWeight: 600 }}>{account?.kanakkuEn || profile.kanakkuEn}</div>
                 </div>
                 {(account?.ifsc || profile.ifsc) && (
@@ -769,8 +804,14 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
                     <div style={{ color: '#334155', fontWeight: 600 }}>{profile.pan}</div>
                   </div>
                 )}
+                {(account?.upiId || profile.upiId) && (
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    <div style={{ fontWeight: 700, whiteSpace: 'nowrap', fontSize: '0.82rem', color: accent }}>UPI :</div>
+                    <div style={{ color: '#334155', fontWeight: 600 }}>{account?.upiId || profile.upiId}</div>
+                  </div>
+                )}
               </div>
-            )}
+            );})()}
             {options.exchangeRate && currencySymbol !== 'INR' && (
               <div className="inv-footer-block" style={{ marginBottom: '15px' }}>
                 <h4 className="inv-section-label">{t('hc_exchangeRate')}</h4>
@@ -797,14 +838,14 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
         {/* Bottom Row: Nandri & Signatory Text */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', width: '100%', marginTop: 'auto', paddingTop: '10px' }}>
           <div style={{ fontFamily: 'inherit', fontSize: '0.85rem', fontWeight: 700, color: accent, lineHeight: 1 }}>
-            {profile?.primaryDataLanguage === 'Tamil' || !profile?.primaryDataLanguage ? 'நன்றி' : 'Thank You'}
+            {profile?.primaryDataLanguage === 'English' ? 'Thank You' : 'நன்றி'}
           </div>
           
           {showSignature && (
             <div style={{ minWidth: '220px', textAlign: 'right' }}>
               {showSignatoryText && (
                 <div style={{ position: 'relative', zIndex: 10, fontSize: '0.75rem', fontWeight: 600, color: '#555', lineHeight: 1 }}>
-                  {profile?.authorizedSignatoryName ? `(${profile.authorizedSignatoryName})` : (profile?.primaryDataLanguage === 'Tamil' || !profile?.primaryDataLanguage ? '(கையொப்பம்)' : '(Authorized Signatory)')}
+                  {profile?.authorizedSignatoryName ? `(${profile.authorizedSignatoryName})` : `(${profile?.primaryDataLanguage === 'English' ? 'Signature' : 'கையொப்பம்'})`}
                 </div>
               )}
             </div>
@@ -819,8 +860,9 @@ const SjsTheme = React.forwardRef(({ profile, client, details, items = [], total
         const addr1 = (addr1_eng || addr1_tam) + (profile?.pin ? ` - ${profile.pin}` : '');
         
         const rawCountry = profile?.country || 'India';
-        const country_eng = getBilingualCountryName(rawCountry, { ...profile, returnOnlySecondary: true, fallbackEnglishName: profile?.country_English }) || profile?.country_English || rawCountry;
-        const country_tam = getBilingualCountryName(rawCountry, { ...profile, returnOnlyPrimary: true }) || rawCountry === 'India' ? 'இந்தியா' : rawCountry;
+        const country_eng = profile?.enableBilingual === false ? '' : (getBilingualCountryName(rawCountry, { ...profile, returnOnlySecondary: true, fallbackEnglishName: profile?.country_English }) || profile?.country_English || rawCountry);
+        const countryPrimary = getBilingualCountryName(rawCountry, { ...profile, returnOnlyPrimary: true });
+        const country_tam = countryPrimary || (rawCountry === 'India' ? (profile?.primaryDataLanguage === 'English' ? 'India' : 'இந்தியா') : rawCountry);
 
         const dist_eng = [getDynamicField(profile, 'maavattam', profile, false), getBilingualStateName(profile.maanilam, { ...profile, returnOnlySecondary: true, fallbackEnglishName: profile.maanilamEn }), country_eng].filter(Boolean).join(', ');
         const dist_tam = [getDynamicField(profile, 'maavattam', profile, true), getBilingualStateName(profile.maanilam, { ...profile, returnOnlyPrimary: true }), country_tam].filter(Boolean).join(', ');

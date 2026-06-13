@@ -5,7 +5,7 @@ import { PencilSimple, Printer as PrintIcon, DownloadSimple, ShareNetwork, Spinn
 import { FloatingBackButton } from './FloatingBackButton';
 import { useLanguage } from '../mozhi/LanguageContext';
 
-export const ViewHeader = ({ onEdit, onPrint, onPDF, onShare, saving, sharing = false, title, onBack, className }) => {
+export const ViewHeader = ({ onEdit, onPrint, onPDF, onShare, saving, sharing = false, title, onBack, className = '' }: any) => {
   const { t } = useLanguage();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));

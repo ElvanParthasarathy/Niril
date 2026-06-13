@@ -1,25 +1,9 @@
 // @ts-nocheck
-import Save from '@mui/icons-material/Save';
-import Upload from '@mui/icons-material/Upload';
-import Download from '@mui/icons-material/Download';
-import Add from '@mui/icons-material/Add';
-import Delete from '@mui/icons-material/Delete';
-import Edit from '@mui/icons-material/Edit';
-import Image from '@mui/icons-material/Image';
-import Create from '@mui/icons-material/Create';
-import Cloud from '@mui/icons-material/Cloud';
-import CloudOff from '@mui/icons-material/CloudOff';
-import Business from '@mui/icons-material/Business';
-import Tag from '@mui/icons-material/Tag';
-import Refresh from '@mui/icons-material/Refresh';
-import Close from '@mui/icons-material/Close';
-import KeyboardArrowUp from '@mui/icons-material/KeyboardArrowUp';
-import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import { useState, useEffect, useRef } from 'react';
 import { getProfile, saveProfile, exportAllData, importData, inspectBackup, getAllProfiles, saveBusinessProfile, deleteBusinessProfile, getInvoiceNumberSettings, saveInvoiceNumberSettings, getReceiptNumberSettings, saveReceiptNumberSettings, getInvoiceDisplayOptions, saveInvoiceDisplayOptions } from '../Avanam';
-import { ensureToken, findOrCreateFolder, uploadJSON } from '../sevaigal/googleDrive';
+import { ensureToken, findOrCreateFolder, uploadJSON } from '../panigal/googleDrive';
 import { getCountryConfig, getStatesForCountry, getBilingualStateName, getBilingualCountryName, validateTaxId, detectCountryFromBrowser, getCountriesForRegion, getPaymentAccounts, createEmptyAccount, maskkanakkuEn, reorderAccounts, setDefaultAccount, isValidUpiId, tamilNaduDistricts } from '../Payanpadu';
-import { initGoogleDrive, isConnected, disconnect } from '../sevaigal/googleDrive';
+import { initGoogleDrive, isConnected, disconnect } from '../panigal/googleDrive';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -28,12 +12,13 @@ import '../styles/settings/hub.css';
 
 // MUI Imports
 import { 
-  Box, Paper, TextField, Button, Select, MenuItem, Checkbox, Switch,
+  Box, Paper, TextField, Button, Select, MenuItem, Checkbox,
   FormControlLabel, Typography, IconButton, Grid, Chip, Autocomplete,
   Divider, InputAdornment, FormControl, InputLabel,
   Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText,
   List, ListItem, ListItemText, ListItemSecondaryAction, Tabs, Tab, Fab
 } from '@mui/material';
+import { Material3Switch } from './Amaippugal/Material3Switch';
 
 const ACCENT_PRESETS = [
   { color: '#1e40af', label: 'Blue' },
@@ -126,7 +111,7 @@ export default function Amaippugal({ onSaved }) {
   const saveLangSettings = async () => {
     await saveProfile(profile);
     setEditingLangSettings(false);
-    thagaval(language === 'ta' ? 'அமைப்புகள் சேமிக்கப்பட்டன' : 'Language settings saved!', 'success');
+    thagaval(t('languageSettingsSaved'), 'success');
   };
 
 
@@ -584,7 +569,7 @@ export default function Amaippugal({ onSaved }) {
               )}
 
               <Grid size={{ xs: 12, sm: 12 }}>
-                <TextField disabled={!isEditingCompany} fullWidth size="small" label={language === 'ta' ? 'குறுகிய வணிக பெயர் (பில் எண்ணுக்கு)' : 'Short Business Name (for Bill No)'} name="shortBusinessName" value={profile.shortBusinessName || ''} onChange={handleChange} placeholder="e.g. SJS" helperText={language === 'ta' ? 'இது தானியங்கி பில் எண்ணில் முன்னொட்டாக பயன்படுத்தப்படும் (உதாரணமாக SJS/2026-27/0001).' : 'Used as the default prefix for your invoice numbers (e.g. SJS/2026-27/0001).'} />
+                <TextField disabled={!isEditingCompany} fullWidth size="small" label={t('shortBusinessNameLabel')} name="shortBusinessName" value={profile.shortBusinessName || ''} onChange={handleChange} placeholder="e.g. SJS" helperText={t('usedAsTheDefaultPrefixForYourI')} />
               </Grid>
 
               <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
@@ -703,8 +688,8 @@ export default function Amaippugal({ onSaved }) {
               {!showMobileField && !profile.mobileNumber ? (
                 isEditingCompany ? (
                   <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Button size="small" variant="text" onClick={() => setShowMobileField(true)} startIcon={<Add sx={{ fontSize: 16 }} />} sx={{ color: 'text.secondary', textTransform: 'none' }}>
-                      {language === 'ta' ? 'மாற்று கைபேசி எண் சேர்க்க' : 'Add Alternate Mobile'}
+                    <Button size="small" variant="text" onClick={() => setShowMobileField(true)} startIcon={<Plus size={20} weight="fill" sx={{ fontSize: 16 }} />} sx={{ color: 'text.secondary', textTransform: 'none' }}>
+                      {t('addAlternateMobile')}
                     </Button>
                   </Grid>
                 ) : null
@@ -730,7 +715,7 @@ export default function Amaippugal({ onSaved }) {
                               }}
                               edge="end"
                             >
-                              <Close sx={{ fontSize: 16 }} />
+                              <X size={20} weight="fill" sx={{ fontSize: 16 }} />
                             </IconButton>
                           </InputAdornment>
                         ) : null
@@ -770,7 +755,7 @@ export default function Amaippugal({ onSaved }) {
                   <Box sx={{ position: 'relative' }}>
                     <img src={profile.logo} alt="Logo" style={{ height: `${profile.logoHeight || 48}px`, maxWidth: '180px', objectFit: 'contain' }} />
                     <IconButton size="small" color="error" onClick={() => removeImage('logo')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
-                      <Delete sx={{ fontSize: 14 }} />
+                      <Trash size={20} weight="fill" sx={{ fontSize: 14 }} />
                     </IconButton>
                   </Box>
                   <Box sx={{ width: '100%', px: 2 }}>
@@ -784,7 +769,7 @@ export default function Amaippugal({ onSaved }) {
                   <Button size="small" variant="outlined" onClick={() => logoInputRef.current?.click()}>Change Logo</Button>
                 </>
               ) : (
-                <Button variant="outlined" onClick={() => logoInputRef.current?.click()} startIcon={<Image sx={{ fontSize: 20 }} />} sx={{ flexDirection: 'column', py: 3, gap: 1 }}>
+                <Button variant="outlined" onClick={() => logoInputRef.current?.click()} startIcon={<ImageSquare size={20} weight="fill" sx={{ fontSize: 20 }} />} sx={{ flexDirection: 'column', py: 3, gap: 1 }}>
                   {t('uploadLogo')}
                   <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{t('logoHint')}</Typography>
                 </Button>
@@ -800,12 +785,12 @@ export default function Amaippugal({ onSaved }) {
                   <Box sx={{ position: 'relative' }}>
                     <img src={profile.signature} alt="Signature" style={{ maxHeight: '100px', maxWidth: '200px', objectFit: 'contain' }} />
                     <IconButton size="small" color="error" onClick={() => removeImage('signature')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
-                      <Delete sx={{ fontSize: 14 }} />
+                      <Trash size={20} weight="fill" sx={{ fontSize: 14 }} />
                     </IconButton>
                   </Box>
                 </>
               ) : (
-                <Button variant="outlined" onClick={() => sigInputRef.current?.click()} startIcon={<Create sx={{ fontSize: 20 }} />} sx={{ flexDirection: 'column', py: 3, gap: 1, height: '100%', width: '100%' }}>
+                <Button variant="outlined" onClick={() => sigInputRef.current?.click()} startIcon={<PencilSimple size={20} weight="fill" sx={{ fontSize: 20 }} />} sx={{ flexDirection: 'column', py: 3, gap: 1, height: '100%', width: '100%' }}>
                   {t('uploadSignature')}
                   <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>{t('sigHint')}</Typography>
                 </Button>
@@ -825,10 +810,10 @@ export default function Amaippugal({ onSaved }) {
             {t('businessProfilesTitle')}
           </Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button variant="outlined" onClick={handleAddNewProfile} startIcon={<Add sx={{ fontSize: 16 }} />}>
+            <Button variant="outlined" onClick={handleAddNewProfile} startIcon={<Plus size={20} weight="fill" sx={{ fontSize: 16 }} />}>
               {t('addNewProfile')}
             </Button>
-            <Button variant="contained" onClick={handleSaveAsProfile} startIcon={<Business sx={{ fontSize: 16 }} />}>
+            <Button variant="contained" onClick={handleSaveAsProfile} startIcon={<Buildings size={20} weight="fill" sx={{ fontSize: 16 }} />}>
               {t('saveAsProfile')}
             </Button>
           </Box>
@@ -862,7 +847,7 @@ export default function Amaippugal({ onSaved }) {
                         {isActive ? 'Current' : 'Switch'}
                       </Button>
                       <IconButton size="small" color="error" onClick={() => handleDeleteProfile(bp.id)} title="Delete">
-                        <Delete sx={{ fontSize: 16 }} />
+                        <Trash size={20} weight="fill" sx={{ fontSize: 16 }} />
                       </IconButton>
                     </Box>
                   </Box>
@@ -885,7 +870,7 @@ export default function Amaippugal({ onSaved }) {
           {t('language')}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {language === 'ta' ? 'பயன்பாட்டின் மொழியை மாற்றவும்.' : 'Change the language of the application.'}
+          {t('changeTheLanguageOfTheApplicat')}
         </Typography>
         <Grid container spacing={2}>
           {[
@@ -927,16 +912,16 @@ export default function Amaippugal({ onSaved }) {
         {/* App User Name */}
         <Paper className="s2-group" elevation={0} sx={{ p: { xs: 0, md: 0 }, mb: { xs: 4, md: 5 }, bgcolor: 'transparent', backgroundImage: 'none' }}>
           <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0, mb: 0.5 }}>
-            {language === 'ta' ? 'பயனர் பெயர் (பயன்பாடு)' : 'App User Name'}
+            {t('appUserName')}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-            {language === 'ta' ? 'இந்த பெயர் பயன்பாட்டின் முகப்புத்திரையில் தோன்றும்.' : 'This name will appear on the app home screen profile pill.'}
+            {t('thisNameWillAppearOnTheAppHome')}
           </Typography>
           <Grid container spacing={3}>
             <Grid size={{ xs: 12, sm: profile.enableBilingual !== false ? 6 : 12 }}>
               <TextField 
                 fullWidth size="small" 
-                label={`${language === 'ta' ? 'பயனர் பெயர்' : 'User Name'} (${profile.primaryDataLanguage || 'Tamil'})`} 
+                label={`${t('userName')} (${profile.primaryDataLanguage || 'Tamil'})`} 
                 name="personName" 
                 value={profile.personName || ''} 
                 onChange={handleChange} 
@@ -946,7 +931,7 @@ export default function Amaippugal({ onSaved }) {
               <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField 
                   fullWidth size="small" 
-                  label={`${language === 'ta' ? 'பயனர் பெயர்' : 'User Name'} (${profile.secondaryDataLanguage || 'English'})`} 
+                  label={`${t('userName')} (${profile.secondaryDataLanguage || 'English'})`} 
                   name="personNameEn" 
                   value={profile.personNameEn || ''} 
                   onChange={handleChange} 
@@ -962,10 +947,10 @@ export default function Amaippugal({ onSaved }) {
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1, mb: 3 }}>
           <Box>
             <Typography variant="h6" style={{ fontWeight: 600 }} gutterBottom sx={{ mt: 0, mb: 0.5 }}>
-              {language === 'ta' ? 'தரவு உள்ளீடு மொழிகள்' : 'Data Entry Languages'}
+              {t('dataEntryLanguages')}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {language === 'ta' ? 'பட்டியல் உருவாக்கத்தில் பயன்படுத்தப்படும் மொழிகள்' : 'Languages used for billing and data entry'}
+              {t('languagesUsedForBilling')}
             </Typography>
           </Box>
           {!editingLangSettings ? (
@@ -975,7 +960,7 @@ export default function Amaippugal({ onSaved }) {
           ) : (
             <Box sx={{ display: 'flex', gap: 1 }}>
               <Button variant="outlined" color="inherit" onClick={() => setEditingLangSettings(false)}>{t('cancel' as any) || 'Cancel'}</Button>
-              <Button variant="contained" onClick={saveLangSettings} startIcon={<Save sx={{ fontSize: 16 }} />}>{t('save' as any) || 'Save'}</Button>
+              <Button variant="contained" onClick={saveLangSettings} startIcon={<FloppyDisk size={20} weight="fill" sx={{ fontSize: 16 }} />}>{t('save' as any) || 'Save'}</Button>
             </Box>
           )}
         </Box>
@@ -984,13 +969,13 @@ export default function Amaippugal({ onSaved }) {
           <Grid size={{ xs: 12, sm: 6 }}>
             {!editingLangSettings ? (
               <Box>
-                <Typography variant="body2" color="text.secondary" gutterBottom>{language === 'ta' ? 'முதன்மை மொழி' : 'Primary Language'}</Typography>
+                <Typography variant="body2" color="text.secondary" gutterBottom>{t('primaryLanguage')}</Typography>
                 <Typography variant="body1" sx={{ p: 1.5, bgcolor: 'action.hover', borderRadius: 1 }}>{profile.primaryDataLanguage || 'Tamil'}</Typography>
               </Box>
             ) : (
               <FormControl fullWidth size="small">
-                <InputLabel>{language === 'ta' ? 'முதன்மை மொழி' : 'Primary Language'}</InputLabel>
-                <Select MenuProps={{ disableScrollLock: true }} name="primaryDataLanguage" value={profile.primaryDataLanguage || 'Tamil'} onChange={handleChange} label={language === 'ta' ? 'முதன்மை மொழி' : 'Primary Language'}>
+                <InputLabel>{t('primaryLanguage')}</InputLabel>
+                <Select MenuProps={{ disableScrollLock: true }} name="primaryDataLanguage" value={profile.primaryDataLanguage || 'Tamil'} onChange={handleChange} label={t('primaryLanguage')}>
                   <MenuItem value="Tamil">{t('langTamil')}</MenuItem>
                   <MenuItem value="English">{t('langEnglish')}</MenuItem>
                   {/* Archived Languages:
@@ -1009,13 +994,13 @@ export default function Amaippugal({ onSaved }) {
           <Grid size={{ xs: 12, sm: 6 }}>
             {!editingLangSettings ? (
               <Box>
-                <Typography variant="body2" color="text.secondary" gutterBottom>{language === 'ta' ? 'இரண்டாம் மொழி' : 'Secondary Language'}</Typography>
+                <Typography variant="body2" color="text.secondary" gutterBottom>{t('secondaryLanguage')}</Typography>
                 <Typography variant="body1" sx={{ p: 1.5, bgcolor: 'action.hover', borderRadius: 1 }}>{profile.secondaryDataLanguage || 'English'}</Typography>
               </Box>
             ) : (
               <FormControl fullWidth size="small">
-                <InputLabel>{language === 'ta' ? 'இரண்டாம் மொழி' : 'Secondary Language'}</InputLabel>
-                <Select MenuProps={{ disableScrollLock: true }} name="secondaryDataLanguage" value={profile.secondaryDataLanguage || 'English'} onChange={handleChange} label={language === 'ta' ? 'இரண்டாம் மொழி' : 'Secondary Language'}>
+                <InputLabel>{t('secondaryLanguage')}</InputLabel>
+                <Select MenuProps={{ disableScrollLock: true }} name="secondaryDataLanguage" value={profile.secondaryDataLanguage || 'English'} onChange={handleChange} label={t('secondaryLanguage')}>
                   <MenuItem value="English">{t('langEnglish')}</MenuItem>
                   <MenuItem value="Tamil">{t('langTamil')}</MenuItem>
                   {/* Archived Languages:
@@ -1035,17 +1020,16 @@ export default function Amaippugal({ onSaved }) {
             <Paper className="s2-group" variant="outlined" sx={{ p: 2, display: 'flex', alignItems: 'center', opacity: editingLangSettings ? 1 : 0.7, pointerEvents: editingLangSettings ? 'auto' : 'none', bgcolor: 'action.hover' }}>
               <FormControlLabel
                 control={
-                  <Switch 
+                  <Material3Switch 
                     checked={profile.enableBilingual !== false} 
                     onChange={e => setProfile(prev => ({ ...prev, enableBilingual: e.target.checked }))} 
                     disabled={!editingLangSettings} 
-                    color="primary"
                   />
                 }
                 label={
                   <Box>
-                    <Typography variant="body1" style={{ fontWeight: 500 }}>{language === 'ta' ? 'இருமொழிப் பதிவு' : 'Enable Bilingual Bills'}</Typography>
-                    <Typography variant="body2" color="text.secondary">{language === 'ta' ? 'இரு மொழிகளிலும் தரவை உள்ளிட அனுமதிக்கவும்' : 'Allow data entry in two languages'}</Typography>
+                    <Typography variant="body1" style={{ fontWeight: 500 }}>{t('enableBilingualBills')}</Typography>
+                    <Typography variant="body2" color="text.secondary">{t('allowDataEntryInTwoLanguages')}</Typography>
                   </Box>
                 }
                 sx={{ m: 0, width: '100%' }}
@@ -1062,23 +1046,23 @@ export default function Amaippugal({ onSaved }) {
           {t('paymentAccountsTitle')}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 3 }}>
-          {language === 'ta' ? 'பில்களில் காட்டப்படும் வங்கி விவரங்கள்.' : 'Bank details shown on your invoices.'}
+          {t('bankDetailsShownOnYourInvoices')}
         </Typography>
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth size="small" label={language === 'ta' ? 'வங்கி பெயர் (தமிழ்)' : 'Bank Name (Tamil)'} name="vangiPeyar" value={profile.vangiPeyar || ''} onChange={handleChange} />
+            <TextField fullWidth size="small" label={t('bankNameTamil')} name="vangiPeyar" value={profile.vangiPeyar || ''} onChange={handleChange} />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth size="small" label={language === 'ta' ? 'வங்கி பெயர் (ஆங்கிலம்)' : 'Bank Name (English)'} name="vangiPeyarEn" value={profile.vangiPeyarEn || ''} onChange={handleChange} />
+            <TextField fullWidth size="small" label={t('bankNameEnglish')} name="vangiPeyarEn" value={profile.vangiPeyarEn || ''} onChange={handleChange} />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth size="small" label={language === 'ta' ? 'கிளை பெயர் (தமிழ்)' : 'Branch Name (Tamil)'} name="bankBranch" value={profile.bankBranch || ''} onChange={handleChange} />
+            <TextField fullWidth size="small" label={t('branchNameTamil')} name="bankBranch" value={profile.bankBranch || ''} onChange={handleChange} />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth size="small" label={language === 'ta' ? 'கிளை பெயர் (ஆங்கிலம்)' : 'Branch Name (English)'} name="bankBranchEn" value={profile.bankBranchEn || ''} onChange={handleChange} />
+            <TextField fullWidth size="small" label={t('branchNameEnglish')} name="bankBranchEn" value={profile.bankBranchEn || ''} onChange={handleChange} />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth size="small" label={language === 'ta' ? 'கணக்கு எண்' : 'Account Number'} name="kanakkuEn" value={profile.kanakkuEn || ''} onChange={handleChange} />
+            <TextField fullWidth size="small" label={t('accountNumber')} name="kanakkuEn" value={profile.kanakkuEn || ''} onChange={handleChange} />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
             <TextField fullWidth size="small" label="IFSC Code" name="ifsc" value={profile.ifsc || ''} onChange={handleChange} />
@@ -1087,7 +1071,7 @@ export default function Amaippugal({ onSaved }) {
             <TextField fullWidth size="small" label="SWIFT / BIC (optional)" name="swift" value={profile.swift || ''} onChange={handleChange} placeholder="e.g. HDFCINBB" />
           </Grid>
           <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField fullWidth size="small" label={language === 'ta' ? 'UPI ID (விருப்பம்)' : 'UPI ID (optional)'} name="upiId" value={profile.upiId || ''} onChange={handleChange} placeholder="e.g. yourbusiness@hdfcbank" />
+            <TextField fullWidth size="small" label={t('uPIIDOptional')} name="upiId" value={profile.upiId || ''} onChange={handleChange} placeholder="e.g. yourbusiness@hdfcbank" />
           </Grid>
           {((profile.country || 'India') === 'India') && (
             <Grid size={{ xs: 12, sm: 6 }}>
@@ -1316,10 +1300,10 @@ export default function Amaippugal({ onSaved }) {
         </Typography>
         
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-          <Button variant="contained" onClick={() => setShowExportModal(true)} startIcon={<Download sx={{ fontSize: 18 }} />}>
+          <Button variant="contained" onClick={() => setShowExportModal(true)} startIcon={<DownloadSimple size={20} weight="fill" sx={{ fontSize: 18 }} />}>
             {t('exportBackup')}
           </Button>
-          <Button variant="outlined" onClick={() => fileInputRef.current?.click()} startIcon={<Upload sx={{ fontSize: 18 }} />}>
+          <Button variant="outlined" onClick={() => fileInputRef.current?.click()} startIcon={<UploadSimple size={20} weight="fill" sx={{ fontSize: 18 }} />}>
             {t('importBackup')}
           </Button>
           <input ref={fileInputRef} type="file" accept=".json" onChange={handleImportPick} style={{ display: 'none' }} />
@@ -1369,7 +1353,7 @@ export default function Amaippugal({ onSaved }) {
           <Paper className="s2-group" elevation={0} sx={{ p: 2, bgcolor: 'primary.50', color: 'primary.900', borderRadius: 2 }}>
             <Typography variant="subtitle2" style={{ fontWeight: 'bold' }}>New version v{updateInfo.latest} is available!</Typography>
             <Typography variant="body2" sx={{ mb: 1 }}>Your data will not be affected. Click below to update:</Typography>
-            <Button component="a" href="elvanniril-update://run" variant="contained" color="primary" startIcon={<Download sx={{ fontSize: 18 }} />}>
+            <Button component="a" href="elvanniril-update://run" variant="contained" color="primary" startIcon={<DownloadSimple size={20} weight="fill" sx={{ fontSize: 18 }} />}>
               Update Now
             </Button>
           </Paper>
@@ -1409,7 +1393,7 @@ export default function Amaippugal({ onSaved }) {
 
        <div className="s2-profile-card" onClick={() => handleNavigate(0)} style={{ marginBottom: 32 }}>
           <div className="s2-avatar">
-              {profile.logo ? <img src={profile.logo} alt="Logo" /> : <Business className="s2-avatar-icon" />}
+              {profile.logo ? <img src={profile.logo} alt="Logo" /> : <Buildings size={20} weight="fill" className="s2-avatar-icon" />}
           </div>
           <div className="s2-profile-text">
               <div className="s2-profile-title">{profile.niruvanathinPeyar || 'Business Profile'}</div>
@@ -1541,7 +1525,7 @@ export default function Amaippugal({ onSaved }) {
             size="large"
             onClick={handleSave}
             disabled={saving}
-            startIcon={<Save />}
+            startIcon={<FloppyDisk size={20} weight="fill" />}
             sx={{ minWidth: 150, borderRadius: 2 }}
           >
             {saving ? t('saving') : t('saveProfile')}
@@ -1557,7 +1541,7 @@ export default function Amaippugal({ onSaved }) {
             disabled={saving}
             sx={{ position: 'fixed', bottom: 24, right: 24, zIndex: 1000 }}
           >
-            <Save />
+            <FloppyDisk size={20} weight="fill" />
           </Fab>
         )}
 
@@ -1594,7 +1578,7 @@ export default function Amaippugal({ onSaved }) {
         <DialogActions>
           <Button color="inherit" onClick={() => setShowExportModal(false)} disabled={drivePending}>{t('cancel')}</Button>
           <Button variant="contained" onClick={runExport} disabled={drivePending || !Object.values(exportSel).some(Boolean)}>
-            {drivePending ? 'Uploading…' : <><Download sx={{ fontSize: 16 }} style={{ marginRight: 6 }} /> Download Backup</>}
+            {drivePending ? 'Uploading…' : <><DownloadSimple size={20} weight="fill" sx={{ fontSize: 16 }} style={{ marginRight: 6 }} /> Download Backup</>}
           </Button>
         </DialogActions>
       </Dialog>
@@ -1639,7 +1623,7 @@ export default function Amaippugal({ onSaved }) {
           </DialogContent>
           <DialogActions>
             <Button color="inherit" onClick={() => setShowImportModal(false)}>{t('cancel')}</Button>
-            <Button variant="contained" onClick={runImport} disabled={!Object.values(importSel).some(Boolean)} startIcon={<Upload sx={{ fontSize: 16 }} />}>
+            <Button variant="contained" onClick={runImport} disabled={!Object.values(importSel).some(Boolean)} startIcon={<UploadSimple size={20} weight="fill" sx={{ fontSize: 16 }} />}>
               Restore selected
             </Button>
           </DialogActions>

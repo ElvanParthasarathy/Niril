@@ -1,33 +1,4 @@
-
-/* Moolam Theme Overrides for Neram Settings */
-:root {
-   --mac-card-bg: #1c1c1e;
-   --mac-card-border: 1px solid rgba(255, 255, 255, 0.05);
-   --mac-selection-hover: rgba(255, 255, 255, 0.08);
-   --mac-divider: rgba(255, 255, 255, 0.08);
-   --mac-text: #ffffff;
-   --mac-text-secondary: rgba(255, 255, 255, 0.5);
-   --mac-blue: #0A84FF;
-   --mac-green: #32D74B;
-   --mac-purple: #BF5AF2;
-   --mac-orange: #FF9F0A;
-   --mac-red: #FF453A;
-}
-
-/* Ensure paper backgrounds don't override our s2-group */
-.s2-group {
-    background: var(--mac-card-bg) !important;
-    border: var(--mac-card-border) !important;
-    border-radius: 24px !important;
-    overflow: hidden;
-}
-
-/* Override MUI text colors inside settings to use Neram colors if needed */
-.s2-col-right * {
-    /* We don't force color to allow MUI to work, but we set the base */
-}
-
-/* ==========================================================================
+﻿/* ==========================================================================
    SETTINGS SHARED — Base styles used across all settings pages
    Blue=#2196F3  Purple=#9C27B0  Orange=#FF9800  Green=#4CAF50  Red=#F44336
    ========================================================================== */
@@ -168,8 +139,14 @@
     cursor: pointer;
     color: var(--mac-text);
     font-size: 22px;
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.15s;
     flex-shrink: 0;
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .s2-back-btn {
+        display: none !important;
+    }
 }
 
 @media (max-width: 768px) {
@@ -185,6 +162,7 @@
 .s2-sub-title {
     font-size: 28px;
     font-weight: 800;
+    font-family: 'Elvan Sans', sans-serif;
     color: var(--mac-text);
     letter-spacing: -0.5px;
 }

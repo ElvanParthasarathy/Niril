@@ -108,56 +108,71 @@ export default function CoolieItems({ onAddProduct, onEditProduct }) {
 
   const renderCard = (product, globalIndex, isSelectionMode, isSelected, toggleSelection) => {
     return (
-      <ElvanCard 
-        key={product.id}
-        sx={{ 
-          height: '100%',
-          ...(isSelectionMode && isSelected ? { bgcolor: isDark ? 'rgba(255,255,255,0.06) !important' : 'rgba(0,0,0,0.04) !important' } : {})
-        }}
-        onClick={() => isSelectionMode ? toggleSelection(product.id) : onEditProduct(product)}
-      >
-        <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
-          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flex: 1, width: '100%' }}>
-            {!isSelectionMode ? (
-              <Box sx={{ 
-                display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                width: 28, height: 28, 
-                borderRadius: '50%',
-                bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
-                flexShrink: 0
-              }}>
-                <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
-                  {(globalIndex + 1).toString().padStart(2, '0')}
+      <Box sx={{ position: 'relative', height: '100%' }} key={product.id}>
+        <ElvanCard 
+          sx={{ 
+            height: '100%',
+            ...(isSelectionMode && isSelected ? { bgcolor: isDark ? 'rgba(255,255,255,0.06) !important' : 'rgba(0,0,0,0.04) !important' } : {})
+          }}
+          onClick={() => isSelectionMode ? toggleSelection(product.id) : onEditProduct(product)}
+        >
+          <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
+            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flex: 1, width: '100%' }}>
+              {!isSelectionMode ? (
+                <Box sx={{ 
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                  width: 28, height: 28, 
+                  borderRadius: '50%',
+                  bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
+                  flexShrink: 0
+                }}>
+                  <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
+                    {(globalIndex + 1).toString().padStart(2, '0')}
+                  </Typography>
+                </Box>
+              ) : (
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, color: isSelected ? 'primary.main' : 'text.secondary', flexShrink: 0 }}>
+                  {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} weight="regular" />}
+                </Box>
+              )}
+              <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0.5 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                  {getDynamicField(product, 'name', activeProfile, true) || product.name}
                 </Typography>
+                {/* Always render bilingual for Coolie */}
+                {(getDynamicField(product, 'name', activeProfile, false) || product.nameEn) && (
+                  <Typography variant="body2" sx={{ fontSize: '0.85rem', opacity: 0.6 }}>
+                    {getDynamicField(product, 'name', activeProfile, false) || product.nameEn}
+                  </Typography>
+                )}
               </Box>
-            ) : (
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, color: isSelected ? 'primary.main' : 'text.secondary', flexShrink: 0 }}>
-                {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} weight="regular" />}
-              </Box>
-            )}
-            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0.5 }}>
-              <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                {getDynamicField(product, 'name', activeProfile, true) || product.name}
-              </Typography>
-              {/* Always render bilingual for Coolie */}
-              {(getDynamicField(product, 'name', activeProfile, false) || product.nameEn) && (
-                <Typography variant="body2" sx={{ fontSize: '0.85rem', opacity: 0.6 }}>
-                  {getDynamicField(product, 'name', activeProfile, false) || product.nameEn}
-                </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+              {isSelectionMode && (
+                <Box sx={{ width: 34, height: 34 }} />
               )}
             </Box>
-          </Box>
-          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            {isSelectionMode && (
-              <Tooltip title={t('delete') || 'Delete'}>
-                <IconButton color="error" size="small" onClick={(e) => { e.stopPropagation(); handleDeleteSingle(product.id); }}>
-                  <Trash size={20} weight="regular" />
-                </IconButton>
-              </Tooltip>
-            )}
-          </Box>
-        </Stack>
-      </ElvanCard>
+          </Stack>
+        </ElvanCard>
+        {isSelectionMode && (
+          <Tooltip title={t('delete') || 'Delete'}>
+            <IconButton 
+              color="error" 
+              size="small" 
+              onClick={(e) => { e.stopPropagation(); handleDeleteSingle(product.id); }} 
+              sx={{ 
+                position: 'absolute',
+                top: '50%',
+                right: '16px',
+                transform: 'translateY(-50%)',
+                zIndex: 10
+              }}
+            >
+              <Trash size={20} weight="regular" />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Box>
     );
   };
 

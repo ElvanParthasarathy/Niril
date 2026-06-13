@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Box, TextField, InputAdornment, Typography, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { saveProduct } from '../Avanam';
-import { getCountryConfig } from '../Payanpadu';
-import { thagaval } from './Thagaval';
-import { useLanguage } from '../mozhi/LanguageContext';
-import ElvanEditorLayout from './ElvanEditorLayout';
-import ElvanBilingualField from './ElvanBilingualField';
-import { useDraftAndUnsaved } from '../hooks/useDraftAndUnsaved';
+import { saveProduct } from '../../../Avanam';
+import { getCountryConfig } from '../../../Payanpadu';
+import { thagaval } from '../../Thagaval';
+import { useLanguage } from '../../../mozhi/LanguageContext';
+import ElvanEditorLayout from '../../ElvanEditorLayout';
+import ElvanBilingualField from '../../ElvanBilingualField';
+import { useDraftAndUnsaved } from '../../../hooks/useDraftAndUnsaved';
 
 export default function PorulThoguppu({ onBack, onSaved, product, profileSettings, defaultCountry }) {
   const { t, language } = useLanguage();
-  const [form, setForm] = useState({});
+  const [form, setForm] = useState<any>({});
   const profileCountry = defaultCountry || 'India';
   const isEditing = !!product?.id;
 
@@ -129,7 +129,7 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
             />
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
               <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1, fontWeight: 500, ml: 2.5 }}>
-                {language === 'ta' ? 'அளவீடு முறை' : 'Measure Type'}
+                {t('measureType')}
               </Typography>
               <ToggleButtonGroup
                 color="primary"
@@ -162,10 +162,10 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
                 }}
               >
                 <ToggleButton value="quantity" sx={{ flex: 1, textTransform: 'none', fontWeight: 600 }}>
-                  {language === 'ta' ? 'அளவு' : 'Quantity'}
+                  {t('quantity')}
                 </ToggleButton>
                 <ToggleButton value="weight" sx={{ flex: 1, textTransform: 'none', fontWeight: 600 }}>
-                  {language === 'ta' ? 'எடை' : 'Weight'}
+                  {t('weight')}
                 </ToggleButton>
               </ToggleButtonGroup>
             </Box>

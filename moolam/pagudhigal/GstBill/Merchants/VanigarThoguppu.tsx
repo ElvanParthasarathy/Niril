@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
-import { getCountryConfig, getStatesForCountry, getBilingualStateName, getBilingualCountryName, validateTaxId, detectCountryFromBrowser, COUNTRIES, doesStateMatchSearch, doesCountryMatchSearch } from '../Payanpadu';
-import { useLanguage } from '../mozhi/LanguageContext';
-import { TextField, Box, Autocomplete, Typography } from '@mui/material';
-import { saveClient } from '../Avanam';
-import { thagaval } from './Thagaval';
-import ElvanEditorLayout from './ElvanEditorLayout';
-import ElvanBilingualField from './ElvanBilingualField';
-import { useDraftAndUnsaved } from '../hooks/useDraftAndUnsaved';
+import { getCountryConfig, getStatesForCountry, getBilingualStateName, getBilingualCountryName, validateTaxId, detectCountryFromBrowser, COUNTRIES, doesStateMatchSearch, doesCountryMatchSearch } from '../../../Payanpadu';
+import { useLanguage } from '../../../mozhi/LanguageContext';
+import ElvanPillAutocomplete from '../../ElvanPillAutocomplete';
+import { TextField, Box, Typography } from '@mui/material';
+import { saveClient } from '../../../Avanam';
+import { thagaval } from '../../Thagaval';
+import ElvanEditorLayout from '../../ElvanEditorLayout';
+import ElvanBilingualField from '../../ElvanBilingualField';
+import { useDraftAndUnsaved } from '../../../hooks/useDraftAndUnsaved';
 
 export default function VanigarThoguppu({ onBack, onSaved, client, profileSettings, defaultCountry }) {
   const { t } = useLanguage();
-  const fallbackCountry = defaultCountry || detectCountryFromBrowser();
-  const [form, setForm] = useState({});
+  const fallbackCountry = 'India';
+  const [form, setForm] = useState<any>({});
   const [taxIdWarning, setTaxIdWarning] = useState('');
   const isEditing = !!client?.id;
 
@@ -177,32 +178,32 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
 
         <Box sx={{ gridColumn: !isBilingual ? { sm: '1 / -1' } : undefined }}>
           {stateOptions.length > 0 ? (
-            <Autocomplete
+            <ElvanPillAutocomplete
               options={stateOptions}
-              filterOptions={(options, { inputValue }) => options.filter((option) => doesStateMatchSearch(option, inputValue))}
-              getOptionLabel={(s) => getBilingualStateName(s, { ...profileSettings, returnOnlyPrimary: true }) || s}
+              filterOptions={(options: any[], { inputValue }: any) => options.filter((option: any) => doesStateMatchSearch(option, inputValue))}
+              getOptionLabel={(s: any) => getBilingualStateName(s, { ...profileSettings, returnOnlyPrimary: true }) || s}
               value={getField('maanilam', primaryLang) || null}
-              onChange={(e, newValue) => updateField('maanilam', primaryLang, newValue || '')}
-              renderInput={(params) => (
-                <TextField {...params} fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }} placeholder={`${t('selectLabel')} ${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}`} autoComplete="new-password" />
-              )}
+              onChange={(_e: any, newValue: any) => updateField('maanilam', primaryLang, newValue || '')}
+              label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`}
+              placeholder={`${t('selectLabel')} ${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}`}
+              textFieldProps={{ autoComplete: "new-password" }}
             />
           ) : (
-            <TextField fullWidth size="medium" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
+            <TextField fullWidth size="small" label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${primaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
               value={getField('maanilam', primaryLang)} onChange={e => updateField('maanilam', primaryLang, e.target.value)} placeholder={t(cc.stateLabel as any, { defaultValue: cc.stateLabel }) as string} />
           )}
         </Box>{isBilingual && (
-          <TextField fullWidth size="medium" disabled label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${secondaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
+          <TextField fullWidth size="small" disabled label={`${t(cc.stateLabel as any, { defaultValue: cc.stateLabel })}${secondaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
             value={getField('maanilam', primaryLang) ? getBilingualStateName(getField('maanilam', primaryLang), { ...profileSettings, returnOnlySecondary: true }) : ''} sx={{ '& .MuiInputBase-root': { bgcolor: 'action.hover' } }} />
         )}
 
         <Box sx={!isBilingual ? { gridColumn: { sm: '1 / -1' } } : undefined}>
-          <Autocomplete
-            options={Array.from(new Set([...visibleCountries.map(c => c.name), 'Other']))}
-            filterOptions={(options, { inputValue }) => options.filter((option) => option === 'Other' ? 'Other (Custom)'.toLowerCase().includes(inputValue.toLowerCase()) : doesCountryMatchSearch(option, inputValue))}
-            getOptionLabel={(c) => c === 'Other' ? 'Other (Custom)' : (getBilingualCountryName(c, { ...profileSettings, returnOnlyPrimary: true }) || c)}
+          <ElvanPillAutocomplete
+            options={Array.from(new Set([...visibleCountries.map((c: any) => c.name), 'Other']))}
+            filterOptions={(options: any[], { inputValue }: any) => options.filter((option: any) => option === 'Other' ? 'Other (Custom)'.toLowerCase().includes(inputValue.toLowerCase()) : doesCountryMatchSearch(option, inputValue))}
+            getOptionLabel={(c: any) => c === 'Other' ? 'Other (Custom)' : (getBilingualCountryName(c, { ...profileSettings, returnOnlyPrimary: true }) || c)}
             value={isCustomCountry ? 'Other' : (formCountry || null)}
-            onChange={(e, newValue) => {
+            onChange={(_e: any, newValue: any) => {
               const val = newValue || '';
               if (val === 'Other') {
                 updateField('country', null, 'Other');
@@ -218,12 +219,12 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
                 updateField('maanilam', secondaryLang, '');
               }
             }}
-            renderInput={(params) => (
-              <TextField {...params} fullWidth size="medium" sx={{ mb: isCustomCountry ? 2 : 0 }} label={`${t('country')}${primaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }} autoComplete="new-password" />
-            )}
+            label={`${t('country')}${primaryLangSuffix}`}
+            textFieldProps={{ autoComplete: "new-password" }}
+            textFieldSx={{ mb: isCustomCountry ? 2 : 0 }}
           />
           {isCustomCountry && (
-            <TextField fullWidth size="medium" 
+            <TextField fullWidth size="small" 
               value={getField('country', primaryLang)} 
               onChange={e => updateField('country', primaryLang, e.target.value)} 
               placeholder={t('hc_enterCountryName') as string} />
@@ -232,12 +233,12 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
 
         {isBilingual && (
           <Box>
-            <TextField fullWidth size="medium" disabled label={`${t('country')}${secondaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
+            <TextField fullWidth size="small" disabled label={`${t('country')}${secondaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
               value={formCountry ? getBilingualCountryName(formCountry, { ...profileSettings, returnOnlySecondary: true }) || (formCountry === 'Other' ? 'Other (Custom)' : formCountry) : ''}
               sx={{ '& .MuiInputBase-root': { bgcolor: 'action.hover' }, mb: isCustomCountry ? 2 : 0 }} />
             
             {isCustomCountry && (
-              <TextField fullWidth size="medium" label={`${t('country')}${secondaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
+              <TextField fullWidth size="small" label={`${t('country')}${secondaryLangSuffix}`} slotProps={{ inputLabel: { shrink: true } }}
                 value={getField('country', secondaryLang)}
                 onChange={e => updateField('country', secondaryLang, e.target.value)}
                 placeholder={t('hc_enterCountryName') as string} />
@@ -245,7 +246,7 @@ export default function VanigarThoguppu({ onBack, onSaved, client, profileSettin
           </Box>
         )}
 
-          <TextField fullWidth size="medium" label={t(cc.postalLabel as any, { defaultValue: cc.postalLabel }) as string} slotProps={{ inputLabel: { shrink: true } }}
+          <TextField fullWidth size="small" label={t(cc.postalLabel as any, { defaultValue: cc.postalLabel }) as string} slotProps={{ inputLabel: { shrink: true } }}
             value={form.pin || ''} onChange={e => updateField('pin', null, e.target.value)} placeholder={cc.postalLabel} />
           </Box>
         </Box>

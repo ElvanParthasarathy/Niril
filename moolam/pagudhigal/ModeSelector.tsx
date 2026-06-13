@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useLanguage } from '../mozhi/LanguageContext';
 
 export default function ModeSelector({ onSelect, currentMode }) {
+  const { t } = useLanguage();
+
   const { language } = useLanguage();
   const theme = useTheme();
   const darkMode = true; // Always lock to dark mode for a cinematic, premium entry screen
@@ -53,7 +55,7 @@ export default function ModeSelector({ onSelect, currentMode }) {
                 mb: 1.5,
               }}
             >
-              {language === 'ta' ? 'இன்று எந்தக் கணக்கு?' : "Who's working today?"}
+              {t('whoIsWorkingToday')}
             </Typography>
             <Typography
               variant="subtitle1"
@@ -64,7 +66,7 @@ export default function ModeSelector({ onSelect, currentMode }) {
                 px: 2,
               }}
             >
-              {language === 'ta' ? 'உங்கள் கணக்குப் பகுதியைத் தேர்ந்தெடுக்கவும்' : 'Select your operating mode'}
+              {t('selectYourOperatingMode')}
             </Typography>
           </Box>
         </Zoom>
@@ -135,7 +137,7 @@ export default function ModeSelector({ onSelect, currentMode }) {
                       transition: 'color 0.3s ease',
                     }}
                   >
-                    {language === 'ta' ? 'நிறில் பட்டு' : 'Niril Silk'}
+                    {t('nirilSilk')}
                   </Typography>
                 </CardContent>
               </CardActionArea>
@@ -207,7 +209,7 @@ export default function ModeSelector({ onSelect, currentMode }) {
                       transition: 'color 0.3s ease',
                     }}
                   >
-                    {language === 'ta' ? 'நிறில் கூலி' : 'Niril Coolie'}
+                    {t('nirilCoolie')}
                   </Typography>
                 </CardContent>
               </CardActionArea>

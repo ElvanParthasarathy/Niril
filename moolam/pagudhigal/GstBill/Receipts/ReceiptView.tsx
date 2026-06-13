@@ -1,17 +1,17 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { ArrowLeft, Printer as PrintIcon, ShareNetwork, Spinner, DownloadSimple, PencilSimple, DotsThreeVertical } from '@phosphor-icons/react';
-import { FloatingBackButton } from './FloatingBackButton';
+import { FloatingBackButton } from '../../FloatingBackButton';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
-import { ensureToken, findOrCreateFolder, uploadPDF } from '../sevaigal/googleDrive';
-import { useLanguage } from '../mozhi/LanguageContext';
-import { en } from '../mozhi/en';
-import { ta } from '../mozhi/ta';
-import { formatCurrency, numberToWords, getCountryConfig, getDynamicField, getBilingualStateName, getBilingualCountryName } from '../Payanpadu';
+import { ensureToken, findOrCreateFolder, uploadPDF } from '../../../panigal/googleDrive';
+import { useLanguage } from '../../../mozhi/LanguageContext';
+import { en } from '../../../mozhi/en';
+import { ta } from '../../../mozhi/ta';
+import { formatCurrency, numberToWords, getCountryConfig, getDynamicField, getBilingualStateName, getBilingualCountryName } from '../../../Payanpadu';
 import { Box, Paper } from '@mui/material';
-import { ViewHeader } from './ViewHeader';
-import { thagaval } from './Thagaval';
-import './CoolieBill/print.css';
+import { ViewHeader } from '../../ViewHeader';
+import { thagaval } from '../../Thagaval';
+import '../../CoolieBill/print.css';
 
 const IconPhone = ({ size = 14, className = '', style = {} }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} style={style}>
@@ -26,7 +26,7 @@ const IconMail = ({ size = 14, className = '', style = {} }) => (
     </svg>
 );
 
-import { saveProfile } from '../Avanam';
+import { saveProfile } from '../../../Avanam';
 
 export default function ReceiptView({ receipt: receiptProp, profile: profileProp, onBack, onEdit }) {
   const profile = profileProp || {};
@@ -390,7 +390,7 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
                 </div>
                 <div className="print-header-new" style={{ borderBottom: '2px solid #e2e8f0', paddingBottom: '1.5rem', marginBottom: '3rem' }}>
                   <div className="header-left">
-                    {profile.wideLogo ? (
+                    {(profile?.billHeaderStyle === 'wide' || (!profile?.billHeaderStyle && profile?.wideLogo)) && profile?.wideLogo ? (
                       <img 
                         src={profile.wideLogo} 
                         alt="Wide Logo" 
@@ -407,19 +407,27 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
                         }} 
                       />
                     ) : (
-                      <>
-                        {profile.logo && <img src={profile.logo} alt="Logo" style={{ maxHeight: '140px' }} />}
-                        <div className="header-company-info">
-                          <div className="company-name font-display" style={{ color: profile.themeColor || '#388e3c' }}>
+                      <div style={{
+                        position: 'absolute',
+                        left: 0,
+                        top: -40,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '1rem',
+                        height: '140px'
+                      }}>
+                        {profile.logo && <img src={profile.logo} alt="Logo" style={{ maxHeight: `${profile.logoHeight || 120}px`, maxWidth: '160px', objectFit: 'contain' }} />}
+                        <div className="header-company-info" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                          <div className="company-name font-display" style={{ color: profile.themeColor || '#388e3c', whiteSpace: 'nowrap' }}>
                             {getDynamicField(profile, 'niruvanathinPeyar', profile, true) || 'Your Business'}
                           </div>
                           {profile?.enableBilingual !== false && getDynamicField(profile, 'niruvanathinPeyar', profile, false) && (
-                            <div className="company-subtitle font-tamil" style={{ color: '#475569' }}>
+                            <div className="company-subtitle font-tamil" style={{ color: '#475569', whiteSpace: 'nowrap' }}>
                               {getDynamicField(profile, 'niruvanathinPeyar', profile, false)}
                             </div>
                           )}
                         </div>
-                      </>
+                      </div>
                     )}
                   </div>
                   <div className="header-right">
@@ -488,7 +496,7 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
                 const addr1_tam = [getDynamicField(profile, 'mugavari', profile, true), getDynamicField(profile, 'oor', profile, true)].filter(Boolean).join(', ');
                 const addr1 = (addr1_eng || addr1_tam) + (profile?.pin ? ` - ${profile.pin}` : '');
                 
-                const country_eng = getBilingualCountryName(profile?.country, { ...profile, returnOnlySecondary: true, fallbackEnglishName: profile?.country_English }) || profile?.country_English || profile?.country;
+                const country_eng = profile?.enableBilingual === false ? '' : (getBilingualCountryName(profile?.country, { ...profile, returnOnlySecondary: true, fallbackEnglishName: profile?.country_English }) || profile?.country_English || profile?.country);
                 const country_tam = getBilingualCountryName(profile?.country, { ...profile, returnOnlyPrimary: true }) || profile?.country;
 
                 const dist_eng = [getDynamicField(profile, 'maavattam', profile, false), getBilingualStateName(profile.maanilam, { ...profile, returnOnlySecondary: true, fallbackEnglishName: profile.maanilamEn }), country_eng].filter(Boolean).join(', ');
