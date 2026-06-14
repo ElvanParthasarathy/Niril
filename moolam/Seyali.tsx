@@ -1014,7 +1014,7 @@ function Seyali() {
                 onClick={(e) => setMoreMenuAnchor(e.currentTarget)}
                 sx={{ 
                   color: darkMode ? '#aaa' : '#666',
-                  bgcolor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+                  bgcolor: darkMode ? 'rgba(255,255,255,0.08)' : '#FFFFFF',
                   width: 40, height: 40,
                   '&:active svg': { transform: 'scale(0.85)' },
                   '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
