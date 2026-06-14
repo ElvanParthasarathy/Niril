@@ -76,7 +76,6 @@ export default function Welcome({ mode, onContinue }: { mode: 'pre-login' | 'pos
     }, [phase]);
 
     const handleContinue = () => {
-        localStorage.setItem('elvanniril_welcomed', 'true');
         onContinue();
     };
 

@@ -474,9 +474,7 @@ function Seyali() {
   const [firebaseUser, setFirebaseUser] = useState<any>(null);
   const [firebaseAuthLoading, setFirebaseAuthLoading] = useState(true);
   const [postLoginWelcomeDone, setPostLoginWelcomeDone] = useState(false);
-  const [hasWelcomed, setHasWelcomed] = useState(() => {
-    return localStorage.getItem('elvanniril_welcomed') === 'true';
-  });
+  const [hasWelcomed, setHasWelcomed] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
@@ -1021,7 +1019,6 @@ function Seyali() {
         {!hasWelcomed ? (
           <Welcome mode="pre-login" onContinue={() => {
             setHasWelcomed(true);
-            localStorage.setItem('elvanniril_welcomed', 'true');
           }} />
         ) : (
           <Login />
