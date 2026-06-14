@@ -38,6 +38,31 @@ export const AuthInput = ({ label, value, onChange, type = "text", placeholder, 
                 placeholder={placeholder}
                 error={!!error}
                 helperText={error}
+                sx={{
+                    '& .MuiFilledInput-root': {
+                        backgroundColor: 'var(--auth-input-bg)',
+                        border: '1px solid var(--auth-divider)',
+                        borderRadius: '50px',
+                        overflow: 'hidden',
+                        transition: 'all 0.2s ease',
+                        '&:hover': {
+                            backgroundColor: 'var(--auth-input-bg)',
+                            borderColor: 'var(--auth-text-muted)',
+                        },
+                        '&.Mui-focused': {
+                            backgroundColor: 'var(--auth-input-bg)',
+                            borderColor: 'var(--auth-accent)',
+                            boxShadow: '0 0 0 4px var(--auth-glow)'
+                        }
+                    },
+                    '& .MuiFilledInput-input': {
+                        '&:-webkit-autofill': {
+                            WebkitBoxShadow: '0 0 0 100px var(--auth-input-bg) inset !important',
+                            WebkitTextFillColor: 'var(--auth-text) !important',
+                            borderRadius: '0px'
+                        }
+                    }
+                }}
                 slotProps={{
                     input: {
                         startAdornment: icon ? (
