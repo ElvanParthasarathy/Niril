@@ -18,7 +18,7 @@
     --auth-btn-text: #FFFFFF;
 }
 
-html.dark {
+html.dark, html[data-theme="dark"] {
     --auth-bg: #0A0A0A;
     --auth-surface: #1A1A1A;
     --auth-text: #FFFFFF;
@@ -37,7 +37,7 @@ html.dark {
     transition: filter 0.3s ease;
 }
 
-html.dark .auth-logo-themed {
+html.dark .auth-logo-themed, html[data-theme="dark"] .auth-logo-themed {
     filter: invert(1) brightness(100%);
 }
 

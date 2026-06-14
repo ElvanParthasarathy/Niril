@@ -14,7 +14,7 @@
     --splash-logo-filter: none;
 }
 
-html.dark {
+html.dark, html[data-theme="dark"] {
     --splash-bg: #0A0A0A;
     --splash-spinner-color: #FFFFFF;
     --splash-logo-filter: invert(1) brightness(100%);
