@@ -1013,7 +1013,7 @@ function Seyali() {
               <IconButton 
                 onClick={(e) => setMoreMenuAnchor(e.currentTarget)}
                 sx={{ 
-                  color: darkMode ? '#aaa' : '#666',
+                  color: darkMode ? '#aaa' : '#000000',
                   bgcolor: darkMode ? 'rgba(255,255,255,0.08)' : '#FFFFFF',
                   width: 40, height: 40,
                   '&:active svg': { transform: 'scale(0.85)' },
