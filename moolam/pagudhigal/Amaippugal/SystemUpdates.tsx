@@ -28,8 +28,13 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
         throw new Error("No user email found.");
       }
 
-      // Wiping the entire database
-      await remove(ref(rtdb, '/'));
+      // Wiping the entire database (safely by deleting top-level nodes instead of root if root is blocked)
+      const pathsToClear = [
+        'pattiyalkal', 'vanigargal', 'porulgal', 'patrugal', 'thannilai', 'mathirigal',
+        'coolie_pattiyalkal', 'coolie_vanigargal', 'coolie_porulgal', 'coolie_patrugal', 'coolie_thannilai',
+        'profile', 'meta'
+      ];
+      await Promise.all(pathsToClear.map(p => remove(ref(rtdb, p))));
       
       thagaval('App data completely erased.', 'success');
       localStorage.clear();
