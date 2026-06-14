@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { AuthLayout, AuthButton } from './AuthComponents';
-import { Database, Translate } from '@phosphor-icons/react';
+import { Database, CheckCircle } from '@phosphor-icons/react';
 import { useLanguage } from '../../mozhi/LanguageContext';
 
-const GREETINGS = ["வணக்கம்", "Hello", "नमस्ते", "Hola", "Bonjour", "你好"];
+const GREETINGS = ["வணக்கம்", "Hello", "നമസ്കാരം"];
 
 export default function Welcome({ onContinue }: { onContinue: () => void }) {
     const { t, language, setLanguage } = useLanguage();
@@ -181,38 +181,55 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                             paddingBottom: '40px'
                         }}>
                             
-                            {/* LANGUAGE SELECTOR */}
+                            {/* IOS-STYLE LANGUAGE SELECTOR */}
                             <div style={{
                                 display: 'flex',
-                                alignItems: 'center',
+                                flexDirection: 'column',
                                 gap: '12px',
-                                background: 'var(--auth-surface)',
-                                padding: '8px 16px',
-                                borderRadius: '100px',
-                                marginBottom: '32px',
-                                border: '1px solid var(--auth-divider)',
-                                boxShadow: '0 4px 12px var(--auth-glow)',
-                                cursor: 'pointer'
+                                width: '100%',
+                                maxWidth: '300px',
+                                marginBottom: '32px'
                             }}>
-                                <Translate size={20} color="var(--auth-text-secondary)" weight="bold" />
-                                <select 
-                                    value={language} 
-                                    onChange={(e) => setLanguage(e.target.value as 'en' | 'ta')}
+                                <div 
+                                    onClick={() => setLanguage('ta')}
                                     style={{
-                                        background: 'transparent',
-                                        border: 'none',
-                                        color: 'var(--auth-text)',
-                                        fontSize: '16px',
-                                        fontWeight: '600',
-                                        outline: 'none',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        padding: '16px 20px',
+                                        background: language === 'ta' ? 'var(--auth-text)' : 'var(--auth-surface)',
+                                        color: language === 'ta' ? 'var(--auth-surface)' : 'var(--auth-text)',
+                                        borderRadius: '16px',
                                         cursor: 'pointer',
-                                        appearance: 'none',
-                                        paddingRight: '12px'
+                                        border: `2px solid ${language === 'ta' ? 'var(--auth-text)' : 'var(--auth-divider)'}`,
+                                        transition: 'all 0.2s ease',
+                                        boxShadow: language === 'ta' ? '0 8px 16px var(--auth-glow)' : '0 2px 8px var(--auth-glow)',
+                                        fontWeight: language === 'ta' ? '700' : '500'
                                     }}
                                 >
-                                    <option value="ta" style={{ color: 'var(--mac-text)' }}>தமிழ்</option>
-                                    <option value="en" style={{ color: 'var(--mac-text)' }}>English</option>
-                                </select>
+                                    <span style={{ fontSize: '18px' }}>தமிழ்</span>
+                                    {language === 'ta' && <CheckCircle size={24} weight="fill" />}
+                                </div>
+                                <div 
+                                    onClick={() => setLanguage('en')}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        padding: '16px 20px',
+                                        background: language === 'en' ? 'var(--auth-text)' : 'var(--auth-surface)',
+                                        color: language === 'en' ? 'var(--auth-surface)' : 'var(--auth-text)',
+                                        borderRadius: '16px',
+                                        cursor: 'pointer',
+                                        border: `2px solid ${language === 'en' ? 'var(--auth-text)' : 'var(--auth-divider)'}`,
+                                        transition: 'all 0.2s ease',
+                                        boxShadow: language === 'en' ? '0 8px 16px var(--auth-glow)' : '0 2px 8px var(--auth-glow)',
+                                        fontWeight: language === 'en' ? '700' : '500'
+                                    }}
+                                >
+                                    <span style={{ fontSize: '18px' }}>English</span>
+                                    {language === 'en' && <CheckCircle size={24} weight="fill" />}
+                                </div>
                             </div>
 
                             <p style={{
@@ -223,11 +240,11 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                                 maxWidth: '280px',
                                 lineHeight: '1.5'
                             }}>
-                                {t('welcomeAgreeText') !== 'welcomeAgreeText' ? t('welcomeAgreeText') : 'Tap "Agree and Continue" to get started with Niril.'}
+                                {t('welcomeAgreeText') !== 'welcomeAgreeText' ? t('welcomeAgreeText') : 'Tap "Get Started" to continue with Niril.'}
                             </p>
 
                             <AuthButton onClick={handleContinue}>
-                                {t('agreeAndContinueBtn') !== 'agreeAndContinueBtn' ? t('agreeAndContinueBtn') : 'Agree and Continue'}
+                                {t('agreeAndContinueBtn') !== 'agreeAndContinueBtn' ? t('agreeAndContinueBtn') : 'Get Started'}
                             </AuthButton>
                         </div>
                     </div>
