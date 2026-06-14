@@ -475,7 +475,6 @@ function Seyali() {
   const [firebaseAuthLoading, setFirebaseAuthLoading] = useState(true);
   const [isProfileLoading, setIsProfileLoading] = useState(true);
   const [postLoginWelcomeDone, setPostLoginWelcomeDone] = useState(false);
-  const [hasWelcomed, setHasWelcomed] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
@@ -1031,13 +1030,7 @@ function Seyali() {
     return (
       <ThemeProvider theme={muiTheme}>
         <CssBaseline />
-        {!hasWelcomed ? (
-          <Welcome mode="pre-login" onContinue={() => {
-            setHasWelcomed(true);
-          }} />
-        ) : (
-          <Login />
-        )}
+        <Login />
       </ThemeProvider>
     );
   }
