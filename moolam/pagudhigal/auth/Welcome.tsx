@@ -274,15 +274,14 @@ export default function Welcome({ mode, onContinue }: { mode: 'pre-login' | 'pos
                             <div style={{
                                 width: '96px',
                                 height: '96px',
-                                background: 'var(--auth-surface)',
+                                background: 'var(--auth-accent)',
                                 borderRadius: '28px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                boxShadow: '0 20px 40px var(--auth-glow)',
-                                border: '1px solid var(--auth-divider)'
+                                boxShadow: '0 20px 40px var(--auth-glow)'
                             }}>
-                                <Database size={48} weight="duotone" color="var(--auth-accent)" />
+                                <Database size={48} weight="duotone" color="var(--auth-bg)" />
                             </div>
                         </div>
 
