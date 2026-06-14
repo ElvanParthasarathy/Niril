@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AuthLayout, AuthButton } from './AuthComponents';
-import { Database, CheckCircle, GlobeHemisphereWest } from '@phosphor-icons/react';
+import { Database, CheckCircle, GlobeHemisphereWest, FileText } from '@phosphor-icons/react';
 import { List, ListItem, ListItemButton, ListItemText, ListItemIcon, Divider } from '@mui/material';
 import { useLanguage } from '../../mozhi/LanguageContext';
 
@@ -148,7 +148,7 @@ export default function Welcome({ onContinue, mode = 'post-login' }: { onContinu
                             gap: '12px'
                         }}>
                             <h1 style={{
-                                fontSize: '32px',
+                                fontSize: 'clamp(24px, 7vw, 32px)',
                                 fontWeight: '800',
                                 color: 'var(--auth-text)',
                                 margin: 0,
@@ -289,7 +289,7 @@ export default function Welcome({ onContinue, mode = 'post-login' }: { onContinu
                             gap: '12px'
                         }}>
                             <h1 style={{
-                                fontSize: '32px',
+                                fontSize: 'clamp(24px, 7vw, 32px)',
                                 fontWeight: '800',
                                 color: 'var(--auth-text)',
                                 margin: 0,
