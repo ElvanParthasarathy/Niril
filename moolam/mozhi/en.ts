@@ -1115,5 +1115,10 @@ export const en: Record<TranslationKey, string> = {
   systemSecurityDesc: 'Clear cache, Account security, Updates',
   clearCacheTitle: 'Clear Cache',
   clearCacheDesc: 'Clear local cache to fix issues.',
-  clearCacheBtn: 'Clear Cache'
+  clearCacheBtn: 'Clear Cache',
+
+  welcomeTitle: 'Welcome to Niril',
+  welcomeSubtitle: 'Your Billing & GST, Sorted.',
+  welcomeAgreeText: 'Tap "Agree and Continue" to get started with Niril.',
+  agreeAndContinueBtn: 'Agree and Continue'
 };

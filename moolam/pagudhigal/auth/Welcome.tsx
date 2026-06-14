@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { AuthLayout, AuthButton } from './AuthComponents';
 import { Database } from '@phosphor-icons/react';
+import { useLanguage } from '../../mozhi/LanguageContext';
 
 export default function Welcome({ onContinue }: { onContinue: () => void }) {
+    const { t } = useLanguage();
     const [showLogo, setShowLogo] = useState(false);
     const [showText, setShowText] = useState(false);
     const [showButton, setShowButton] = useState(false);
@@ -26,47 +28,43 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
     };
 
     return (
-        <AuthLayout>
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
-
+        <AuthLayout hideLogo>
+            <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+                justifyContent: 'space-between',
+                padding: '40px 24px',
+                maxWidth: '480px',
+                margin: '0 auto',
+                width: '100%'
+            }}>
+                <div style={{ flex: 1 }} />
+                
                 {/* LOGO SECTION */}
-                <div
-                    className={`animate-enter`}
-                    style={{
-                        marginTop: '60px',
-                        opacity: showLogo ? 1 : 0,
-                        transform: showLogo ? 'scale(1)' : 'scale(0.8)',
-                        transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)'
-                    }}
-                >
+                <div style={{
+                    opacity: showLogo ? 1 : 0,
+                    transform: showLogo ? 'scale(1)' : 'scale(0.8)',
+                    transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '24px',
+                    marginBottom: '40px'
+                }}>
                     <div style={{
-                        position: 'relative',
-                        width: '180px',
-                        height: '180px',
+                        width: '96px',
+                        height: '96px',
+                        background: 'linear-gradient(135deg, var(--mac-blue), #5E5CE6)',
+                        borderRadius: '28px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        animation: 'float 3s ease-in-out infinite alternate' // Floating Animation
+                        boxShadow: '0 20px 40px rgba(10, 132, 255, 0.3)'
                     }}>
-                        {/* Glow Effect */}
-                        <div style={{
-                            position: 'absolute',
-                            width: '100%',
-                            height: '100%',
-                            borderRadius: '50%',
-                            background: 'var(--auth-glow)',
-                            filter: 'blur(20px)',
-                            zIndex: -1,
-                            animation: 'pulse 2s ease-in-out infinite'
-                        }} />
-
-                        <div className="auth-logo-themed" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Database size={80} weight="duotone" color="var(--auth-accent)" />
-                        </div>
+                        <Database size={48} weight="duotone" color="white" />
                     </div>
                 </div>
-
-                <div style={{ height: '48px' }} />
 
                 {/* TEXT SECTION */}
                 <div style={{
@@ -76,7 +74,6 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                     textAlign: 'center',
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center',
                     gap: '12px'
                 }}>
                     <h1 style={{
@@ -86,7 +83,7 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                         margin: 0,
                         letterSpacing: '-0.5px'
                     }}>
-                        Welcome to Elvan Niril
+                        {t('welcomeTitle') !== 'welcomeTitle' ? t('welcomeTitle') : 'Welcome to Niril'}
                     </h1>
                     <p style={{
                         fontSize: '18px',
@@ -94,7 +91,7 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                         margin: 0,
                         fontWeight: '500'
                     }}>
-                        Your Billing & GST, Sorted.
+                        {t('welcomeSubtitle') !== 'welcomeSubtitle' ? t('welcomeSubtitle') : 'Your Billing & GST, Sorted.'}
                     </p>
                 </div>
 
@@ -119,13 +116,13 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                         maxWidth: '280px',
                         lineHeight: '1.5'
                     }}>
-                        Tap "Agree and Continue" to get started with Elvan Niril.
+                        {t('welcomeAgreeText') !== 'welcomeAgreeText' ? t('welcomeAgreeText') : 'Tap "Agree and Continue" to get started with Niril.'}
                     </p>
 
                     <AuthButton
                         onClick={handleContinue}
                     >
-                        Agree and Continue
+                        {t('agreeAndContinueBtn') !== 'agreeAndContinueBtn' ? t('agreeAndContinueBtn') : 'Agree and Continue'}
                     </AuthButton>
                 </div>
 

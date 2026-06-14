@@ -1143,6 +1143,11 @@ export const ta = {
 
   vanakkamTitle: 'வணக்கம்!',
   whoIsWorkingToday: 'இன்று எந்தக் கணக்கு?',
+
+  welcomeTitle: 'நிறிள்-க்கு நல்வரவு',
+  welcomeSubtitle: 'உங்கள் பில்லிங் & ஜிஎஸ்டி, எளிதாக்கப்பட்டது.',
+  welcomeAgreeText: 'நிறிள்-ஐத் தொடங்க "ஏற்றுத் தொடரவும்"-ஐத் தட்டவும்.',
+  agreeAndContinueBtn: 'ஏற்றுத் தொடரவும்'
 };
 
 export type TranslationKey = keyof typeof ta;
