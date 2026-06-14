@@ -125,20 +125,6 @@ export default function StorageCloud({ profile, driveConnected, setDriveConnecte
         </SettingsPillContainer>
       )}
 
-      <SettingsPillContainer>
-        <SettingsRow
-          icon={<LockKeyhole size={20} />}
-          iconColor="red"
-          title="Account Security"
-          description="Sign out of Firebase to lock your database access on this device."
-          control={
-            <Button variant="outlined" color="error" size="small" sx={{ borderRadius: 8 }} onClick={() => signOut(auth)}>
-              Sign Out
-            </Button>
-          }
-        />
-      </SettingsPillContainer>
-
       {/* Export modal */}
       <Dialog open={showExportModal} onClose={() => setShowExportModal(false)} maxWidth="sm" fullWidth disableScrollLock>
         <DialogTitle>Export Backup</DialogTitle>

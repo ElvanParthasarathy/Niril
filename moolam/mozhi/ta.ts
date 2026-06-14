@@ -72,7 +72,8 @@ export const ta = {
   storageCloud: 'சேமிப்பகம் & முகில்',
 
   systemUpdates: 'அமைப்பு & புதுப்பிப்புகள்',
-  appVersionsCache: 'செயலி பதிப்புகள், தற்காலிக நினைவகம்',
+  systemStorage: 'அமைப்பு நினைவகம்',
+  appVersionsCache: 'செயலி பதிப்புகள், காப்புநகல், தற்காலிக நினைவகம்',
 
   // Forms & Inputs
   name: 'பெயர்',
@@ -315,6 +316,7 @@ export const ta = {
   businessProfilesDesc2: 'சுயவிவரங்கள் இல்லை',
 
   appUpdatesTitle: 'பயன்பாட்டு புதுப்பிப்புகள்',
+  appStorageDesc: 'தற்காலிக நினைவகம்',
   appUpdatesDesc: 'புதிய பதிப்பு உள்ளதா என சரிபார்க்கவும்.',
   checkingUpdate: 'சரிபார்க்கப்படுகிறது...',
   checkForUpdates: 'புதுப்பிப்புகளை சரிபார்',

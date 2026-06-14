@@ -43,6 +43,8 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
   const [currentView, setCurrentView] = useState<any>(() => window.innerWidth > 768 ? 0 : 'hub');
   const [activeTab, setActiveTab] = useState<any>('business');
 
+  const showAppVersion = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || !!(window as any).Capacitor || window.matchMedia('(display-mode: standalone)').matches;
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', handleResize);
@@ -228,13 +230,14 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
       title = t('appPreferences') || "App Preferences";
       content = <AppPreferences thagaval={thagaval} darkMode={darkMode} setDarkMode={setDarkMode} themeMode={themeMode} setThemeMode={setThemeMode} />;
     }
-    else if (currentView === 2) { 
-      title = t('storageCloud') || "Storage & Cloud";
-      content = <StorageCloud profile={profile} driveConnected={driveConnected} setDriveConnected={setDriveConnected} connecting={connecting} setConnecting={setConnecting} t={t} />;
-    }
     else if (currentView === 3) { 
-      title = t('systemUpdates') || "System & Updates";
-      content = <SystemUpdates t={t} />;
+      title = showAppVersion ? (t('systemUpdates') || "System & Updates") : (t('systemStorage') || "System Storage");
+      content = (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <StorageCloud profile={profile} driveConnected={driveConnected} setDriveConnected={setDriveConnected} connecting={connecting} setConnecting={setConnecting} t={t} />
+          <SystemUpdates t={t} />
+        </Box>
+      );
     }
 
     return (
@@ -390,18 +393,12 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
              description={t('uiLanguageTheme')} 
              onClick={() => handleNavigate(1)} 
           />
-          <SettingsRow 
-             icon={<Cloud size={20} weight="fill" />} 
-             iconColor="monochrome"
-             title={t('storageCloud')} 
-             description={t('googleDriveLocalBackups')} 
-             onClick={() => handleNavigate(2)} 
-          />
+
           <SettingsRow 
              icon={<ArrowsClockwise size={20} weight="bold" />} 
              iconColor="monochrome"
-             title={t('systemUpdates')} 
-             description={t('appVersionsCache')} 
+             title={showAppVersion ? t('systemUpdates') : t('systemStorage')} 
+             description={showAppVersion ? t('appVersionsCache') : t('appStorageDesc')} 
              onClick={() => handleNavigate(3)} 
           />
        </SettingsSection>

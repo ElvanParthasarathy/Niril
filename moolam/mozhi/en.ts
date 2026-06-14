@@ -69,7 +69,8 @@ export const en: Record<TranslationKey, string> = {
   storageCloud: 'Storage & Cloud',
 
   systemUpdates: 'System & Updates',
-  appVersionsCache: 'App versions, Cache',
+  systemStorage: 'System Storage',
+  appVersionsCache: 'App versions, Backup, Cache',
 
   // Forms & Inputs
   name: 'Name',
@@ -345,6 +346,7 @@ export const en: Record<TranslationKey, string> = {
   businessProfilesDesc2: 'No saved profiles.',
 
   appUpdatesTitle: 'App Updates',
+  appStorageDesc: 'App cache memory',
   appUpdatesDesc: 'Check if a newer version is available.',
   checkingUpdate: 'Checking...',
   checkForUpdates: 'Check for Updates',
