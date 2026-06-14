@@ -1,8 +1,11 @@
 import React from 'react';
 import { AuthLayout } from './AuthComponents';
+import { useLanguage } from '../../mozhi/LanguageContext';
 import './splash.css';
 
 const SplashScreen = () => {
+    const { t } = useLanguage();
+    
     return (
         <AuthLayout>
             <div style={{
@@ -15,7 +18,7 @@ const SplashScreen = () => {
                 gap: '24px'
             }}>
                 <div className="animate-zoom" style={{ fontSize: '32px', fontWeight: 'bold', color: 'var(--auth-text)' }}>
-                    Elvan Niril
+                    {t('appNameFull') || 'Elvan Niril'}
                 </div>
             </div>
         </AuthLayout>
