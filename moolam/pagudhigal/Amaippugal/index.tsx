@@ -14,7 +14,7 @@ import { thagaval } from '../Thagaval';
 import GstSettings from '../GstBill/GstSettings';
 import CoolieSettings from '../CoolieBill/CoolieSettings';
 import SystemUpdates from './SystemUpdates';
-import StorageCloud from './StorageCloud';
+import DevTools from './DevTools';
 import AppPreferences from './AppPreferences';
 import { SubHeader, SettingsGroup, SettingsItem, SettingsDivider } from './SettingsShared';
 import { SettingsSection, SettingsRow } from '../ElvanSettingsSection';
@@ -74,6 +74,7 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
     if (subRoute === 'app-preferences') setCurrentView(1);
     else if (subRoute === 'cloud') setCurrentView(2);
     else if (subRoute === 'updates') setCurrentView(3);
+    else if (subRoute === 'devtools') setCurrentView(4);
     else {
       setCurrentView(0);
       if (appMode === 'COOLIE') {
@@ -237,8 +238,15 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
       title = t('systemAndSecurity') || "System & Security";
       content = (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <StorageCloud profile={profile} driveConnected={driveConnected} setDriveConnected={setDriveConnected} connecting={connecting} setConnecting={setConnecting} t={t} />
           <SystemUpdates t={t} />
+        </Box>
+      );
+    }
+    else if (currentView === 4) {
+      title = "Developer Tools";
+      content = (
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <DevTools t={t} profile={profile} driveConnected={driveConnected} setDriveConnected={setDriveConnected} connecting={connecting} setConnecting={setConnecting} />
         </Box>
       );
     }
@@ -407,6 +415,18 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
              onClick={() => handleNavigate(3)} 
           />
         </SettingsSection>
+
+        {showAppVersion && (
+          <SettingsSection>
+            <SettingsRow 
+               icon={<ArrowsClockwise size={20} weight="fill" />} 
+               iconColor="blue"
+               title="Developer Tools" 
+               description="Import/Export and App Version" 
+               onClick={() => handleNavigate(4)} 
+            />
+          </SettingsSection>
+        )}
     </div>
   );
 

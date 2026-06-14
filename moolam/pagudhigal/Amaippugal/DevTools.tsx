@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Box, Typography, Button, FormControlLabel, Checkbox, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import { DownloadSimple, UploadSimple, Cloud, CloudSlash } from '@phosphor-icons/react';
+import { DownloadSimple, UploadSimple, Cloud, CloudSlash, ArrowsClockwise } from '@phosphor-icons/react';
 import { LockKeyhole } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../firebase';
@@ -25,7 +25,7 @@ const ALL_BACKUP_PARTS = [
   { id: 'localStorage',   label: 'Local preferences',        hint: 'Custom units, theme, last region preference' },
 ];
 
-export default function StorageCloud({ profile, driveConnected, setDriveConnected, connecting, setConnecting, t }) {
+export default function DevTools({ profile, driveConnected, setDriveConnected, connecting, setConnecting, t }) {
   const fileInputRef = useRef(null);
 
   const [showExportModal, setShowExportModal] = useState(false);
@@ -34,6 +34,9 @@ export default function StorageCloud({ profile, driveConnected, setDriveConnecte
   const [importSel, setImportSel] = useState(() => Object.fromEntries(ALL_BACKUP_PARTS.map(p => [p.id, true])));
   const [importInspection, setImportInspection] = useState<any>(null);
   const [importJsonText, setImportJsonText] = useState('');
+
+  const [updateInfo, setUpdateInfo] = useState<any>(null);
+  const [checkingUpdate, setCheckingUpdate] = useState(false);
 
   const toggleExport = (id) => setExportSel(prev => ({ ...prev, [id]: !prev[id] }));
   const toggleImport = (id) => setImportSel(prev => ({ ...prev, [id]: !prev[id] }));
@@ -95,35 +98,76 @@ export default function StorageCloud({ profile, driveConnected, setDriveConnecte
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      {(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && (
-        <SettingsPillContainer>
+      <SettingsPillContainer>
+        <SettingsRow
+          icon={<DownloadSimple size={20} weight="fill" />}
+          iconColor="blue"
+          title={t('exportBackup') || 'Export Backup'}
+          description="Save all your profiles and settings to a JSON file."
+          control={
+            <Button variant="outlined" size="small" sx={{ borderRadius: 8 }} onClick={() => setShowExportModal(true)}>
+              Export
+            </Button>
+          }
+        />
+        <SettingsRow
+          icon={<UploadSimple size={20} weight="fill" />}
+          iconColor="orange"
+          title={t('importBackup') || 'Import Backup'}
+          description="Restore your data from a previous backup file."
+          control={
+            <>
+              <Button variant="outlined" size="small" sx={{ borderRadius: 8 }} onClick={() => (fileInputRef.current as any)?.click()}>
+                Import
+              </Button>
+              <input ref={fileInputRef} type="file" accept=".json" onChange={handleImportPick} style={{ display: 'none' }} />
+            </>
+          }
+        />
+      </SettingsPillContainer>
+      
+      <SettingsPillContainer>
+        <SettingsRow
+          icon={<ArrowsClockwise size={20} weight="fill" />}
+          iconColor="blue"
+          title="App Version"
+          description={updateInfo ? `Current: v${updateInfo.current}${updateInfo.latest ? ` | Latest: v${updateInfo.latest}` : ''}` : "Checking for updates manually."}
+          control={
+            <Button variant="outlined" size="small" disabled={checkingUpdate} onClick={async () => {
+              setCheckingUpdate(true);
+              try {
+                const res = await fetch('/api/check-update');
+                const data = await res.json();
+                setUpdateInfo(data);
+                if (data.updateAvailable) {
+                  thagaval(`Update available: v${data.latest}`, 'info');
+                } else if (data.error) {
+                  thagaval('Could not check for updates. Check internet connection.', 'warning');
+                } else {
+                  thagaval('You are on the latest version!', 'success');
+                }
+              } catch {
+                thagaval('Could not check for updates.', 'error');
+              }
+              setCheckingUpdate(false);
+            }}>
+              {checkingUpdate ? (t('checkingUpdate') || 'Checking...') : (t('checkForUpdates') || 'Check for Updates')}
+            </Button>
+          }
+        />
+
+        {updateInfo?.updateAvailable && (
           <SettingsRow
-            icon={<DownloadSimple size={20} weight="fill" />}
-            iconColor="blue"
-            title={t('exportBackup') || 'Export Backup'}
-            description="Save all your profiles and settings to a JSON file."
+            title="New Version Available"
+            description={`v${updateInfo.latest} is ready to install.`}
             control={
-              <Button variant="outlined" size="small" sx={{ borderRadius: 8 }} onClick={() => setShowExportModal(true)}>
-                Export
+              <Button component="a" href="elvanniril-update://run" variant="contained" color="primary" size="small">
+                Update Now
               </Button>
             }
           />
-          <SettingsRow
-            icon={<UploadSimple size={20} weight="fill" />}
-            iconColor="orange"
-            title={t('importBackup') || 'Import Backup'}
-            description="Restore your data from a previous backup file."
-            control={
-              <>
-                <Button variant="outlined" size="small" sx={{ borderRadius: 8 }} onClick={() => (fileInputRef.current as any)?.click()}>
-                  Import
-                </Button>
-                <input ref={fileInputRef} type="file" accept=".json" onChange={handleImportPick} style={{ display: 'none' }} />
-              </>
-            }
-          />
-        </SettingsPillContainer>
-      )}
+        )}
+      </SettingsPillContainer>
 
       {/* Export modal */}
       <Dialog open={showExportModal} onClose={() => setShowExportModal(false)} maxWidth="sm" fullWidth disableScrollLock>
