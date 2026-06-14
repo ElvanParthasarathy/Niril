@@ -1137,9 +1137,9 @@ export const ta = {
 
   systemAndSecurity: 'அமைப்பு & பாதுகாப்பு',
   systemSecurityDesc: 'கணக்கு பாதுகாப்பு மற்றும் செயலித் தரவை நிர்வகிக்கவும்.',
-  clearCacheTitle: 'தேக்ககத்தை அழி',
-  clearCacheDesc: 'பயன்பாட்டுத் தேக்ககத்தை அழிக்கவும்.',
-  clearCacheBtn: 'தேக்ககத்தை அழி',
+  clearCacheTitle: 'தேக்கத்தை அழி',
+  clearCacheDesc: 'பயன்பாட்டுத் தேக்கத்தை அழிக்கவும்.',
+  clearCacheBtn: 'தேக்கத்தை அழி',
 
   vanakkamTitle: 'வணக்கம்!',
   whoIsWorkingToday: 'இன்று எந்தக் கணக்கு?',
