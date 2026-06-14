@@ -7,9 +7,11 @@ import { thagaval } from '../Thagaval';
 export default function SystemUpdates({ t }: { t: (key: string) => string }) {
   const [updateInfo, setUpdateInfo] = useState<any>(null);
   const [checkingUpdate, setCheckingUpdate] = useState(false);
+  const showAppVersion = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || !!(window as any).Capacitor || window.matchMedia('(display-mode: standalone)').matches;
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      {showAppVersion && (
       <SettingsPillContainer>
         <SettingsRow
           icon={<ArrowsClockwise size={20} weight="fill" />}
@@ -52,6 +54,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
           />
         )}
       </SettingsPillContainer>
+      )}
 
       <SettingsPillContainer>
         <SettingsRow
