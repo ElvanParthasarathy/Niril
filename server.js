@@ -502,11 +502,8 @@ app.get('/api/export', (req, res) => {
     termsTemplates: readAllFromDir('mathirigal'),
     products: readAllFromDir('porulgal'),
     coolieProducts: readAllFromDir('coolie_porulgal'),
-    expenses: readAllFromDir('selavugal'),
-    recurring: readAllFromDir('thodar_pattiyalkal'),
     receipts: readAllFromDir('patrugal'),
     profiles: readAllFromDir('thannilai'),
-    purchases: readAllFromDir('kolmudhal'),
     coolieBills: readAllFromDir('coolie_pattiyalkal'),
     coolieReceipts: readAllFromDir('coolie_patrugal'),
     meta: readJSON(META_PATH, {}),
@@ -568,20 +565,6 @@ app.post('/api/import', (req, res) => {
       }
     }
   }
-  if (data.expenses && Array.isArray(data.expenses)) {
-    for (const exp of data.expenses) {
-      if (exp.id) {
-        writeJSON(path.join(DATA_DIR, 'selavugal', safeFileName(exp.id) + '.json'), exp);
-      }
-    }
-  }
-  if (data.recurring && Array.isArray(data.recurring)) {
-    for (const rec of data.recurring) {
-      if (rec.id) {
-        writeJSON(path.join(DATA_DIR, 'thodar_pattiyalkal', safeFileName(rec.id) + '.json'), rec);
-      }
-    }
-  }
   if (data.receipts && Array.isArray(data.receipts)) {
     for (const rcp of data.receipts) {
       if (rcp.id) {
@@ -593,13 +576,6 @@ app.post('/api/import', (req, res) => {
     for (const prof of data.profiles) {
       if (prof.id) {
         writeJSON(path.join(DATA_DIR, 'thannilai', safeFileName(prof.id) + '.json'), prof);
-      }
-    }
-  }
-  if (data.purchases && Array.isArray(data.purchases)) {
-    for (const pur of data.purchases) {
-      if (pur.id) {
-        writeJSON(path.join(DATA_DIR, 'kolmudhal', safeFileName(pur.id) + '.json'), pur);
       }
     }
   }
