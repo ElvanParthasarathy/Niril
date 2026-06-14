@@ -1135,6 +1135,9 @@ export const ta = {
   eraseAppDataDesc: 'உங்கள் தரவுத்தளத்தை முழுமையாக அழிக்கவும். மீட்டமைக்க நீங்கள் ஒரு காப்புப்பிரதியை இறக்குமதி செய்ய வேண்டும்.',
   eraseDataBtn: 'தரவை அழி',
 
+  systemAndSecurity: 'அமைப்பு & பாதுகாப்பு',
+  systemSecurityDesc: 'கணக்கு பாதுகாப்பு மற்றும் ஆப்ஸ் தரவை நிர்வகிக்கவும்.',
+
   vanakkamTitle: 'வணக்கம்!',
   whoIsWorkingToday: 'இன்று எந்தக் கணக்கு?',
 };

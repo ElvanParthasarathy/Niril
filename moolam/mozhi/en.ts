@@ -1110,5 +1110,7 @@ export const en: Record<TranslationKey, string> = {
   signOutBtn: 'Sign Out',
   eraseAppDataTitle: 'Erase App Data',
   eraseAppDataDesc: 'Completely wipe your database. You will need to import a backup to restore.',
-  eraseDataBtn: 'Erase Data'
+  eraseDataBtn: 'Erase Data',
+  systemAndSecurity: 'System & Security',
+  systemSecurityDesc: 'Clear cache, Account security, Updates'
 };

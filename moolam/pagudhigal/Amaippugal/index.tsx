@@ -397,7 +397,7 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
 
 
 
-       <SettingsSection>
+        <SettingsSection>
           <SettingsRow 
              icon={<Hash size={20} weight="fill" />} 
              iconColor="monochrome"
@@ -405,14 +405,11 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
              description={t('uiLanguageTheme')} 
              onClick={() => handleNavigate(1)} 
           />
-        </SettingsSection>
-
-        <SettingsSection>
           <SettingsRow 
              icon={<LockKeyhole size={20} weight="fill" />} 
              iconColor="monochrome"
-             title={t('systemAndSecurity') || 'System & Security'} 
-             description={t('systemSecurityDesc') || 'Clear cache, Account security, Updates'} 
+             title={t('systemAndSecurity') !== 'systemAndSecurity' ? t('systemAndSecurity') : 'System & Security'} 
+             description={t('systemSecurityDesc') !== 'systemSecurityDesc' ? t('systemSecurityDesc') : 'Clear cache, Account security, Updates'} 
              onClick={() => handleNavigate(3)} 
           />
         </SettingsSection>
