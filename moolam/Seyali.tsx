@@ -1300,7 +1300,7 @@ function Seyali() {
             overscrollBehavior: 'contain',
             '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
           }}>
-        {currentView === 'settings' && <Amaippugal appMode={appMode} onSaved={() => {}} onSwitchModeRequest={() => setInlineOverlay({ type: 'mode-selector' })} darkMode={darkMode} setDarkMode={setDarkMode} themeMode={themeMode} setThemeMode={setThemeMode} />}
+        {currentView === 'settings' && <Amaippugal appMode={appMode} onSaved={() => {}} onSwitchModeRequest={handleSwitchModeRequest} darkMode={darkMode} setDarkMode={setDarkMode} themeMode={themeMode} setThemeMode={setThemeMode} />}
           </Box>
         )}
           </Box>
