@@ -396,11 +396,7 @@ export default function Welcome({ onContinue, mode = 'post-login' }: { onContinu
                             <div style={{ width: '100%', maxWidth: '320px' }}>
                                 <AuthButton onClick={() => {
                                     localStorage.setItem('elvanniril_setup_billingLang', billingLanguage);
-                                    if (mode === 'post-login') {
-                                        setPhase('setup');
-                                    } else {
-                                        onContinue();
-                                    }
+                                    onContinue();
                                 }}>
                                     Continue
                                 </AuthButton>
