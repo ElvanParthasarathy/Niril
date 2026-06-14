@@ -13,7 +13,7 @@ import { INVOICE_TYPES } from '../../Payanpadu';
 import ElvanEditorLayout from '../ElvanEditorLayout';
 import { useDraftAndUnsaved } from '../../hooks/useDraftAndUnsaved';
 
-export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp, editingBill, onRequestAddClient, onRequestAddProduct, dataVersion }: any) {
+export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp, editingBill, onRequestAddClient, onRequestAddProduct, dataVersion, hideHeaderPortals }: any) {
   const { t } = useLanguage();
   const [client, setClient] = useState<ClientState>(createEmptyClient());
   const [items, setItems] = useState<LineItemState[]>([createEmptyLineItem()]);
@@ -225,6 +225,7 @@ export default function InvoiceEditorV2({ onBack, onSaved, profile: profileProp,
         clearDraft();
         onBack();
       }}
+      hideHeaderPortals={hideHeaderPortals}
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
         

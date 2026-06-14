@@ -116,11 +116,14 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
       }
     }
     
-    navigate(path);
+    // If already inside a sub-setting, replace so we don't stack up history.
+    // Only push when navigating from the settings hub into a sub-setting.
+    const isAlreadyInSubSetting = location.pathname !== '/dashboard/settings' && location.pathname.startsWith('/dashboard/settings/');
+    navigate(path, { replace: isAlreadyInSubSetting });
   };
 
   const goHub = () => {
-    navigate('/dashboard/settings');
+    navigate('/dashboard/settings', { replace: true });
   };
 
   const handleCreateNewProfile = async () => {

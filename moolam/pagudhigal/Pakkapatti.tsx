@@ -51,7 +51,7 @@ export default function Pakkapatti({
 
   const handleNavClick = (id: any, defaultOnClick?: any) => {
     if (defaultOnClick) defaultOnClick();
-    else setCurrentView(id, true);
+    else setCurrentView(id);
     if (mobileOpen && handleDrawerToggle) {
       handleDrawerToggle();
     }

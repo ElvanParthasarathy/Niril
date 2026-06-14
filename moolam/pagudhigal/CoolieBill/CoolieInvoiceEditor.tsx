@@ -92,7 +92,7 @@ const clientFilter = createFilterOptions({
   }
 });
 
-export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onRequestAddClient, onRequestAddProduct, dataVersion }) {
+export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onRequestAddClient, onRequestAddProduct, dataVersion, hideHeaderPortals }) {
   const { t, language } = useLanguage();
   const theme = useTheme();
   const skipNextInputChangeRef = React.useRef(false);
@@ -414,12 +414,13 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
       title={t('coolieBill') || 'Coolie Bill'}
       onBack={onBack}
       onSave={handleSave}
-      saveButtonText={t('save') || 'Save'}
+      saveButtonText={(!!existingBill ? t('hc_updateBillBtn') : t('hc_saveBillBtn')) as string}
       hasUnsavedChanges={hasUnsavedChanges}
       onDiscard={() => {
         clearDraft();
         if (onBack) onBack();
       }}
+      hideHeaderPortals={hideHeaderPortals}
     >
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
         

@@ -1,7 +1,7 @@
 // @ts-nocheck
-import { CaretLeft, CaretDoubleLeft as KeyboardDoubleArrowLeft, CaretDoubleRight as KeyboardDoubleArrowRight, House as Home, FileText as Description, GearSix as Settings, Plus as Add, Users as People, Package as Inventory, ChartBar as BarChart, Wallet as AccountBalanceWallet, ArrowsClockwise as Refresh, Receipt, BookOpen as MenuBook, Moon as DarkMode, Sun as LightMode, DownloadSimple as Download, X as Close, ShoppingCart, CaretDown as KeyboardArrowDown, CaretRight as KeyboardArrowRight, Buildings as Business, PencilSimple as Edit, Question as HelpOutlined, MagnifyingGlass as Search, Command as KeyboardCommandKey, Bell as Notifications, List as Menu, CalendarDots } from '@phosphor-icons/react';
+import { CaretLeft, CaretDoubleLeft as KeyboardDoubleArrowLeft, CaretDoubleRight as KeyboardDoubleArrowRight, House as Home, FileText as Description, GearSix as Settings, Plus as Add, Users as People, Package as Inventory, ChartBar as BarChart, Wallet as AccountBalanceWallet, ArrowsClockwise as Refresh, Receipt, BookOpen as MenuBook, Moon as DarkMode, Sun as LightMode, DownloadSimple as Download, X as Close, ShoppingCart, CaretDown as KeyboardArrowDown, CaretRight as KeyboardArrowRight, Buildings as Business, PencilSimple as Edit, Question as HelpOutlined, MagnifyingGlass as Search, Command as KeyboardCommandKey, Bell as Notifications, List as Menu, CalendarDots, DotsThree } from '@phosphor-icons/react';
 import { useState, useEffect, useRef, useMemo, useCallback, startTransition } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useNavigationType } from 'react-router-dom';
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Badge, Box, Typography, Avatar, Divider, Tooltip, IconButton, Collapse, CssBaseline, Dialog, DialogTitle, DialogContent, DialogActions, Button, Backdrop, CircularProgress, InputBase, AppBar, Toolbar, useMediaQuery, Stack, Select, MenuItem, Paper, Popover } from '@mui/material';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { getAllProfiles, saveProfile, getAllBills, getAllProducts } from './Avanam';
@@ -165,6 +165,7 @@ function Seyali() {
   const { t, language, setLanguage } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
+  const navigationType = useNavigationType();
 
   const currentView = useMemo(() => {
     const path = location.pathname;
@@ -184,6 +185,24 @@ function Seyali() {
     return 'dashboard';
   }, [location.pathname]);
 
+  // Scroll restoration: ONLY reset scroll when switching between main bottom-bar tabs.
+  // Sub-page navigations (list→editor, list→view) must NOT reset scroll so the list remembers position.
+  const mainTabs = useMemo(() => new Set(['dashboard', 'invoice-list', 'clients', 'inventory', 'receipts', 'reports', 'gst-returns', 'settings']), []);
+  const prevPathRef = useRef(location.pathname);
+  useEffect(() => {
+    const prevPath = prevPathRef.current;
+    prevPathRef.current = location.pathname;
+    if (prevPath === location.pathname) return;
+
+    // Only reset scroll when landing on a main tab (bottom bar / sidebar tap)
+    // Never reset when going into a sub-page (overlay) or coming back (POP)
+    if (mainTabs.has(currentView as string) && navigationType !== 'POP') {
+      const mainContainer = document.getElementById('main-scroll-container');
+      if (mainContainer) mainContainer.scrollTo(0, 0);
+      window.scrollTo(0, 0);
+    }
+  }, [location.pathname, navigationType, currentView, mainTabs]);
+
   const setCurrentView = useCallback((v: string, replace = false) => {
     let path = '/dashboard';
     if (v === 'invoice-list') path = '/dashboard/invoices';
@@ -202,9 +221,12 @@ function Seyali() {
     
     // Smart history management for top-level tabs
     const isTopLevelTab = ['invoice-list', 'clients', 'inventory', 'receipts', 'reports', 'gst-returns', 'settings'].includes(v);
-    const isCurrentlyDashboard = location.pathname === '/dashboard' || location.pathname === '/';
+    const isCurrentlyDashboard = !['/dashboard/invoices', '/dashboard/clients', '/dashboard/inventory', '/dashboard/receipts', '/dashboard/reports', '/dashboard/gst-returns', '/dashboard/settings'].some(p => location.pathname.startsWith(p));
     
-    const shouldReplace = isTopLevelTab && isCurrentlyDashboard ? false : replace;
+    let shouldReplace = replace;
+    if (isTopLevelTab && !isCurrentlyDashboard) {
+      shouldReplace = true;
+    }
 
     navigate(path, { replace: shouldReplace, state: location.state });
   }, [navigate, location.pathname, location.state]);
@@ -243,6 +265,7 @@ function Seyali() {
   const [devSecondaryLang, setDevSecondaryLang] = useState<string | null>(null);
   const [devPanelAnchorEl, setDevPanelAnchorEl] = useState<HTMLDivElement | null>(null);
   const devPanelOpen = Boolean(devPanelAnchorEl);
+  const [moreMenuAnchor, setMoreMenuAnchor] = useState<HTMLElement | null>(null);
   
   const profile = dbProfile ? { 
     ...dbProfile, 
@@ -927,39 +950,7 @@ function Seyali() {
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />
       
-      {/* Dev-only floating blank state toggle */}
-      <IconButton 
-        className="no-print"
-        onClick={() => {
-          const isBlank = sessionStorage.getItem('__DEV_BLANK_STATE__') === 'true';
-          sessionStorage.setItem('__DEV_BLANK_STATE__', isBlank ? 'false' : 'true');
-          window.location.reload();
-        }}
-        sx={{ 
-          position: 'fixed', top: 12, right: 56, zIndex: 9999, 
-          bgcolor: sessionStorage.getItem('__DEV_BLANK_STATE__') === 'true' ? 'rgba(255,69,58,0.8)' : (darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)'),
-          backdropFilter: 'blur(8px)', width: 32, height: 32,
-          '&:hover': { bgcolor: sessionStorage.getItem('__DEV_BLANK_STATE__') === 'true' ? 'rgba(255,69,58,1)' : (darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)') }
-        }}
-        title="Toggle Blank State (Dev Only)"
-      >
-        <div style={{ width: 12, height: 12, borderRadius: '50%', border: '2px solid', borderColor: darkMode ? "#ffffff" : "#000000" }} />
-      </IconButton>
 
-      {/* Dev-only floating dark mode toggle */}
-      <IconButton 
-        className="no-print"
-        onClick={() => setDarkMode(!darkMode)}
-        sx={{ 
-          position: 'fixed', top: 12, right: 16, zIndex: 9999, 
-          bgcolor: darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
-          backdropFilter: 'blur(8px)', width: 32, height: 32,
-          '&:hover': { bgcolor: darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)' }
-        }}
-        title="Toggle Theme (Dev Only)"
-      >
-        {darkMode ? <LightMode size={16} weight="bold" color="#ffffff" /> : <DarkMode size={16} weight="bold" color="#000000" />}
-      </IconButton>
       {!hasSelectedMode && (
         <ModeSelector 
           currentMode={appMode}
@@ -1019,30 +1010,60 @@ function Seyali() {
           )}
           <Box id="mobile-topbar-right" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
             {currentView === 'dashboard' && (
-              <Stack direction="row" spacing={0.5}>
-                <IconButton onClick={() => setCurrentView('reports')} sx={{ 
-                  color: currentView === 'reports' ? 'primary.main' : (darkMode ? '#aaa' : '#666'),
+              <IconButton 
+                onClick={(e) => setMoreMenuAnchor(e.currentTarget)}
+                sx={{ 
+                  color: darkMode ? '#aaa' : '#666',
+                  bgcolor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+                  width: 40, height: 40,
                   '&:active svg': { transform: 'scale(0.85)' },
                   '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
-                }}>
-                  <BarChart size={24} weight={currentView === 'reports' ? "fill" : "regular"} />
-                </IconButton>
-                <IconButton onClick={() => setCurrentView('gst-returns')} sx={{ 
-                  color: currentView === 'gst-returns' ? 'primary.main' : (darkMode ? '#aaa' : '#666'),
-                  '&:active svg': { transform: 'scale(0.85)' },
-                  '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
-                }}>
-                  <Description size={24} weight={currentView === 'gst-returns' ? "fill" : "regular"} />
-                </IconButton>
-                <IconButton onClick={() => setCurrentView('settings')} sx={{ 
-                  color: currentView === 'settings' ? 'primary.main' : (darkMode ? '#aaa' : '#666'),
-                  '&:active svg': { transform: 'scale(0.85)' },
-                  '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
-                }}>
-                  <Settings size={24} weight={currentView === 'settings' ? "fill" : "regular"} />
-                </IconButton>
-              </Stack>
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg>
+              </IconButton>
             )}
+            <Popover
+              open={Boolean(moreMenuAnchor)}
+              anchorEl={moreMenuAnchor}
+              onClose={() => setMoreMenuAnchor(null)}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              slotProps={{ paper: { sx: { 
+                borderRadius: 2, 
+                bgcolor: darkMode ? '#1a1a1a' : '#fff',
+                border: 'none',
+                boxShadow: darkMode ? '0 8px 32px rgba(0,0,0,0.5)' : '0 8px 32px rgba(0,0,0,0.15)',
+                minWidth: 200,
+                mt: 1,
+                overflow: 'hidden'
+              } } }}
+            >
+              {[
+                ...(appMode === 'GST' ? [
+                  { id: 'reports', icon: BarChart, label: t('reports') || 'Reports' },
+                  { id: 'gst-returns', icon: Description, label: t('gstReturns') || 'GST Returns' }
+                ] : []),
+                { id: 'settings', icon: Settings, label: t('settings') || 'Settings' },
+              ].map((item) => (
+                <Box
+                  key={item.id}
+                  onClick={() => { setMoreMenuAnchor(null); setCurrentView(item.id as any); }}
+                  sx={{
+                    display: 'flex', alignItems: 'center', gap: 1.5,
+                    px: 2, py: 1.5,
+                    cursor: 'pointer',
+                    color: darkMode ? '#fff' : 'text.primary',
+                    '&:hover': { bgcolor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)' },
+                    '&:active': { bgcolor: darkMode ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)' },
+                    transition: 'background 0.15s'
+                  }}
+                >
+                  <item.icon size={20} weight="regular" />
+                  <Typography sx={{ fontSize: '0.9rem', fontWeight: 600 }}>{item.label}</Typography>
+                </Box>
+              ))}
+            </Popover>
             {['reports', 'gst-returns', 'settings'].includes(currentView as string) && (
               <IconButton onClick={() => {
                 if (window.history.length > 1) {
@@ -1053,11 +1074,11 @@ function Seyali() {
               }} sx={{ 
                 bgcolor: 'background.paper', 
                 color: 'text.primary',
-                p: 1.5,
+                p: 1.2,
                 '&:active svg': { transform: 'scale(0.85)' },
                 '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
               }}>
-                <CaretLeft size={20} weight="bold" />
+                <CaretLeft size={22} weight="bold" />
               </IconButton>
             )}
           </Box>
@@ -1085,7 +1106,7 @@ function Seyali() {
             '@media print': { overflowY: 'visible', pb: 0 }
           }}>
         {(currentView === 'dashboard' || currentView === 'settings' || (['invoice-editor', 'invoice-view'].includes(currentView as string) && sessionStorage.getItem('gst_backTo') === 'dashboard')) && (
-          <Box sx={{ display: currentView === 'settings' ? { xs: 'block', md: 'none' } : 'block' }}>
+          <Box sx={{ display: currentView === 'settings' ? 'none' : 'block', height: '100%' }}>
             {appMode === 'GST' ? (
               <Mugappu key={refreshKey} onViewAll={() => setCurrentView('invoice-list')} onNew={handleNewInvoice} onEdit={handleViewInvoice} onDuplicate={handleDuplicateInvoice} onConvert={handleConvertToInvoice} profile={profile} onSwitchModeRequest={handleSwitchModeRequest} />
             ) : (
@@ -1095,12 +1116,82 @@ function Seyali() {
         )}
         {/* Always render the list when in any invoice view (unless coming from dashboard) so it maintains state and DOM */}
         {(currentView === 'invoice-list' || (['invoice-editor', 'invoice-view'].includes(currentView as string) && sessionStorage.getItem('gst_backTo') !== 'dashboard')) && (
+          <Box sx={{ height: '100%' }}>
+            {appMode === 'GST' ? (
+              <InvoiceList key={refreshKey} onNew={handleNewInvoice} onView={handleViewInvoice} onDuplicate={handleDuplicateInvoice} profile={profile} />
+            ) : (
+              <CoolieInvoiceList key={refreshKey} onNew={handleNewInvoice} onView={handleViewInvoice} />
+            )}
+          </Box>
+        )}
+
+        {/* Clients list - stays in scroll container */}
+        {(currentView === 'clients' || currentView === 'client-editor') && (
+          <Box sx={{ height: '100%' }}>
+            {appMode === 'GST' ? (
+              <Vanigargal key={refreshKey} onAddClient={() => { setEditingClient(null); navigate('/dashboard/clients/new'); }} onEditClient={(c) => { setEditingClient(c); navigate(`/dashboard/clients/edit/${c.id || 'draft'}`); }} profile={profile} />
+            ) : (
+              <CoolieMerchants key={refreshKey} onAddClient={() => { setEditingClient(null); navigate('/dashboard/clients/new'); }} onEditClient={(c) => { setEditingClient(c); navigate(`/dashboard/clients/edit/${c.id || 'draft'}`); }} />
+            )}
+          </Box>
+        )}
+
+        {/* Inventory list - stays in scroll container */}
+        {(currentView === 'inventory' || currentView === 'product-editor') && (
+          <Box sx={{ height: '100%' }}>
+            {appMode === 'GST' ? (
+              <Porul key={refreshKey} onAddProduct={() => { setEditingProduct(null); navigate('/dashboard/inventory/new'); }} onEditProduct={(p) => { setEditingProduct(p); navigate(`/dashboard/inventory/edit/${p.id || 'draft'}`); }} profile={profile} />
+            ) : (
+              <CoolieItems key={refreshKey} onAddProduct={() => { setEditingProduct(null); navigate('/dashboard/inventory/new'); }} onEditProduct={(p) => { setEditingProduct(p); navigate(`/dashboard/inventory/edit/${p.id || 'draft'}`); }} />
+            )}
+          </Box>
+        )}
+
+        {(currentView === 'receipts' || currentView === 'receipt-editor' || currentView === 'receipt-view') && (
           appMode === 'GST' ? (
-            <InvoiceList key={refreshKey} onNew={handleNewInvoice} onView={handleViewInvoice} onDuplicate={handleDuplicateInvoice} profile={profile} />
+            <Patru 
+              key={refreshKey}
+              profile={profile} 
+              onAddReceipt={() => { setEditingReceipt(null); navigate('/dashboard/receipts/new'); }} 
+              onEditReceipt={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/edit/${rcp.id || 'draft'}`); }} 
+              onViewReceipt={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/view/${rcp.id || 'draft'}`); }}
+            />
           ) : (
-            <CoolieInvoiceList key={refreshKey} onNew={handleNewInvoice} onView={handleViewInvoice} />
+            <CoolieReceiptList 
+              key={refreshKey}
+              onAddReceipt={() => { setEditingReceipt(null); navigate('/dashboard/receipts/new'); }} 
+              onEditReceipt={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/edit/${rcp.id || 'draft'}`); }} 
+              onViewReceipt={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/view/${rcp.id || 'draft'}`); }}
+            />
           )
         )}
+        {currentView === 'reports' && (
+          <Arikkaigal />
+        )}
+        {currentView === 'gst-returns' && (
+          <VariArikkaigal profile={profile} />
+        )}
+
+        {currentView === 'settings' && (
+          <Box sx={{ 
+            position: { xs: 'fixed', md: 'static' }, 
+            top: { xs: '64px', md: 'auto' }, 
+            left: { xs: '12px', md: 'auto' }, 
+            right: { xs: '12px', md: 'auto' }, 
+            bottom: { xs: '12px', md: 'auto' }, 
+            borderRadius: { xs: '24px', md: 0 },
+            bgcolor: 'background.default', 
+            zIndex: { xs: 1200, md: 'auto' }, 
+            overflowY: { xs: 'auto', md: 'visible' }, 
+            overscrollBehavior: 'contain',
+            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+          }}>
+            <Amaippugal appMode={appMode} onSaved={(p) => setProfile(p)} onSwitchModeRequest={handleSwitchModeRequest} darkMode={darkMode} setDarkMode={setDarkMode} />
+          </Box>
+        )}
+          </Box>
+          {/* === Overlay editors rendered OUTSIDE scroll container but INSIDE the shell === */}
+          {/* This preserves scroll position of lists underneath */}
 
         {/* Render Editor on top as a modal inner shell */}
         {currentView === 'invoice-editor' && (
@@ -1125,6 +1216,7 @@ function Seyali() {
                 onRequestAddClient={() => setInlineOverlay({ type: 'client-editor' })}
                 onRequestAddProduct={() => setInlineOverlay({ type: 'product-editor' })}
                 dataVersion={dataVersion}
+                hideHeaderPortals={!!inlineOverlay}
               />
             ) : (
               <CoolieInvoiceEditor 
@@ -1134,6 +1226,7 @@ function Seyali() {
                 onRequestAddClient={() => setInlineOverlay({ type: 'client-editor' })}
                 onRequestAddProduct={() => setInlineOverlay({ type: 'product-editor' })}
                 dataVersion={dataVersion}
+                hideHeaderPortals={!!inlineOverlay}
               />
             )}
           </Box>
@@ -1220,14 +1313,7 @@ function Seyali() {
           </Box>
         )}
 
-        {/* Global screens rendering inline */}
-        {currentView === 'clients' && (
-          appMode === 'GST' ? (
-            <Vanigargal key={refreshKey} onAddClient={() => { setEditingClient(null); navigate('/dashboard/clients/new'); }} onEditClient={(c) => { setEditingClient(c); navigate(`/dashboard/clients/edit/${c.id || 'draft'}`); }} profile={profile} />
-          ) : (
-            <CoolieMerchants key={refreshKey} onAddClient={() => { setEditingClient(null); navigate('/dashboard/clients/new'); }} onEditClient={(c) => { setEditingClient(c); navigate(`/dashboard/clients/edit/${c.id || 'draft'}`); }} />
-          )
-        )}
+        {/* Client editor overlay */}
         {currentView === 'client-editor' && (
           <Box sx={{ 
             position: { xs: 'fixed', md: 'absolute' }, 
@@ -1259,13 +1345,7 @@ function Seyali() {
           </Box>
         )}
 
-        {currentView === 'inventory' && (
-          appMode === 'GST' ? (
-            <Porul key={refreshKey} onAddProduct={() => { setEditingProduct(null); navigate('/dashboard/inventory/new'); }} onEditProduct={(p) => { setEditingProduct(p); navigate(`/dashboard/inventory/edit/${p.id || 'draft'}`); }} profile={profile} />
-          ) : (
-            <CoolieItems key={refreshKey} onAddProduct={() => { setEditingProduct(null); navigate('/dashboard/inventory/new'); }} onEditProduct={(p) => { setEditingProduct(p); navigate(`/dashboard/inventory/edit/${p.id || 'draft'}`); }} />
-          )
-        )}
+        {/* Product editor overlay */}
         {currentView === 'product-editor' && (
           <Box sx={{ 
             position: { xs: 'fixed', md: 'absolute' }, 
@@ -1298,25 +1378,7 @@ function Seyali() {
           </Box>
         )}
 
-
-        {['receipts', 'receipt-editor', 'receipt-view'].includes(currentView as string) && (
-          appMode === 'GST' ? (
-            <Patru 
-              key={refreshKey}
-              profile={profile} 
-              onAddReceipt={() => { setEditingReceipt(null); navigate('/dashboard/receipts/new'); }} 
-              onEditReceipt={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/edit/${rcp.id || 'draft'}`); }} 
-              onViewReceipt={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/view/${rcp.id || 'draft'}`); }}
-            />
-          ) : (
-            <CoolieReceiptList 
-              key={refreshKey}
-              onAddReceipt={() => { setEditingReceipt(null); navigate('/dashboard/receipts/new'); }} 
-              onEditReceipt={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/edit/${rcp.id || 'draft'}`); }} 
-              onViewReceipt={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/view/${rcp.id || 'draft'}`); }}
-            />
-          )
-        )}
+        {/* Receipt editor overlay */}
         {currentView === 'receipt-editor' && (
           <Box sx={{ 
             position: { xs: 'fixed', md: 'absolute' }, 
@@ -1377,31 +1439,6 @@ function Seyali() {
             )}
           </Box>
         )}
-        {currentView === 'reports' && (
-          <Arikkaigal />
-        )}
-        {currentView === 'gst-returns' && (
-          <VariArikkaigal profile={profile} />
-        )}
-
-        {currentView === 'settings' && (
-          <Box sx={{ 
-            position: { xs: 'fixed', md: 'static' }, 
-            top: { xs: '64px', md: 'auto' }, 
-            left: { xs: '12px', md: 'auto' }, 
-            right: { xs: '12px', md: 'auto' }, 
-            bottom: { xs: '12px', md: 'auto' }, 
-            borderRadius: { xs: '24px', md: 0 },
-            bgcolor: 'background.default', 
-            zIndex: { xs: 1200, md: 'auto' }, 
-            overflowY: { xs: 'auto', md: 'visible' }, 
-            overscrollBehavior: 'contain',
-            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
-          }}>
-            <Amaippugal appMode={appMode} onSaved={(p) => setProfile(p)} onSwitchModeRequest={handleSwitchModeRequest} darkMode={darkMode} setDarkMode={setDarkMode} />
-          </Box>
-        )}
-          </Box>
         </Box>
         
         {/* New Mobile AMOLED Bottom Navigation */}
@@ -1753,6 +1790,32 @@ function Seyali() {
                 <Material3Switch 
                   checked={profile.enableBilingual} 
                   onChange={(e) => setDevBilingualToggle(e.target.checked)} 
+                />
+              </Box>
+
+              <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', bgcolor: 'rgba(0,0,0,0.2)', p: 1.5, borderRadius: 2 }}>
+                <Typography sx={{ fontSize: '14px', fontWeight: 600 }}>
+                  Dark Mode
+                </Typography>
+                <Material3Switch 
+                  checked={darkMode} 
+                  onChange={() => setDarkMode(!darkMode)} 
+                />
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', bgcolor: sessionStorage.getItem('__DEV_BLANK_STATE__') === 'true' ? 'rgba(255,69,58,0.2)' : 'rgba(0,0,0,0.2)', p: 1.5, borderRadius: 2 }}>
+                <Typography sx={{ fontSize: '14px', fontWeight: 600 }}>
+                  Blank State
+                </Typography>
+                <Material3Switch 
+                  checked={sessionStorage.getItem('__DEV_BLANK_STATE__') === 'true'} 
+                  onChange={() => {
+                    const isBlank = sessionStorage.getItem('__DEV_BLANK_STATE__') === 'true';
+                    sessionStorage.setItem('__DEV_BLANK_STATE__', isBlank ? 'false' : 'true');
+                    window.location.reload();
+                  }} 
                 />
               </Box>
 

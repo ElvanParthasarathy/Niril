@@ -13,12 +13,14 @@ export default function InvoiceSettings({ language, t }) {
   });
   const [editingSection, setEditingSection] = useState<string | null>(null);
 
-  useEffect(() => {
+  const [loaded, setLoaded] = useState(false);
 
+  useEffect(() => {
     getInvoiceDisplayOptions().then(serverOpts => {
       if (serverOpts && Object.keys(serverOpts).length > 0) {
         setInvoiceTemplate(prev => ({ ...prev, ...serverOpts }));
       }
+      setLoaded(true);
     });
   }, []);
 
@@ -75,10 +77,12 @@ export default function InvoiceSettings({ language, t }) {
               {t('displayDetailedItemizedGst')}
             </Typography>
           </Box>
-          <Material3Switch 
-            checked={!!invoiceTemplate.showItemizedTax}
-            onChange={(e) => handleTemplateChange('showItemizedTax', e.target.checked)}
-          />
+          {loaded && (
+            <Material3Switch 
+              checked={!!invoiceTemplate.showItemizedTax}
+              onChange={(e) => handleTemplateChange('showItemizedTax', e.target.checked)}
+            />
+          )}
         </Box>
       </SettingsPillContainer>
     </Box>

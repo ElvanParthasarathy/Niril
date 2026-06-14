@@ -39,7 +39,7 @@ export const FloatingBackButton: React.FC<FloatingBackButtonProps> = ({ label, c
                     '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
                 }}
             >
-                <CaretLeft weight="bold" size={20} />
+                <CaretLeft weight="bold" size={22} />
             </IconButton>
         );
     }

@@ -14,6 +14,7 @@ export interface ElvanEditorLayoutProps {
   children: React.ReactNode;
   hasUnsavedChanges?: boolean;
   onDiscard?: () => void;
+  hideHeaderPortals?: boolean;
 }
 
 export default function ElvanEditorLayout({
@@ -24,7 +25,8 @@ export default function ElvanEditorLayout({
   saveButtonIcon = <FloppyDisk size={20} weight="bold" />,
   children,
   hasUnsavedChanges = false,
-  onDiscard
+  onDiscard,
+  hideHeaderPortals = false
 }: ElvanEditorLayoutProps) {
   const { t } = useLanguage();
   const theme = useTheme();
@@ -62,7 +64,7 @@ export default function ElvanEditorLayout({
   );
 
   let renderHeader = null;
-  if (isMobile && mounted) {
+  if (!hideHeaderPortals && isMobile && mounted) {
     const leftTarget = document.getElementById('mobile-topbar-left');
     const rightTarget = document.getElementById('mobile-topbar-right');
     if (leftTarget && rightTarget) {

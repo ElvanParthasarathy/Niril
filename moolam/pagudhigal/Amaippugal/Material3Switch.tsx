@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import Switch, { SwitchProps } from '@mui/material/Switch';
 
-export const Material3Switch = styled((props: SwitchProps) => (
+const Material3SwitchBase = styled((props: SwitchProps) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
 ))(({ theme }) => ({
   width: 52,
@@ -75,3 +75,24 @@ export const Material3Switch = styled((props: SwitchProps) => (
     }),
   },
 }));
+
+// Wrapper that disables transition on initial mount to prevent ghost animation
+export const Material3Switch = React.forwardRef<HTMLButtonElement, SwitchProps>((props, ref) => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { requestAnimationFrame(() => setMounted(true)); }, []);
+  return (
+    <Material3SwitchBase
+      {...props}
+      ref={ref}
+      sx={{
+        ...(!mounted && {
+          '& .MuiSwitch-switchBase': { transitionDuration: '0ms !important' },
+          '& .MuiSwitch-thumb': { transition: 'none !important' },
+          '& .MuiSwitch-track': { transition: 'none !important' },
+        }),
+        ...(props.sx || {}),
+      }}
+    />
+  );
+});
+

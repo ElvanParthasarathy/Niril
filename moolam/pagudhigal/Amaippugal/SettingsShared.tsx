@@ -8,7 +8,7 @@ import { CaretLeft, PencilSimple } from "@phosphor-icons/react";
 export const SubHeader = ({ title, onBack }: { title: string, onBack: () => void }) => (
     <div className="s2-sub-header">
         <button className="s2-back-btn" onClick={onBack}>
-            <CaretLeft weight="bold" size={20} />
+            <CaretLeft weight="bold" size={22} />
         </button>
         <span className="s2-sub-title">{title}</span>
     </div>
