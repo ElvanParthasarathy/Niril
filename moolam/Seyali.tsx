@@ -1093,8 +1093,8 @@ function Seyali() {
           mx: { xs: 1.5, md: 0 },
           mb: { xs: ['reports', 'settings', 'gst-returns'].includes(currentView as string) ? 1.5 : '85px', md: 0 },
           borderRadius: { xs: '24px', md: 0 },
-          bgcolor: { xs: darkMode ? '#000000' : '#F3F4F6', md: 'transparent' },
-          boxShadow: { xs: darkMode ? 'none' : '0 8px 30px rgba(0,0,0,0.04)', md: 'none' },
+          bgcolor: 'transparent',
+          boxShadow: 'none',
           position: 'relative',
           '@media print': { mx: 0, mb: 0, borderRadius: 0, boxShadow: 'none' }
         }}>
