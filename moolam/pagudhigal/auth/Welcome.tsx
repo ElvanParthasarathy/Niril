@@ -6,19 +6,16 @@ import { useLanguage } from '../../mozhi/LanguageContext';
 
 const GREETINGS = ["வணக்கம்!", "Hello!", "നമസ്കാരം!"];
 
-export default function Welcome({ mode, onContinue }: { mode: 'pre-login' | 'post-login', onContinue: () => void }) {
+export default function Welcome({ onContinue, mode = 'post-login' }: { onContinue: () => void, mode?: 'pre-login' | 'post-login' }) {
     const { t, language, setLanguage } = useLanguage();
     
-    // Phases: 'greeting' -> 'language' -> 'setup'
-    const [phase, setPhase] = useState<'greeting' | 'language' | 'setup'>(mode === 'pre-login' ? 'setup' : 'greeting');
-    
-    // Greeting Animation State
+    const [phase, setPhase] = useState<'greeting' | 'language' | 'billingLanguage' | 'setup'>(mode === 'pre-login' ? 'greeting' : 'setup');
     const [greetingIndex, setGreetingIndex] = useState(0);
     const [greetingOpacity, setGreetingOpacity] = useState(0);
-    
-    // Setup UI Animation State
     const [showLanguage, setShowLanguage] = useState(false);
     const [showSetup, setShowSetup] = useState(false);
+    const [billingLanguage, setBillingLanguage] = useState<'Tamil' | 'English'>('Tamil');
+    const [showBillingLanguage, setShowBillingLanguage] = useState(false);
 
     useEffect(() => {
         // Default to Tamil during post-login setup if user hasn't explicitly set a language yet
@@ -70,6 +67,8 @@ export default function Welcome({ mode, onContinue }: { mode: 'pre-login' | 'pos
     useEffect(() => {
         if (phase === 'language') {
             setTimeout(() => setShowLanguage(true), 100);
+        } else if (phase === 'billingLanguage') {
+            setTimeout(() => setShowBillingLanguage(true), 100);
         } else if (phase === 'setup') {
             setTimeout(() => setShowSetup(true), 100);
         }
@@ -244,7 +243,145 @@ export default function Welcome({ mode, onContinue }: { mode: 'pre-login' | 'pos
                             </List>
 
                             <div style={{ width: '100%', maxWidth: '320px' }}>
-                                <AuthButton onClick={() => onContinue()}>
+                                <AuthButton onClick={() => setPhase('billingLanguage')}>
+                                    Continue
+                                </AuthButton>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* PHASE 2.5: BILLING LANGUAGE SELECTION SCREEN */}
+                {phase === 'billingLanguage' && (
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        height: '100%',
+                        width: '100%',
+                        justifyContent: 'space-between',
+                        opacity: showBillingLanguage ? 1 : 0,
+                        transform: showBillingLanguage ? 'translateY(0)' : 'translateY(20px)',
+                        transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    }}>
+                        <div style={{ flex: 1 }} />
+                        
+                        {/* ICON SECTION */}
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            marginBottom: '40px'
+                        }}>
+                            <FileText size={80} weight="duotone" color="var(--auth-text)" />
+                        </div>
+
+                        {/* TEXT SECTION */}
+                        <div style={{
+                            textAlign: 'center',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '12px'
+                        }}>
+                            <h1 style={{
+                                fontSize: '32px',
+                                fontWeight: '800',
+                                color: 'var(--auth-text)',
+                                margin: 0,
+                                letterSpacing: '-0.5px'
+                            }}>
+                                {language === 'ta' ? 'பில் முதன்மை மொழி' : 'Select Primary Billing Language'}
+                            </h1>
+                            <p style={{
+                                fontSize: '18px',
+                                color: 'var(--auth-text-secondary)',
+                                margin: 0,
+                                fontWeight: '500'
+                            }}>
+                                {language === 'ta' ? 'பில்களுக்கு எந்த மொழியைப் பயன்படுத்த விரும்புகிறீர்கள்?' : 'Which language would you like to use for your bills?'}
+                            </p>
+                        </div>
+
+                        <div style={{ flex: 1 }} />
+
+                        {/* LANGUAGE OPTIONS & BUTTON SECTION */}
+                        <div style={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            paddingBottom: '40px'
+                        }}>
+                            
+                            {/* MUI LANGUAGE SELECTOR */}
+                            <List sx={{
+                                width: '100%',
+                                maxWidth: '320px',
+                                bgcolor: 'var(--auth-input-bg)',
+                                borderRadius: '16px',
+                                mb: 4,
+                                overflow: 'hidden',
+                                p: 0
+                            }}>
+                                <ListItem disablePadding>
+                                    <ListItemButton 
+                                        onClick={() => setBillingLanguage('Tamil')} 
+                                        sx={{ 
+                                            py: 2, 
+                                            px: 3,
+                                            bgcolor: 'transparent',
+                                            '&:hover': { bgcolor: 'transparent' }
+                                        }}
+                                        disableRipple
+                                    >
+                                        <ListItemText 
+                                            primary="தமிழ்" 
+                                            primaryTypographyProps={{ 
+                                                fontSize: '18px', 
+                                                fontWeight: billingLanguage === 'Tamil' ? 600 : 500, 
+                                                color: 'var(--auth-text)' 
+                                            }} 
+                                        />
+                                        {billingLanguage === 'Tamil' && (
+                                            <ListItemIcon sx={{ minWidth: 'auto' }}>
+                                                <CheckCircle size={24} weight="fill" color="var(--auth-text)" />
+                                            </ListItemIcon>
+                                        )}
+                                    </ListItemButton>
+                                </ListItem>
+                                <Divider sx={{ mx: 3, borderColor: 'var(--auth-divider)' }} />
+                                <ListItem disablePadding>
+                                    <ListItemButton 
+                                        onClick={() => setBillingLanguage('English')} 
+                                        sx={{ 
+                                            py: 2, 
+                                            px: 3,
+                                            bgcolor: 'transparent',
+                                            '&:hover': { bgcolor: 'transparent' }
+                                        }}
+                                        disableRipple
+                                    >
+                                        <ListItemText 
+                                            primary="English" 
+                                            primaryTypographyProps={{ 
+                                                fontSize: '18px', 
+                                                fontWeight: billingLanguage === 'English' ? 600 : 500, 
+                                                color: 'var(--auth-text)' 
+                                            }} 
+                                        />
+                                        {billingLanguage === 'English' && (
+                                            <ListItemIcon sx={{ minWidth: 'auto' }}>
+                                                <CheckCircle size={24} weight="fill" color="var(--auth-text)" />
+                                            </ListItemIcon>
+                                        )}
+                                    </ListItemButton>
+                                </ListItem>
+                            </List>
+
+                            <div style={{ width: '100%', maxWidth: '320px' }}>
+                                <AuthButton onClick={() => {
+                                    localStorage.setItem('elvanniril_setup_billingLang', billingLanguage);
+                                    onContinue();
+                                }}>
                                     Continue
                                 </AuthButton>
                             </div>

@@ -23,10 +23,20 @@ export default function Nalvaravu({ onComplete }) {
     
     setSaving(true);
     try {
-      const gstProfile = { niruvanathinPeyar: gstBusinessName.trim() };
+      const billingLang = localStorage.getItem('elvanniril_setup_billingLang') || 'Tamil';
+      
+      const gstProfile = { 
+        niruvanathinPeyar: gstBusinessName.trim(),
+        primaryDataLanguage: billingLang,
+        secondaryDataLanguage: billingLang === 'Tamil' ? 'English' : 'Tamil'
+      };
       await saveProfile(gstProfile);
       
-      const coolieProfile = { name: coolieBusinessName.trim() };
+      const coolieProfile = { 
+        name: coolieBusinessName.trim(),
+        billLanguage: billingLang,
+        receiptLanguage: billingLang
+      };
       await saveCoolieProfile(coolieProfile);
       
       localStorage.setItem('elvanniril_onboarded', 'true');
