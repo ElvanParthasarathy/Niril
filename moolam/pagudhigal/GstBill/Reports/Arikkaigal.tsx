@@ -45,7 +45,7 @@ export default function Arikkaigal() {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const [billData] = await Promise.all([getAllBills()]);
+      const [billData] = await Promise.all([getAllBills(setBills)]);
       setBills(billData);
     } catch {
       thagaval(t('failedToLoadProductsToast'), 'error');

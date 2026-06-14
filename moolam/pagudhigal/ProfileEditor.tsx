@@ -132,7 +132,7 @@ export default function Amaippugal({ onSaved }) {
     getReceiptNumberSettings().then(setRcpNumSettings);
   }, []);
 
-  const loadBusinessProfiles = async () => setBusinessProfiles(await getAllProfiles());
+  const loadBusinessProfiles = async () => setBusinessProfiles(await getAllProfiles(setBusinessProfiles));
 
   const handleChange = (e) => {
     const { name, value } = e.target;

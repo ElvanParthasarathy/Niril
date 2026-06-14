@@ -25,7 +25,7 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
   const loadProducts = async () => {
     setIsLoading(true);
     try {
-      const data = await getAllProducts();
+      const data = await getAllProducts(setProducts);
       setProducts(data);
     } catch {
       thagaval(t('failedToLoadProductsToast') || 'Failed to load products', 'error');

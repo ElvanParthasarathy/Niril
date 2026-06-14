@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo, useCallback, startTransition } fr
 import { useNavigate, useLocation, useNavigationType } from 'react-router-dom';
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Badge, Box, Typography, Avatar, Divider, Tooltip, IconButton, Collapse, CssBaseline, Dialog, DialogTitle, DialogContent, DialogActions, Button, Backdrop, CircularProgress, InputBase, AppBar, Toolbar, useMediaQuery, Stack, Select, MenuItem, Paper, Popover } from '@mui/material';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
-import { getAllProfiles, saveProfile, getAllBills, getAllProducts } from './Avanam';
+import { getProfile, getAllProfiles, saveProfile, getAllBills, getAllCoolieBills, getAllProducts, getAllCoolieProducts, getAllClients, getAllCoolieClients, getAllReceipts, getAllCoolieReceipts } from './Avanam';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import Login from './pagudhigal/Login';
@@ -247,6 +247,7 @@ function Seyali() {
     }
   }, [location.pathname, navigate]);
 
+
   const handleBack = useCallback((fallbackView: string) => {
     if (window.history.state && window.history.state.idx > 0) {
       navigate(-1);
@@ -279,6 +280,8 @@ function Seyali() {
   } : null;
   
   const [appMode, setAppMode] = useState(() => localStorage.getItem('elvanniril_app_mode') || 'GST');
+
+
   const [hasSelectedMode, setHasSelectedMode] = useState(() => {
     return sessionStorage.getItem('session_mode_selected') === 'true';
   });
@@ -294,6 +297,30 @@ function Seyali() {
       return saved ? JSON.parse(saved) : null;
     } catch { return null; }
   });
+
+  // Load bill if navigating directly to view/edit URL
+  useEffect(() => {
+    const path = location.pathname;
+    const isView = path.startsWith('/dashboard/invoices/view/');
+    const isEdit = path.startsWith('/dashboard/invoices/edit/');
+    
+    if ((isView || isEdit) && !editingBill && appMode) {
+      const id = path.split('/').pop();
+      if (id && id !== 'draft' && id !== 'new') {
+        const fetchBill = async () => {
+          const fetcher = appMode === 'GST' ? getAllBills : getAllCoolieBills;
+          const bills = await fetcher();
+          const bill = bills.find((b: any) => String(b.id) === String(id));
+          if (bill) {
+            setEditingBill(bill);
+          } else {
+             navigate('/dashboard/invoices', { replace: true });
+          }
+        };
+        fetchBill();
+      }
+    }
+  }, [location.pathname, editingBill, appMode, navigate]);
   const [editingProduct, setEditingProduct] = useState<any>(() => {
     try {
       const saved = sessionStorage.getItem('niril_editingProduct');
@@ -306,6 +333,76 @@ function Seyali() {
       return saved ? JSON.parse(saved) : null;
     } catch { return null; }
   });
+  // Load receipt if navigating directly to view/edit URL
+  useEffect(() => {
+    const path = location.pathname;
+    const isView = path.startsWith('/dashboard/receipts/view/');
+    const isEdit = path.startsWith('/dashboard/receipts/edit/');
+    
+    if ((isView || isEdit) && !editingReceipt && appMode) {
+      const id = path.split('/').pop();
+      if (id && id !== 'draft' && id !== 'new') {
+        const fetchReceipt = async () => {
+          const fetcher = appMode === 'GST' ? getAllReceipts : getAllCoolieReceipts;
+          const receipts = await fetcher();
+          const rcp = receipts.find((r: any) => String(r.id) === String(id));
+          if (rcp) {
+            setEditingReceipt(rcp);
+          } else {
+             navigate('/dashboard/receipts', { replace: true });
+          }
+        };
+        fetchReceipt();
+      }
+    }
+  }, [location.pathname, editingReceipt, appMode, navigate]);
+
+  // Load client if navigating directly to view/edit URL
+  useEffect(() => {
+    const path = location.pathname;
+    const isEdit = path.startsWith('/dashboard/clients/edit/');
+    
+    if (isEdit && !editingClient && appMode) {
+      const id = path.split('/').pop();
+      if (id && id !== 'draft' && id !== 'new') {
+        const fetchClient = async () => {
+          const fetcher = appMode === 'GST' ? getAllClients : getAllCoolieClients;
+          const clients = await fetcher();
+          const c = clients.find((c: any) => String(c.id) === String(id));
+          if (c) {
+            setEditingClient(c);
+          } else {
+             navigate('/dashboard/clients', { replace: true });
+          }
+        };
+        fetchClient();
+      }
+    }
+  }, [location.pathname, editingClient, appMode, navigate]);
+
+  // Load product if navigating directly to view/edit URL
+  useEffect(() => {
+    const path = location.pathname;
+    const isEdit = path.startsWith('/dashboard/inventory/edit/');
+    
+    if (isEdit && !editingProduct && appMode) {
+      const id = path.split('/').pop();
+      if (id && id !== 'draft' && id !== 'new') {
+        const fetchProduct = async () => {
+          const fetcher = appMode === 'GST' ? getAllProducts : getAllCoolieProducts;
+          const products = await fetcher();
+          const p = products.find((p: any) => String(p.id) === String(id));
+          if (p) {
+            setEditingProduct(p);
+          } else {
+             navigate('/dashboard/inventory', { replace: true });
+          }
+        };
+        fetchProduct();
+      }
+    }
+  }, [location.pathname, editingProduct, appMode, navigate]);
+
   // Inline overlay for opening client/product editors from inside the bill editor
   const inlineOverlay = useMemo(() => {
     if (location.pathname.endsWith('/add-client')) return { type: 'client-editor' };
@@ -426,7 +523,7 @@ function Seyali() {
 
     const loadAppProfile = async () => {
       try {
-        const p = await getProfile();
+        const p = await getProfile(setProfile);
         if (cancelled) return;
         setServerStatus('online');
         if (!profileLoaded.current) {

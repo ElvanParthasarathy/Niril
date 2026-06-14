@@ -39,12 +39,12 @@ export default function LineItemsTable({
   const [activeSuggestionRow, setActiveSuggestionRow] = useState<string | null>(null);
 
   useEffect(() => {
-    getAllProducts().then(setProducts);
+    getAllProducts(setProducts).then(setProducts);
   }, []);
 
   useEffect(() => {
     if (dataVersion && dataVersion > 0) {
-      getAllProducts().then(setProducts);
+      getAllProducts(setProducts).then(setProducts);
     }
   }, [dataVersion]);
 

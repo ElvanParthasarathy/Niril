@@ -27,17 +27,21 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
   const loadBills = async () => {
     setIsLoading(true);
     try {
-      const data = await getAllBills();
-      setBills(data);
+      const handleSetData = (data) => {
+        setBills(data);
 
-      const byCurrency = {};
-      for (const b of data) {
-        const cur = b.currency || b.data?.invoiceOptions?.currency || 'INR';
-        if (!byCurrency[cur]) byCurrency[cur] = { total: 0, tax: 0 };
-        byCurrency[cur].total += b.totalAmount || 0;
-        byCurrency[cur].tax += b.totalTaxAmount || 0;
-      }
-      setStats({ byCurrency, count: data.length });
+        const byCurrency = {};
+        for (const b of data) {
+          const cur = b.currency || b.data?.invoiceOptions?.currency || 'INR';
+          if (!byCurrency[cur]) byCurrency[cur] = { total: 0, tax: 0 };
+          byCurrency[cur].total += b.totalAmount || 0;
+          byCurrency[cur].tax += b.totalTaxAmount || 0;
+        }
+        setStats({ byCurrency, count: data.length });
+      };
+      
+      const data = await getAllBills(handleSetData);
+      handleSetData(data);
     } catch {
       thagaval('Failed to load invoices', 'error');
     } finally {

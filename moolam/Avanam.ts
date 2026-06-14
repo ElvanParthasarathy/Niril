@@ -7,7 +7,9 @@ const API = '/api';
 import { rtdb } from './firebase';
 import { ref, get, set, remove, update } from 'firebase/database';
 
-async function apiFetch(url, options = {}) {
+import { withCache } from './CacheManager';
+
+async function apiFetch(url, options = {}, onFreshData = null) {
   const isGet = !options.method || options.method === 'GET';
   const isPost = options.method === 'POST';
   const isDelete = options.method === 'DELETE';
@@ -51,14 +53,17 @@ async function apiFetch(url, options = {}) {
 
   try {
     if (isGet) {
-      const snapshot = await get(ref(rtdb, path));
-      if (snapshot.exists()) {
-        const val = snapshot.val();
-        if (collections.includes(path)) return Object.values(val);
-        return val;
-      }
-      if (collections.includes(path)) return [];
-      return {};
+      const fetchFn = async () => {
+        const snapshot = await get(ref(rtdb, path));
+        if (snapshot.exists()) {
+          const val = snapshot.val();
+          if (collections.includes(path)) return Object.values(val);
+          return val;
+        }
+        if (collections.includes(path)) return [];
+        return {};
+      };
+      return await withCache(path, fetchFn, onFreshData);
     }
     
     if (isPost) {
@@ -218,9 +223,7 @@ export const saveBill = async (bill) => {
   return apiFetch(`${API}/pattiyalkal`, { method: 'POST', body: JSON.stringify(taggedBill) });
 };
 
-export const getAllBills = async () => {
-  if (isBlankState()) return [];
-  const bills = await apiFetch(`${API}/pattiyalkal`);
+const processBills = async (bills) => {
   return Promise.all(bills.map(async bill => {
     const b = { ...bill };
     if (b.client) b.client = await restoreSingleFromStorage(b.client, ['name', 'mugavari', 'oor', 'maavattam', 'maanilam', 'country']);
@@ -229,6 +232,14 @@ export const getAllBills = async () => {
     }
     return b;
   }));
+};
+
+export const getAllBills = async (onFreshData = null) => {
+  if (isBlankState()) return [];
+  const bills = await apiFetch(`${API}/pattiyalkal`, {}, onFreshData ? async (fresh) => {
+      onFreshData(await processBills(fresh));
+  } : null);
+  return processBills(bills);
 };
 
 export const deleteBill = async (id) => {
@@ -243,9 +254,11 @@ export const saveProfile = async (profile) => {
   return result;
 };
 
-export const getProfile = async () => {
+export const getProfile = async (onFreshData = null) => {
   if (isBlankState()) return {};
-  const profile = await apiFetch(`${API}/profile`);
+  const profile = await apiFetch(`${API}/profile`, {}, onFreshData ? async (fresh) => {
+      onFreshData(await restoreSingleFromStorage(fresh, ['niruvanathinPeyar', 'shortBusinessName', 'mugavari', 'oor', 'maavattam', 'maanilam', 'country', 'bankName', 'branch', 'terms']));
+  } : null);
   return restoreSingleFromStorage(profile, ['niruvanathinPeyar', 'shortBusinessName', 'mugavari', 'oor', 'maavattam', 'maanilam', 'country', 'bankName', 'branch', 'terms']);
 };
 
@@ -257,9 +270,11 @@ export const saveClient = async (client) => {
   return client;
 };
 
-export const getAllClients = async () => {
+export const getAllClients = async (onFreshData = null) => {
   if (isBlankState()) return [];
-  const clients = await apiFetch(`${API}/vanigargal`);
+  const clients = await apiFetch(`${API}/vanigargal`, {}, onFreshData ? async (fresh) => {
+      onFreshData(await restoreFromStorage(fresh, ['name', 'mugavari', 'oor', 'maavattam', 'maanilam', 'country']));
+  } : null);
   return restoreFromStorage(clients, ['name', 'mugavari', 'oor', 'maavattam', 'maanilam', 'country']);
 };
 
@@ -268,9 +283,11 @@ export const deleteClient = async (id) => {
 };
 
 // ---- Coolie Clients / Merchants ----
-export const getAllCoolieClients = async () => {
+export const getAllCoolieClients = async (onFreshData = null) => {
   if (isBlankState()) return [];
-  const clients = await apiFetch(`${API}/coolie_vanigargal`);
+  const clients = await apiFetch(`${API}/coolie_vanigargal`, {}, onFreshData ? async (fresh) => {
+      onFreshData(await restoreFromStorage(fresh, ['name', 'city', 'address1']));
+  } : null);
   return restoreFromStorage(clients, ['name', 'city', 'address1']);
 };
 
@@ -286,9 +303,11 @@ export const deleteCoolieClient = async (id) => {
 };
 
 // ---- Coolie Profiles / Settings ----
-export const getAllCoolieProfiles = async () => {
+export const getAllCoolieProfiles = async (onFreshData = null) => {
   if (isBlankState()) return [];
-  const profiles = await apiFetch(`${API}/coolie_thannilai`);
+  const profiles = await apiFetch(`${API}/coolie_thannilai`, {}, onFreshData ? async (fresh) => {
+      onFreshData(await restoreFromStorage(fresh, ['name', 'address', 'city', 'district', 'bankName', 'branch', 'email']));
+  } : null);
   return restoreFromStorage(profiles, [
     'name', 'address', 'city', 'district', 'bankName', 'branch', 'email'
   ]);
@@ -309,9 +328,11 @@ export const deleteCoolieProfile = async (id) => {
 
 
 // ---- Products / Inventory ----
-export const getAllProducts = async () => {
+export const getAllProducts = async (onFreshData = null) => {
   if (isBlankState()) return [];
-  const products = await apiFetch(`${API}/porulgal`);
+  const products = await apiFetch(`${API}/porulgal`, {}, onFreshData ? async (fresh) => {
+      onFreshData(await restoreFromStorage(fresh, ['name', 'description']));
+  } : null);
   return restoreFromStorage(products, ['name', 'description']);
 };
 
@@ -327,9 +348,11 @@ export const deleteProduct = async (id) => {
 };
 
 // ---- Coolie Products / Inventory ----
-export const getAllCoolieProducts = async () => {
+export const getAllCoolieProducts = async (onFreshData = null) => {
   if (isBlankState()) return [];
-  const products = await apiFetch(`${API}/coolie_porulgal`);
+  const products = await apiFetch(`${API}/coolie_porulgal`, {}, onFreshData ? async (fresh) => {
+      onFreshData(await restoreFromStorage(fresh, ['name', 'description']));
+  } : null);
   return restoreFromStorage(products, ['name', 'description']);
 };
 
@@ -345,9 +368,11 @@ export const deleteCoolieProduct = async (id) => {
 };
 
 // ---- Coolie Bills ----
-export const getAllCoolieBills = async () => {
+export const getAllCoolieBills = async (onFreshData = null) => {
   if (isBlankState()) return [];
-  const bills = await apiFetch(`${API}/coolie_pattiyalkal`);
+  const bills = await apiFetch(`${API}/coolie_pattiyalkal`, {}, onFreshData ? async (fresh) => {
+      onFreshData(fresh || []);
+  } : null);
   return bills || [];
 };
 
@@ -395,9 +420,9 @@ export const deleteCoolieBill = async (id) => {
 
 
 // ---- Receipts / Payment Vouchers ----
-export const getAllReceipts = async () => {
+export const getAllReceipts = async (onFreshData = null) => {
   if (isBlankState()) return [];
-  return apiFetch(`${API}/patrugal`);
+  return apiFetch(`${API}/patrugal`, {}, onFreshData);
 };
 
 export const saveReceipt = async (receipt) => {
@@ -411,9 +436,9 @@ export const deleteReceipt = async (id) => {
 };
 
 // ---- Coolie Receipts ----
-export const getAllCoolieReceipts = async () => {
+export const getAllCoolieReceipts = async (onFreshData = null) => {
   if (isBlankState()) return [];
-  return apiFetch(`${API}/coolie_patrugal`);
+  return apiFetch(`${API}/coolie_patrugal`, {}, onFreshData);
 };
 
 export const saveCoolieReceipt = async (receipt) => {
@@ -427,9 +452,9 @@ export const deleteCoolieReceipt = async (id) => {
 };
 
 // ---- Business Profiles (multi-business) ----
-export const getAllProfiles = async () => {
+export const getAllProfiles = async (onFreshData = null) => {
   if (isBlankState()) return [];
-  return apiFetch(`${API}/thannilai`);
+  return apiFetch(`${API}/thannilai`, {}, onFreshData);
 };
 
 export const saveBusinessProfile = async (profile) => {

@@ -21,7 +21,7 @@ export default function Vanigargal({ onEditClient, onAddClient, profile }) {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const [c, b] = await Promise.all([getAllClients(), getAllBills()]);
+      const [c, b] = await Promise.all([getAllClients(setClients), getAllBills(setBills)]);
       setClients(c);
       setBills(b);
     } catch {

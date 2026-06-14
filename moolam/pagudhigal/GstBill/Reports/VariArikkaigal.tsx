@@ -555,7 +555,7 @@ export default function VariArikkaigal({ profile }) {
 
   const loadData = async () => {
     try {
-      const [b, e] = await Promise.all([getAllBills(), getAllExpenses()]);
+      const [b, e] = await Promise.all([getAllBills(setBills), getAllExpenses()]);
       setBills(b); setExpenses(e);
       // Purchases endpoint may not exist on older server versions
       try { const pur = await getAllPurchases(); setPurchases(pur || []); } catch { /* ignore — older servers don't have this endpoint */ }

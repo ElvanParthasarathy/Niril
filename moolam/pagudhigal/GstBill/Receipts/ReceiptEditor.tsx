@@ -107,13 +107,21 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
   };
 
   useEffect(() => {
+    if (!editingReceipt && allReceipts.length > 0 && profile && Object.keys(profile).length > 0) {
+      if (!form.receiptNo || form.receiptNo.includes('BIZ')) {
+        setForm(prev => ({ ...prev, receiptNo: generateReceiptNo(profile, allReceipts) }));
+      }
+    }
+  }, [allReceipts, editingReceipt, profile]);
+
+  useEffect(() => {
     const init = async () => {
       try {
         const [recs, bls, coolieProfiles, clients] = await Promise.all([
-          getAllReceipts(),
-          getAllBills(),
-          getAllProfiles(),
-          getAllClients()
+          getAllReceipts(setAllReceipts),
+          getAllBills(setBills),
+          getAllProfiles(setAllProfiles),
+          getAllClients(setClientOptions)
         ]);
         setBills(bls || []);
         setAllProfiles(coolieProfiles || []);

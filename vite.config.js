@@ -90,6 +90,7 @@ export default defineConfig(({ command }) => ({
         maximumFileSizeToCacheInBytes: 5000000,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
         navigateFallback: '/index.html',
+        navigateFallbackAllowlist: [/^\//],
         navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
 

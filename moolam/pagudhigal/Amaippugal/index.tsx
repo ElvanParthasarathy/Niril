@@ -84,7 +84,15 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
   }, [location.pathname, isMobile, appMode]);
 
   useEffect(() => {
-    getProfile().then(p => {
+    getProfile((p) => {
+      setProfile({
+        ...p,
+        primaryDataLanguage: p?.primaryDataLanguage || 'Tamil',
+        secondaryDataLanguage: p?.secondaryDataLanguage || 'English',
+        enableBilingual: p?.enableBilingual !== false
+      });
+      setProfileLoaded(true);
+    }).then(p => {
       setProfile({
         ...p,
         primaryDataLanguage: p?.primaryDataLanguage || 'Tamil',
@@ -96,7 +104,7 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
     loadBusinessProfiles();
   }, []);
 
-  const loadBusinessProfiles = async () => setBusinessProfiles(await getAllProfiles());
+  const loadBusinessProfiles = async () => setBusinessProfiles(await getAllProfiles(setBusinessProfiles));
 
   const handleNavigate = (viewId, tab = 'business') => {
     let path = '/dashboard/settings';

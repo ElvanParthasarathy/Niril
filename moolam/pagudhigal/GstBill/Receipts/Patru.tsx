@@ -54,7 +54,7 @@ export default function Patru({ profile: parentProfile, onAddReceipt, onEditRece
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const [recs, bls, prof] = await Promise.all([getAllReceipts(), getAllBills(), getProfile()]);
+      const [recs, bls, prof] = await Promise.all([getAllReceipts(setReceipts), getAllBills(setBills), getProfile(setLocalProfile)]);
       setReceipts(recs || []);
       setBills(bls || []);
       setLocalProfile(prof || {});

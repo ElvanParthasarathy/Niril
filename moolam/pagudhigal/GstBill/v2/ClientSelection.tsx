@@ -42,16 +42,12 @@ export default function ClientSelection({
   const clientSuggestionsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    getAllClients().then(clients => {
-      setSavedClients(clients);
-    });
+    getAllClients(setSavedClients).then(setSavedClients);
   }, []);
 
   useEffect(() => {
     if (dataVersion && dataVersion > 0) {
-      getAllClients().then(clients => {
-        setSavedClients(clients);
-      });
+      getAllClients(setSavedClients).then(setSavedClients);
     }
   }, [dataVersion]);
 
