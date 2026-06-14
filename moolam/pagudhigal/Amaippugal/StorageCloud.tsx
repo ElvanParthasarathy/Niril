@@ -8,10 +8,18 @@ import { thagaval } from '../Thagaval';
 const ALL_BACKUP_PARTS = [
   { id: 'profile',        label: 'Active business profile',  hint: 'Name, address, GSTIN, bank, logo, signature' },
   { id: 'profiles',       label: 'All business profiles',    hint: 'Multi-business switcher entries' },
-  { id: 'bills',          label: 'Invoices / bills',         hint: 'Tax invoices, proforma, credit notes, etc.' },
-  { id: 'clients',        label: 'Clients',                  hint: 'Saved client directory' },
-  { id: 'products',       label: 'Products / Inventory',     hint: 'Product catalog with HSN, rate, stock' },
-  { id: 'receipts',       label: 'Receipts',                 hint: 'Payment receipts' },
+  { id: 'bills',          label: 'GST Invoices / bills',     hint: 'Tax invoices, proforma, credit notes, etc.' },
+  { id: 'clients',        label: 'GST Clients',              hint: 'Saved client directory' },
+  { id: 'products',       label: 'GST Products / Inventory', hint: 'Product catalog with HSN, rate, stock' },
+  { id: 'receipts',       label: 'GST Receipts',             hint: 'Payment receipts' },
+  { id: 'coolieBills',    label: 'Coolie Bills',             hint: 'Non-GST / Coolie bills' },
+  { id: 'coolieClients',  label: 'Coolie Clients',           hint: 'Saved coolie clients' },
+  { id: 'coolieProducts', label: 'Coolie Products',          hint: 'Coolie product catalog' },
+  { id: 'coolieReceipts', label: 'Coolie Receipts',          hint: 'Coolie payment receipts' },
+  { id: 'purchases',      label: 'Purchases',                hint: 'Purchase records' },
+  { id: 'expenses',       label: 'Expenses',                 hint: 'Expense records' },
+  { id: 'recurring',      label: 'Recurring Invoices',       hint: 'Recurring billing schedules' },
+  { id: 'termsTemplates', label: 'Terms Templates',          hint: 'Custom terms and conditions' },
   { id: 'meta',           label: 'App settings',             hint: 'Region, modules, invoice number format, display options' },
   { id: 'localStorage',   label: 'Local preferences',        hint: 'Custom units, theme, last region preference' },
 ];
@@ -71,13 +79,11 @@ export default function StorageCloud({ profile, driveConnected, setDriveConnecte
     try {
       const result = await importData(importJsonText, importSel);
       const parts = [];
+      ALL_BACKUP_PARTS.forEach(p => {
+        if (p.id === 'profile' || p.id === 'meta' || p.id === 'localStorage') return; // Handled specially or hidden from numbers
+        if (importSel[p.id] && result.counts[p.id] > 0) parts.push(`${result.counts[p.id]} ${p.label.toLowerCase()}`);
+      });
       if (importSel.profile && result.counts.profile > 0) parts.push('Active Profile');
-      if (importSel.profiles && result.counts.profiles > 0) parts.push(`${result.counts.profiles} profiles`);
-      if (importSel.bills && result.counts.bills > 0) parts.push(`${result.counts.bills} bills`);
-      if (importSel.clients && result.counts.clients > 0) parts.push(`${result.counts.clients} clients`);
-      if (importSel.products && result.counts.products > 0) parts.push(`${result.counts.products} products`);
-      if (importSel.receipts && result.counts.receipts > 0) parts.push(`${result.counts.receipts} receipts`);
-      
       thagaval(`Imported: ${parts.join(', ')}`, 'success');
       setShowImportModal(false);
       setTimeout(() => window.location.reload(), 1500);

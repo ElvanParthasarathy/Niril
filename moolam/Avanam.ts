@@ -421,17 +421,23 @@ const getAppVersion = async () => {
 //   receipts, meta, localStorage } — each bool.
 export const exportAllData = async (selection) => {
   const [all, version] = await Promise.all([apiFetch(`${API}/export`), getAppVersion()]);
-  const sel = selection || { profile: true, profiles: true, bills: true, clients: true, products: true, receipts: true, meta: true, localStorage: true };
+  const sel = selection || { profile: true, profiles: true, bills: true, clients: true, products: true, receipts: true, meta: true, localStorage: true, coolieClients: true, termsTemplates: true, coolieProducts: true, expenses: true, recurring: true, purchases: true, coolieBills: true, coolieReceipts: true };
 
-  const data = { exportedAt: new Date().toISOString(), version, __freegstbill_backup: true };
+  const data: any = { exportedAt: new Date().toISOString(), version, __freegstbill_backup: true };
   if (sel.profile)        data.profile = all.profile;
   if (sel.profiles)       data.profiles = all.profiles;
   if (sel.bills)          data.bills = all.bills;
   if (sel.clients)        data.clients = all.clients;
   if (sel.products)       data.products = all.products;
-
-
   if (sel.receipts)       data.receipts = all.receipts;
+  if (sel.coolieClients)  data.coolieClients = all.coolieClients;
+  if (sel.termsTemplates) data.termsTemplates = all.termsTemplates;
+  if (sel.coolieProducts) data.coolieProducts = all.coolieProducts;
+  if (sel.expenses)       data.expenses = all.expenses;
+  if (sel.recurring)      data.recurring = all.recurring;
+  if (sel.purchases)      data.purchases = all.purchases;
+  if (sel.coolieBills)    data.coolieBills = all.coolieBills;
+  if (sel.coolieReceipts) data.coolieReceipts = all.coolieReceipts;
 
   if (sel.meta)           data.meta = all.meta; // includes enabledModules, etc. on server
   if (sel.localStorage)   data.localStorage = collectLocalStorage();
@@ -455,10 +461,15 @@ export const inspectBackup = (jsonString) => {
       bills: Array.isArray(data.bills) ? data.bills.length : 0,
       clients: Array.isArray(data.clients) ? data.clients.length : 0,
       products: Array.isArray(data.products) ? data.products.length : 0,
-
-
-
       receipts: Array.isArray(data.receipts) ? data.receipts.length : 0,
+      coolieClients: Array.isArray(data.coolieClients) ? data.coolieClients.length : 0,
+      termsTemplates: Array.isArray(data.termsTemplates) ? data.termsTemplates.length : 0,
+      coolieProducts: Array.isArray(data.coolieProducts) ? data.coolieProducts.length : 0,
+      expenses: Array.isArray(data.expenses) ? data.expenses.length : 0,
+      recurring: Array.isArray(data.recurring) ? data.recurring.length : 0,
+      purchases: Array.isArray(data.purchases) ? data.purchases.length : 0,
+      coolieBills: Array.isArray(data.coolieBills) ? data.coolieBills.length : 0,
+      coolieReceipts: Array.isArray(data.coolieReceipts) ? data.coolieReceipts.length : 0,
       meta: data.meta ? Object.keys(data.meta).length : 0,
       localStorage: data.localStorage ? Object.keys(data.localStorage).length : 0,
     },
@@ -470,18 +481,24 @@ export const inspectBackup = (jsonString) => {
 export const importData = async (jsonString, selection) => {
   const inspected = typeof jsonString === 'string' ? inspectBackup(jsonString) : { raw: jsonString };
   const data = inspected.raw;
-  const sel = selection || { profile: true, profiles: true, bills: true, clients: true, products: true, receipts: true, meta: true, localStorage: true };
+  const sel = selection || { profile: true, profiles: true, bills: true, clients: true, products: true, receipts: true, meta: true, localStorage: true, coolieClients: true, termsTemplates: true, coolieProducts: true, expenses: true, recurring: true, purchases: true, coolieBills: true, coolieReceipts: true };
 
   // Build a filtered payload — never touch collections the user didn't tick.
-  const payload = {};
+  const payload: any = {};
   if (sel.profile && data.profile)               payload.profile = data.profile;
   if (sel.profiles && data.profiles)             payload.profiles = data.profiles;
   if (sel.bills && data.bills)                   payload.bills = data.bills;
   if (sel.clients && data.clients)               payload.clients = data.clients;
   if (sel.products && data.products)             payload.products = data.products;
-
-
   if (sel.receipts && data.receipts)             payload.receipts = data.receipts;
+  if (sel.coolieClients && data.coolieClients)   payload.coolieClients = data.coolieClients;
+  if (sel.termsTemplates && data.termsTemplates) payload.termsTemplates = data.termsTemplates;
+  if (sel.coolieProducts && data.coolieProducts) payload.coolieProducts = data.coolieProducts;
+  if (sel.expenses && data.expenses)             payload.expenses = data.expenses;
+  if (sel.recurring && data.recurring)           payload.recurring = data.recurring;
+  if (sel.purchases && data.purchases)           payload.purchases = data.purchases;
+  if (sel.coolieBills && data.coolieBills)       payload.coolieBills = data.coolieBills;
+  if (sel.coolieReceipts && data.coolieReceipts) payload.coolieReceipts = data.coolieReceipts;
 
   if (sel.meta && data.meta)                     payload.meta = data.meta;
 

@@ -613,6 +613,13 @@ app.post('/api/import', (req, res) => {
       }
     }
   }
+  if (data.coolieBills && Array.isArray(data.coolieBills)) {
+    for (const bill of data.coolieBills) {
+      if (bill.id) {
+        writeJSON(path.join(DATA_DIR, 'coolie_pattiyalkal', safeFileName(bill.id) + '.json'), bill);
+      }
+    }
+  }
 
   res.json({ billCount, clientCount, templateCount, productCount, hasProfile: !!data.profile });
 });
