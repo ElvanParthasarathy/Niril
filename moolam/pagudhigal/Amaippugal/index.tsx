@@ -118,6 +118,7 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
     if (viewId === 1) path = '/dashboard/settings/app-preferences';
     else if (viewId === 2) path = '/dashboard/settings/cloud';
     else if (viewId === 3) path = '/dashboard/settings/updates';
+    else if (viewId === 4) path = '/dashboard/settings/devtools';
     else if (viewId === 0) {
       if (appMode === 'COOLIE') {
         if (tab === 1) path = '/dashboard/settings/address';
