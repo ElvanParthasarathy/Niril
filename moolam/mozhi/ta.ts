@@ -1129,16 +1129,16 @@ export const ta = {
   receiptLanguage: 'ரசீது அச்சிடும் மொழி',
 
   accountSecurityTitle: 'கணக்கு பாதுகாப்பு',
-  accountSecurityDesc: 'இந்த சாதனத்தில் உங்கள் தரவுத்தள அணுகலைப் பூட்ட ஃபயர்பேஸிலிருந்து வெளியேறவும்.',
+  accountSecurityDesc: 'உங்கள் கணக்கைப் பாதுகாக்க வெளியேறவும்.',
   signOutBtn: 'வெளியேறு',
-  eraseAppDataTitle: 'பயன்பாட்டுத் தரவை அழி',
-  eraseAppDataDesc: 'உங்கள் தரவுத்தளத்தை முழுமையாக அழிக்கவும். மீட்டமைக்க நீங்கள் ஒரு காப்புப்பிரதியை இறக்குமதி செய்ய வேண்டும்.',
+  eraseAppDataTitle: 'ஆப்ஸ் தரவை அழி',
+  eraseAppDataDesc: 'தரவை அழிக்கவும் (காப்புப்பிரதி தேவை).',
   eraseDataBtn: 'தரவை அழி',
 
   systemAndSecurity: 'அமைப்பு & பாதுகாப்பு',
   systemSecurityDesc: 'கணக்கு பாதுகாப்பு மற்றும் ஆப்ஸ் தரவை நிர்வகிக்கவும்.',
   clearCacheTitle: 'கேச் அழி',
-  clearCacheDesc: 'சிக்கல்களை சரிசெய்ய உள்ளூர் கேச்-ஐ அழிக்கவும்.',
+  clearCacheDesc: 'பயன்பாட்டு கேச்-ஐ அழிக்கவும்.',
   clearCacheBtn: 'கேச் அழி',
 
   vanakkamTitle: 'வணக்கம்!',
