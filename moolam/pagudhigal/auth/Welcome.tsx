@@ -184,7 +184,6 @@ export default function Welcome({ mode, onContinue }: { mode: 'pre-login' | 'pos
                                 maxWidth: '320px',
                                 bgcolor: 'var(--auth-surface)',
                                 borderRadius: '16px',
-                                border: '1px solid var(--auth-divider)',
                                 mb: 4,
                                 boxShadow: '0 4px 12px var(--auth-glow)',
                                 overflow: 'hidden',
@@ -242,9 +241,11 @@ export default function Welcome({ mode, onContinue }: { mode: 'pre-login' | 'pos
                                 </ListItem>
                             </List>
 
-                            <AuthButton onClick={() => onContinue()}>
-                                Continue
-                            </AuthButton>
+                            <div style={{ width: '100%', maxWidth: '320px' }}>
+                                <AuthButton onClick={() => onContinue()}>
+                                    Continue
+                                </AuthButton>
+                            </div>
                         </div>
                     </div>
                 )}
