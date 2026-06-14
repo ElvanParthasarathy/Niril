@@ -95,33 +95,35 @@ export default function StorageCloud({ profile, driveConnected, setDriveConnecte
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-      <SettingsPillContainer>
-        <SettingsRow
-          icon={<DownloadSimple size={20} weight="fill" />}
-          iconColor="blue"
-          title={t('exportBackup') || 'Export Backup'}
-          description="Save all your profiles and settings to a JSON file."
-          control={
-            <Button variant="outlined" size="small" sx={{ borderRadius: 8 }} onClick={() => setShowExportModal(true)}>
-              Export
-            </Button>
-          }
-        />
-        <SettingsRow
-          icon={<UploadSimple size={20} weight="fill" />}
-          iconColor="orange"
-          title={t('importBackup') || 'Import Backup'}
-          description="Restore your data from a previous backup file."
-          control={
-            <>
-              <Button variant="outlined" size="small" sx={{ borderRadius: 8 }} onClick={() => (fileInputRef.current as any)?.click()}>
-                Import
+      {(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && (
+        <SettingsPillContainer>
+          <SettingsRow
+            icon={<DownloadSimple size={20} weight="fill" />}
+            iconColor="blue"
+            title={t('exportBackup') || 'Export Backup'}
+            description="Save all your profiles and settings to a JSON file."
+            control={
+              <Button variant="outlined" size="small" sx={{ borderRadius: 8 }} onClick={() => setShowExportModal(true)}>
+                Export
               </Button>
-              <input ref={fileInputRef} type="file" accept=".json" onChange={handleImportPick} style={{ display: 'none' }} />
-            </>
-          }
-        />
-      </SettingsPillContainer>
+            }
+          />
+          <SettingsRow
+            icon={<UploadSimple size={20} weight="fill" />}
+            iconColor="orange"
+            title={t('importBackup') || 'Import Backup'}
+            description="Restore your data from a previous backup file."
+            control={
+              <>
+                <Button variant="outlined" size="small" sx={{ borderRadius: 8 }} onClick={() => (fileInputRef.current as any)?.click()}>
+                  Import
+                </Button>
+                <input ref={fileInputRef} type="file" accept=".json" onChange={handleImportPick} style={{ display: 'none' }} />
+              </>
+            }
+          />
+        </SettingsPillContainer>
+      )}
 
       <SettingsPillContainer>
         <SettingsRow

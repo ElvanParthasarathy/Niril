@@ -436,6 +436,9 @@ function Seyali() {
   });
 
   useEffect(() => {
+    localStorage.setItem('elvanniril_theme_mode', themeMode);
+    localStorage.setItem('elvanniril_theme', themeMode === 'dark' ? 'dark' : 'light'); // fallback
+    
     if (themeMode === 'auto') {
       const mq = window.matchMedia('(prefers-color-scheme: dark)');
       const listener = (e: any) => setDarkMode(e.matches);
@@ -445,8 +448,6 @@ function Seyali() {
     } else {
       setDarkMode(themeMode === 'dark');
     }
-    localStorage.setItem('elvanniril_theme_mode', themeMode);
-    localStorage.setItem('elvanniril_theme', themeMode === 'dark' ? 'dark' : 'light'); // fallback
   }, [themeMode]);
   const [isCollapsed, setIsCollapsed] = useState(() => localStorage.getItem('elvanniril_sidebar_collapsed') === 'true');
   const [isHovered, setIsHovered] = useState(false);
