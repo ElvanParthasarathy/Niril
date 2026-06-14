@@ -101,7 +101,6 @@ export default function AppPreferences({ thagaval, darkMode, setDarkMode, themeM
 
             {/* Auto Mode removed from here, added as a switch below */}
         </Box>
-        <Divider sx={(theme) => ({ ml: '20px', mr: '20px', borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)' })} />
         <Box sx={{ p: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box>
             <Typography variant="body1" sx={{ fontWeight: 600, color: 'text.primary' }}>
