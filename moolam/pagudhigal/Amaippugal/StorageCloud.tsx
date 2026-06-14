@@ -1,6 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { Box, Typography, Button, FormControlLabel, Checkbox, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { DownloadSimple, UploadSimple, Cloud, CloudSlash } from '@phosphor-icons/react';
+import { LockKeyhole } from 'lucide-react';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../firebase';
 import { SettingsPillContainer, SettingsRow } from '../ElvanSettingsSection';
 import { exportAllData, importData, inspectBackup } from '../../Avanam';
 import { thagaval } from '../Thagaval';
@@ -116,6 +119,20 @@ export default function StorageCloud({ profile, driveConnected, setDriveConnecte
               </Button>
               <input ref={fileInputRef} type="file" accept=".json" onChange={handleImportPick} style={{ display: 'none' }} />
             </>
+          }
+        />
+      </SettingsPillContainer>
+
+      <SettingsPillContainer>
+        <SettingsRow
+          icon={<LockKeyhole size={20} />}
+          iconColor="red"
+          title="Account Security"
+          description="Sign out of Firebase to lock your database access on this device."
+          control={
+            <Button variant="outlined" color="error" size="small" sx={{ borderRadius: 8 }} onClick={() => signOut(auth)}>
+              Sign Out
+            </Button>
           }
         />
       </SettingsPillContainer>

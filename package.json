@@ -78,11 +78,10 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "server": "node server.js",
-    "dev": "concurrently \"node server.js\" \"vite\"",
-    "dev:win": "concurrently \"node server.js\" \"vite\"",
+    "dev": "vite",
+    "dev:win": "vite",
     "build": "vite build",
-    "start": "vite build && node server.js",
+    "start": "vite build && vite preview",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -98,6 +97,7 @@
     "dayjs": "^1.11.21",
     "dompurify": "^3.3.3",
     "express": "^5.2.1",
+    "firebase": "^12.14.0",
     "framer-motion": "^12.40.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.0",

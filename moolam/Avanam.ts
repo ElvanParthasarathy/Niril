@@ -4,16 +4,77 @@
 
 const API = '/api';
 
+import { rtdb } from './firebase';
+import { ref, get, set, remove, update } from 'firebase/database';
+
 async function apiFetch(url, options = {}) {
   const isGet = !options.method || options.method === 'GET';
-  const finalUrl = isGet ? (url.includes('?') ? `${url}&_t=${Date.now()}` : `${url}?_t=${Date.now()}`) : url;
+  const isPost = options.method === 'POST';
+  const isDelete = options.method === 'DELETE';
   
-  const res = await fetch(finalUrl, {
-    headers: { 'Content-Type': 'application/json' },
-    ...options,
-  });
-  if (!res.ok) throw new Error(`API error: ${res.status}`);
-  return res.json();
+  let path = url.replace('/api/', '').split('?')[0];
+
+  if (path === 'export') {
+    const snapshot = await get(ref(rtdb, '/'));
+    return snapshot.exists() ? snapshot.val() : {};
+  }
+  if (path === 'version') {
+     return { version: '2.0.0' };
+  }
+
+  const collections = ['pattiyalkal', 'vanigargal', 'mathirigal', 'porulgal', 'patrugal', 'thannilai', 'coolie_pattiyalkal', 'coolie_vanigargal', 'coolie_porulgal', 'coolie_patrugal', 'coolie_thannilai'];
+
+  if (path === 'import') {
+    const payload = JSON.parse(options.body);
+    const updates = {};
+    const keyMap = {
+      bills: 'pattiyalkal', clients: 'vanigargal', products: 'porulgal', receipts: 'patrugal',
+      profiles: 'thannilai', termsTemplates: 'mathirigal', coolieBills: 'coolie_pattiyalkal',
+      coolieClients: 'coolie_vanigargal', coolieProducts: 'coolie_porulgal', coolieReceipts: 'coolie_patrugal',
+      coolieProfiles: 'coolie_thannilai'
+    };
+
+    if (payload.profile) updates['profile'] = payload.profile;
+    if (payload.meta) updates['meta'] = payload.meta;
+    
+    for (const [key, dbPath] of Object.entries(keyMap)) {
+      if (payload[key] && Array.isArray(payload[key])) {
+        for (const item of payload[key]) {
+           if (item.id) updates[`${dbPath}/${item.id}`] = item;
+        }
+      }
+    }
+    
+    await update(ref(rtdb), updates);
+    return { success: true };
+  }
+
+  if (isGet) {
+    const snapshot = await get(ref(rtdb, path));
+    if (snapshot.exists()) {
+      const val = snapshot.val();
+      if (collections.includes(path)) return Object.values(val);
+      return val;
+    }
+    if (collections.includes(path)) return [];
+    return {};
+  }
+  
+  if (isPost) {
+    const body = JSON.parse(options.body);
+    if (path === 'profile' || path.startsWith('meta/')) {
+       await set(ref(rtdb, path), body);
+       return body;
+    }
+    const id = body.id || `doc_${Date.now()}`;
+    await set(ref(rtdb, `${path}/${id}`), body);
+    return body;
+  }
+
+  if (isDelete) {
+    await remove(ref(rtdb, path));
+    return { success: true };
+  }
 }
 
 // ---- Invoice Number Settings ----

@@ -5,6 +5,10 @@ import { useNavigate, useLocation, useNavigationType } from 'react-router-dom';
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Badge, Box, Typography, Avatar, Divider, Tooltip, IconButton, Collapse, CssBaseline, Dialog, DialogTitle, DialogContent, DialogActions, Button, Backdrop, CircularProgress, InputBase, AppBar, Toolbar, useMediaQuery, Stack, Select, MenuItem, Paper, Popover } from '@mui/material';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { getAllProfiles, saveProfile, getAllBills, getAllProducts } from './Avanam';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase';
+import Login from './pagudhigal/Login';
+import Welcome from './pagudhigal/auth/Welcome';
 import { jsPDF } from 'jspdf';
 import VariArikkaigal from './pagudhigal/GstBill/Reports/VariArikkaigal';
 import Mugappu from './pagudhigal/GstBill/Mugappu';
@@ -348,6 +352,20 @@ function Seyali() {
   // after that dismissal will re-show the banner.
   const [updateInfo, setUpdateInfo] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+  const [firebaseUser, setFirebaseUser] = useState<any>(null);
+  const [firebaseAuthLoading, setFirebaseAuthLoading] = useState(true);
+  const [hasWelcomed, setHasWelcomed] = useState(() => {
+    return localStorage.getItem('elvanniril_welcomed') === 'true';
+  });
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      setFirebaseUser(u);
+      setFirebaseAuthLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
   const updateBannerVisible = updateInfo?.updateAvailable
     && localStorage.getItem('elvanniril_dismissedUpdate') !== updateInfo.latest;
 
@@ -881,6 +899,30 @@ function Seyali() {
       }
     }
   }), [darkMode]);
+
+  if (firebaseAuthLoading) {
+    return (
+      <ThemeProvider theme={muiTheme}>
+        <CssBaseline />
+        <Box sx={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center' }}>
+          <CircularProgress />
+        </Box>
+      </ThemeProvider>
+    );
+  }
+
+  if (!firebaseUser) {
+    return (
+      <ThemeProvider theme={muiTheme}>
+        <CssBaseline />
+        {!hasWelcomed ? (
+          <Welcome onContinue={() => setHasWelcomed(true)} />
+        ) : (
+          <Login />
+        )}
+      </ThemeProvider>
+    );
+  }
 
   if (serverDown) {
     return (
