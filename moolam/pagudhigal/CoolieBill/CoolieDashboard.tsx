@@ -103,9 +103,13 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchMode
           </Box>
           <Box>
             <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>{t('totalInvoiced') || 'Total Amount'}</Typography>
-            <Typography variant="h5" color="text.primary" sx={{ fontWeight: 800 }}>
-              {formatCurrency(stats.overallTotal, 'INR')}
-            </Typography>
+            {isLoading ? (
+              <Skeleton variant="text" width={120} height={32} />
+            ) : (
+              <Typography variant="h5" color="text.primary" sx={{ fontWeight: 800 }}>
+                {formatCurrency(stats.overallTotal, 'INR')}
+              </Typography>
+            )}
           </Box>
         </CardContent>
       </Card>
@@ -119,12 +123,16 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchMode
             <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>
               {t('companies')}
             </Typography>
-            <Typography variant="h6" color="text.primary" sx={{ fontWeight: 800, lineHeight: 1.4 }}>
-              {Object.entries(stats.byCompany)
-                .filter(([id, data]: any) => data.total > 0)
-                .map(([id, data]: any) => data.name)
-                .join(', ') || '—'}
-            </Typography>
+            {isLoading ? (
+              <Skeleton variant="text" width="80%" height={32} />
+            ) : (
+              <Typography variant="h6" color="text.primary" sx={{ fontWeight: 800, lineHeight: 1.4 }}>
+                {Object.entries(stats.byCompany)
+                  .filter(([id, data]: any) => data.total > 0)
+                  .map(([id, data]: any) => data.name)
+                  .join(', ') || '—'}
+              </Typography>
+            )}
           </Box>
         </CardContent>
       </Card>
@@ -139,14 +147,18 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchMode
             <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>
               {t('totalBills')}
             </Typography>
-            <Typography variant="h6" color="text.primary" sx={{ fontWeight: 800 }}>
-              {(() => {
-                const activeCompanies = Object.values(stats.byCompany).filter((c: any) => c.count > 0);
-                if (activeCompanies.length === 1) return `${activeCompanies[0].count} · ${activeCompanies[0].name}`;
-                if (activeCompanies.length > 1) return activeCompanies.map((c: any) => `${c.count} · ${c.name}`).join('  +  ') + `  =  ${stats.count}`;
-                return stats.count;
-              })()}
-            </Typography>
+            {isLoading ? (
+              <Skeleton variant="text" width={60} height={32} />
+            ) : (
+              <Typography variant="h6" color="text.primary" sx={{ fontWeight: 800 }}>
+                {(() => {
+                  const activeCompanies = Object.values(stats.byCompany).filter((c: any) => c.count > 0);
+                  if (activeCompanies.length === 1) return `${activeCompanies[0].count} · ${activeCompanies[0].name}`;
+                  if (activeCompanies.length > 1) return activeCompanies.map((c: any) => `${c.count} · ${c.name}`).join('  +  ') + `  =  ${stats.count}`;
+                  return stats.count;
+                })()}
+              </Typography>
+            )}
           </Box>
         </CardContent>
       </Card>

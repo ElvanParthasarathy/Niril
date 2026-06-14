@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Typography, Button, ButtonBase } from '@mui/material';
+import { Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Typography, Button, ButtonBase, Skeleton } from '@mui/material';
 import { Buildings, Hash, Cloud, ArrowsClockwise, CaretRight, Invoice, HandCoins, Translate, MapPin, Bank, Palette, PaintBrush } from '@phosphor-icons/react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -177,6 +177,14 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
   };
   const transition = { type: "spring", stiffness: 300, damping: 30 };
 
+  const SettingsShimmer = () => (
+    <Box sx={{ p: { xs: 2, md: 3 } }}>
+      <Skeleton variant="rectangular" height={80} sx={{ borderRadius: 3, mb: 2 }} />
+      <Skeleton variant="rectangular" height={80} sx={{ borderRadius: 3, mb: 2 }} />
+      <Skeleton variant="rectangular" height={80} sx={{ borderRadius: 3, mb: 2 }} />
+    </Box>
+  );
+
   const renderDetailView = () => {
     let content = null;
     let title = "";
@@ -198,7 +206,7 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
       content = (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
           {appMode === 'COOLIE' ? (
-            <CoolieSettings activeTab={activeTab} />
+            profileLoaded ? <CoolieSettings activeTab={activeTab} /> : <SettingsShimmer />
           ) : (
             profileLoaded ? (
               <GstSettings 
@@ -211,7 +219,7 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
                 setSaving={setSaving} 
                 activeTab={activeTab}
               />
-            ) : null
+            ) : <SettingsShimmer />
           )}
         </Box>
       ); 

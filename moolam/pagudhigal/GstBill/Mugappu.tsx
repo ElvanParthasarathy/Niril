@@ -88,12 +88,17 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
           </Box>
           <Box>
             <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>{t('totalInvoiced')}</Typography>
-            {Object.entries(stats.byCurrency).map(([cur, v]) => (
-              <Typography key={cur} variant="h5" color="text.primary" sx={{ fontWeight: 800 }}>
-                {formatCurrency(v.total, cur)}
-              </Typography>
-            ))}
-            {Object.keys(stats.byCurrency).length === 0 && <Typography variant="h5" color="text.secondary" sx={{ fontWeight: 800 }}>—</Typography>}
+            {isLoading ? (
+              <Skeleton variant="text" width={120} height={32} />
+            ) : Object.keys(stats.byCurrency).length === 0 ? (
+              <Typography variant="h5" color="text.secondary" sx={{ fontWeight: 800 }}>—</Typography>
+            ) : (
+              Object.entries(stats.byCurrency).map(([cur, v]) => (
+                <Typography key={cur} variant="h5" color="text.primary" sx={{ fontWeight: 800 }}>
+                  {formatCurrency(v.total, cur)}
+                </Typography>
+              ))
+            )}
           </Box>
         </CardContent>
       </Card>
@@ -105,12 +110,17 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
           </Box>
           <Box>
             <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>{t('taxCollected')}</Typography>
-            {Object.entries(stats.byCurrency).map(([cur, v]) => (
-              <Typography key={cur} variant="h5" color="text.primary" sx={{ fontWeight: 800 }}>
-                {formatCurrency(v.tax, cur)}
-              </Typography>
-            ))}
-            {Object.keys(stats.byCurrency).length === 0 && <Typography variant="h5" color="text.secondary" sx={{ fontWeight: 800 }}>—</Typography>}
+            {isLoading ? (
+              <Skeleton variant="text" width={120} height={32} />
+            ) : Object.keys(stats.byCurrency).length === 0 ? (
+              <Typography variant="h5" color="text.secondary" sx={{ fontWeight: 800 }}>—</Typography>
+            ) : (
+              Object.entries(stats.byCurrency).map(([cur, v]) => (
+                <Typography key={cur} variant="h5" color="text.primary" sx={{ fontWeight: 800 }}>
+                  {formatCurrency(v.tax, cur)}
+                </Typography>
+              ))
+            )}
           </Box>
         </CardContent>
       </Card>
@@ -125,9 +135,13 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
             <Typography variant="body2" color="text.secondary" mb={0.5} sx={{ fontWeight: 600 }}>
               {t('invoiceCount')}
             </Typography>
-            <Typography variant="h5" color="text.primary" sx={{ fontWeight: 800 }}>
-              {stats.count}
-            </Typography>
+            {isLoading ? (
+              <Skeleton variant="text" width={60} height={32} />
+            ) : (
+              <Typography variant="h5" color="text.primary" sx={{ fontWeight: 800 }}>
+                {stats.count}
+              </Typography>
+            )}
           </Box>
         </CardContent>
       </Card>
