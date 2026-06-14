@@ -181,7 +181,7 @@ export default function GstSettings({
         niruvanathinPeyar: newProfileData.niruvanathinPeyar,
         niruvanathinPeyarEn: '', mugavari: newProfileData.mugavari, mugavariEn: '', oor: '', oorEn: '', maavattam: '', maavattamEn: '', maanilam: '', maanilamEn: '', pin: '', country: detectCountryFromBrowser(),
         gstin: newProfileData.gstin, pan: '', email: '', tholaipesi: '', mobileNumber: '', vangiPeyar: '', kanakkuEn: '', ifsc: '', swift: '',
-        logo: '', wideLogo: '', logoHeight: 48, signature: '', upiId: '', googleClientId: '', googleDriveFolder: 'GST Billing Invoices',
+        logo: '', wideLogo: '', logoHeight: 48, signature: '', upiId: '',
       };
       
       const saved = await saveBusinessProfile(freshProfile);

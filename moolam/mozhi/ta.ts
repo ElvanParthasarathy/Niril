@@ -1,4 +1,4 @@
-﻿// @ts-nocheck
+// @ts-nocheck
 export const ta = {
   'PIN Code': 'அஞ்சல் குறியீடு',
   'GSTIN': 'GSTIN',
@@ -70,7 +70,7 @@ export const ta = {
   languageChangedTa: 'மொழி தமிழுக்கு மாற்றப்பட்டது',
   languageChangedEn: 'Language changed to English',
   storageCloud: 'சேமிப்பகம் & முகில்',
-  googleDriveLocalBackups: 'கூகுள் டிரைவ், உள்ளூர் காப்புகள்',
+
   systemUpdates: 'அமைப்பு & புதுப்பிப்புகள்',
   appVersionsCache: 'செயலி பதிப்புகள், தற்காலிக நினைவகம்',
 
@@ -221,7 +221,7 @@ export const ta = {
 
   moduleGroup_integrations: 'ஒருங்கிணைப்புகள்',
   moduleDesc_integrations: 'கிளவுட் காப்பு & QR குறியீடுகள்',
-  module_googleDrive: 'Google Drive காப்பு',
+
   module_upiQr: 'பட்டியல்களில் UPI QR குறியீடு',
 
   // Settings Form
@@ -325,7 +325,7 @@ export const ta = {
   exportBackup: 'காப்புப் பிரதியை ஏற்றுமதி செய்...',
   importBackup: 'காப்புப் பிரதியை இறக்குமதி செய்...',
   
-  googleDriveEasyWay: 'எளிதான வழி — Google Drive for Desktop (பரிந்துரைக்கப்படுகிறது)',
+
 
 
 
@@ -863,11 +863,9 @@ export const ta = {
   hc_uiLanguageDataLanguages: "\u0baa\u0baf\u0ba9\u0bb0\u0bcd \u0b87\u0b9f\u0bc8\u0bae\u0bc1\u0b95 \u0bae\u0bca\u0bb4\u0bbf, \u0ba4\u0bb0\u0bb5\u0bc1 \u0bae\u0bca\u0bb4\u0bbf\u0b95\u0bb3\u0bcd",
   hc_accountsInvoiceFormatsTerms: "\u0b95\u0ba3\u0b95\u0bcd\u0b95\u0bc1\u0b95\u0bb3\u0bcd, \u0baa\u0b9f\u0bcd\u0b9f\u0bbf\u0baf\u0bb2\u0bcd \u0bb5\u0b9f\u0bbf\u0bb5\u0b99\u0bcd\u0b95\u0bb3\u0bcd, \u0bb5\u0bbf\u0ba4\u0bbf\u0bae\u0bc1\u0bb1\u0bc8\u0b95\u0bb3\u0bcd",
   hc_advanced: "\u0bae\u0bc7\u0bae\u0bcd\u0baa\u0b9f\u0bcd\u0b9f\u0bb5\u0bc8",
-  hc_googleDriveLocalBackups: "Google Drive, \u0b95\u0ba3\u0bbf\u0ba9\u0bbf \u0b95\u0bbe\u0baa\u0bcd\u0baa\u0bc1\u0ba8\u0b95\u0bb2\u0bcd\u0b95\u0bb3\u0bcd",
   hc_appVersionsCache: "\u0b9a\u0bc6\u0baf\u0bb2\u0bbf \u0baa\u0ba4\u0bbf\u0baa\u0bcd\u0baa\u0bc1\u0b95\u0bb3\u0bcd, \u0ba4\u0bb1\u0bcd\u0b95\u0bbe\u0bb2\u0bbf\u0b95 \u0b9a\u0bc7\u0bae\u0bbf\u0baa\u0bcd\u0baa\u0bc1",
   hc_selectASetting: "\u0b85\u0bae\u0bc8\u0baa\u0bcd\u0baa\u0bc8\u0ba4\u0bcd \u0ba4\u0bc7\u0bb0\u0bcd\u0ba8\u0bcd\u0ba4\u0bc6\u0b9f\u0bc1\u0b95\u0bcd\u0b95\u0bb5\u0bc1\u0bae\u0bcd",
   hc_exportBackup1: "\u0b95\u0bbe\u0baa\u0bcd\u0baa\u0bc1\u0ba8\u0b95\u0bb2\u0bc8 \u0b8f\u0bb1\u0bcd\u0bb1\u0bc1\u0bae\u0ba4\u0bbf \u0b9a\u0bc6\u0baf\u0bcd",
-  hc_alsoSaveACopyTo: "Google Drive-\u0b87\u0bb2\u0bc1\u0bae\u0bcd \u0b92\u0bb0\u0bc1 \u0ba8\u0b95\u0bb2\u0bc8\u0b9a\u0bcd \u0b9a\u0bc7\u0bae\u0bbf",
   hc_downloadBackup: "\u0b95\u0bbe\u0baa\u0bcd\u0baa\u0bc1\u0ba8\u0b95\u0bb2\u0bc8\u0baa\u0bcd \u0baa\u0ba4\u0bbf\u0bb5\u0bbf\u0bb1\u0b95\u0bcd\u0b95\u0bc1",
   hc_restoreFromBackup: "\u0b95\u0bbe\u0baa\u0bcd\u0baa\u0bc1\u0ba8\u0b95\u0bb2\u0bbf\u0bb2\u0bbf\u0bb0\u0bc1\u0ba8\u0bcd\u0ba4\u0bc1 \u0bae\u0bc0\u0b9f\u0bcd\u0b9f\u0bae\u0bc8",
   hc_overwriteMatchingRecordsById: "\u0baa\u0bca\u0bb0\u0bc1\u0ba8\u0bcd\u0ba4\u0bc1\u0bae\u0bcd \u0ba4\u0bb0\u0bb5\u0bc1\u0b95\u0bb3\u0bc8 \u0bae\u0bc7\u0bb2\u0bc6\u0bb4\u0bc1\u0ba4\u0bc1",

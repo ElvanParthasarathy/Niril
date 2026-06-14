@@ -35,27 +35,6 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
 
   const typeConfig = INVOICE_TYPES[invoiceType || 'tax-invoice'] || INVOICE_TYPES['tax-invoice'];
 
-  // Upload PDF to Google Drive if configured
-  const uploadToGoogleDrive = async (pdfBlob, fileName) => {
-    try {
-      const clientId = profile.googleClientId;
-      const folderName = profile.googleDriveFolder || 'GST Billing Invoices';
-      if (!clientId) return;
-
-      const hasToken = await ensureToken(clientId);
-      if (!hasToken) {
-        thagaval('Google Drive: Please reconnect in Settings', 'warning');
-        return;
-      }
-
-      const folderId = await findOrCreateFolder(folderName);
-      await uploadPDF(fileName, pdfBlob, folderId);
-      thagaval(`Saved to Google Drive → ${folderName}`, 'success');
-    } catch (err) {
-      console.error('Google Drive upload error:', err);
-      thagaval('Google Drive upload failed: ' + err.message, 'warning');
-    }
-  };
 
   const buildPDF = async () => {
     const paperEl = printRef.current.closest('.invoice-paper');
@@ -138,7 +117,6 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
       fetch(`/api/save-pdf?${params}`, { method: 'POST', headers: { 'Content-Type': 'application/pdf' }, body: pdfBlob }).catch(() => {});
 
       thagaval(`Invoice downloaded & saved to Saved Invoices/${clientName}/`, 'success');
-      uploadToGoogleDrive(pdfBlob, fileName);
     } catch (err) {
       console.error(err);
       thagaval('Failed to generate PDF.', 'error');

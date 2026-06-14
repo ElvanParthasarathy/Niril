@@ -67,7 +67,7 @@ export const en: Record<TranslationKey, string> = {
   languageChangedTa: 'மொழி தமிழுக்கு மாற்றப்பட்டது',
   languageChangedEn: 'Language changed to English',
   storageCloud: 'Storage & Cloud',
-  googleDriveLocalBackups: 'Google Drive, Local Backups',
+
   systemUpdates: 'System & Updates',
   appVersionsCache: 'App versions, Cache',
 
@@ -238,7 +238,7 @@ export const en: Record<TranslationKey, string> = {
 
   moduleGroup_integrations: 'Integrations',
   moduleDesc_integrations: 'Cloud backup and payment QR codes',
-  module_googleDrive: 'Google Drive backup',
+
   module_upiQr: 'UPI QR code on invoices',
 
   // Settings Form
@@ -355,7 +355,7 @@ export const en: Record<TranslationKey, string> = {
   exportBackup: 'Export Backup...',
   importBackup: 'Import Backup...',
   
-  googleDriveEasyWay: 'Easiest Way — Google Drive for Desktop (Recommended)',
+
 
 
   // Reports page
@@ -553,7 +553,7 @@ export const en: Record<TranslationKey, string> = {
   hc_uiLanguageDataLanguages: "UI language, Data languages",
   hc_accountsInvoiceFormatsTerms: "Accounts, Invoice formats, Terms",
   hc_advanced: "Advanced",
-  hc_googleDriveLocalBackups: "Google Drive, Local Backups",
+
   hc_appVersionsCache: "App versions, Cache",
   hc_selectASetting: "Select a setting",
   hc_exportBackup1: "Export Backup",

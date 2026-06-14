@@ -1,9 +1,7 @@
 // @ts-nocheck
 import { useState, useEffect, useRef } from 'react';
 import { getProfile, saveProfile, exportAllData, importData, inspectBackup, getAllProfiles, saveBusinessProfile, deleteBusinessProfile, getInvoiceNumberSettings, saveInvoiceNumberSettings, getReceiptNumberSettings, saveReceiptNumberSettings, getInvoiceDisplayOptions, saveInvoiceDisplayOptions } from '../Avanam';
-import { ensureToken, findOrCreateFolder, uploadJSON } from '../panigal/googleDrive';
 import { getCountryConfig, getStatesForCountry, getBilingualStateName, getBilingualCountryName, validateTaxId, detectCountryFromBrowser, getCountriesForRegion, getPaymentAccounts, createEmptyAccount, maskkanakkuEn, reorderAccounts, setDefaultAccount, isValidUpiId, tamilNaduDistricts } from '../Payanpadu';
-import { initGoogleDrive, isConnected, disconnect } from '../panigal/googleDrive';
 import { thagaval } from './Thagaval';
 import { useLanguage } from '../mozhi/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -42,13 +40,11 @@ export default function Amaippugal({ onSaved }) {
   const [profile, setProfile] = useState<any>({
     niruvanathinPeyar: '', niruvanathinPeyarEn: '', mugavari: '', mugavariEn: '', oor: '', oorEn: '', maavattam: '', maavattamEn: '', maanilam: '', maanilamEn: '', gstin: '', pan: '',
     email: '', tholaipesi: '', mobileNumber: '', vangiPeyar: '', kanakkuEn: '', ifsc: '',
-    logo: '', logoHeight: 48, signature: '', upiId: '', googleClientId: '', googleDriveFolder: 'GST Billing Invoices',
+    logo: '', logoHeight: 48, signature: '', upiId: '',
     primaryDataLanguage: 'Tamil', secondaryDataLanguage: 'English', enableBilingual: true,
     invoiceTerms: '',
   });
   const [saving, setSaving] = useState(false);
-  const [driveConnected, setDriveConnected] = useState(false);
-  const [connecting, setConnecting] = useState(false);
   const [businessProfiles, setBusinessProfiles] = useState([]);
   const [invNumSettings, setInvNumSettings] = useState({
     format: 'branded', brandPrefix: '', separator: '/', showFinYear: true, startNumber: 1, padDigits: 4,
@@ -132,7 +128,6 @@ export default function Amaippugal({ onSaved }) {
       });
     });
     loadBusinessProfiles();
-    setDriveConnected(isConnected());
     getInvoiceNumberSettings().then(setInvNumSettings);
     getReceiptNumberSettings().then(setRcpNumSettings);
   }, []);
@@ -339,30 +334,6 @@ export default function Amaippugal({ onSaved }) {
     return `${pfx}${sep}${padded}`;
   };
 
-  // Google Drive
-  const handleConnectDrive = async () => {
-    if (!profile.googleClientId.trim()) {
-      thagaval('Enter your Google OAuth Client ID first', 'warning');
-      return;
-    }
-    setConnecting(true);
-    try {
-      const result = (await initGoogleDrive(profile.googleClientId)) as any;
-      if (result.success) {
-        setDriveConnected(true);
-        thagaval('Connected to Google Drive!', 'success');
-      } else {
-        thagaval('Failed: ' + (result.error || 'Unknown error'), 'error');
-      }
-    } catch (err) {
-      thagaval('Connection failed: ' + err.message, 'error');
-    }
-    setConnecting(false);
-  };
-
-  const handleDisconnectDrive = () => {
-    disconnect();
-    setDriveConnected(false);
     thagaval('Disconnected from Google Drive', 'info');
   };
 
@@ -407,30 +378,11 @@ export default function Amaippugal({ onSaved }) {
       a.href = url; a.download = fileName; a.click();
       URL.revokeObjectURL(url);
 
-      // Optional Google Drive copy
-      if (exportToDrive) {
-        if (!profile?.googleClientId) {
-          thagaval('Google Drive not configured. Set Google Client ID in Settings to enable Drive backups.', 'warning');
-        } else {
-          setDrivePending(true);
-          const ok = await ensureToken(profile.googleClientId);
-          if (!ok) { thagaval('Drive auth failed — backup downloaded locally only', 'warning'); }
-          else {
-            const folderName = (profile.googleDriveFolder || 'GST Billing Invoices') + ' - Backups';
-            const folderId = await findOrCreateFolder(folderName);
-            const result = await uploadJSON(fileName, json, folderId);
-            thagaval(`Saved to Drive — ${result.name}`, 'success');
-          }
-          setDrivePending(false);
-        }
-      }
-
       thagaval('Backup downloaded', 'success');
       setShowExportModal(false);
     } catch (err) {
       console.error(err);
       thagaval('Export failed: ' + (err.message || 'unknown error'), 'error');
-      setDrivePending(false);
     }
   };
 
@@ -510,7 +462,7 @@ export default function Amaippugal({ onSaved }) {
       personName: '', personNameEn: '',
       niruvanathinPeyar: '', niruvanathinPeyarEn: '', mugavari: '', mugavariEn: '', oor: '', oorEn: '', maavattam: '', maavattamEn: '', maanilam: '', maanilamEn: '', pin: '', country: detectCountryFromBrowser(),
       gstin: '', pan: '', email: '', tholaipesi: '', mobileNumber: '', vangiPeyar: '', kanakkuEn: '', ifsc: '', swift: '',
-      logo: '', logoHeight: 48, signature: '', upiId: '', googleClientId: '', googleDriveFolder: 'GST Billing Invoices',
+      logo: '', logoHeight: 48, signature: '', upiId: '',
     });
     setTaxIdWarning('');
     companyFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1245,44 +1197,6 @@ export default function Amaippugal({ onSaved }) {
           API Integrations and advanced configuration.
         </Typography>
 
-        <details>
-          <summary style={{ cursor: 'pointer', color: 'var(--text-muted)', fontSize: '0.9rem', padding: '0.5rem 0', fontWeight: 500 }}>
-            Google Drive Backup API
-          </summary>
-          <Box sx={{ pt: 2 }}>
-            <Grid container spacing={3}>
-              <Grid size={{ xs: 12 }}>
-                <TextField fullWidth size="small" label="Google OAuth Client ID" name="googleClientId" value={profile.googleClientId} onChange={handleChange} placeholder="xxxx.apps.googleusercontent.com" 
-                  helperText={
-                    <Typography component="span" variant="caption">
-                      <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--primary)' }}>Open Google Cloud Console</a> &rarr; Create Project &rarr; Enable Drive API &rarr; Create OAuth Client ID (Web app) &rarr; Add <code>http://localhost:5173</code> as origin.
-                    </Typography>
-                  }
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField fullWidth size="small" label="Drive Folder Name" name="googleDriveFolder" value={profile.googleDriveFolder} onChange={handleChange} placeholder="GST Billing Invoices" />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }} gutterBottom>Status</Typography>
-                <Box sx={{ display: 'flex', gap: 1 }}>
-                  {driveConnected ? (
-                    <>
-                      <Chip icon={<Cloud sx={{ fontSize: 14 }} />} label="Connected" color="success" variant="outlined" sx={{ bgcolor: 'success.50' }} />
-                      <Button variant="outlined" size="small" color="inherit" onClick={handleDisconnectDrive} startIcon={<CloudOff sx={{ fontSize: 14 }} />}>
-                        Disconnect
-                      </Button>
-                    </>
-                  ) : (
-                    <Button variant="contained" size="small" onClick={handleConnectDrive} disabled={connecting} startIcon={<Cloud sx={{ fontSize: 16 }} />}>
-                      {connecting ? 'Connecting...' : 'Connect Google Drive'}
-                    </Button>
-                  )}
-                </Box>
-              </Grid>
-            </Grid>
-          </Box>
-        </details>
       </Paper>
 
       <Paper className="s2-group" elevation={2} sx={{ p: { xs: 2, md: 3 }, mb: { xs: 2, md: 3 }, borderRadius: { xs: 0, sm: 2 }, borderX: { xs: 0, sm: undefined } }}>
@@ -1566,19 +1480,11 @@ export default function Amaippugal({ onSaved }) {
               } />
             ))}
           </Box>
-          <FormControlLabel sx={{ mt: 2 }} control={<Checkbox checked={exportToDrive} onChange={e => setExportToDrive(e.target.checked)} />} label={
-            <Box>
-              <Typography variant="body2" style={{ fontWeight: 'bold' }}>Also save a copy to my Google Drive</Typography>
-              <Typography variant="caption" color="text.secondary">
-                Uploads to <em>{(profile.googleDriveFolder || 'GST Billing Invoices')} - Backups</em> in your Drive. Requires Google Client ID configured above. The file always downloads to your computer too.
-              </Typography>
-            </Box>
-          } />
         </DialogContent>
         <DialogActions>
-          <Button color="inherit" onClick={() => setShowExportModal(false)} disabled={drivePending}>{t('cancel')}</Button>
-          <Button variant="contained" onClick={runExport} disabled={drivePending || !Object.values(exportSel).some(Boolean)}>
-            {drivePending ? 'Uploading…' : <><DownloadSimple size={20} weight="fill" sx={{ fontSize: 16 }} style={{ marginRight: 6 }} /> Download Backup</>}
+          <Button color="inherit" onClick={() => setShowExportModal(false)}>{t('cancel')}</Button>
+          <Button variant="contained" onClick={runExport} disabled={!Object.values(exportSel).some(Boolean)}>
+            <><DownloadSimple size={20} weight="fill" sx={{ fontSize: 16 }} style={{ marginRight: 6 }} /> Download Backup</>
           </Button>
         </DialogActions>
       </Dialog>

@@ -3,7 +3,6 @@ import { Box, Typography, Button, FormControlLabel, Checkbox, Dialog, DialogTitl
 import { DownloadSimple, UploadSimple, Cloud, CloudSlash } from '@phosphor-icons/react';
 import { SettingsPillContainer, SettingsRow } from '../ElvanSettingsSection';
 import { exportAllData, importData, inspectBackup } from '../../Avanam';
-import { ensureToken, findOrCreateFolder, uploadJSON, initGoogleDrive, isConnected, disconnect } from '../../panigal/googleDrive';
 import { thagaval } from '../Thagaval';
 
 const ALL_BACKUP_PARTS = [
@@ -26,8 +25,6 @@ export default function StorageCloud({ profile, driveConnected, setDriveConnecte
   const [importSel, setImportSel] = useState(() => Object.fromEntries(ALL_BACKUP_PARTS.map(p => [p.id, true])));
   const [importInspection, setImportInspection] = useState<any>(null);
   const [importJsonText, setImportJsonText] = useState('');
-  const [exportToDrive, setExportToDrive] = useState(false);
-  const [drivePending, setDrivePending] = useState(false);
 
   const toggleExport = (id) => setExportSel(prev => ({ ...prev, [id]: !prev[id] }));
   const toggleImport = (id) => setImportSel(prev => ({ ...prev, [id]: !prev[id] }));
@@ -39,37 +36,17 @@ export default function StorageCloud({ profile, driveConnected, setDriveConnecte
       const json = await exportAllData(exportSel);
       const fileName = `elvanniril-backup-${new Date().toISOString().split('T')[0]}.json`;
 
-      // Local download (always)
       const blob = new Blob([json], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url; a.download = fileName; a.click();
       URL.revokeObjectURL(url);
 
-      // Optional Google Drive copy
-      if (exportToDrive) {
-        if (!profile?.googleClientId) {
-          thagaval('Google Drive not configured. Set Google Client ID in Settings to enable Drive backups.', 'warning');
-        } else {
-          setDrivePending(true);
-          const ok = await ensureToken(profile.googleClientId);
-          if (!ok) { thagaval('Drive auth failed — backup downloaded locally only', 'warning'); }
-          else {
-            const folderName = (profile.googleDriveFolder || 'GST Billing Invoices') + ' - Backups';
-            const folderId = await findOrCreateFolder(folderName);
-            const result = await uploadJSON(fileName, json, folderId);
-            thagaval(`Saved to Drive — ${result.name}`, 'success');
-          }
-          setDrivePending(false);
-        }
-      }
-
       thagaval('Backup downloaded', 'success');
       setShowExportModal(false);
     } catch (err: any) {
       console.error(err);
       thagaval('Export failed: ' + (err.message || 'unknown error'), 'error');
-      setDrivePending(false);
     }
   };
 
@@ -109,32 +86,6 @@ export default function StorageCloud({ profile, driveConnected, setDriveConnecte
     }
   };
 
-  const handleConnectDrive = async () => {
-    if (!profile.googleClientId?.trim()) {
-      thagaval('Enter your Google OAuth Client ID first in GST settings', 'warning');
-      return;
-    }
-    setConnecting(true);
-    try {
-      const result = (await initGoogleDrive(profile.googleClientId)) as any;
-      if (result.success) {
-        setDriveConnected(true);
-        thagaval('Connected to Google Drive!', 'success');
-      } else {
-        thagaval('Failed: ' + (result.error || 'Unknown error'), 'error');
-      }
-    } catch (err: any) {
-      thagaval('Connection failed: ' + err.message, 'error');
-    }
-    setConnecting(false);
-  };
-
-  const handleDisconnectDrive = () => {
-    disconnect();
-    setDriveConnected(false);
-    thagaval('Disconnected from Google Drive', 'info');
-  };
-
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       <SettingsPillContainer>
@@ -165,26 +116,8 @@ export default function StorageCloud({ profile, driveConnected, setDriveConnecte
         />
       </SettingsPillContainer>
 
-      <SettingsPillContainer>
-        <SettingsRow
-          icon={driveConnected ? <Cloud size={20} weight="fill" /> : <CloudSlash size={20} weight="fill" />}
-          iconColor={driveConnected ? 'green' : 'monochrome'}
-          title="Google Drive Backup"
-          description={driveConnected ? `Connected. Uploading to folder: "${profile.googleDriveFolder}"` : "Not connected. Link your account to enable auto-uploads."}
-          control={
-            driveConnected ? (
-              <Button variant="outlined" color="error" size="small" sx={{ borderRadius: 8 }} onClick={handleDisconnectDrive}>Disconnect</Button>
-            ) : (
-              <Button variant="contained" size="small" sx={{ borderRadius: 8 }} onClick={handleConnectDrive} disabled={connecting}>
-                {connecting ? 'Connecting...' : 'Connect Drive'}
-              </Button>
-            )
-          }
-        />
-      </SettingsPillContainer>
-
       {/* Export modal */}
-      <Dialog open={showExportModal} onClose={() => !drivePending && setShowExportModal(false)} maxWidth="sm" fullWidth disableScrollLock>
+      <Dialog open={showExportModal} onClose={() => setShowExportModal(false)} maxWidth="sm" fullWidth disableScrollLock>
         <DialogTitle>Export Backup</DialogTitle>
         <DialogContent dividers>
           <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -206,14 +139,9 @@ export default function StorageCloud({ profile, driveConnected, setDriveConnecte
           </Box>
         </DialogContent>
         <DialogActions sx={{ px: 3, py: 2 }}>
-          <FormControlLabel 
-            control={<Checkbox checked={exportToDrive} onChange={e => setExportToDrive(e.target.checked)} disabled={!driveConnected} />}
-            label="Also copy to Google Drive"
-            sx={{ mr: 'auto' }}
-          />
-          <Button onClick={() => setShowExportModal(false)} disabled={drivePending}>Cancel</Button>
-          <Button variant="contained" onClick={runExport} disabled={drivePending || !Object.values(exportSel).some(Boolean)}>
-            {drivePending ? 'Processing...' : 'Download'}
+          <Button onClick={() => setShowExportModal(false)}>Cancel</Button>
+          <Button variant="contained" onClick={runExport} disabled={!Object.values(exportSel).some(Boolean)}>
+            Download .json
           </Button>
         </DialogActions>
       </Dialog>

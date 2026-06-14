@@ -3,7 +3,6 @@ import { ArrowLeft, Printer as PrintIcon, ShareNetwork, Spinner, DownloadSimple,
 import { FloatingBackButton } from '../../FloatingBackButton';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
-import { ensureToken, findOrCreateFolder, uploadPDF } from '../../../panigal/googleDrive';
 import { useLanguage } from '../../../mozhi/LanguageContext';
 import { en } from '../../../mozhi/en';
 import { ta } from '../../../mozhi/ta';
@@ -175,27 +174,7 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
     }, 500);
   };
 
-  // Upload PDF to Google Drive if configured
-  const uploadToGoogleDrive = async (pdfBlob, fileName) => {
-    try {
-      const clientId = profile.googleClientId;
-      const folderName = profile.googleDriveFolder || 'GST Billing Invoices'; // we'll use same folder or should we use Receipts? Wait, I'll use GST Billing Invoices to be consistent or 'GST Billing Receipts' if they want. Let's just use 'GST Billing Invoices' as default like in InvoiceView.
-      if (!clientId) return;
 
-      const hasToken = await ensureToken(clientId);
-      if (!hasToken) {
-        thagaval('Google Drive: Please reconnect in Settings', 'warning');
-        return;
-      }
-
-      const folderId = await findOrCreateFolder(folderName);
-      await uploadPDF(fileName, pdfBlob, folderId);
-      thagaval(`Saved to Google Drive → ${folderName}`, 'success');
-    } catch (err) {
-      console.error('Google Drive upload error:', err);
-      thagaval('Google Drive upload failed: ' + err.message, 'warning');
-    }
-  };
 
   const buildPDF = async () => {
     const paperEl = printRef.current.closest('.MuiPaper-root');
@@ -261,7 +240,6 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
       fetch(`/api/save-pdf?${params}`, { method: 'POST', headers: { 'Content-Type': 'application/pdf' }, body: pdfBlob }).catch(() => {});
 
       thagaval(`Receipt downloaded & saved to Saved Invoices/${clientName}/`, 'success');
-      uploadToGoogleDrive(pdfBlob, fileName);
     } catch (err) {
       console.error(err);
       thagaval('Failed to generate PDF.', 'error');

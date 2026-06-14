@@ -22,7 +22,7 @@ export default function Nalvaravu({ onComplete }) {
   const [profile, setProfile] = useState({
     niruvanathinPeyar: '', mugavari: '', oor: '', pin: '', maanilam: '', country: detectedCountry, gstin: '', pan: '',
     email: '', tholaipesi: '', vangiPeyar: '', kanakkuEn: '', ifsc: '', swift: '',
-    logo: '', signature: '', upiId: '', googleClientId: '', googleDriveFolder: 'GST Billing Invoices',
+    logo: '', signature: '', upiId: '',
   });
 
   const [saving, setSaving] = useState(false);

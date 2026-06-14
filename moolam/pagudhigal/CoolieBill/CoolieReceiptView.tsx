@@ -3,7 +3,6 @@ import { ArrowLeft, Printer as PrintIcon, ShareNetwork, Spinner, DownloadSimple,
 import { FloatingBackButton } from '../FloatingBackButton';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
-import { ensureToken, findOrCreateFolder, uploadPDF } from '../../panigal/googleDrive';
 import { useLanguage } from '../../mozhi/LanguageContext';
 import { en } from '../../mozhi/en';
 import { ta } from '../../mozhi/ta';
@@ -139,27 +138,6 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
     }, 500);
   };
 
-  const uploadToGoogleDrive = async (pdfBlob, fileName) => {
-    try {
-      const clientId = profile.googleClientId;
-      const folderName = profile.googleDriveFolder || 'Coolie Billing Receipts';
-      if (!clientId) return;
-
-      const hasToken = await ensureToken(clientId);
-      if (!hasToken) {
-        thagaval('Google Drive: Please reconnect in Settings', 'warning');
-        return;
-      }
-
-      const folderId = await findOrCreateFolder(folderName);
-      await uploadPDF(fileName, pdfBlob, folderId);
-      thagaval(`Saved to Google Drive → ${folderName}`, 'success');
-    } catch (err) {
-      console.error('Google Drive upload error:', err);
-      thagaval('Google Drive upload failed: ' + err.message, 'warning');
-    }
-  };
-
   const buildPDF = async () => {
     const paperEl = printRef.current?.closest('.invoice-paper');
     const origTransform = paperEl ? paperEl.style.transform : '';
@@ -228,7 +206,6 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
       fetch(`/api/save-pdf?${params}`, { method: 'POST', headers: { 'Content-Type': 'application/pdf' }, body: pdfBlob }).catch(() => {});
 
       thagaval(`Receipt downloaded & saved to Saved Invoices/${clientName}/`, 'success');
-      uploadToGoogleDrive(pdfBlob, fileName);
     } catch (err) {
       console.error(err);
       thagaval('Failed to generate PDF.', 'error');

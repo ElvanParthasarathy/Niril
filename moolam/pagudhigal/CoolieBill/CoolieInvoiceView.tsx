@@ -6,7 +6,6 @@ import html2canvas from 'html2canvas';
 import { ViewHeader } from '../ViewHeader';
 import { thagaval } from '../Thagaval';
 import { useLanguage } from '../../mozhi/LanguageContext';
-import { ensureToken, findOrCreateFolder, uploadPDF } from '../../panigal/googleDrive';
 import './print.css'; // The exact print.css copied from Kananam
 import { getAllCoolieProfiles } from '../../Avanam';
 import numberToWordsTamil from '../../mozhi/tamilNumbers';
@@ -140,28 +139,6 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
         }, 500);
     };
 
-    // Upload PDF to Google Drive if configured
-    const uploadToGoogleDrive = async (pdfBlob, fileName) => {
-      try {
-        const clientId = activeProfile?.googleClientId;
-        const folderName = activeProfile?.googleDriveFolder || 'Coolie Bills';
-        if (!clientId) return;
-  
-        const hasToken = await ensureToken(clientId);
-        if (!hasToken) {
-          thagaval('Google Drive: Please reconnect in Settings', 'warning');
-          return;
-        }
-  
-        const folderId = await findOrCreateFolder(folderName);
-        await uploadPDF(fileName, pdfBlob, folderId);
-        thagaval(`Saved to Google Drive → ${folderName}`, 'success');
-      } catch (err) {
-        console.error('Google Drive upload error:', err);
-        thagaval('Google Drive upload failed: ' + err.message, 'warning');
-      }
-    };
-  
     const buildPDF = async () => {
       const paperEl = printRef.current?.closest('.invoice-paper');
       const origTransform = paperEl ? paperEl.style.transform : '';
@@ -234,7 +211,6 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
         fetch(`/api/save-pdf?${params}`, { method: 'POST', headers: { 'Content-Type': 'application/pdf' }, body: pdfBlob }).catch(() => {});
   
         thagaval('Invoice saved', 'success');
-        uploadToGoogleDrive(pdfBlob, fileName);
       } catch (err) {
         console.error(err);
         thagaval('Failed to generate PDF.', 'error');
