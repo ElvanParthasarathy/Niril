@@ -7,6 +7,8 @@ import './vadivam.css'
 
 import { LanguageProvider } from './mozhi/LanguageContext'
 
+import { BrowserRouter } from 'react-router-dom';
+
 // Register service worker with auto-update
 const updateSW = registerSW({
   onNeedRefresh() {
@@ -21,7 +23,9 @@ const updateSW = registerSW({
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <LanguageProvider>
-      <Seyali />
+      <BrowserRouter>
+        <Seyali />
+      </BrowserRouter>
     </LanguageProvider>
   </StrictMode>,
 )

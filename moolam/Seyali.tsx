@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { CaretLeft, CaretDoubleLeft as KeyboardDoubleArrowLeft, CaretDoubleRight as KeyboardDoubleArrowRight, House as Home, FileText as Description, GearSix as Settings, Plus as Add, Users as People, Package as Inventory, ChartBar as BarChart, Wallet as AccountBalanceWallet, ArrowsClockwise as Refresh, Receipt, BookOpen as MenuBook, Moon as DarkMode, Sun as LightMode, DownloadSimple as Download, X as Close, ShoppingCart, CaretDown as KeyboardArrowDown, CaretRight as KeyboardArrowRight, Buildings as Business, PencilSimple as Edit, Question as HelpOutlined, MagnifyingGlass as Search, Command as KeyboardCommandKey, Bell as Notifications, List as Menu, CalendarDots } from '@phosphor-icons/react';
 import { useState, useEffect, useRef, useMemo, useCallback, startTransition } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Badge, Box, Typography, Avatar, Divider, Tooltip, IconButton, Collapse, CssBaseline, Dialog, DialogTitle, DialogContent, DialogActions, Button, Backdrop, CircularProgress, InputBase, AppBar, Toolbar, useMediaQuery, Stack, Select, MenuItem, Paper, Popover } from '@mui/material';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { getAllProfiles, saveProfile, getAllBills, getAllProducts } from './Avanam';
@@ -162,58 +163,79 @@ function DevLanguageSwitcher({ profile, setProfile, language, setLanguage }: any
 
 function Seyali() {
   const { t, language, setLanguage } = useLanguage();
-  const [currentView, setCurrentView] = useState(() => {
-    // PWA manifest "shortcuts" deep-link in via ?view=Close (e.g. right-clicking
-    // the pinned taskbar icon → "New Invoice" opens /?view=new). Honour that
-    // before falling back to whatever the user was last looking at.
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const v = params.get('view');
-      const valid = ['dashboard', 'new', 'invoice-editor', 'invoice-list', 'invoice-view', 'clients', 'client-editor', 'inventory', 'product-editor', 'receipts', 'receipt-editor', 'receipt-view', 'reports', 'filing', 'settings'];
-      if (v && valid.includes(v)) {
-        return v === 'new' ? 'invoice-editor' : v;
-      }
-    } catch { /* sandboxed history API — fall through */ }
-    return sessionStorage.getItem('gst_currentView') || 'dashboard';
-  });
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Handle browser back/forward buttons
-  useEffect(() => {
-    const handlePopState = (event) => {
-      if (event.state && event.state.view) {
-        setCurrentView(event.state.view);
-      } else {
-        const params = new URLSearchParams(window.location.search);
-        const v = params.get('view') || 'dashboard';
-        setCurrentView(v);
-      }
-    };
-    window.addEventListener('popstate', handlePopState);
-    
-    // Initially replace state so first back navigation works correctly
-    window.history.replaceState({ view: currentView }, '', window.location.pathname + window.location.search);
-    
-    return () => window.removeEventListener('popstate', handlePopState);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const currentView = useMemo(() => {
+    const path = location.pathname;
+    if (path.startsWith('/dashboard/invoices/edit') || path.startsWith('/dashboard/invoices/new')) return 'invoice-editor';
+    if (path.startsWith('/dashboard/invoices/view')) return 'invoice-view';
+    if (path.startsWith('/dashboard/invoices')) return 'invoice-list';
+    if (path.startsWith('/dashboard/clients/edit') || path.startsWith('/dashboard/clients/new')) return 'client-editor';
+    if (path.startsWith('/dashboard/clients')) return 'clients';
+    if (path.startsWith('/dashboard/inventory/edit') || path.startsWith('/dashboard/inventory/new')) return 'product-editor';
+    if (path.startsWith('/dashboard/inventory')) return 'inventory';
+    if (path.startsWith('/dashboard/receipts/edit') || path.startsWith('/dashboard/receipts/new')) return 'receipt-editor';
+    if (path.startsWith('/dashboard/receipts/view')) return 'receipt-view';
+    if (path.startsWith('/dashboard/receipts')) return 'receipts';
+    if (path.startsWith('/dashboard/reports')) return 'reports';
+    if (path.startsWith('/dashboard/gst-returns')) return 'gst-returns';
+    if (path.startsWith('/dashboard/settings')) return 'settings';
+    return 'dashboard';
+  }, [location.pathname]);
 
-  // Sync state to URL and history stack when changed programmatically
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const urlView = params.get('view') || 'dashboard';
+  const setCurrentView = useCallback((v: string, replace = false) => {
+    let path = '/dashboard';
+    if (v === 'invoice-list') path = '/dashboard/invoices';
+    else if (v === 'invoice-editor') path = '/dashboard/invoices/edit';
+    else if (v === 'invoice-view') path = '/dashboard/invoices/view';
+    else if (v === 'clients') path = '/dashboard/clients';
+    else if (v === 'client-editor') path = '/dashboard/clients/edit';
+    else if (v === 'inventory') path = '/dashboard/inventory';
+    else if (v === 'product-editor') path = '/dashboard/inventory/edit';
+    else if (v === 'receipts') path = '/dashboard/receipts';
+    else if (v === 'receipt-editor') path = '/dashboard/receipts/edit';
+    else if (v === 'receipt-view') path = '/dashboard/receipts/view';
+    else if (v === 'reports') path = '/dashboard/reports';
+    else if (v === 'gst-returns') path = '/dashboard/gst-returns';
+    else if (v === 'settings') path = '/dashboard/settings';
     
-    if (urlView !== currentView) {
-      const newParams = new URLSearchParams(window.location.search);
-      if (currentView === 'dashboard') {
-        newParams.delete('view');
-      } else {
-        newParams.set('view', currentView);
-      }
-      const qs = newParams.toString();
-      const newUrl = window.location.pathname + (qs ? '?' + qs : '');
-      window.history.pushState({ view: currentView }, '', newUrl);
+    // Smart history management for top-level tabs
+    const isTopLevelTab = ['invoice-list', 'clients', 'inventory', 'receipts', 'reports', 'gst-returns', 'settings'].includes(v);
+    const isCurrentlyDashboard = location.pathname === '/dashboard' || location.pathname === '/';
+    
+    const shouldReplace = isTopLevelTab && isCurrentlyDashboard ? false : replace;
+
+    navigate(path, { replace: shouldReplace, state: location.state });
+  }, [navigate, location.pathname, location.state]);
+
+  // Clean up empty edit URLs that shouldn't exist anymore
+  useEffect(() => {
+    const path = location.pathname;
+    if (path === '/dashboard/inventory/edit') {
+      navigate('/dashboard/inventory/new', { replace: true });
+    } else if (path === '/dashboard/clients/edit') {
+      navigate('/dashboard/clients/new', { replace: true });
+    } else if (path === '/dashboard/receipts/edit') {
+      navigate('/dashboard/receipts/new', { replace: true });
     }
-  }, [currentView]);
+  }, [location.pathname, navigate]);
+
+  const handleBack = useCallback((fallbackView: string) => {
+    if (window.history.state && window.history.state.idx > 0) {
+      navigate(-1);
+    } else {
+      setCurrentView(fallbackView, true);
+    }
+  }, [navigate, setCurrentView]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const viewParam = params.get('view');
+    if (viewParam) {
+      setCurrentView(viewParam === 'new' ? 'invoice-editor' : viewParam, true);
+    }
+  }, [location.search, setCurrentView]);
   
   const [dbProfile, setProfile] = useState<any>(null);
   const [devBilingualToggle, setDevBilingualToggle] = useState<boolean | null>(null);
@@ -258,7 +280,23 @@ function Seyali() {
     } catch { return null; }
   });
   // Inline overlay for opening client/product editors from inside the bill editor
-  const [inlineOverlay, setInlineOverlay] = useState<{ type: 'client-editor' | 'product-editor'; data?: any } | null>(null);
+  const inlineOverlay = useMemo(() => {
+    if (location.pathname.endsWith('/add-client')) return { type: 'client-editor' };
+    if (location.pathname.endsWith('/add-product')) return { type: 'product-editor' };
+    return null;
+  }, [location.pathname]);
+
+  const setInlineOverlay = useCallback((overlay) => {
+    if (overlay === null) {
+      if (location.pathname.endsWith('/add-client') || location.pathname.endsWith('/add-product')) {
+        navigate(-1);
+      }
+    } else if (overlay.type === 'client-editor') {
+      navigate(location.pathname.replace(/\/$/, '') + '/add-client');
+    } else if (overlay.type === 'product-editor') {
+      navigate(location.pathname.replace(/\/$/, '') + '/add-product');
+    }
+  }, [navigate, location.pathname]);
   const [dataVersion, setDataVersion] = useState(0);
   const [refreshKey, setRefreshKey] = useState(0);
   const dismissOverlay = (saved?: boolean) => { setInlineOverlay(null); if (saved) setDataVersion(v => v + 1); };
@@ -416,18 +454,27 @@ function Seyali() {
   }, [editingBill]);
 
   useEffect(() => {
-    if (editingClient) sessionStorage.setItem('niril_editingClient', JSON.stringify(editingClient));
-    else sessionStorage.removeItem('niril_editingClient');
+    if (editingClient) {
+      sessionStorage.setItem('niril_editingClient', JSON.stringify(editingClient));
+    } else {
+      sessionStorage.removeItem('niril_editingClient');
+    }
   }, [editingClient]);
 
   useEffect(() => {
-    if (editingProduct) sessionStorage.setItem('niril_editingProduct', JSON.stringify(editingProduct));
-    else sessionStorage.removeItem('niril_editingProduct');
+    if (editingProduct) {
+      sessionStorage.setItem('niril_editingProduct', JSON.stringify(editingProduct));
+    } else {
+      sessionStorage.removeItem('niril_editingProduct');
+    }
   }, [editingProduct]);
 
   useEffect(() => {
-    if (editingReceipt) sessionStorage.setItem('niril_editingReceipt', JSON.stringify(editingReceipt));
-    else sessionStorage.removeItem('niril_editingReceipt');
+    if (editingReceipt) {
+      sessionStorage.setItem('niril_editingReceipt', JSON.stringify(editingReceipt));
+    } else {
+      sessionStorage.removeItem('niril_editingReceipt');
+    }
   }, [editingReceipt]);
 
 
@@ -466,7 +513,7 @@ function Seyali() {
   const handleNewInvoice = () => {
     sessionStorage.removeItem('gst_invoiceDraft');
     setEditingBill(null);
-    setCurrentView('invoice-editor');
+    navigate('/dashboard/invoices/new');
   };
 
   const handleEditInvoice = (bill) => {
@@ -475,7 +522,7 @@ function Seyali() {
     if (currentView === 'dashboard' || currentView === 'invoice-list') {
       sessionStorage.setItem('gst_backTo', currentView);
     }
-    setCurrentView('invoice-editor');
+    navigate(`/dashboard/invoices/edit/${bill.id || 'draft'}`);
   };
 
   const handleDuplicateInvoice = (bill) => {
@@ -483,7 +530,7 @@ function Seyali() {
     const clone = JSON.parse(JSON.stringify(bill));
     clone._isDuplicate = true;
     setEditingBill(clone);
-    setCurrentView('invoice-editor');
+    navigate(`/dashboard/invoices/edit/draft`);
   };
 
   const handleViewInvoice = (bill) => {
@@ -492,7 +539,7 @@ function Seyali() {
     if (currentView === 'dashboard' || currentView === 'invoice-list') {
       sessionStorage.setItem('gst_backTo', currentView);
     }
-    setCurrentView('invoice-view');
+    navigate(`/dashboard/invoices/view/${bill.id || 'draft'}`);
   };
 
   const handleInstallPWA = async () => {
@@ -520,7 +567,7 @@ function Seyali() {
     clone._isDuplicate = true;
     clone._convertToType = 'tax-invoice';
     setEditingBill(clone);
-    setCurrentView('invoice-editor');
+    navigate(`/dashboard/invoices/edit/draft`);
   };
 
   const mainNavItems = [
@@ -1072,15 +1119,8 @@ function Seyali() {
           }}>
             {appMode === 'GST' ? (
               <InvoiceEditor
-                onBack={() => {
-                  if (editingBill && !editingBill._isDuplicate) {
-                    setCurrentView('invoice-view');
-                  } else {
-                    setEditingBill(null);
-                    setCurrentView(sessionStorage.getItem('gst_backTo') === 'dashboard' ? 'dashboard' : 'invoice-list');
-                  }
-                }}
-                onSaved={(bill) => { setEditingBill(bill); setCurrentView('invoice-view'); setRefreshKey(k => k + 1); }}
+                onBack={() => navigate(-1)}
+                onSaved={(bill) => { setEditingBill(bill); navigate(`/dashboard/invoices/view/${bill.id || 'draft'}`, { replace: true }); setRefreshKey(k => k + 1); }}
                 profile={profile} editingBill={editingBill}
                 onRequestAddClient={() => setInlineOverlay({ type: 'client-editor' })}
                 onRequestAddProduct={() => setInlineOverlay({ type: 'product-editor' })}
@@ -1089,8 +1129,8 @@ function Seyali() {
             ) : (
               <CoolieInvoiceEditor 
                 existingBill={editingBill}
-                onBack={() => { setEditingBill(null); setCurrentView(sessionStorage.getItem('gst_backTo') === 'dashboard' ? 'dashboard' : 'invoice-list'); }}
-                onSaved={(bill) => { setEditingBill(bill); setCurrentView('invoice-view'); setRefreshKey(k => k + 1); }}
+                onBack={() => navigate(-1)}
+                onSaved={(bill) => { setEditingBill(bill); navigate(`/dashboard/invoices/view/${bill.id || 'draft'}`, { replace: true }); setRefreshKey(k => k + 1); }}
                 onRequestAddClient={() => setInlineOverlay({ type: 'client-editor' })}
                 onRequestAddProduct={() => setInlineOverlay({ type: 'product-editor' })}
                 dataVersion={dataVersion}
@@ -1167,14 +1207,14 @@ function Seyali() {
               <InvoiceView 
                 bill={editingBill} 
                 profile={profile} 
-                onBack={() => { setEditingBill(null); setCurrentView(sessionStorage.getItem('gst_backTo') === 'dashboard' ? 'dashboard' : 'invoice-list'); }} 
-                onEdit={(bill) => { setEditingBill(bill); setCurrentView('invoice-editor'); }} 
+                onBack={() => navigate(-1)} 
+                onEdit={(bill) => { setEditingBill(bill); navigate(`/dashboard/invoices/edit/${bill.id || 'draft'}`); }} 
               />
             ) : (
               <CoolieInvoiceView 
                 bill={editingBill} 
-                onBack={() => { setEditingBill(null); setCurrentView(sessionStorage.getItem('gst_backTo') === 'dashboard' ? 'dashboard' : 'invoice-list'); }} 
-                onEdit={(bill) => { setEditingBill(bill); setCurrentView('invoice-editor'); }} 
+                onBack={() => navigate(-1)} 
+                onEdit={(bill) => { setEditingBill(bill); navigate(`/dashboard/invoices/edit/${bill.id || 'draft'}`); }} 
               />
             )}
           </Box>
@@ -1183,9 +1223,9 @@ function Seyali() {
         {/* Global screens rendering inline */}
         {currentView === 'clients' && (
           appMode === 'GST' ? (
-            <Vanigargal key={refreshKey} onAddClient={() => { setEditingClient(null); setCurrentView('client-editor'); }} onEditClient={(c) => { setEditingClient(c); setCurrentView('client-editor'); }} profile={profile} />
+            <Vanigargal key={refreshKey} onAddClient={() => { setEditingClient(null); navigate('/dashboard/clients/new'); }} onEditClient={(c) => { setEditingClient(c); navigate(`/dashboard/clients/edit/${c.id || 'draft'}`); }} profile={profile} />
           ) : (
-            <CoolieMerchants key={refreshKey} onAddClient={() => { setEditingClient(null); setCurrentView('client-editor'); }} onEditClient={(c) => { setEditingClient(c); setCurrentView('client-editor'); }} />
+            <CoolieMerchants key={refreshKey} onAddClient={() => { setEditingClient(null); navigate('/dashboard/clients/new'); }} onEditClient={(c) => { setEditingClient(c); navigate(`/dashboard/clients/edit/${c.id || 'draft'}`); }} />
           )
         )}
         {currentView === 'client-editor' && (
@@ -1205,15 +1245,15 @@ function Seyali() {
             {appMode === 'GST' ? (
               <VanigarThoguppu 
                 client={editingClient} 
-                onBack={() => { setEditingClient(null); setCurrentView('clients'); }} 
-                onSaved={(c) => { setEditingClient(null); setCurrentView('clients'); setRefreshKey(k => k + 1); }} 
+                onBack={() => navigate(-1)} 
+                onSaved={() => { setEditingClient(null); navigate('/dashboard/clients', { replace: true }); setRefreshKey(k => k + 1); }} 
                 profileSettings={profile} 
               />
             ) : (
               <CoolieClientEditor 
                 client={editingClient} 
-                onBack={() => { setEditingClient(null); setCurrentView('clients'); }} 
-                onSaved={(c) => { setEditingClient(null); setCurrentView('clients'); setRefreshKey(k => k + 1); }} 
+                onBack={() => navigate(-1)} 
+                onSaved={() => { setEditingClient(null); navigate('/dashboard/clients', { replace: true }); setRefreshKey(k => k + 1); }} 
               />
             )}
           </Box>
@@ -1221,9 +1261,9 @@ function Seyali() {
 
         {currentView === 'inventory' && (
           appMode === 'GST' ? (
-            <Porul key={refreshKey} onAddProduct={() => { setEditingProduct(null); setCurrentView('product-editor'); }} onEditProduct={(p) => { setEditingProduct(p); setCurrentView('product-editor'); }} profile={profile} />
+            <Porul key={refreshKey} onAddProduct={() => { setEditingProduct(null); navigate('/dashboard/inventory/new'); }} onEditProduct={(p) => { setEditingProduct(p); navigate(`/dashboard/inventory/edit/${p.id || 'draft'}`); }} profile={profile} />
           ) : (
-            <CoolieItems key={refreshKey} onAddProduct={() => { setEditingProduct(null); setCurrentView('product-editor'); }} onEditProduct={(p) => { setEditingProduct(p); setCurrentView('product-editor'); }} />
+            <CoolieItems key={refreshKey} onAddProduct={() => { setEditingProduct(null); navigate('/dashboard/inventory/new'); }} onEditProduct={(p) => { setEditingProduct(p); navigate(`/dashboard/inventory/edit/${p.id || 'draft'}`); }} />
           )
         )}
         {currentView === 'product-editor' && (
@@ -1243,16 +1283,16 @@ function Seyali() {
             {appMode === 'GST' ? (
               <PorulThoguppu 
                 product={editingProduct} 
-                onBack={() => { setEditingProduct(null); setCurrentView('inventory'); }} 
-                onSaved={(p) => { setEditingProduct(null); setCurrentView('inventory'); setRefreshKey(k => k + 1); }} 
+                onBack={() => navigate(-1)} 
+                onSaved={() => { setEditingProduct(null); navigate('/dashboard/inventory', { replace: true }); setRefreshKey(k => k + 1); }} 
                 profileSettings={profile} 
                 defaultCountry={profile?.country}
               />
             ) : (
               <CoolieItemEditor 
                 product={editingProduct} 
-                onBack={() => { setEditingProduct(null); setCurrentView('inventory'); }} 
-                onSaved={(p) => { setEditingProduct(null); setCurrentView('inventory'); setRefreshKey(k => k + 1); }} 
+                onBack={() => navigate(-1)} 
+                onSaved={() => { setEditingProduct(null); navigate('/dashboard/inventory', { replace: true }); setRefreshKey(k => k + 1); }} 
               />
             )}
           </Box>
@@ -1264,16 +1304,16 @@ function Seyali() {
             <Patru 
               key={refreshKey}
               profile={profile} 
-              onAddReceipt={() => { setEditingReceipt(null); setCurrentView('receipt-editor'); }} 
-              onEditReceipt={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-editor'); }} 
-              onViewReceipt={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-view'); }}
+              onAddReceipt={() => { setEditingReceipt(null); navigate('/dashboard/receipts/new'); }} 
+              onEditReceipt={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/edit/${rcp.id || 'draft'}`); }} 
+              onViewReceipt={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/view/${rcp.id || 'draft'}`); }}
             />
           ) : (
             <CoolieReceiptList 
               key={refreshKey}
-              onAddReceipt={() => { setEditingReceipt(null); setCurrentView('receipt-editor'); }} 
-              onEditReceipt={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-editor'); }} 
-              onViewReceipt={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-view'); }}
+              onAddReceipt={() => { setEditingReceipt(null); navigate('/dashboard/receipts/new'); }} 
+              onEditReceipt={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/edit/${rcp.id || 'draft'}`); }} 
+              onViewReceipt={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/view/${rcp.id || 'draft'}`); }}
             />
           )
         )}
@@ -1295,14 +1335,14 @@ function Seyali() {
               <ReceiptEditor 
                 profile={profile} 
                 editingReceipt={editingReceipt} 
-                onBack={() => { setEditingReceipt(null); setCurrentView('receipts'); }} 
-                onSaved={() => { setEditingReceipt(null); setCurrentView('receipts'); setRefreshKey(k => k + 1); }} 
+                onBack={() => navigate(-1)} 
+                onSaved={() => { setEditingReceipt(null); navigate('/dashboard/receipts', { replace: true }); setRefreshKey(k => k + 1); }} 
               />
             ) : (
               <CoolieReceiptEditor 
                 editingReceipt={editingReceipt} 
-                onBack={() => { setEditingReceipt(null); setCurrentView('receipts'); }} 
-                onSaved={() => { setEditingReceipt(null); setCurrentView('receipts'); setRefreshKey(k => k + 1); }} 
+                onBack={() => navigate(-1)} 
+                onSaved={() => { setEditingReceipt(null); navigate('/dashboard/receipts', { replace: true }); setRefreshKey(k => k + 1); }} 
               />
             )}
           </Box>
@@ -1325,14 +1365,14 @@ function Seyali() {
               <ReceiptView
                 receipt={editingReceipt}
                 profile={profile}
-                onBack={() => { setEditingReceipt(null); setCurrentView('receipts'); }}
-                onEdit={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-editor'); }}
+                onBack={() => navigate(-1)}
+                onEdit={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/edit/${rcp.id || 'draft'}`); }}
               />
             ) : (
               <CoolieReceiptView
                 receipt={editingReceipt}
-                onBack={() => { setEditingReceipt(null); setCurrentView('receipts'); }}
-                onEdit={(rcp) => { setEditingReceipt(rcp); setCurrentView('receipt-editor'); }}
+                onBack={() => navigate(-1)}
+                onEdit={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/edit/${rcp.id || 'draft'}`); }}
               />
             )}
           </Box>
@@ -1429,13 +1469,13 @@ function Seyali() {
             onClick={() => {
               if (currentView === 'clients') {
                 setEditingClient(null);
-                setCurrentView('client-editor');
+                navigate('/dashboard/clients/new');
               } else if (currentView === 'inventory') {
                 setEditingProduct(null);
-                setCurrentView('product-editor');
+                navigate('/dashboard/inventory/new');
               } else if (currentView === 'receipts') {
                 setEditingReceipt(null);
-                setCurrentView('receipt-editor');
+                navigate('/dashboard/receipts/new');
               } else {
                 handleNewInvoice();
               }

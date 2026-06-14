@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { SidebarSimple, FileText, GearSix, DownloadSimple, Moon, Sun, CaretDown, CaretRight, Question, Bell, SignOut, CaretUpDown, Invoice, HandCoins } from '@phosphor-icons/react';
 import { useState } from 'react';
-import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Badge, Box, Typography, Avatar, Divider, Tooltip, IconButton, Collapse, Popover, Switch } from '@mui/material';
+import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Badge, Box, Typography, Avatar, Divider, Tooltip, IconButton, Collapse, Popover, Switch, Fade } from '@mui/material';
 import { useLanguage } from '../mozhi/LanguageContext';
 
 export default function Pakkapatti({
@@ -51,7 +51,7 @@ export default function Pakkapatti({
 
   const handleNavClick = (id: any, defaultOnClick?: any) => {
     if (defaultOnClick) defaultOnClick();
-    else setCurrentView(id);
+    else setCurrentView(id, true);
     if (mobileOpen && handleDrawerToggle) {
       handleDrawerToggle();
     }
@@ -290,59 +290,130 @@ export default function Pakkapatti({
 
         </List>
 
-          {/* Settings Zone */}
-          <Box sx={{ px: 1.5, pb: 3, display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <ListItemButton 
-              onClick={() => { handleNavClick('settings'); }} 
-              sx={{ 
-                borderRadius: isCollapsed ? '16px' : '100px', 
-                mx: isCollapsed ? 'auto' : 0,
-                width: isCollapsed ? 48 : '100%',
-                height: isCollapsed ? 48 : 'auto',
-                justifyContent: isCollapsed ? 'center' : 'flex-start',
-                alignItems: 'center',
-                flexDirection: isCollapsed ? 'column' : 'row',
-                px: isCollapsed ? 0 : '18px',
-                py: isCollapsed ? 0 : '10px',
-                minHeight: isCollapsed ? 48 : 40,
-                color: darkMode ? '#aaaaaa' : '#666666',
-                transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
-                '&:hover': { 
-                  backgroundColor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
-                  color: darkMode ? '#ffffff' : '#000000',
-                  '& .MuiListItemIcon-root': { color: darkMode ? '#ffffff' : '#000000' }
-                },
-                '&:active svg': {
-                  transform: 'scale(0.85)',
-                },
-                '& svg': {
-                  transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)',
-                },
-                '& .MuiTouchRipple-child': {
-                  backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.2)',
-                }
-              }}
-            >
-              <ListItemIcon sx={{ mr: isCollapsed ? 0 : 1.25, mb: 0, minWidth: 0, justifyContent: 'center', color: currentView === 'settings' ? (darkMode ? '#ffffff' : '#000000') : (darkMode ? '#aaaaaa' : '#666666'), transition: 'color 0.2s' }}>
-                <GearSix size={isCollapsed ? 24 : 20} weight={currentView === 'settings' ? "fill" : "regular"} />
-              </ListItemIcon>
-              {!isCollapsed && (
-                <ListItemText 
-                  sx={{ m: 0, display: 'block' }}
-                  primary={
-                    <Typography variant="body2" sx={{ 
-                      fontWeight: 500, 
-                      fontSize: '0.875rem',
-                      lineHeight: 1.2,
-                      position: 'relative',
-                      top: '1px'
+          {/* Profile & Settings Zone */}
+          <Box sx={{ px: 1.5, pb: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
+            {isCollapsed ? (
+              <Box 
+                sx={{ 
+                  borderRadius: '16px', 
+                  mx: 'auto',
+                  width: 48,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  minHeight: 48,
+                }}
+              >
+                <Tooltip title={t('settings') || 'Settings'} placement="right" arrow TransitionComponent={Fade}>
+                  <IconButton 
+                    onClick={() => handleNavClick('settings')}
+                    sx={{ 
+                      width: 48, 
+                      height: 48, 
+                      color: currentView === 'settings' ? 'primary.main' : (darkMode ? '#aaaaaa' : '#666666'),
+                      '&:hover': {
+                        backgroundColor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
+                        color: darkMode ? '#ffffff' : '#000000'
+                      }
+                    }}
+                  >
+                    <GearSix size={24} weight={currentView === 'settings' ? "fill" : "regular"} />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            ) : (
+              <Box sx={{ position: 'relative', width: '100%' }}>
+                <ListItemButton
+                  component="div"
+                  disableRipple
+                  onClick={() => { if(onSwitchModeRequest) onSwitchModeRequest(); }}
+                  sx={{ 
+                    borderRadius: '16px', 
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
+                    pl: '18px',
+                    pr: '42px',
+                    py: '8px',
+                    minHeight: 52,
+                    userSelect: 'none',
+                    transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
+                    '&:hover': {
+                      backgroundColor: 'transparent'
+                    }
+                  }}
+                >
+                  <Box 
+                    sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      flex: 1, 
+                      minWidth: 0, 
+                      gap: 1.25,
+                      alignSelf: 'stretch',
+                      '&:hover .profile-text, &:hover .profile-circle': {
+                        color: darkMode ? '#ffffff' : '#000000'
+                      }
+                    }}
+                  >
+                    <Box 
+                      className="profile-circle"
+                      sx={{ 
+                      width: 32, 
+                      height: 32, 
+                      borderRadius: '50%', 
+                      bgcolor: darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      color: darkMode ? '#aaaaaa' : '#666666',
+                      transition: 'color 0.2s ease'
                     }}>
-                      {t('settings') || 'Settings'}
-                    </Typography>
-                  } 
-                />
-              )}
-            </ListItemButton>
+                      {appMode === 'COOLIE' ? <HandCoins weight="fill" size={16} /> : <Invoice weight="fill" size={16} />}
+                    </Box>
+
+                    <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                      <Typography 
+                        className="profile-text"
+                        noWrap 
+                        variant="body2" 
+                        sx={{ 
+                        fontWeight: 500, 
+                        fontSize: '0.875rem', 
+                        lineHeight: 1.2, 
+                        color: darkMode ? '#aaaaaa' : '#666666',
+                        transition: 'color 0.2s ease',
+                        position: 'relative',
+                        top: '1px'
+                      }}>
+                        {appMode === 'COOLIE' ? t('nirilCoolie') : t('nirilSilk')}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </ListItemButton>
+
+                <Box sx={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)' }}>
+                  <Tooltip title={t('settings') || 'Settings'} placement="top" arrow TransitionComponent={Fade}>
+                    <IconButton 
+                      onClick={(e) => { e.stopPropagation(); handleNavClick('settings'); }}
+                      size="small"
+                      sx={{ 
+                        color: 'text.secondary',
+                        bgcolor: 'transparent',
+                        '&:hover': {
+                           bgcolor: darkMode ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)',
+                           color: darkMode ? '#ffffff' : '#000000'
+                        }
+                      }}
+                    >
+                      <GearSix size={18} weight="regular" />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+              </Box>
+            )}
           </Box>
       </Box>
   );

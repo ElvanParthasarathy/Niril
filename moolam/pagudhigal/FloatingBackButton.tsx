@@ -34,7 +34,7 @@ export const FloatingBackButton: React.FC<FloatingBackButtonProps> = ({ label, c
                 sx={{
                     bgcolor: 'background.paper',
                     color: 'text.primary',
-                    p: 1.5, // Better touch target
+                    p: 1.2,
                     '&:active svg': { transform: 'scale(0.85)' },
                     '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
                 }}

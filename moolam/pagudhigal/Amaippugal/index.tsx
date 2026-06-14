@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Typography, Button, ButtonBase } from '@mui/material';
 import { Buildings, Hash, Cloud, ArrowsClockwise, CaretRight, Invoice, HandCoins, Translate, MapPin, Bank, Palette, PaintBrush } from '@phosphor-icons/react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,13 +21,15 @@ import '../../styles/settings/hub.css';
 
 export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, darkMode, setDarkMode }) {
   const { language, setLanguage, t } = useLanguage();
+  const navigate = useNavigate();
+  const location = useLocation();
   
   const [profile, setProfile] = useState<any>({});
   const [profileLoaded, setProfileLoaded] = useState(false);
   const [businessProfiles, setBusinessProfiles] = useState([]);
   const [saving, setSaving] = useState(false);
   
-  // Storage & Cloud connection states (moved to child or managed here, we'll just manage them here to be safe)
+  // Storage & Cloud connection states
   const [driveConnected, setDriveConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
 
@@ -47,19 +50,38 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
   }, []);
 
   useEffect(() => {
-    const handlePopState = (e) => {
+    const path = location.pathname;
+    if (!path.startsWith('/dashboard/settings')) return;
+
+    const parts = path.split('/');
+    const subRoute = parts[3];
+
+    if (!subRoute) {
       if (isMobile) {
-        const state = e.state;
-        if (state && state.settingsView !== undefined) {
-          setCurrentView(state.settingsView);
-        } else {
-          setCurrentView('hub');
-        }
+        setCurrentView('hub');
+      } else {
+        setCurrentView(0);
+        setActiveTab('business');
       }
-    };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, [isMobile]);
+      return;
+    }
+
+    if (subRoute === 'app-preferences') setCurrentView(1);
+    else if (subRoute === 'cloud') setCurrentView(2);
+    else if (subRoute === 'updates') setCurrentView(3);
+    else {
+      setCurrentView(0);
+      if (appMode === 'COOLIE') {
+        if (subRoute === 'address') setActiveTab(1);
+        else if (subRoute === 'branding') setActiveTab(2);
+        else if (subRoute === 'bank') setActiveTab(3);
+        else if (subRoute === 'theme') setActiveTab(4);
+        else setActiveTab('business');
+      } else {
+        setActiveTab(subRoute);
+      }
+    }
+  }, [location.pathname, isMobile, appMode]);
 
   useEffect(() => {
     getProfile().then(p => {
@@ -77,29 +99,28 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
   const loadBusinessProfiles = async () => setBusinessProfiles(await getAllProfiles());
 
   const handleNavigate = (viewId, tab = 'business') => {
-    if (isMobile) {
-      window.history.pushState({ view: 'settings', settingsView: viewId, settingsTab: tab }, '');
+    let path = '/dashboard/settings';
+    
+    if (viewId === 1) path = '/dashboard/settings/app-preferences';
+    else if (viewId === 2) path = '/dashboard/settings/cloud';
+    else if (viewId === 3) path = '/dashboard/settings/updates';
+    else if (viewId === 0) {
+      if (appMode === 'COOLIE') {
+        if (tab === 1) path = '/dashboard/settings/address';
+        else if (tab === 2) path = '/dashboard/settings/branding';
+        else if (tab === 3) path = '/dashboard/settings/bank';
+        else if (tab === 4) path = '/dashboard/settings/theme';
+        else path = '/dashboard/settings/business';
+      } else {
+        path = `/dashboard/settings/${tab}`;
+      }
     }
-    setActiveTab(tab);
-    setCurrentView(viewId as any);
+    
+    navigate(path);
   };
 
   const goHub = () => {
-    if (!isMobile) {
-      if (currentView === 0 && activeTab !== 'business') {
-        setActiveTab('business');
-      }
-      setCurrentView(0);
-    } else {
-      if (currentView !== 'hub') {
-        // Update UI instantly for responsive feel
-        setCurrentView('hub');
-        // Pop history to keep native back button in sync
-        if (window.history.state && window.history.state.settingsView !== undefined) {
-          window.history.back();
-        }
-      }
-    }
+    navigate('/dashboard/settings');
   };
 
   const handleCreateNewProfile = async () => {
@@ -238,7 +259,7 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
           <Box 
              onClick={(e) => {
                 e.stopPropagation();
-                if (onSwitchModeRequest) onSwitchModeRequest();
+                if (onSwitchModeRequest) onSwitchModeRequest('settings');
              }}
              sx={{ 
              position: 'absolute',

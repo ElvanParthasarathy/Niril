@@ -2675,12 +2675,6 @@ kbd {
     font-size: 0.72rem;
   }
 
-  /* ── Invoice preview — not normally shown on mobile ── */
-  .invoice-preview-container {
-    width: 100% !important;
-    min-height: auto !important;
-    font-size: 10px;
-  }
 
   /* ── PWA install banner ── */
   .pwa-install-banner {
