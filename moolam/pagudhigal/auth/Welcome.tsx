@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AuthLayout, AuthButton } from './AuthComponents';
 import { Database, CheckCircle, GlobeHemisphereWest } from '@phosphor-icons/react';
+import { List, ListItem, ListItemButton, ListItemText, ListItemIcon } from '@mui/material';
 import { useLanguage } from '../../mozhi/LanguageContext';
 
 const GREETINGS = ["வணக்கம்!", "Hello!", "നമസ്കാരം!"];
@@ -131,7 +132,7 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                             alignItems: 'center',
                             marginBottom: '40px'
                         }}>
-                            <GlobeHemisphereWest size={80} weight="regular" color="#0A84FF" />
+                            <GlobeHemisphereWest size={80} weight="regular" color="var(--auth-text)" />
                         </div>
 
                         {/* TEXT SECTION */}
@@ -171,59 +172,69 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                             paddingBottom: '40px'
                         }}>
                             
-                            {/* IOS-STYLE LANGUAGE SELECTOR */}
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'column',
+                            {/* MUI LANGUAGE SELECTOR */}
+                            <List sx={{
                                 width: '100%',
                                 maxWidth: '320px',
-                                marginBottom: '32px',
-                                background: 'var(--auth-surface)',
+                                bgcolor: 'var(--auth-surface)',
                                 borderRadius: '16px',
                                 border: '1px solid var(--auth-divider)',
+                                mb: 4,
+                                boxShadow: '0 4px 12px var(--auth-glow)',
                                 overflow: 'hidden',
-                                boxShadow: '0 4px 12px var(--auth-glow)'
+                                p: 0
                             }}>
-                                <div 
-                                    onClick={() => setLanguage('ta')}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                        padding: '16px 20px',
-                                        cursor: 'pointer',
-                                        borderBottom: '1px solid var(--auth-divider)',
-                                        background: language === 'ta' ? 'var(--auth-glow)' : 'transparent',
-                                        transition: 'background 0.2s'
-                                    }}
-                                >
-                                    <span style={{ 
-                                        fontSize: '18px', 
-                                        color: 'var(--auth-text)',
-                                        fontWeight: language === 'ta' ? '600' : '500'
-                                    }}>தமிழ்</span>
-                                    {language === 'ta' && <CheckCircle size={24} weight="fill" color="#0A84FF" />}
-                                </div>
-                                <div 
-                                    onClick={() => setLanguage('en')}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                        padding: '16px 20px',
-                                        cursor: 'pointer',
-                                        background: language === 'en' ? 'var(--auth-glow)' : 'transparent',
-                                        transition: 'background 0.2s'
-                                    }}
-                                >
-                                    <span style={{ 
-                                        fontSize: '18px', 
-                                        color: 'var(--auth-text)',
-                                        fontWeight: language === 'en' ? '600' : '500'
-                                    }}>English</span>
-                                    {language === 'en' && <CheckCircle size={24} weight="fill" color="#0A84FF" />}
-                                </div>
-                            </div>
+                                <ListItem disablePadding divider>
+                                    <ListItemButton 
+                                        onClick={() => setLanguage('ta')} 
+                                        sx={{ 
+                                            py: 2, 
+                                            px: 3,
+                                            bgcolor: language === 'ta' ? 'var(--auth-glow)' : 'transparent',
+                                            '&:hover': { bgcolor: 'var(--auth-glow)' }
+                                        }}
+                                    >
+                                        <ListItemText 
+                                            primary="தமிழ்" 
+                                            primaryTypographyProps={{ 
+                                                fontSize: '18px', 
+                                                fontWeight: language === 'ta' ? 600 : 500, 
+                                                color: 'var(--auth-text)' 
+                                            }} 
+                                        />
+                                        {language === 'ta' && (
+                                            <ListItemIcon sx={{ minWidth: 'auto' }}>
+                                                <CheckCircle size={24} weight="fill" color="var(--auth-text)" />
+                                            </ListItemIcon>
+                                        )}
+                                    </ListItemButton>
+                                </ListItem>
+                                <ListItem disablePadding>
+                                    <ListItemButton 
+                                        onClick={() => setLanguage('en')} 
+                                        sx={{ 
+                                            py: 2, 
+                                            px: 3,
+                                            bgcolor: language === 'en' ? 'var(--auth-glow)' : 'transparent',
+                                            '&:hover': { bgcolor: 'var(--auth-glow)' }
+                                        }}
+                                    >
+                                        <ListItemText 
+                                            primary="English" 
+                                            primaryTypographyProps={{ 
+                                                fontSize: '18px', 
+                                                fontWeight: language === 'en' ? 600 : 500, 
+                                                color: 'var(--auth-text)' 
+                                            }} 
+                                        />
+                                        {language === 'en' && (
+                                            <ListItemIcon sx={{ minWidth: 'auto' }}>
+                                                <CheckCircle size={24} weight="fill" color="var(--auth-text)" />
+                                            </ListItemIcon>
+                                        )}
+                                    </ListItemButton>
+                                </ListItem>
+                            </List>
 
                             <AuthButton onClick={() => setPhase('setup')}>
                                 Continue
