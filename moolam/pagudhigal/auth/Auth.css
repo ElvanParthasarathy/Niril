@@ -8,13 +8,14 @@
     --auth-text-secondary: #666666;
     --auth-text-muted: #999999;
     --auth-input-bg: #FFFFFF;
-    --auth-shape: #E8F0FE;
-    /* Light Mode Shape Color */
-    --auth-accent: #007AFF;
-    /* NeramBlue */
-    --auth-accent-light: #4DA3FF;
+    --auth-shape: #F0F0F0;
+    --auth-accent: #111111;
+    --auth-accent-light: #333333;
     --auth-divider: #E0E0E0;
     --auth-danger: #EF5350;
+    --auth-glow: rgba(0, 0, 0, 0.08);
+    --auth-btn-shadow: rgba(0, 0, 0, 0.25);
+    --auth-btn-text: #FFFFFF;
 }
 
 html.dark {
@@ -25,8 +26,11 @@ html.dark {
     --auth-text-muted: rgba(255, 255, 255, 0.4);
     --auth-input-bg: #1E1E1E;
     --auth-shape: rgba(255, 255, 255, 0.03);
-    /* Dark Mode Shape Color */
+    --auth-accent: #FFFFFF;
     --auth-divider: rgba(255, 255, 255, 0.1);
+    --auth-glow: rgba(255, 255, 255, 0.15);
+    --auth-btn-shadow: rgba(255, 255, 255, 0.2);
+    --auth-btn-text: #000000;
 }
 
 .auth-logo-themed {
@@ -285,14 +289,14 @@ html.dark .auth-input {
     width: 100%;
     height: 56px;
     background: var(--auth-accent);
-    color: white;
+    color: var(--auth-btn-text);
     border: none;
     border-radius: 50px;
     font-size: 16px;
     font-weight: 700;
     letter-spacing: 0.5px;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+    box-shadow: 0 4px 12px var(--auth-btn-shadow);
     transition: transform 0.1s ease, opacity 0.2s;
     display: flex;
     align-items: center;
@@ -312,8 +316,9 @@ html.dark .auth-input {
 .btn-loader {
     width: 24px;
     height: 24px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-top-color: white;
+    border: 3px solid var(--auth-btn-text);
+    opacity: 0.5;
+    border-top-color: transparent;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }

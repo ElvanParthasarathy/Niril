@@ -327,9 +327,30 @@ function Seyali() {
   const [dataVersion, setDataVersion] = useState(0);
   const [refreshKey, setRefreshKey] = useState(0);
   const dismissOverlay = (saved?: boolean) => { setInlineOverlay(null); if (saved) setDataVersion(v => v + 1); };
+  const [themeMode, setThemeMode] = useState<'light'|'dark'|'auto'>(() => {
+    return (localStorage.getItem('elvanniril_theme_mode') as any) || 'light';
+  });
+
   const [darkMode, setDarkMode] = useState(() => {
+    const savedMode = localStorage.getItem('elvanniril_theme_mode');
+    if (savedMode === 'dark') return true;
+    if (savedMode === 'auto') return window.matchMedia('(prefers-color-scheme: dark)').matches;
     return localStorage.getItem('elvanniril_theme') === 'dark';
   });
+
+  useEffect(() => {
+    if (themeMode === 'auto') {
+      const mq = window.matchMedia('(prefers-color-scheme: dark)');
+      const listener = (e: any) => setDarkMode(e.matches);
+      mq.addEventListener('change', listener);
+      setDarkMode(mq.matches);
+      return () => mq.removeEventListener('change', listener);
+    } else {
+      setDarkMode(themeMode === 'dark');
+    }
+    localStorage.setItem('elvanniril_theme_mode', themeMode);
+    localStorage.setItem('elvanniril_theme', themeMode === 'dark' ? 'dark' : 'light'); // fallback
+  }, [themeMode]);
   const [isCollapsed, setIsCollapsed] = useState(() => localStorage.getItem('elvanniril_sidebar_collapsed') === 'true');
   const [isHovered, setIsHovered] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
@@ -1024,6 +1045,8 @@ function Seyali() {
 
         darkMode={darkMode}
         setDarkMode={setDarkMode}
+        themeMode={themeMode}
+        setThemeMode={setThemeMode}
         serverStatus={serverStatus}
         profile={profile}
         allProfiles={allProfiles}
@@ -1228,7 +1251,7 @@ function Seyali() {
             overscrollBehavior: 'contain',
             '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
           }}>
-            <Amaippugal appMode={appMode} onSaved={(p) => setProfile(p)} onSwitchModeRequest={handleSwitchModeRequest} darkMode={darkMode} setDarkMode={setDarkMode} />
+        {currentView === 'settings' && <Amaippugal appMode={appMode} onSaved={() => {}} onSwitchModeRequest={() => setInlineOverlay({ type: 'mode-selector' })} darkMode={darkMode} setDarkMode={setDarkMode} themeMode={themeMode} setThemeMode={setThemeMode} />}
           </Box>
         )}
           </Box>

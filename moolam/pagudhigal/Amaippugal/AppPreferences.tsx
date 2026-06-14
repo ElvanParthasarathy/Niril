@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Box, Typography, Select, MenuItem } from '@mui/material';
-import { Translate, Palette, CheckCircle, Circle } from '@phosphor-icons/react';
+import { Translate, Palette, CheckCircle, Circle, Desktop } from '@phosphor-icons/react';
 import { SettingsPillContainer, SettingsPillRow } from '../ElvanSettingsSection';
 import { useLanguage } from '../../mozhi/LanguageContext';
 
-export default function AppPreferences({ thagaval, darkMode, setDarkMode }: { thagaval: any, darkMode?: boolean, setDarkMode?: (v: boolean) => void }) {
+export default function AppPreferences({ thagaval, darkMode, setDarkMode, themeMode, setThemeMode }: any) {
   const { language, setLanguage, t } = useLanguage();
   const [editingSection, setEditingSection] = useState<string | null>(null);
   const [localLanguage, setLocalLanguage] = useState(language);
@@ -20,10 +20,8 @@ export default function AppPreferences({ thagaval, darkMode, setDarkMode }: { th
     setEditingSection(null);
   };
 
-  const handleThemeChange = (newTheme: 'light' | 'dark') => {
-    if (!setDarkMode) return;
-    setDarkMode(newTheme === 'dark');
-    localStorage.setItem('elvanniril_theme', newTheme);
+  const handleThemeChange = (newTheme: 'light' | 'dark' | 'auto') => {
+    if (setThemeMode) setThemeMode(newTheme);
   };
 
   return (
@@ -46,25 +44,25 @@ export default function AppPreferences({ thagaval, darkMode, setDarkMode }: { th
             >
               <Box sx={{
                 width: 110, height: 85, borderRadius: '24px',
-                bgcolor: '#f5f5f5', border: '1px solid', borderColor: !darkMode ? '#555' : 'divider',
+                bgcolor: '#f5f5f5', border: '1px solid', borderColor: themeMode === 'light' ? '#555' : 'divider',
                 display: 'flex', flexDirection: 'column', gap: 1.2, p: 2,
                 transition: 'all 0.2s',
-                transform: !darkMode ? 'scale(1.02)' : 'scale(1)'
+                transform: themeMode === 'light' ? 'scale(1.02)' : 'scale(1)'
               }}>
                 <Box sx={{ width: 32, height: 8, borderRadius: 4, bgcolor: '#000', opacity: 0.7 }} />
                 <Box sx={{ width: '100%', height: 6, borderRadius: 4, bgcolor: '#cfcfcf' }} />
                 <Box sx={{ width: '60%', height: 6, borderRadius: 4, bgcolor: '#cfcfcf' }} />
               </Box>
               <Typography variant="body2" sx={{ 
-                fontWeight: !darkMode ? 600 : 500, 
-                color: !darkMode ? 'text.primary' : 'text.secondary',
+                fontWeight: themeMode === 'light' ? 600 : 500, 
+                color: themeMode === 'light' ? 'text.primary' : 'text.secondary',
                 transition: 'color 0.2s',
                 mt: 0.5
               }}>
                 {t('lightMode') || 'Light'}
               </Typography>
               <Box sx={{ mt: -1 }}>
-                {!darkMode ? <CheckCircle weight="fill" size={24} color="#000" /> : <Circle weight="regular" size={24} color="#888" />}
+                {themeMode === 'light' ? <CheckCircle weight="fill" size={24} color="#000" /> : <Circle weight="regular" size={24} color="#888" />}
               </Box>
             </Box>
 
@@ -78,25 +76,55 @@ export default function AppPreferences({ thagaval, darkMode, setDarkMode }: { th
             >
               <Box sx={{
                 width: 110, height: 85, borderRadius: '24px',
-                bgcolor: '#1e1e1e', border: '1px solid', borderColor: darkMode ? '#888' : 'divider',
+                bgcolor: '#1e1e1e', border: '1px solid', borderColor: themeMode === 'dark' ? '#888' : 'divider',
                 display: 'flex', flexDirection: 'column', gap: 1.2, p: 2,
                 transition: 'all 0.2s',
-                transform: darkMode ? 'scale(1.02)' : 'scale(1)'
+                transform: themeMode === 'dark' ? 'scale(1.02)' : 'scale(1)'
               }}>
                 <Box sx={{ width: 32, height: 8, borderRadius: 4, bgcolor: '#fff', opacity: 0.8 }} />
                 <Box sx={{ width: '100%', height: 6, borderRadius: 4, bgcolor: '#444' }} />
                 <Box sx={{ width: '60%', height: 6, borderRadius: 4, bgcolor: '#444' }} />
               </Box>
               <Typography variant="body2" sx={{ 
-                fontWeight: darkMode ? 600 : 500, 
-                color: darkMode ? 'text.primary' : 'text.secondary',
+                fontWeight: themeMode === 'dark' ? 600 : 500, 
+                color: themeMode === 'dark' ? 'text.primary' : 'text.secondary',
                 transition: 'color 0.2s',
                 mt: 0.5
               }}>
                 {t('darkMode') || 'Dark'}
               </Typography>
               <Box sx={{ mt: -1 }}>
-                {darkMode ? <CheckCircle weight="fill" size={24} color="#fff" /> : <Circle weight="regular" size={24} color="#888" />}
+                {themeMode === 'dark' ? <CheckCircle weight="fill" size={24} color="#fff" /> : <Circle weight="regular" size={24} color="#888" />}
+              </Box>
+            </Box>
+
+            {/* Auto Mode Option */}
+            <Box 
+              onClick={() => handleThemeChange("auto")}
+              sx={{ 
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
+                cursor: 'pointer', userSelect: 'none'
+              }}
+            >
+              <Box sx={{
+                width: 110, height: 85, borderRadius: '24px',
+                bgcolor: darkMode ? '#2d2d2d' : '#e0e0e0', border: '1px solid', borderColor: themeMode === 'auto' ? (darkMode ? '#888' : '#555') : 'divider',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1.2, p: 2,
+                transition: 'all 0.2s',
+                transform: themeMode === 'auto' ? 'scale(1.02)' : 'scale(1)'
+              }}>
+                <Desktop size={32} weight="duotone" color={darkMode ? "#fff" : "#000"} />
+              </Box>
+              <Typography variant="body2" sx={{ 
+                fontWeight: themeMode === 'auto' ? 600 : 500, 
+                color: themeMode === 'auto' ? 'text.primary' : 'text.secondary',
+                transition: 'color 0.2s',
+                mt: 0.5
+              }}>
+                Auto
+              </Typography>
+              <Box sx={{ mt: -1 }}>
+                {themeMode === 'auto' ? <CheckCircle weight="fill" size={24} color={darkMode ? "#fff" : "#000"} /> : <Circle weight="regular" size={24} color="#888" />}
               </Box>
             </Box>
 

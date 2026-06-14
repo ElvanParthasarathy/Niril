@@ -19,7 +19,7 @@ import { SettingsSection, SettingsRow } from '../ElvanSettingsSection';
 import '../../styles/settings/shared.css';
 import '../../styles/settings/hub.css';
 
-export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, darkMode, setDarkMode }) {
+export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, darkMode, setDarkMode, themeMode, setThemeMode }: any) {
   const { language, setLanguage, t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
@@ -210,7 +210,7 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
     }
     else if (currentView === 1) { 
       title = t('appPreferences') || "App Preferences";
-      content = <AppPreferences thagaval={thagaval} darkMode={darkMode} setDarkMode={setDarkMode} />;
+      content = <AppPreferences thagaval={thagaval} darkMode={darkMode} setDarkMode={setDarkMode} themeMode={themeMode} setThemeMode={setThemeMode} />;
     }
     else if (currentView === 2) { 
       title = t('storageCloud') || "Storage & Cloud";

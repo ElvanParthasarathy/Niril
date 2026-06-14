@@ -22,6 +22,8 @@ export default function Pakkapatti({
   setShowUpdateModal,
   darkMode,
   setDarkMode,
+  themeMode,
+  setThemeMode,
   serverStatus,
   profile,
   allProfiles,
@@ -36,17 +38,8 @@ export default function Pakkapatti({
   const isProfileMenuOpen = Boolean(profileAnchorEl);
   const handleProfileClose = () => setProfileAnchorEl(null);
 
-  const [themeMode, setThemeMode] = useState(() => localStorage.getItem('elvanniril_theme_mode') || (darkMode ? 'dark' : 'light'));
-
-  const handleThemeChange = (mode) => {
-    setThemeMode(mode);
-    localStorage.setItem('elvanniril_theme_mode', mode);
-    if (mode === 'auto') {
-      const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setDarkMode(isSystemDark);
-    } else {
-      setDarkMode(mode === 'dark');
-    }
+  const handleThemeChange = (mode: any) => {
+    if (setThemeMode) setThemeMode(mode);
   };
 
   const handleNavClick = (id: any, defaultOnClick?: any) => {

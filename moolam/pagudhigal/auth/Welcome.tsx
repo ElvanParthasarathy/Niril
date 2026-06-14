@@ -54,7 +54,7 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                             width: '100%',
                             height: '100%',
                             borderRadius: '50%',
-                            background: 'rgba(0, 122, 255, 0.15)',
+                            background: 'var(--auth-glow)',
                             filter: 'blur(20px)',
                             zIndex: -1,
                             animation: 'pulse 2s ease-in-out infinite'
