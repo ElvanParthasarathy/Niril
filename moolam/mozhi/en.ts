@@ -1112,5 +1112,8 @@ export const en: Record<TranslationKey, string> = {
   eraseAppDataDesc: 'Completely wipe your database. You will need to import a backup to restore.',
   eraseDataBtn: 'Erase Data',
   systemAndSecurity: 'System & Security',
-  systemSecurityDesc: 'Clear cache, Account security, Updates'
+  systemSecurityDesc: 'Clear cache, Account security, Updates',
+  clearCacheTitle: 'Clear Cache',
+  clearCacheDesc: 'Clear local cache to fix issues.',
+  clearCacheBtn: 'Clear Cache'
 };

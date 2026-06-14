@@ -1137,6 +1137,9 @@ export const ta = {
 
   systemAndSecurity: 'அமைப்பு & பாதுகாப்பு',
   systemSecurityDesc: 'கணக்கு பாதுகாப்பு மற்றும் ஆப்ஸ் தரவை நிர்வகிக்கவும்.',
+  clearCacheTitle: 'கேச் அழி',
+  clearCacheDesc: 'சிக்கல்களை சரிசெய்ய உள்ளூர் கேச்-ஐ அழிக்கவும்.',
+  clearCacheBtn: 'கேச் அழி',
 
   vanakkamTitle: 'வணக்கம்!',
   whoIsWorkingToday: 'இன்று எந்தக் கணக்கு?',
