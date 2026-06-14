@@ -426,7 +426,7 @@ function Seyali() {
   const [refreshKey, setRefreshKey] = useState(0);
   const dismissOverlay = (saved?: boolean) => { setInlineOverlay(null); if (saved) setDataVersion(v => v + 1); };
   const [themeMode, setThemeMode] = useState<'light'|'dark'|'auto'>(() => {
-    return (localStorage.getItem('elvanniril_theme_mode') as any) || 'light';
+    return (localStorage.getItem('elvanniril_theme_mode') as any) || 'auto';
   });
 
   const [darkMode, setDarkMode] = useState(() => {
