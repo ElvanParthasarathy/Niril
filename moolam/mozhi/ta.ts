@@ -1128,6 +1128,13 @@ export const ta = {
   defaultPrintLanguage: 'பில் அச்சிடும் மொழி',
   receiptLanguage: 'ரசீது அச்சிடும் மொழி',
 
+  accountSecurityTitle: 'கணக்கு பாதுகாப்பு',
+  accountSecurityDesc: 'இந்த சாதனத்தில் உங்கள் தரவுத்தள அணுகலைப் பூட்ட ஃபயர்பேஸிலிருந்து வெளியேறவும்.',
+  signOutBtn: 'வெளியேறு',
+  eraseAppDataTitle: 'பயன்பாட்டுத் தரவை அழி',
+  eraseAppDataDesc: 'உங்கள் தரவுத்தளத்தை முழுமையாக அழிக்கவும். மீட்டமைக்க நீங்கள் ஒரு காப்புப்பிரதியை இறக்குமதி செய்ய வேண்டும்.',
+  eraseDataBtn: 'தரவை அழி',
+
   vanakkamTitle: 'வணக்கம்!',
   whoIsWorkingToday: 'இன்று எந்தக் கணக்கு?',
 };

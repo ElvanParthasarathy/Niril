@@ -58,7 +58,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
           title={t('clearCacheTitle') !== 'clearCacheTitle' ? t('clearCacheTitle') : 'Clear Cache'}
           description={t('clearCacheDesc') !== 'clearCacheDesc' ? t('clearCacheDesc') : 'Clear local cache to fix issues.'}
           control={
-            <Button variant="outlined" color="inherit" size="small" sx={{ borderRadius: 10, px: 2 }} onClick={() => {
+            <Button variant="contained" color="inherit" size="small" sx={{ borderRadius: 10, px: 2, minWidth: '120px' }} onClick={() => {
               if (confirm('Clear local cache and reload? You will need to log in again if using Google Drive.')) {
                 localStorage.clear();
                 window.location.reload();
@@ -71,22 +71,22 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
         <SettingsRow 
           icon={<LockKeyhole size={20} />} 
           iconColor="monochrome"
-          title="Account Security"
-          description="Sign out of Firebase to lock your database access on this device."
+          title={t('accountSecurityTitle') !== 'accountSecurityTitle' ? t('accountSecurityTitle') : 'Account Security'}
+          description={t('accountSecurityDesc') !== 'accountSecurityDesc' ? t('accountSecurityDesc') : 'Sign out of Firebase to lock your database access on this device.'}
           control={
-            <Button variant="outlined" color="inherit" size="small" sx={{ borderRadius: 8 }} onClick={() => { signOut(auth); }}>
-              Sign Out
+            <Button variant="contained" color="inherit" size="small" sx={{ borderRadius: 10, px: 2, minWidth: '120px' }} onClick={() => { signOut(auth); }}>
+              {t('signOutBtn') !== 'signOutBtn' ? t('signOutBtn') : 'Sign Out'}
             </Button>
           }
         />
         <SettingsRow 
           icon={<WarningCircle size={20} weight="fill" />} 
-          iconColor="red"
-          title="Erase App Data"
-          description="Completely wipe your database. You will need to import a backup to restore."
+          iconColor="monochrome"
+          title={t('eraseAppDataTitle') !== 'eraseAppDataTitle' ? t('eraseAppDataTitle') : 'Erase App Data'}
+          description={t('eraseAppDataDesc') !== 'eraseAppDataDesc' ? t('eraseAppDataDesc') : 'Completely wipe your database. You will need to import a backup to restore.'}
           control={
-            <Button variant="outlined" color="error" size="small" sx={{ borderRadius: 8 }} onClick={() => setEraseDialogOpen(true)}>
-              Erase Data
+            <Button variant="contained" color="inherit" size="small" sx={{ borderRadius: 10, px: 2, minWidth: '120px' }} onClick={() => setEraseDialogOpen(true)}>
+              {t('eraseDataBtn') !== 'eraseDataBtn' ? t('eraseDataBtn') : 'Erase Data'}
             </Button>
           }
         />

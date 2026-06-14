@@ -1104,5 +1104,11 @@ export const en: Record<TranslationKey, string> = {
   appearanceDescription: 'Configure bill theme color and print languages.',
   billTheme: 'Bill Theme Color',
   defaultPrintLanguage: 'Default Print Language',
-  receiptLanguage: 'Receipt Language'
+  receiptLanguage: 'Receipt Language',
+  accountSecurityTitle: 'Account Security',
+  accountSecurityDesc: 'Sign out of Firebase to lock your database access on this device.',
+  signOutBtn: 'Sign Out',
+  eraseAppDataTitle: 'Erase App Data',
+  eraseAppDataDesc: 'Completely wipe your database. You will need to import a backup to restore.',
+  eraseDataBtn: 'Erase Data'
 };
