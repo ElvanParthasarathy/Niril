@@ -234,7 +234,7 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
       content = <AppPreferences thagaval={thagaval} darkMode={darkMode} setDarkMode={setDarkMode} themeMode={themeMode} setThemeMode={setThemeMode} />;
     }
     else if (currentView === 3) { 
-      title = showAppVersion ? (t('systemUpdates') || "System & Updates") : (t('systemStorage') || "System Storage");
+      title = t('systemAndSecurity') || "System & Security";
       content = (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <StorageCloud profile={profile} driveConnected={driveConnected} setDriveConnected={setDriveConnected} connecting={connecting} setConnecting={setConnecting} t={t} />
@@ -398,45 +398,15 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
           />
         </SettingsSection>
 
-        <SettingsSection title={t('systemAndSecurity') || 'System & Security'}>
+        <SettingsSection>
           <SettingsRow 
-            icon={<Trash size={20} weight="fill" />} 
-            iconColor="monochrome"
-            title={t('clearCacheTitle') !== 'clearCacheTitle' ? t('clearCacheTitle') : 'Clear Cache'}
-            description={t('clearCacheDesc') !== 'clearCacheDesc' ? t('clearCacheDesc') : 'Clear local cache to fix issues.'}
-            control={
-              <Button variant="outlined" color="inherit" size="small" sx={{ borderRadius: 10, px: 2 }} onClick={(e) => {
-                e.stopPropagation();
-                if (confirm('Clear local cache and reload? You will need to log in again if using Google Drive.')) {
-                  localStorage.clear();
-                  window.location.reload();
-                }
-              }}>
-                {t('clearCacheBtn') !== 'clearCacheBtn' ? t('clearCacheBtn') : 'Clear Cache'}
-              </Button>
-            }
+             icon={<LockKeyhole size={20} weight="fill" />} 
+             iconColor="monochrome"
+             title={t('systemAndSecurity') || 'System & Security'} 
+             description={t('systemSecurityDesc') || 'Clear cache, Account security, Updates'} 
+             onClick={() => handleNavigate(3)} 
           />
-          <SettingsRow 
-            icon={<LockKeyhole size={20} />} 
-            iconColor="monochrome"
-            title="Account Security"
-            description="Sign out of Firebase to lock your database access on this device."
-            control={
-              <Button variant="outlined" color="inherit" size="small" sx={{ borderRadius: 8 }} onClick={(e) => { e.stopPropagation(); signOut(auth); }}>
-                Sign Out
-              </Button>
-            }
-          />
-          {showAppVersion && (
-            <SettingsRow 
-               icon={<ArrowsClockwise size={20} weight="bold" />} 
-               iconColor="monochrome"
-               title={t('systemUpdates')} 
-               description={t('appVersionsBackupCache') || 'App versions, Backup'} 
-               onClick={() => handleNavigate(3)} 
-            />
-          )}
-       </SettingsSection>
+        </SettingsSection>
     </div>
   );
 
