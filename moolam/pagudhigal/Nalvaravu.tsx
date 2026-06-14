@@ -83,7 +83,7 @@ export default function Nalvaravu({ onComplete }) {
               disabled={saving || !gstBusinessName.trim() || !coolieBusinessName.trim()} 
               loading={saving}
             >
-              Start Billing
+              {language === 'ta' ? 'தொடரவும்' : 'Continue'}
             </AuthButton>
           </Box>
         </div>
