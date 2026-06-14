@@ -21,41 +21,79 @@ export const AuthHeader = ({ title, subtitle }: { title: string, subtitle: strin
     </div>
 );
 
+import { TextField, Button, InputAdornment, IconButton, Typography, Box, CircularProgress } from '@mui/material';
+
 export const AuthInput = ({ label, value, onChange, type = "text", placeholder, icon, error, ...props }: any) => {
     const [showPass, setShowPass] = useState(false);
     const isPass = type === 'password';
 
     return (
-        <div className="auth-field animate-enter delay-2">
-            <label className="auth-label">{label}</label>
-            <div className={`auth-input-wrapper ${error ? 'has-error' : ''}`}>
-                {icon && <div className="auth-icon-start">{icon}</div>}
-                <input
-                    className={`auth-input ${icon ? 'has-start-icon' : ''} ${isPass ? 'has-end-icon' : ''}`}
-                    type={isPass && showPass ? 'text' : type}
-                    value={value}
-                    onChange={onChange}
-                    placeholder={placeholder}
-                    {...props}
-                />
-                {isPass && (
-                    <div className="auth-icon-end" onClick={() => setShowPass(!showPass)}>
-                        {showPass ? <EyeClosed size={20} /> : <Eye size={20} />}
-                    </div>
-                )}
-            </div>
-            {error && <div className="auth-error">{error}</div>}
-        </div>
+        <Box className="auth-field animate-enter delay-2" sx={{ width: '100%', mb: 2 }}>
+            <TextField
+                fullWidth
+                label={label}
+                value={value}
+                onChange={onChange}
+                type={isPass && showPass ? 'text' : type}
+                placeholder={placeholder}
+                error={!!error}
+                helperText={error}
+                slotProps={{
+                    input: {
+                        startAdornment: icon ? (
+                            <InputAdornment position="start">
+                                {icon}
+                            </InputAdornment>
+                        ) : null,
+                        endAdornment: isPass ? (
+                            <InputAdornment position="end">
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={() => setShowPass(!showPass)}
+                                    edge="end"
+                                    size="small"
+                                >
+                                    {showPass ? <EyeClosed size={20} /> : <Eye size={20} />}
+                                </IconButton>
+                            </InputAdornment>
+                        ) : null,
+                    }
+                }}
+                {...props}
+            />
+        </Box>
     );
 };
 
 export const AuthButton = ({ children, onClick, disabled, loading, secondary, className = "", type = "button" }: any) => (
-    <button
+    <Button
+        fullWidth
         type={type}
-        className={`auth-btn ${secondary ? 'auth-btn-google' : ''} ${className} animate-enter delay-3`}
+        variant={secondary ? 'outlined' : 'contained'}
+        color="primary"
+        size="large"
+        className={`animate-enter delay-3 ${className}`}
         onClick={onClick}
         disabled={disabled || loading}
+        sx={{
+            py: 1.5,
+            borderRadius: 50,
+            mt: 2,
+            mb: 1,
+            fontWeight: 600,
+            textTransform: 'none',
+            fontSize: '1rem',
+            ...(secondary && {
+                borderColor: 'var(--auth-text)',
+                color: 'var(--auth-text)',
+                backgroundColor: 'transparent',
+                '&:hover': {
+                    borderColor: 'var(--auth-text)',
+                    backgroundColor: 'rgba(128, 128, 128, 0.08)'
+                }
+            })
+        }}
     >
-        {loading ? <div className="btn-loader" /> : children}
-    </button>
+        {loading ? <CircularProgress size={24} color="inherit" /> : children}
+    </Button>
 );
