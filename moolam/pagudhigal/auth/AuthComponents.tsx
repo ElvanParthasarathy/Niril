@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, EyeClosed, CaretDown } from '@phosphor-icons/react';
+import { CaretDown } from '@phosphor-icons/react';
 import './Auth.css';
 
 export const AuthLayout = ({ children }: { children: React.ReactNode }) => (
@@ -22,6 +22,8 @@ export const AuthHeader = ({ title, subtitle }: { title: string, subtitle: strin
 );
 
 import { TextField, Button, InputAdornment, IconButton, Typography, Box, CircularProgress } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 export const AuthInput = ({ label, value, onChange, type = "text", placeholder, icon, error, ...props }: any) => {
     const [showPass, setShowPass] = useState(false);
@@ -53,7 +55,7 @@ export const AuthInput = ({ label, value, onChange, type = "text", placeholder, 
                                     edge="end"
                                     size="small"
                                 >
-                                    {showPass ? <EyeClosed size={20} /> : <Eye size={20} />}
+                                    {showPass ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
                                 </IconButton>
                             </InputAdornment>
                         ) : null,
