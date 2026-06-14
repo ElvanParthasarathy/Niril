@@ -506,7 +506,7 @@ export const importData = async (jsonString, selection) => {
 
   if (sel.localStorage && data.localStorage) restoreLocalStorage(data.localStorage);
 
-  return result;
+  return { ...result, counts: inspected.counts || {} };
 };
 
 // Dummy exports for deleted features to keep VariArikkaigal compiling
