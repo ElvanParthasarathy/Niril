@@ -1,5 +1,6 @@
 import React from 'react';
 import { AuthLayout } from './AuthComponents';
+import { CircularProgress } from '@mui/material';
 import './splash.css';
 
 const SplashScreen = () => {
@@ -18,11 +19,8 @@ const SplashScreen = () => {
                     Elvan Niril
                 </div>
 
-                {/* Spinner */}
-                <div className="splash-spinner animate-enter delay-1">
-                    {[...Array(12)].map((_, i) => (
-                        <div key={i} className="bar"></div>
-                    ))}
+                <div className="animate-enter delay-1">
+                    <CircularProgress sx={{ color: 'var(--auth-text, #ffffff)' }} />
                 </div>
             </div>
         </AuthLayout>
