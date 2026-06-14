@@ -60,7 +60,7 @@ export default function Nalvaravu({ onComplete }) {
 
           <AuthInput 
             variant="filled"
-            label="Coolie Business Name"
+            label={language === 'ta' ? 'கூலி வணிகப் பெயர்' : 'Coolie Business Name'}
             value={coolieBusinessName}
             onChange={(e) => setCoolieBusinessName(e.target.value)}
             placeholder={language === 'ta' ? 'பெயரை உள்ளிடுக' : 'Enter name'}
