@@ -479,6 +479,10 @@ function Seyali() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
+      if (u) {
+        setIsProfileLoading(true);
+        profileLoaded.current = false;
+      }
       setFirebaseUser(u);
       setFirebaseAuthLoading(false);
     });
