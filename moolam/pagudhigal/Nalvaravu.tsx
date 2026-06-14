@@ -54,6 +54,7 @@ export default function Nalvaravu({ onComplete }) {
             label={t('hc_businessName') || 'GST Business Name'}
             value={gstBusinessName}
             onChange={(e) => setGstBusinessName(e.target.value)}
+            placeholder={language === 'ta' ? 'பெயரை உள்ளிடுக' : 'Enter name'}
             helperText="Used for regular GST invoices."
           />
 
@@ -62,6 +63,7 @@ export default function Nalvaravu({ onComplete }) {
             label="Coolie Business Name"
             value={coolieBusinessName}
             onChange={(e) => setCoolieBusinessName(e.target.value)}
+            placeholder={language === 'ta' ? 'பெயரை உள்ளிடுக' : 'Enter name'}
             helperText="Used for Coolie bills and receipts."
           />
 
