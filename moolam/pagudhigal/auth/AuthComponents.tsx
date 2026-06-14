@@ -45,13 +45,16 @@ export const AuthInput = ({ label, value, onChange, type = "text", placeholder, 
                         borderRadius: '50px',
                         overflow: 'hidden',
                         transition: 'all 0.2s ease',
+                        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
                         '&:hover': {
                             backgroundColor: 'var(--auth-input-bg)',
-                            filter: 'brightness(0.96)'
+                            filter: 'brightness(0.96)',
+                            boxShadow: '0 6px 20px rgba(0, 0, 0, 0.06)'
                         },
                         '&.Mui-focused': {
                             backgroundColor: 'var(--auth-input-bg)',
-                            filter: 'brightness(0.92)'
+                            filter: 'brightness(0.92)',
+                            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.08)'
                         }
                     },
                     '& .MuiFilledInput-input': {
