@@ -300,7 +300,7 @@ export default function Welcome({ mode, onContinue }: { mode: 'pre-login' | 'pos
                                 margin: 0,
                                 letterSpacing: '-0.5px'
                             }}>
-                                {t('welcomeTitle') !== 'welcomeTitle' ? t('welcomeTitle') : 'Welcome to Niril'}
+                                Welcome to Niril
                             </h1>
                             <p style={{
                                 fontSize: '18px',
@@ -308,7 +308,7 @@ export default function Welcome({ mode, onContinue }: { mode: 'pre-login' | 'pos
                                 margin: 0,
                                 fontWeight: '500'
                             }}>
-                                {t('welcomeSubtitle') !== 'welcomeSubtitle' ? t('welcomeSubtitle') : 'Your Billing & GST, Sorted.'}
+                                Your Billing & GST, Sorted.
                             </p>
                         </div>
 
@@ -330,11 +330,11 @@ export default function Welcome({ mode, onContinue }: { mode: 'pre-login' | 'pos
                                 maxWidth: '280px',
                                 lineHeight: '1.5'
                             }}>
-                                {t('welcomeAgreeText') !== 'welcomeAgreeText' ? t('welcomeAgreeText') : 'Tap "Get Started" to continue with Niril.'}
+                                Tap "Get Started" to continue with Niril.
                             </p>
 
                             <AuthButton onClick={handleContinue}>
-                                {t('agreeAndContinueBtn') !== 'agreeAndContinueBtn' ? t('agreeAndContinueBtn') : 'Get Started'}
+                                Get Started
                             </AuthButton>
                         </div>
                     </div>
