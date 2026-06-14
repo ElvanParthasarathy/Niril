@@ -55,14 +55,15 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                     <div style={{
                         width: '96px',
                         height: '96px',
-                        background: 'linear-gradient(135deg, var(--mac-blue), #5E5CE6)',
+                        background: 'var(--auth-surface)',
                         borderRadius: '28px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        boxShadow: '0 20px 40px rgba(10, 132, 255, 0.3)'
+                        boxShadow: '0 20px 40px var(--auth-glow)',
+                        border: '1px solid var(--auth-divider)'
                     }}>
-                        <Database size={48} weight="duotone" color="white" />
+                        <Database size={48} weight="duotone" color="var(--auth-accent)" />
                     </div>
                 </div>
 
