@@ -6,11 +6,11 @@ import { useLanguage } from '../../mozhi/LanguageContext';
 
 const GREETINGS = ["வணக்கம்!", "Hello!", "നമസ്കാരം!"];
 
-export default function Welcome({ onContinue }: { onContinue: () => void }) {
+export default function Welcome({ mode, onContinue }: { mode: 'pre-login' | 'post-login', onContinue: () => void }) {
     const { t, language, setLanguage } = useLanguage();
     
     // Phases: 'greeting' -> 'language' -> 'setup'
-    const [phase, setPhase] = useState<'greeting' | 'language' | 'setup'>('greeting');
+    const [phase, setPhase] = useState<'greeting' | 'language' | 'setup'>(mode === 'pre-login' ? 'setup' : 'greeting');
     
     // Greeting Animation State
     const [greetingIndex, setGreetingIndex] = useState(0);
@@ -21,11 +21,11 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
     const [showSetup, setShowSetup] = useState(false);
 
     useEffect(() => {
-        // Default to Tamil during setup if user hasn't explicitly set a language yet
-        if (!localStorage.getItem('elvanniril_language')) {
+        // Default to Tamil during post-login setup if user hasn't explicitly set a language yet
+        if (mode === 'post-login' && !localStorage.getItem('elvanniril_language')) {
             setLanguage('ta');
         }
-    }, []);
+    }, [mode]);
 
     useEffect(() => {
         if (localStorage.getItem('elvanniril_theme') === 'dark') {
@@ -243,7 +243,7 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                                 </ListItem>
                             </List>
 
-                            <AuthButton onClick={() => setPhase('setup')}>
+                            <AuthButton onClick={() => onContinue()}>
                                 Continue
                             </AuthButton>
                         </div>

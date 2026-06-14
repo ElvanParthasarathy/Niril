@@ -474,6 +474,9 @@ function Seyali() {
   const [firebaseUser, setFirebaseUser] = useState<any>(null);
   const [firebaseAuthLoading, setFirebaseAuthLoading] = useState(true);
   const [postLoginWelcomeDone, setPostLoginWelcomeDone] = useState(false);
+  const [hasWelcomed, setHasWelcomed] = useState(() => {
+    return localStorage.getItem('elvanniril_welcomed') === 'true';
+  });
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
@@ -1015,7 +1018,14 @@ function Seyali() {
     return (
       <ThemeProvider theme={muiTheme}>
         <CssBaseline />
-        <Login />
+        {!hasWelcomed ? (
+          <Welcome mode="pre-login" onContinue={() => {
+            setHasWelcomed(true);
+            localStorage.setItem('elvanniril_welcomed', 'true');
+          }} />
+        ) : (
+          <Login />
+        )}
       </ThemeProvider>
     );
   }
@@ -1027,7 +1037,7 @@ function Seyali() {
       <ThemeProvider theme={muiTheme}>
         <CssBaseline />
         {!postLoginWelcomeDone ? (
-          <Welcome onContinue={() => setPostLoginWelcomeDone(true)} />
+          <Welcome mode="post-login" onContinue={() => setPostLoginWelcomeDone(true)} />
         ) : (
           <>
             <Nalvaravu onComplete={(p) => {
