@@ -391,19 +391,7 @@ function Seyali() {
     && localStorage.getItem('elvanniril_dismissedUpdate') !== updateInfo.latest;
 
   useEffect(() => {
-    let cancelled = false;
-    const check = async () => {
-      try {
-        const res = await fetch('/api/check-update');
-        const data = await res.json();
-        if (!cancelled) setUpdateInfo(data);
-      } catch { /* offline — quietly skip */ }
-    };
-    // First check ~5 seconds after mount so it doesn't fight the initial load.
-    const initial = setTimeout(check, 5000);
-    // Then re-check every 6 hours while the app is open.
-    const interval = setInterval(check, 6 * 60 * 60 * 1000);
-    return () => { cancelled = true; clearTimeout(initial); clearInterval(interval); };
+    // Legacy offline update check removed since we are moving to Vercel
   }, []);
 
   // ---- Notification centre ----
@@ -440,29 +428,21 @@ function Seyali() {
 
     const checkServer = async () => {
       try {
-        const res = await fetch('/api/profile', { signal: AbortSignal.timeout(3000) });
-        if (res.ok) {
-          if (cancelled) return;
-          setServerDown(false);
-          setServerStatus('online');
-          if (!profileLoaded.current) {
-            profileLoaded.current = true;
-            const p = await res.json();
-            setProfile(p);
-            if (!p.niruvanathinPeyar && !localStorage.getItem('elvanniril_onboarded')) {
-              setShowWelcome(true);
-            }
-            
-
+        const p = await getProfile();
+        if (cancelled) return;
+        setServerDown(false);
+        setServerStatus('online');
+        if (!profileLoaded.current) {
+          profileLoaded.current = true;
+          setProfile(p);
+          if (!p.niruvanathinPeyar && !localStorage.getItem('elvanniril_onboarded')) {
+            setShowWelcome(true);
           }
-          return;
         }
-        throw new Error('not ok');
-      } catch {
-        if (!cancelled) {
-          setServerDown(true);
-          setServerStatus('offline');
-        }
+      } catch (err) {
+        if (cancelled) return;
+        setServerDown(true);
+        setServerStatus('offline');
       }
     };
 

@@ -34,8 +34,8 @@ export default defineConfig(({ command }) => ({
       includeAssets: ['og-preview.png'],
       manifest: {
         name: 'Elvan Niril',
-        short_name: 'GST Billing',
-        description: 'Open-source, offline GST invoicing for India and 21 other countries. Tax invoices, GSTR-1 / GSTR-3B / GSTR-2B, TDS / TCS, multi-currency, multi-account payments, recurring billing. Your data stays on your computer. Free forever.',
+        short_name: 'Niril',
+        description: 'Elvan Niril App',
         theme_color: '#1e40af',
         background_color: '#f8fafc',
         display: 'standalone',
