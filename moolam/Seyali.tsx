@@ -9,6 +9,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import Login from './pagudhigal/Login';
 import Welcome from './pagudhigal/auth/Welcome';
+import SplashScreen from './pagudhigal/auth/SplashScreen';
 import { jsPDF } from 'jspdf';
 import VariArikkaigal from './pagudhigal/GstBill/Reports/VariArikkaigal';
 import Mugappu from './pagudhigal/GstBill/Mugappu';
@@ -1007,9 +1008,7 @@ function Seyali() {
     return (
       <ThemeProvider theme={muiTheme}>
         <CssBaseline />
-        <Box sx={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center' }}>
-          <CircularProgress />
-        </Box>
+        <SplashScreen />
       </ThemeProvider>
     );
   }
