@@ -396,7 +396,9 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
              description={t('uiLanguageTheme')} 
              onClick={() => handleNavigate(1)} 
           />
+        </SettingsSection>
 
+        <SettingsSection title={t('systemAndSecurity') || 'System & Security'}>
           <SettingsRow 
             icon={<Trash size={20} weight="fill" />} 
             iconColor="monochrome"
