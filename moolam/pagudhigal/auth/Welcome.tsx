@@ -129,22 +129,9 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
-                            gap: '24px',
                             marginBottom: '40px'
                         }}>
-                            <div style={{
-                                width: '96px',
-                                height: '96px',
-                                background: 'var(--auth-surface)',
-                                borderRadius: '50%',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                boxShadow: '0 20px 40px var(--auth-glow)',
-                                border: '1px solid var(--auth-divider)'
-                            }}>
-                                <GlobeHemisphereWest size={48} weight="duotone" color="var(--auth-accent)" />
-                            </div>
+                            <GlobeHemisphereWest size={80} weight="regular" color="#0A84FF" />
                         </div>
 
                         {/* TEXT SECTION */}
@@ -188,10 +175,14 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                             <div style={{
                                 display: 'flex',
                                 flexDirection: 'column',
-                                gap: '12px',
                                 width: '100%',
-                                maxWidth: '300px',
-                                marginBottom: '32px'
+                                maxWidth: '320px',
+                                marginBottom: '32px',
+                                background: 'var(--auth-surface)',
+                                borderRadius: '16px',
+                                border: '1px solid var(--auth-divider)',
+                                overflow: 'hidden',
+                                boxShadow: '0 4px 12px var(--auth-glow)'
                             }}>
                                 <div 
                                     onClick={() => setLanguage('ta')}
@@ -200,18 +191,18 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                                         alignItems: 'center',
                                         justifyContent: 'space-between',
                                         padding: '16px 20px',
-                                        background: language === 'ta' ? 'var(--auth-text)' : 'var(--auth-surface)',
-                                        color: language === 'ta' ? 'var(--auth-surface)' : 'var(--auth-text)',
-                                        borderRadius: '16px',
                                         cursor: 'pointer',
-                                        border: `2px solid ${language === 'ta' ? 'var(--auth-text)' : 'var(--auth-divider)'}`,
-                                        transition: 'all 0.2s ease',
-                                        boxShadow: language === 'ta' ? '0 8px 16px var(--auth-glow)' : '0 2px 8px var(--auth-glow)',
-                                        fontWeight: language === 'ta' ? '700' : '500'
+                                        borderBottom: '1px solid var(--auth-divider)',
+                                        background: language === 'ta' ? 'var(--auth-glow)' : 'transparent',
+                                        transition: 'background 0.2s'
                                     }}
                                 >
-                                    <span style={{ fontSize: '18px' }}>தமிழ்</span>
-                                    {language === 'ta' && <CheckCircle size={24} weight="fill" />}
+                                    <span style={{ 
+                                        fontSize: '18px', 
+                                        color: 'var(--auth-text)',
+                                        fontWeight: language === 'ta' ? '600' : '500'
+                                    }}>தமிழ்</span>
+                                    {language === 'ta' && <CheckCircle size={24} weight="fill" color="#0A84FF" />}
                                 </div>
                                 <div 
                                     onClick={() => setLanguage('en')}
@@ -220,18 +211,17 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                                         alignItems: 'center',
                                         justifyContent: 'space-between',
                                         padding: '16px 20px',
-                                        background: language === 'en' ? 'var(--auth-text)' : 'var(--auth-surface)',
-                                        color: language === 'en' ? 'var(--auth-surface)' : 'var(--auth-text)',
-                                        borderRadius: '16px',
                                         cursor: 'pointer',
-                                        border: `2px solid ${language === 'en' ? 'var(--auth-text)' : 'var(--auth-divider)'}`,
-                                        transition: 'all 0.2s ease',
-                                        boxShadow: language === 'en' ? '0 8px 16px var(--auth-glow)' : '0 2px 8px var(--auth-glow)',
-                                        fontWeight: language === 'en' ? '700' : '500'
+                                        background: language === 'en' ? 'var(--auth-glow)' : 'transparent',
+                                        transition: 'background 0.2s'
                                     }}
                                 >
-                                    <span style={{ fontSize: '18px' }}>English</span>
-                                    {language === 'en' && <CheckCircle size={24} weight="fill" />}
+                                    <span style={{ 
+                                        fontSize: '18px', 
+                                        color: 'var(--auth-text)',
+                                        fontWeight: language === 'en' ? '600' : '500'
+                                    }}>English</span>
+                                    {language === 'en' && <CheckCircle size={24} weight="fill" color="#0A84FF" />}
                                 </div>
                             </div>
 
