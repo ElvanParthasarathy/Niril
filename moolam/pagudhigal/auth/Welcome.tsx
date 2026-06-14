@@ -9,7 +9,7 @@ const GREETINGS = ["வணக்கம்!", "Hello!", "നമസ്കാരം
 export default function Welcome({ onContinue, mode = 'post-login' }: { onContinue: () => void, mode?: 'pre-login' | 'post-login' }) {
     const { t, language, setLanguage } = useLanguage();
     
-    const [phase, setPhase] = useState<'greeting' | 'language' | 'billingLanguage' | 'setup'>(mode === 'pre-login' ? 'greeting' : 'setup');
+    const [phase, setPhase] = useState<'greeting' | 'language' | 'billingLanguage' | 'setup'>(mode === 'pre-login' ? 'greeting' : 'language');
     const [greetingIndex, setGreetingIndex] = useState(0);
     const [greetingOpacity, setGreetingOpacity] = useState(0);
     const [showLanguage, setShowLanguage] = useState(false);
@@ -380,7 +380,11 @@ export default function Welcome({ onContinue, mode = 'post-login' }: { onContinu
                             <div style={{ width: '100%', maxWidth: '320px' }}>
                                 <AuthButton onClick={() => {
                                     localStorage.setItem('elvanniril_setup_billingLang', billingLanguage);
-                                    onContinue();
+                                    if (mode === 'post-login') {
+                                        setPhase('setup');
+                                    } else {
+                                        onContinue();
+                                    }
                                 }}>
                                     Continue
                                 </AuthButton>
