@@ -1788,7 +1788,7 @@ function Seyali() {
 
       <Thagaval />
       {/* GLOBAL DEV TOGGLE FOR BILINGUAL TESTING */}
-      {profile && (
+      {profile && typeof window !== 'undefined' && window.location.hostname === 'localhost' && (
         <>
           <Box 
             onClick={(e) => setDevPanelAnchorEl(e.currentTarget)}
