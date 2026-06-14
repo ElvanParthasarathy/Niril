@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { SettingsPillContainer, SettingsRow } from '../ElvanSettingsSection';
-import { ArrowsClockwise, Trash, LockKeyhole } from '@phosphor-icons/react';
+import { ArrowsClockwise, Trash } from '@phosphor-icons/react';
+import { LockKeyhole } from 'lucide-react';
 import { Button, Box } from '@mui/material';
 import { thagaval } from '../Thagaval';
 import { signOut } from 'firebase/auth';
