@@ -49,31 +49,39 @@ async function apiFetch(url, options = {}) {
     return { success: true };
   }
 
-  if (isGet) {
-    const snapshot = await get(ref(rtdb, path));
-    if (snapshot.exists()) {
-      const val = snapshot.val();
-      if (collections.includes(path)) return Object.values(val);
-      return val;
+  try {
+    if (isGet) {
+      const snapshot = await get(ref(rtdb, path));
+      if (snapshot.exists()) {
+        const val = snapshot.val();
+        if (collections.includes(path)) return Object.values(val);
+        return val;
+      }
+      if (collections.includes(path)) return [];
+      return {};
     }
-    if (collections.includes(path)) return [];
-    return {};
-  }
-  
-  if (isPost) {
-    const body = JSON.parse(options.body);
-    if (path === 'profile' || path.startsWith('meta/')) {
-       await set(ref(rtdb, path), body);
-       return body;
+    
+    if (isPost) {
+      const body = JSON.parse(options.body);
+      if (path === 'profile' || path.startsWith('meta/')) {
+         await set(ref(rtdb, path), body);
+         return body;
+      }
+      const id = body.id || `doc_${Date.now()}`;
+      await set(ref(rtdb, `${path}/${id}`), body);
+      return body;
     }
-    const id = body.id || `doc_${Date.now()}`;
-    await set(ref(rtdb, `${path}/${id}`), body);
-    return body;
-  }
 
-  if (isDelete) {
-    await remove(ref(rtdb, path));
-    return { success: true };
+    if (isDelete) {
+      await remove(ref(rtdb, path));
+      return { success: true };
+    }
+  } catch (error) {
+    console.error(`[Firebase API Error] Failed to ${options.method || 'GET'} ${path}:`, error);
+    if (isGet) {
+      return collections.includes(path) ? [] : {};
+    }
+    throw error;
   }
 }
 
