@@ -138,7 +138,7 @@ export default function GstSettings({
       if (!confirm(t('unsavedChangesContinue'))) return;
     }
     if (profile.niruvanathinPeyar?.trim()) {
-      const existing = businessProfiles.find(p => p.niruvanathinPeyar.trim().toLowerCase() === profile.niruvanathinPeyar.trim().toLowerCase());
+      const existing = businessProfiles.find(p => (p.niruvanathinPeyar || '').trim().toLowerCase() === (profile.niruvanathinPeyar || '').trim().toLowerCase());
       await saveBusinessProfile({ ...profile, id: existing?.id || undefined });
     }
     const loaded = { ...bp };
@@ -156,7 +156,7 @@ export default function GstSettings({
 
   const confirmDeleteProfile = async () => {
     if (!deleteConfirmId) return;
-    const isActive = businessProfiles.find(p => p.id === deleteConfirmId)?.niruvanathinPeyar?.trim().toLowerCase() === profile.niruvanathinPeyar?.trim().toLowerCase();
+    const isActive = businessProfiles.find(p => p.id === deleteConfirmId)?.niruvanathinPeyar?.trim().toLowerCase() === (profile.niruvanathinPeyar || '').trim().toLowerCase();
     await deleteBusinessProfile(deleteConfirmId);
     thagaval(t('profileDeleted'), 'success');
     
@@ -187,7 +187,7 @@ export default function GstSettings({
       const saved = await saveBusinessProfile(freshProfile);
       
       if (profile.niruvanathinPeyar?.trim()) {
-        const existing = businessProfiles.find(p => p.niruvanathinPeyar.trim().toLowerCase() === profile.niruvanathinPeyar.trim().toLowerCase());
+        const existing = businessProfiles.find(p => (p.niruvanathinPeyar || '').trim().toLowerCase() === (profile.niruvanathinPeyar || '').trim().toLowerCase());
         await saveBusinessProfile({ ...profile, id: existing?.id || undefined });
       }
       
@@ -381,7 +381,7 @@ export default function GstSettings({
           ) : (
             <List disablePadding>
               {businessProfiles.map((bp, idx) => {
-                const isActive = bp.niruvanathinPeyar?.trim().toLowerCase() === profile.niruvanathinPeyar?.trim().toLowerCase();
+                const isActive = (bp.niruvanathinPeyar || '').trim().toLowerCase() === (profile.niruvanathinPeyar || '').trim().toLowerCase();
                 return (
                   <React.Fragment key={bp.id}>
                     {idx > 0 && <Divider />}

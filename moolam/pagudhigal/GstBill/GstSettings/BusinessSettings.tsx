@@ -55,7 +55,7 @@ export default function BusinessSettings({
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
             <Select 
               fullWidth size="small"
-              value={businessProfiles.find(bp => bp.niruvanathinPeyar?.trim().toLowerCase() === profile.niruvanathinPeyar?.trim().toLowerCase())?.id || ''} 
+              value={businessProfiles.find(bp => (bp.niruvanathinPeyar || '').trim().toLowerCase() === (profile.niruvanathinPeyar || '').trim().toLowerCase())?.id || ''} 
               onChange={(e) => {
                 const bp = businessProfiles.find(p => p.id === e.target.value);
                 if (bp) handleLoadProfile(bp);

@@ -28,6 +28,8 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
     });
   }, []);
 
+  if (!bill) return null;
+
   const {
     profile: snapshotProfile, client, details, items, totals, invoiceType = 'tax-invoice',
     customTerms, invoiceOptions

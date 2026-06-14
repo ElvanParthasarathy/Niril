@@ -20,7 +20,7 @@ import { numberToWords, formatCurrency, INVOICE_TYPES, getCountryConfig, CURRENC
 import { en } from '../../mozhi/en';
 import { ta } from '../../mozhi/ta';
 
-const SjsTheme = React.forwardRef(({ profile, client, details, items = [], totals = {}, invoiceType = 'tax-invoice', customTerms, options = {} }, ref) => {
+const SjsTheme = React.forwardRef(({ profile = {}, client = {}, details = {}, items = [], totals = {}, invoiceType = 'tax-invoice', customTerms, options = {} }, ref) => {
   const { t } = useLanguage();
   
   const businessState = getDynamicField(profile, 'maanilam', profile, true)?.trim().toLowerCase();
