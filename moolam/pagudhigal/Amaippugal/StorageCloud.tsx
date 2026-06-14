@@ -13,6 +13,7 @@ const ALL_BACKUP_PARTS = [
   { id: 'products',       label: 'GST Products / Inventory', hint: 'Product catalog with HSN, rate, stock' },
   { id: 'receipts',       label: 'GST Receipts',             hint: 'Payment receipts' },
   { id: 'coolieBills',    label: 'Coolie Bills',             hint: 'Non-GST / Coolie bills' },
+  { id: 'coolieProfiles', label: 'Coolie Profiles',          hint: 'Coolie business settings' },
   { id: 'coolieClients',  label: 'Coolie Clients',           hint: 'Saved coolie clients' },
   { id: 'coolieProducts', label: 'Coolie Products',          hint: 'Coolie product catalog' },
   { id: 'coolieReceipts', label: 'Coolie Receipts',          hint: 'Coolie payment receipts' },

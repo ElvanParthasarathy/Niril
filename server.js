@@ -502,6 +502,7 @@ app.get('/api/export', (req, res) => {
     termsTemplates: readAllFromDir('mathirigal'),
     products: readAllFromDir('porulgal'),
     coolieProducts: readAllFromDir('coolie_porulgal'),
+    coolieProfiles: readAllFromDir('coolie_thannilai'),
     receipts: readAllFromDir('patrugal'),
     profiles: readAllFromDir('thannilai'),
     coolieBills: readAllFromDir('coolie_pattiyalkal'),
@@ -576,6 +577,13 @@ app.post('/api/import', (req, res) => {
     for (const prof of data.profiles) {
       if (prof.id) {
         writeJSON(path.join(DATA_DIR, 'thannilai', safeFileName(prof.id) + '.json'), prof);
+      }
+    }
+  }
+  if (data.coolieProfiles && Array.isArray(data.coolieProfiles)) {
+    for (const prof of data.coolieProfiles) {
+      if (prof.id) {
+        writeJSON(path.join(DATA_DIR, 'coolie_thannilai', safeFileName(prof.id) + '.json'), prof);
       }
     }
   }

@@ -421,7 +421,7 @@ const getAppVersion = async () => {
 //   receipts, meta, localStorage } — each bool.
 export const exportAllData = async (selection) => {
   const [all, version] = await Promise.all([apiFetch(`${API}/export`), getAppVersion()]);
-  const sel = selection || { profile: true, profiles: true, bills: true, clients: true, products: true, receipts: true, meta: true, localStorage: true, coolieClients: true, termsTemplates: true, coolieProducts: true, coolieBills: true, coolieReceipts: true };
+  const sel = selection || { profile: true, profiles: true, bills: true, clients: true, products: true, receipts: true, meta: true, localStorage: true, coolieClients: true, termsTemplates: true, coolieProducts: true, coolieBills: true, coolieReceipts: true, coolieProfiles: true };
 
   const data: any = { exportedAt: new Date().toISOString(), version, __freegstbill_backup: true };
   if (sel.profile)        data.profile = all.profile;
@@ -433,6 +433,7 @@ export const exportAllData = async (selection) => {
   if (sel.coolieClients)  data.coolieClients = all.coolieClients;
   if (sel.termsTemplates) data.termsTemplates = all.termsTemplates;
   if (sel.coolieProducts) data.coolieProducts = all.coolieProducts;
+  if (sel.coolieProfiles) data.coolieProfiles = all.coolieProfiles;
   if (sel.coolieBills)    data.coolieBills = all.coolieBills;
   if (sel.coolieReceipts) data.coolieReceipts = all.coolieReceipts;
 
@@ -462,6 +463,7 @@ export const inspectBackup = (jsonString) => {
       coolieClients: Array.isArray(data.coolieClients) ? data.coolieClients.length : 0,
       termsTemplates: Array.isArray(data.termsTemplates) ? data.termsTemplates.length : 0,
       coolieProducts: Array.isArray(data.coolieProducts) ? data.coolieProducts.length : 0,
+      coolieProfiles: Array.isArray(data.coolieProfiles) ? data.coolieProfiles.length : 0,
       coolieBills: Array.isArray(data.coolieBills) ? data.coolieBills.length : 0,
       coolieReceipts: Array.isArray(data.coolieReceipts) ? data.coolieReceipts.length : 0,
       meta: data.meta ? Object.keys(data.meta).length : 0,
@@ -475,7 +477,7 @@ export const inspectBackup = (jsonString) => {
 export const importData = async (jsonString, selection) => {
   const inspected = typeof jsonString === 'string' ? inspectBackup(jsonString) : { raw: jsonString };
   const data = inspected.raw;
-  const sel = selection || { profile: true, profiles: true, bills: true, clients: true, products: true, receipts: true, meta: true, localStorage: true, coolieClients: true, termsTemplates: true, coolieProducts: true, coolieBills: true, coolieReceipts: true };
+  const sel = selection || { profile: true, profiles: true, bills: true, clients: true, products: true, receipts: true, meta: true, localStorage: true, coolieClients: true, termsTemplates: true, coolieProducts: true, coolieBills: true, coolieReceipts: true, coolieProfiles: true };
 
   // Build a filtered payload — never touch collections the user didn't tick.
   const payload: any = {};
@@ -488,6 +490,7 @@ export const importData = async (jsonString, selection) => {
   if (sel.coolieClients && data.coolieClients)   payload.coolieClients = data.coolieClients;
   if (sel.termsTemplates && data.termsTemplates) payload.termsTemplates = data.termsTemplates;
   if (sel.coolieProducts && data.coolieProducts) payload.coolieProducts = data.coolieProducts;
+  if (sel.coolieProfiles && data.coolieProfiles) payload.coolieProfiles = data.coolieProfiles;
   if (sel.coolieBills && data.coolieBills)       payload.coolieBills = data.coolieBills;
   if (sel.coolieReceipts && data.coolieReceipts) payload.coolieReceipts = data.coolieReceipts;
 
