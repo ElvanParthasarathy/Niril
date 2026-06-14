@@ -20,7 +20,7 @@ const SplashScreen = () => {
                 </div>
 
                 <div className="animate-enter delay-1">
-                    <CircularProgress sx={{ color: 'var(--auth-text, #ffffff)' }} />
+                    <CircularProgress size={28} thickness={4.5} sx={{ color: 'var(--auth-text, #ffffff)' }} />
                 </div>
             </div>
         </AuthLayout>
