@@ -41,12 +41,9 @@ export default function Nalvaravu({ onComplete }) {
   return (
     <AuthLayout>
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        <div style={{ width: '64px', height: '64px', borderRadius: '16px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem', boxShadow: '0 20px 40px var(--auth-glow)' }}>
-          <Buildings size={32} weight="regular" color="white" />
-        </div>
         <AuthHeader 
           title={language === 'ta' ? 'வணிகத் தரவுகளை உள்ளிடுக' : 'Enter Business Details'} 
-          subtitle={language === 'ta' ? 'தொடங்குவதற்கு உங்கள் வணிகப் பெயர்களை கீழே உள்ளிடவும்.' : "Let's get started. Please enter your business names below to set up your profiles."} 
+          subtitle="" 
         />
       </div>
 
