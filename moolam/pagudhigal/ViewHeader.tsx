@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Box, Typography, IconButton, Tooltip, useMediaQuery, useTheme, Button } from '@mui/material';
-import { PencilSimple, Printer as PrintIcon, DownloadSimple, ShareNetwork, Spinner } from '@phosphor-icons/react';
+import { Box, Typography, IconButton, Tooltip, useMediaQuery, useTheme, Button, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
+import { PencilSimple, Printer as PrintIcon, DownloadSimple, ShareNetwork, Spinner, DotsThreeVertical } from '@phosphor-icons/react';
 import { FloatingBackButton } from './FloatingBackButton';
 import { useLanguage } from '../mozhi/LanguageContext';
 
@@ -21,6 +21,10 @@ export const ViewHeader = ({ onEdit, onPrint, onPDF, onShare, saving, sharing = 
     '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
   };
 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const handleMenuOpen = (e: any) => setAnchorEl(e.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
+
   const toolsPill = (
     <Box sx={{ ml: {xs: 0, md: 2}, display: 'flex', gap: { xs: 1, md: 0.5 }, alignItems: 'center', bgcolor: { xs: 'transparent', md: 'background.paper' }, borderRadius: '999px', px: { xs: 0, md: 1 }, height: { xs: 48, md: 40 }, boxSizing: 'border-box', border: 'none' }}>
       {onEdit && (
@@ -30,21 +34,65 @@ export const ViewHeader = ({ onEdit, onPrint, onPDF, onShare, saving, sharing = 
           </IconButton>
         </Tooltip>
       )}
-      <Tooltip title="Print">
-        <IconButton onClick={onPrint} sx={iconBtnSx}>
-          <PrintIcon size={22} />
+      <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 0.5 }}>
+        <Tooltip title="Print">
+          <IconButton onClick={onPrint} sx={iconBtnSx}>
+            <PrintIcon size={22} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="PDF">
+          <IconButton onClick={onPDF} disabled={saving} sx={iconBtnSx}>
+            <DownloadSimple size={22} />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Share">
+          <IconButton onClick={onShare} disabled={sharing || saving} sx={iconBtnSx}>
+            {sharing ? <Spinner size={22} className="animate-spin" /> : <ShareNetwork size={22} />}
+          </IconButton>
+        </Tooltip>
+      </Box>
+      <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+        <IconButton onClick={handleMenuOpen} sx={iconBtnSx}>
+          <DotsThreeVertical size={24} weight="bold" />
         </IconButton>
-      </Tooltip>
-      <Tooltip title="PDF">
-        <IconButton onClick={onPDF} disabled={saving} sx={iconBtnSx}>
-          <DownloadSimple size={22} />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="Share">
-        <IconButton onClick={onShare} disabled={sharing || saving} sx={iconBtnSx}>
-          {sharing ? <Spinner size={22} className="animate-spin" /> : <ShareNetwork size={22} />}
-        </IconButton>
-      </Tooltip>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          sx={{ mt: 1 }}
+          PaperProps={{
+            elevation: 0,
+            sx: {
+              overflow: 'visible',
+              filter: 'drop-shadow(0px 4px 20px rgba(0,0,0,0.1))',
+              mt: 1.5,
+              borderRadius: '16px',
+              minWidth: 160,
+            },
+          }}
+        >
+          {onEdit && (
+            <MenuItem onClick={() => { handleMenuClose(); onEdit(); }}>
+              <ListItemIcon><PencilSimple size={20} /></ListItemIcon>
+              <ListItemText>{t('edit') || 'Edit'}</ListItemText>
+            </MenuItem>
+          )}
+          <MenuItem onClick={() => { handleMenuClose(); onPrint(); }}>
+            <ListItemIcon><PrintIcon size={20} /></ListItemIcon>
+            <ListItemText>{t('print') || 'Print'}</ListItemText>
+          </MenuItem>
+          <MenuItem disabled={saving} onClick={() => { handleMenuClose(); onPDF(); }}>
+            <ListItemIcon><DownloadSimple size={20} /></ListItemIcon>
+            <ListItemText>{t('pdf') || 'PDF'}</ListItemText>
+          </MenuItem>
+          <MenuItem disabled={sharing || saving} onClick={() => { handleMenuClose(); onShare(); }}>
+            <ListItemIcon>
+              {sharing ? <Spinner size={20} className="animate-spin" /> : <ShareNetwork size={20} />}
+            </ListItemIcon>
+            <ListItemText>{t('share') || 'Share'}</ListItemText>
+          </MenuItem>
+        </Menu>
+      </Box>
     </Box>
   );
 
