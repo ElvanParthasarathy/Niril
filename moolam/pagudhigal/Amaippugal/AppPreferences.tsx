@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, Select, MenuItem } from '@mui/material';
+import { Box, Typography, Select, MenuItem, Switch } from '@mui/material';
 import { Translate, Palette, CheckCircle, Circle, Desktop } from '@phosphor-icons/react';
 import { SettingsPillContainer, SettingsPillRow } from '../ElvanSettingsSection';
 import { useLanguage } from '../../mozhi/LanguageContext';
@@ -98,36 +98,22 @@ export default function AppPreferences({ thagaval, darkMode, setDarkMode, themeM
               </Box>
             </Box>
 
-            {/* Auto Mode Option */}
-            <Box 
-              onClick={() => handleThemeChange("auto")}
-              sx={{ 
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
-                cursor: 'pointer', userSelect: 'none'
-              }}
-            >
-              <Box sx={{
-                width: 110, height: 85, borderRadius: '24px',
-                bgcolor: darkMode ? '#2d2d2d' : '#e0e0e0', border: '1px solid', borderColor: themeMode === 'auto' ? (darkMode ? '#888' : '#555') : 'divider',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1.2, p: 2,
-                transition: 'all 0.2s',
-                transform: themeMode === 'auto' ? 'scale(1.02)' : 'scale(1)'
-              }}>
-                <Desktop size={32} weight="duotone" color={darkMode ? "#fff" : "#000"} />
-              </Box>
-              <Typography variant="body2" sx={{ 
-                fontWeight: themeMode === 'auto' ? 600 : 500, 
-                color: themeMode === 'auto' ? 'text.primary' : 'text.secondary',
-                transition: 'color 0.2s',
-                mt: 0.5
-              }}>
-                Auto
-              </Typography>
-              <Box sx={{ mt: -1 }}>
-                {themeMode === 'auto' ? <CheckCircle weight="fill" size={24} color={darkMode ? "#fff" : "#000"} /> : <Circle weight="regular" size={24} color="#888" />}
-              </Box>
-            </Box>
-
+            {/* Auto Mode removed from here, added as a switch below */}
+        </Box>
+        <Box sx={{ borderTop: '1px solid', borderColor: 'divider', p: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box>
+            <Typography variant="body1" sx={{ fontWeight: 600, color: 'text.primary' }}>
+              Auto
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
+              Use system theme
+            </Typography>
+          </Box>
+          <Switch 
+            checked={themeMode === 'auto'} 
+            onChange={(e) => handleThemeChange(e.target.checked ? 'auto' : (darkMode ? 'dark' : 'light'))} 
+            color="primary"
+          />
         </Box>
       </SettingsPillContainer>
 
