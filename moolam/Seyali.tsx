@@ -473,9 +473,7 @@ function Seyali() {
 
   const [firebaseUser, setFirebaseUser] = useState<any>(null);
   const [firebaseAuthLoading, setFirebaseAuthLoading] = useState(true);
-  const [hasWelcomed, setHasWelcomed] = useState(() => {
-    return localStorage.getItem('elvanniril_welcomed') === 'true';
-  });
+  const [postLoginWelcomeDone, setPostLoginWelcomeDone] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
@@ -1017,11 +1015,7 @@ function Seyali() {
     return (
       <ThemeProvider theme={muiTheme}>
         <CssBaseline />
-        {!hasWelcomed ? (
-          <Welcome onContinue={() => setHasWelcomed(true)} />
-        ) : (
-          <Login />
-        )}
+        <Login />
       </ThemeProvider>
     );
   }
@@ -1030,13 +1024,20 @@ function Seyali() {
 
   if (showWelcome) {
     return (
-      <>
-        <Nalvaravu onComplete={(p) => {
-          if (p) setProfile(p);
-          setShowWelcome(false);
-        }} />
-        <Thagaval />
-      </>
+      <ThemeProvider theme={muiTheme}>
+        <CssBaseline />
+        {!postLoginWelcomeDone ? (
+          <Welcome onContinue={() => setPostLoginWelcomeDone(true)} />
+        ) : (
+          <>
+            <Nalvaravu onComplete={(p) => {
+              if (p) setProfile(p);
+              setShowWelcome(false);
+            }} />
+            <Thagaval />
+          </>
+        )}
+      </ThemeProvider>
     );
   }
 
