@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AuthLayout, AuthButton } from './AuthComponents';
 import { Database, CheckCircle, GlobeHemisphereWest } from '@phosphor-icons/react';
-import { List, ListItem, ListItemButton, ListItemText, ListItemIcon } from '@mui/material';
+import { List, ListItem, ListItemButton, ListItemText, ListItemIcon, Divider } from '@mui/material';
 import { useLanguage } from '../../mozhi/LanguageContext';
 
 const GREETINGS = ["வணக்கம்!", "Hello!", "നമസ്കാരം!"];
@@ -188,7 +188,7 @@ export default function Welcome({ mode, onContinue }: { mode: 'pre-login' | 'pos
                                 overflow: 'hidden',
                                 p: 0
                             }}>
-                                <ListItem disablePadding divider sx={{ borderColor: 'var(--auth-divider)' }}>
+                                <ListItem disablePadding>
                                     <ListItemButton 
                                         onClick={() => setLanguage('ta')} 
                                         sx={{ 
@@ -214,6 +214,7 @@ export default function Welcome({ mode, onContinue }: { mode: 'pre-login' | 'pos
                                         )}
                                     </ListItemButton>
                                 </ListItem>
+                                <Divider sx={{ mx: 3, borderColor: 'var(--auth-divider)' }} />
                                 <ListItem disablePadding>
                                     <ListItemButton 
                                         onClick={() => setLanguage('en')} 
