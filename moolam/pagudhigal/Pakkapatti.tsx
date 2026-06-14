@@ -322,12 +322,12 @@ export default function Pakkapatti({
                   onClick={() => { if(onSwitchModeRequest) onSwitchModeRequest(); }}
                   sx={{ 
                     borderRadius: '16px', 
-                    width: '100%',
+                    width: 'calc(100% - 48px)',
                     display: 'flex',
                     justifyContent: 'flex-start',
                     alignItems: 'center',
                     pl: '18px',
-                    pr: '42px',
+                    pr: '12px',
                     py: '8px',
                     minHeight: 52,
                     userSelect: 'none',
