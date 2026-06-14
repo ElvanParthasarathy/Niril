@@ -54,7 +54,6 @@ export default function Nalvaravu({ onComplete }) {
             label={t('hc_businessName') || 'GST Business Name'}
             value={gstBusinessName}
             onChange={(e) => setGstBusinessName(e.target.value)}
-            placeholder="e.g. Sharma Consultants Pvt Ltd"
             helperText="Used for regular GST invoices."
           />
 
@@ -63,7 +62,6 @@ export default function Nalvaravu({ onComplete }) {
             label="Coolie Business Name"
             value={coolieBusinessName}
             onChange={(e) => setCoolieBusinessName(e.target.value)}
-            placeholder="e.g. Sharma Coolie Works"
             helperText="Used for Coolie bills and receipts."
           />
 
