@@ -9,7 +9,7 @@ const GREETINGS = ["வணக்கம்!", "Hello!", "നമസ്കാരം
 export default function Welcome({ onContinue, mode = 'post-login' }: { onContinue: () => void, mode?: 'pre-login' | 'post-login' }) {
     const { t, language, setLanguage } = useLanguage();
     
-    const [phase, setPhase] = useState<'greeting' | 'language' | 'billingLanguage' | 'setup'>('greeting');
+    const [phase, setPhase] = useState<'greeting' | 'language' | 'billingLanguage' | 'setup'>(mode === 'pre-login' ? 'setup' : 'greeting');
     const [greetingIndex, setGreetingIndex] = useState(0);
     const [greetingOpacity, setGreetingOpacity] = useState(0);
     const [showLanguage, setShowLanguage] = useState(false);
