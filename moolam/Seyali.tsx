@@ -357,11 +357,9 @@ function Seyali() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
-  const [serverDown, setServerDown] = useState(false);
   const deferredPrompt = useRef(null);
-  const retryTimer = useRef(null);
 
-  const [serverStatus, setServerStatus] = useState('checking'); // 'checking' | 'online' | 'offline'
+  const [serverStatus, setServerStatus] = useState('connecting'); // 'checking' | 'online' | 'offline'
   const profileLoaded = useRef(false);
   const [allProfiles, setAllProfiles] = useState([]);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -422,15 +420,14 @@ function Seyali() {
     setShowUpdateModal(false);
   };
 
-  // Check if server is running — continuously monitors
+  // Load profile on startup
   useEffect(() => {
     let cancelled = false;
 
-    const checkServer = async () => {
+    const loadAppProfile = async () => {
       try {
         const p = await getProfile();
         if (cancelled) return;
-        setServerDown(false);
         setServerStatus('online');
         if (!profileLoaded.current) {
           profileLoaded.current = true;
@@ -441,18 +438,14 @@ function Seyali() {
         }
       } catch (err) {
         if (cancelled) return;
-        setServerDown(true);
         setServerStatus('offline');
       }
     };
 
-    checkServer();
-    // Keep checking every 5 seconds (fast when down, normal heartbeat when up)
-    retryTimer.current = setInterval(checkServer, 5000);
+    loadAppProfile();
 
     return () => {
       cancelled = true;
-      if (retryTimer.current) clearInterval(retryTimer.current);
     };
   }, []);
 
@@ -925,39 +918,7 @@ function Seyali() {
     );
   }
 
-  if (serverDown) {
-    return (
-      <Backdrop open={true} sx={{ color: '#fff', zIndex: 9999, flexDirection: 'column', bgcolor: 'rgba(0,0,0,0.85)' }}>
-        <Box sx={{ bgcolor: 'background.paper', color: 'text.primary', p: 4, borderRadius: 3, maxWidth: 500, width: '90%', textAlign: 'center', boxShadow: 24 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-            <Description size={48} weight="regular" color="#3b82f6" />
-          </Box>
-          <Typography variant="h5" sx={{ fontWeight: 700 }} gutterBottom>
-            Elvan Niril Needs a Quick Start
-          </Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Your data is <strong>{t('hc_100Safe')}</strong> on your computer — nothing is lost.
-            The app just needs to be started once.
-          </Typography>
-          <Button variant="contained" color="primary" href="elvanniril://start" sx={{ textTransform: 'none', mb: 3 }}>
-            Open GST Billing
-          </Button>
-          <Box sx={{ textAlign: 'left', bgcolor: 'action.hover', p: 2, borderRadius: 2, mb: 3 }}>
-            <Typography variant="caption" gutterBottom sx={{ fontWeight: 600, display: 'block' }}>{t('hc_orStartManually')}</Typography>
-            <Typography variant="caption" sx={{ display: 'block' }}>{t('hc_1Doubleclick')}<strong>Elvan Niril</strong>{t('hc_onYourDesktop')}</Typography>
-            <Typography variant="caption" sx={{ display: 'block' }}>{t('hc_2OrSearch')}<strong>"Elvan Niril"</strong>{t('hc_inStartMenu')}</Typography>
-          </Box>
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-            All your invoices, clients, and data are safely stored on your computer. They are never deleted or shared.
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1.5, color: 'text.secondary' }}>
-            <CircularProgress size={16} color="inherit" />
-            <Typography variant="caption">{t('hc_startingThisPageWillOpen')}</Typography>
-          </Box>
-        </Box>
-      </Backdrop>
-    );
-  }
+
 
   if (showWelcome) {
     return (
