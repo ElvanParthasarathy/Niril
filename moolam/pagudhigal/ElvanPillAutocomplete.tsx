@@ -31,22 +31,27 @@ export default function ElvanPillAutocomplete({
       renderInput={(params: any) => {
         // CRITICAL: merge slotProps so we don't clobber the Autocomplete's
         // internal input props (role="combobox", aria-*, ref, endAdornment).
+
+        // In MUI v6, inputProps and InputLabelProps are passed via slotProps
         const mergedSlotProps = {
           ...params.slotProps,
-          inputLabel: { ...params.slotProps?.inputLabel, shrink: true },
+          inputLabel: {
+            ...params.slotProps?.inputLabel,
+            ...params.InputLabelProps,
+            ...(textFieldProps?.InputLabelProps || {}),
+            ...(textFieldProps?.slotProps?.inputLabel || {}),
+            shrink: true,
+          },
+          htmlInput: {
+            ...params.slotProps?.htmlInput,
+            ...params.inputProps,
+            ...(textFieldProps?.inputProps || {}),
+            ...(textFieldProps?.slotProps?.htmlInput || {})
+          }
         };
-        // Merge textFieldProps safely so we don't overwrite params
+
+        // Remove deprecated props to prevent React DOM errors
         const finalTextFieldProps = { ...textFieldProps };
-        const finalInputProps = {
-          ...params.inputProps,
-          ...(textFieldProps?.inputProps || {})
-        };
-        const finalInputLabelProps = {
-          ...params.InputLabelProps,
-          ...(textFieldProps?.InputLabelProps || {})
-        };
-        
-        // Remove them from finalTextFieldProps so we don't duplicate
         delete finalTextFieldProps.inputProps;
         delete finalTextFieldProps.InputLabelProps;
 
@@ -59,8 +64,6 @@ export default function ElvanPillAutocomplete({
             label={label}
             placeholder={placeholder}
             slotProps={mergedSlotProps}
-            inputProps={finalInputProps}
-            InputLabelProps={finalInputLabelProps}
             {...finalTextFieldProps}
             sx={{
               // Scoped overrides that fix the Autocomplete padding conflict

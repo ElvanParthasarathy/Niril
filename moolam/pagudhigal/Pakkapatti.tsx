@@ -297,7 +297,7 @@ export default function Pakkapatti({
                   minHeight: 48,
                 }}
               >
-                <Tooltip title={t('settings') || 'Settings'} placement="right" arrow TransitionComponent={Fade}>
+                <Tooltip title={t('settings') || 'Settings'} placement="right" arrow slots={{ transition: Fade }}>
                   <IconButton 
                     onClick={() => handleNavClick('settings')}
                     sx={{ 
@@ -388,7 +388,7 @@ export default function Pakkapatti({
                 </ListItemButton>
 
                 <Box sx={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)' }}>
-                  <Tooltip title={t('settings') || 'Settings'} placement="top" arrow TransitionComponent={Fade}>
+                  <Tooltip title={t('settings') || 'Settings'} placement="top" arrow slots={{ transition: Fade }}>
                     <IconButton 
                       onClick={(e) => { e.stopPropagation(); handleNavClick('settings'); }}
                       size="small"
