@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Typography, Button, ButtonBase, Skeleton } from '@mui/material';
-import { Buildings, Hash, Cloud, ArrowsClockwise, CaretRight, Invoice, HandCoins, Translate, MapPin, Bank, Palette, PaintBrush } from '@phosphor-icons/react';
+import { Buildings, Hash, Cloud, ArrowsClockwise, CaretRight, Invoice, HandCoins, Translate, MapPin, Bank, Palette, PaintBrush, Trash } from '@phosphor-icons/react';
+import { LockKeyhole } from 'lucide-react';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../firebase';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { useLanguage } from '../../mozhi/LanguageContext';
@@ -395,12 +398,42 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
           />
 
           <SettingsRow 
-             icon={<ArrowsClockwise size={20} weight="bold" />} 
-             iconColor="monochrome"
-             title={showAppVersion ? t('systemUpdates') : t('systemStorage')} 
-             description={showAppVersion ? t('appVersionsCache') : t('appStorageDesc')} 
-             onClick={() => handleNavigate(3)} 
+            icon={<Trash size={20} weight="fill" />} 
+            iconColor="monochrome"
+            title={t('clearCacheTitle') !== 'clearCacheTitle' ? t('clearCacheTitle') : 'Clear Cache'}
+            description={t('clearCacheDesc') !== 'clearCacheDesc' ? t('clearCacheDesc') : 'Clear local cache to fix issues.'}
+            control={
+              <Button variant="outlined" color="inherit" size="small" sx={{ borderRadius: 10, px: 2 }} onClick={(e) => {
+                e.stopPropagation();
+                if (confirm('Clear local cache and reload? You will need to log in again if using Google Drive.')) {
+                  localStorage.clear();
+                  window.location.reload();
+                }
+              }}>
+                {t('clearCacheBtn') !== 'clearCacheBtn' ? t('clearCacheBtn') : 'Clear Cache'}
+              </Button>
+            }
           />
+          <SettingsRow 
+            icon={<LockKeyhole size={20} />} 
+            iconColor="monochrome"
+            title="Account Security"
+            description="Sign out of Firebase to lock your database access on this device."
+            control={
+              <Button variant="outlined" color="inherit" size="small" sx={{ borderRadius: 8 }} onClick={(e) => { e.stopPropagation(); signOut(auth); }}>
+                Sign Out
+              </Button>
+            }
+          />
+          {showAppVersion && (
+            <SettingsRow 
+               icon={<ArrowsClockwise size={20} weight="bold" />} 
+               iconColor="monochrome"
+               title={t('systemUpdates')} 
+               description={t('appVersionsBackupCache') || 'App versions, Backup'} 
+               onClick={() => handleNavigate(3)} 
+            />
+          )}
        </SettingsSection>
     </div>
   );

@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import { SettingsPillContainer, SettingsRow } from '../ElvanSettingsSection';
-import { ArrowsClockwise, Trash } from '@phosphor-icons/react';
+import { ArrowsClockwise } from '@phosphor-icons/react';
 import { Button, Box } from '@mui/material';
 import { thagaval } from '../Thagaval';
-import { LockKeyhole } from 'lucide-react';
-import { signOut } from 'firebase/auth';
-import { auth } from '../../firebase';
 
 export default function SystemUpdates({ t }: { t: (key: string) => string }) {
   const [updateInfo, setUpdateInfo] = useState<any>(null);
@@ -59,38 +56,6 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
       </SettingsPillContainer>
       )}
 
-      <SettingsPillContainer>
-        <SettingsRow
-          icon={<Trash size={20} weight="fill" />}
-          iconColor="monochrome"
-          title={t('clearCacheTitle') !== 'clearCacheTitle' ? t('clearCacheTitle') : 'Clear Cache'}
-          description={t('clearCacheDesc') !== 'clearCacheDesc' ? t('clearCacheDesc') : 'Clear local cache to fix issues.'}
-          control={
-            <Button variant="outlined" color="inherit" size="small" sx={{ borderRadius: 10, px: 2 }} onClick={() => {
-              if (confirm('Clear local cache and reload? You will need to log in again if using Google Drive.')) {
-                localStorage.clear();
-                window.location.reload();
-              }
-            }}>
-              {t('clearCacheBtn') !== 'clearCacheBtn' ? t('clearCacheBtn') : 'Clear Cache'}
-            </Button>
-          }
-        />
-      </SettingsPillContainer>
-
-      <SettingsPillContainer>
-        <SettingsRow
-          icon={<LockKeyhole size={20} />}
-          iconColor="monochrome"
-          title="Account Security"
-          description="Sign out of Firebase to lock your database access on this device."
-          control={
-            <Button variant="outlined" color="inherit" size="small" sx={{ borderRadius: 8 }} onClick={() => signOut(auth)}>
-              Sign Out
-            </Button>
-          }
-        />
-      </SettingsPillContainer>
     </Box>
   );
 }
