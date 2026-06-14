@@ -9,7 +9,7 @@ import { thagaval } from './Thagaval';
 import { AuthLayout, AuthHeader, AuthInput, AuthButton } from './auth/AuthComponents';
 
 export default function Nalvaravu({ onComplete }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const [gstBusinessName, setGstBusinessName] = useState('');
   const [coolieBusinessName, setCoolieBusinessName] = useState('');
@@ -45,8 +45,8 @@ export default function Nalvaravu({ onComplete }) {
           <Buildings size={32} weight="regular" color="white" />
         </div>
         <AuthHeader 
-          title={t('hc_welcomeToElvanNiril') || 'Welcome'} 
-          subtitle="Let's get started. Please enter your business names below to set up your profiles." 
+          title={language === 'ta' ? 'வணிகத் தரவுகளை உள்ளிடுக' : 'Enter Business Details'} 
+          subtitle={language === 'ta' ? 'தொடங்குவதற்கு உங்கள் வணிகப் பெயர்களை கீழே உள்ளிடவும்.' : "Let's get started. Please enter your business names below to set up your profiles."} 
         />
       </div>
 
