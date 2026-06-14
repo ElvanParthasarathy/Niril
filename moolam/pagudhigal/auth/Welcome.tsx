@@ -49,7 +49,11 @@ export default function Welcome({ onContinue, mode = 'post-login' }: { onContinu
                 // Move to next greeting or switch to setup phase
                 loopCount++;
                 if (loopCount >= GREETINGS.length) {
-                    setPhase('language');
+                    if (mode === 'pre-login') {
+                        setPhase('setup');
+                    } else {
+                        setPhase('language');
+                    }
                     break;
                 } else {
                     setGreetingIndex((prev) => prev + 1);
