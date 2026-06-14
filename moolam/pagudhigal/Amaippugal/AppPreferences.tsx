@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Typography, Select, MenuItem, Switch } from '@mui/material';
+import { Box, Typography, Select, MenuItem, Switch, Divider } from '@mui/material';
 import { Translate, Palette, CheckCircle, Circle, Desktop } from '@phosphor-icons/react';
 import { SettingsPillContainer, SettingsPillRow } from '../ElvanSettingsSection';
 import { useLanguage } from '../../mozhi/LanguageContext';
+import { Material3Switch } from './Material3Switch';
 
 export default function AppPreferences({ thagaval, darkMode, setDarkMode, themeMode, setThemeMode }: any) {
   const { language, setLanguage, t } = useLanguage();
@@ -100,7 +101,8 @@ export default function AppPreferences({ thagaval, darkMode, setDarkMode, themeM
 
             {/* Auto Mode removed from here, added as a switch below */}
         </Box>
-        <Box sx={{ borderTop: '1px solid', borderColor: 'divider', p: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Divider sx={(theme) => ({ ml: '20px', mr: '20px', borderColor: theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.06)' })} />
+        <Box sx={{ p: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box>
             <Typography variant="body1" sx={{ fontWeight: 600, color: 'text.primary' }}>
               Auto
@@ -109,10 +111,9 @@ export default function AppPreferences({ thagaval, darkMode, setDarkMode, themeM
               Use system theme
             </Typography>
           </Box>
-          <Switch 
+          <Material3Switch 
             checked={themeMode === 'auto'} 
-            onChange={(e) => handleThemeChange(e.target.checked ? 'auto' : (darkMode ? 'dark' : 'light'))} 
-            color="primary"
+            onChange={(e: any) => handleThemeChange(e.target.checked ? 'auto' : (darkMode ? 'dark' : 'light'))} 
           />
         </Box>
       </SettingsPillContainer>
