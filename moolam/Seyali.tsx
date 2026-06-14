@@ -473,6 +473,7 @@ function Seyali() {
 
   const [firebaseUser, setFirebaseUser] = useState<any>(null);
   const [firebaseAuthLoading, setFirebaseAuthLoading] = useState(true);
+  const [isProfileLoading, setIsProfileLoading] = useState(true);
   const [postLoginWelcomeDone, setPostLoginWelcomeDone] = useState(false);
   const [hasWelcomed, setHasWelcomed] = useState(false);
 
@@ -518,8 +519,14 @@ function Seyali() {
     setShowUpdateModal(false);
   };
 
-  // Load profile on startup
+  // Load profile on startup or login
   useEffect(() => {
+    if (firebaseAuthLoading) return;
+    if (!firebaseUser) {
+      setIsProfileLoading(false);
+      return;
+    }
+
     let cancelled = false;
 
     const loadAppProfile = async () => {
@@ -548,6 +555,10 @@ function Seyali() {
       } catch (err) {
         if (cancelled) return;
         setServerStatus('offline');
+      } finally {
+        if (!cancelled) {
+          setIsProfileLoading(false);
+        }
       }
     };
 
@@ -556,7 +567,7 @@ function Seyali() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [firebaseAuthLoading, firebaseUser]);
 
   // Capture PWA install prompt. Banner re-appears 14 days after dismissal
   // (was: dismissed forever — too aggressive, users who closed it during
@@ -1003,7 +1014,7 @@ function Seyali() {
     }
   }), [darkMode]);
 
-  if (firebaseAuthLoading) {
+  if (firebaseAuthLoading || isProfileLoading) {
     return (
       <ThemeProvider theme={muiTheme}>
         <CssBaseline />
