@@ -182,22 +182,22 @@ export default function Welcome({ mode, onContinue }: { mode: 'pre-login' | 'pos
                             <List sx={{
                                 width: '100%',
                                 maxWidth: '320px',
-                                bgcolor: 'var(--auth-surface)',
+                                bgcolor: 'var(--auth-input-bg)',
                                 borderRadius: '16px',
                                 mb: 4,
-                                boxShadow: '0 4px 12px var(--auth-glow)',
                                 overflow: 'hidden',
                                 p: 0
                             }}>
-                                <ListItem disablePadding divider>
+                                <ListItem disablePadding divider sx={{ borderColor: 'var(--auth-divider)' }}>
                                     <ListItemButton 
                                         onClick={() => setLanguage('ta')} 
                                         sx={{ 
                                             py: 2, 
                                             px: 3,
-                                            bgcolor: language === 'ta' ? 'var(--auth-glow)' : 'transparent',
-                                            '&:hover': { bgcolor: 'var(--auth-glow)' }
+                                            bgcolor: 'transparent',
+                                            '&:hover': { bgcolor: 'transparent' }
                                         }}
+                                        disableRipple
                                     >
                                         <ListItemText 
                                             primary="தமிழ்" 
@@ -220,9 +220,10 @@ export default function Welcome({ mode, onContinue }: { mode: 'pre-login' | 'pos
                                         sx={{ 
                                             py: 2, 
                                             px: 3,
-                                            bgcolor: language === 'en' ? 'var(--auth-glow)' : 'transparent',
-                                            '&:hover': { bgcolor: 'var(--auth-glow)' }
+                                            bgcolor: 'transparent',
+                                            '&:hover': { bgcolor: 'transparent' }
                                         }}
+                                        disableRipple
                                     >
                                         <ListItemText 
                                             primary="English" 
