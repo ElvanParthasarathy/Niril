@@ -94,31 +94,16 @@ export default function AppearanceSettings({ formData, setFormData, handleAutoSa
               options={langOptions}
               value={langOptions.find(o => o.id === (formData.defaultPrintLanguage || 'ta')) || null}
               disableClearable
-              onChange={(e, val: any) => setFormData({ ...formData, defaultPrintLanguage: val?.id || 'ta' })}
+              onChange={(e, val: any) => setFormData({ 
+                ...formData, 
+                defaultPrintLanguage: val?.id || 'ta',
+                receiptLanguage: val?.id || 'ta'
+              })}
             />
           </Box>
         </SettingsPillRow>
 
-        <SettingsPillRow
-          label={t('receiptLanguage') || 'Receipt Language'}
-          value={getLangName(formData.receiptLanguage || 'ta')}
-          isEditing={editingSection === 'receiptLang'}
-          onEdit={() => setEditingSection('receiptLang')}
-          onCancel={onPillCancel}
-          onSave={onPillSave}
-        >
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
-            <Typography sx={{ fontSize: '13px', color: 'var(--mac-text-secondary, #aaaaaa)', fontWeight: 500 }}>
-              {t('receiptLanguage') || 'Receipt Language'}
-            </Typography>
-            <ElvanPillAutocomplete
-              options={langOptions}
-              value={langOptions.find(o => o.id === (formData.receiptLanguage || 'ta')) || null}
-              disableClearable
-              onChange={(e, val: any) => setFormData({ ...formData, receiptLanguage: val?.id || 'ta' })}
-            />
-          </Box>
-        </SettingsPillRow>
+
       </SettingsPillContainer>
     </Box>
   );

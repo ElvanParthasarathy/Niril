@@ -1103,7 +1103,7 @@ export const en: Record<TranslationKey, string> = {
   branchEnglish: 'Branch (English)',
   appearanceDescription: 'Configure bill theme color and print languages.',
   billTheme: 'Bill Theme Color',
-  defaultPrintLanguage: 'Default Print Language',
+  defaultPrintLanguage: 'Bill & Receipt Language',
   receiptLanguage: 'Receipt Language',
   accountSecurityTitle: 'Account Security',
   accountSecurityDesc: 'Sign out of Firebase to lock your database access on this device.',

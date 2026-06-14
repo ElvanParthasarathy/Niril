@@ -1125,7 +1125,7 @@ export const ta = {
   branchEnglish: 'கிளை (ஆங்கிலம்)',
   appearanceDescription: 'பில்லின் நிறம் மற்றும் அச்சிடும் மொழிகளை அமைக்கவும்.',
   billTheme: 'பில் தீம் (நிறம்)',
-  defaultPrintLanguage: 'பில் அச்சிடும் மொழி',
+  defaultPrintLanguage: 'பில் மற்றும் ரசீது மொழி',
   receiptLanguage: 'ரசீது அச்சிடும் மொழி',
 
   accountSecurityTitle: 'கணக்கு பாதுகாப்பு',
