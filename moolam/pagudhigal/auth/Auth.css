@@ -29,7 +29,7 @@ html.dark {
     --auth-accent: #FFFFFF;
     --auth-divider: rgba(255, 255, 255, 0.1);
     --auth-glow: rgba(255, 255, 255, 0.15);
-    --auth-btn-shadow: rgba(255, 255, 255, 0.2);
+    --auth-btn-shadow: rgba(0, 0, 0, 0.5);
     --auth-btn-text: #000000;
 }
 
