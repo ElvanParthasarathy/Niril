@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../mozhi/LanguageContext';
-import { Box, Typography, Card, CardContent, Stack, useTheme, Avatar } from '@mui/material';
+import { Box, Typography, Card, CardContent, Stack, useTheme, Avatar, Skeleton } from '@mui/material';
 import { CurrencyInr, Receipt, TrendUp, CaretRight, Storefront, HandCoins } from '@phosphor-icons/react';
 import { getAllCoolieBills, getAllCoolieProfiles } from '../../Avanam';
 import { formatCurrency } from '../../Payanpadu';
