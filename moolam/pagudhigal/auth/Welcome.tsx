@@ -199,12 +199,15 @@ export default function Welcome({ onContinue, mode = 'post-login' }: { onContinu
                                         disableRipple
                                     >
                                         <ListItemText 
-                                            primary="தமிழ்" 
-                                            primaryTypographyProps={{ 
-                                                fontSize: '18px', 
-                                                fontWeight: language === 'ta' ? 600 : 500, 
-                                                color: 'var(--auth-text)' 
-                                            }} 
+                                            primary={
+                                                <span style={{ 
+                                                    fontSize: '18px', 
+                                                    fontWeight: language === 'ta' ? 600 : 500, 
+                                                    color: 'var(--auth-text)' 
+                                                }}>
+                                                    தமிழ்
+                                                </span>
+                                            } 
                                         />
                                         {language === 'ta' && (
                                             <ListItemIcon sx={{ minWidth: 'auto' }}>
@@ -226,12 +229,15 @@ export default function Welcome({ onContinue, mode = 'post-login' }: { onContinu
                                         disableRipple
                                     >
                                         <ListItemText 
-                                            primary="English" 
-                                            primaryTypographyProps={{ 
-                                                fontSize: '18px', 
-                                                fontWeight: language === 'en' ? 600 : 500, 
-                                                color: 'var(--auth-text)' 
-                                            }} 
+                                            primary={
+                                                <span style={{ 
+                                                    fontSize: '18px', 
+                                                    fontWeight: language === 'en' ? 600 : 500, 
+                                                    color: 'var(--auth-text)' 
+                                                }}>
+                                                    English
+                                                </span>
+                                            } 
                                         />
                                         {language === 'en' && (
                                             <ListItemIcon sx={{ minWidth: 'auto' }}>
@@ -334,12 +340,15 @@ export default function Welcome({ onContinue, mode = 'post-login' }: { onContinu
                                         disableRipple
                                     >
                                         <ListItemText 
-                                            primary="தமிழ்" 
-                                            primaryTypographyProps={{ 
-                                                fontSize: '18px', 
-                                                fontWeight: billingLanguage === 'Tamil' ? 600 : 500, 
-                                                color: 'var(--auth-text)' 
-                                            }} 
+                                            primary={
+                                                <span style={{ 
+                                                    fontSize: '18px', 
+                                                    fontWeight: billingLanguage === 'Tamil' ? 600 : 500, 
+                                                    color: 'var(--auth-text)' 
+                                                }}>
+                                                    தமிழ்
+                                                </span>
+                                            } 
                                         />
                                         {billingLanguage === 'Tamil' && (
                                             <ListItemIcon sx={{ minWidth: 'auto' }}>
@@ -361,12 +370,15 @@ export default function Welcome({ onContinue, mode = 'post-login' }: { onContinu
                                         disableRipple
                                     >
                                         <ListItemText 
-                                            primary="English" 
-                                            primaryTypographyProps={{ 
-                                                fontSize: '18px', 
-                                                fontWeight: billingLanguage === 'English' ? 600 : 500, 
-                                                color: 'var(--auth-text)' 
-                                            }} 
+                                            primary={
+                                                <span style={{ 
+                                                    fontSize: '18px', 
+                                                    fontWeight: billingLanguage === 'English' ? 600 : 500, 
+                                                    color: 'var(--auth-text)' 
+                                                }}>
+                                                    English
+                                                </span>
+                                            } 
                                         />
                                         {billingLanguage === 'English' && (
                                             <ListItemIcon sx={{ minWidth: 'auto' }}>
