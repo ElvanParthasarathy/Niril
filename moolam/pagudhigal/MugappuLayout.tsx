@@ -59,7 +59,7 @@ export default function MugappuLayout({
               bgcolor: isDark ? '#333' : '#eee', color: isDark ? '#fff' : '#000', 
               fontWeight: 'bold', cursor: 'pointer', fontSize: { xs: '1.5rem', sm: '1.25rem' },
               transition: 'all 0.2s ease',
-              '&:hover': { transform: 'scale(1.05)', filter: 'brightness(1.1)' },
+              '&:hover': { transform: 'scale(1.05)', filter: isDark ? 'brightness(1.1)' : 'brightness(0.95)' },
               '&:active': { transform: 'scale(0.95)' }
             }}
           >
