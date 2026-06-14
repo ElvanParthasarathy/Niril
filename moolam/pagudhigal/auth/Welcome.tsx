@@ -3,7 +3,7 @@ import { AuthLayout, AuthButton } from './AuthComponents';
 import { Database, CheckCircle } from '@phosphor-icons/react';
 import { useLanguage } from '../../mozhi/LanguageContext';
 
-const GREETINGS = ["வணக்கம்", "Hello", "നമസ്കാരം"];
+const GREETINGS = ["வணக்கம்!", "Hello!", "നമസ്കാരം!"];
 
 export default function Welcome({ onContinue }: { onContinue: () => void }) {
     const { t, language, setLanguage } = useLanguage();
