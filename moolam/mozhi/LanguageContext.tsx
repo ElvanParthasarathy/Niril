@@ -14,14 +14,20 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [language, setLanguageState] = useState<Language>('ta'); // Tamil is primary default
+  const [language, setLanguageState] = useState<Language>(() => {
+    const saved = localStorage.getItem('elvanniril_language') as Language;
+    return (saved === 'en' || saved === 'ta') ? saved : 'en';
+  });
 
   useEffect(() => {
-    // Load saved language or default to 'ta'
-    const savedLang = localStorage.getItem('elvanniril_language') as Language;
-    if (savedLang === 'en' || savedLang === 'ta') {
-      setLanguageState(savedLang);
-    }
+    // Keep in sync if changed from other tabs
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'elvanniril_language' && (e.newValue === 'en' || e.newValue === 'ta')) {
+        setLanguageState(e.newValue);
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const setLanguage = (lang: Language) => {

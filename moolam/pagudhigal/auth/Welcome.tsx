@@ -21,6 +21,13 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
     const [showSetup, setShowSetup] = useState(false);
 
     useEffect(() => {
+        // Default to Tamil during setup if user hasn't explicitly set a language yet
+        if (!localStorage.getItem('elvanniril_language')) {
+            setLanguage('ta');
+        }
+    }, []);
+
+    useEffect(() => {
         if (localStorage.getItem('elvanniril_theme') === 'dark') {
             document.documentElement.classList.add('dark');
         } else {
