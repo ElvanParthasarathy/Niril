@@ -530,7 +530,18 @@ function Seyali() {
           profileLoaded.current = true;
           setProfile(p);
           if (!p.niruvanathinPeyar && !localStorage.getItem('elvanniril_onboarded')) {
-            setShowWelcome(true);
+            // Smart resume: check if any profiles exist in the database before forcing setup
+            const existingProfiles = await getAllProfiles();
+            if (existingProfiles && existingProfiles.length > 0) {
+              const defaultProfile = existingProfiles[0];
+              const loaded = { ...defaultProfile };
+              delete loaded.id;
+              setProfile(loaded);
+              await saveProfile(loaded);
+              localStorage.setItem('elvanniril_onboarded', 'true');
+            } else {
+              setShowWelcome(true);
+            }
           }
         }
       } catch (err) {
