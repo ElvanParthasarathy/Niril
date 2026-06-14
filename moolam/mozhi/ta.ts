@@ -1146,8 +1146,10 @@ export const ta = {
 
   welcomeTitle: 'நிறிள்-க்கு நல்வரவு',
   welcomeSubtitle: 'உங்கள் பில்லிங் & ஜிஎஸ்டி, எளிதாக்கப்பட்டது.',
-  welcomeAgreeText: 'நிறிள்-ஐத் தொடங்க "ஏற்றுத் தொடரவும்"-ஐத் தட்டவும்.',
-  agreeAndContinueBtn: 'ஏற்றுத் தொடரவும்'
+  welcomeAgreeText: 'நிறிள்-ஐத் தொடங்க "தொடங்குக"-ஐத் தட்டவும்.',
+  agreeAndContinueBtn: 'தொடங்குக',
+  selectLanguageTitle: 'மொழியைத் தேர்வு செய்',
+  selectLanguageSubtitle: 'உங்கள் விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்'
 };
 
 export type TranslationKey = keyof typeof ta;

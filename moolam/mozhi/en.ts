@@ -1119,6 +1119,8 @@ export const en: Record<TranslationKey, string> = {
 
   welcomeTitle: 'Welcome to Niril',
   welcomeSubtitle: 'Your Billing & GST, Sorted.',
-  welcomeAgreeText: 'Tap "Agree and Continue" to get started with Niril.',
-  agreeAndContinueBtn: 'Agree and Continue'
+  welcomeAgreeText: 'Tap "Get Started" to continue with Niril.',
+  agreeAndContinueBtn: 'Get Started',
+  selectLanguageTitle: 'Select Language',
+  selectLanguageSubtitle: 'Choose your preferred language'
 };

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AuthLayout, AuthButton } from './AuthComponents';
-import { Database, CheckCircle } from '@phosphor-icons/react';
+import { Database, CheckCircle, GlobeHemisphereWest } from '@phosphor-icons/react';
 import { useLanguage } from '../../mozhi/LanguageContext';
 
 const GREETINGS = ["வணக்கம்!", "Hello!", "നമസ്കാരം!"];
@@ -8,14 +8,15 @@ const GREETINGS = ["வணக்கம்!", "Hello!", "നമസ്കാരം
 export default function Welcome({ onContinue }: { onContinue: () => void }) {
     const { t, language, setLanguage } = useLanguage();
     
-    // Phases: 'greeting' -> 'setup'
-    const [phase, setPhase] = useState<'greeting' | 'setup'>('greeting');
+    // Phases: 'greeting' -> 'language' -> 'setup'
+    const [phase, setPhase] = useState<'greeting' | 'language' | 'setup'>('greeting');
     
     // Greeting Animation State
     const [greetingIndex, setGreetingIndex] = useState(0);
     const [greetingOpacity, setGreetingOpacity] = useState(0);
     
     // Setup UI Animation State
+    const [showLanguage, setShowLanguage] = useState(false);
     const [showSetup, setShowSetup] = useState(false);
 
     useEffect(() => {
@@ -43,7 +44,7 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                 // Move to next greeting or switch to setup phase
                 loopCount++;
                 if (loopCount >= GREETINGS.length) {
-                    setPhase('setup');
+                    setPhase('language');
                     break;
                 } else {
                     setGreetingIndex((prev) => prev + 1);
@@ -59,7 +60,9 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
     }, [phase]);
 
     useEffect(() => {
-        if (phase === 'setup') {
+        if (phase === 'language') {
+            setTimeout(() => setShowLanguage(true), 100);
+        } else if (phase === 'setup') {
             setTimeout(() => setShowSetup(true), 100);
         }
     }, [phase]);
@@ -107,7 +110,139 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                     </div>
                 )}
 
-                {/* PHASE 2: SETUP SCREEN */}
+                {/* PHASE 2: LANGUAGE SELECTION SCREEN */}
+                {phase === 'language' && (
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        height: '100%',
+                        width: '100%',
+                        justifyContent: 'space-between',
+                        opacity: showLanguage ? 1 : 0,
+                        transform: showLanguage ? 'translateY(0)' : 'translateY(20px)',
+                        transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    }}>
+                        <div style={{ flex: 1 }} />
+                        
+                        {/* ICON SECTION */}
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '24px',
+                            marginBottom: '40px'
+                        }}>
+                            <div style={{
+                                width: '96px',
+                                height: '96px',
+                                background: 'var(--auth-surface)',
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                boxShadow: '0 20px 40px var(--auth-glow)',
+                                border: '1px solid var(--auth-divider)'
+                            }}>
+                                <GlobeHemisphereWest size={48} weight="duotone" color="var(--auth-accent)" />
+                            </div>
+                        </div>
+
+                        {/* TEXT SECTION */}
+                        <div style={{
+                            textAlign: 'center',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '12px'
+                        }}>
+                            <h1 style={{
+                                fontSize: '32px',
+                                fontWeight: '800',
+                                color: 'var(--auth-text)',
+                                margin: 0,
+                                letterSpacing: '-0.5px'
+                            }}>
+                                {t('selectLanguageTitle') !== 'selectLanguageTitle' ? t('selectLanguageTitle') : 'Select Language'}
+                            </h1>
+                            <p style={{
+                                fontSize: '18px',
+                                color: 'var(--auth-text-secondary)',
+                                margin: 0,
+                                fontWeight: '500'
+                            }}>
+                                {t('selectLanguageSubtitle') !== 'selectLanguageSubtitle' ? t('selectLanguageSubtitle') : 'Choose your preferred language'}
+                            </p>
+                        </div>
+
+                        <div style={{ flex: 1 }} />
+
+                        {/* LANGUAGE OPTIONS & BUTTON SECTION */}
+                        <div style={{
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            paddingBottom: '40px'
+                        }}>
+                            
+                            {/* IOS-STYLE LANGUAGE SELECTOR */}
+                            <div style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: '12px',
+                                width: '100%',
+                                maxWidth: '300px',
+                                marginBottom: '32px'
+                            }}>
+                                <div 
+                                    onClick={() => setLanguage('ta')}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        padding: '16px 20px',
+                                        background: language === 'ta' ? 'var(--auth-text)' : 'var(--auth-surface)',
+                                        color: language === 'ta' ? 'var(--auth-surface)' : 'var(--auth-text)',
+                                        borderRadius: '16px',
+                                        cursor: 'pointer',
+                                        border: `2px solid ${language === 'ta' ? 'var(--auth-text)' : 'var(--auth-divider)'}`,
+                                        transition: 'all 0.2s ease',
+                                        boxShadow: language === 'ta' ? '0 8px 16px var(--auth-glow)' : '0 2px 8px var(--auth-glow)',
+                                        fontWeight: language === 'ta' ? '700' : '500'
+                                    }}
+                                >
+                                    <span style={{ fontSize: '18px' }}>தமிழ்</span>
+                                    {language === 'ta' && <CheckCircle size={24} weight="fill" />}
+                                </div>
+                                <div 
+                                    onClick={() => setLanguage('en')}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        padding: '16px 20px',
+                                        background: language === 'en' ? 'var(--auth-text)' : 'var(--auth-surface)',
+                                        color: language === 'en' ? 'var(--auth-surface)' : 'var(--auth-text)',
+                                        borderRadius: '16px',
+                                        cursor: 'pointer',
+                                        border: `2px solid ${language === 'en' ? 'var(--auth-text)' : 'var(--auth-divider)'}`,
+                                        transition: 'all 0.2s ease',
+                                        boxShadow: language === 'en' ? '0 8px 16px var(--auth-glow)' : '0 2px 8px var(--auth-glow)',
+                                        fontWeight: language === 'en' ? '700' : '500'
+                                    }}
+                                >
+                                    <span style={{ fontSize: '18px' }}>English</span>
+                                    {language === 'en' && <CheckCircle size={24} weight="fill" />}
+                                </div>
+                            </div>
+
+                            <AuthButton onClick={() => setPhase('setup')}>
+                                Continue
+                            </AuthButton>
+                        </div>
+                    </div>
+                )}
+
+                {/* PHASE 3: SETUP SCREEN */}
                 {phase === 'setup' && (
                     <div style={{
                         display: 'flex',
@@ -172,7 +307,7 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
 
                         <div style={{ flex: 1 }} />
 
-                        {/* LANGUAGE & BUTTON SECTION */}
+                        {/* BUTTON SECTION */}
                         <div style={{
                             width: '100%',
                             display: 'flex',
@@ -180,58 +315,6 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                             alignItems: 'center',
                             paddingBottom: '40px'
                         }}>
-                            
-                            {/* IOS-STYLE LANGUAGE SELECTOR */}
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                gap: '12px',
-                                width: '100%',
-                                maxWidth: '300px',
-                                marginBottom: '32px'
-                            }}>
-                                <div 
-                                    onClick={() => setLanguage('ta')}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                        padding: '16px 20px',
-                                        background: language === 'ta' ? 'var(--auth-text)' : 'var(--auth-surface)',
-                                        color: language === 'ta' ? 'var(--auth-surface)' : 'var(--auth-text)',
-                                        borderRadius: '16px',
-                                        cursor: 'pointer',
-                                        border: `2px solid ${language === 'ta' ? 'var(--auth-text)' : 'var(--auth-divider)'}`,
-                                        transition: 'all 0.2s ease',
-                                        boxShadow: language === 'ta' ? '0 8px 16px var(--auth-glow)' : '0 2px 8px var(--auth-glow)',
-                                        fontWeight: language === 'ta' ? '700' : '500'
-                                    }}
-                                >
-                                    <span style={{ fontSize: '18px' }}>தமிழ்</span>
-                                    {language === 'ta' && <CheckCircle size={24} weight="fill" />}
-                                </div>
-                                <div 
-                                    onClick={() => setLanguage('en')}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-between',
-                                        padding: '16px 20px',
-                                        background: language === 'en' ? 'var(--auth-text)' : 'var(--auth-surface)',
-                                        color: language === 'en' ? 'var(--auth-surface)' : 'var(--auth-text)',
-                                        borderRadius: '16px',
-                                        cursor: 'pointer',
-                                        border: `2px solid ${language === 'en' ? 'var(--auth-text)' : 'var(--auth-divider)'}`,
-                                        transition: 'all 0.2s ease',
-                                        boxShadow: language === 'en' ? '0 8px 16px var(--auth-glow)' : '0 2px 8px var(--auth-glow)',
-                                        fontWeight: language === 'en' ? '700' : '500'
-                                    }}
-                                >
-                                    <span style={{ fontSize: '18px' }}>English</span>
-                                    {language === 'en' && <CheckCircle size={24} weight="fill" />}
-                                </div>
-                            </div>
-
                             <p style={{
                                 fontSize: '12px',
                                 color: 'var(--auth-text-muted)',
