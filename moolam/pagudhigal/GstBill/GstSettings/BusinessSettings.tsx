@@ -92,8 +92,9 @@ export default function BusinessSettings({
             )}
           </Box>
           
-          <Collapse in={isProfileEditing} sx={{ width: '100%' }}>
-              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 3, width: '100%', flexWrap: 'wrap' }}>
+          <Collapse in={isProfileEditing} sx={{ width: '100%' }} unmountOnExit timeout={300}>
+            <Box sx={{ pt: 3 }}>
+              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', width: '100%', flexWrap: 'wrap' }}>
                 <ButtonBase 
                   onClick={() => setIsProfileEditing(false)} 
                   sx={{ 
@@ -129,6 +130,7 @@ export default function BusinessSettings({
                   {t('addNew')}
                 </ButtonBase>
               </Box>
+            </Box>
           </Collapse>
         </Box>
       </Paper>
