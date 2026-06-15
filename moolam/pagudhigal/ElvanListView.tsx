@@ -129,7 +129,7 @@ export default function ElvanListView<T extends { id: string }>(props: ElvanList
       </Box>
 
       {/* Search and Selection */}
-      <Box sx={{ mb: 4, px: { xs: 2, md: 0 } }}>
+      <Box sx={{ mb: 4 }}>
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
           <Paper elevation={1} className="vanigargal-search" sx={getSearchPaperSx(isDark)}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.5 }}>
