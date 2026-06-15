@@ -1118,6 +1118,8 @@ export const en: Record<TranslationKey, string> = {
   clearCacheBtn: 'Clear Cache',
 
   clearCacheConfirmDesc: 'This will reload the app. You may need to sign in again.',
+  signOutConfirmTitle: 'Sign Out?',
+  signOutConfirmDesc: 'Are you sure you want to sign out? You will need your password to access your data again.',
   eraseConfirmDesc: 'Permanently deletes all cloud data. This cannot be undone.',
   confirmPassword: 'Confirm Password',
   password: 'Password',

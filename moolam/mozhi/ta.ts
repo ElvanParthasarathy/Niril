@@ -1142,6 +1142,8 @@ export const ta = {
   clearCacheBtn: 'தேக்கத்தை அழி',
 
   clearCacheConfirmDesc: 'பயன்பாடு மீண்டும் ஏற்றப்படும். மீண்டும் உள்நுழைய நேரிடலாம்.',
+  signOutConfirmTitle: 'வெளியேற வேண்டுமா?',
+  signOutConfirmDesc: 'தரவை மீண்டும் அணுக உங்கள் கடவுச்சொல் தேவைப்படும்.',
   eraseConfirmDesc: 'மேகக்கணி தரவுகள் நிரந்தரமாக அழிக்கப்படும். இதை செயல்தவிர்க்க முடியாது.',
   confirmPassword: 'கடவுச்சொல்லை உறுதிசெய்க',
   password: 'கடவுச்சொல்',

@@ -10,6 +10,7 @@ import { ref, remove } from 'firebase/database';
 export default function SystemUpdates({ t }: { t: (key: string) => string }) {
   const [eraseDialogOpen, setEraseDialogOpen] = useState(false);
   const [cacheDialogOpen, setCacheDialogOpen] = useState(false);
+  const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
   const [eraseEmail, setEraseEmail] = useState(auth.currentUser?.email || '');
   const [erasePassword, setErasePassword] = useState('');
   const [erasing, setErasing] = useState(false);
@@ -58,6 +59,11 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
     window.location.replace('/');
   };
 
+  const handleSignOut = async () => {
+    await signOut(auth);
+    window.location.replace('/');
+  };
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
 
@@ -72,9 +78,9 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
         <SettingsRow 
           icon={<SignOut size={20} weight="fill" />} 
           iconColor="monochrome"
-          title={t('accountSecurityTitle') !== 'accountSecurityTitle' ? t('accountSecurityTitle') : 'Sign Out'}
+          title={t('signOutBtn') !== 'signOutBtn' ? t('signOutBtn') : 'Sign Out'}
           description={t('accountSecurityDesc') !== 'accountSecurityDesc' ? t('accountSecurityDesc') : 'Lock app access'}
-          onClick={async () => { await signOut(auth); window.location.replace('/'); }}
+          onClick={() => setSignOutDialogOpen(true)}
         />
         <SettingsRow 
           icon={<WarningCircle size={20} weight="fill" />} 
@@ -97,6 +103,22 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
           </Button>
           <Button onClick={handleClearCache} variant="contained" disableElevation sx={{ bgcolor: 'black', color: 'white', borderRadius: 2, px: 3, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none', '&:hover': { bgcolor: '#333' } }}>
             {t('clearCacheBtn') !== 'clearCacheBtn' ? t('clearCacheBtn') : 'Clear'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Sign Out Dialog */}
+      <Dialog open={signOutDialogOpen} onClose={() => setSignOutDialogOpen(false)} maxWidth="xs" fullWidth slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
+        <DialogTitle sx={{ fontWeight: 600, pb: 1, fontSize: '1.125rem' }}>{t('signOutConfirmTitle') !== 'signOutConfirmTitle' ? t('signOutConfirmTitle') : 'Sign Out?'}</DialogTitle>
+        <DialogContent sx={{ color: 'text.secondary', fontSize: '0.875rem' }}>
+          {t('signOutConfirmDesc') !== 'signOutConfirmDesc' ? t('signOutConfirmDesc') : 'Are you sure you want to sign out? You will need your password to access your data again.'}
+        </DialogContent>
+        <DialogActions sx={{ p: 2, pt: 0 }}>
+          <Button onClick={() => setSignOutDialogOpen(false)} sx={{ color: 'text.secondary', fontWeight: 600, borderRadius: 2, fontSize: '0.875rem', textTransform: 'none' }}>
+            {t('cancel') !== 'cancel' ? t('cancel') : 'Cancel'}
+          </Button>
+          <Button onClick={handleSignOut} variant="contained" disableElevation sx={{ bgcolor: 'black', color: 'white', borderRadius: 2, px: 3, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none', '&:hover': { bgcolor: '#333' } }}>
+            {t('signOutBtn') !== 'signOutBtn' ? t('signOutBtn') : 'Sign Out'}
           </Button>
         </DialogActions>
       </Dialog>
