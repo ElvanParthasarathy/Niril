@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SettingsPillContainer, SettingsRow, SettingsDivider } from '../ElvanSettingsSection';
+import { SettingsPillContainer, SettingsRow } from '../ElvanSettingsSection';
 import { ArrowsClockwise, Trash, WarningCircle } from '@phosphor-icons/react';
 import { LockKeyhole } from 'lucide-react';
 import { Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Typography, CircularProgress, Button } from '@mui/material';
@@ -69,7 +69,6 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
             }
           }}
         />
-        <SettingsDivider />
         <SettingsRow 
           icon={<LockKeyhole size={20} />} 
           iconColor="monochrome"
@@ -77,7 +76,6 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
           description="Lock database access on this device"
           onClick={async () => { await signOut(auth); window.location.replace('/'); }}
         />
-        <SettingsDivider />
         <SettingsRow 
           icon={<WarningCircle size={20} weight="fill" />} 
           iconColor="red"
