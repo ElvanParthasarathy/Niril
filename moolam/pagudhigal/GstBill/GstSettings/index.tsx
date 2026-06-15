@@ -129,7 +129,6 @@ export default function GstSettings({
     const fresh = await getProfile();
     setProfile(prev => ({ ...prev, ...fresh }));
     setSavedSnapshot(pickProfileFields(fresh));
-    thagaval(t('changesDiscarded'), 'info');
   };
 
   // ─── Profile switching ───

@@ -212,7 +212,6 @@ export default function CoolieSettings({ activeTab = 'business' }: any) {
     } else {
       handleAddNew();
     }
-    thagaval(t('changesDiscarded'), 'info');
   };
 
   const handleAutoSaveSetting = async (key: string, val: any) => {
