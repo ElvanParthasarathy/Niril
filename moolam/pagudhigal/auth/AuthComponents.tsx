@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
 import { Eye, EyeClosed, CaretDown } from '@phosphor-icons/react';
+import { TextField, Button, InputAdornment, IconButton, Typography, Box, CircularProgress, Container } from '@mui/material';
 import './Auth.css';
 
-export const AuthLayout = ({ children }: { children: React.ReactNode }) => (
+export const AuthLayout = ({ children, hideLogo }: { children: React.ReactNode, hideLogo?: boolean }) => (
     <div className="auth-container">
         <div className="auth-shape shape-1" />
         <div className="auth-shape shape-2" />
         <div className="auth-shape shape-3" />
         <div className="auth-shape shape-4" />
-        <div className="auth-content">
+        <Container component="main" maxWidth="xs" className="auth-content" sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            height: '100%',
+            position: 'relative',
+            zIndex: 1,
+            px: { xs: 3, sm: 4 },
+        }}>
             {children}
-        </div>
+        </Container>
     </div>
 );
 
@@ -20,8 +28,6 @@ export const AuthHeader = ({ title, subtitle }: { title: string, subtitle: strin
         <div className="auth-subtitle">{subtitle}</div>
     </div>
 );
-
-import { TextField, Button, InputAdornment, IconButton, Typography, Box, CircularProgress } from '@mui/material';
 
 export const AuthInput = ({ label, value, onChange, type = "text", placeholder, icon, error, ...props }: any) => {
     const [showPass, setShowPass] = useState(false);
