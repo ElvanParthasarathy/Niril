@@ -14,10 +14,9 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
             <div style={{
                 display: 'flex',
                 flexDirection: 'column',
-                height: '100%',
+                flex: 1,
                 justifyContent: 'center',
                 alignItems: 'center',
-                padding: '40px 24px',
                 maxWidth: '480px',
                 margin: '0 auto',
                 width: '100%',

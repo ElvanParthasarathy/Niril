@@ -34,17 +34,14 @@ export default function Login() {
 
   return (
     <AuthLayout>
-      <div style={{ height: '40px' }} />
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <AuthHeader
+          title="Elvan Niril"
+          subtitle="Sign in to your secure database"
+        />
 
-      <AuthHeader
-        title="Elvan Niril"
-        subtitle="Sign in to your secure database"
-      />
-
-      <div style={{ height: '32px' }} />
-
-      <form onSubmit={handleLogin} style={{ width: '100%' }}>
-        <AuthInput
+        <form onSubmit={handleLogin} style={{ width: '100%', marginTop: '32px' }}>
+          <AuthInput
           label="Email Address"
           placeholder="Enter your email"
           value={email}
@@ -72,6 +69,7 @@ export default function Login() {
           Sign In
         </AuthButton>
       </form>
+      </div>
     </AuthLayout>
   );
 }

@@ -12,9 +12,11 @@ export const AuthLayout = ({ children, hideLogo }: { children: React.ReactNode, 
         <Container component="main" maxWidth="xs" className="auth-content" sx={{ 
             display: 'flex', 
             flexDirection: 'column', 
-            height: '100%',
+            minHeight: '100%',
             position: 'relative',
             zIndex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
             px: { xs: 3, sm: 4 },
         }}>
             {children}

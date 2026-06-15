@@ -73,18 +73,10 @@ html.dark .auth-logo-themed, html[data-theme="dark"] .auth-logo-themed {
 }
 
 .auth-content {
-    width: 100%;
-    max-width: 480px;
-    /* Mobile-like width on desktop */
-    padding: 20px 24px;
-    padding-top: 32px;
-    /* Bottom padding ensures the last button clears the browser toolbar
-       and home indicator on notched/gesture-nav phones. */
-    padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+    /* MUI Container handles width, max-width, and padding */
     z-index: 10;
     display: flex;
     flex-direction: column;
-    align-items: center;
     min-height: 100vh;
     min-height: 100dvh;
 }
@@ -118,45 +110,42 @@ html.dark .auth-logo-themed, html[data-theme="dark"] .auth-logo-themed {
     animation: float 4s ease-in-out infinite alternate;
 }
 
-/* 3. Pill (Middle Left) */
+/* 3. Small Rounded Square (Top Left) */
 .shape-3 {
-    top: 35%;
-    left: -10%;
-    width: 40vw;
-    height: 15vw;
-    border-radius: 100px;
-    animation: rotate2 80s linear infinite;
-    transform-origin: 20% 40%;
-}
-
-/* 4. Small Diamond (Bottom Right) */
-.shape-4 {
-    bottom: 30%;
-    right: 5%;
+    top: 15%;
+    left: 5%;
     width: 20vw;
     height: 20vw;
     border-radius: 30px;
-    animation: rotate1 60s linear infinite reverse;
-    transform-origin: 90% 70%;
+    animation: rotate2 40s linear infinite reverse;
 }
 
+/* 4. Small Circle (Center Right) */
+.shape-4 {
+    top: 60%;
+    right: 10%;
+    width: 15vw;
+    height: 15vw;
+    border-radius: 50%;
+    animation: float 5s ease-in-out infinite alternate-reverse;
+}
+
+/* Animations */
 @keyframes rotate1 {
-    0% {
+    from {
         transform: rotate(0deg);
     }
-
-    100% {
+    to {
         transform: rotate(360deg);
     }
 }
 
 @keyframes rotate2 {
-    0% {
-        transform: rotate(360deg);
-    }
-
-    100% {
+    from {
         transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
     }
 }
 
@@ -181,7 +170,7 @@ html.dark .auth-logo-themed, html[data-theme="dark"] .auth-logo-themed {
 }
 
 .auth-title {
-    font-size: 32px;
+    font-size: clamp(32px, 8vw, 40px);
     font-weight: 800;
     /* ExtraBold */
     color: var(--auth-text);

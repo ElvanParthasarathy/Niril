@@ -69,10 +69,9 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
             <div style={{
                 display: 'flex',
                 flexDirection: 'column',
-                height: '100%',
-                justifyContent: 'center', // Center content naturally
+                flex: 1,
+                justifyContent: 'center',
                 alignItems: 'center',
-                padding: '40px 24px',
                 maxWidth: '480px',
                 margin: '0 auto',
                 width: '100%',
@@ -236,7 +235,7 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
 
                             <div style={{ width: '100%', maxWidth: '320px' }}>
                                 <AuthButton onClick={() => setPhase('billingLanguage')}>
-                                    Continue
+                                    {language === 'ta' ? 'தொடரவும்' : 'Continue'}
                                 </AuthButton>
                             </div>
                         </div>
@@ -380,7 +379,7 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
                                     localStorage.setItem('elvanniril_setup_billingLang', billingLanguage);
                                     onContinue();
                                 }}>
-                                    Continue
+                                    {language === 'ta' ? 'தொடரவும்' : 'Continue'}
                                 </AuthButton>
                             </div>
                         </div>
