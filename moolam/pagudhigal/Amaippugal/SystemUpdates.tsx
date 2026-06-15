@@ -63,7 +63,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
           title={t('clearCacheTitle') !== 'clearCacheTitle' ? t('clearCacheTitle') : 'Clear Cache'}
           description={t('clearCacheDesc') !== 'clearCacheDesc' ? t('clearCacheDesc') : 'Clear local cache to fix issues.'}
           control={
-            <Button variant="contained" size="small" sx={{ borderRadius: 10, px: 2, minWidth: '120px', bgcolor: 'rgba(255,255,255,0.08)', color: '#fff', '&:hover': { bgcolor: 'rgba(255,255,255,0.12)' } }} onClick={() => {
+            <Button variant="contained" size="small" sx={{ borderRadius: 10, px: 2, minWidth: '120px', bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)', color: 'text.primary', boxShadow: 'none', '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)', boxShadow: 'none' } }} onClick={() => {
               if (confirm('Clear local cache and reload? You will need to log in again if using Google Drive.')) {
                 localStorage.clear();
                 window.location.replace('/');
@@ -79,7 +79,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
           title={t('accountSecurityTitle') !== 'accountSecurityTitle' ? t('accountSecurityTitle') : 'Account Security'}
           description={t('accountSecurityDesc') !== 'accountSecurityDesc' ? t('accountSecurityDesc') : 'Sign out of Firebase to lock your database access on this device.'}
           control={
-            <Button variant="contained" size="small" sx={{ borderRadius: 10, px: 2, minWidth: '120px', bgcolor: 'rgba(255,255,255,0.08)', color: '#fff', '&:hover': { bgcolor: 'rgba(255,255,255,0.12)' } }} onClick={async () => { await signOut(auth); window.location.replace('/'); }}>
+            <Button variant="contained" size="small" sx={{ borderRadius: 10, px: 2, minWidth: '120px', bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)', color: 'text.primary', boxShadow: 'none', '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)', boxShadow: 'none' } }} onClick={async () => { await signOut(auth); window.location.replace('/'); }}>
               {t('signOutBtn') !== 'signOutBtn' ? t('signOutBtn') : 'Sign Out'}
             </Button>
           }
@@ -90,7 +90,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
           title={t('eraseAppDataTitle') !== 'eraseAppDataTitle' ? t('eraseAppDataTitle') : 'Erase App Data'}
           description={t('eraseAppDataDesc') !== 'eraseAppDataDesc' ? t('eraseAppDataDesc') : 'Completely wipe your database. You will need to import a backup to restore.'}
           control={
-            <Button variant="contained" size="small" sx={{ borderRadius: 10, px: 2, minWidth: '120px', bgcolor: 'rgba(255,255,255,0.08)', color: '#fff', '&:hover': { bgcolor: 'rgba(255,255,255,0.12)' } }} onClick={() => setEraseDialogOpen(true)}>
+            <Button variant="contained" size="small" sx={{ borderRadius: 10, px: 2, minWidth: '120px', bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)', color: 'error.main', boxShadow: 'none', '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)', boxShadow: 'none' } }} onClick={() => setEraseDialogOpen(true)}>
               {t('eraseDataBtn') !== 'eraseDataBtn' ? t('eraseDataBtn') : 'Erase Data'}
             </Button>
           }
