@@ -1114,7 +1114,21 @@ function Seyali() {
     
   const getTopBarTitle = () => {
     if (currentView === 'dashboard') return t('appName');
-    if (currentView === 'settings') return t('settingsTitle');
+    if (currentView === 'settings') {
+      const path = location.pathname;
+      if (path === '/dashboard/settings') return t('settingsTitle');
+      if (path.includes('app-preferences')) return t('appPreferences') || 'App Preferences';
+      if (path.includes('cloud')) return t('cloudSync') || 'Cloud Sync';
+      if (path.includes('updates')) return t('updates') || 'Updates';
+      if (path.includes('devtools')) return 'Developer Tools';
+      if (path.includes('address')) return t('address') || 'Address';
+      if (path.includes('branding')) return t('branding') || 'Branding';
+      if (path.includes('bank')) return t('bank') || 'Bank Details';
+      if (path.includes('theme')) return t('theme') || 'Theme';
+      if (path.includes('invoice')) return t('invoiceSettings') || 'Invoice Settings';
+      if (path.includes('languages')) return t('languageSettings') || 'Languages';
+      return t('businessSettings') || 'Business Settings';
+    }
     if (currentView === 'invoice-editor' || currentView === 'invoice-view') return t('invoices');
     if (currentView === 'receipt-editor' || currentView === 'receipt-view') return t('receipts');
     const navItem = allNavItems.find(item => item && item.id === currentView);
