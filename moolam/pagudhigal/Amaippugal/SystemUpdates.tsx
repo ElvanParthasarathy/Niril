@@ -131,7 +131,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
 
       {/* Erase App Data Dialog */}
       <Dialog open={eraseDialogOpen} onClose={() => !erasing && setEraseDialogOpen(false)} maxWidth="xs" fullWidth slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
-        <DialogTitle sx={{ color: 'error.main', fontWeight: 600, fontSize: '1.125rem', textAlign: 'center' }}>
+        <DialogTitle sx={{ fontWeight: 600, pb: 1, fontSize: '1.125rem' }}>
           {t('eraseAppDataTitle') !== 'eraseAppDataTitle' ? t('eraseAppDataTitle') : 'Erase All Data?'}
         </DialogTitle>
         <DialogContent sx={{ pb: 1 }}>
@@ -159,7 +159,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
             sx={{ '& .MuiOutlinedInput-root': { borderRadius: '50px', fontSize: '0.875rem', bgcolor: 'action.hover' }, '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }}
           />
         </DialogContent>
-        <DialogActions sx={{ p: 2, pt: 0, justifyContent: 'center', gap: 1 }}>
+        <DialogActions sx={{ p: 2, pt: 0, gap: 1 }}>
           <Button disabled={erasing} onClick={() => setEraseDialogOpen(false)} sx={{ color: 'text.secondary', fontWeight: 600, borderRadius: '50px', px: 3, fontSize: '0.875rem', textTransform: 'none' }}>
             {t('cancel') !== 'cancel' ? t('cancel') : 'Cancel'}
           </Button>
@@ -167,9 +167,8 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
             disabled={erasing || !erasePassword || confirmEmailInput.trim().toLowerCase() !== currentUserEmail.toLowerCase()} 
             onClick={handleEraseApp} 
             variant="contained" 
-            color="error"
             disableElevation
-            sx={{ borderRadius: '50px', px: 4, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none' }}
+            sx={{ bgcolor: 'black', color: 'white', borderRadius: '50px', px: 4, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none', '&:hover': { bgcolor: '#333' } }}
             startIcon={erasing ? <CircularProgress size={16} color="inherit" /> : undefined}
           >
             {erasing ? (t('erasing') !== 'erasing' ? t('erasing') : 'Erasing...') : (t('eraseDataBtn') !== 'eraseDataBtn' ? t('eraseDataBtn') : 'Erase')}
