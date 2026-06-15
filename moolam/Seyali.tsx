@@ -177,12 +177,13 @@ const MobileOverlayWrapper = ({ children, isVisible, viewKey, darkMode, zIndex =
           component={isMobile ? motion.div : 'div'}
           key={viewKey}
           {...(isMobile ? {
-             initial: { x: "100%", opacity: 0 },
+             initial: { x: "100vw", opacity: 0 },
              animate: { x: 0, opacity: 1 },
-             exit: { x: "100%", opacity: 0 },
+             exit: { x: "100vw", opacity: 0 },
              transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] }
           } : {})}
           sx={{
+            willChange: 'transform, opacity',
             position: { xs: 'fixed', md: 'absolute' }, 
             top: { xs: '64px', md: 0 }, 
             left: { xs: '12px', md: 0 }, 
