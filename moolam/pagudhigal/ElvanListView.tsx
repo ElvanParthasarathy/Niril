@@ -1,5 +1,5 @@
 import React, { useState, useRef, ReactNode } from 'react';
-import { Box, Typography, Button, Paper, IconButton, Toolbar, Stack, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Pagination, LinearProgress, Skeleton } from '@mui/material';
+import { Box, Typography, Button, Paper, IconButton, Toolbar, Stack, Tooltip, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Pagination, LinearProgress, Skeleton, Collapse, Fade } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { X, PencilSimple, Plus, CheckSquare, Square, Trash, Copy } from '@phosphor-icons/react';
 import { useLanguage } from '../mozhi/LanguageContext';
@@ -174,7 +174,8 @@ export default function ElvanListView<T extends { id: string }>(props: ElvanList
         )}
       </Box>
 
-      {isSelectionMode && (
+      <Collapse in={isSelectionMode} unmountOnExit timeout={300}>
+        <Fade in={isSelectionMode} timeout={300}>
         <Toolbar
           component={Paper}
           elevation={1}
@@ -215,7 +216,8 @@ export default function ElvanListView<T extends { id: string }>(props: ElvanList
             )}
           </Stack>
         </Toolbar>
-      )}
+        </Fade>
+      </Collapse>
 
       {isLoading ? (
         <Box sx={{ 
