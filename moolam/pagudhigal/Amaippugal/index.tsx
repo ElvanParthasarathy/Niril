@@ -445,10 +445,11 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
               {currentView !== 'hub' && (
                 <Box
                   component={motion.div}
-                  initial={{ x: "100%", opacity: 0.5 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: "100%", opacity: 0 }}
-                  transition={{ duration: 0.25, ease: 'easeOut' }}
+                  initial={{ x: "100vw" }}
+                  animate={{ x: 0 }}
+                  exit={{ x: "100vw" }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ willChange: "transform" }}
                   key={currentView}
                   sx={{
                     position: 'fixed',
