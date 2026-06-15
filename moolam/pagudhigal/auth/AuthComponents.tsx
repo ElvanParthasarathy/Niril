@@ -39,6 +39,9 @@ export const AuthInput = ({ label, value, onChange, type = "text", placeholder, 
                 error={!!error}
                 helperText={error}
                 sx={{
+                    '& .MuiInputLabel-asterisk': {
+                        display: 'none',
+                    },
                     '& .MuiFilledInput-root': {
                         backgroundColor: 'var(--auth-input-bg)',
                         border: 'none',
