@@ -1145,6 +1145,8 @@ export const ta = {
   signOutConfirmTitle: 'வெளியேற வேண்டுமா?',
   signOutConfirmDesc: 'தரவை மீண்டும் அணுக உங்கள் கடவுச்சொல் தேவைப்படும்.',
   eraseConfirmDesc: 'மேகக்கணி தரவுகள் நிரந்தரமாக அழிக்கப்படும். இதை செயல்தவிர்க்க முடியாது.',
+  confirmEmailLabel: 'மின்னஞ்சலை உறுதிசெய்க',
+  incorrectEmail: 'மின்னஞ்சல் பொருந்தவில்லை.',
   confirmPassword: 'கடவுச்சொல்லை உறுதிசெய்க',
   password: 'கடவுச்சொல்',
   erasing: 'அழிக்கிறது...',

@@ -1121,6 +1121,8 @@ export const en: Record<TranslationKey, string> = {
   signOutConfirmTitle: 'Sign Out?',
   signOutConfirmDesc: 'Are you sure you want to sign out? You will need your password to access your data again.',
   eraseConfirmDesc: 'Permanently deletes all cloud data. This cannot be undone.',
+  confirmEmailLabel: 'Confirm Email',
+  incorrectEmail: 'Email does not match.',
   confirmPassword: 'Confirm Password',
   password: 'Password',
   erasing: 'Erasing...',

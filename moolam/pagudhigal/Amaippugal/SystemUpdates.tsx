@@ -11,11 +11,17 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
   const [eraseDialogOpen, setEraseDialogOpen] = useState(false);
   const [cacheDialogOpen, setCacheDialogOpen] = useState(false);
   const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
-  const [eraseEmail, setEraseEmail] = useState(auth.currentUser?.email || '');
+  const [confirmEmailInput, setConfirmEmailInput] = useState('');
   const [erasePassword, setErasePassword] = useState('');
   const [erasing, setErasing] = useState(false);
 
+  const currentUserEmail = auth.currentUser?.email || '';
+
   const handleEraseApp = async () => {
+    if (confirmEmailInput.trim().toLowerCase() !== currentUserEmail.toLowerCase()) {
+      thagaval(t('incorrectEmail') || 'Email does not match.', 'warning');
+      return;
+    }
     if (!erasePassword) {
       thagaval(t('enterPassword') || 'Please enter your password', 'warning');
       return;
@@ -130,6 +136,22 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
           <Typography sx={{ mb: 2, color: 'text.secondary', fontSize: '0.875rem' }}>
             {t('eraseConfirmDesc') !== 'eraseConfirmDesc' ? t('eraseConfirmDesc') : 'Permanently deletes all cloud data. This cannot be undone.'}
           </Typography>
+
+          <Typography sx={{ mb: 1, fontSize: '0.8125rem', fontWeight: 500 }}>
+            {t('confirmEmailLabel') !== 'confirmEmailLabel' ? t('confirmEmailLabel') : 'Enter email to confirm'} ({currentUserEmail}):
+          </Typography>
+          <TextField
+            fullWidth
+            type="email"
+            size="small"
+            variant="outlined"
+            disabled={erasing}
+            value={confirmEmailInput}
+            onChange={(e) => setConfirmEmailInput(e.target.value)}
+            placeholder={currentUserEmail}
+            sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: 2, fontSize: '0.875rem' } }}
+          />
+
           <Typography sx={{ mb: 1, fontSize: '0.8125rem', fontWeight: 500 }}>
             {t('confirmPassword') !== 'confirmPassword' ? t('confirmPassword') : 'Confirm Password'}:
           </Typography>
@@ -150,7 +172,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
             {t('cancel') !== 'cancel' ? t('cancel') : 'Cancel'}
           </Button>
           <Button 
-            disabled={erasing || !erasePassword} 
+            disabled={erasing || !erasePassword || confirmEmailInput.trim().toLowerCase() !== currentUserEmail.toLowerCase()} 
             onClick={handleEraseApp} 
             variant="contained" 
             color="error"
