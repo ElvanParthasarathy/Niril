@@ -144,7 +144,17 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
             value={confirmEmailInput}
             onChange={(e) => setConfirmEmailInput(e.target.value)}
             placeholder={t('confirmEmailLabel') !== 'confirmEmailLabel' ? t('confirmEmailLabel') : 'Confirm email'}
-            sx={{ mt: 1, mb: 2, '& .MuiOutlinedInput-root': { borderRadius: '50px', fontSize: '0.875rem', bgcolor: 'action.hover' }, '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }}
+            sx={{ 
+              mt: 1, mb: 2, 
+              '& .MuiOutlinedInput-root': { 
+                borderRadius: '50px', 
+                fontSize: '0.875rem', 
+                bgcolor: 'action.selected' 
+              }, 
+              '& .MuiOutlinedInput-notchedOutline': { 
+                borderColor: 'divider' 
+              } 
+            }}
           />
 
           <TextField
@@ -156,7 +166,16 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
             value={erasePassword}
             onChange={(e) => setErasePassword(e.target.value)}
             placeholder={t('password') !== 'password' ? t('password') : 'Password'}
-            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '50px', fontSize: '0.875rem', bgcolor: 'action.hover' }, '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }}
+            sx={{ 
+              '& .MuiOutlinedInput-root': { 
+                borderRadius: '50px', 
+                fontSize: '0.875rem', 
+                bgcolor: 'action.selected' 
+              }, 
+              '& .MuiOutlinedInput-notchedOutline': { 
+                borderColor: 'divider' 
+              } 
+            }}
           />
         </DialogContent>
         <DialogActions sx={{ p: 2, pt: 0, gap: 1 }}>
