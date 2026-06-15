@@ -121,7 +121,6 @@ export default function LanguageSettings({ profile, setProfile, setSavedSnapshot
                 {t('save') || 'Save'}
               </Typography>
             </Box>
-            </Box>
           </Box>
         </Collapse>
 
