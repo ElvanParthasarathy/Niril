@@ -61,7 +61,7 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                         gap: '12px'
                     }}>
                         <h1 style={{
-                            fontSize: '32px',
+                            fontSize: 'clamp(22px, 6vw, 36px)',
                             fontWeight: '800',
                             color: 'var(--auth-text)',
                             margin: 0,
