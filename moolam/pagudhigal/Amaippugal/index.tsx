@@ -432,7 +432,7 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
 
   return (
     <div className="s2-page-view">
-      <div className="s2-content-grid">
+      <div className="s2-content-grid" style={{ position: 'relative' }}>
         {/* LEFT: Hub navigation */}
         <div className="s2-col-left">
           {renderHub()}
@@ -451,11 +451,11 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
                   transition={{ duration: 0.3, ease: 'easeOut' }}
                   key={currentView}
                   sx={{
-                    position: 'fixed',
-                    top: '64px',
-                    left: '12px',
-                    right: '12px',
-                    bottom: '12px',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
                     borderRadius: '24px',
                     bgcolor: 'background.default',
                     zIndex: 50,
