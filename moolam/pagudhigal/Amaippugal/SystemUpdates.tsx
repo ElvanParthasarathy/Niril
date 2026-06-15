@@ -87,15 +87,15 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
 
       {/* Clear Cache Dialog */}
       <Dialog open={cacheDialogOpen} onClose={() => setCacheDialogOpen(false)} maxWidth="xs" fullWidth slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
-        <DialogTitle sx={{ fontWeight: 600, pb: 1 }}>{t('clearCacheTitle') !== 'clearCacheTitle' ? t('clearCacheTitle') : 'Clear Cache?'}</DialogTitle>
-        <DialogContent sx={{ color: 'text.secondary' }}>
+        <DialogTitle sx={{ fontWeight: 600, pb: 1, fontSize: '1.125rem' }}>{t('clearCacheTitle') !== 'clearCacheTitle' ? t('clearCacheTitle') : 'Clear Cache?'}</DialogTitle>
+        <DialogContent sx={{ color: 'text.secondary', fontSize: '0.875rem' }}>
           {t('clearCacheConfirmDesc') !== 'clearCacheConfirmDesc' ? t('clearCacheConfirmDesc') : 'This will reload the app. You may need to sign in again.'}
         </DialogContent>
         <DialogActions sx={{ p: 2, pt: 0 }}>
-          <Button onClick={() => setCacheDialogOpen(false)} sx={{ color: 'text.secondary', fontWeight: 600, borderRadius: 2 }}>
+          <Button onClick={() => setCacheDialogOpen(false)} sx={{ color: 'text.secondary', fontWeight: 600, borderRadius: 2, fontSize: '0.875rem', textTransform: 'none' }}>
             {t('cancel') !== 'cancel' ? t('cancel') : 'Cancel'}
           </Button>
-          <Button onClick={handleClearCache} variant="contained" sx={{ bgcolor: 'var(--mac-selection-hover)', color: 'var(--mac-text)', borderRadius: 2, px: 3, fontWeight: 600, boxShadow: 'none', '&:hover': { bgcolor: 'action.hover', boxShadow: 'none' } }}>
+          <Button onClick={handleClearCache} variant="contained" sx={{ bgcolor: 'var(--mac-selection-hover)', color: 'var(--mac-text)', borderRadius: 2, px: 3, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none', boxShadow: 'none', '&:hover': { bgcolor: 'action.hover', boxShadow: 'none' } }}>
             {t('clearCacheBtn') !== 'clearCacheBtn' ? t('clearCacheBtn') : 'Clear'}
           </Button>
         </DialogActions>
@@ -103,12 +103,12 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
 
       {/* Erase App Data Dialog */}
       <Dialog open={eraseDialogOpen} onClose={() => !erasing && setEraseDialogOpen(false)} maxWidth="xs" fullWidth slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
-        <DialogTitle sx={{ color: 'error.main', fontWeight: 600 }}>{t('eraseAppDataTitle') !== 'eraseAppDataTitle' ? t('eraseAppDataTitle') : 'Erase All Data?'}</DialogTitle>
+        <DialogTitle sx={{ color: 'error.main', fontWeight: 600, fontSize: '1.125rem' }}>{t('eraseAppDataTitle') !== 'eraseAppDataTitle' ? t('eraseAppDataTitle') : 'Erase All Data?'}</DialogTitle>
         <DialogContent>
-          <Typography sx={{ mb: 2, color: 'text.secondary' }}>
+          <Typography sx={{ mb: 2, color: 'text.secondary', fontSize: '0.875rem' }}>
             {t('eraseConfirmDesc') !== 'eraseConfirmDesc' ? t('eraseConfirmDesc') : 'Permanently deletes all cloud data. This cannot be undone.'}
           </Typography>
-          <Typography sx={{ mb: 1, fontSize: '0.875rem', fontWeight: 500 }}>
+          <Typography sx={{ mb: 1, fontSize: '0.8125rem', fontWeight: 500 }}>
             {t('confirmPassword') !== 'confirmPassword' ? t('confirmPassword') : 'Confirm Password'}:
           </Typography>
           <TextField
@@ -120,11 +120,11 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
             value={erasePassword}
             onChange={(e) => setErasePassword(e.target.value)}
             placeholder={t('password') !== 'password' ? t('password') : 'Password'}
-            sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+            sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2, fontSize: '0.875rem' } }}
           />
         </DialogContent>
         <DialogActions sx={{ p: 2, pt: 0 }}>
-          <Button disabled={erasing} onClick={() => setEraseDialogOpen(false)} sx={{ color: 'text.secondary', fontWeight: 600, borderRadius: 2 }}>
+          <Button disabled={erasing} onClick={() => setEraseDialogOpen(false)} sx={{ color: 'text.secondary', fontWeight: 600, borderRadius: 2, fontSize: '0.875rem', textTransform: 'none' }}>
             {t('cancel') !== 'cancel' ? t('cancel') : 'Cancel'}
           </Button>
           <Button 
@@ -132,7 +132,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
             onClick={handleEraseApp} 
             variant="contained" 
             color="error"
-            sx={{ borderRadius: 2, px: 3, fontWeight: 600, boxShadow: 'none', '&:hover': { boxShadow: 'none' } }}
+            sx={{ borderRadius: 2, px: 3, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none', boxShadow: 'none', '&:hover': { boxShadow: 'none' } }}
             startIcon={erasing ? <CircularProgress size={16} color="inherit" /> : <WarningCircle />}
           >
             {erasing ? (t('erasing') !== 'erasing' ? t('erasing') : 'Erasing...') : (t('eraseDataBtn') !== 'eraseDataBtn' ? t('eraseDataBtn') : 'Erase')}
