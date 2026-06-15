@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { SettingsPillContainer, SettingsItem, SettingsDivider } from '../ElvanSettingsSection';
+import { SettingsPillContainer } from '../ElvanSettingsSection';
+import { SettingsItem, SettingsDivider } from './SettingsShared';
 import { ArrowsClockwise, Trash, WarningCircle } from '@phosphor-icons/react';
 import { LockKeyhole } from 'lucide-react';
 import { Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Typography, CircularProgress, Button } from '@mui/material';
