@@ -73,9 +73,6 @@ export default function InvoiceSettings({ language, t }) {
             <Typography sx={{ fontSize: '15px', color: 'var(--mac-text, #ffffff)', fontWeight: 500 }}>
               {t('showItemizedGstTable')}
             </Typography>
-            <Typography sx={{ fontSize: '13px', color: 'var(--mac-text-secondary, #aaaaaa)', mt: 0.5 }}>
-              {t('displayDetailedItemizedGst')}
-            </Typography>
           </Box>
           {loaded && (
             <Material3Switch 

@@ -106,9 +106,6 @@ export default function AppPreferences({ thagaval, darkMode, setDarkMode, themeM
             <Typography variant="body1" sx={{ fontWeight: 600, color: 'text.primary' }}>
               Auto
             </Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-              Use system theme
-            </Typography>
           </Box>
           <Material3Switch 
             checked={themeMode === 'auto'} 

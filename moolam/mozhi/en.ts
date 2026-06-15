@@ -396,7 +396,7 @@ export const en: Record<TranslationKey, string> = {
   disabled: 'Disabled',
   languagesUsedForBilling: 'Languages used for billing and data entry',
   enableBilingualBills: 'Enable Bilingual Bills',
-  showItemizedGstTable: 'Show itemized GST table',
+  showItemizedGstTable: 'Show GST splits in table',
   displayDetailedItemizedGst: 'Display detailed itemized GST breakdown columns on the invoice',
   overviewOfInvoices: 'Overview of your invoices',
   totalInvoiced: 'Total Invoiced',

@@ -981,7 +981,6 @@ export default function Amaippugal({ onSaved }) {
                 label={
                   <Box>
                     <Typography variant="body1" style={{ fontWeight: 500 }}>{t('enableBilingualBills')}</Typography>
-                    <Typography variant="body2" color="text.secondary">{t('allowDataEntryInTwoLanguages')}</Typography>
                   </Box>
                 }
                 sx={{ m: 0, width: '100%' }}
