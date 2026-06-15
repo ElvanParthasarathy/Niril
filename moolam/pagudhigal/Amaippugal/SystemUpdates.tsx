@@ -95,7 +95,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
           <Button onClick={() => setCacheDialogOpen(false)} sx={{ color: 'text.secondary', fontWeight: 600, borderRadius: 2, fontSize: '0.875rem', textTransform: 'none' }}>
             {t('cancel') !== 'cancel' ? t('cancel') : 'Cancel'}
           </Button>
-          <Button onClick={handleClearCache} variant="contained" sx={{ bgcolor: 'var(--mac-selection-hover)', color: 'var(--mac-text)', borderRadius: 2, px: 3, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none', boxShadow: 'none', '&:hover': { bgcolor: 'action.hover', boxShadow: 'none' } }}>
+          <Button onClick={handleClearCache} variant="contained" disableElevation sx={{ bgcolor: 'black', color: 'white', borderRadius: 2, px: 3, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none', '&:hover': { bgcolor: '#333' } }}>
             {t('clearCacheBtn') !== 'clearCacheBtn' ? t('clearCacheBtn') : 'Clear'}
           </Button>
         </DialogActions>
@@ -132,7 +132,8 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
             onClick={handleEraseApp} 
             variant="contained" 
             color="error"
-            sx={{ borderRadius: 2, px: 3, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none', boxShadow: 'none', '&:hover': { boxShadow: 'none' } }}
+            disableElevation
+            sx={{ borderRadius: 2, px: 3, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none', '&:hover': { boxShadow: 'none' } }}
             startIcon={erasing ? <CircularProgress size={16} color="inherit" /> : <WarningCircle />}
           >
             {erasing ? (t('erasing') !== 'erasing' ? t('erasing') : 'Erasing...') : (t('eraseDataBtn') !== 'eraseDataBtn' ? t('eraseDataBtn') : 'Erase')}
