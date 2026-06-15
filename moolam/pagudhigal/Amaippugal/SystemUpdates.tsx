@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { SettingsPillContainer } from '../ElvanSettingsSection';
-import { SettingsItem, SettingsDivider } from './SettingsShared';
+import { SettingsPillContainer, SettingsRow, SettingsDivider } from '../ElvanSettingsSection';
 import { ArrowsClockwise, Trash, WarningCircle } from '@phosphor-icons/react';
 import { LockKeyhole } from 'lucide-react';
 import { Box, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Typography, CircularProgress, Button } from '@mui/material';
@@ -58,11 +57,11 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
 
       <SettingsPillContainer>
-        <SettingsItem 
+        <SettingsRow 
           icon={<Trash size={20} weight="fill" />} 
           iconColor="monochrome"
           title={t('clearCacheTitle') !== 'clearCacheTitle' ? t('clearCacheTitle') : 'Clear Cache'}
-          desc="Fix issues by clearing local cache"
+          description="Fix issues by clearing local cache"
           onClick={() => {
             if (confirm('Clear local cache and reload? You will need to log in again if using Google Drive.')) {
               localStorage.clear();
@@ -71,20 +70,19 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
           }}
         />
         <SettingsDivider />
-        <SettingsItem 
+        <SettingsRow 
           icon={<LockKeyhole size={20} />} 
           iconColor="monochrome"
           title={t('accountSecurityTitle') !== 'accountSecurityTitle' ? t('accountSecurityTitle') : 'Sign Out'}
-          desc="Lock database access on this device"
+          description="Lock database access on this device"
           onClick={async () => { await signOut(auth); window.location.replace('/'); }}
         />
         <SettingsDivider />
-        <SettingsItem 
+        <SettingsRow 
           icon={<WarningCircle size={20} weight="fill" />} 
           iconColor="red"
-          danger={true}
           title={t('eraseAppDataTitle') !== 'eraseAppDataTitle' ? t('eraseAppDataTitle') : 'Erase App Data'}
-          desc="Permanently wipe all database records"
+          description="Permanently wipe all database records"
           onClick={() => setEraseDialogOpen(true)}
         />
       </SettingsPillContainer>
