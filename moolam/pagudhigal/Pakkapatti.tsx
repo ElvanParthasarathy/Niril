@@ -2,6 +2,7 @@
 import { SidebarSimple, FileText, GearSix, DownloadSimple, Moon, Sun, CaretDown, CaretRight, Question, Bell, SignOut, CaretUpDown, Invoice, HandCoins } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Badge, Box, Typography, Avatar, Divider, Tooltip, IconButton, Collapse, Popover, Switch, Fade } from '@mui/material';
+import { motion } from 'framer-motion';
 import { useLanguage } from '../mozhi/LanguageContext';
 
 export default function Pakkapatti({
@@ -50,7 +51,7 @@ export default function Pakkapatti({
     }
   };
 
-  const drawerContent = (
+  const renderDrawerContent = (isDesktop: boolean) => (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         {/* Header */}
         <Box sx={{ display: 'flex', alignItems: 'center', flexShrink: 0, minHeight: 80, pt: 3, pb: 1, pl: isCollapsed ? 0 : 4, pr: isCollapsed ? 0 : 3, justifyContent: isCollapsed ? 'center' : 'space-between' }}>
@@ -142,6 +143,7 @@ export default function Pakkapatti({
                       minHeight: 40,
                       color: darkMode ? '#aaaaaa' : '#666666',
                       transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
+                      position: 'relative',
                       '&:hover': {
                         backgroundColor: isCollapsed ? 'transparent' : (darkMode ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0,0,0,0.04)'),
                         color: darkMode ? '#ffffff' : '#000000',
@@ -151,10 +153,10 @@ export default function Pakkapatti({
                         }
                       },
                       '&.Mui-selected': {
-                        backgroundColor: isCollapsed ? 'transparent' : (darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0,0,0,0.06)'),
+                        backgroundColor: isCollapsed ? 'transparent' : (isDesktop ? 'transparent' : (darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0,0,0,0.06)')),
                         color: darkMode ? '#ffffff' : '#000000',
                         '&:hover': {
-                          backgroundColor: isCollapsed ? 'transparent' : (darkMode ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0,0,0,0.09)'),
+                          backgroundColor: isCollapsed ? 'transparent' : (isDesktop ? 'transparent' : (darkMode ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0,0,0,0.09)')),
                           opacity: 1
                         },
                         '& .MuiListItemIcon-root': { color: darkMode ? '#ffffff' : '#000000' }
@@ -170,7 +172,27 @@ export default function Pakkapatti({
                       }
                     }}
                   >
+                    {isSelected && !isCollapsed && isDesktop && (
+                      <motion.div
+                        layoutId="desktop-sidebar-active-pill"
+                        initial={false}
+                        transition={{
+                          type: "spring",
+                          stiffness: 500,
+                          damping: 35,
+                          mass: 1
+                        }}
+                        style={{
+                          position: 'absolute',
+                          top: 0, left: 0, right: 0, bottom: 0,
+                          backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0,0,0,0.06)',
+                          borderRadius: '100px',
+                          zIndex: 0
+                        }}
+                      />
+                    )}
                     <ListItemIcon sx={{ 
+                      position: 'relative', zIndex: 1,
                       mr: isCollapsed ? 0 : 1.25, 
                       mb: isCollapsed ? 1 : 0, 
                       minWidth: 0, 
@@ -192,7 +214,9 @@ export default function Pakkapatti({
                         sx={{ 
                           m: 0, 
                           display: (!isCollapsed || isCollapsed) ? 'block' : 'none',
-                          overflow: 'visible'
+                          overflow: 'visible',
+                          position: 'relative',
+                          zIndex: 1
                         }}
                         primary={
                           <Typography variant="body2" sx={{ 
@@ -433,7 +457,7 @@ export default function Pakkapatti({
           '& .MuiBackdrop-root': { backdropFilter: 'blur(4px)' },
         }}
       >
-        {drawerContent}
+        {renderDrawerContent(false)}
       </Drawer>
       <Drawer
         variant="permanent"
@@ -454,7 +478,7 @@ export default function Pakkapatti({
           },
         }}
       >
-        {drawerContent}
+        {renderDrawerContent(true)}
       </Drawer>
     </Box>
   );
