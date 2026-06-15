@@ -143,7 +143,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
             disabled={erasing}
             value={confirmEmailInput}
             onChange={(e) => setConfirmEmailInput(e.target.value)}
-            placeholder={`${t('confirmEmailLabel') !== 'confirmEmailLabel' ? t('confirmEmailLabel') : 'Confirm email'} (${currentUserEmail})`}
+            placeholder={t('confirmEmailLabel') !== 'confirmEmailLabel' ? t('confirmEmailLabel') : 'Confirm email'}
             sx={{ mt: 1, mb: 2, '& .MuiOutlinedInput-root': { borderRadius: '50px', fontSize: '0.875rem', bgcolor: 'action.hover' }, '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }}
           />
 
