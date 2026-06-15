@@ -434,31 +434,58 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
     <div className="s2-page-view">
       <div className="s2-content-grid">
         {/* LEFT: Hub navigation */}
-        <div className={`s2-col-left`} style={{ visibility: currentView !== 'hub' && isMobile ? 'hidden' : 'visible' }}>
-          {renderHub()}
+        <div className="s2-col-left">
+          {isMobile ? (
+            <motion.div
+              animate={{ 
+                x: currentView !== 'hub' ? "-10%" : 0, 
+                opacity: currentView !== 'hub' ? 0 : 1,
+                scale: currentView !== 'hub' ? 0.95 : 1
+              }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              style={{ height: '100%', pointerEvents: currentView !== 'hub' ? 'none' : 'auto' }}
+            >
+              {renderHub()}
+            </motion.div>
+          ) : (
+            renderHub()
+          )}
         </div>
 
         {/* RIGHT: Detail view */}
-        <div className={`s2-col-right ${currentView === 'hub' && isMobile ? 's2-hide-mobile' : ''}`}>
-          {currentView !== 'hub' || !isMobile ? (
-            isMobile ? (
-              <Box sx={{
-                position: 'fixed',
-                top: '64px',
-                left: '12px',
-                right: '12px',
-                bottom: '12px',
-                borderRadius: '24px',
-                bgcolor: 'background.default',
-                zIndex: 50,
-                overflowY: 'auto',
-                overscrollBehavior: 'contain',
-                padding: '24px 0 calc(24px + env(safe-area-inset-bottom, 0px))'
-              }}>
-                {renderDetailView()}
-              </Box>
-            ) : renderDetailView()
-          ) : null}
+        <div className="s2-col-right">
+          {isMobile ? (
+            <AnimatePresence mode="wait">
+              {currentView !== 'hub' && (
+                <Box
+                  component={motion.div}
+                  initial={{ x: "100%", opacity: 0.8 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: "100%", opacity: 0 }}
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  key={currentView}
+                  sx={{
+                    position: 'fixed',
+                    top: '64px',
+                    left: '12px',
+                    right: '12px',
+                    bottom: '12px',
+                    borderRadius: '24px',
+                    bgcolor: 'background.default',
+                    zIndex: 50,
+                    overflowY: 'auto',
+                    overscrollBehavior: 'contain',
+                    padding: '24px 0 calc(24px + env(safe-area-inset-bottom, 0px))',
+                    boxShadow: darkMode ? '0 0 40px rgba(0,0,0,0.5)' : '0 0 40px rgba(0,0,0,0.15)'
+                  }}
+                >
+                  {renderDetailView()}
+                </Box>
+              )}
+            </AnimatePresence>
+          ) : (
+            currentView !== 'hub' ? renderDetailView() : null
+          )}
         </div>
       </div>
 
