@@ -351,7 +351,7 @@ export const ta = {
   disabled: 'இல்லை',
   languagesUsedForBilling: 'பட்டியல் உருவாக்கத்தில் பயன்படுத்தப்படும் மொழிகள்',
   enableBilingualBills: 'இருமொழிப் பதிவு',
-  showItemizedGstTable: 'ஜிஎஸ்டி பிரிப்புகளைக் காட்டு',
+  showItemizedGstTable: 'GST பிரிப்புகளைக் காட்டு',
   displayDetailedItemizedGst: 'ஒவ்வொரு பொருளுக்கும் தனித்தனியாக ஜிஎஸ்டி விவரங்களை காண்பி',
   overviewOfInvoices: 'உங்கள் பட்டியல்களின் சுருக்கம்',
   totalInvoiced: 'மொத்த பட்டியல்',
