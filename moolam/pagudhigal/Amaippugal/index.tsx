@@ -439,7 +439,7 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
         </div>
 
         {/* RIGHT: Detail view */}
-        <div className={`s2-col-right ${currentView === 'hub' && isMobile ? 's2-hide-mobile' : ''}`}>
+        <div className="s2-col-right">
           {isMobile ? (
             <AnimatePresence>
               {currentView !== 'hub' && (
