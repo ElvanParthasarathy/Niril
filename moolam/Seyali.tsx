@@ -9,6 +9,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import Login from './pagudhigal/Login';
 import Welcome from './pagudhigal/auth/Welcome';
+import NalvaravuWelcome from './pagudhigal/nalvaravu/NalvaravuWelcome';
 import SplashScreen from './pagudhigal/auth/SplashScreen';
 import { jsPDF } from 'jspdf';
 import VariArikkaigal from './pagudhigal/GstBill/Reports/VariArikkaigal';
@@ -1032,7 +1033,7 @@ function Seyali() {
       <ThemeProvider theme={muiTheme}>
         <CssBaseline />
         {!hasWelcomed ? (
-          <Welcome mode="pre-login" onContinue={() => {
+          <Welcome onContinue={() => {
             setHasWelcomed(true);
           }} />
         ) : (
@@ -1049,7 +1050,7 @@ function Seyali() {
       <ThemeProvider theme={muiTheme}>
         <CssBaseline />
         {!postLoginWelcomeDone ? (
-          <Welcome mode="post-login" onContinue={() => setPostLoginWelcomeDone(true)} />
+          <NalvaravuWelcome onContinue={() => setPostLoginWelcomeDone(true)} />
         ) : (
           <>
             <Nalvaravu onComplete={(p) => {
