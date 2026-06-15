@@ -28,8 +28,10 @@
     font-size: inherit;
 }
 
-.s2-item:hover {
-    background: var(--mac-selection-hover);
+@media (hover: hover) {
+    .s2-item:hover {
+        background: var(--mac-selection-hover);
+    }
 }
 
 /* ── Colored Icon Circle ── */
@@ -155,8 +157,10 @@
     }
 }
 
-.s2-back-btn:hover {
-    background: var(--mac-selection-hover);
+@media (hover: hover) {
+    .s2-back-btn:hover {
+        background: var(--mac-selection-hover);
+    }
 }
 
 .s2-sub-title {
@@ -273,8 +277,10 @@
     font-family: inherit;
 }
 
-.s2-dialog-btn:hover {
-    opacity: 0.85;
+@media (hover: hover) {
+    .s2-dialog-btn:hover {
+        opacity: 0.85;
+    }
 }
 
 .s2-dialog-btn.cancel {
@@ -426,8 +432,10 @@ html.dark .s2-back-btn {
     background: var(--mac-card-bg);
 }
 
-html.dark .s2-profile-card:hover,
-html.dark .s2-item:hover,
-html.dark .s2-back-btn:hover {
-    background: var(--mac-selection-hover);
+@media (hover: hover) {
+    html.dark .s2-profile-card:hover,
+    html.dark .s2-item:hover,
+    html.dark .s2-back-btn:hover {
+        background: var(--mac-selection-hover);
+    }
 }
