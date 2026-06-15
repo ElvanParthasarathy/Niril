@@ -463,18 +463,18 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
                   transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                   key={currentView}
                   sx={{
-                    position: 'fixed',
-                    top: '64px',
-                    left: '12px',
-                    right: '12px',
-                    bottom: '12px',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
                     borderRadius: '24px',
-                    bgcolor: 'background.default',
+                    bgcolor: darkMode ? '#000000' : '#FFFFFF',
                     zIndex: 50,
                     overflowY: 'auto',
                     overscrollBehavior: 'contain',
                     padding: '24px 0 calc(24px + env(safe-area-inset-bottom, 0px))',
-                    boxShadow: darkMode ? '0 0 40px rgba(0,0,0,0.5)' : '0 0 40px rgba(0,0,0,0.15)'
+                    boxShadow: darkMode ? '-10px 0 40px rgba(0,0,0,0.5)' : '-10px 0 40px rgba(0,0,0,0.15)'
                   }}
                 >
                   {renderDetailView()}

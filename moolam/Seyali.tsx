@@ -190,7 +190,7 @@ const MobileOverlayWrapper = ({ children, isVisible, viewKey, darkMode, zIndex =
             right: { xs: '12px', md: 0 }, 
             bottom: { xs: '12px', md: 0 }, 
             borderRadius: { xs: '24px', md: 0 },
-            bgcolor: 'background.default', 
+            bgcolor: darkMode ? '#000000' : '#FFFFFF', 
             zIndex: zIndex, 
             overflowY: 'auto', 
             overscrollBehavior: 'contain',
