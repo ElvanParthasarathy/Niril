@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Paper, Divider, ButtonBase } from '@mui/material';
+import { Box, Typography, Button, Divider, Paper, ButtonBase, Collapse } from '@mui/material';
 import { PencilSimple } from '@phosphor-icons/react';
 import { useLanguage } from '../mozhi/LanguageContext';
 
@@ -205,11 +205,12 @@ export function EditableSettingsPill({
           </Box>
         )}
 
-        {!isEditing ? (
+        <Collapse in={!isEditing} timeout={300}>
           <Box sx={{ p: '20px 80px 20px 20px' }}>
             {renderDisplay()}
           </Box>
-        ) : (
+        </Collapse>
+        <Collapse in={isEditing} unmountOnExit timeout={300}>
           <Box sx={{ p: '20px', bgcolor: 'transparent' }}>
             {children}
             <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
@@ -239,7 +240,7 @@ export function EditableSettingsPill({
               </ButtonBase>
             </Box>
           </Box>
-        )}
+        </Collapse>
       </Paper>
     </Box>
   );
@@ -321,7 +322,7 @@ export function SettingsPillRow({
 
   return (
     <Box sx={{ position: 'relative' }}>
-      {!isEditing ? (
+      <Collapse in={!isEditing} timeout={300}>
         <Box sx={{ p: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', pr: 2 }}>
              <Typography sx={{ fontSize: '13px', color: 'var(--mac-text-secondary, #aaaaaa)', mb: '2px', fontWeight: 500 }}>
@@ -347,7 +348,9 @@ export function SettingsPillRow({
             </ButtonBase>
           )}
         </Box>
-      ) : (
+      </Collapse>
+      
+      <Collapse in={isEditing} unmountOnExit timeout={300}>
         <Box sx={{ p: '20px', bgcolor: 'transparent' }}>
           <Typography sx={{ fontSize: '13px', color: 'var(--mac-text-secondary, #aaaaaa)', mb: 2, fontWeight: 500 }}>
              {editPrefix}{label}
@@ -387,7 +390,7 @@ export function SettingsPillRow({
             </ButtonBase>
           </Box>
         </Box>
-      )}
+      </Collapse>
     </Box>
   );
 }
