@@ -131,15 +131,10 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
 
       {/* Erase App Data Dialog */}
       <Dialog open={eraseDialogOpen} onClose={() => !erasing && setEraseDialogOpen(false)} maxWidth="xs" fullWidth slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
-        <DialogTitle sx={{ color: 'error.main', fontWeight: 600, fontSize: '1.125rem' }}>{t('eraseAppDataTitle') !== 'eraseAppDataTitle' ? t('eraseAppDataTitle') : 'Erase All Data?'}</DialogTitle>
-        <DialogContent>
-          <Typography sx={{ mb: 2, color: 'text.secondary', fontSize: '0.875rem' }}>
-            {t('eraseConfirmDesc') !== 'eraseConfirmDesc' ? t('eraseConfirmDesc') : 'Permanently deletes all cloud data. This cannot be undone.'}
-          </Typography>
-
-          <Typography sx={{ mb: 1, fontSize: '0.8125rem', fontWeight: 500 }}>
-            {t('confirmEmailLabel') !== 'confirmEmailLabel' ? t('confirmEmailLabel') : 'Enter email to confirm'} ({currentUserEmail}):
-          </Typography>
+        <DialogTitle sx={{ color: 'error.main', fontWeight: 600, fontSize: '1.125rem', textAlign: 'center' }}>
+          {t('eraseAppDataTitle') !== 'eraseAppDataTitle' ? t('eraseAppDataTitle') : 'Erase All Data?'}
+        </DialogTitle>
+        <DialogContent sx={{ pb: 1 }}>
           <TextField
             fullWidth
             type="email"
@@ -148,13 +143,10 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
             disabled={erasing}
             value={confirmEmailInput}
             onChange={(e) => setConfirmEmailInput(e.target.value)}
-            placeholder={currentUserEmail}
-            sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: 2, fontSize: '0.875rem' } }}
+            placeholder={`${t('confirmEmailLabel') !== 'confirmEmailLabel' ? t('confirmEmailLabel') : 'Confirm email'} (${currentUserEmail})`}
+            sx={{ mt: 1, mb: 2, '& .MuiOutlinedInput-root': { borderRadius: '50px', fontSize: '0.875rem', bgcolor: 'action.hover' }, '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }}
           />
 
-          <Typography sx={{ mb: 1, fontSize: '0.8125rem', fontWeight: 500 }}>
-            {t('confirmPassword') !== 'confirmPassword' ? t('confirmPassword') : 'Confirm Password'}:
-          </Typography>
           <TextField
             fullWidth
             type="password"
@@ -164,11 +156,11 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
             value={erasePassword}
             onChange={(e) => setErasePassword(e.target.value)}
             placeholder={t('password') !== 'password' ? t('password') : 'Password'}
-            sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2, fontSize: '0.875rem' } }}
+            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '50px', fontSize: '0.875rem', bgcolor: 'action.hover' }, '& .MuiOutlinedInput-notchedOutline': { border: 'none' } }}
           />
         </DialogContent>
-        <DialogActions sx={{ p: 2, pt: 0 }}>
-          <Button disabled={erasing} onClick={() => setEraseDialogOpen(false)} sx={{ color: 'text.secondary', fontWeight: 600, borderRadius: 2, fontSize: '0.875rem', textTransform: 'none' }}>
+        <DialogActions sx={{ p: 2, pt: 0, justifyContent: 'center', gap: 1 }}>
+          <Button disabled={erasing} onClick={() => setEraseDialogOpen(false)} sx={{ color: 'text.secondary', fontWeight: 600, borderRadius: '50px', px: 3, fontSize: '0.875rem', textTransform: 'none' }}>
             {t('cancel') !== 'cancel' ? t('cancel') : 'Cancel'}
           </Button>
           <Button 
@@ -177,8 +169,8 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
             variant="contained" 
             color="error"
             disableElevation
-            sx={{ borderRadius: 2, px: 3, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none', '&:hover': { boxShadow: 'none' } }}
-            startIcon={erasing ? <CircularProgress size={16} color="inherit" /> : <WarningCircle />}
+            sx={{ borderRadius: '50px', px: 4, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none' }}
+            startIcon={erasing ? <CircularProgress size={16} color="inherit" /> : undefined}
           >
             {erasing ? (t('erasing') !== 'erasing' ? t('erasing') : 'Erasing...') : (t('eraseDataBtn') !== 'eraseDataBtn' ? t('eraseDataBtn') : 'Erase')}
           </Button>
