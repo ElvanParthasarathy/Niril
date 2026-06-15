@@ -25,22 +25,19 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                 <div style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    height: '100%',
                     width: '100%',
-                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: '40px',
                     opacity: showSetup ? 1 : 0,
                     transform: showSetup ? 'translateY(0)' : 'translateY(20px)',
                     transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
                 }}>
-                    <div style={{ flex: 1 }} />
                     
                     {/* LOGO SECTION */}
                     <div style={{
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        gap: '24px',
-                        marginBottom: '40px'
                     }}>
                         <div style={{
                             width: '96px',
@@ -82,15 +79,12 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                         </p>
                     </div>
 
-                    <div style={{ flex: 1 }} />
-
                     {/* BUTTON SECTION */}
                     <div style={{
                         width: '100%',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        paddingBottom: '40px'
                     }}>
                         <p style={{
                             fontSize: '12px',

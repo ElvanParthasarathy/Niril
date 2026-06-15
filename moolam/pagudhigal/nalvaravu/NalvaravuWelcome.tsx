@@ -106,21 +106,19 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
                     <div style={{
                         display: 'flex',
                         flexDirection: 'column',
-                        height: '100%',
                         width: '100%',
-                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: '40px',
                         opacity: showLanguage ? 1 : 0,
                         transform: showLanguage ? 'translateY(0)' : 'translateY(20px)',
                         transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
                     }}>
-                        <div style={{ flex: 1 }} />
                         
                         {/* ICON SECTION */}
                         <div style={{
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
-                            marginBottom: '40px'
                         }}>
                             <GlobeHemisphereWest size={80} weight="regular" color="var(--auth-text)" />
                         </div>
@@ -151,15 +149,12 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
                             </p>
                         </div>
 
-                        <div style={{ flex: 1 }} />
-
                         {/* LANGUAGE OPTIONS & BUTTON SECTION */}
                         <div style={{
                             width: '100%',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
-                            paddingBottom: '40px'
                         }}>
                             
                             {/* MUI LANGUAGE SELECTOR */}
@@ -247,21 +242,19 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
                     <div style={{
                         display: 'flex',
                         flexDirection: 'column',
-                        height: '100%',
                         width: '100%',
-                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: '40px',
                         opacity: showBillingLanguage ? 1 : 0,
                         transform: showBillingLanguage ? 'translateY(0)' : 'translateY(20px)',
                         transition: 'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
                     }}>
-                        <div style={{ flex: 1 }} />
                         
                         {/* ICON SECTION */}
                         <div style={{
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
-                            marginBottom: '40px'
                         }}>
                             <FileText size={80} weight="duotone" color="var(--auth-text)" />
                         </div>
@@ -292,15 +285,12 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
                             </p>
                         </div>
 
-                        <div style={{ flex: 1 }} />
-
                         {/* LANGUAGE OPTIONS & BUTTON SECTION */}
                         <div style={{
                             width: '100%',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
-                            paddingBottom: '40px'
                         }}>
                             
                             {/* MUI LANGUAGE SELECTOR */}
