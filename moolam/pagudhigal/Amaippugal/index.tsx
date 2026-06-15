@@ -276,7 +276,9 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
                 p: '14px 32px 14px 98px', 
                 justifyContent: 'flex-start',
                 textAlign: 'left',
-                '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'var(--mac-selection-hover, rgba(255, 255, 255, 0.05))' : 'action.hover' },
+                '@media (hover: hover)': {
+                  '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'var(--mac-selection-hover, rgba(255, 255, 255, 0.05))' : 'action.hover' },
+                },
                 transition: 'background-color 0.2s',
              }}
           >

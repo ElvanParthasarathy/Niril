@@ -369,7 +369,7 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
                                     localStorage.setItem('elvanniril_setup_billingLang', billingLanguage);
                                     onContinue();
                                 }}>
-                                    {language === 'ta' ? 'தொடரவும்' : 'Continue'}
+                                    {billingLanguage === 'Tamil' ? 'தொடரவும்' : 'Continue'}
                                 </AuthButton>
                             </div>
                         </div>

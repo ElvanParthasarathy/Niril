@@ -542,7 +542,11 @@ function Seyali() {
         if (!profileLoaded.current) {
           profileLoaded.current = true;
           setProfile(p);
-          if (!p.niruvanathinPeyar && !localStorage.getItem('elvanniril_onboarded')) {
+          
+          // If the profile object is completely empty, it means no profile exists in DB
+          const isProfileEmpty = !p || Object.keys(p).length === 0;
+          
+          if (isProfileEmpty && !localStorage.getItem('elvanniril_onboarded')) {
             // Smart resume: check if any profiles exist in the database before forcing setup
             const existingProfiles = await getAllProfiles();
             if (existingProfiles && existingProfiles.length > 0) {
@@ -555,6 +559,10 @@ function Seyali() {
             } else {
               setShowWelcome(true);
             }
+          } else {
+            // If profile exists in DB, ensure local storage knows we are onboarded
+            // so we don't accidentally trigger it later
+            localStorage.setItem('elvanniril_onboarded', 'true');
           }
         }
       } catch (err) {
@@ -865,6 +873,42 @@ function Seyali() {
         }
       },
 
+      MuiButtonBase: {
+        defaultProps: {
+          disableTouchRipple: false,
+        },
+        styleOverrides: {
+          root: {
+            '@media (hover: none)': {
+              '&:hover': {
+                backgroundColor: 'transparent',
+              },
+            },
+          },
+        },
+      },
+      MuiIconButton: {
+        styleOverrides: {
+          root: {
+            '@media (hover: none)': {
+              '&:hover': {
+                backgroundColor: 'transparent',
+              },
+            },
+          },
+        },
+      },
+      MuiListItemButton: {
+        styleOverrides: {
+          root: {
+            '@media (hover: none)': {
+              '&:hover': {
+                backgroundColor: 'transparent',
+              },
+            },
+          },
+        },
+      },
       MuiTextField: {
         defaultProps: {
           variant: 'filled',
@@ -1240,8 +1284,9 @@ function Seyali() {
           <Box id="main-scroll-container" className={['invoice-editor', 'invoice-view', 'receipt-editor', 'receipt-view'].includes(currentView as string) ? 'no-print' : ''} sx={{ 
             flexGrow: 1, 
             overflowY: 'scroll',
+            overflowX: 'hidden',
             pb: { xs: 2, md: 0 }, // small padding at the bottom of the scroll inside the shell
-            '@media print': { overflowY: 'visible', pb: 0 }
+            '@media print': { overflowY: 'visible', overflowX: 'visible', pb: 0 }
           }}>
         {(currentView === 'dashboard' || currentView === 'settings' || (['invoice-editor', 'invoice-view'].includes(currentView as string) && sessionStorage.getItem('gst_backTo') === 'dashboard')) && (
           <Box sx={{ display: currentView === 'settings' ? 'none' : 'block', height: '100%' }}>

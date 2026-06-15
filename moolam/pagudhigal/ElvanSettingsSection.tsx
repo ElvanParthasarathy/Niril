@@ -86,7 +86,9 @@ export function SettingsRow({ icon, iconColor, title, description, control, onCl
         textAlign: 'left',
         p: '16px 20px',
         cursor: onClick ? 'pointer' : 'default',
-        '&:hover': onClick ? { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'var(--mac-selection-hover, rgba(255, 255, 255, 0.05))' : 'action.hover' } : {},
+        '@media (hover: hover)': {
+          '&:hover': onClick ? { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'var(--mac-selection-hover, rgba(255, 255, 255, 0.05))' : 'action.hover' } : {},
+        },
         transition: 'background-color 0.2s',
         ...sx
       }}
@@ -193,7 +195,9 @@ export function EditableSettingsPill({
                 width: 42, height: 42, borderRadius: '50%', 
                 color: 'text.secondary', flexShrink: 0,
                 bgcolor: 'var(--mac-selection-hover, rgba(255,255,255,0.05))',
-                '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)', color: 'var(--mac-text)' }
+                '@media (hover: hover)': {
+                  '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)', color: 'var(--mac-text)' }
+                }
               }}
             >
               <PencilSimple size={18} weight="bold" />
@@ -214,7 +218,9 @@ export function EditableSettingsPill({
                 sx={{ 
                   px: 2, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px',
                   color: 'text.secondary',
-                  '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
+                  '@media (hover: hover)': {
+                    '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
+                  }
                 }}
               >
                 {cancelLabel}
@@ -224,7 +230,9 @@ export function EditableSettingsPill({
                 sx={{ 
                   px: 3, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px',
                   bgcolor: 'primary.main', color: 'primary.contrastText',
-                  '&:hover': { bgcolor: 'primary.dark' }
+                  '@media (hover: hover)': {
+                    '&:hover': { bgcolor: 'primary.dark' }
+                  }
                 }}
               >
                 {saveLabel}
@@ -330,7 +338,9 @@ export function SettingsPillRow({
                 width: 42, height: 42, borderRadius: '50%', 
                 color: 'text.secondary', flexShrink: 0,
                 bgcolor: 'var(--mac-selection-hover, rgba(255,255,255,0.05))',
-                '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)', color: 'var(--mac-text)' }
+                '@media (hover: hover)': {
+                  '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)', color: 'var(--mac-text)' }
+                }
               }}
             >
               <PencilSimple size={18} weight="bold" />
@@ -356,7 +366,9 @@ export function SettingsPillRow({
               sx={{ 
                 px: 2, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px', fontFamily: '"Elvan Sans", sans-serif',
                 color: 'text.secondary',
-                '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
+                '@media (hover: hover)': {
+                  '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
+                }
               }}
             >
               {finalCancelLabel}
@@ -366,7 +378,9 @@ export function SettingsPillRow({
               sx={{ 
                 px: 3, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px', fontFamily: '"Elvan Sans", sans-serif',
                 bgcolor: 'primary.main', color: 'primary.contrastText',
-                '&:hover': { bgcolor: 'primary.dark' }
+                '@media (hover: hover)': {
+                  '&:hover': { bgcolor: 'primary.dark' }
+                }
               }}
             >
               {finalSaveLabel}

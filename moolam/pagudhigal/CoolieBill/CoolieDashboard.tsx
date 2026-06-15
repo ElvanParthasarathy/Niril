@@ -167,7 +167,7 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchMode
 
   const renderRecentItem = (bill, index) => {
     return (
-      <ElvanCard key={bill.id} onClick={() => onView && onView(bill)} sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}>
+      <ElvanCard key={bill.id} onClick={() => onView && onView(bill)} sx={{ cursor: 'pointer', '@media (hover: hover)': { '&:hover': { bgcolor: 'action.hover' } } }}>
         <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
           <Box sx={{ 

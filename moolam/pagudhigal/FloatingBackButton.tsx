@@ -64,8 +64,10 @@ export const FloatingBackButton: React.FC<FloatingBackButtonProps> = ({ label, c
                 fontSize: '0.9rem',
                 bgcolor: 'background.paper',
                 color: 'text.primary',
-                '&:hover': {
-                    bgcolor: 'action.hover',
+                '@media (hover: hover)': {
+                    '&:hover': {
+                        bgcolor: 'action.hover',
+                    }
                 }
             }}
         >
