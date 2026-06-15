@@ -31,7 +31,7 @@ export const AuthHeader = ({ title, subtitle }: { title: string, subtitle: strin
     </div>
 );
 
-export const AuthInput = ({ label, value, onChange, type = "text", placeholder, icon, error, ...props }: any) => {
+export const AuthInput = ({ label, value, onChange, type = "text", placeholder, icon, error, helperText, ...props }: any) => {
     const [showPass, setShowPass] = useState(false);
     const isPass = type === 'password';
 
@@ -45,7 +45,7 @@ export const AuthInput = ({ label, value, onChange, type = "text", placeholder, 
                 type={isPass && showPass ? 'text' : type}
                 placeholder={placeholder}
                 error={!!error}
-                helperText={error}
+                helperText={error || helperText}
                 sx={{
                     '& .MuiInputLabel-asterisk': {
                         display: 'none',
@@ -73,6 +73,14 @@ export const AuthInput = ({ label, value, onChange, type = "text", placeholder, 
                             WebkitBoxShadow: '0 0 0 100px var(--auth-input-bg) inset !important',
                             WebkitTextFillColor: 'var(--auth-text) !important',
                             borderRadius: '0px'
+                        }
+                    },
+                    '& .MuiFormHelperText-root': {
+                        fontSize: '10px',
+                        marginLeft: '12px',
+                        marginTop: '6px',
+                        '&:not(.Mui-error)': {
+                            color: 'var(--auth-text-muted)'
                         }
                     }
                 }}
