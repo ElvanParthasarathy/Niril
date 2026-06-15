@@ -4,7 +4,7 @@ import {
   Box, Typography, Button, TextField, Select, MenuItem, useTheme, useMediaQuery, 
   Stack, FormControl, InputLabel, Divider, Chip, Dialog, DialogTitle, 
   DialogContent, DialogActions, List, ListItem, ListItemText, ListItemSecondaryAction, 
-  IconButton, Paper, Grid, Card, CardActionArea, CardContent, ButtonBase
+  IconButton, Paper, Grid, Card, CardActionArea, CardContent, ButtonBase, Collapse
 } from '@mui/material';
 
 import { getAllCoolieProfiles, saveCoolieProfile, deleteCoolieProfile } from '../../../Avanam';
@@ -319,7 +319,7 @@ export default function CoolieSettings({ activeTab = 'business' }: any) {
                 )}
               </Box>
               
-              {isProfileEditing && (
+              <Collapse in={isProfileEditing} sx={{ width: '100%' }}>
                   <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 3, width: '100%', flexWrap: 'wrap' }}>
                     <ButtonBase 
                       onClick={() => setIsProfileEditing(false)} 
@@ -356,7 +356,7 @@ export default function CoolieSettings({ activeTab = 'business' }: any) {
                       {t('addNewBtn')}
                     </ButtonBase>
                   </Box>
-                )}
+              </Collapse>
               </Box>
           </Paper>
           <BusinessInfoSettings formData={formData} setFormData={setFormData} phones={phones} setPhones={setPhones} t={t} handleSave={handleSave} handleDiscard={handleDiscard} />

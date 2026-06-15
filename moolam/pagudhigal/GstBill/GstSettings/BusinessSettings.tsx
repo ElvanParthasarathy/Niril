@@ -1,7 +1,7 @@
 import { useLanguage } from '../../../mozhi/LanguageContext';
 import React, { useState } from 'react';
 import { Buildings, Plus, Gear, Trash, ImageSquare, PencilSimple, MapPin, PaintBrush } from '@phosphor-icons/react';
-import { Box, Paper, TextField, Button, Select, MenuItem, Typography, IconButton, Grid, FormControl, InputLabel, ButtonBase } from '@mui/material';
+import { Box, Paper, TextField, Button, Select, MenuItem, Typography, IconButton, Grid, FormControl, InputLabel, ButtonBase, Collapse } from '@mui/material';
 
 import { getCountryConfig, getStatesForCountry, getBilingualStateName, getBilingualCountryName, getCountriesForRegion } from '../../../Payanpadu';
 import { SettingsPillContainer, SettingsPillRow } from '../../ElvanSettingsSection';
@@ -92,7 +92,7 @@ export default function BusinessSettings({
             )}
           </Box>
           
-          {isProfileEditing && (
+          <Collapse in={isProfileEditing} sx={{ width: '100%' }}>
               <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 3, width: '100%', flexWrap: 'wrap' }}>
                 <ButtonBase 
                   onClick={() => setIsProfileEditing(false)} 
@@ -129,7 +129,7 @@ export default function BusinessSettings({
                   {t('addNew')}
                 </ButtonBase>
               </Box>
-            )}
+          </Collapse>
         </Box>
       </Paper>
 
