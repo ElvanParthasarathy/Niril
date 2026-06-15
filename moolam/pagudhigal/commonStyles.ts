@@ -2,6 +2,7 @@ import { Theme, SxProps } from '@mui/material/styles';
 
 export const getSearchPaperSx = (isDark: boolean): SxProps<Theme> => ({
   flex: 1,
+  minWidth: 0,
   maxWidth: { xs: 'none', md: 400 },
   display: 'flex',
   alignItems: 'center',
@@ -31,6 +32,7 @@ export const getEditPaperSx = (isDark: boolean, isSelectionMode: boolean): SxPro
   borderRadius: '50%',
   bgcolor: isSelectionMode ? (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)') : (isDark ? 'rgba(255,255,255,0.03)' : '#FFFFFF'), 
   boxShadow: 'none',
+  flexShrink: 0,
 });
 
 export const getEditIconButtonSx = (isDark: boolean): SxProps<Theme> => ({
