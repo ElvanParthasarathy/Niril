@@ -16,7 +16,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
 
   const handleEraseApp = async () => {
     if (!erasePassword) {
-      thagaval('Please enter your password to confirm.', 'warning');
+      thagaval(t('enterPassword') || 'Please enter your password', 'warning');
       return;
     }
     setErasing(true);
@@ -36,18 +36,18 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
       ];
       await Promise.all(pathsToClear.map(p => remove(ref(rtdb, p))));
       
-      thagaval('App data completely erased.', 'success');
+      thagaval(t('dataErasedSuccess') || 'App data erased.', 'success');
       localStorage.clear();
       await signOut(auth);
       window.location.replace('/');
     } catch (error: any) {
       console.error(error);
       if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-        thagaval('Incorrect password. Cannot erase data.', 'error');
+        thagaval(t('incorrectPassword') || 'Incorrect password.', 'error');
       } else if (error.code === 'auth/too-many-requests') {
-        thagaval('Too many failed attempts. Please try again later.', 'error');
+        thagaval(t('tooManyRequests') || 'Too many attempts. Try later.', 'error');
       } else {
-        thagaval('Failed to erase data. Check console for details.', 'error');
+        thagaval(t('errorOccurred') || 'Failed to erase data.', 'error');
       }
     }
     setErasing(false);
@@ -66,50 +66,50 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
           icon={<Trash size={20} weight="fill" />} 
           iconColor="monochrome"
           title={t('clearCacheTitle') !== 'clearCacheTitle' ? t('clearCacheTitle') : 'Clear Cache'}
-          description="Fix issues by clearing local cache"
+          description={t('clearCacheDesc') !== 'clearCacheDesc' ? t('clearCacheDesc') : 'Fix issues by clearing cache'}
           onClick={() => setCacheDialogOpen(true)}
         />
         <SettingsRow 
           icon={<SignOut size={20} weight="fill" />} 
           iconColor="monochrome"
           title={t('accountSecurityTitle') !== 'accountSecurityTitle' ? t('accountSecurityTitle') : 'Sign Out'}
-          description="Lock database access on this device"
+          description={t('accountSecurityDesc') !== 'accountSecurityDesc' ? t('accountSecurityDesc') : 'Lock app access'}
           onClick={async () => { await signOut(auth); window.location.replace('/'); }}
         />
         <SettingsRow 
           icon={<WarningCircle size={20} weight="fill" />} 
           iconColor="red"
           title={t('eraseAppDataTitle') !== 'eraseAppDataTitle' ? t('eraseAppDataTitle') : 'Erase App Data'}
-          description="Permanently wipe all database records"
+          description={t('eraseAppDataDesc') !== 'eraseAppDataDesc' ? t('eraseAppDataDesc') : 'Permanently wipe all records'}
           onClick={() => setEraseDialogOpen(true)}
         />
       </SettingsPillContainer>
 
       {/* Clear Cache Dialog */}
       <Dialog open={cacheDialogOpen} onClose={() => setCacheDialogOpen(false)} maxWidth="xs" fullWidth slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
-        <DialogTitle sx={{ fontWeight: 600, pb: 1 }}>Clear Local Cache?</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 600, pb: 1 }}>{t('clearCacheTitle') !== 'clearCacheTitle' ? t('clearCacheTitle') : 'Clear Cache?'}</DialogTitle>
         <DialogContent sx={{ color: 'text.secondary' }}>
-          Are you sure you want to clear the local cache and reload? You will need to log in again if using Google Drive.
+          {t('clearCacheConfirmDesc') !== 'clearCacheConfirmDesc' ? t('clearCacheConfirmDesc') : 'This will reload the app. You may need to sign in again.'}
         </DialogContent>
         <DialogActions sx={{ p: 2, pt: 0 }}>
           <Button onClick={() => setCacheDialogOpen(false)} sx={{ color: 'text.secondary', fontWeight: 600, borderRadius: 2 }}>
-            Cancel
+            {t('cancel') !== 'cancel' ? t('cancel') : 'Cancel'}
           </Button>
           <Button onClick={handleClearCache} variant="contained" sx={{ bgcolor: 'var(--mac-selection-hover)', color: 'var(--mac-text)', borderRadius: 2, px: 3, fontWeight: 600, boxShadow: 'none', '&:hover': { bgcolor: 'action.hover', boxShadow: 'none' } }}>
-            Clear Cache
+            {t('clearCacheBtn') !== 'clearCacheBtn' ? t('clearCacheBtn') : 'Clear'}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Erase App Data Dialog */}
       <Dialog open={eraseDialogOpen} onClose={() => !erasing && setEraseDialogOpen(false)} maxWidth="xs" fullWidth slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
-        <DialogTitle sx={{ color: 'error.main', fontWeight: 600 }}>Erase All App Data?</DialogTitle>
+        <DialogTitle sx={{ color: 'error.main', fontWeight: 600 }}>{t('eraseAppDataTitle') !== 'eraseAppDataTitle' ? t('eraseAppDataTitle') : 'Erase All Data?'}</DialogTitle>
         <DialogContent>
           <Typography sx={{ mb: 2, color: 'text.secondary' }}>
-            This action will <b>permanently delete</b> all invoices, inventory, and profile settings from the cloud database. This cannot be undone.
+            {t('eraseConfirmDesc') !== 'eraseConfirmDesc' ? t('eraseConfirmDesc') : 'Permanently deletes all cloud data. This cannot be undone.'}
           </Typography>
           <Typography sx={{ mb: 1, fontSize: '0.875rem', fontWeight: 500 }}>
-            Confirm your password ({eraseEmail}):
+            {t('confirmPassword') !== 'confirmPassword' ? t('confirmPassword') : 'Confirm Password'}:
           </Typography>
           <TextField
             fullWidth
@@ -119,13 +119,13 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
             disabled={erasing}
             value={erasePassword}
             onChange={(e) => setErasePassword(e.target.value)}
-            placeholder="Firebase Password"
+            placeholder={t('password') !== 'password' ? t('password') : 'Password'}
             sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
           />
         </DialogContent>
         <DialogActions sx={{ p: 2, pt: 0 }}>
           <Button disabled={erasing} onClick={() => setEraseDialogOpen(false)} sx={{ color: 'text.secondary', fontWeight: 600, borderRadius: 2 }}>
-            Cancel
+            {t('cancel') !== 'cancel' ? t('cancel') : 'Cancel'}
           </Button>
           <Button 
             disabled={erasing || !erasePassword} 
@@ -135,7 +135,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
             sx={{ borderRadius: 2, px: 3, fontWeight: 600, boxShadow: 'none', '&:hover': { boxShadow: 'none' } }}
             startIcon={erasing ? <CircularProgress size={16} color="inherit" /> : <WarningCircle />}
           >
-            {erasing ? 'Erasing...' : 'Permanently Erase'}
+            {erasing ? (t('erasing') !== 'erasing' ? t('erasing') : 'Erasing...') : (t('eraseDataBtn') !== 'eraseDataBtn' ? t('eraseDataBtn') : 'Erase')}
           </Button>
         </DialogActions>
       </Dialog>
