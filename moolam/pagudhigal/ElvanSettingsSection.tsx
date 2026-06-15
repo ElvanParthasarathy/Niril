@@ -1,5 +1,4 @@
-import React from 'react';
-import { Box, Typography, Button, Divider, Paper, ButtonBase, Collapse } from '@mui/material';
+import { Box, Typography, Button, Divider, Paper, ButtonBase, Collapse, Fade } from '@mui/material';
 import { PencilSimple } from '@phosphor-icons/react';
 import { useLanguage } from '../mozhi/LanguageContext';
 
@@ -206,40 +205,44 @@ export function EditableSettingsPill({
         )}
 
         <Collapse in={!isEditing} timeout={300}>
-          <Box sx={{ p: '20px 80px 20px 20px' }}>
-            {renderDisplay()}
-          </Box>
+          <Fade in={!isEditing} timeout={300}>
+            <Box sx={{ p: '20px 80px 20px 20px' }}>
+              {renderDisplay()}
+            </Box>
+          </Fade>
         </Collapse>
         <Collapse in={isEditing} unmountOnExit timeout={300}>
-          <Box sx={{ p: '20px', bgcolor: 'transparent' }}>
-            {children}
-            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-              <ButtonBase 
-                onClick={onCancel} 
-                sx={{ 
-                  px: 2, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px',
-                  color: 'text.secondary',
-                  '@media (hover: hover)': {
-                    '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
-                  }
-                }}
-              >
-                {cancelLabel}
-              </ButtonBase>
-              <ButtonBase 
-                onClick={onSave} 
-                sx={{ 
-                  px: 3, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px',
-                  bgcolor: 'primary.main', color: 'primary.contrastText',
-                  '@media (hover: hover)': {
-                    '&:hover': { bgcolor: 'primary.dark' }
-                  }
-                }}
-              >
-                {saveLabel}
-              </ButtonBase>
+          <Fade in={isEditing} timeout={300}>
+            <Box sx={{ p: '20px', bgcolor: 'transparent' }}>
+              {children}
+              <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+                <ButtonBase 
+                  onClick={onCancel} 
+                  sx={{ 
+                    px: 2, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px',
+                    color: 'text.secondary',
+                    '@media (hover: hover)': {
+                      '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
+                    }
+                  }}
+                >
+                  {cancelLabel}
+                </ButtonBase>
+                <ButtonBase 
+                  onClick={onSave} 
+                  sx={{ 
+                    px: 3, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px',
+                    bgcolor: 'primary.main', color: 'primary.contrastText',
+                    '@media (hover: hover)': {
+                      '&:hover': { bgcolor: 'primary.dark' }
+                    }
+                  }}
+                >
+                  {saveLabel}
+                </ButtonBase>
+              </Box>
             </Box>
-          </Box>
+          </Fade>
         </Collapse>
       </Paper>
     </Box>
@@ -323,73 +326,77 @@ export function SettingsPillRow({
   return (
     <Box sx={{ position: 'relative' }}>
       <Collapse in={!isEditing} timeout={300}>
-        <Box sx={{ p: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', pr: 2 }}>
-             <Typography sx={{ fontSize: '13px', color: 'var(--mac-text-secondary, #aaaaaa)', mb: '2px', fontWeight: 500 }}>
-               {label}
-             </Typography>
-             <Typography component="div" sx={{ fontSize: '15px', color: 'var(--mac-text, #ffffff)' }}>
-               {value || <span style={{ fontStyle: 'italic', opacity: 0.5 }}>Not set</span>}
-             </Typography>
+        <Fade in={!isEditing} timeout={300}>
+          <Box sx={{ p: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', pr: 2 }}>
+               <Typography sx={{ fontSize: '13px', color: 'var(--mac-text-secondary, #aaaaaa)', mb: '2px', fontWeight: 500 }}>
+                 {label}
+               </Typography>
+               <Typography component="div" sx={{ fontSize: '15px', color: 'var(--mac-text, #ffffff)' }}>
+                 {value || <span style={{ fontStyle: 'italic', opacity: 0.5 }}>Not set</span>}
+               </Typography>
+            </Box>
+            {!disableEdit && (
+              <ButtonBase 
+                onClick={onEdit} 
+                sx={{ 
+                  width: 42, height: 42, borderRadius: '50%', 
+                  color: 'text.secondary', flexShrink: 0,
+                  bgcolor: 'var(--mac-selection-hover, rgba(255,255,255,0.05))',
+                  '@media (hover: hover)': {
+                    '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)', color: 'var(--mac-text)' }
+                  }
+                }}
+              >
+                <PencilSimple size={18} weight="bold" />
+              </ButtonBase>
+            )}
           </Box>
-          {!disableEdit && (
-            <ButtonBase 
-              onClick={onEdit} 
-              sx={{ 
-                width: 42, height: 42, borderRadius: '50%', 
-                color: 'text.secondary', flexShrink: 0,
-                bgcolor: 'var(--mac-selection-hover, rgba(255,255,255,0.05))',
-                '@media (hover: hover)': {
-                  '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)', color: 'var(--mac-text)' }
-                }
-              }}
-            >
-              <PencilSimple size={18} weight="bold" />
-            </ButtonBase>
-          )}
-        </Box>
+        </Fade>
       </Collapse>
       
       <Collapse in={isEditing} unmountOnExit timeout={300}>
-        <Box sx={{ p: '20px', bgcolor: 'transparent' }}>
-          <Typography sx={{ fontSize: '13px', color: 'var(--mac-text-secondary, #aaaaaa)', mb: 2, fontWeight: 500 }}>
-             {editPrefix}{label}
-          </Typography>
-          <Box sx={{ mb: 2 }}>
-            {children}
+        <Fade in={isEditing} timeout={300}>
+          <Box sx={{ p: '20px', bgcolor: 'transparent' }}>
+            <Typography sx={{ fontSize: '13px', color: 'var(--mac-text-secondary, #aaaaaa)', mb: 2, fontWeight: 500 }}>
+               {editPrefix}{label}
+            </Typography>
+            <Box sx={{ mb: 2 }}>
+              {children}
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+              {extraAction && (
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  {extraAction}
+                </Box>
+              )}
+              <ButtonBase 
+                onClick={onCancel} 
+                sx={{ 
+                  px: 2, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px', fontFamily: '"Elvan Sans", sans-serif',
+                  color: 'text.secondary',
+                  '@media (hover: hover)': {
+                    '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
+                  }
+                }}
+              >
+                {finalCancelLabel}
+              </ButtonBase>
+              <ButtonBase 
+                onClick={onSave} 
+                sx={{ 
+                  px: 3, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px', fontFamily: '"Elvan Sans", sans-serif',
+                  bgcolor: 'primary.main', color: 'primary.contrastText',
+                  '@media (hover: hover)': {
+                    '&:hover': { bgcolor: 'primary.dark' }
+                  }
+                }}
+              >
+                {finalSaveLabel}
+              </ButtonBase>
+            </Box>
           </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-            {extraAction && (
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                {extraAction}
-              </Box>
-            )}
-            <ButtonBase 
-              onClick={onCancel} 
-              sx={{ 
-                px: 2, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px', fontFamily: '"Elvan Sans", sans-serif',
-                color: 'text.secondary',
-                '@media (hover: hover)': {
-                  '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
-                }
-              }}
-            >
-              {finalCancelLabel}
-            </ButtonBase>
-            <ButtonBase 
-              onClick={onSave} 
-              sx={{ 
-                px: 3, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px', fontFamily: '"Elvan Sans", sans-serif',
-                bgcolor: 'primary.main', color: 'primary.contrastText',
-                '@media (hover: hover)': {
-                  '&:hover': { bgcolor: 'primary.dark' }
-                }
-              }}
-            >
-              {finalSaveLabel}
-            </ButtonBase>
-          </Box>
-        </Box>
+        </Fade>
       </Collapse>
     </Box>
   );

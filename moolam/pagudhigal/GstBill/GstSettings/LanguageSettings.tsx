@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, Select, MenuItem, FormControl, Collapse } from '@mui/material';
+import { Box, Typography, Select, MenuItem, FormControl, Collapse, Fade } from '@mui/material';
 import { Material3Switch } from '../../Amaippugal/Material3Switch';
 import { Translate } from '@phosphor-icons/react';
 import { SettingsPillContainer, SettingsPillRow } from '../../ElvanSettingsSection';
@@ -46,109 +46,113 @@ export default function LanguageSettings({ profile, setProfile, setSavedSnapshot
       <SettingsPillContainer title={t('dataEntryLanguages')} icon={<Translate size={20} weight="fill" />} iconColor="blue">
         
         <Collapse in={editingSection === 'languages'} unmountOnExit timeout={300}>
-          <Box sx={{ p: '24px 20px 20px 20px', bgcolor: 'transparent' }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-              <Box>
-                <Typography sx={{ fontSize: '13px', color: 'var(--mac-text)', fontWeight: 500, mb: 1, ml: 1.5 }}>
-                  {t('primaryLanguage')}
-                </Typography>
-                <FormControl fullWidth size="small">
-                  <Select
-                    value={profile.primaryDataLanguage || 'Tamil'}
-                    onChange={(e) => handleCustomChange('primaryDataLanguage', e.target.value)}
-                    sx={{ 
-                      bgcolor: 'action.hover',
-                      borderRadius: '100px',
-                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                      '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                      '& .MuiSelect-select': { py: 1.5, px: 2 }
-                    }}
-                    MenuProps={{ disableScrollLock: true }}
-                  >
-                    <MenuItem value="Tamil">Tamil</MenuItem>
-                    <MenuItem value="English">English</MenuItem>
-                  </Select>
-                </FormControl>
+          <Fade in={editingSection === 'languages'} timeout={300}>
+            <Box sx={{ p: '24px 20px 20px 20px', bgcolor: 'transparent' }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                <Box>
+                  <Typography sx={{ fontSize: '13px', color: 'var(--mac-text)', fontWeight: 500, mb: 1, ml: 1.5 }}>
+                    {t('primaryLanguage')}
+                  </Typography>
+                  <FormControl fullWidth size="small">
+                    <Select
+                      value={profile.primaryDataLanguage || 'Tamil'}
+                      onChange={(e) => handleCustomChange('primaryDataLanguage', e.target.value)}
+                      sx={{ 
+                        bgcolor: 'action.hover',
+                        borderRadius: '100px',
+                        '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                        '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                        '& .MuiSelect-select': { py: 1.5, px: 2 }
+                      }}
+                      MenuProps={{ disableScrollLock: true }}
+                    >
+                      <MenuItem value="Tamil">Tamil</MenuItem>
+                      <MenuItem value="English">English</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+  
+                <Box>
+                  <Typography sx={{ fontSize: '13px', color: 'var(--mac-text)', fontWeight: 500, mb: 1, ml: 1.5 }}>
+                    {t('secondaryLanguage')}
+                  </Typography>
+                  <FormControl fullWidth size="small">
+                    <Select
+                      value={profile.secondaryDataLanguage || 'English'}
+                      onChange={(e) => handleCustomChange('secondaryDataLanguage', e.target.value)}
+                      sx={{ 
+                        bgcolor: 'action.hover',
+                        borderRadius: '100px',
+                        '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                        '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                        '& .MuiSelect-select': { py: 1.5, px: 2 }
+                      }}
+                      MenuProps={{ disableScrollLock: true }}
+                    >
+                      <MenuItem value="Tamil">Tamil</MenuItem>
+                      <MenuItem value="English">English</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
               </Box>
-
-              <Box>
-                <Typography sx={{ fontSize: '13px', color: 'var(--mac-text)', fontWeight: 500, mb: 1, ml: 1.5 }}>
-                  {t('secondaryLanguage')}
+  
+              <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+                <Typography 
+                  component="div"
+                  onClick={onPillCancel} 
+                  sx={{ 
+                    px: 2, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px',
+                    color: 'text.secondary', cursor: 'pointer',
+                    '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
+                  }}
+                >
+                  {t('cancel') || 'Cancel'}
                 </Typography>
-                <FormControl fullWidth size="small">
-                  <Select
-                    value={profile.secondaryDataLanguage || 'English'}
-                    onChange={(e) => handleCustomChange('secondaryDataLanguage', e.target.value)}
-                    sx={{ 
-                      bgcolor: 'action.hover',
-                      borderRadius: '100px',
-                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                      '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                      '& .MuiSelect-select': { py: 1.5, px: 2 }
-                    }}
-                    MenuProps={{ disableScrollLock: true }}
-                  >
-                    <MenuItem value="Tamil">Tamil</MenuItem>
-                    <MenuItem value="English">English</MenuItem>
-                  </Select>
-                </FormControl>
+                <Typography 
+                  component="div"
+                  onClick={onPillSave} 
+                  sx={{ 
+                    px: 3, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px',
+                    bgcolor: 'primary.main', color: 'primary.contrastText', cursor: 'pointer',
+                    '&:hover': { bgcolor: 'primary.dark' }
+                  }}
+                >
+                  {t('save') || 'Save'}
+                </Typography>
               </Box>
             </Box>
-
-            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-              <Typography 
-                component="div"
-                onClick={onPillCancel} 
-                sx={{ 
-                  px: 2, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px',
-                  color: 'text.secondary', cursor: 'pointer',
-                  '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
-                }}
-              >
-                {t('cancel') || 'Cancel'}
-              </Typography>
-              <Typography 
-                component="div"
-                onClick={onPillSave} 
-                sx={{ 
-                  px: 3, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px',
-                  bgcolor: 'primary.main', color: 'primary.contrastText', cursor: 'pointer',
-                  '&:hover': { bgcolor: 'primary.dark' }
-                }}
-              >
-                {t('save') || 'Save'}
-              </Typography>
-            </Box>
-          </Box>
+          </Fade>
         </Collapse>
 
         <Collapse in={editingSection !== 'languages'} timeout={300}>
-          <Box>
-            <SettingsPillRow
-              label={t('primaryLanguage')}
-              value={profile.primaryDataLanguage || 'Tamil'}
-              isEditing={false}
-              onEdit={() => setEditingSection('languages')}
-              onCancel={() => {}}
-              onSave={() => {}}
-            >
-              {null}
-            </SettingsPillRow>
-
-            <SettingsPillRow
-              label={t('secondaryLanguage')}
-              value={profile.secondaryDataLanguage || 'English'}
-              isEditing={false}
-              onEdit={() => {}}
-              onCancel={() => {}}
-              onSave={() => {}}
-              disableEdit={true}
-            >
-              {null}
-            </SettingsPillRow>
-          </Box>
+          <Fade in={editingSection !== 'languages'} timeout={300}>
+            <Box>
+              <SettingsPillRow
+                label={t('primaryLanguage')}
+                value={profile.primaryDataLanguage || 'Tamil'}
+                isEditing={false}
+                onEdit={() => setEditingSection('languages')}
+                onCancel={() => {}}
+                onSave={() => {}}
+              >
+                {null}
+              </SettingsPillRow>
+  
+              <SettingsPillRow
+                label={t('secondaryLanguage')}
+                value={profile.secondaryDataLanguage || 'English'}
+                isEditing={false}
+                onEdit={() => {}}
+                onCancel={() => {}}
+                onSave={() => {}}
+                disableEdit={true}
+              >
+                {null}
+              </SettingsPillRow>
+            </Box>
+          </Fade>
         </Collapse>
       </SettingsPillContainer>
 
