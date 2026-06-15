@@ -95,16 +95,14 @@ export default function BusinessSettings({
           {isProfileEditing && (
               <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 3, width: '100%', flexWrap: 'wrap' }}>
                 <ButtonBase 
-                  onClick={() => {
-                    setShowNewProfileModal(true);
-                  }} 
+                  onClick={() => setIsProfileEditing(false)} 
                   sx={{ 
                     px: 3, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px', fontFamily: '"Elvan Sans", sans-serif',
                     color: 'text.secondary',
                     '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
                   }}
                 >
-                  {t('addNew')}
+                  {t('closeBtn')}
                 </ButtonBase>
                 <ButtonBase 
                   onClick={() => {
@@ -119,14 +117,16 @@ export default function BusinessSettings({
                   {t('manage')}
                 </ButtonBase>
                 <ButtonBase 
-                  onClick={() => setIsProfileEditing(false)} 
+                  onClick={() => {
+                    setShowNewProfileModal(true);
+                  }} 
                   sx={{ 
                     px: 3, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px', fontFamily: '"Elvan Sans", sans-serif',
                     bgcolor: 'primary.main', color: 'primary.contrastText',
                     '&:hover': { bgcolor: 'primary.dark' }
                   }}
                 >
-                  {t('closeBtn')}
+                  {t('addNew')}
                 </ButtonBase>
               </Box>
             )}
