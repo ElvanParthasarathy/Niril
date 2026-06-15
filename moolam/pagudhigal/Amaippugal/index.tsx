@@ -434,31 +434,44 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
     <div className="s2-page-view">
       <div className="s2-content-grid">
         {/* LEFT: Hub navigation */}
-        <div className={`s2-col-left`} style={{ visibility: currentView !== 'hub' && isMobile ? 'hidden' : 'visible' }}>
+        <div className="s2-col-left">
           {renderHub()}
         </div>
 
         {/* RIGHT: Detail view */}
         <div className={`s2-col-right ${currentView === 'hub' && isMobile ? 's2-hide-mobile' : ''}`}>
-          {currentView !== 'hub' || !isMobile ? (
-            isMobile ? (
-              <Box sx={{
-                position: 'fixed',
-                top: '64px',
-                left: '12px',
-                right: '12px',
-                bottom: '12px',
-                borderRadius: '24px',
-                bgcolor: 'background.default',
-                zIndex: 50,
-                overflowY: 'auto',
-                overscrollBehavior: 'contain',
-                padding: '24px 0 calc(24px + env(safe-area-inset-bottom, 0px))'
-              }}>
-                {renderDetailView()}
-              </Box>
-            ) : renderDetailView()
-          ) : null}
+          {isMobile ? (
+            <AnimatePresence>
+              {currentView !== 'hub' && (
+                <Box
+                  component={motion.div}
+                  initial={{ x: "100%", opacity: 0.5 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: "100%", opacity: 0 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
+                  key={currentView}
+                  sx={{
+                    position: 'fixed',
+                    top: '64px',
+                    left: '12px',
+                    right: '12px',
+                    bottom: '12px',
+                    borderRadius: '24px',
+                    bgcolor: 'background.default',
+                    zIndex: 50,
+                    overflowY: 'auto',
+                    overscrollBehavior: 'contain',
+                    padding: '24px 0 calc(24px + env(safe-area-inset-bottom, 0px))',
+                    boxShadow: darkMode ? '-4px 0 24px rgba(0,0,0,0.5)' : '-4px 0 24px rgba(0,0,0,0.1)'
+                  }}
+                >
+                  {renderDetailView()}
+                </Box>
+              )}
+            </AnimatePresence>
+          ) : (
+            currentView !== 'hub' ? renderDetailView() : null
+          )}
         </div>
       </div>
 
