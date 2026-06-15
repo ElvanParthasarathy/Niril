@@ -438,13 +438,9 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
           {isMobile ? (
             <motion.div
               animate={{ 
-                x: currentView !== 'hub' ? "-15%" : 0, 
-                opacity: currentView !== 'hub' ? 0.2 : 1,
-                scale: currentView !== 'hub' ? 0.96 : 1,
-                rotateY: currentView !== 'hub' ? -8 : 0,
-                transformPerspective: 1200
+                opacity: currentView !== 'hub' ? 0 : 1
               }}
-              transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
               style={{ height: '100%', pointerEvents: currentView !== 'hub' ? 'none' : 'auto' }}
             >
               {renderHub()}
@@ -461,10 +457,10 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
               {currentView !== 'hub' && (
                 <Box
                   component={motion.div}
-                  initial={{ x: "100%", opacity: 0, rotateY: 8, scale: 0.98, transformPerspective: 1200 }}
-                  animate={{ x: 0, opacity: 1, rotateY: 0, scale: 1, transformPerspective: 1200 }}
-                  exit={{ x: "100%", opacity: 0, rotateY: 8, scale: 0.98, transformPerspective: 1200 }}
-                  transition={{ duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
+                  initial={{ x: "100%", opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: "100%", opacity: 0 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
                   key={currentView}
                   sx={{
                     position: 'fixed',
