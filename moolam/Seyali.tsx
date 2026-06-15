@@ -1,7 +1,6 @@
 // @ts-nocheck
 import { CaretLeft, CaretDoubleLeft as KeyboardDoubleArrowLeft, CaretDoubleRight as KeyboardDoubleArrowRight, House as Home, FileText as Description, GearSix as Settings, Plus as Add, Users as People, Package as Inventory, ChartBar as BarChart, Wallet as AccountBalanceWallet, ArrowsClockwise as Refresh, Receipt, BookOpen as MenuBook, Moon as DarkMode, Sun as LightMode, DownloadSimple as Download, X as Close, ShoppingCart, CaretDown as KeyboardArrowDown, CaretRight as KeyboardArrowRight, Buildings as Business, PencilSimple as Edit, Question as HelpOutlined, MagnifyingGlass as Search, Command as KeyboardCommandKey, Bell as Notifications, List as Menu, CalendarDots, DotsThree } from '@phosphor-icons/react';
 import { useState, useEffect, useRef, useMemo, useCallback, startTransition } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate, useLocation, useNavigationType } from 'react-router-dom';
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Badge, Box, Typography, Avatar, Divider, Tooltip, IconButton, Collapse, CssBaseline, Dialog, DialogTitle, DialogContent, DialogActions, Button, Backdrop, CircularProgress, InputBase, AppBar, Toolbar, useMediaQuery, Stack, Select, MenuItem, Paper, Popover } from '@mui/material';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
@@ -167,43 +166,6 @@ function DevLanguageSwitcher({ profile, setProfile, language, setLanguage }: any
     </>
   );
 }
-
-const MobileOverlayWrapper = ({ children, isVisible, viewKey, darkMode, zIndex = 1200 }) => {
-  const isMobile = useMediaQuery('(max-width:900px)');
-  return (
-    <AnimatePresence>
-      {isVisible && (
-        <Box
-          component={isMobile ? motion.div : 'div'}
-          key={viewKey}
-          {...(isMobile ? {
-             initial: { x: "100vw", opacity: 0 },
-             animate: { x: 0, opacity: 1 },
-             exit: { x: "100vw", opacity: 0 },
-             transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] }
-          } : {})}
-          sx={{
-            willChange: 'transform, opacity',
-            position: { xs: 'fixed', md: 'absolute' }, 
-            top: { xs: '64px', md: 0 }, 
-            left: { xs: '12px', md: 0 }, 
-            right: { xs: '12px', md: 0 }, 
-            bottom: { xs: '12px', md: 0 }, 
-            borderRadius: { xs: '24px', md: 0 },
-            bgcolor: darkMode ? '#000000' : '#FFFFFF', 
-            zIndex: zIndex, 
-            overflowY: 'auto', 
-            overscrollBehavior: 'contain',
-            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' },
-            boxShadow: isMobile ? (darkMode ? '-10px 0 40px rgba(0,0,0,0.5)' : '-10px 0 40px rgba(0,0,0,0.15)') : 'none'
-          }}
-        >
-          {children}
-        </Box>
-      )}
-    </AnimatePresence>
-  );
-};
 
 function Seyali() {
   const { t, language, setLanguage } = useLanguage();
@@ -1386,23 +1348,49 @@ function Seyali() {
             />
           )
         )}
-        <MobileOverlayWrapper isVisible={currentView === 'reports'} viewKey="reports" darkMode={darkMode}>
+        {currentView === 'reports' && (
           <Arikkaigal />
-        </MobileOverlayWrapper>
-
-        <MobileOverlayWrapper isVisible={currentView === 'gst-returns'} viewKey="gst-returns" darkMode={darkMode}>
+        )}
+        {currentView === 'gst-returns' && (
           <VariArikkaigal profile={profile} />
-        </MobileOverlayWrapper>
+        )}
 
-        <MobileOverlayWrapper isVisible={currentView === 'settings'} viewKey="settings" darkMode={darkMode}>
-          <Amaippugal appMode={appMode} onSaved={() => {}} onSwitchModeRequest={handleSwitchModeRequest} darkMode={darkMode} setDarkMode={setDarkMode} themeMode={themeMode} setThemeMode={setThemeMode} />
-        </MobileOverlayWrapper>
+        {currentView === 'settings' && (
+          <Box sx={{ 
+            position: { xs: 'fixed', md: 'static' }, 
+            top: { xs: '64px', md: 'auto' }, 
+            left: { xs: '12px', md: 'auto' }, 
+            right: { xs: '12px', md: 'auto' }, 
+            bottom: { xs: '12px', md: 'auto' }, 
+            borderRadius: { xs: '24px', md: 0 },
+            bgcolor: 'background.default', 
+            zIndex: { xs: 1200, md: 'auto' }, 
+            overflowY: { xs: 'auto', md: 'visible' }, 
+            overscrollBehavior: 'contain',
+            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+          }}>
+        {currentView === 'settings' && <Amaippugal appMode={appMode} onSaved={() => {}} onSwitchModeRequest={handleSwitchModeRequest} darkMode={darkMode} setDarkMode={setDarkMode} themeMode={themeMode} setThemeMode={setThemeMode} />}
+          </Box>
+        )}
           </Box>
           {/* === Overlay editors rendered OUTSIDE scroll container but INSIDE the shell === */}
           {/* This preserves scroll position of lists underneath */}
 
         {/* Render Editor on top as a modal inner shell */}
-        <MobileOverlayWrapper isVisible={currentView === 'invoice-editor'} viewKey="invoice-editor" darkMode={darkMode}>
+        {currentView === 'invoice-editor' && (
+          <Box sx={{ 
+            position: { xs: 'fixed', md: 'absolute' }, 
+            top: { xs: '64px', md: 0 }, 
+            left: { xs: '12px', md: 0 }, 
+            right: { xs: '12px', md: 0 }, 
+            bottom: { xs: '12px', md: 0 }, 
+            borderRadius: { xs: '24px', md: 0 },
+            bgcolor: 'background.default', 
+            zIndex: 1200, 
+            overflowY: 'auto', 
+            overscrollBehavior: 'contain',
+            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+          }}>
             {appMode === 'GST' ? (
               <InvoiceEditor
                 onBack={() => navigate(-1)}
@@ -1424,11 +1412,24 @@ function Seyali() {
                 hideHeaderPortals={!!inlineOverlay}
               />
             )}
-        </MobileOverlayWrapper>
+          </Box>
+        )}
 
         {/* Inline overlay for Add Client / Add Product from inside invoice editor */}
-        <MobileOverlayWrapper isVisible={currentView === 'invoice-editor' && !!inlineOverlay} viewKey="inlineOverlay" darkMode={darkMode} zIndex={1300}>
-            {inlineOverlay?.type === 'client-editor' ? (
+        {currentView === 'invoice-editor' && inlineOverlay && (
+          <Box sx={{ 
+            position: { xs: 'fixed', md: 'absolute' }, 
+            top: { xs: '64px', md: 0 }, 
+            left: { xs: '12px', md: 0 }, 
+            right: { xs: '12px', md: 0 }, 
+            bottom: { xs: '12px', md: 0 }, 
+            borderRadius: { xs: '24px', md: 0 },
+            bgcolor: 'background.default', 
+            zIndex: 1300, 
+            overflowY: 'auto', 
+            overscrollBehavior: 'contain'
+          }}>
+            {inlineOverlay.type === 'client-editor' ? (
               appMode === 'GST' ? (
                 <VanigarThoguppu 
                   client={null} 
@@ -1443,7 +1444,7 @@ function Seyali() {
                   onSaved={(c) => { setInlineOverlay(null); setRefreshKey(k => k + 1); }} 
                 />
               )
-            ) : inlineOverlay?.type === 'product-editor' ? (
+            ) : inlineOverlay.type === 'product-editor' ? (
               appMode === 'GST' ? (
                 <PorulThoguppu 
                   product={null} 
@@ -1460,10 +1461,24 @@ function Seyali() {
                 />
               )
             ) : null}
-        </MobileOverlayWrapper>
+          </Box>
+        )}
 
         {/* Render View on top as a modal inner shell */}
-        <MobileOverlayWrapper isVisible={currentView === 'invoice-view' && !!editingBill} viewKey="invoice-view" darkMode={darkMode}>
+        {currentView === 'invoice-view' && editingBill && (
+          <Box sx={{ 
+            position: { xs: 'fixed', md: 'absolute' }, 
+            top: { xs: '64px', md: 0 }, 
+            left: { xs: '12px', md: 0 }, 
+            right: { xs: '12px', md: 0 }, 
+            bottom: { xs: '12px', md: 0 }, 
+            borderRadius: { xs: '24px', md: 0 },
+            bgcolor: 'background.default', 
+            zIndex: 1200, 
+            overflowY: 'auto', 
+            overscrollBehavior: 'contain',
+            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+          }}>
             {appMode === 'GST' ? (
               <InvoiceView 
                 bill={editingBill} 
@@ -1478,10 +1493,24 @@ function Seyali() {
                 onEdit={(bill) => { setEditingBill(bill); navigate(`/dashboard/invoices/edit/${bill.id || 'draft'}`); }} 
               />
             )}
-        </MobileOverlayWrapper>
+          </Box>
+        )}
 
         {/* Client editor overlay */}
-        <MobileOverlayWrapper isVisible={currentView === 'client-editor'} viewKey="client-editor" darkMode={darkMode}>
+        {currentView === 'client-editor' && (
+          <Box sx={{ 
+            position: { xs: 'fixed', md: 'absolute' }, 
+            top: { xs: '64px', md: 0 }, 
+            left: { xs: '12px', md: 0 }, 
+            right: { xs: '12px', md: 0 }, 
+            bottom: { xs: '12px', md: 0 }, 
+            borderRadius: { xs: '24px', md: 0 },
+            bgcolor: 'background.default', 
+            zIndex: 1200, 
+            overflowY: 'auto', 
+            overscrollBehavior: 'contain',
+            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+          }}>
             {appMode === 'GST' ? (
               <VanigarThoguppu 
                 client={editingClient} 
@@ -1496,10 +1525,24 @@ function Seyali() {
                 onSaved={() => { setEditingClient(null); navigate('/dashboard/clients', { replace: true }); setRefreshKey(k => k + 1); }} 
               />
             )}
-        </MobileOverlayWrapper>
+          </Box>
+        )}
 
         {/* Product editor overlay */}
-        <MobileOverlayWrapper isVisible={currentView === 'product-editor'} viewKey="product-editor" darkMode={darkMode}>
+        {currentView === 'product-editor' && (
+          <Box sx={{ 
+            position: { xs: 'fixed', md: 'absolute' }, 
+            top: { xs: '64px', md: 0 }, 
+            left: { xs: '12px', md: 0 }, 
+            right: { xs: '12px', md: 0 }, 
+            bottom: { xs: '12px', md: 0 }, 
+            borderRadius: { xs: '24px', md: 0 },
+            bgcolor: 'background.default', 
+            zIndex: 1200, 
+            overflowY: 'auto', 
+            overscrollBehavior: 'contain',
+            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+          }}>
             {appMode === 'GST' ? (
               <PorulThoguppu 
                 product={editingProduct} 
@@ -1515,10 +1558,24 @@ function Seyali() {
                 onSaved={() => { setEditingProduct(null); navigate('/dashboard/inventory', { replace: true }); setRefreshKey(k => k + 1); }} 
               />
             )}
-        </MobileOverlayWrapper>
+          </Box>
+        )}
 
         {/* Receipt editor overlay */}
-        <MobileOverlayWrapper isVisible={currentView === 'receipt-editor'} viewKey="receipt-editor" darkMode={darkMode}>
+        {currentView === 'receipt-editor' && (
+          <Box sx={{ 
+            position: { xs: 'fixed', md: 'absolute' }, 
+            top: { xs: '64px', md: 0 }, 
+            left: { xs: '12px', md: 0 }, 
+            right: { xs: '12px', md: 0 }, 
+            bottom: { xs: '12px', md: 0 }, 
+            borderRadius: { xs: '24px', md: 0 },
+            bgcolor: 'background.default', 
+            zIndex: 1200, 
+            overflowY: 'auto', 
+            overscrollBehavior: 'contain',
+            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+          }}>
             {appMode === 'GST' ? (
               <ReceiptEditor 
                 profile={profile} 
@@ -1533,8 +1590,22 @@ function Seyali() {
                 onSaved={() => { setEditingReceipt(null); navigate('/dashboard/receipts', { replace: true }); setRefreshKey(k => k + 1); }} 
               />
             )}
-        </MobileOverlayWrapper>
-        <MobileOverlayWrapper isVisible={currentView === 'receipt-view' && !!editingReceipt} viewKey="receipt-view" darkMode={darkMode}>
+          </Box>
+        )}
+        {currentView === 'receipt-view' && editingReceipt && (
+          <Box sx={{ 
+            position: { xs: 'fixed', md: 'absolute' }, 
+            top: { xs: '64px', md: 0 }, 
+            left: { xs: '12px', md: 0 }, 
+            right: { xs: '12px', md: 0 }, 
+            bottom: { xs: '12px', md: 0 }, 
+            borderRadius: { xs: '24px', md: 0 },
+            bgcolor: 'background.default', 
+            zIndex: 1200, 
+            overflowY: 'auto', 
+            overscrollBehavior: 'contain',
+            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+          }}>
             {appMode === 'GST' ? (
               <ReceiptView
                 receipt={editingReceipt}
@@ -1549,7 +1620,8 @@ function Seyali() {
                 onEdit={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/edit/${rcp.id || 'draft'}`); }}
               />
             )}
-        </MobileOverlayWrapper>
+          </Box>
+        )}
         </Box>
         
         {/* New Mobile AMOLED Bottom Navigation */}
