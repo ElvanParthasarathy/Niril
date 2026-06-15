@@ -134,7 +134,7 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
                             gap: '12px'
                         }}>
                             <h1 style={{
-                                fontSize: 'clamp(24px, 7vw, 32px)',
+                                fontSize: 'clamp(20px, 5.5vw, 28px)',
                                 fontWeight: '800',
                                 color: 'var(--auth-text)',
                                 margin: 0,
@@ -275,7 +275,7 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
                             gap: '12px'
                         }}>
                             <h1 style={{
-                                fontSize: 'clamp(24px, 7vw, 32px)',
+                                fontSize: 'clamp(20px, 5.5vw, 28px)',
                                 fontWeight: '800',
                                 color: 'var(--auth-text)',
                                 margin: 0,
