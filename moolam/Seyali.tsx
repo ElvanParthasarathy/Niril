@@ -2,6 +2,7 @@
 import { CaretLeft, CaretDoubleLeft as KeyboardDoubleArrowLeft, CaretDoubleRight as KeyboardDoubleArrowRight, House as Home, FileText as Description, GearSix as Settings, Plus as Add, Users as People, Package as Inventory, ChartBar as BarChart, Wallet as AccountBalanceWallet, ArrowsClockwise as Refresh, Receipt, BookOpen as MenuBook, Moon as DarkMode, Sun as LightMode, DownloadSimple as Download, X as Close, ShoppingCart, CaretDown as KeyboardArrowDown, CaretRight as KeyboardArrowRight, Buildings as Business, PencilSimple as Edit, Question as HelpOutlined, MagnifyingGlass as Search, Command as KeyboardCommandKey, Bell as Notifications, List as Menu, CalendarDots, DotsThree } from '@phosphor-icons/react';
 import { useState, useEffect, useRef, useMemo, useCallback, startTransition } from 'react';
 import { useNavigate, useLocation, useNavigationType } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Badge, Box, Typography, Avatar, Divider, Tooltip, IconButton, Collapse, CssBaseline, Dialog, DialogTitle, DialogContent, DialogActions, Button, Backdrop, CircularProgress, InputBase, AppBar, Toolbar, useMediaQuery, Stack, Select, MenuItem, Paper, Popover } from '@mui/material';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { getProfile, getAllProfiles, saveProfile, getAllBills, getAllCoolieBills, getAllProducts, getAllCoolieProducts, getAllClients, getAllCoolieClients, getAllReceipts, getAllCoolieReceipts } from './Avanam';
@@ -172,6 +173,7 @@ function Seyali() {
   const navigate = useNavigate();
   const location = useLocation();
   const navigationType = useNavigationType();
+  const isDesktop = useMediaQuery('(min-width:900px)');
 
   const currentView = useMemo(() => {
     const path = location.pathname;
@@ -1302,6 +1304,15 @@ function Seyali() {
             pb: { xs: 2, md: 0 }, // small padding at the bottom of the scroll inside the shell
             '@media print': { overflowY: 'visible', overflowX: 'visible', pb: 0 }
           }}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={location.pathname.split('/')[2] || 'dashboard'}
+                initial={isDesktop ? { opacity: 0, y: 8 } : false}
+                animate={isDesktop ? { opacity: 1, y: 0 } : false}
+                exit={isDesktop ? { opacity: 0, y: -8 } : false}
+                transition={{ duration: 0.15, ease: "easeOut" }}
+                style={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+              >
         {(currentView === 'dashboard' || currentView === 'settings' || (['invoice-editor', 'invoice-view'].includes(currentView as string) && sessionStorage.getItem('gst_backTo') === 'dashboard')) && (
           <Box sx={{ display: currentView === 'settings' ? 'none' : 'block', height: '100%' }}>
             {appMode === 'GST' ? (
@@ -1386,6 +1397,8 @@ function Seyali() {
         {currentView === 'settings' && <Amaippugal appMode={appMode} onSaved={() => {}} onSwitchModeRequest={handleSwitchModeRequest} darkMode={darkMode} setDarkMode={setDarkMode} themeMode={themeMode} setThemeMode={setThemeMode} />}
           </Box>
         )}
+              </motion.div>
+            </AnimatePresence>
           </Box>
           {/* === Overlay editors rendered OUTSIDE scroll container but INSIDE the shell === */}
           {/* This preserves scroll position of lists underneath */}
