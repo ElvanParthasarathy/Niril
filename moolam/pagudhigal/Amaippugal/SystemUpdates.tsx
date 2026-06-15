@@ -152,7 +152,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
                 bgcolor: 'action.selected' 
               }, 
               '& .MuiOutlinedInput-notchedOutline': { 
-                borderColor: 'divider' 
+                border: 'none' 
               } 
             }}
           />
@@ -173,7 +173,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
                 bgcolor: 'action.selected' 
               }, 
               '& .MuiOutlinedInput-notchedOutline': { 
-                borderColor: 'divider' 
+                border: 'none' 
               } 
             }}
           />
