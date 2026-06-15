@@ -432,9 +432,9 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
 
   return (
     <div className="s2-page-view">
-      <div className="s2-content-grid" style={{ position: 'relative' }}>
+      <div className="s2-content-grid">
         {/* LEFT: Hub navigation */}
-        <div className="s2-col-left">
+        <div className={`s2-col-left`} style={{ visibility: currentView !== 'hub' && isMobile ? 'hidden' : 'visible' }}>
           {renderHub()}
         </div>
 
@@ -448,21 +448,20 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
                   initial={{ x: "100%", opacity: 0.5 }}
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: "100%", opacity: 0 }}
-                  transition={{ duration: 0.3, ease: 'easeOut' }}
+                  transition={{ duration: 0.25, ease: 'easeOut' }}
                   key={currentView}
                   sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
+                    position: 'fixed',
+                    top: '64px',
+                    left: '12px',
+                    right: '12px',
+                    bottom: '12px',
                     borderRadius: '24px',
                     bgcolor: 'background.default',
                     zIndex: 50,
                     overflowY: 'auto',
                     overscrollBehavior: 'contain',
-                    padding: '24px 0 calc(24px + env(safe-area-inset-bottom, 0px))',
-                    boxShadow: darkMode ? '-4px 0 24px rgba(0,0,0,0.5)' : '-4px 0 24px rgba(0,0,0,0.1)'
+                    padding: '24px 0 calc(24px + env(safe-area-inset-bottom, 0px))'
                   }}
                 >
                   {renderDetailView()}
