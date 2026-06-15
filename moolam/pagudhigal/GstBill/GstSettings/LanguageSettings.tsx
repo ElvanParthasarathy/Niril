@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, Select, MenuItem, FormControl } from '@mui/material';
+import { Box, Typography, Select, MenuItem, FormControl, Collapse } from '@mui/material';
 import { Material3Switch } from '../../Amaippugal/Material3Switch';
 import { Translate } from '@phosphor-icons/react';
 import { SettingsPillContainer, SettingsPillRow } from '../../ElvanSettingsSection';
@@ -45,7 +45,7 @@ export default function LanguageSettings({ profile, setProfile, setSavedSnapshot
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
       <SettingsPillContainer title={t('dataEntryLanguages')} icon={<Translate size={20} weight="fill" />} iconColor="blue">
         
-        {editingSection === 'languages' ? (
+        <Collapse in={editingSection === 'languages'} unmountOnExit timeout={300}>
           <Box sx={{ p: '24px 20px 20px 20px', bgcolor: 'transparent' }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
               <Box>
@@ -121,9 +121,12 @@ export default function LanguageSettings({ profile, setProfile, setSavedSnapshot
                 {t('save') || 'Save'}
               </Typography>
             </Box>
+            </Box>
           </Box>
-        ) : (
-          <>
+        </Collapse>
+
+        <Collapse in={editingSection !== 'languages'} timeout={300}>
+          <Box>
             <SettingsPillRow
               label={t('primaryLanguage')}
               value={profile.primaryDataLanguage || 'Tamil'}
@@ -146,8 +149,8 @@ export default function LanguageSettings({ profile, setProfile, setSavedSnapshot
             >
               {null}
             </SettingsPillRow>
-          </>
-        )}
+          </Box>
+        </Collapse>
       </SettingsPillContainer>
 
       {/* Standalone Bilingual Toggle in its own container */}
