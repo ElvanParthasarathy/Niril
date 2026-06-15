@@ -438,9 +438,9 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
           {isMobile ? (
             <motion.div
               animate={{ 
-                opacity: currentView !== 'hub' ? 0 : 1
+                opacity: currentView !== 'hub' ? 0.3 : 1
               }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               style={{ height: '100%', pointerEvents: currentView !== 'hub' ? 'none' : 'auto' }}
             >
               {renderHub()}
@@ -460,7 +460,7 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
                   initial={{ x: "100%", opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: "100%", opacity: 0 }}
-                  transition={{ duration: 0.3, ease: 'easeOut' }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                   key={currentView}
                   sx={{
                     position: 'fixed',
