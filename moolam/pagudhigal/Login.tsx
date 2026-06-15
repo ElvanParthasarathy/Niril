@@ -40,7 +40,7 @@ export default function Login() {
           subtitle="Sign in to your secure database"
         />
 
-        <form onSubmit={handleLogin} style={{ width: '100%', marginTop: '32px' }}>
+        <form onSubmit={handleLogin} style={{ width: '100%', maxWidth: '360px', marginTop: '32px' }}>
           <AuthInput
           label="Email Address"
           placeholder="Enter your email"

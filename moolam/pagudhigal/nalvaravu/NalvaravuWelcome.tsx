@@ -160,7 +160,7 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
                             {/* MUI LANGUAGE SELECTOR */}
                             <List sx={{
                                 width: '100%',
-                                maxWidth: '320px',
+                                maxWidth: '360px',
                                 bgcolor: 'var(--auth-input-bg)',
                                 borderRadius: '16px',
                                 mb: 4,
@@ -228,7 +228,7 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
                                 </ListItem>
                             </List>
 
-                            <div style={{ width: '100%', maxWidth: '320px' }}>
+                            <div style={{ width: '100%', maxWidth: '360px' }}>
                                 <AuthButton onClick={() => setPhase('billingLanguage')}>
                                     {language === 'ta' ? 'தொடரவும்' : 'Continue'}
                                 </AuthButton>
@@ -296,7 +296,7 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
                             {/* MUI LANGUAGE SELECTOR */}
                             <List sx={{
                                 width: '100%',
-                                maxWidth: '320px',
+                                maxWidth: '360px',
                                 bgcolor: 'var(--auth-input-bg)',
                                 borderRadius: '16px',
                                 mb: 4,
@@ -364,7 +364,7 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
                                 </ListItem>
                             </List>
 
-                            <div style={{ width: '100%', maxWidth: '320px' }}>
+                            <div style={{ width: '100%', maxWidth: '360px' }}>
                                 <AuthButton onClick={() => {
                                     localStorage.setItem('elvanniril_setup_billingLang', billingLanguage);
                                     onContinue();

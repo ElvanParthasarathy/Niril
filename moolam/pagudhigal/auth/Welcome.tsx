@@ -97,9 +97,11 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                             Tap "Get Started" to continue with Niril.
                         </p>
 
-                        <AuthButton onClick={onContinue}>
-                            Get Started
-                        </AuthButton>
+                        <div style={{ width: '100%', maxWidth: '360px' }}>
+                            <AuthButton onClick={onContinue}>
+                                Get Started
+                            </AuthButton>
+                        </div>
                     </div>
                 </div>
             </div>
