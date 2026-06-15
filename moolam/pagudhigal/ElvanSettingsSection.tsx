@@ -1,3 +1,4 @@
+import React from 'react';
 import { Box, Typography, Button, Divider, Paper, ButtonBase, Collapse, Fade } from '@mui/material';
 import { PencilSimple } from '@phosphor-icons/react';
 import { useLanguage } from '../mozhi/LanguageContext';
