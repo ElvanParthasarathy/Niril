@@ -11,13 +11,20 @@ import { useLanguage } from '../../mozhi/LanguageContext';
 import { formatCurrency, INVOICE_TYPES } from '../../Payanpadu';
 import { getInvoiceDisplayOptions } from '../../Avanam';
 import { Box, Paper } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { ViewHeader } from '../ViewHeader';
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate }) {
   const { t } = useLanguage();
   const printRef = useRef(null);
   const [saving, setSaving] = useState(false);
   const [displayOptions, setDisplayOptions] = useState<any>({});
+  
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const [isZoomedOut, setIsZoomedOut] = useState(true);
 
   useEffect(() => {
     const savedLocal = localStorage.getItem('elvanniril_invoiceOptions');
@@ -237,29 +244,77 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
       />
 
       {/* Centered Preview Container */}
-      <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4 }}>
-        <Paper elevation={3} className="invoice-paper print-wrapper" sx={{ 
-          p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto',
-          zoom: { xs: 0.43, sm: 0.7, md: 0.85, lg: 1 },
-          '@supports not (zoom: 1)': {
-            transformOrigin: 'top center',
-            transform: { xs: 'scale(0.43)', sm: 'scale(0.7)', md: 'scale(0.85)', lg: 'none' },
-            mb: { xs: '-55%', sm: '-25%', md: '-10%', lg: 0 }
-          }
-        }}>
-          {(() => {
-            const mergedOptions = { ...displayOptions, ...invoiceOptions };
-            return profile?.invoiceTheme === 'sjs' ? (
-              <SjsTheme ref={printRef} profile={profile} client={client} details={details}
-                items={items} totals={totals} invoiceType={invoiceType} customTerms={customTerms}
-                options={mergedOptions} />
-            ) : (
-              <InvoicePreview ref={printRef} profile={profile} client={client} details={details}
-                items={items} totals={totals} invoiceType={invoiceType} customTerms={customTerms}
-                options={mergedOptions} />
-            );
-          })()}
-        </Paper>
+      <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4, width: '100%' }}>
+        {isMobile ? (
+          <TransformWrapper
+            initialScale={1}
+            minScale={1}
+            maxScale={3}
+            centerOnInit={true}
+            
+            
+            limitToBounds={true}
+            panning={{ disabled: isZoomedOut }}
+            onTransformed={(ref) => {
+                const zoomedOut = ref.state.scale <= 1.05;
+                if (zoomedOut !== isZoomedOut) {
+                    setIsZoomedOut(zoomedOut);
+                }
+            }}
+            onInit={(ref) => {
+                const zoomedOut = ref.state.scale <= 1.05;
+                if (zoomedOut !== isZoomedOut) {
+                    setIsZoomedOut(zoomedOut);
+                }
+            }}
+          >
+            <TransformComponent wrapperStyle={{ width: "100%" }}>
+              <Paper elevation={3} className="invoice-paper print-wrapper" sx={{ 
+                                p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto',
+                                zoom: 'none',
+                                transformOrigin: 'top center',
+                                transform: 'scale(0.43)',
+                                mb: '-57%'
+                            }}>
+                {(() => {
+                  const mergedOptions = { ...displayOptions, ...invoiceOptions };
+                  return profile?.invoiceTheme === 'sjs' ? (
+                    <SjsTheme ref={printRef} profile={profile} client={client} details={details}
+                      items={items} totals={totals} invoiceType={invoiceType} customTerms={customTerms}
+                      options={mergedOptions} />
+                  ) : (
+                    <InvoicePreview ref={printRef} profile={profile} client={client} details={details}
+                      items={items} totals={totals} invoiceType={invoiceType} customTerms={customTerms}
+                      options={mergedOptions} />
+                  );
+                })()}
+              </Paper>
+            </TransformComponent>
+          </TransformWrapper>
+        ) : (
+          <Paper elevation={3} className="invoice-paper print-wrapper" sx={{ 
+            p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto',
+            zoom: { xs: 0.43, sm: 0.7, md: 0.85, lg: 1 },
+            '@supports not (zoom: 1)': {
+              transformOrigin: 'top center',
+              transform: { xs: 'scale(0.43)', sm: 'scale(0.7)', md: 'scale(0.85)', lg: 'none' },
+              mb: { xs: '-55%', sm: '-25%', md: '-10%', lg: 0 }
+            }
+          }}>
+            {(() => {
+              const mergedOptions = { ...displayOptions, ...invoiceOptions };
+              return profile?.invoiceTheme === 'sjs' ? (
+                <SjsTheme ref={printRef} profile={profile} client={client} details={details}
+                  items={items} totals={totals} invoiceType={invoiceType} customTerms={customTerms}
+                  options={mergedOptions} />
+              ) : (
+                <InvoicePreview ref={printRef} profile={profile} client={client} details={details}
+                  items={items} totals={totals} invoiceType={invoiceType} customTerms={customTerms}
+                  options={mergedOptions} />
+              );
+            })()}
+          </Paper>
+        )}
       </Box>
     </Box>
   );

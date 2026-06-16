@@ -1,5 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Box, Button, IconButton, Paper, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { Printer, X, PencilSimple } from '@phosphor-icons/react';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -67,6 +70,9 @@ const pickTamilPart = (text) => {
 
 export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
     const { t } = useLanguage();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const [isZoomedOut, setIsZoomedOut] = useState(true);
     const printRef = useRef(null);
     const [companyProfile, setCompanyProfile] = useState(bill._companyProfile || null);
     const [isLoadingProfile, setIsLoadingProfile] = useState(!bill._companyProfile);
@@ -370,7 +376,239 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
             />
 
             {/* Centered Preview Container */}
-            <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4 }}>
+            <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4, width: '100%' }}>
+                {isMobile ? (
+                    <TransformWrapper
+            initialScale={1}
+            minScale={1}
+            maxScale={3}
+            centerOnInit={true}
+            
+            
+            limitToBounds={true}
+            panning={{ disabled: isZoomedOut }}
+            onTransformed={(ref) => {
+                const zoomedOut = ref.state.scale <= 1.05;
+                if (zoomedOut !== isZoomedOut) {
+                    setIsZoomedOut(zoomedOut);
+                }
+            }}
+            onInit={(ref) => {
+                const zoomedOut = ref.state.scale <= 1.05;
+                if (zoomedOut !== isZoomedOut) {
+                    setIsZoomedOut(zoomedOut);
+                }
+            }}
+          >
+                        <TransformComponent wrapperStyle={{ width: "100%" }}>
+                            <Paper elevation={3} className="invoice-paper print-wrapper" sx={{ 
+                                p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto',
+                                zoom: 'none',
+                                transformOrigin: 'top center',
+                                transform: 'scale(0.43)',
+                                mb: '-57%'
+                            }}>
+
+                    <div ref={printRef} className="a4-paper font-tamil" style={{ margin: '0 auto', background: 'white', ...themeStyles }}>
+                
+                {/* Top Greeting Row */}
+                <div className="top-greeting-row">
+                    <span className="greeting-left">{isEng ? 'Vaazhga Vaiyagam' : 'வாழ்க வையகம்'}</span>
+                    <span className="greeting-center">உ</span>
+                    <span className="greeting-right">{isEng ? 'Vaazhga Valamudan' : 'வாழ்க வளமுடன்'}</span>
+                </div>
+
+                {/* Header */}
+                <div className="print-header-new">
+                    <div className="header-left">
+                        <div className="header-company-info">
+                            <div className="company-name font-display">
+                                {name.english}
+                            </div>
+                            <div className="company-subtitle font-tamil">{name.tamil}</div>
+                        </div>
+                    </div>
+                    <div className="header-right">
+                        <div className="bill-type-badge font-tamil">{isEng ? 'Coolie Bill' : 'கூலி பில்'}</div>
+                    </div>
+                </div>
+
+                {/* Divider Line */}
+                <div className="header-divider"></div>
+
+                {/* Bill Info Section */}
+                <div className="bill-info-section">
+                    <div className="bill-meta-row">
+                        <span className="bill-meta">{isEng ? 'Bill No:' : 'பில் எண் :'} <strong style={{ textTransform: 'uppercase' }}>{displayBillNo}</strong></span>
+                        <span className="bill-meta">{isEng ? 'Date:' : 'நாள் :'} <strong>{date}</strong></span>
+                    </div>
+                    <div className="customer-info">
+                        <div className="customer-name-simple">
+                            <span className="customer-label">{isEng ? 'Thiru:' : 'திரு:'}</span>
+                            <span style={{ fontWeight: '600' }}>
+                                {contactPerson ? `${pickTamilPart(contactPerson)}, ${customerName}` : customerName}
+                            </span>
+                        </div>
+                        <div className="customer-city-simple">
+                            <span className="customer-label">{isEng ? 'Place:' : 'ஊர்:'}</span>
+                            <span>{address && city ? `${address}, ${city}` : (address || city || '')}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Table */}
+                <table className="bill-table-new">
+                    <thead>
+                        <tr>
+                            <th style={{ width: '15%' }}><div>{isEng ? 'Coolie' : 'கூலி'}</div></th>
+                            <th style={{ width: '45%', textAlign: 'left', paddingLeft: '15px' }}><div>{isEng ? 'Item Name' : 'பொருள் பெயர்'}</div></th>
+                            <th style={{ width: '15%' }}><div>{isEng ? 'Weight (Kg)' : 'எடை (Kg)'}</div></th>
+                            <th style={{ width: '25%' }}><div>{isEng ? 'Amount' : 'தொகை'}</div></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {items.map((item, i) => (
+                            <tr key={i} className={i % 2 === 1 ? 'row-alt' : ''}>
+                                <td className="text-center">{item.coolie || ''}</td>
+                                <td className="text-left">{isEng && item.name_english ? item.name_english : pickTamilPart(item.porul)}</td>
+                                <td className="text-center">{item.kg ? formatWeight(item.kg) : ''}</td>
+                                <td className="text-center">{item.kg ? formatCurrency(calcItemAmount(item.coolie, item.kg)) : ''}</td>
+                            </tr>
+                        ))}
+
+                        {ahimsaSilkRs && (
+                            <tr>
+                                <td className="text-center">-</td>
+                                <td className="text-left"><div>{isEng ? 'Ahimsa Silk' : 'அகிம்சா பட்டு'}</div></td>
+                                <td className="text-center">-</td>
+                                <td className="text-center">{formatCurrency(ahimsaSilkRs)}</td>
+                            </tr>
+                        )}
+
+                        {otherCharges.map((charge, i) => {
+                            if (!charge.amount || parseFloat(String(charge.amount)) === 0) return null;
+                            return (
+                                <tr key={`oc-${i}`}>
+                                    <td className="text-center">-</td>
+                                    <td className="text-left"><div>{charge.name || (isEng ? 'Custom Charges' : 'பிற விவரம்')}</div></td>
+                                    <td className="text-center">-</td>
+                                    <td className="text-center">{formatCurrency(charge.amount)}</td>
+                                </tr>
+                            );
+                        })}
+
+                        {setharamGrams && (
+                            <tr className={items.length % 2 === 1 ? 'row-alt' : ''}>
+                                <td className="text-center">-</td>
+                                <td className="text-left"><div>{isEng ? 'Wastage' : 'சேதாரம்'}</div></td>
+                                <td className="text-center">{formatWeight(setharamKg)}</td>
+                                <td className="text-center">-</td>
+                            </tr>
+                        )}
+
+                        {courierRs && (
+                            <tr>
+                                <td className="text-center">-</td>
+                                <td className="text-left"><div>{isEng ? 'Courier Charges' : 'கொரியர் கட்டணம்'}</div></td>
+                                <td className="text-center">-</td>
+                                <td className="text-center">{formatCurrency(courierRs)}</td>
+                            </tr>
+                        )}
+                    </tbody>
+                    <tfoot>
+                        <tr className="total-footer-row">
+                            <td colSpan="2" className="text-right total-label-cell">{isEng ? 'Total' : 'மொத்தம்'}</td>
+                            <td className="text-center total-weight-cell">{formatWeight(totalKg)} Kg</td>
+                            <td className="text-center total-amount-cell">₹ {formatCurrency(totalRs)}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                {totalRs > 0 && (
+                    <div className="amount-in-words font-tamil mt-3 text-center">
+                        <span className="words-label" style={{ fontSize: '12px', fontWeight: '600', color: 'var(--bill-text)', marginRight: '6px' }}>
+                            {isEng ? 'Amount in words:' : 'எழுத்தில் மொத்தத் தொகை:'}
+                        </span>
+                        <span className="words-line">
+                            {isEng ? numberToWordsEnglish(totalRs) : numberToWordsTamil(totalRs)}
+                        </span>
+                    </div>
+                )}  <div style={{ flexGrow: 1 }}></div>
+
+                {/* Footer */}
+                <div className="bill-footer-new">
+                    <div className="footer-left">
+                        {( (showBankDetails && (bankDetails || accountNo)) || (showIfsc && ifsc) ) && (
+                            <div style={{ marginBottom: '10px', color: 'var(--bill-text-dark)', fontSize: '0.9rem', lineHeight: '1.4', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                                {showBankDetails && (
+                                    <div style={{ display: 'flex', gap: '5px' }}>
+                                        <div style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>{isEng ? 'Bank Details :' : 'வங்கி விவரம் :'}</div>
+                                        <div style={{ color: '#000' }}>
+                                            {isEng && p.bankNameEn ? `${p.bankNameEn}${p.branchEn ? ', ' + p.branchEn : ''}` : bankDetails}
+                                        </div>
+                                    </div>
+                                )}
+                                {showBankDetails && accountNo && (
+                                    <div style={{ display: 'flex', gap: '5px' }}>
+                                        <div style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>{isEng ? 'A/C No :' : 'கணக்கு எண் :'}</div>
+                                        <div style={{ color: '#000' }}>{accountNo}</div>
+                                    </div>
+                                )}
+                                {showIfsc && ifsc && (
+                                    <div style={{ display: 'flex', gap: '5px' }}>
+                                        <div style={{ fontWeight: 'bold', whiteSpace: 'nowrap' }}>IFSC :</div>
+                                        <div style={{ color: '#000' }}>{ifsc}</div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        <div className="thank-you font-tamil">{isEng ? 'Thank You' : 'நன்றி'}</div>
+                    </div>
+                    <div className="preview-footer-right">
+                        <div className="sign-company font-display" style={{ position: 'relative', zIndex: 10 }}>{name.english}</div>
+                        <div className="sign-space" style={{ position: 'relative' }}>
+                            {p.signature && (
+                                <img src={p.signature} alt="Signature" style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: '-10px', maxHeight: '95px', maxWidth: '200px', objectFit: 'contain', pointerEvents: 'none' }} />
+                            )}
+                        </div>
+                        <div className="sign-label" style={{ position: 'relative', zIndex: 10 }}>{p.authorizedSignatoryName ? `(${p.authorizedSignatoryName})` : isEng ? '(Authorized Signature)' : '(கையொப்பம்)'}</div>
+                    </div>
+                </div>
+
+                {/* Contact Section */}
+                <div className="contact-section">
+                    <div className="contact-title">{isEng ? 'Contact Us' : 'தொடர்பு கொள்ள'}</div>
+                    <div className="contact-row">
+                        <div className="contact-left">
+                            <div className="contact-address">
+                                <div>{addressLine1}</div>
+                                {addressLine2 && <div>{addressLine2}</div>}
+                            </div>
+                            <div className="contact-email" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', marginTop: '-2px' }}>
+                                    <IconMail size={14} />
+                                </div>
+                                <span>{email}</span>
+                            </div>
+                        </div>
+                        <div className="contact-phones">
+                            {phone.map((num, i) => (
+                                <div key={i} className="phone-item-new" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', marginTop: '-2px' }}>
+                                        <IconPhone size={14} />
+                                    </div>
+                                    <span>{num}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                    </div>
+                            </Paper>
+                        </TransformComponent>
+                    </TransformWrapper>
+                ) : (
                 <Paper elevation={3} className="invoice-paper print-wrapper" sx={{ 
                     p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto',
                     zoom: { xs: 0.43, sm: 0.7, md: 0.85, lg: 1 },
@@ -380,6 +618,7 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
                         mb: { xs: '-55%', sm: '-25%', md: '-10%', lg: 0 }
                     }
                 }}>
+
                     <div ref={printRef} className="a4-paper font-tamil" style={{ margin: '0 auto', background: 'white', ...themeStyles }}>
                 
                 {/* Top Greeting Row */}
@@ -577,6 +816,7 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
 
                     </div>
                 </Paper>
+                )}
             </Box>
         </Box>
     );
