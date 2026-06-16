@@ -100,7 +100,7 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
               <Typography variant="h5" color="text.secondary" sx={{ fontWeight: 800 }}>—</Typography>
             ) : (
               Object.entries(stats.byCurrency).map(([cur, v]) => (
-                <Typography key={cur} variant="h5" color="text.primary" sx={{ fontWeight: 800 }}>
+                <Typography key={cur} variant="h5" color="text.primary" sx={{ fontWeight: 800, fontSize: { xs: formatCurrency(v.total, cur).length > 11 ? '1.25rem' : '1.5rem', sm: '1.5rem' }, wordBreak: 'break-word', lineHeight: 1.2 }}>
                   {formatCurrency(v.total, cur)}
                 </Typography>
               ))
@@ -122,7 +122,7 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
               <Typography variant="h5" color="text.secondary" sx={{ fontWeight: 800 }}>—</Typography>
             ) : (
               Object.entries(stats.byCurrency).map(([cur, v]) => (
-                <Typography key={cur} variant="h5" color="text.primary" sx={{ fontWeight: 800 }}>
+                <Typography key={cur} variant="h5" color="text.primary" sx={{ fontWeight: 800, fontSize: { xs: formatCurrency(v.tax, cur).length > 11 ? '1.25rem' : '1.5rem', sm: '1.5rem' }, wordBreak: 'break-word', lineHeight: 1.2 }}>
                   {formatCurrency(v.tax, cur)}
                 </Typography>
               ))
@@ -172,7 +172,7 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
             </Typography>
           </Box>
           <Box sx={{ minWidth: 0, flex: 1 }}>
-            <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700, fontSize: '0.95rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: 1.3, mb: 0.5 }}>
               {bill.clientName || '-'}
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>

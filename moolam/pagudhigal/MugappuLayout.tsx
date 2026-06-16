@@ -115,7 +115,7 @@ export default function MugappuLayout({
         </Box>
 
         {isLoading ? (
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 2, pb: 3, px: 0 }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 2, pb: { xs: 12, md: 3 }, px: 0 }}>
             {[1, 2, 3, 4].map((i) => (
               <ElvanCard key={i} sx={{ height: '100%', p: 2 }}>
                 <Stack direction="row" spacing={2} sx={{ alignItems: 'center', height: '100%' }}>
@@ -137,7 +137,7 @@ export default function MugappuLayout({
             </Typography>
           </Box>
         ) : (
-          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 2, pb: 3, px: 0 }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 2, pb: { xs: 12, md: 3 }, px: 0 }}>
             {recentItems.map((item, index) => renderRecentItem(item, index))}
           </Box>
         )}

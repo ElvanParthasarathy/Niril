@@ -127,7 +127,7 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchMode
             {isLoading ? (
               <Skeleton variant="text" width={120} height={32} />
             ) : (
-              <Typography variant="h5" color="text.primary" sx={{ fontWeight: 800 }}>
+              <Typography variant="h5" color="text.primary" sx={{ fontWeight: 800, fontSize: { xs: formatCurrency(stats.overallTotal, 'INR').length > 11 ? '1.25rem' : '1.5rem', sm: '1.5rem' }, wordBreak: 'break-word', lineHeight: 1.2 }}>
                 {formatCurrency(stats.overallTotal, 'INR')}
               </Typography>
             )}
@@ -203,7 +203,7 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchMode
             </Typography>
           </Box>
           <Box sx={{ minWidth: 0, flex: 1 }}>
-            <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700, fontSize: '0.95rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: 1.3, mb: 0.5 }}>
               {bill.customer_name ? (bill.customer_name.includes('/') ? bill.customer_name.split('/')[0].trim() : bill.customer_name) : '-'}
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
