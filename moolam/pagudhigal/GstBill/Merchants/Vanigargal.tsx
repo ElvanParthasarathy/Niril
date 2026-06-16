@@ -113,52 +113,57 @@ export default function Vanigargal({ onEditClient, onAddClient, profile }) {
           }}
           onClick={() => isSelectionMode ? toggleSelection(client.id) : onEditClient(client)}
         >
-          <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
-              {!isSelectionMode ? (
-                <Box sx={{ 
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                  width: 28, height: 28, mt: 0.15, 
-                  borderRadius: '50%',
-                  bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
-                  flexShrink: 0
-                }}>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
-                    {(globalIndex + 1).toString().padStart(2, '0')}
-                  </Typography>
-                </Box>
-              ) : (
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, mt: 0.15, color: isSelected ? 'primary.main' : 'text.secondary', flexShrink: 0 }}>
-                  {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} weight="regular" />}
-                </Box>
-              )}
-              <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                  {getDynamicField(client, 'name', profile, true)}
+          <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start' }}>
+            {!isSelectionMode ? (
+              <Box sx={{ 
+                display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                width: 28, height: 28, mt: 0.15, 
+                borderRadius: '50%',
+                bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
+                flexShrink: 0
+              }}>
+                <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
+                  {(globalIndex + 1).toString().padStart(2, '0')}
                 </Typography>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
-                  {profile?.enableBilingual !== false && getDynamicField(client, 'name', profile, false) && (
-                    <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{getDynamicField(client, 'name', profile, false)}</Typography>
-                  )}
+              </Box>
+            ) : (
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, mt: 0.15, color: isSelected ? 'primary.main' : 'text.secondary', flexShrink: 0 }}>
+                {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} weight="regular" />}
+              </Box>
+            )}
+            
+            <Box sx={{ minWidth: 0, flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
+                <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700, fontSize: '0.95rem', flex: 1, minWidth: 0 }}>
+                  {getDynamicField(client, 'name', profile, true) || '-'}
+                </Typography>
+                {isSelectionMode && (
+                  <Box sx={{ width: 34, flexShrink: 0 }} />
+                )}
+              </Box>
+              
+              {profile?.enableBilingual !== false && getDynamicField(client, 'name', profile, false) && (
+                <Typography variant="caption" noWrap sx={{ display: 'block', fontWeight: 500, color: 'text.secondary', mt: 0.25 }}>
+                  {getDynamicField(client, 'name', profile, false)}
+                </Typography>
+              )}
+              
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mt: 0.5, gap: 1 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
                   {getDynamicField(client, 'oor', profile, true) && (
-                    <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
+                    <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'text.secondary' }} noWrap>
                       {getDynamicField(client, 'oor', profile, true)}{profile?.enableBilingual !== false && getDynamicField(client, 'oor', profile, false) ? <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> : ''}{profile?.enableBilingual !== false && getDynamicField(client, 'oor', profile, false) ? getDynamicField(client, 'oor', profile, false) : ''}
                     </Typography>
                   )}
                   {client.gstin && (
-                    <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500, mt: 0.5 }}>
+                    <Typography variant="body2" sx={{ fontSize: '0.8rem', fontWeight: 500, color: 'text.secondary', mt: 0.25 }} noWrap>
                       GSTIN: {client.gstin}
                     </Typography>
                   )}
                 </Box>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-              {isSelectionMode && (
-                <Box sx={{ width: 40, height: 40 }} />
-              )}
-            </Box>
-          </Stack>
+          </Box>
         </ElvanCard>
         {isSelectionMode && (
           <Tooltip title={t('delete') || 'Delete'}>

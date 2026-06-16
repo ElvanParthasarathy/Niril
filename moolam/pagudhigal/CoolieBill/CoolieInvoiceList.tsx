@@ -183,13 +183,12 @@ export default function CoolieInvoiceList({ onView, onNew }) {
             }
           }}
         >
-          <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
+          <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start' }}>
               {isSelectionMode ? (
                 <IconButton
                   size="small"
                   onClick={(e) => { e.stopPropagation(); toggleSelection(bill.id); }}
-                  sx={{ color: isSelected ? 'primary.main' : 'text.disabled', p: 0, mt: 0.2 }}
+                  sx={{ color: isSelected ? 'primary.main' : 'text.disabled', p: 0, mt: 0.15, flexShrink: 0 }}
                 >
                   {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} />}
                 </IconButton>
@@ -206,49 +205,37 @@ export default function CoolieInvoiceList({ onView, onNew }) {
                   </Typography>
                 </Box>
               )}
-              <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                  {bill.customer_name ? (
-                    bill.customer_name.includes('/') ? (
-                      <>
-                        <Box component="span" sx={{ display: 'block' }}>{bill.customer_name.split('/')[0].trim()}</Box>
-                        <Box component="span" sx={{ display: 'block', fontSize: '0.85em', opacity: 0.7, fontWeight: 'normal', mt: -0.2 }}>
-                          {bill.customer_name.split('/').slice(1).join('/').trim()}
-                        </Box>
-                      </>
-                    ) : (
-                      <>
-                        <Box component="span" sx={{ display: 'block' }}>{bill.customer_name}</Box>
-                        {bill.customer_name_en && (
-                          <Box component="span" sx={{ display: 'block', fontSize: '0.85em', opacity: 0.7, fontWeight: 'normal', mt: -0.2 }}>
-                            {bill.customer_name_en}
-                          </Box>
-                        )}
-                      </>
-                    )
-                  ) : '-'}
+              
+              <Box sx={{ minWidth: 0, flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
+                  <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700, fontSize: '0.95rem', flex: 1, minWidth: 0 }}>
+                    {bill.customer_name ? (bill.customer_name.includes('/') ? bill.customer_name.split('/')[0].trim() : bill.customer_name) : '-'}
+                  </Typography>
+                  {isSelectionMode && (
+                    <Box sx={{ width: 34, flexShrink: 0 }} />
+                  )}
+                </Box>
+                
+                {bill.customer_name_en && (
+                  <Typography variant="caption" noWrap sx={{ display: 'block', fontWeight: 500, color: 'text.secondary', mt: 0.25 }}>
+                    {bill.customer_name_en}
+                  </Typography>
+                )}
+                
+                <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'text.secondary', mt: 0.5 }} noWrap>
+                  {bill.bill_no} <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> {bill.date ? bill.date : '-'}
                 </Typography>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
-                    <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5, fontWeight: 600, color: 'text.primary' }}>
-                      {bill.bill_no} <span style={{ opacity: 0.6, margin: '0 6px', fontWeight: 400, color: 'text.secondary' }}>•</span> <span style={{ fontWeight: 400, color: 'text.secondary' }}>{bill.date ? bill.date : '-'}</span>
-                    </Typography>
-                  <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
-                    {bill.city && bill.city}
+                
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mt: 0.25, gap: 1 }}>
+                  <Typography variant="body2" sx={{ fontSize: '0.82rem', color: 'text.secondary', flex: 1, minWidth: 0 }} noWrap>
+                    {bill.city || ''}
+                  </Typography>
+                  <Typography variant="subtitle2" noWrap sx={{ fontWeight: 800, color: 'primary.main', fontSize: `₹ ${Number(bill.grand_total || 0).toLocaleString('en-IN')}`.length > 11 ? '0.8rem' : '0.95rem', flexShrink: 0 }}>
+                    ₹ {Number(bill.grand_total || 0).toLocaleString('en-IN')}
                   </Typography>
                 </Box>
               </Box>
-            </Box>
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'space-between' }}>
-              <Box sx={{ display: 'flex', gap: 0.5, mt: -0.5, mr: -0.5, alignItems: 'center' }}>
-                {isSelectionMode && (
-                  <Box sx={{ width: 34, height: 34 }} />
-                )}
-              </Box>
-              <Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: 800 }}>
-                ₹ {Number(bill.grand_total || 0).toLocaleString('en-IN')}
-              </Typography>
-            </Box>
-          </Stack>
+          </Box>
         </ElvanCard>
         {isSelectionMode && (
           <IconButton 

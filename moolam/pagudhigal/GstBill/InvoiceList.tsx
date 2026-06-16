@@ -116,13 +116,12 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
           }}
           onClick={() => isSelectionMode ? toggleSelection(bill.id) : (onView && onView(bill))}
         >
-          <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
+          <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start' }}>
               {isSelectionMode ? (
                 <IconButton
                   size="small"
                   onClick={(e) => { e.stopPropagation(); toggleSelection(bill.id); }}
-                  sx={{ color: isSelected ? 'primary.main' : 'text.disabled', p: 0, mt: 0.2 }}
+                  sx={{ color: isSelected ? 'primary.main' : 'text.disabled', p: 0, mt: 0.15, flexShrink: 0 }}
                 >
                   {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} />}
                 </IconButton>
@@ -139,34 +138,37 @@ export default function InvoiceList({ onView, onDuplicate, onNew, profile }) {
                   </Typography>
                 </Box>
               )}
-              <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                  {bill.clientName || '-'}
-                </Typography>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
-                  {profile?.enableBilingual !== false && (bill.clientNameEn || getDynamicField(bill.data?.client, 'name', profile, false) || bill.data?.client?.nameEn) && (
-                    <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{bill.clientNameEn || getDynamicField(bill.data?.client, 'name', profile, false) || bill.data?.client?.nameEn}</Typography>
-                  )}
-                  <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
-                    {bill.invoiceNumber} <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> {bill.invoiceDate ? new Date(bill.invoiceDate).toLocaleDateString('en-IN') : '-'}
+              
+              <Box sx={{ minWidth: 0, flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
+                  <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700, fontSize: '0.95rem', flex: 1, minWidth: 0 }}>
+                    {bill.clientName || '-'}
                   </Typography>
-                  <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
+                  {isSelectionMode && (
+                    <Box sx={{ width: 34, flexShrink: 0 }} />
+                  )}
+                </Box>
+                
+                {profile?.enableBilingual !== false && (bill.clientNameEn || getDynamicField(bill.data?.client, 'name', profile, false) || bill.data?.client?.nameEn) && (
+                  <Typography variant="caption" noWrap sx={{ display: 'block', fontWeight: 500, color: 'text.secondary', mt: 0.25 }}>
+                    {bill.clientNameEn || getDynamicField(bill.data?.client, 'name', profile, false) || bill.data?.client?.nameEn}
+                  </Typography>
+                )}
+                
+                <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'text.secondary', mt: 0.5 }} noWrap>
+                  {bill.invoiceNumber} <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> {bill.invoiceDate ? new Date(bill.invoiceDate).toLocaleDateString('en-IN') : '-'}
+                </Typography>
+                
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mt: 0.25, gap: 1 }}>
+                  <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'text.secondary', flex: 1, minWidth: 0 }} noWrap>
                     {invoiceTypeLabel}
+                  </Typography>
+                  <Typography variant="subtitle2" noWrap sx={{ fontWeight: 800, color: 'primary.main', fontSize: formatCurrency(bill.totalAmount, profileCurrency).length > 11 ? '0.8rem' : '0.95rem', flexShrink: 0 }}>
+                    {formatCurrency(bill.totalAmount, profileCurrency)}
                   </Typography>
                 </Box>
               </Box>
-            </Box>
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'space-between' }}>
-              <Box sx={{ display: 'flex', gap: 0.5, mt: -0.5, mr: -0.5 }}>
-                {isSelectionMode && (
-                  <Box sx={{ width: 34, height: 34 }} />
-                )}
-              </Box>
-              <Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: 800 }}>
-                {formatCurrency(bill.totalAmount, profileCurrency)}
-              </Typography>
-            </Box>
-          </Stack>
+          </Box>
         </ElvanCard>
         {isSelectionMode && (
           <IconButton 

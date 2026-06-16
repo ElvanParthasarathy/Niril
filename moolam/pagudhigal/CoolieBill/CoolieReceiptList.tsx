@@ -139,13 +139,12 @@ export default function CoolieReceiptList({ onAddReceipt, onEditReceipt, onViewR
         }} 
         onClick={() => isSelectionMode ? toggleSelection(rcp.id) : (onViewReceipt && onViewReceipt(rcp))}
       >
-        <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
-          <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
+          <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start' }}>
             {isSelectionMode ? (
               <IconButton 
                 size="small" 
                 onClick={(e) => { e.stopPropagation(); toggleSelection(rcp.id); }} 
-                sx={{ color: isSelected ? 'primary.main' : 'text.disabled', p: 0, mt: 0.2 }}
+                sx={{ color: isSelected ? 'primary.main' : 'text.disabled', p: 0, mt: 0.15, flexShrink: 0 }}
               >
                 {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} />}
               </IconButton>
@@ -162,40 +161,45 @@ export default function CoolieReceiptList({ onAddReceipt, onEditReceipt, onViewR
                 </Typography>
               </Box>
             )}
-            <Box>
-              <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                {rcp.clientName}
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
-                {profile?.enableBilingual !== false && getDisplayClientNameEn(rcp) && (
-                  <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{getDisplayClientNameEn(rcp)}</Typography>
+            
+            <Box sx={{ minWidth: 0, flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
+                <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700, fontSize: '0.95rem', flex: 1, minWidth: 0 }}>
+                  {rcp.clientName || '-'}
+                </Typography>
+                {isSelectionMode && (
+                  <Box sx={{ display: 'flex', gap: 0.5, mt: -0.5, mr: -0.5, alignItems: 'center', flexShrink: 0 }}>
+                    <IconButton 
+                      size="small" 
+                      color="error"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setReceiptToDelete(rcp);
+                      }}
+                      sx={{ p: 0.5 }}
+                    >
+                      <Trash size={18} />
+                    </IconButton>
+                  </Box>
                 )}
-                <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
+              </Box>
+              
+              {profile?.enableBilingual !== false && getDisplayClientNameEn(rcp) && (
+                <Typography variant="caption" noWrap sx={{ display: 'block', fontWeight: 500, color: 'text.secondary', mt: 0.25 }}>
+                  {getDisplayClientNameEn(rcp)}
+                </Typography>
+              )}
+              
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mt: 0.5, gap: 1 }}>
+                <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'text.secondary', flex: 1, minWidth: 0 }} noWrap>
                   {rcp.receiptNo} <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> {rcp.date ? new Date(rcp.date).toLocaleDateString('en-IN') : '-'}
+                </Typography>
+                <Typography variant="subtitle2" noWrap sx={{ fontWeight: 800, color: 'primary.main', fontSize: formatCurrency(rcp.amount, profileCurrency).length > 11 ? '0.8rem' : '0.95rem', flexShrink: 0 }}>
+                  {formatCurrency(rcp.amount, profileCurrency)}
                 </Typography>
               </Box>
             </Box>
           </Box>
-          <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'space-between' }}>
-            <Box sx={{ display: 'flex', gap: 0.5, mt: -0.5, mr: -0.5 }}>
-              {isSelectionMode && (
-                <IconButton 
-                  size="small" 
-                  color="error"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setReceiptToDelete(rcp);
-                  }}
-                >
-                  <Trash size={20} />
-                </IconButton>
-              )}
-            </Box>
-            <Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: 800 }}>
-              {formatCurrency(rcp.amount, profileCurrency)}
-            </Typography>
-          </Box>
-        </Stack>
       </ElvanCard>
     );
   };

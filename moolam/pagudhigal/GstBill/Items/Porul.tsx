@@ -116,60 +116,60 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
           }}
           onClick={() => isSelectionMode ? toggleSelection(product.id) : onEditProduct(product)}
         >
-          <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, width: '100%' }}>
-              {!isSelectionMode ? (
-                <Box sx={{ 
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                  width: 28, height: 28, mt: 0.15, 
-                  borderRadius: '50%',
-                  bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
-                  flexShrink: 0
-                }}>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
-                    {(globalIndex + 1).toString().padStart(2, '0')}
-                  </Typography>
-                </Box>
-              ) : (
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, mt: 0.15, color: isSelected ? 'primary.main' : 'text.secondary', flexShrink: 0 }}>
-                  {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} weight="regular" />}
-                </Box>
-              )}
-              <Box>
-                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                  {getDynamicField(product, 'name', profile, true)}
+          <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start' }}>
+            {!isSelectionMode ? (
+              <Box sx={{ 
+                display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                width: 28, height: 28, mt: 0.15, 
+                borderRadius: '50%',
+                bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
+                flexShrink: 0
+              }}>
+                <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
+                  {(globalIndex + 1).toString().padStart(2, '0')}
                 </Typography>
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
-                  {profile?.enableBilingual !== false && getDynamicField(product, 'name', profile, false) && (
-                    <Typography variant="body2" sx={{ fontSize: '0.85rem', fontWeight: 500 }}>{getDynamicField(product, 'name', profile, false)}</Typography>
-                  )}
-                  {getDynamicField(product, 'description', profile, true) && (
-                    <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
-                      {getDynamicField(product, 'description', profile, true)}
-                    </Typography>
-                  )}
+              </Box>
+            ) : (
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, mt: 0.15, color: isSelected ? 'primary.main' : 'text.secondary', flexShrink: 0 }}>
+                {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} weight="regular" />}
+              </Box>
+            )}
+            
+            <Box sx={{ minWidth: 0, flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
+                <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700, fontSize: '0.95rem', flex: 1, minWidth: 0 }}>
+                  {getDynamicField(product, 'name', profile, true) || '-'}
+                </Typography>
+                {isSelectionMode && (
+                  <Box sx={{ width: 34, flexShrink: 0 }} />
+                )}
+              </Box>
+              
+              {profile?.enableBilingual !== false && getDynamicField(product, 'name', profile, false) && (
+                <Typography variant="caption" noWrap sx={{ display: 'block', fontWeight: 500, color: 'text.secondary', mt: 0.25 }}>
+                  {getDynamicField(product, 'name', profile, false)}
+                </Typography>
+              )}
+              
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mt: 0.5, gap: 1 }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
                   {(product.hsn || product.taxPercent) && (
-                    <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5 }}>
+                    <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'text.secondary' }} noWrap>
                       {product.hsn ? `HSN: ${product.hsn}` : ''}
                       {product.hsn && product.taxPercent ? <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> : ''}
                       {product.taxPercent ? `Tax: ${product.taxPercent}%` : ''}
                     </Typography>
                   )}
-                  <Typography variant="body2" sx={{ fontSize: '0.85rem', mt: 0.5, color: 'primary.main', fontWeight: 500 }}>
+                  <Typography variant="body2" sx={{ fontSize: '0.8rem', mt: 0.25, color: 'primary.main', fontWeight: 500 }} noWrap>
                     {(product.measureType === 'weight') ? 'எடை • Weight' : 'அளவு • Quantity'}
                   </Typography>
                 </Box>
+                <Typography variant="subtitle2" noWrap sx={{ fontWeight: 800, color: 'primary.main', fontSize: (product.rate && formatCurrency(product.rate, profileCurrency).length > 11) ? '0.8rem' : '0.95rem', flexShrink: 0 }}>
+                  {product.rate ? formatCurrency(product.rate, profileCurrency) : '-'}
+                </Typography>
               </Box>
             </Box>
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', flexDirection: 'column', alignSelf: 'stretch', justifyContent: isSelectionMode ? 'space-between' : 'flex-end' }}>
-              {isSelectionMode && (
-                <Box sx={{ width: 34, height: 34 }} />
-              )}
-              <Typography variant="subtitle1" color="primary.main" sx={{ fontWeight: 800 }}>
-                {product.rate ? formatCurrency(product.rate, profileCurrency) : '-'}
-              </Typography>
-            </Box>
-          </Stack>
+          </Box>
         </ElvanCard>
         {isSelectionMode && (
           <Tooltip title={t('delete') || 'Delete'}>

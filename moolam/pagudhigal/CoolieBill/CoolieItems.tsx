@@ -123,43 +123,42 @@ export default function CoolieItems({ onAddProduct, onEditProduct }) {
           }}
           onClick={() => isSelectionMode ? toggleSelection(product.id) : onEditProduct(product)}
         >
-          <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
-            <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flex: 1, width: '100%' }}>
-              {!isSelectionMode ? (
-                <Box sx={{ 
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                  width: 28, height: 28, 
-                  borderRadius: '50%',
-                  bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
-                  flexShrink: 0
-                }}>
-                  <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
-                    {(globalIndex + 1).toString().padStart(2, '0')}
-                  </Typography>
-                </Box>
-              ) : (
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, color: isSelected ? 'primary.main' : 'text.secondary', flexShrink: 0 }}>
-                  {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} weight="regular" />}
-                </Box>
-              )}
-              <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0.5 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                  {getDynamicField(product, 'name', activeProfile, true) || product.name}
+          <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start' }}>
+            {!isSelectionMode ? (
+              <Box sx={{ 
+                display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                width: 28, height: 28, mt: 0.15, 
+                borderRadius: '50%',
+                bgcolor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)',
+                flexShrink: 0
+              }}>
+                <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
+                  {(globalIndex + 1).toString().padStart(2, '0')}
                 </Typography>
-                {/* Always render bilingual for Coolie */}
-                {(getDynamicField(product, 'name', activeProfile, false) || product.nameEn) && (
-                  <Typography variant="body2" sx={{ fontSize: '0.85rem', opacity: 0.6 }}>
-                    {getDynamicField(product, 'name', activeProfile, false) || product.nameEn}
-                  </Typography>
+              </Box>
+            ) : (
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, mt: 0.15, color: isSelected ? 'primary.main' : 'text.secondary', flexShrink: 0 }}>
+                {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} weight="regular" />}
+              </Box>
+            )}
+            
+            <Box sx={{ minWidth: 0, flex: 1, display: 'flex', flexDirection: 'column' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
+                <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700, fontSize: '0.95rem', flex: 1, minWidth: 0 }}>
+                  {getDynamicField(product, 'name', activeProfile, true) || product.name || '-'}
+                </Typography>
+                {isSelectionMode && (
+                  <Box sx={{ width: 34, flexShrink: 0 }} />
                 )}
               </Box>
-            </Box>
-            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-              {isSelectionMode && (
-                <Box sx={{ width: 34, height: 34 }} />
+              
+              {(getDynamicField(product, 'name', activeProfile, false) || product.nameEn) && (
+                <Typography variant="caption" noWrap sx={{ display: 'block', fontWeight: 500, color: 'text.secondary', mt: 0.25 }}>
+                  {getDynamicField(product, 'name', activeProfile, false) || product.nameEn}
+                </Typography>
               )}
             </Box>
-          </Stack>
+          </Box>
         </ElvanCard>
         {isSelectionMode && (
           <Tooltip title={t('delete') || 'Delete'}>
