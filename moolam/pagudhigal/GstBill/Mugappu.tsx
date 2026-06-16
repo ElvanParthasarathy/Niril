@@ -100,7 +100,7 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
               <Typography variant="h5" color="text.secondary" sx={{ fontWeight: 800 }}>—</Typography>
             ) : (
               Object.entries(stats.byCurrency).map(([cur, v]) => (
-                <Typography key={cur} variant="h5" color="text.primary" sx={{ fontWeight: 800, fontSize: { xs: formatCurrency(v.total, cur).length > 11 ? '1.25rem' : '1.5rem', sm: '1.5rem' }, wordBreak: 'break-word', lineHeight: 1.2 }}>
+                <Typography key={cur} variant="h5" color="text.primary" sx={{ fontWeight: 800, fontSize: { xs: formatCurrency(v.total, cur).length > 14 ? '0.95rem' : formatCurrency(v.total, cur).length > 11 ? '1.15rem' : '1.5rem', sm: '1.5rem' }, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: 1.2, width: '100%', display: 'block' }}>
                   {formatCurrency(v.total, cur)}
                 </Typography>
               ))
@@ -122,7 +122,7 @@ export default function Mugappu({ onViewAll, onNew, onEdit, onDuplicate, onConve
               <Typography variant="h5" color="text.secondary" sx={{ fontWeight: 800 }}>—</Typography>
             ) : (
               Object.entries(stats.byCurrency).map(([cur, v]) => (
-                <Typography key={cur} variant="h5" color="text.primary" sx={{ fontWeight: 800, fontSize: { xs: formatCurrency(v.tax, cur).length > 11 ? '1.25rem' : '1.5rem', sm: '1.5rem' }, wordBreak: 'break-word', lineHeight: 1.2 }}>
+                <Typography key={cur} variant="h5" color="text.primary" sx={{ fontWeight: 800, fontSize: { xs: formatCurrency(v.tax, cur).length > 14 ? '0.95rem' : formatCurrency(v.tax, cur).length > 11 ? '1.15rem' : '1.5rem', sm: '1.5rem' }, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: 1.2, width: '100%', display: 'block' }}>
                   {formatCurrency(v.tax, cur)}
                 </Typography>
               ))

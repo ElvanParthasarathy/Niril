@@ -127,7 +127,7 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchMode
             {isLoading ? (
               <Skeleton variant="text" width={120} height={32} />
             ) : (
-              <Typography variant="h5" color="text.primary" sx={{ fontWeight: 800, fontSize: { xs: formatCurrency(stats.overallTotal, 'INR').length > 11 ? '1.25rem' : '1.5rem', sm: '1.5rem' }, wordBreak: 'break-word', lineHeight: 1.2 }}>
+              <Typography variant="h5" color="text.primary" sx={{ fontWeight: 800, fontSize: { xs: formatCurrency(stats.overallTotal, 'INR').length > 14 ? '0.95rem' : formatCurrency(stats.overallTotal, 'INR').length > 11 ? '1.15rem' : '1.5rem', sm: '1.5rem' }, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: 1.2, width: '100%', display: 'block' }}>
                 {formatCurrency(stats.overallTotal, 'INR')}
               </Typography>
             )}
