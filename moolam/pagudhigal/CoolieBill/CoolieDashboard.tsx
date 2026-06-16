@@ -188,9 +188,8 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchMode
 
   const renderRecentItem = (bill, index) => {
     return (
-      <ElvanCard key={bill.id} onClick={() => onView && onView(bill)} sx={{ cursor: 'pointer', '@media (hover: hover)': { '&:hover': { bgcolor: 'action.hover' } } }}>
-        <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
+      <ElvanCard key={bill.id} onClick={() => onView && onView(bill)} sx={{ cursor: 'pointer', position: 'relative', '@media (hover: hover)': { '&:hover': { bgcolor: 'action.hover' } } }}>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, minWidth: 0, pr: { xs: 3, sm: 4 } }}>
           <Box sx={{ 
             display: 'flex', alignItems: 'center', justifyContent: 'center', 
             width: 28, height: 28, mt: 0.15, 
@@ -202,8 +201,8 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchMode
               {(index + 1).toString().padStart(2, '0')}
             </Typography>
           </Box>
-          <Box sx={{ minWidth: 0, flex: 1 }}>
-            <Typography variant="subtitle1" sx={{ fontWeight: 700, fontSize: '0.95rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: 1.3, mb: 0.5 }}>
+          <Box sx={{ minWidth: 0, flex: 1, pb: { xs: 2.5, sm: 3 } }}>
+            <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700, fontSize: '0.9rem' }}>
               {bill.customer_name ? (bill.customer_name.includes('/') ? bill.customer_name.split('/')[0].trim() : bill.customer_name) : '-'}
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
@@ -223,13 +222,10 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchMode
             </Box>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'flex-end', flexDirection: 'column', alignSelf: 'stretch', justifyContent: 'space-between', flexShrink: 0 }}>
-          <CaretRight size={18} weight="regular" color={isDark ? "#555" : "#aaa"} style={{ marginTop: '2px', marginRight: '-4px' }} />
-          <Typography variant="subtitle2" sx={{ fontWeight: 800, color: 'primary.main' }}>
-            {formatCurrency(Number(bill.grand_total || 0), 'INR')}
-          </Typography>
-        </Box>
-      </Stack>
+        <CaretRight size={18} weight="regular" color={isDark ? "#555" : "#aaa"} style={{ position: 'absolute', top: 18, right: 16 }} />
+        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: 'primary.main', position: 'absolute', bottom: 16, right: 16, fontSize: { xs: formatCurrency(Number(bill.grand_total || 0), 'INR').length > 10 ? '0.75rem' : '0.85rem', sm: '0.875rem' } }}>
+          {formatCurrency(Number(bill.grand_total || 0), 'INR')}
+        </Typography>
       </ElvanCard>
     );
   };
