@@ -18,21 +18,31 @@ export default function Vanigargal({ onEditClient, onAddClient, profile }) {
   const [bills, setBills] = useState([]);
   const [confirmDialog, setConfirmDialog] = useState({ open: false, title: '', message: '', action: null });
 
-  const loadData = async () => {
-    setIsLoading(true);
-    try {
-      const [c, b] = await Promise.all([getAllClients(setClients), getAllBills(setBills)]);
-      setClients(c);
-      setBills(b);
-    } catch {
-      thagaval(t('errorLoadingCustomers') || 'Error loading customers', 'error');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadData();
+    let unsubs = [];
+
+    const initRealtime = async () => {
+      setIsLoading(true);
+      try {
+        const c = await getAllClients(setClients);
+        if (c && c.unsubscribe) unsubs.push(c.unsubscribe);
+        setClients(c || []);
+
+        const b = await getAllBills(setBills);
+        if (b && b.unsubscribe) unsubs.push(b.unsubscribe);
+        setBills(b || []);
+      } catch {
+        thagaval(t('errorLoadingCustomers') || 'Error loading customers', 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initRealtime();
+
+    return () => {
+      unsubs.forEach(unsub => unsub());
+    };
   }, []);
 
   const filterFn = (c, search) => {
@@ -55,7 +65,7 @@ export default function Vanigargal({ onEditClient, onAddClient, profile }) {
         if (onProgress) onProgress(count, ids.length);
       }
       thagaval(t('deletedSuccessfully') || 'Deleted successfully', 'success');
-      loadData();
+      thagaval(t('deletedSuccessfully') || 'Deleted successfully', 'success');
     } catch (e) {
       thagaval(t('errorDeleting') || 'Error deleting', 'error');
     }
@@ -74,7 +84,6 @@ export default function Vanigargal({ onEditClient, onAddClient, profile }) {
         count++;
         if (onProgress) onProgress(count, selected.length);
       }
-      loadData();
       thagaval(t('customersDuplicatedSuccess') || 'Customers duplicated successfully', 'success');
     } catch (e) {
       thagaval(t('errorDuplicating') || 'Error duplicating customers', 'error');

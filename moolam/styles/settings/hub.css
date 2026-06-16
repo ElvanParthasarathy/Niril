@@ -89,6 +89,11 @@
         width: 100%;
     }
 
+    .s2-col-left {
+        padding-top: 12px;
+        padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    }
+
     .s2-hide-mobile {
         display: none;
     }

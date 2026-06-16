@@ -51,30 +51,41 @@ export default function CoolieReceiptList({ onAddReceipt, onEditReceipt, onViewR
     return '';
   };
 
-  const loadData = async () => {
-    setIsLoading(true);
-    try {
-      const [recs, bls, profs] = await Promise.all([getAllCoolieReceipts(), getAllCoolieBills(), getAllCoolieProfiles()]);
-      setReceipts(recs || []);
-      setBills(bls || []);
-      if (Array.isArray(profs) && profs.length > 0) {
-        setLocalProfile(profs[0]);
-      }
-    } catch {
-      thagaval('Failed to load data', 'error');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadData();
-    
-    // Listen for custom event from Seyali to refresh data after a save
-    const handleRefresh = () => loadData();
+    let unsubs = [];
+
+    const initRealtime = async () => {
+      setIsLoading(true);
+      try {
+        const recs = await getAllCoolieReceipts((fresh) => setReceipts(fresh || []));
+        if (recs && recs.unsubscribe) unsubs.push(recs.unsubscribe);
+        setReceipts(recs || []);
+
+        const bls = await getAllCoolieBills((fresh) => setBills(fresh || []));
+        if (bls && bls.unsubscribe) unsubs.push(bls.unsubscribe);
+        setBills(bls || []);
+
+        const profs = await getAllCoolieProfiles((fresh) => {
+          if (Array.isArray(fresh) && fresh.length > 0) setLocalProfile(fresh[0]);
+        });
+        if (profs && profs.unsubscribe) unsubs.push(profs.unsubscribe);
+        if (Array.isArray(profs) && profs.length > 0) setLocalProfile(profs[0]);
+      } catch {
+        thagaval('Failed to load data', 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initRealtime();
+
+    const handleRefresh = () => initRealtime();
     window.addEventListener('refreshReceipts', handleRefresh);
     
-    return () => window.removeEventListener('refreshReceipts', handleRefresh);
+    return () => {
+      window.removeEventListener('refreshReceipts', handleRefresh);
+      unsubs.forEach(unsub => unsub());
+    };
   }, []);
 
   const filterFn = (r, search) => {
@@ -96,7 +107,6 @@ export default function CoolieReceiptList({ onAddReceipt, onEditReceipt, onViewR
         if (onProgress) onProgress(count, ids.length);
       }
       thagaval(t('deletedSuccessfully') || 'Deleted successfully', 'success');
-      loadData();
     } catch (e) {
       thagaval(t('errorDeleting') || 'Error deleting', 'error');
     }
@@ -112,8 +122,7 @@ export default function CoolieReceiptList({ onAddReceipt, onEditReceipt, onViewR
         count++;
         if (onProgress) onProgress(count, selected.length);
       }
-      thagaval(t('productsDuplicatedSuccess') || 'Receipts duplicated successfully', 'success');
-      loadData();
+      thagaval(t('invoicesDuplicatedSuccess') || 'Invoices duplicated successfully', 'success');
     } catch (e) {
       thagaval(t('errorDuplicating') || 'Error duplicating', 'error');
     }

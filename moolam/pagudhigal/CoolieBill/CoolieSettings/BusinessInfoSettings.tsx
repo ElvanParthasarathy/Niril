@@ -69,7 +69,7 @@ export default function BusinessInfoSettings({
                 sx={{ 
                   px: 2, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px', fontFamily: '"Elvan Sans", sans-serif',
                   color: 'text.secondary',
-                  '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
+                  '@media (hover: hover)': { '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' } }
                 }}
               >
                 {t('add')}
@@ -97,7 +97,7 @@ export default function BusinessInfoSettings({
                           edge="end"
                           sx={{ 
                             color: 'text.secondary',
-                            '&:hover': { color: 'error.main' }
+                            '@media (hover: hover)': { '&:hover': { color: 'error.main' } }
                           }} 
                           onClick={() => setPhones(phones.filter((_, i) => i !== index))}
                         >

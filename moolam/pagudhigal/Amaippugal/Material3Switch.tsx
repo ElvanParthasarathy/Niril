@@ -19,15 +19,15 @@ const Material3SwitchBase = styled((props: SwitchProps) => (
     alignItems: 'center',
     justifyContent: 'center',
     transitionDuration: '300ms',
-    '&:hover': {
+    '@media (hover: hover)': { '&:hover': {
       backgroundColor: 'transparent',
-    },
+    } },
     '&.Mui-checked': {
       transform: 'translateX(20px)',
       color: '#fff',
-      '&:hover': {
+      '@media (hover: hover)': { '&:hover': {
         backgroundColor: 'transparent',
-      },
+      } },
       '& + .MuiSwitch-track': {
         backgroundColor: theme.palette.mode === 'dark' ? '#ffffff' : '#000000',
         opacity: 1,

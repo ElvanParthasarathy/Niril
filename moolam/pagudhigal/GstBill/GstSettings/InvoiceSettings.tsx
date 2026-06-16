@@ -16,12 +16,22 @@ export default function InvoiceSettings({ language, t }) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    getInvoiceDisplayOptions().then(serverOpts => {
+    let unsub = null;
+    getInvoiceDisplayOptions((fresh) => {
+      if (fresh && Object.keys(fresh).length > 0) {
+        setInvoiceTemplate(prev => ({ ...prev, ...fresh }));
+      }
+    }).then(serverOpts => {
       if (serverOpts && Object.keys(serverOpts).length > 0) {
         setInvoiceTemplate(prev => ({ ...prev, ...serverOpts }));
       }
+      if (serverOpts && serverOpts.unsubscribe) unsub = serverOpts.unsubscribe;
       setLoaded(true);
     });
+
+    return () => {
+      if (unsub) unsub();
+    };
   }, []);
 
   const handleTemplateChange = (key, val) => {

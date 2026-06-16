@@ -105,7 +105,7 @@ export default function LanguageSettings({ profile, setProfile, setSavedSnapshot
                   sx={{ 
                     px: 2, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px',
                     color: 'text.secondary', cursor: 'pointer',
-                    '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
+                    '@media (hover: hover)': { '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' } }
                   }}
                 >
                   {t('cancel') || 'Cancel'}
@@ -116,7 +116,7 @@ export default function LanguageSettings({ profile, setProfile, setSavedSnapshot
                   sx={{ 
                     px: 3, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px',
                     bgcolor: 'primary.main', color: 'primary.contrastText', cursor: 'pointer',
-                    '&:hover': { bgcolor: 'primary.dark' }
+                    '@media (hover: hover)': { '&:hover': { bgcolor: 'primary.dark' } }
                   }}
                 >
                   {t('save') || 'Save'}

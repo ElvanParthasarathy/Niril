@@ -13,7 +13,12 @@ export async function withCache<T>(
             
             // If data changed (or it's the first time), update cache and notify
             if (newStr !== oldStr) {
-                localStorage.setItem(cacheKey, newStr);
+                try {
+                    localStorage.setItem(cacheKey, newStr);
+                } catch (e) {
+                    console.warn('[CacheManager] Error saving to cache', e);
+                    // Silently ignore if quota is exceeded, just don't cache
+                }
                 if (onFreshData && oldStr !== null) {
                     // Only call onFreshData if we already returned the stale cache
                     // If oldStr is null, we are returning freshData immediately anyway.
@@ -21,7 +26,7 @@ export async function withCache<T>(
                 }
             }
         } catch (e) {
-            console.warn('[CacheManager] Error saving to cache', e);
+            console.warn('[CacheManager] JSON stringify error', e);
         }
         return freshData;
     });

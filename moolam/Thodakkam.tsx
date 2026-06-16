@@ -20,6 +20,20 @@ const updateSW = registerSW({
   },
 })
 
+// Global fix for stuck ripples on touch devices and desktop clicks
+document.addEventListener('pointerup', (e) => {
+  const target = e.target as HTMLElement;
+  const button = target.closest('button, [role="button"], a, .MuiButtonBase-root');
+  if (button) {
+    // Delay blur slightly to allow the ripple animation to start fading out naturally
+    setTimeout(() => {
+      if (document.activeElement === button || button.contains(document.activeElement)) {
+        (document.activeElement as HTMLElement).blur();
+      }
+    }, 250); 
+  }
+}, { passive: true });
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <LanguageProvider>

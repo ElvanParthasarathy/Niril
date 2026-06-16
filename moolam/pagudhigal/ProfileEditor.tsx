@@ -706,7 +706,7 @@ export default function Amaippugal({ onSaved }) {
                 <>
                   <Box sx={{ position: 'relative' }}>
                     <img src={profile.logo} alt="Logo" style={{ height: `${profile.logoHeight || 48}px`, maxWidth: '180px', objectFit: 'contain' }} />
-                    <IconButton size="small" color="error" onClick={() => removeImage('logo')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
+                    <IconButton size="small" color="error" onClick={() => removeImage('logo')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '@media (hover: hover)': { '&:hover': { bgcolor: 'error.light' } } }}>
                       <Trash size={20} weight="fill" sx={{ fontSize: 14 }} />
                     </IconButton>
                   </Box>
@@ -736,7 +736,7 @@ export default function Amaippugal({ onSaved }) {
                 <>
                   <Box sx={{ position: 'relative' }}>
                     <img src={profile.signature} alt="Signature" style={{ maxHeight: '100px', maxWidth: '200px', objectFit: 'contain' }} />
-                    <IconButton size="small" color="error" onClick={() => removeImage('signature')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
+                    <IconButton size="small" color="error" onClick={() => removeImage('signature')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '@media (hover: hover)': { '&:hover': { bgcolor: 'error.light' } } }}>
                       <Trash size={20} weight="fill" sx={{ fontSize: 14 }} />
                     </IconButton>
                   </Box>
@@ -846,7 +846,7 @@ export default function Amaippugal({ onSaved }) {
                   borderWidth: language === opt.id ? 2 : 1,
                   borderColor: language === opt.id ? 'primary.main' : 'divider',
                   bgcolor: language === opt.id ? 'primary.50' : 'background.paper',
-                  '&:hover': { bgcolor: language === opt.id ? 'primary.50' : 'action.hover' }
+                  '@media (hover: hover)': { '&:hover': { bgcolor: language === opt.id ? 'primary.50' : 'action.hover' } }
                 }}
               >
                 <Typography variant="subtitle2" style={{ fontWeight: 'bold' }} gutterBottom color={language === opt.id ? 'primary.main' : 'text.primary'}>
@@ -1452,7 +1452,7 @@ export default function Amaippugal({ onSaved }) {
             aria-label="save" 
             onClick={handleSave}
             disabled={saving}
-            sx={{ position: 'fixed', bottom: 24, right: 24, zIndex: 1000 }}
+            sx={{ position: 'fixed', bottom: 'calc(env(safe-area-inset-bottom, 0px) + 95px)', right: 20, zIndex: 1000 }}
           >
             <FloppyDisk size={20} weight="fill" />
           </Fab>

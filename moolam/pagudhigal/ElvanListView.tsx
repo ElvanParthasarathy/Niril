@@ -306,11 +306,11 @@ export default function ElvanListView<T extends { id: string }>(props: ElvanList
           )}
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button disabled={!!progress} onClick={() => setCopyConfirmOpen(false)} color="inherit" sx={{ borderRadius: '50px', textTransform: 'none', px: 3 }}>
+          <Button disabled={!!progress} onClick={() => setCopyConfirmOpen(false)} color="inherit" sx={{ borderRadius: '50px', textTransform: 'none', px: 3, whiteSpace: 'nowrap' }}>
             {t('cancel') || 'Cancel'}
           </Button>
-          <Button disabled={!!progress} onClick={executeCopy} variant="contained" color="primary" sx={{ borderRadius: '50px', textTransform: 'none', px: 3, boxShadow: 'none' }}>
-            {t('saveDuplicate') || 'Save (Duplicate)'}
+          <Button disabled={!!progress} onClick={executeCopy} variant="contained" color="primary" sx={{ borderRadius: '50px', textTransform: 'none', px: 3, boxShadow: 'none', whiteSpace: 'nowrap' }}>
+            {t('copy') || 'Copy'}
           </Button>
         </DialogActions>
       </Dialog>

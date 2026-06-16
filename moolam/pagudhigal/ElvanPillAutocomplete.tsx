@@ -98,9 +98,9 @@ export default function ElvanPillAutocomplete({
                 padding: '4px !important',
                 borderRadius: '50% !important',
                 color: 'text.secondary',
-                '&:hover': {
+                '@media (hover: hover)': { '&:hover': {
                   backgroundColor: 'rgba(128, 128, 128, 0.1) !important',
-                },
+                } },
                 '& .MuiSvgIcon-root': {
                   color: 'inherit',
                   fontSize: '1.25rem',

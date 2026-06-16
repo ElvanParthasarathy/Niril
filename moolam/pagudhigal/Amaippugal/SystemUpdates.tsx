@@ -107,7 +107,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
           <Button onClick={() => setCacheDialogOpen(false)} sx={{ color: 'text.secondary', fontWeight: 600, borderRadius: 2, fontSize: '0.875rem', textTransform: 'none' }}>
             {t('cancel') !== 'cancel' ? t('cancel') : 'Cancel'}
           </Button>
-          <Button onClick={handleClearCache} variant="contained" disableElevation sx={{ bgcolor: 'black', color: 'white', borderRadius: 2, px: 3, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none', '&:hover': { bgcolor: '#333' } }}>
+          <Button onClick={handleClearCache} variant="contained" disableElevation sx={{ bgcolor: 'black', color: 'white', borderRadius: 2, px: 3, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none', '@media (hover: hover)': { '&:hover': { bgcolor: '#333' } } }}>
             {t('clearCacheBtn') !== 'clearCacheBtn' ? t('clearCacheBtn') : 'Clear'}
           </Button>
         </DialogActions>
@@ -123,7 +123,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
           <Button onClick={() => setSignOutDialogOpen(false)} sx={{ color: 'text.secondary', fontWeight: 600, borderRadius: 2, fontSize: '0.875rem', textTransform: 'none' }}>
             {t('cancel') !== 'cancel' ? t('cancel') : 'Cancel'}
           </Button>
-          <Button onClick={handleSignOut} variant="contained" disableElevation sx={{ bgcolor: 'black', color: 'white', borderRadius: 2, px: 3, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none', '&:hover': { bgcolor: '#333' } }}>
+          <Button onClick={handleSignOut} variant="contained" disableElevation sx={{ bgcolor: 'black', color: 'white', borderRadius: 2, px: 3, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none', '@media (hover: hover)': { '&:hover': { bgcolor: '#333' } } }}>
             {t('signOutBtn') !== 'signOutBtn' ? t('signOutBtn') : 'Sign Out'}
           </Button>
         </DialogActions>
@@ -187,7 +187,7 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
             onClick={handleEraseApp} 
             variant="contained" 
             disableElevation
-            sx={{ bgcolor: 'black', color: 'white', borderRadius: '50px', px: 4, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none', '&:hover': { bgcolor: '#333' } }}
+            sx={{ bgcolor: 'black', color: 'white', borderRadius: '50px', px: 4, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none', '@media (hover: hover)': { '&:hover': { bgcolor: '#333' } } }}
             startIcon={erasing ? <CircularProgress size={16} color="inherit" /> : undefined}
           >
             {erasing ? (t('erasing') !== 'erasing' ? t('erasing') : 'Erasing...') : (t('eraseDataBtn') !== 'eraseDataBtn' ? t('eraseDataBtn') : 'Erase')}

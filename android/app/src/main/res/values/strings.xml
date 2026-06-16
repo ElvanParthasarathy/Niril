@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Elvan Niril</string>
+    <string name="title_activity_main">Elvan Niril</string>
+    <string name="package_name">com.elvan.niril</string>
+    <string name="custom_url_scheme">com.elvan.niril</string>
+</resources>

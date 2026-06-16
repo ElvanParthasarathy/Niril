@@ -213,7 +213,7 @@ export default function VanigarThirai({ show, onClose, onSave, client, isEditing
         <Button variant="outlined" color="inherit" onClick={onClose} sx={{ height: 42, borderRadius: '50px', textTransform: 'none', px: 3, whiteSpace: 'nowrap' }}>
           {t('cancelModalBtn')}
         </Button>
-        <Button variant="contained" onClick={handleSave} sx={{ height: 42, borderRadius: '50px', textTransform: 'none', px: 3, bgcolor: '#0f172a', color: 'white', '&:hover': { bgcolor: '#1e293b' }, whiteSpace: 'nowrap' }}>
+        <Button variant="contained" onClick={handleSave} sx={{ height: 42, borderRadius: '50px', textTransform: 'none', px: 3, bgcolor: '#0f172a', color: 'white', '@media (hover: hover)': { '&:hover': { bgcolor: '#1e293b' } }, whiteSpace: 'nowrap' }}>
           {isEditing ? t('updateClientModalBtn') : t('saveClientModalBtn')}
         </Button>
       </DialogActions>

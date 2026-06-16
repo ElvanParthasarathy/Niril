@@ -7,10 +7,11 @@ import { useLanguage } from '../../../mozhi/LanguageContext';
 import { en } from '../../../mozhi/en';
 import { ta } from '../../../mozhi/ta';
 import { formatCurrency, numberToWords, getCountryConfig, getDynamicField, getBilingualStateName, getBilingualCountryName } from '../../../Payanpadu';
-import { Box, Paper } from '@mui/material';
+import { Box, Paper, useTheme, useMediaQuery } from '@mui/material';
 import { ViewHeader } from '../../ViewHeader';
 import { thagaval } from '../../Thagaval';
 import '../../CoolieBill/print.css';
+import { usePinchZoom } from '../../../hooks/usePinchZoom';
 
 const IconPhone = ({ size = 14, className = '', style = {} }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} style={style}>
@@ -34,6 +35,13 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
   const printRef = useRef(null);
   const [sharing, setSharing] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const initialScale = typeof window !== 'undefined' ? Math.min((window.innerWidth - 32) / 793.7, 1) : 0.43;
+  const mbPercent = (1 - initialScale) * 141;
+
+  const { wrapperRef, contentRef, scale } = usePinchZoom({ minScale: 1, maxScale: 4 });
 
   // Dynamic logo layout states
   const [logoX, setLogoX] = useState(profile?.wideLogoX || 0);
@@ -305,24 +313,35 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
 
 
 
-      <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4 }}>
-        <Paper elevation={3} className="invoice-paper print-wrapper" sx={{ 
-          p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto', bgcolor: 'white', color: 'black',
-          zoom: { xs: 0.43, sm: 0.7, md: 0.85, lg: 1 },
-          '@supports not (zoom: 1)': {
-            transformOrigin: 'top center',
-            transform: { xs: 'scale(0.43)', sm: 'scale(0.7)', md: 'scale(0.85)', lg: 'none' },
-            mb: { xs: '-55%', sm: '-25%', md: '-10%', lg: 0 }
-          },
-          '@media print': { 
-            zoom: '1 !important', 
-            transform: 'none !important',
-            mb: '0 !important',
-            boxShadow: 'none !important',
-            bgcolor: 'white !important',
-            color: 'black !important'
-          }
-        }}>
+      <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4, width: '100%' }}>
+        <div ref={isMobile ? wrapperRef : null} style={isMobile ? { width: "100%", overflow: "hidden", touchAction: "none", display: "flex", justifyContent: "center", padding: "0 16px", boxSizing: "border-box" } : { width: '100%', display: 'flex', justifyContent: 'center' }}>
+          <div ref={isMobile ? contentRef : null} style={isMobile ? { transformOrigin: "top center", width: "100%" } : {}}>
+            <Paper elevation={isMobile ? 8 : 3} className="invoice-paper print-wrapper" sx={{ 
+              p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto', bgcolor: 'white', color: 'black',
+              ...(isMobile ? {
+                zoom: 'none',
+                transformOrigin: 'top left',
+                transform: `scale(${initialScale})`,
+                mb: `-${mbPercent}%`,
+                borderRadius: '12px'
+              } : {
+                zoom: { xs: 0.43, sm: 0.7, md: 0.85, lg: 1 },
+                '@supports not (zoom: 1)': {
+                  transformOrigin: 'top center',
+                  transform: { xs: 'scale(0.43)', sm: 'scale(0.7)', md: 'scale(0.85)', lg: 'none' },
+                  mb: { xs: '-55%', sm: '-25%', md: '-10%', lg: 0 }
+                }
+              }),
+              '@media print': { 
+                zoom: '1 !important', 
+                transform: 'none !important',
+                mb: '0 !important',
+                boxShadow: 'none !important',
+                bgcolor: 'white !important',
+                color: 'black !important',
+                borderRadius: '0 !important'
+              }
+            }}>
           <div ref={printRef} className="print-area">
           <style>{`
           .receipt-box { width: 210mm; height: 297mm; max-height: 297mm; box-sizing: border-box; margin: 0 auto; border: 2px solid #e2e8f0; border-radius: 8px; background: white; display: flex; flex-direction: column; overflow: hidden; }
@@ -524,7 +543,9 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
               })()}
             </div>
           </div>
-        </Paper>
+            </Paper>
+          </div>
+        </div>
       </Box>
     </Box>
   );

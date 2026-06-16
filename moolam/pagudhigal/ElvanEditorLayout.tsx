@@ -70,8 +70,8 @@ export default function ElvanEditorLayout({
     if (leftTarget && rightTarget) {
       renderHeader = (
         <>
-          {createPortal(titleElement, leftTarget)}
-          {createPortal(backButtonElement, rightTarget)}
+          {createPortal(backButtonElement, leftTarget)}
+          {createPortal(titleElement, rightTarget)}
         </>
       );
     }
@@ -103,7 +103,7 @@ export default function ElvanEditorLayout({
           variant="contained" 
           disableElevation 
           onClick={handleBackClick} 
-          sx={{ height: 40, minHeight: 40, maxHeight: 40, px: 3, borderRadius: '50px', bgcolor: 'background.paper', color: 'text.primary', '&:hover': { bgcolor: 'action.hover' } }}
+          sx={{ height: 40, minHeight: 40, maxHeight: 40, px: 3, borderRadius: '50px', bgcolor: 'background.paper', color: 'text.primary', '@media (hover: hover)': { '&:hover': { bgcolor: 'action.hover' } } }}
         >
           {t('cancelModalBtn') || 'Cancel'}
         </Button>
@@ -128,7 +128,7 @@ export default function ElvanEditorLayout({
           sx={{
             display: { xs: 'flex', md: 'none' },
             position: 'fixed',
-            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 40px)',
+            bottom: 'calc(env(safe-area-inset-bottom, 0px) + 95px)',
             right: 20,
             minWidth: 56,
             width: 56,

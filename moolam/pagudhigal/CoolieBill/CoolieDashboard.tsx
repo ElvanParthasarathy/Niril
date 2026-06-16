@@ -18,44 +18,65 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchMode
   const [stats, setStats] = useState({ overallTotal: 0, byCompany: {}, count: 0 });
   const [isLoading, setIsLoading] = useState(true);
 
-  const loadData = async () => {
-    setIsLoading(true);
-    try {
-      const [allBills, allProfiles] = await Promise.all([
-        getAllCoolieBills(),
-        getAllCoolieProfiles()
-      ]);
-      setBills(allBills || []);
-      setProfiles(allProfiles || []);
-
-      let overallTotal = 0;
-      const byCompany = {};
-      
-      for (const p of allProfiles || []) {
-        byCompany[p.id] = { name: p.shortBusinessName || p.name, total: 0, count: 0 };
-      }
-
-      for (const b of allBills || []) {
-        const amount = Number(b.grand_total || 0);
-        overallTotal += amount;
-        if (b.company_id && byCompany[b.company_id]) {
-          byCompany[b.company_id].total += amount;
-          byCompany[b.company_id].count += 1;
-        } else if (b.company_id) {
-          byCompany[b.company_id] = { name: 'Unknown', total: amount, count: 1 };
-        }
-      }
-
-      setStats({ overallTotal, byCompany, count: (allBills || []).length });
-    } catch {
-      thagaval('Failed to load coolie dashboard', 'error');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadData();
+    let unsubs = [];
+    
+    const initRealtime = async () => {
+      setIsLoading(true);
+      try {
+        let currentBills = [];
+        let currentProfiles = [];
+
+        const computeStats = (allBills, allProfiles) => {
+          let overallTotal = 0;
+          const byCompany = {};
+          for (const p of allProfiles || []) {
+            byCompany[p.id] = { name: p.shortBusinessName || p.name, total: 0, count: 0 };
+          }
+          for (const b of allBills || []) {
+            const amount = Number(b.grand_total || 0);
+            overallTotal += amount;
+            if (b.company_id && byCompany[b.company_id]) {
+              byCompany[b.company_id].total += amount;
+              byCompany[b.company_id].count += 1;
+            } else if (b.company_id) {
+              byCompany[b.company_id] = { name: 'Unknown', total: amount, count: 1 };
+            }
+          }
+          setStats({ overallTotal, byCompany, count: (allBills || []).length });
+        };
+
+        const b = await getAllCoolieBills((fresh) => {
+          currentBills = fresh || [];
+          setBills(currentBills);
+          computeStats(currentBills, currentProfiles);
+        });
+        if (b && b.unsubscribe) unsubs.push(b.unsubscribe);
+        currentBills = b || [];
+        setBills(currentBills);
+
+        const p = await getAllCoolieProfiles((fresh) => {
+          currentProfiles = fresh || [];
+          setProfiles(currentProfiles);
+          computeStats(currentBills, currentProfiles);
+        });
+        if (p && p.unsubscribe) unsubs.push(p.unsubscribe);
+        currentProfiles = p || [];
+        setProfiles(currentProfiles);
+
+        computeStats(currentBills, currentProfiles);
+      } catch {
+        thagaval('Failed to load coolie dashboard', 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initRealtime();
+
+    return () => {
+      unsubs.forEach(unsub => unsub());
+    };
   }, []);
 
   const handleView = (bill) => {

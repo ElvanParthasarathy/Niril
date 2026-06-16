@@ -154,9 +154,9 @@ export default function PorulThoguppu({ onBack, onSaved, product, profileSetting
                       bgcolor: 'primary.main',
                       color: 'primary.contrastText',
                       boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                      '&:hover': {
+                      '@media (hover: hover)': { '&:hover': {
                         bgcolor: 'primary.dark',
-                      }
+                      } }
                     }
                   }
                 }}

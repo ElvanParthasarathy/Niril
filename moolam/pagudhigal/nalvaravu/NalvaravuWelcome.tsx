@@ -174,7 +174,7 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
                                             py: 2, 
                                             px: 3,
                                             bgcolor: 'transparent',
-                                            '&:hover': { bgcolor: 'transparent' }
+                                            '@media (hover: hover)': { '&:hover': { bgcolor: 'transparent' } }
                                         }}
                                         disableRipple
                                     >
@@ -204,7 +204,7 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
                                             py: 2, 
                                             px: 3,
                                             bgcolor: 'transparent',
-                                            '&:hover': { bgcolor: 'transparent' }
+                                            '@media (hover: hover)': { '&:hover': { bgcolor: 'transparent' } }
                                         }}
                                         disableRipple
                                     >
@@ -310,7 +310,7 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
                                             py: 2, 
                                             px: 3,
                                             bgcolor: 'transparent',
-                                            '&:hover': { bgcolor: 'transparent' }
+                                            '@media (hover: hover)': { '&:hover': { bgcolor: 'transparent' } }
                                         }}
                                         disableRipple
                                     >
@@ -340,7 +340,7 @@ export default function NalvaravuWelcome({ onContinue }: { onContinue: () => voi
                                             py: 2, 
                                             px: 3,
                                             bgcolor: 'transparent',
-                                            '&:hover': { bgcolor: 'transparent' }
+                                            '@media (hover: hover)': { '&:hover': { bgcolor: 'transparent' } }
                                         }}
                                         disableRipple
                                     >

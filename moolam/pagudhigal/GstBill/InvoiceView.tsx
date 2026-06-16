@@ -11,10 +11,10 @@ import { useLanguage } from '../../mozhi/LanguageContext';
 import { formatCurrency, INVOICE_TYPES } from '../../Payanpadu';
 import { getInvoiceDisplayOptions } from '../../Avanam';
 import { Box, Paper } from '@mui/material';
+import { usePinchZoom } from '../../hooks/usePinchZoom';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { ViewHeader } from '../ViewHeader';
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate }) {
   const { t } = useLanguage();
@@ -24,7 +24,10 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
   
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const [isZoomedOut, setIsZoomedOut] = useState(true);
+    const initialScale = typeof window !== 'undefined' ? Math.min((window.innerWidth - 32) / 793.7, 1) : 0.43;
+    const mbPercent = (1 - initialScale) * 141;
+
+  const { wrapperRef, contentRef, scale } = usePinchZoom({ minScale: 1, maxScale: 4 });
 
   useEffect(() => {
     const savedLocal = localStorage.getItem('elvanniril_invoiceOptions');
@@ -246,35 +249,15 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
       {/* Centered Preview Container */}
       <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4, width: '100%' }}>
         {isMobile ? (
-          <TransformWrapper
-            initialScale={1}
-            minScale={1}
-            maxScale={3}
-            centerOnInit={true}
-            
-            
-            limitToBounds={true}
-            panning={{ disabled: isZoomedOut }}
-            onTransformed={(ref) => {
-                const zoomedOut = ref.state.scale <= 1.05;
-                if (zoomedOut !== isZoomedOut) {
-                    setIsZoomedOut(zoomedOut);
-                }
-            }}
-            onInit={(ref) => {
-                const zoomedOut = ref.state.scale <= 1.05;
-                if (zoomedOut !== isZoomedOut) {
-                    setIsZoomedOut(zoomedOut);
-                }
-            }}
-          >
-            <TransformComponent wrapperStyle={{ width: "100%" }}>
-              <Paper elevation={3} className="invoice-paper print-wrapper" sx={{ 
+          <div ref={wrapperRef} style={{ width: "100%", overflow: "hidden", touchAction: "none", display: "flex", justifyContent: "center", padding: "0 16px", boxSizing: "border-box" }}>
+            <div ref={contentRef} style={{ transformOrigin: "top center", width: "100%" }}>
+              <Paper elevation={8} className="invoice-paper print-wrapper" sx={{ 
                                 p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto',
                                 zoom: 'none',
-                                transformOrigin: 'top center',
-                                transform: 'scale(0.43)',
-                                mb: '-57%'
+                                  transformOrigin: 'top left',
+                                  transform: `scale(${initialScale})`,
+                                  mb: `-${mbPercent}%`,
+                                  borderRadius: '12px',
                             }}>
                 {(() => {
                   const mergedOptions = { ...displayOptions, ...invoiceOptions };
@@ -289,8 +272,8 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
                   );
                 })()}
               </Paper>
-            </TransformComponent>
-          </TransformWrapper>
+            </div>
+          </div>
         ) : (
           <Paper elevation={3} className="invoice-paper print-wrapper" sx={{ 
             p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto',

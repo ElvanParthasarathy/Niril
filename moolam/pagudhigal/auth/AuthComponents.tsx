@@ -57,11 +57,11 @@ export const AuthInput = ({ label, value, onChange, type = "text", placeholder, 
                         overflow: 'hidden',
                         transition: 'all 0.2s ease',
                         boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
-                        '&:hover': {
+                        '@media (hover: hover)': { '&:hover': {
                             backgroundColor: 'var(--auth-input-bg)',
                             filter: 'brightness(0.98)',
                             boxShadow: '0 6px 20px rgba(0, 0, 0, 0.12)'
-                        },
+                        } },
                         '&.Mui-focused': {
                             backgroundColor: 'var(--auth-input-bg)',
                             filter: 'brightness(0.98)',
@@ -133,10 +133,10 @@ export const AuthButton = ({ children, onClick, disabled, loading, secondary, cl
                 borderColor: 'var(--auth-text)',
                 color: 'var(--auth-text)',
                 backgroundColor: 'transparent',
-                '&:hover': {
+                '@media (hover: hover)': { '&:hover': {
                     borderColor: 'var(--auth-text)',
                     backgroundColor: 'rgba(128, 128, 128, 0.08)'
-                }
+                } }
             })
         }}
     >

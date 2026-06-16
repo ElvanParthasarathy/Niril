@@ -22,20 +22,27 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
   const profileCountry = profile?.country || 'India';
   const profileCurrency = getCountryConfig(profileCountry).currency;
 
-  const loadProducts = async () => {
-    setIsLoading(true);
-    try {
-      const data = await getAllProducts(setProducts);
-      setProducts(data);
-    } catch {
-      thagaval(t('failedToLoadProductsToast') || 'Failed to load products', 'error');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadProducts();
+    let unsubs = [];
+
+    const initRealtime = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getAllProducts(setProducts);
+        if (data && data.unsubscribe) unsubs.push(data.unsubscribe);
+        setProducts(data || []);
+      } catch {
+        thagaval(t('failedToLoadProductsToast') || 'Failed to load products', 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initRealtime();
+
+    return () => {
+      unsubs.forEach(unsub => unsub());
+    };
   }, []);
 
   const filterFn = (p, search) => {
@@ -57,7 +64,6 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
         if (onProgress) onProgress(count, ids.length);
       }
       thagaval(t('deletedSuccessfully') || 'Deleted successfully', 'success');
-      loadProducts();
     } catch (e) {
       thagaval(t('errorDeleting') || 'Error deleting', 'error');
     }
@@ -76,7 +82,6 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
         count++;
         if (onProgress) onProgress(count, selected.length);
       }
-      loadProducts();
       thagaval(t('productsDuplicatedSuccess') || 'Products duplicated successfully', 'success');
     } catch (e) {
       thagaval(t('errorDuplicating') || 'Error duplicating', 'error');
@@ -226,9 +231,9 @@ export default function Porul({ onAddProduct, onEditProduct, profile }) {
               bgcolor: 'background.paper',
               color: 'text.primary',
               boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-              '&:hover': {
+              '@media (hover: hover)': { '&:hover': {
                 bgcolor: 'background.paper',
-              }
+              } }
             }
           }
         }}

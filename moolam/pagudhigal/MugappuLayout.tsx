@@ -59,7 +59,7 @@ export default function MugappuLayout({
               bgcolor: isDark ? '#333' : '#eee', color: isDark ? '#fff' : '#000', 
               fontWeight: 'bold', cursor: 'pointer', fontSize: { xs: '1.5rem', sm: '1.25rem' },
               transition: 'all 0.2s ease',
-              '&:hover': { transform: 'scale(1.05)', filter: isDark ? 'brightness(1.1)' : 'brightness(0.95)' },
+              '@media (hover: hover)': { '&:hover': { transform: 'scale(1.05)', filter: isDark ? 'brightness(1.1)' : 'brightness(0.95)' } },
               '&:active': { transform: 'scale(0.95)' }
             }}
           >
@@ -87,7 +87,7 @@ export default function MugappuLayout({
             fontWeight: 700,
             textTransform: 'none',
             boxShadow: 'none',
-            '&:hover': { bgcolor: isDark ? '#e5e5e5' : '#333', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' } 
+            '@media (hover: hover)': { '&:hover': { bgcolor: isDark ? '#e5e5e5' : '#333', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' } } 
           }}>
           + {t('newInvoice')}
         </Button>
@@ -99,7 +99,7 @@ export default function MugappuLayout({
       </Box>
 
       {/* Recent Activity Area */}
-      <Paper elevation={0} sx={{ borderRadius: '24px', overflow: 'hidden', bgcolor: 'transparent' }}>
+      <Box sx={{ borderRadius: '24px', overflow: 'hidden' }}>
         <Box sx={{ px: 0, pt: { xs: 1, md: 2 }, pb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="h6" sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', ml: 1.5 }}>
             {recentActivityTitle}
@@ -107,7 +107,7 @@ export default function MugappuLayout({
           <Button 
             onClick={onViewAll} 
             endIcon={<CaretRight size={16} weight="regular" />}
-            sx={{ fontWeight: 600, color: 'text.secondary', textTransform: 'none', '&:hover': { color: 'text.primary', bgcolor: 'transparent' }, mr: 1.5 }}
+            sx={{ fontWeight: 600, color: 'text.secondary', textTransform: 'none', '@media (hover: hover)': { '&:hover': { color: 'text.primary', bgcolor: 'transparent' } }, mr: 1.5 }}
             disableRipple
           >
             {t('seeAll')}
@@ -141,7 +141,7 @@ export default function MugappuLayout({
             {recentItems.map((item, index) => renderRecentItem(item, index))}
           </Box>
         )}
-      </Paper>
+      </Box>
     </Box>
   );
 }

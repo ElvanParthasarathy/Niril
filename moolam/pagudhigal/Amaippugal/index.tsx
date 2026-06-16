@@ -306,7 +306,7 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
              display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: 'var(--mac-selection-hover)',
              cursor: 'pointer',
              transition: 'transform 0.2s, background-color 0.2s',
-             '&:hover': { transform: 'scale(1.05)', bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)' },
+             '@media (hover: hover)': { '&:hover': { transform: 'scale(1.05)', bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.08)' } },
              '&:active': { transform: 'scale(0.95)' }
           }}>
              {appMode === 'COOLIE' ? (
@@ -453,16 +453,17 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
                   key={currentView}
                   sx={{
                     position: 'fixed',
-                    top: '64px',
-                    left: '12px',
-                    right: '12px',
-                    bottom: '12px',
-                    borderRadius: '24px',
-                    bgcolor: 'background.default',
+                    top: 'calc(64px + env(safe-area-inset-top, 0px))',
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    borderRadius: 0,
+                    bgcolor: (theme) => theme.palette.mode === 'dark' ? '#000000' : '#F3F4F6',
                     zIndex: 50,
                     overflowY: 'auto',
                     overscrollBehavior: 'contain',
-                    padding: '24px 0 calc(24px + env(safe-area-inset-bottom, 0px))'
+                    padding: '8px 12px calc(80px + env(safe-area-inset-bottom, 0px)) 12px',
+                    boxShadow: 'none'
                   }}
                 >
                   {renderDetailView()}

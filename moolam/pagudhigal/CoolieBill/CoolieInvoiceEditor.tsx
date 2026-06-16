@@ -620,7 +620,7 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                   sx={{ 
                     bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.hover' : 'background.paper',
                     color: 'text.secondary',
-                    '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'error.light', color: (theme) => theme.palette.mode === 'dark' ? 'error.main' : 'error.main' }
+                    '@media (hover: hover)': { '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'error.light', color: (theme) => theme.palette.mode === 'dark' ? 'error.main' : 'error.main' } }
                   }}
                 >
                   <Trash size={20} weight="regular" />
@@ -759,7 +759,7 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                 py: 1,
                 boxShadow: 'none',
                 border: 'none',
-                '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'rgba(0,0,0,0.04)' }
+                '@media (hover: hover)': { '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'rgba(0,0,0,0.04)' } }
               }}
             >
               {t('addAnotherItem') || 'Add Item'}
@@ -778,7 +778,7 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                   py: 1,
                   boxShadow: 'none',
                   border: 'none',
-                  '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'rgba(0,0,0,0.04)' }
+                  '@media (hover: hover)': { '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'rgba(0,0,0,0.04)' } }
                 }}
               >
                 {t('addOtherCharges') || 'Add Other Charges'}
@@ -800,7 +800,7 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                   sx={{ 
                     bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.hover' : 'background.paper',
                     color: 'text.secondary',
-                    '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'error.light', color: (theme) => theme.palette.mode === 'dark' ? 'error.main' : 'error.main' }
+                    '@media (hover: hover)': { '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'error.light', color: (theme) => theme.palette.mode === 'dark' ? 'error.main' : 'error.main' } }
                   }}
                 >
                   <Trash size={20} weight="regular" />
@@ -850,7 +850,7 @@ export default function CoolieInvoiceEditor({ onBack, onSaved, existingBill, onR
                   py: 1,
                   boxShadow: 'none',
                   border: 'none',
-                  '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'rgba(0,0,0,0.04)' }
+                  '@media (hover: hover)': { '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'rgba(0,0,0,0.04)' } }
                 }}
               >
                 {t('addOtherCharges') || 'Add Other Charges'}

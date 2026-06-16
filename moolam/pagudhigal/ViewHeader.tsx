@@ -58,7 +58,7 @@ export const ViewHeader = ({ onEdit, onPrint, onPDF, onShare, saving, sharing = 
       sx={{
         display: { xs: 'flex', md: 'none' },
         position: 'fixed',
-        bottom: 'calc(env(safe-area-inset-bottom, 0px) + 40px)',
+        bottom: 'calc(env(safe-area-inset-bottom, 0px) + 95px)',
         right: 20,
         minWidth: 56,
         width: 56,
@@ -80,8 +80,8 @@ export const ViewHeader = ({ onEdit, onPrint, onPDF, onShare, saving, sharing = 
     if (leftTarget && rightTarget) {
       return (
         <>
-          {createPortal(toolsPill, leftTarget)}
-          {createPortal(backBtn, rightTarget)}
+          {createPortal(backBtn, leftTarget)}
+          {createPortal(toolsPill, rightTarget)}
           {mobileEditFab}
         </>
       );

@@ -58,7 +58,7 @@ export default function BrandingSettings({
               <>
                 <Box sx={{ position: 'relative' }}>
                   <img src={formData.signature} alt="Signature" style={{ maxHeight: '100px', maxWidth: '200px', objectFit: 'contain' }} />
-                  <IconButton size="small" color="error" onClick={() => setFormData(prev => ({ ...prev, signature: '' }))} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
+                  <IconButton size="small" color="error" onClick={() => setFormData(prev => ({ ...prev, signature: '' }))} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '@media (hover: hover)': { '&:hover': { bgcolor: 'error.light' } } }}>
                     <Trash size={20} weight="fill" sx={{ fontSize: 14 }} />
                   </IconButton>
                 </Box>

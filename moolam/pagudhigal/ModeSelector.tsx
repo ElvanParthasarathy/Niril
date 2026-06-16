@@ -11,20 +11,21 @@ export default function ModeSelector({ onSelect, currentMode }) {
   const darkMode = true; // Always lock to dark mode for a cinematic, premium entry screen
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [mounted, setMounted] = useState(false);
+  const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   const handleSelect = (mode) => {
-    setMounted(false);
+    setIsFadingOut(true);
     setTimeout(() => {
       onSelect(mode);
     }, 400); // Wait for fade out animation
   };
 
   return (
-    <Fade in={mounted} timeout={800}>
+    <>
       <Box
         sx={{
           position: 'fixed',
@@ -40,19 +41,21 @@ export default function ModeSelector({ onSelect, currentMode }) {
           overflow: 'hidden',
           px: 2,
           zIndex: 99999,
+          opacity: isFadingOut ? 0 : 1,
+          transition: 'opacity 0.4s ease-out',
         }}
       >
         <Zoom in={mounted} timeout={1000}>
-          <Box sx={{ textAlign: 'center', mb: { xs: 4, sm: 8 } }}>
+          <Box sx={{ textAlign: 'center', mb: { xs: 3, sm: 8 } }}>
             <Typography
               variant="h3"
               sx={{
-                fontSize: { xs: '2rem', sm: '3rem' },
+                fontSize: { xs: '1.6rem', sm: '3rem' },
                 fontWeight: 800,
                 color: darkMode ? '#ffffff' : '#111827',
                 letterSpacing: '-0.02em',
                 lineHeight: 1.2,
-                mb: 1.5,
+                mb: 1,
               }}
             >
               {t('whoIsWorkingToday')}
@@ -60,7 +63,7 @@ export default function ModeSelector({ onSelect, currentMode }) {
             <Typography
               variant="subtitle1"
               sx={{
-                fontSize: { xs: '0.95rem', sm: '1.25rem' },
+                fontSize: { xs: '0.85rem', sm: '1.25rem' },
                 fontWeight: 500,
                 color: darkMode ? '#9ca3af' : '#6b7280',
                 px: 2,
@@ -94,7 +97,7 @@ export default function ModeSelector({ onSelect, currentMode }) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  '&:hover': {
+                  '@media (hover: hover)': { '&:hover': {
                     transform: 'scale(1.05) translateY(-8px)',
                     '& .icon-box': {
                       boxShadow: darkMode 
@@ -105,7 +108,7 @@ export default function ModeSelector({ onSelect, currentMode }) {
                     '& .card-text': {
                       color: darkMode ? '#ffffff' : '#111827',
                     }
-                  },
+                  } },
                 }}
               >
                 <Box
@@ -166,7 +169,7 @@ export default function ModeSelector({ onSelect, currentMode }) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  '&:hover': {
+                  '@media (hover: hover)': { '&:hover': {
                     transform: 'scale(1.05) translateY(-8px)',
                     '& .icon-box': {
                       boxShadow: darkMode 
@@ -177,7 +180,7 @@ export default function ModeSelector({ onSelect, currentMode }) {
                     '& .card-text': {
                       color: darkMode ? '#ffffff' : '#111827',
                     }
-                  },
+                  } },
                 }}
               >
                 <Box
@@ -217,6 +220,6 @@ export default function ModeSelector({ onSelect, currentMode }) {
           </Zoom>
         </Box>
       </Box>
-    </Fade>
+    </>
   );
 }

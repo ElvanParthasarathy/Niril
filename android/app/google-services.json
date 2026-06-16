@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "609507731846",
+    "firebase_url": "https://elvan-niril-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "elvan-niril",
+    "storage_bucket": "elvan-niril.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:609507731846:android:99fbdee178429bef696407",
+        "android_client_info": {
+          "package_name": "com.elvan.niril"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "609507731846-mg6g9d8rsagsvors5usr1vloebvnfl98.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8AYlOTBXisWwTMUfixn2YB1vxf5OGHpM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "609507731846-mg6g9d8rsagsvors5usr1vloebvnfl98.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:609507731846:android:d0af9bdc20e3dceb696407",
+        "android_client_info": {
+          "package_name": "com.elvan.niril.lite"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "609507731846-mg6g9d8rsagsvors5usr1vloebvnfl98.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8AYlOTBXisWwTMUfixn2YB1vxf5OGHpM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "609507731846-mg6g9d8rsagsvors5usr1vloebvnfl98.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

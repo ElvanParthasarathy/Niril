@@ -21,18 +21,20 @@ export default function CoolieInvoiceList({ onView, onNew }) {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const [b, p] = await Promise.all([
-        getAllCoolieBills(),
-        getAllCoolieProfiles()
-      ]);
-      const sortedBills = (b || []).sort((a, b) => {
-        const aMatch = String(a.bill_no || '').match(/\d+/);
-        const bMatch = String(b.bill_no || '').match(/\d+/);
-        const aNo = aMatch ? parseInt(aMatch[0], 10) : 0;
-        const bNo = bMatch ? parseInt(bMatch[0], 10) : 0;
-        return bNo - aNo;
-      });
-      setBills(sortedBills);
+      const b = await getAllCoolieBills();
+      const p = await getAllCoolieProfiles();
+
+      const sortBills = (billsArr) => {
+        return (billsArr || []).sort((a, b) => {
+          const aMatch = String(a.bill_no || '').match(/\d+/);
+          const bMatch = String(b.bill_no || '').match(/\d+/);
+          const aNo = aMatch ? parseInt(aMatch[0], 10) : 0;
+          const bNo = bMatch ? parseInt(bMatch[0], 10) : 0;
+          return bNo - aNo;
+        });
+      };
+
+      setBills(sortBills(b));
       setProfiles(p || []);
     } catch {
       thagaval(t('errorLoadingInvoices') || 'Failed to load invoices', 'error');
@@ -42,7 +44,40 @@ export default function CoolieInvoiceList({ onView, onNew }) {
   };
 
   useEffect(() => {
-    loadData();
+    let unsubs = [];
+
+    const sortBills = (billsArr) => {
+      return (billsArr || []).sort((a, b) => {
+        const aMatch = String(a.bill_no || '').match(/\d+/);
+        const bMatch = String(b.bill_no || '').match(/\d+/);
+        const aNo = aMatch ? parseInt(aMatch[0], 10) : 0;
+        const bNo = bMatch ? parseInt(bMatch[0], 10) : 0;
+        return bNo - aNo;
+      });
+    };
+
+    const initRealtime = async () => {
+      setIsLoading(true);
+      try {
+        const b = await getAllCoolieBills((fresh) => setBills(sortBills(fresh)));
+        if (b && b.unsubscribe) unsubs.push(b.unsubscribe);
+        setBills(sortBills(b));
+
+        const p = await getAllCoolieProfiles((fresh) => setProfiles(fresh || []));
+        if (p && p.unsubscribe) unsubs.push(p.unsubscribe);
+        setProfiles(p || []);
+      } catch (e) {
+        thagaval(t('errorLoadingInvoices') || 'Failed to load invoices', 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initRealtime();
+
+    return () => {
+      unsubs.forEach(unsub => unsub());
+    };
   }, []);
 
   // Tanglish Normalization Logic (from Kananam)
@@ -299,9 +334,9 @@ export default function CoolieInvoiceList({ onView, onNew }) {
               bgcolor: 'background.paper',
               color: 'text.primary',
               boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-              '&:hover': {
+              '@media (hover: hover)': { '&:hover': {
                 bgcolor: 'background.paper',
-              }
+              } }
             }
           }
         }}

@@ -19,25 +19,34 @@ export default function CoolieItems({ onAddProduct, onEditProduct }) {
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [confirmDialog, setConfirmDialog] = useState({ open: false, title: '', message: '', action: null as any });
 
-  const loadProducts = async () => {
-    setIsLoading(true);
-    try {
-      const [data, p] = await Promise.all([
-        getAllCoolieProducts(),
-        getAllCoolieProfiles()
-      ]);
-      setProducts(data || []);
-      if (p && p.length > 0) setCoolieProfile(p[0]);
-    } catch {
-      thagaval(t('failedToLoadProductsToast') || 'Failed to load products', 'error');
-    } finally {
-      setIsLoading(false);
-      setIsLoadingProfile(false);
-    }
-  };
-
   useEffect(() => {
-    loadProducts();
+    let unsubs = [];
+
+    const initRealtime = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getAllCoolieProducts((fresh) => setProducts(fresh || []));
+        if (data && data.unsubscribe) unsubs.push(data.unsubscribe);
+        setProducts(data || []);
+
+        const p = await getAllCoolieProfiles((fresh) => {
+          if (fresh && fresh.length > 0) setCoolieProfile(fresh[0]);
+        });
+        if (p && p.unsubscribe) unsubs.push(p.unsubscribe);
+        if (p && p.length > 0) setCoolieProfile(p[0]);
+      } catch {
+        thagaval(t('failedToLoadProductsToast') || 'Failed to load products', 'error');
+      } finally {
+        setIsLoading(false);
+        setIsLoadingProfile(false);
+      }
+    };
+
+    initRealtime();
+
+    return () => {
+      unsubs.forEach(unsub => unsub());
+    };
   }, []);
 
   const activeProfile = coolieProfile || {};
@@ -61,7 +70,6 @@ export default function CoolieItems({ onAddProduct, onEditProduct }) {
         if (onProgress) onProgress(count, ids.length);
       }
       thagaval(t('deletedSuccessfully') || 'Deleted successfully', 'success');
-      loadProducts();
     } catch (e) {
       thagaval(t('errorDeleting') || 'Error deleting', 'error');
     }
@@ -82,7 +90,6 @@ export default function CoolieItems({ onAddProduct, onEditProduct }) {
         count++;
         if (onProgress) onProgress(count, selected.length);
       }
-      loadProducts();
       thagaval(t('productsDuplicatedSuccess') || 'Products duplicated successfully', 'success');
     } catch (e) {
       thagaval(t('errorDuplicating') || 'Error duplicating', 'error');

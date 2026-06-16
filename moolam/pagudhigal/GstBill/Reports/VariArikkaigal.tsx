@@ -465,7 +465,7 @@ function StepList({ steps, title }: { steps: any[], title: string }) {
           <Box key={i} sx={{ borderBottom: i < steps.length - 1 ? '1px solid' : 'none', borderColor: 'divider' }}>
             <Box
               onClick={() => setExpanded(p => ({ ...p, [i]: !p[i] }))}
-              sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 2, cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
+              sx={{ display: 'flex', alignItems: 'center', gap: 1.5, p: 2, cursor: 'pointer', '@media (hover: hover)': { '&:hover': { bgcolor: 'action.hover' } } }}
             >
               <Box
                 component="button"
@@ -476,7 +476,7 @@ function StepList({ steps, title }: { steps: any[], title: string }) {
                   opacity: checked[i] ? 1 : 0.7,
                   width: 28, height: 28, borderRadius: '50%', border: 'none', cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  '&:hover': { opacity: 1, bgcolor: checked[i] ? 'success.light' : 'action.hover' }
+                  '@media (hover: hover)': { '&:hover': { opacity: 1, bgcolor: checked[i] ? 'success.light' : 'action.hover' } }
                 }}
               >
                 <CheckCircle size={20} weight="fill" sx={{ fontSize: 18 }} />
@@ -553,16 +553,9 @@ export default function VariArikkaigal({ profile }) {
   const yearOptions = [];
   for (let y = currentYear; y >= currentYear - 5; y--) yearOptions.push(y);
 
-  const loadData = async () => {
-    try {
-      const [b, e] = await Promise.all([getAllBills(setBills), getAllExpenses()]);
-      setBills(b); setExpenses(e);
-      // Purchases endpoint may not exist on older server versions
-      try { const pur = await getAllPurchases(); setPurchases(pur || []); } catch { /* ignore — older servers don't have this endpoint */ }
-    } catch { thagaval('Failed to load data', 'error'); }
-  };
-
   useEffect(() => {
+    let unsubs = [];
+
     const now = new Date();
     const fy = fyOptions[0];
     if (fy) setFyFilter(fy.value);
@@ -572,7 +565,25 @@ export default function VariArikkaigal({ profile }) {
     const m = now.getMonth();
     const q = QUARTERS.find(q => q.months.includes(m));
     if (q) setQuarterFilter(q.id);
-    loadData();
+
+    const initRealtime = async () => {
+      try {
+        const b = await getAllBills((fresh) => setBills(fresh || []));
+        if (b && b.unsubscribe) unsubs.push(b.unsubscribe);
+        setBills(b || []);
+
+        const e = await getAllExpenses();
+        setExpenses(e || []);
+        
+        try { const pur = await getAllPurchases(); setPurchases(pur || []); } catch { /* ignore — older servers don't have this endpoint */ }
+      } catch { thagaval('Failed to load data', 'error'); }
+    };
+
+    initRealtime();
+
+    return () => {
+      unsubs.forEach(unsub => unsub());
+    };
   }, []);
 
   // ========== Period filtering ==========
@@ -1184,7 +1195,7 @@ export default function VariArikkaigal({ profile }) {
   const paginatedBills = searchedBills.slice((safePage - 1) * itemsPerPage, safePage * itemsPerPage);
 
   return (
-    <Box sx={{ pt: { xs: 1.5, md: 4 }, pb: { xs: 0, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
+    <Box sx={{ pt: { xs: 3, md: 4 }, pb: { xs: 12, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
       {/* Page Header (Hidden on Mobile) */}
       <Box sx={{ mb: 4, display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <Box sx={{ ml: { xs: 0, md: 2 } }}>
@@ -1389,7 +1400,7 @@ export default function VariArikkaigal({ profile }) {
                 {search && <IconButton size="small" onClick={() => { setSearch(''); setPage(1); }}><X size={14} weight="regular" /></IconButton>}
               </Paper>
               <Tooltip title="Download Excel" placement="top">
-                <IconButton onClick={exportSimpleCSV} sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF', width: 48, height: 48, flexShrink: 0, transition: 'background 0.3s ease', '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.12)' : '#F5F5F5' } }}>
+                <IconButton onClick={exportSimpleCSV} sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.08)' : '#FFFFFF', width: 48, height: 48, flexShrink: 0, transition: 'background 0.3s ease', '@media (hover: hover)': { '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.12)' : '#F5F5F5' } } }}>
                   <DownloadSimple size={20} weight="fill" sx={{ fontSize: 20 }} />
                 </IconButton>
               </Tooltip>
@@ -2458,7 +2469,7 @@ export default function VariArikkaigal({ profile }) {
       )}
 
       <Box sx={{ mt: 6, mb: 2, textAlign: 'center' }}>
-        <Typography variant="caption" sx={{ opacity: 0.15, userSelect: 'none', transition: 'opacity 0.2s', '&:hover': { opacity: 0.5 } }}>
+        <Typography variant="caption" sx={{ opacity: 0.15, userSelect: 'none', transition: 'opacity 0.2s', '@media (hover: hover)': { '&:hover': { opacity: 0.5 } } }}>
           <a href="https://services.gst.gov.in/services/login" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>{t('gstPortalBtn')}</a>
         </Typography>
       </Box>

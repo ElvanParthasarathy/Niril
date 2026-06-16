@@ -37,7 +37,7 @@ export const getEditPaperSx = (isDark: boolean, isSelectionMode: boolean): SxPro
 
 export const getEditIconButtonSx = (isDark: boolean): SxProps<Theme> => ({
   width: 48, height: 48, 
-  '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' },
+  '@media (hover: hover)': { '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' } },
   '& .MuiTouchRipple-child': {
     backgroundColor: isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.2)',
   }
@@ -56,8 +56,14 @@ export const getAddButtonSx = (isDark: boolean): SxProps<Theme> => ({
   color: isDark ? 'black' : 'white', 
   fontWeight: 700, 
   boxShadow: 'none', 
-  '&:hover': { 
+  '@media (hover: hover)': { '&:hover': { 
     bgcolor: isDark ? '#e5e5e5' : '#333', 
     boxShadow: '0 4px 12px rgba(0,0,0,0.1)' 
+  } },
+  '@media (hover: none)': {
+    '@media (hover: hover)': { '&:hover': {
+      bgcolor: isDark ? 'white' : 'black',
+      boxShadow: 'none',
+    } }
   }
 });

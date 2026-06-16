@@ -390,7 +390,7 @@ const SjsTheme = React.forwardRef(({ profile = {}, client = {}, details = {}, it
           border: 1px solid #e2e8f0 !important;
           border-radius: 8px !important;
           overflow: hidden !important;
-          margin: 0 1.5rem 0.5rem !important;
+          margin: 0 0 0.5rem !important;
         }
         #invoice-preview .inv-table {
           border-collapse: separate !important;
@@ -433,32 +433,25 @@ const SjsTheme = React.forwardRef(({ profile = {}, client = {}, details = {}, it
           gap: 1.5rem !important;
         }
         #invoice-preview .inv-classic-header {
-          padding-left: 1.5rem;
-          padding-right: 1.5rem;
+          padding-left: 1.5rem !important;
+          padding-right: 1.5rem !important;
         }
         #invoice-preview .inv-parties {
-          margin-bottom: 0.5rem !important;
+          margin: 0 1.5rem 0.5rem 1.5rem !important;
         }
-          #invoice-preview .inv-classic-header {
-            padding-left: 1.5rem !important;
-            padding-right: 1.5rem !important;
-          }
-          #invoice-preview .inv-parties {
-            margin: 0 1.5rem 0.5rem 1.5rem !important;
-          }
-          #invoice-preview .unified-table-box {
-            margin: 0 1.5rem 0.5rem !important;
-          }
-          #invoice-preview .invoice-preview-signatures {
-            padding: 0 1.5rem !important;
-          }
-          #invoice-preview .inv-footer {
-            margin: 1.5rem 1.5rem 0.5rem !important;
-          }
-          #invoice-preview .inv-contact-block {
-            padding-left: 1.5rem !important;
-            padding-right: 1.5rem !important;
-          }
+        #invoice-preview .unified-table-box {
+          margin: 0 1.5rem 0.5rem !important;
+        }
+        #invoice-preview .invoice-preview-signatures {
+          padding: 0 1.5rem !important;
+        }
+        #invoice-preview .inv-footer {
+          margin: 1.5rem 1.5rem 0.5rem !important;
+        }
+        #invoice-preview .inv-contact-block {
+          padding-left: 1.5rem !important;
+          padding-right: 1.5rem !important;
+        }
       `}</style>
       {renderClassicHeader()}
 

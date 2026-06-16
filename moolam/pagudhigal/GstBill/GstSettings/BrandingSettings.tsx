@@ -39,7 +39,7 @@ export default function BrandingSettings({
               <>
                 <Box sx={{ position: 'relative' }}>
                   <img src={profile.logo} alt="Logo" style={{ maxHeight: '100px', maxWidth: '180px', objectFit: 'contain' }} />
-                  <IconButton size="small" color="error" onClick={() => removeImage('logo')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
+                  <IconButton size="small" color="error" onClick={() => removeImage('logo')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '@media (hover: hover)': { '&:hover': { bgcolor: 'error.light' } } }}>
                     <Trash size={20} weight="fill" sx={{ fontSize: 14 }} />
                   </IconButton>
                 </Box>
@@ -69,7 +69,7 @@ export default function BrandingSettings({
               <>
                 <Box sx={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center' }}>
                   <img src={profile.wideLogo} alt="Wide Logo" style={{ height: '100px', width: '100%', objectFit: 'contain' }} />
-                  <IconButton size="small" color="error" onClick={() => removeImage('wideLogo')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
+                  <IconButton size="small" color="error" onClick={() => removeImage('wideLogo')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '@media (hover: hover)': { '&:hover': { bgcolor: 'error.light' } } }}>
                     <Trash size={20} weight="fill" sx={{ fontSize: 14 }} />
                   </IconButton>
                 </Box>
@@ -132,7 +132,7 @@ export default function BrandingSettings({
               <>
                 <Box sx={{ position: 'relative' }}>
                   <img src={profile.signature} alt="Signature" style={{ maxHeight: '100px', maxWidth: '200px', objectFit: 'contain' }} />
-                  <IconButton size="small" color="error" onClick={() => removeImage('signature')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '&:hover': { bgcolor: 'error.light' } }}>
+                  <IconButton size="small" color="error" onClick={() => removeImage('signature')} sx={{ position: 'absolute', top: -10, right: -10, bgcolor: 'background.paper', '@media (hover: hover)': { '&:hover': { bgcolor: 'error.light' } } }}>
                     <Trash size={20} weight="fill" sx={{ fontSize: 14 }} />
                   </IconButton>
                 </Box>

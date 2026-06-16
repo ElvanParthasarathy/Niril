@@ -147,9 +147,9 @@ export default function LineItemsTable({
                   bgcolor: 'primary.main',
                   color: 'primary.contrastText',
                   boxShadow: (theme) => theme.palette.mode === 'dark' ? '0 2px 8px rgba(0,0,0,0.2)' : 'none',
-                  '&:hover': {
+                  '@media (hover: hover)': { '&:hover': {
                     bgcolor: 'primary.dark',
-                  }
+                  } }
                 }
               }
             }}
@@ -176,7 +176,7 @@ export default function LineItemsTable({
               sx={{ 
                 bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.hover' : 'background.paper',
                 color: 'text.secondary',
-                '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'error.light', color: (theme) => theme.palette.mode === 'dark' ? 'error.main' : 'error.main' }
+                '@media (hover: hover)': { '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'action.selected' : 'error.light', color: (theme) => theme.palette.mode === 'dark' ? 'error.main' : 'error.main' } }
               }}
             >
               <Trash size={20} weight="regular" />
@@ -399,9 +399,9 @@ export default function LineItemsTable({
           px: 3,
           py: 1,
           boxShadow: 'none',
-          '&:hover': { 
+          '@media (hover: hover)': { '&:hover': { 
             bgcolor: 'action.hover'
-          }
+          } }
         }}
       >
         {t('addItemBtn') as string}

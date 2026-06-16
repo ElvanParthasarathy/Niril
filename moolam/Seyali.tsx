@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { CaretLeft, CaretDoubleLeft as KeyboardDoubleArrowLeft, CaretDoubleRight as KeyboardDoubleArrowRight, House as Home, FileText as Description, GearSix as Settings, Plus as Add, Users as People, Package as Inventory, ChartBar as BarChart, Wallet as AccountBalanceWallet, ArrowsClockwise as Refresh, Receipt, BookOpen as MenuBook, Moon as DarkMode, Sun as LightMode, DownloadSimple as Download, X as Close, ShoppingCart, CaretDown as KeyboardArrowDown, CaretRight as KeyboardArrowRight, Buildings as Business, PencilSimple as Edit, Question as HelpOutlined, MagnifyingGlass as Search, Command as KeyboardCommandKey, Bell as Notifications, List as Menu, CalendarDots, DotsThree } from '@phosphor-icons/react';
 import { useState, useEffect, useRef, useMemo, useCallback, startTransition } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation, useNavigationType } from 'react-router-dom';
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Badge, Box, Typography, Avatar, Divider, Tooltip, IconButton, Collapse, CssBaseline, Dialog, DialogTitle, DialogContent, DialogActions, Button, Backdrop, CircularProgress, InputBase, AppBar, Toolbar, useMediaQuery, Stack, Select, MenuItem, Paper, Popover } from '@mui/material';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
@@ -10,7 +11,8 @@ import { auth } from './firebase';
 import Login from './pagudhigal/Login';
 import Welcome from './pagudhigal/auth/Welcome';
 import NalvaravuWelcome from './pagudhigal/nalvaravu/NalvaravuWelcome';
-import SplashScreen from './pagudhigal/auth/SplashScreen';
+import { registerPlugin } from '@capacitor/core';
+const CustomSplash = registerPlugin('CustomSplash');
 import { jsPDF } from 'jspdf';
 import VariArikkaigal from './pagudhigal/GstBill/Reports/VariArikkaigal';
 import Mugappu from './pagudhigal/GstBill/Mugappu';
@@ -29,6 +31,7 @@ import CoolieReceiptEditor from './pagudhigal/CoolieBill/CoolieReceiptEditor';
 import CoolieReceiptView from './pagudhigal/CoolieBill/CoolieReceiptView';
 import CoolieSettings from './pagudhigal/CoolieBill/CoolieSettings';
 import ModeSelector from './pagudhigal/ModeSelector';
+import AppSkeleton from './pagudhigal/AppSkeleton';
 import ElvanListView from './pagudhigal/ElvanListView';
 import CoolieClientEditor from './pagudhigal/CoolieBill/CoolieClientEditor';
 import ReceiptView from './pagudhigal/GstBill/Receipts/ReceiptView';
@@ -91,7 +94,7 @@ function DevLanguageSwitcher({ profile, setProfile, language, setLanguage }: any
         bgcolor: '#6366f1', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
         cursor: 'pointer', boxShadow: '0 4px 20px rgba(99,102,241,0.5)',
         fontSize: '1.2rem', fontWeight: 700, userSelect: 'none',
-        '&:hover': { bgcolor: '#4f46e5', transform: 'scale(1.1)' },
+        '@media (hover: hover)': { '&:hover': { bgcolor: '#4f46e5', transform: 'scale(1.1)' } },
         transition: 'all 0.2s'
       }} title={t('hc_devSwitchBilingualLanguage')}>
         {(profile.primaryDataLanguage || 'Ta').slice(0, 2)}
@@ -115,7 +118,7 @@ function DevLanguageSwitcher({ profile, setProfile, language, setLanguage }: any
                   bgcolor: (profile.primaryDataLanguage || 'Tamil') === l ? '#6366f1' : 'action.hover',
                   color: (profile.primaryDataLanguage || 'Tamil') === l ? '#fff' : 'text.primary',
                   fontWeight: (profile.primaryDataLanguage || 'Tamil') === l ? 700 : 400,
-                  '&:hover': { bgcolor: (profile.primaryDataLanguage || 'Tamil') === l ? '#4f46e5' : 'action.selected' },
+                  '@media (hover: hover)': { '&:hover': { bgcolor: (profile.primaryDataLanguage || 'Tamil') === l ? '#4f46e5' : 'action.selected' } },
                   transition: 'all 0.15s'
                 }}>{l}</Box>
             ))}
@@ -129,7 +132,7 @@ function DevLanguageSwitcher({ profile, setProfile, language, setLanguage }: any
                   bgcolor: (profile.secondaryDataLanguage || 'English') === l ? '#6366f1' : 'action.hover',
                   color: (profile.secondaryDataLanguage || 'English') === l ? '#fff' : 'text.primary',
                   fontWeight: (profile.secondaryDataLanguage || 'English') === l ? 700 : 400,
-                  '&:hover': { bgcolor: (profile.secondaryDataLanguage || 'English') === l ? '#4f46e5' : 'action.selected' },
+                  '@media (hover: hover)': { '&:hover': { bgcolor: (profile.secondaryDataLanguage || 'English') === l ? '#4f46e5' : 'action.selected' } },
                   transition: 'all 0.15s'
                 }}>{l}</Box>
             ))}
@@ -156,7 +159,7 @@ function DevLanguageSwitcher({ profile, setProfile, language, setLanguage }: any
                   bgcolor: language === l.code ? '#6366f1' : 'action.hover',
                   color: language === l.code ? '#fff' : 'text.primary',
                   fontWeight: language === l.code ? 700 : 400,
-                  '&:hover': { bgcolor: language === l.code ? '#4f46e5' : 'action.selected' },
+                  '@media (hover: hover)': { '&:hover': { bgcolor: language === l.code ? '#4f46e5' : 'action.selected' } },
                   transition: 'all 0.15s'
                 }}>{l.label}</Box>
             ))}
@@ -172,6 +175,30 @@ function Seyali() {
   const navigate = useNavigate();
   const location = useLocation();
   const navigationType = useNavigationType();
+  const isMobile = useMediaQuery('(max-width:900px)');
+
+  // App Back Button Listener
+  useEffect(() => {
+    let listener: any;
+    const setupListener = async () => {
+      try {
+        const { App } = await import('@capacitor/app');
+        listener = await App.addListener('backButton', () => {
+          if (location.pathname === '/dashboard' || location.pathname === '/' || location.pathname === '/login') {
+            App.exitApp();
+          } else {
+            navigate(-1);
+          }
+        });
+      } catch (err) {
+        console.warn('Capacitor App plugin not available', err);
+      }
+    };
+    setupListener();
+    return () => {
+      if (listener) listener.remove();
+    };
+  }, [location.pathname, navigate]);
 
   const currentView = useMemo(() => {
     const path = location.pathname;
@@ -286,6 +313,9 @@ function Seyali() {
 
   const [hasSelectedMode, setHasSelectedMode] = useState(() => {
     return sessionStorage.getItem('session_mode_selected') === 'true';
+  });
+  const [showModeSelector, setShowModeSelector] = useState(() => {
+    return sessionStorage.getItem('session_mode_selected') !== 'true';
   });
   const [editingBill, setEditingBill] = useState(() => {
     try {
@@ -879,33 +909,27 @@ function Seyali() {
         },
         styleOverrides: {
           root: {
-            '@media (hover: none)': {
-              '&:hover': {
-                backgroundColor: 'transparent',
-              },
-            },
-          },
-        },
+            ...(darkMode && {
+              '& .MuiTouchRipple-child': {
+                backgroundColor: 'rgba(0, 0, 0, 0.8)'
+              }
+            })
+          }
+        }
       },
       MuiIconButton: {
         styleOverrides: {
           root: {
-            '@media (hover: none)': {
-              '&:hover': {
-                backgroundColor: 'transparent',
-              },
-            },
+            // removed broken transparent hover
           },
         },
       },
       MuiListItemButton: {
         styleOverrides: {
           root: {
-            '@media (hover: none)': {
-              '&:hover': {
-                backgroundColor: 'transparent',
-              },
-            },
+            '@media (max-width:600px)': {
+              minHeight: 48,
+            }
           },
         },
       },
@@ -1008,9 +1032,9 @@ function Seyali() {
         styleOverrides: {
           root: {
             boxShadow: 'none',
-            '&:hover': {
+            '@media (hover: hover)': { '&:hover': {
               boxShadow: 'none',
-            },
+            } },
             borderRadius: 50,
             textTransform: 'none',
             fontWeight: 600,
@@ -1021,15 +1045,7 @@ function Seyali() {
           }
         }
       },
-      MuiListItemButton: {
-        styleOverrides: {
-          root: {
-            '@media (max-width:600px)': {
-              minHeight: 48,
-            }
-          }
-        }
-      },
+
       MuiPaginationItem: {
         styleOverrides: {
           root: {
@@ -1040,17 +1056,7 @@ function Seyali() {
           }
         }
       },
-      MuiButtonBase: {
-        styleOverrides: {
-          root: {
-            ...(darkMode && {
-              '& .MuiTouchRipple-child': {
-                backgroundColor: 'rgba(0, 0, 0, 0.8)'
-              }
-            })
-          }
-        }
-      },
+
       MuiCardActionArea: {
         styleOverrides: {
           focusHighlight: {
@@ -1063,11 +1069,17 @@ function Seyali() {
     }
   }), [darkMode]);
 
+  useEffect(() => {
+    if (!firebaseAuthLoading && !isProfileLoading) {
+      CustomSplash.hide();
+    }
+  }, [firebaseAuthLoading, isProfileLoading]);
+
   if (firebaseAuthLoading || isProfileLoading) {
     return (
       <ThemeProvider theme={muiTheme}>
         <CssBaseline />
-        <SplashScreen />
+        <Box sx={{ width: '100vw', height: '100vh', bgcolor: 'background.default' }} />
       </ThemeProvider>
     );
   }
@@ -1136,6 +1148,7 @@ function Seyali() {
   };
 
   const handleSwitchModeRequest = () => {
+    setShowModeSelector(true);
     setHasSelectedMode(false);
     sessionStorage.removeItem('session_mode_selected');
   };
@@ -1145,18 +1158,23 @@ function Seyali() {
       <CssBaseline />
       
 
-      {!hasSelectedMode && (
+      {showModeSelector && (
         <ModeSelector 
           currentMode={appMode}
           onSelect={(mode) => {
             setAppMode(mode);
             setHasSelectedMode(true);
             sessionStorage.setItem('session_mode_selected', 'true');
+            // Allow time for ModeSelector's internal fade animation to finish before removing it from DOM
+            setTimeout(() => setShowModeSelector(false), 1000);
           }} 
         />
       )}
-      <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-      <Box className="no-print">
+      {hasSelectedMode && (
+        <>
+        <AppSkeleton darkMode={darkMode} />
+        <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+          <Box className="no-print">
         <Pakkapatti
           appMode={appMode}
           setAppMode={setAppMode}
@@ -1192,18 +1210,38 @@ function Seyali() {
         flexGrow: 1, 
         display: 'flex', 
         flexDirection: 'column', 
-        height: '100vh', 
+        height: '100%', 
         overflow: 'hidden',
         bgcolor: { xs: darkMode ? '#000000' : '#F3F4F6', md: 'background.default' } 
       }}>
         {/* New Mobile AMOLED Top Bar */}
-        <Box className="no-print" sx={{ display: { xs: 'flex', md: 'none' }, px: 2, py: 1.5, alignItems: 'center', justifyContent: 'space-between', bgcolor: 'transparent', zIndex: 1100, minHeight: 64 }}>
-          <Box id="mobile-topbar-left" sx={{ display: 'flex', alignItems: 'center' }} />
-          {!isEditorView && (
-            <Typography variant="h6" sx={{ ml: 1.5, fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.5px', color: darkMode ? '#FFFFFF' : '#000000', flexGrow: 1 }}>
-              {getTopBarTitle()}
-            </Typography>
-          )}
+        <Box className="no-print" sx={{ display: { xs: 'flex', md: 'none' }, px: 2.5, py: 1.5, alignItems: 'center', justifyContent: 'space-between', bgcolor: 'transparent', zIndex: 1300, position: 'relative', minHeight: 64 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+            {['reports', 'gst-returns', 'settings'].includes(currentView as string) && (
+              <IconButton onClick={() => {
+                if (window.history.length > 1) {
+                  window.history.back();
+                } else {
+                  setCurrentView('dashboard');
+                }
+              }} sx={{ 
+                bgcolor: 'background.paper', 
+                color: 'text.primary',
+                p: 1.2,
+                mr: 1.5,
+                '&:active svg': { transform: 'scale(0.85)' },
+                '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
+              }}>
+                <CaretLeft size={22} weight="bold" />
+              </IconButton>
+            )}
+            <Box id="mobile-topbar-left" sx={{ display: 'flex', alignItems: 'center' }} />
+            {!isEditorView && (
+              <Typography variant="h6" sx={{ ml: ['reports', 'gst-returns', 'settings'].includes(currentView as string) ? 0 : 1.5, fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.5px', color: darkMode ? '#FFFFFF' : '#000000', flexGrow: 1 }}>
+                {getTopBarTitle()}
+              </Typography>
+            )}
+          </Box>
           <Box id="mobile-topbar-right" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
             {currentView === 'dashboard' && (
               <IconButton 
@@ -1250,7 +1288,7 @@ function Seyali() {
                     px: 2, py: 1.5,
                     cursor: 'pointer',
                     color: darkMode ? '#fff' : 'text.primary',
-                    '&:hover': { bgcolor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)' },
+                    '@media (hover: hover)': { '&:hover': { bgcolor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)' } },
                     '&:active': { bgcolor: darkMode ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)' },
                     transition: 'background 0.15s'
                   }}
@@ -1260,23 +1298,6 @@ function Seyali() {
                 </Box>
               ))}
             </Popover>
-            {['reports', 'gst-returns', 'settings'].includes(currentView as string) && (
-              <IconButton onClick={() => {
-                if (window.history.length > 1) {
-                  window.history.back();
-                } else {
-                  setCurrentView('dashboard');
-                }
-              }} sx={{ 
-                bgcolor: 'background.paper', 
-                color: 'text.primary',
-                p: 1.2,
-                '&:active svg': { transform: 'scale(0.85)' },
-                '& svg': { transition: 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' }
-              }}>
-                <CaretLeft size={22} weight="bold" />
-              </IconButton>
-            )}
           </Box>
         </Box>
 
@@ -1286,9 +1307,9 @@ function Seyali() {
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
-          mx: { xs: 1.5, md: 0 },
-          mb: { xs: ['reports', 'settings', 'gst-returns'].includes(currentView as string) ? 1.5 : '85px', md: 0 },
-          borderRadius: { xs: '24px', md: 0 },
+          mx: 0,
+          mb: { xs: isEditorView || ['reports', 'settings', 'gst-returns'].includes(currentView as string) ? 0 : 'calc(105px + env(safe-area-inset-bottom, 0px))', md: 0 },
+          borderRadius: 0,
           bgcolor: 'transparent',
           boxShadow: 'none',
           position: 'relative',
@@ -1297,9 +1318,12 @@ function Seyali() {
           {/* Inner scrollable area inside the shell */}
           <Box id="main-scroll-container" className={['invoice-editor', 'invoice-view', 'receipt-editor', 'receipt-view'].includes(currentView as string) ? 'no-print' : ''} sx={{ 
             flexGrow: 1, 
-            overflowY: 'scroll',
+            overflowY: 'auto',
             overflowX: 'hidden',
-            pb: { xs: 2, md: 0 }, // small padding at the bottom of the scroll inside the shell
+            overscrollBehavior: 'contain',
+            px: { xs: isPrintView ? 0 : 1.5, md: 0 },
+            pb: { xs: isPrintView ? 0 : 2, md: 0 },
+            bgcolor: { xs: darkMode ? '#000000' : '#F3F4F6', md: 'transparent' }, 
             '@media print': { overflowY: 'visible', overflowX: 'visible', pb: 0 }
           }}>
         {(currentView === 'dashboard' || currentView === 'settings' || (['invoice-editor', 'invoice-view'].includes(currentView as string) && sessionStorage.getItem('gst_backTo') === 'dashboard')) && (
@@ -1362,30 +1386,75 @@ function Seyali() {
             />
           )
         )}
-        {currentView === 'reports' && (
-          <Arikkaigal />
-        )}
-        {currentView === 'gst-returns' && (
-          <VariArikkaigal profile={profile} />
-        )}
-
-        {currentView === 'settings' && (
-          <Box sx={{ 
-            position: { xs: 'fixed', md: 'static' }, 
-            top: { xs: '64px', md: 'auto' }, 
-            left: { xs: '12px', md: 'auto' }, 
-            right: { xs: '12px', md: 'auto' }, 
-            bottom: { xs: '12px', md: 'auto' }, 
-            borderRadius: { xs: '24px', md: 0 },
-            bgcolor: 'background.default', 
-            zIndex: { xs: 1200, md: 'auto' }, 
-            overflowY: { xs: 'auto', md: 'visible' }, 
-            overscrollBehavior: 'contain',
-            '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
-          }}>
-        {currentView === 'settings' && <Amaippugal appMode={appMode} onSaved={() => {}} onSwitchModeRequest={handleSwitchModeRequest} darkMode={darkMode} setDarkMode={setDarkMode} themeMode={themeMode} setThemeMode={setThemeMode} />}
-          </Box>
-        )}
+        <AnimatePresence>
+          {currentView === 'reports' && (
+            <Box
+              key="reports"
+              component={motion.div}
+              initial={{ x: isMobile ? "100%" : 0 }}
+              animate={{ x: 0 }}
+              exit={{ x: isMobile ? "100%" : 0 }}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+              sx={{
+                position: { xs: 'absolute', md: 'static' },
+                top: 0, left: 0, right: 0, bottom: 0,
+                pt: { xs: 1, md: 0 },
+                px: { xs: 1.5, md: 0 },
+                bgcolor: 'background.default',
+                zIndex: { xs: 1200, md: 'auto' },
+                overflowY: { xs: 'auto', md: 'visible' },
+                overscrollBehavior: 'contain',
+              }}
+            >
+              <Arikkaigal />
+            </Box>
+          )}
+          {currentView === 'gst-returns' && (
+            <Box
+              key="gst-returns"
+              component={motion.div}
+              initial={{ x: isMobile ? "100%" : 0 }}
+              animate={{ x: 0 }}
+              exit={{ x: isMobile ? "100%" : 0 }}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+              sx={{
+                position: { xs: 'absolute', md: 'static' },
+                top: 0, left: 0, right: 0, bottom: 0,
+                pt: { xs: 1, md: 0 },
+                px: { xs: 1.5, md: 0 },
+                bgcolor: 'background.default',
+                zIndex: { xs: 1200, md: 'auto' },
+                overflowY: { xs: 'auto', md: 'visible' },
+                overscrollBehavior: 'contain',
+              }}
+            >
+              <VariArikkaigal profile={profile} />
+            </Box>
+          )}
+          {currentView === 'settings' && (
+            <Box
+              key="settings"
+              component={motion.div}
+              initial={{ x: isMobile ? "100%" : 0 }}
+              animate={{ x: 0 }}
+              exit={{ x: isMobile ? "100%" : 0 }}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+              sx={{ 
+                position: { xs: 'absolute', md: 'static' }, 
+                top: 0, left: 0, right: 0, bottom: 0, 
+                pt: { xs: 1, md: 0 },
+                px: { xs: 1.5, md: 0 },
+                bgcolor: 'background.default', 
+                zIndex: { xs: 1200, md: 'auto' }, 
+                overflowY: { xs: 'auto', md: 'visible' }, 
+                overscrollBehavior: 'contain',
+                '@media print': { position: 'static', overflowY: 'visible', zIndex: 'auto' }
+              }}
+            >
+              <Amaippugal appMode={appMode} onSaved={() => {}} onSwitchModeRequest={handleSwitchModeRequest} darkMode={darkMode} setDarkMode={setDarkMode} themeMode={themeMode} setThemeMode={setThemeMode} />
+            </Box>
+          )}
+        </AnimatePresence>
           </Box>
           {/* === Overlay editors rendered OUTSIDE scroll container but INSIDE the shell === */}
           {/* This preserves scroll position of lists underneath */}
@@ -1393,12 +1462,13 @@ function Seyali() {
         {/* Render Editor on top as a modal inner shell */}
         {currentView === 'invoice-editor' && (
           <Box sx={{ 
-            position: { xs: 'fixed', md: 'absolute' }, 
-            top: { xs: '64px', md: 0 }, 
-            left: { xs: '12px', md: 0 }, 
-            right: { xs: '12px', md: 0 }, 
-            bottom: { xs: '12px', md: 0 }, 
-            borderRadius: { xs: '24px', md: 0 },
+            position: { xs: 'absolute', md: 'absolute' }, 
+            top: 0, 
+            left: 0, 
+            right: 0, 
+            bottom: 0, 
+            pt: { xs: 1, md: 0 },
+            px: { xs: 1.5, md: 0 },
             bgcolor: 'background.default', 
             zIndex: 1200, 
             overflowY: 'auto', 
@@ -1432,12 +1502,13 @@ function Seyali() {
         {/* Inline overlay for Add Client / Add Product from inside invoice editor */}
         {currentView === 'invoice-editor' && inlineOverlay && (
           <Box sx={{ 
-            position: { xs: 'fixed', md: 'absolute' }, 
-            top: { xs: '64px', md: 0 }, 
-            left: { xs: '12px', md: 0 }, 
-            right: { xs: '12px', md: 0 }, 
-            bottom: { xs: '12px', md: 0 }, 
-            borderRadius: { xs: '24px', md: 0 },
+            position: { xs: 'absolute', md: 'absolute' }, 
+            top: 0, 
+            left: 0, 
+            right: 0, 
+            bottom: 0, 
+            pt: { xs: 1, md: 0 },
+            px: { xs: 1.5, md: 0 },
             bgcolor: 'background.default', 
             zIndex: 1300, 
             overflowY: 'auto', 
@@ -1481,12 +1552,13 @@ function Seyali() {
         {/* Render View on top as a modal inner shell */}
         {currentView === 'invoice-view' && editingBill && (
           <Box sx={{ 
-            position: { xs: 'fixed', md: 'absolute' }, 
-            top: { xs: '64px', md: 0 }, 
-            left: { xs: '12px', md: 0 }, 
-            right: { xs: '12px', md: 0 }, 
-            bottom: { xs: '12px', md: 0 }, 
-            borderRadius: { xs: '24px', md: 0 },
+            position: { xs: 'absolute', md: 'absolute' }, 
+            top: 0, 
+            left: 0, 
+            right: 0, 
+            bottom: 0, 
+            pt: { xs: 0, md: 0 },
+            px: { xs: 0, md: 0 },
             bgcolor: 'background.default', 
             zIndex: 1200, 
             overflowY: 'auto', 
@@ -1513,12 +1585,13 @@ function Seyali() {
         {/* Client editor overlay */}
         {currentView === 'client-editor' && (
           <Box sx={{ 
-            position: { xs: 'fixed', md: 'absolute' }, 
-            top: { xs: '64px', md: 0 }, 
-            left: { xs: '12px', md: 0 }, 
-            right: { xs: '12px', md: 0 }, 
-            bottom: { xs: '12px', md: 0 }, 
-            borderRadius: { xs: '24px', md: 0 },
+            position: { xs: 'absolute', md: 'absolute' }, 
+            top: 0, 
+            left: 0, 
+            right: 0, 
+            bottom: 0, 
+            pt: { xs: 1, md: 0 },
+            px: { xs: 1.5, md: 0 },
             bgcolor: 'background.default', 
             zIndex: 1200, 
             overflowY: 'auto', 
@@ -1545,12 +1618,13 @@ function Seyali() {
         {/* Product editor overlay */}
         {currentView === 'product-editor' && (
           <Box sx={{ 
-            position: { xs: 'fixed', md: 'absolute' }, 
-            top: { xs: '64px', md: 0 }, 
-            left: { xs: '12px', md: 0 }, 
-            right: { xs: '12px', md: 0 }, 
-            bottom: { xs: '12px', md: 0 }, 
-            borderRadius: { xs: '24px', md: 0 },
+            position: { xs: 'absolute', md: 'absolute' }, 
+            top: 0, 
+            left: 0, 
+            right: 0, 
+            bottom: 0, 
+            pt: { xs: 1, md: 0 },
+            px: { xs: 1.5, md: 0 },
             bgcolor: 'background.default', 
             zIndex: 1200, 
             overflowY: 'auto', 
@@ -1578,12 +1652,13 @@ function Seyali() {
         {/* Receipt editor overlay */}
         {currentView === 'receipt-editor' && (
           <Box sx={{ 
-            position: { xs: 'fixed', md: 'absolute' }, 
-            top: { xs: '64px', md: 0 }, 
-            left: { xs: '12px', md: 0 }, 
-            right: { xs: '12px', md: 0 }, 
-            bottom: { xs: '12px', md: 0 }, 
-            borderRadius: { xs: '24px', md: 0 },
+            position: { xs: 'absolute', md: 'absolute' }, 
+            top: 0, 
+            left: 0, 
+            right: 0, 
+            bottom: 0, 
+            pt: { xs: 1, md: 0 },
+            px: { xs: 1.5, md: 0 },
             bgcolor: 'background.default', 
             zIndex: 1200, 
             overflowY: 'auto', 
@@ -1608,12 +1683,13 @@ function Seyali() {
         )}
         {currentView === 'receipt-view' && editingReceipt && (
           <Box sx={{ 
-            position: { xs: 'fixed', md: 'absolute' }, 
-            top: { xs: '64px', md: 0 }, 
-            left: { xs: '12px', md: 0 }, 
-            right: { xs: '12px', md: 0 }, 
-            bottom: { xs: '12px', md: 0 }, 
-            borderRadius: { xs: '24px', md: 0 },
+            position: { xs: 'absolute', md: 'absolute' }, 
+            top: 0, 
+            left: 0, 
+            right: 0, 
+            bottom: 0, 
+            pt: { xs: 0, md: 0 },
+            px: { xs: 0, md: 0 },
             bgcolor: 'background.default', 
             zIndex: 1200, 
             overflowY: 'auto', 
@@ -1726,6 +1802,11 @@ function Seyali() {
               zIndex: 1100,
               boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
               p: 0,
+              '@media (hover: none)': {
+                '@media (hover: hover)': { '&:hover': {
+                  bgcolor: 'primary.main',
+                } }
+              }
             }}
           >
             <Add size={28} weight="bold" />
@@ -1891,7 +1972,7 @@ function Seyali() {
               cursor: 'pointer',
               border: '1px solid rgba(255,255,255,0.1)',
               transition: 'all 0.2s ease-in-out',
-              '&:hover': { bgcolor: 'rgba(30, 30, 30, 0.6)' }
+              '@media (hover: hover)': { '&:hover': { bgcolor: 'rgba(30, 30, 30, 0.6)' } }
             }}
           >
             <Typography sx={{ fontSize: '13px', fontWeight: 800, color: '#fff', letterSpacing: '1px' }}>
@@ -2032,8 +2113,9 @@ function Seyali() {
           </Popover>
         </>
       )}
-
       </Box>
+        </>
+      )}
     </ThemeProvider>
   );
 }

@@ -42,25 +42,33 @@ export default function Arikkaigal() {
   const yearOptions = [];
   for (let y = currentYear; y >= currentYear - 5; y--) yearOptions.push(y);
 
-  const loadData = async () => {
-    setIsLoading(true);
-    try {
-      const [billData] = await Promise.all([getAllBills(setBills)]);
-      setBills(billData);
-    } catch {
-      thagaval(t('failedToLoadProductsToast'), 'error');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
+    let unsubs = [];
+
     const now = new Date();
     const fy = fyOptions[0];
     if (fy) setFyFilter(fy.value);
     setYearFilter(String(now.getFullYear()));
     setMonthFilter(String(now.getMonth()));
-    loadData();
+
+    const initRealtime = async () => {
+      setIsLoading(true);
+      try {
+        const billData = await getAllBills((fresh) => setBills(fresh || []));
+        if (billData && billData.unsubscribe) unsubs.push(billData.unsubscribe);
+        setBills(billData || []);
+      } catch {
+        thagaval(t('failedToLoadProductsToast'), 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initRealtime();
+
+    return () => {
+      unsubs.forEach(unsub => unsub());
+    };
   }, []);
 
   const filterByPeriod = (date) => {
@@ -106,7 +114,7 @@ export default function Arikkaigal() {
 
 
   return (
-    <Box sx={{ pt: { xs: 1.5, md: 4 }, pb: { xs: 0, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
+    <Box sx={{ pt: { xs: 3, md: 4 }, pb: { xs: 12, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto' }}>
       {/* Page Header (Hidden on Mobile) */}
       <Box sx={{ mb: 4, display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <Box>

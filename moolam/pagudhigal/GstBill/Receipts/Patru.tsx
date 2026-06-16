@@ -51,28 +51,39 @@ export default function Patru({ profile: parentProfile, onAddReceipt, onEditRece
     return '';
   };
 
-  const loadData = async () => {
-    setIsLoading(true);
-    try {
-      const [recs, bls, prof] = await Promise.all([getAllReceipts(setReceipts), getAllBills(setBills), getProfile(setLocalProfile)]);
-      setReceipts(recs || []);
-      setBills(bls || []);
-      setLocalProfile(prof || {});
-    } catch {
-      thagaval('Failed to load data', 'error');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadData();
-    
-    // Listen for custom event from Seyali to refresh data after a save
-    const handleRefresh = () => loadData();
+    let unsubs = [];
+
+    const initRealtime = async () => {
+      setIsLoading(true);
+      try {
+        const recs = await getAllReceipts(setReceipts);
+        if (recs && recs.unsubscribe) unsubs.push(recs.unsubscribe);
+        setReceipts(recs || []);
+
+        const bls = await getAllBills(setBills);
+        if (bls && bls.unsubscribe) unsubs.push(bls.unsubscribe);
+        setBills(bls || []);
+
+        const prof = await getProfile(setLocalProfile);
+        if (prof && prof.unsubscribe) unsubs.push(prof.unsubscribe);
+        setLocalProfile(prof || {});
+      } catch {
+        thagaval('Failed to load data', 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initRealtime();
+
+    const handleRefresh = () => initRealtime();
     window.addEventListener('refreshReceipts', handleRefresh);
     
-    return () => window.removeEventListener('refreshReceipts', handleRefresh);
+    return () => {
+      window.removeEventListener('refreshReceipts', handleRefresh);
+      unsubs.forEach(unsub => unsub());
+    };
   }, []);
 
   const filterFn = (r, search) => {
@@ -94,7 +105,6 @@ export default function Patru({ profile: parentProfile, onAddReceipt, onEditRece
         if (onProgress) onProgress(count, ids.length);
       }
       thagaval(t('deletedSuccessfully') || 'Deleted successfully', 'success');
-      loadData();
     } catch (e) {
       thagaval(t('errorDeleting') || 'Error deleting', 'error');
     }
@@ -110,8 +120,7 @@ export default function Patru({ profile: parentProfile, onAddReceipt, onEditRece
         count++;
         if (onProgress) onProgress(count, selected.length);
       }
-      thagaval(t('productsDuplicatedSuccess') || 'Receipts duplicated successfully', 'success');
-      loadData();
+      thagaval(t('invoicesDuplicatedSuccess') || 'Receipts duplicated successfully', 'success');
     } catch (e) {
       thagaval(t('errorDuplicating') || 'Error duplicating', 'error');
     }

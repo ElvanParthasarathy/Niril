@@ -5,9 +5,11 @@
 const API = '/api';
 
 import { rtdb } from './firebase';
-import { ref, get, set, remove, update } from 'firebase/database';
+import { ref, get, set, remove, update, onValue } from 'firebase/database';
 
-import { withCache } from './CacheManager';
+import { withCache, clearCache } from './CacheManager';
+
+const activeListeners = {};
 
 async function apiFetch(url, options = {}, onFreshData = null) {
   const isGet = !options.method || options.method === 'GET';
@@ -53,6 +55,28 @@ async function apiFetch(url, options = {}, onFreshData = null) {
 
   try {
     if (isGet) {
+      if (onFreshData && !activeListeners[path]) {
+          activeListeners[path] = true;
+          const dbRef = ref(rtdb, path);
+          onValue(dbRef, (snapshot) => {
+              const val = snapshot.exists() ? snapshot.val() : null;
+              const data = val ? (collections.includes(path) ? Object.values(val) : val) : (collections.includes(path) ? [] : {});
+              
+              const cacheKey = `elvan_cache_${path.replace(/\//g, '_')}`;
+              const oldCache = localStorage.getItem(cacheKey);
+              const newCache = JSON.stringify(data);
+              
+              if (oldCache !== newCache) {
+                 try {
+                     localStorage.setItem(cacheKey, newCache);
+                 } catch (e) {
+                     console.warn('[Avanam] Error saving to cache in onValue', e);
+                 }
+                 window.dispatchEvent(new CustomEvent(`elvan_update_${path}`, { detail: data }));
+              }
+          });
+      }
+
       const fetchFn = async () => {
         const snapshot = await get(ref(rtdb, path));
         if (snapshot.exists()) {
@@ -63,22 +87,36 @@ async function apiFetch(url, options = {}, onFreshData = null) {
         if (collections.includes(path)) return [];
         return {};
       };
-      return await withCache(path, fetchFn, onFreshData);
+
+      const handler = (e) => onFreshData(e.detail);
+      if (onFreshData) {
+          window.addEventListener(`elvan_update_${path}`, handler);
+      }
+
+      const result = await withCache(path, fetchFn, onFreshData);
+
+      if (onFreshData && result && typeof result === 'object') {
+          result.unsubscribe = () => window.removeEventListener(`elvan_update_${path}`, handler);
+      }
+      return result;
     }
     
     if (isPost) {
       const body = JSON.parse(options.body);
       if (path === 'profile' || path.startsWith('meta/')) {
          await set(ref(rtdb, path), body);
+         clearCache(path);
          return body;
       }
       const id = body.id || `doc_${Date.now()}`;
       await set(ref(rtdb, `${path}/${id}`), body);
+      clearCache(path);
       return body;
     }
 
     if (isDelete) {
       await remove(ref(rtdb, path));
+      clearCache(path);
       return { success: true };
     }
   } catch (error) {
@@ -183,9 +221,15 @@ const restoreSingleFromStorage = async (item, fields) => {
 };
 
 // ---- Invoice Display Options (checkboxes like showGST, showLogo etc.) ----
-export const getInvoiceDisplayOptions = async () => {
-  const { value } = await apiFetch(`${API}/meta/invoiceDisplayOptions`);
-  return value || null;
+export const getInvoiceDisplayOptions = async (onFreshData = null) => {
+  const result = await apiFetch(`${API}/meta/invoiceDisplayOptions`, {}, onFreshData ? async (fresh) => {
+      onFreshData(fresh?.value || null);
+  } : null);
+  const val = result?.value || {};
+  if (onFreshData && result && result.unsubscribe) {
+    val.unsubscribe = result.unsubscribe;
+  }
+  return val;
 };
 
 export const saveInvoiceDisplayOptions = async (options) => {

@@ -20,27 +20,38 @@ export default function CoolieMerchants({ onEditClient, onAddClient }) {
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [confirmDialog, setConfirmDialog] = useState({ open: false, title: '', message: '', action: null as any });
 
-  const loadData = async () => {
-    setIsLoading(true);
-    try {
-      const [c, b, p] = await Promise.all([
-        getAllCoolieClients(), 
-        getAllCoolieBills(),
-        getAllCoolieProfiles()
-      ]);
-      setClients(c);
-      setBills(b);
-      if (p && p.length > 0) setCoolieProfile(p[0]);
-    } catch {
-      thagaval(t('errorLoadingCustomers') || 'Error loading customers', 'error');
-    } finally {
-      setIsLoading(false);
-      setIsLoadingProfile(false);
-    }
-  };
-
   useEffect(() => {
-    loadData();
+    let unsubs = [];
+
+    const initRealtime = async () => {
+      setIsLoading(true);
+      try {
+        const c = await getAllCoolieClients((fresh) => setClients(fresh || []));
+        if (c && c.unsubscribe) unsubs.push(c.unsubscribe);
+        setClients(c || []);
+
+        const b = await getAllCoolieBills((fresh) => setBills(fresh || []));
+        if (b && b.unsubscribe) unsubs.push(b.unsubscribe);
+        setBills(b || []);
+
+        const p = await getAllCoolieProfiles((fresh) => {
+          if (fresh && fresh.length > 0) setCoolieProfile(fresh[0]);
+        });
+        if (p && p.unsubscribe) unsubs.push(p.unsubscribe);
+        if (p && p.length > 0) setCoolieProfile(p[0]);
+      } catch {
+        thagaval(t('errorLoadingCustomers') || 'Error loading customers', 'error');
+      } finally {
+        setIsLoading(false);
+        setIsLoadingProfile(false);
+      }
+    };
+
+    initRealtime();
+
+    return () => {
+      unsubs.forEach(unsub => unsub());
+    };
   }, []);
 
   const activeProfile = coolieProfile || {};
@@ -64,7 +75,6 @@ export default function CoolieMerchants({ onEditClient, onAddClient }) {
         if (onProgress) onProgress(count, ids.length);
       }
       thagaval(t('deletedSuccessfully') || 'Deleted successfully', 'success');
-      loadData();
     } catch (e) {
       thagaval(t('errorDeleting') || 'Error deleting', 'error');
     }
@@ -86,7 +96,6 @@ export default function CoolieMerchants({ onEditClient, onAddClient }) {
         count++;
         if (onProgress) onProgress(count, selected.length);
       }
-      loadData();
       thagaval(t('customersDuplicatedSuccess') || 'Customers duplicated successfully', 'success');
     } catch (e) {
       thagaval(t('errorDuplicating') || 'Error duplicating customers', 'error');

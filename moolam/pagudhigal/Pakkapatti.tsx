@@ -65,9 +65,9 @@ export default function Pakkapatti({
                 sx={{ 
                   display: { xs: 'none', md: 'inline-flex' }, 
                   color: 'primary.main', 
-                  '&:hover': { 
+                  '@media (hover: hover)': { '&:hover': { 
                     backgroundColor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
-                  } 
+                  } } 
                 }}
               >
                 <svg style={{ transform: 'scaleX(-1)' }} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
@@ -97,9 +97,9 @@ export default function Pakkapatti({
                 sx={{ 
                   display: { xs: 'none', md: 'inline-flex' }, 
                   color: 'primary.main', 
-                  '&:hover': { 
+                  '@media (hover: hover)': { '&:hover': { 
                     backgroundColor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
-                  } 
+                  } } 
                 }}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
@@ -142,21 +142,21 @@ export default function Pakkapatti({
                       minHeight: 40,
                       color: darkMode ? '#aaaaaa' : '#666666',
                       transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
-                      '&:hover': {
+                      '@media (hover: hover)': { '&:hover': {
                         backgroundColor: isCollapsed ? 'transparent' : (darkMode ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0,0,0,0.04)'),
                         color: darkMode ? '#ffffff' : '#000000',
                         '& .MuiListItemIcon-root': { 
                           color: darkMode ? '#ffffff' : '#000000',
                           backgroundColor: isCollapsed ? (isSelected ? (darkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0,0,0,0.12)') : (darkMode ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0,0,0,0.04)')) : 'transparent'
                         }
-                      },
+                      } },
                       '&.Mui-selected': {
                         backgroundColor: isCollapsed ? 'transparent' : (darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0,0,0,0.06)'),
                         color: darkMode ? '#ffffff' : '#000000',
-                        '&:hover': {
+                        '@media (hover: hover)': { '&:hover': {
                           backgroundColor: isCollapsed ? 'transparent' : (darkMode ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0,0,0,0.09)'),
                           opacity: 1
-                        },
+                        } },
                         '& .MuiListItemIcon-root': { color: darkMode ? '#ffffff' : '#000000' }
                       },
                       '&:active svg': {
@@ -304,10 +304,10 @@ export default function Pakkapatti({
                       width: 48, 
                       height: 48, 
                       color: currentView === 'settings' ? 'primary.main' : (darkMode ? '#aaaaaa' : '#666666'),
-                      '&:hover': {
+                      '@media (hover: hover)': { '&:hover': {
                         backgroundColor: darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
                         color: darkMode ? '#ffffff' : '#000000'
-                      }
+                      } }
                     }}
                   >
                     <GearSix size={24} weight={currentView === 'settings' ? "fill" : "regular"} />
@@ -332,9 +332,9 @@ export default function Pakkapatti({
                     minHeight: 52,
                     userSelect: 'none',
                     transition: 'all 0.2s cubic-bezier(0.2, 0, 0, 1)',
-                    '&:hover': {
+                    '@media (hover: hover)': { '&:hover': {
                       backgroundColor: 'transparent'
-                    }
+                    } }
                   }}
                 >
                   <Box 
@@ -395,10 +395,10 @@ export default function Pakkapatti({
                       sx={{ 
                         color: 'text.secondary',
                         bgcolor: 'transparent',
-                        '&:hover': {
+                        '@media (hover: hover)': { '&:hover': {
                            bgcolor: darkMode ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)',
                            color: darkMode ? '#ffffff' : '#000000'
-                        }
+                        } }
                       }}
                     >
                       <GearSix size={18} weight="regular" />

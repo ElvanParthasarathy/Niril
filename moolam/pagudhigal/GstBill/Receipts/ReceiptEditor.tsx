@@ -324,7 +324,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
               bgcolor: 'action.hover', // Darker filled look matching the subtle inputs below it
               color: 'text.primary',
               borderRadius: 50,
-              '&:hover': { bgcolor: 'action.selected' }
+              '@media (hover: hover)': { '&:hover': { bgcolor: 'action.selected' } }
             }}
             startIcon={<Receipt size={20} />}
           >
@@ -349,9 +349,9 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
                 '@media (pointer: fine)': {
                   scrollbarWidth: 'thin',
                   scrollbarColor: 'transparent transparent', // Invisible by default
-                  '&:hover': {
+                  '@media (hover: hover)': { '&:hover': {
                     scrollbarColor: 'rgba(128,128,128,0.3) transparent', // Show on hover for Firefox
-                  },
+                  } },
                   '&::-webkit-scrollbar': {
                     display: 'block',
                     height: 4, // Very thin
@@ -487,7 +487,7 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
                         borderBottom: idx < filtered.length - 1 ? '1px solid' : 'none',
                         borderColor: 'divider',
                         bgcolor: isSelected ? 'action.selected' : 'transparent',
-                        '&:hover': { bgcolor: isSelected ? 'action.selected' : 'action.hover' },
+                        '@media (hover: hover)': { '&:hover': { bgcolor: isSelected ? 'action.selected' : 'action.hover' } },
                         transition: 'background-color 0.15s'
                       }}
                     >

@@ -90,7 +90,37 @@ export default function CoolieSettings({ activeTab = 'business' }: any) {
   const loadProfiles = async (idToSelect = null) => {
     setIsLoading(true);
     try {
-      const data = await getAllCoolieProfiles();
+      const handleFreshData = (data: any[]) => {
+        setProfiles(data);
+        if (data.length === 0) {
+          handleAddNew();
+        } else {
+          // If we are currently editing, we probably shouldn't wipe out their typing
+          setFormData(currentForm => {
+            setSavedSnapshot(currentSnapshot => {
+              const targetId = idToSelect || (selectedId !== 'new' ? selectedId : data[0].id);
+              const current = data.find(p => p.id === targetId) || data[0];
+              
+              // Only update form if it was not dirty, OR if it's the initial load
+              const isCurrentlyDirty = currentSnapshot ? !deepEqual(pickSnapshot(currentForm, phones), currentSnapshot) : false;
+              
+              if (!isCurrentlyDirty) {
+                const loadedData = { ...DEFAULT_FORM_DATA, ...current };
+                const loadedPhones = current.phone ? current.phone.split(',').filter(Boolean) : [''];
+                if (loadedPhones.length === 0) loadedPhones.push('');
+                
+                setFormData(loadedData);
+                setPhones(loadedPhones);
+                setSavedSnapshot(pickSnapshot(loadedData, loadedPhones));
+              }
+              return currentSnapshot;
+            });
+            return currentForm;
+          });
+        }
+      };
+
+      const data = await getAllCoolieProfiles(handleFreshData);
       setProfiles(data);
       if (data.length === 0) {
         handleAddNew();
@@ -108,7 +138,35 @@ export default function CoolieSettings({ activeTab = 'business' }: any) {
 
   useEffect(() => {
     loadProfiles();
-  }, []);
+    
+    const handleUpdate = (e: any) => {
+      setProfiles(e.detail);
+      setFormData(currentForm => {
+         setSavedSnapshot(currentSnapshot => {
+            const currentSelected = e.detail.find((p: any) => p.id === selectedId);
+            if (currentSelected) {
+               const isCurrentlyDirty = currentSnapshot ? !deepEqual(pickSnapshot(currentForm, phones), currentSnapshot) : false;
+               if (!isCurrentlyDirty) {
+                  const loadedData = { ...DEFAULT_FORM_DATA, ...currentSelected };
+                  const loadedPhones = currentSelected.phone ? currentSelected.phone.split(',').filter(Boolean) : [''];
+                  if (loadedPhones.length === 0) loadedPhones.push('');
+                  
+                  setFormData(loadedData);
+                  setPhones(loadedPhones);
+                  setSavedSnapshot(pickSnapshot(loadedData, loadedPhones));
+               }
+            }
+            return currentSnapshot;
+         });
+         return currentForm;
+      });
+    };
+    
+    window.addEventListener('elvan_update_coolie_profiles', handleUpdate);
+    return () => {
+      window.removeEventListener('elvan_update_coolie_profiles', handleUpdate);
+    };
+  }, [selectedId, phones]);
 
   const selectProfile = (p: any) => {
     setSelectedId(p.id);
@@ -310,7 +368,7 @@ export default function CoolieSettings({ activeTab = 'business' }: any) {
                       width: 42, height: 42, borderRadius: '50%', 
                       color: 'text.secondary', flexShrink: 0, ml: 2,
                       bgcolor: (theme) => theme.palette.mode === 'dark' ? 'var(--mac-selection-hover, rgba(255,255,255,0.05))' : 'rgba(0,0,0,0.04)',
-                      '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)', color: 'var(--mac-text)' }
+                      '@media (hover: hover)': { '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)', color: 'var(--mac-text)' } }
                     }}
                   >
                     <PencilSimple size={18} weight="bold" />
@@ -326,7 +384,7 @@ export default function CoolieSettings({ activeTab = 'business' }: any) {
                       sx={{ 
                         px: 2, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px', fontFamily: '"Elvan Sans", sans-serif',
                         color: 'text.secondary',
-                        '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
+                        '@media (hover: hover)': { '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' } }
                       }}
                     >
                       {t('closeBtn')}
@@ -338,7 +396,7 @@ export default function CoolieSettings({ activeTab = 'business' }: any) {
                       sx={{ 
                         px: 3, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px', fontFamily: '"Elvan Sans", sans-serif',
                         color: 'text.primary',
-                        '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' }
+                        '@media (hover: hover)': { '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' } }
                       }}
                     >
                       {t('manageBtn')}
@@ -350,7 +408,7 @@ export default function CoolieSettings({ activeTab = 'business' }: any) {
                       sx={{ 
                         px: 3, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px', fontFamily: '"Elvan Sans", sans-serif',
                         bgcolor: 'primary.main', color: 'primary.contrastText',
-                        '&:hover': { bgcolor: 'primary.dark' }
+                        '@media (hover: hover)': { '&:hover': { bgcolor: 'primary.dark' } }
                       }}
                     >
                       {t('addNewBtn')}
