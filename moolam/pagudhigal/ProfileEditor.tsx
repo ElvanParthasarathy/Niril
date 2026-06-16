@@ -1536,7 +1536,7 @@ export default function Amaippugal({ onSaved }) {
       )}
     </div>
   );
-}
+// }
 
 function EditIcon({ size }) {
   return (

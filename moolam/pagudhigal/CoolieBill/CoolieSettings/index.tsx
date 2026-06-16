@@ -86,6 +86,16 @@ export default function CoolieSettings({ activeTab = 'business' }: any) {
 
   const isDirty = savedSnapshot ? !deepEqual(pickSnapshot(formData, phones), savedSnapshot) : false;
 
+  const formDataRef = useRef(formData);
+  const phonesRef = useRef(phones);
+  const snapshotRef = useRef(savedSnapshot);
+
+  useEffect(() => {
+    formDataRef.current = formData;
+    phonesRef.current = phones;
+    snapshotRef.current = savedSnapshot;
+  }, [formData, phones, savedSnapshot]);
+
   // ─── Data Loading ───
   const loadProfiles = async (idToSelect = null) => {
     setIsLoading(true);
@@ -95,28 +105,25 @@ export default function CoolieSettings({ activeTab = 'business' }: any) {
         if (data.length === 0) {
           handleAddNew();
         } else {
-          // If we are currently editing, we probably shouldn't wipe out their typing
-          setFormData(currentForm => {
-            setSavedSnapshot(currentSnapshot => {
-              const targetId = idToSelect || (selectedId !== 'new' ? selectedId : data[0].id);
-              const current = data.find(p => p.id === targetId) || data[0];
-              
-              // Only update form if it was not dirty, OR if it's the initial load
-              const isCurrentlyDirty = currentSnapshot ? !deepEqual(pickSnapshot(currentForm, phones), currentSnapshot) : false;
-              
-              if (!isCurrentlyDirty) {
-                const loadedData = { ...DEFAULT_FORM_DATA, ...current };
-                const loadedPhones = current.phone ? current.phone.split(',').filter(Boolean) : [''];
-                if (loadedPhones.length === 0) loadedPhones.push('');
-                
-                setFormData(loadedData);
-                setPhones(loadedPhones);
-                setSavedSnapshot(pickSnapshot(loadedData, loadedPhones));
-              }
-              return currentSnapshot;
-            });
-            return currentForm;
-          });
+          const targetId = idToSelect || (selectedId !== 'new' ? selectedId : data[0].id);
+          const current = data.find(p => p.id === targetId) || data[0];
+          
+          const currentForm = formDataRef.current;
+          const currentSnapshot = snapshotRef.current;
+          const currentPhones = phonesRef.current;
+          
+          // Only update form if it was not dirty, OR if it's the initial load
+          const isCurrentlyDirty = currentSnapshot ? !deepEqual(pickSnapshot(currentForm, currentPhones), currentSnapshot) : false;
+          
+          if (!isCurrentlyDirty) {
+            const loadedData = { ...DEFAULT_FORM_DATA, ...current };
+            const loadedPhones = current.phone ? current.phone.split(',').filter(Boolean) : [''];
+            if (loadedPhones.length === 0) loadedPhones.push('');
+            
+            setFormData(loadedData);
+            setPhones(loadedPhones);
+            setSavedSnapshot(pickSnapshot(loadedData, loadedPhones));
+          }
         }
       };
 
@@ -141,32 +148,30 @@ export default function CoolieSettings({ activeTab = 'business' }: any) {
     
     const handleUpdate = (e: any) => {
       setProfiles(e.detail);
-      setFormData(currentForm => {
-         setSavedSnapshot(currentSnapshot => {
-            const currentSelected = e.detail.find((p: any) => p.id === selectedId);
-            if (currentSelected) {
-               const isCurrentlyDirty = currentSnapshot ? !deepEqual(pickSnapshot(currentForm, phones), currentSnapshot) : false;
-               if (!isCurrentlyDirty) {
-                  const loadedData = { ...DEFAULT_FORM_DATA, ...currentSelected };
-                  const loadedPhones = currentSelected.phone ? currentSelected.phone.split(',').filter(Boolean) : [''];
-                  if (loadedPhones.length === 0) loadedPhones.push('');
-                  
-                  setFormData(loadedData);
-                  setPhones(loadedPhones);
-                  setSavedSnapshot(pickSnapshot(loadedData, loadedPhones));
-               }
-            }
-            return currentSnapshot;
-         });
-         return currentForm;
-      });
+      const currentSelected = e.detail.find((p: any) => p.id === selectedId);
+      if (currentSelected) {
+         const currentForm = formDataRef.current;
+         const currentSnapshot = snapshotRef.current;
+         const currentPhones = phonesRef.current;
+
+         const isCurrentlyDirty = currentSnapshot ? !deepEqual(pickSnapshot(currentForm, currentPhones), currentSnapshot) : false;
+         if (!isCurrentlyDirty) {
+            const loadedData = { ...DEFAULT_FORM_DATA, ...currentSelected };
+            const loadedPhones = currentSelected.phone ? currentSelected.phone.split(',').filter(Boolean) : [''];
+            if (loadedPhones.length === 0) loadedPhones.push('');
+            
+            setFormData(loadedData);
+            setPhones(loadedPhones);
+            setSavedSnapshot(pickSnapshot(loadedData, loadedPhones));
+         }
+      }
     };
     
     window.addEventListener('elvan_update_coolie_profiles', handleUpdate);
     return () => {
       window.removeEventListener('elvan_update_coolie_profiles', handleUpdate);
     };
-  }, [selectedId, phones]);
+  }, [selectedId]);
 
   const selectProfile = (p: any) => {
     setSelectedId(p.id);
