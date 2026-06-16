@@ -5,7 +5,7 @@
 const API = '/api';
 
 import { rtdb } from './firebase';
-import { ref, get, set, remove, update, onValue } from 'firebase/database';
+import { ref, get, set, remove, update, onValue, runTransaction } from 'firebase/database';
 
 import { withCache, clearCache } from './CacheManager';
 
@@ -103,6 +103,27 @@ async function apiFetch(url, options = {}, onFreshData = null) {
     
     if (isPost) {
       const body = JSON.parse(options.body);
+      
+      if (path.endsWith('/increment')) {
+        const counterPath = path.replace(/\/increment$/, '');
+        const counterRef = ref(rtdb, counterPath);
+        let finalVal = 1;
+        
+        const result = await runTransaction(counterRef, (currentData) => {
+          if (currentData === null || typeof currentData !== 'object') {
+            return { value: 1 };
+          }
+          return { ...currentData, value: (currentData.value || 0) + 1 };
+        });
+        
+        if (result.committed) {
+           finalVal = result.snapshot.val().value;
+        }
+        
+        clearCache(counterPath);
+        return { value: finalVal };
+      }
+      
       if (path === 'profile' || path.startsWith('meta/')) {
          await set(ref(rtdb, path), body);
          clearCache(path);
