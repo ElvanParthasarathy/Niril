@@ -269,32 +269,23 @@ export const saveInvoiceDisplayOptions = async (options) => {
 // read 5 and both write 6 (= duplicate invoice numbers, which is a GST audit failure).
 export const getNextInvoiceNumber = async (prefix = 'INV') => {
   const profile = await getProfile();
-  const key = `counter_${prefix}`;
-  let { value: next } = await apiFetch(`${API}/meta/${key}/increment`, { method: 'POST', body: JSON.stringify({}) });
-
   const pfx = profile.shortBusinessName || prefix;
 
-  if (next === 1) {
-    const allGstBills = await getAllBills();
-    const allCoolieBills = await getAllCoolieBills();
-    const allBills = [...(allGstBills || []), ...(allCoolieBills || [])];
-    
-    let maxFound = 0;
-    for (const bill of allBills) {
-      if (bill && bill.invoiceNumber && bill.invoiceNumber.startsWith(pfx + '-')) {
-        const numPart = parseInt(bill.invoiceNumber.split('-')[1], 10);
-        if (!isNaN(numPart) && numPart > maxFound) {
-          maxFound = numPart;
-        }
+  const allGstBills = await getAllBills();
+  const allCoolieBills = await getAllCoolieBills();
+  const allBills = [...(allGstBills || []), ...(allCoolieBills || [])];
+  
+  let maxFound = 0;
+  for (const bill of allBills) {
+    if (bill && bill.invoiceNumber && bill.invoiceNumber.startsWith(pfx + '-')) {
+      const numPart = parseInt(bill.invoiceNumber.split('-')[1], 10);
+      if (!isNaN(numPart) && numPart > maxFound) {
+        maxFound = numPart;
       }
     }
-    
-    if (maxFound > 0) {
-      next = maxFound + 1;
-      await apiFetch(`${API}/meta/${key}`, { method: 'POST', body: JSON.stringify({ value: next }) });
-    }
   }
-
+  
+  const next = maxFound + 1;
   const padded = String(next).padStart(2, '0');
 
   return `${pfx}-${padded}`;
