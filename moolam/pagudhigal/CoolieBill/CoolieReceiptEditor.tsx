@@ -105,12 +105,21 @@ export default function CoolieReceiptEditor({ onBack, onSaved, editingReceipt }:
     const prefixStr = `${pfx}${sep}${bizInitials}${sep}`;
     
     let maxFound = 0;
-    const relevantRecs = allRecs.filter(r => r.company_id === profileToUse?.id || (r.receiptNo || '').includes(`/${bizInitials}/`));
+    const bizUpper = bizInitials.toUpperCase();
+    const relevantRecs = allRecs.filter(r => 
+      r.company_id === profileToUse?.id || 
+      (r.receiptNo || '').toUpperCase().includes(`/${bizUpper}/`) ||
+      (r.receiptNo || '').toUpperCase().includes(`${bizUpper}`)
+    );
+    
     for (const rcp of relevantRecs) {
-      if (rcp.receiptNo && rcp.receiptNo.startsWith(prefixStr)) {
-        const numPart = parseInt(rcp.receiptNo.replace(prefixStr, ''), 10);
-        if (!isNaN(numPart) && numPart > maxFound) {
-          maxFound = numPart;
+      if (rcp.receiptNo) {
+        const match = rcp.receiptNo.match(/\d+$/);
+        if (match) {
+          const numPart = parseInt(match[0], 10);
+          if (!isNaN(numPart) && numPart > maxFound) {
+            maxFound = numPart;
+          }
         }
       }
     }
