@@ -140,15 +140,7 @@ export default function CoolieReceiptList({ onAddReceipt, onEditReceipt, onViewR
         onClick={() => isSelectionMode ? toggleSelection(rcp.id) : (onViewReceipt && onViewReceipt(rcp))}
       >
           <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start' }}>
-            {isSelectionMode ? (
-              <IconButton 
-                size="small" 
-                onClick={(e) => { e.stopPropagation(); toggleSelection(rcp.id); }} 
-                sx={{ color: isSelected ? 'primary.main' : 'text.disabled', p: 0, mt: 0.15, flexShrink: 0 }}
-              >
-                {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} />}
-              </IconButton>
-            ) : (
+            {!isSelectionMode ? (
               <Box sx={{ 
                 display: 'flex', alignItems: 'center', justifyContent: 'center', 
                 width: 28, height: 28, mt: 0.15, 
@@ -159,6 +151,10 @@ export default function CoolieReceiptList({ onAddReceipt, onEditReceipt, onViewR
                 <Typography variant="caption" sx={{ fontWeight: 800, color: isDark ? '#FFFFFF' : '#000000', fontSize: '0.7rem', lineHeight: 1, position: 'relative', top: '1px' }}>
                   {(globalIndex + 1).toString().padStart(2, '0')}
                 </Typography>
+              </Box>
+            ) : (
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, mt: 0.15, color: isSelected ? 'primary.main' : 'text.secondary', flexShrink: 0 }}>
+                {isSelected ? <CheckSquare size={24} weight="fill" /> : <Square size={24} weight="regular" />}
               </Box>
             )}
             
