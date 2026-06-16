@@ -188,8 +188,8 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchMode
 
   const renderRecentItem = (bill, index) => {
     return (
-      <ElvanCard key={bill.id} onClick={() => onView && onView(bill)} sx={{ cursor: 'pointer', position: 'relative', '@media (hover: hover)': { '&:hover': { bgcolor: 'action.hover' } } }}>
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', flex: 1, minWidth: 0, pr: { xs: 3, sm: 4 } }}>
+      <ElvanCard key={bill.id} onClick={() => onView && onView(bill)} sx={{ cursor: 'pointer', '@media (hover: hover)': { '&:hover': { bgcolor: 'action.hover' } } }}>
+        <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start' }}>
           <Box sx={{ 
             display: 'flex', alignItems: 'center', justifyContent: 'center', 
             width: 28, height: 28, mt: 0.15, 
@@ -201,31 +201,34 @@ export default function CoolieDashboard({ onViewAll, onNew, onView, onSwitchMode
               {(index + 1).toString().padStart(2, '0')}
             </Typography>
           </Box>
-          <Box sx={{ minWidth: 0, flex: 1, pb: { xs: 2.5, sm: 3 } }}>
-            <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700, fontSize: '0.9rem' }}>
-              {bill.customer_name ? (bill.customer_name.includes('/') ? bill.customer_name.split('/')[0].trim() : bill.customer_name) : '-'}
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, color: 'text.secondary', mt: 0.5 }}>
-              {bill.customer_name_en && (
-                <Typography variant="caption" noWrap sx={{ display: 'block', fontWeight: 500 }}>
-                  {bill.customer_name_en}
-                </Typography>
-              )}
-              <Typography variant="body2" sx={{ fontSize: '0.85rem' }} noWrap>
-                {bill.bill_no} <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> {bill.date ? bill.date : '-'}
+          <Box sx={{ minWidth: 0, flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
+              <Typography variant="subtitle1" noWrap sx={{ fontWeight: 700, fontSize: '0.95rem', flex: 1, minWidth: 0 }}>
+                {bill.customer_name ? (bill.customer_name.includes('/') ? bill.customer_name.split('/')[0].trim() : bill.customer_name) : '-'}
               </Typography>
-              {bill.city && (
-                <Typography variant="body2" sx={{ fontSize: '0.82rem', opacity: 0.8 }} noWrap>
-                  {bill.city}
-                </Typography>
-              )}
+              <CaretRight size={18} weight="regular" color={isDark ? "#555" : "#aaa"} style={{ marginTop: '2px', flexShrink: 0 }} />
+            </Box>
+            
+            {bill.customer_name_en && (
+              <Typography variant="caption" noWrap sx={{ display: 'block', fontWeight: 500, color: 'text.secondary', mt: 0.25 }}>
+                {bill.customer_name_en}
+              </Typography>
+            )}
+            
+            <Typography variant="body2" sx={{ fontSize: '0.85rem', color: 'text.secondary', mt: 0.5 }} noWrap>
+              {bill.bill_no} <span style={{ opacity: 0.6, margin: '0 6px' }}>•</span> {bill.date ? bill.date : '-'}
+            </Typography>
+            
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', mt: 0.25, gap: 1 }}>
+              <Typography variant="body2" sx={{ fontSize: '0.82rem', color: 'text.secondary', flex: 1, minWidth: 0 }} noWrap>
+                {bill.city || ''}
+              </Typography>
+              <Typography variant="subtitle2" noWrap sx={{ fontWeight: 800, color: 'primary.main', fontSize: formatCurrency(Number(bill.grand_total || 0), 'INR').length > 11 ? '0.8rem' : '0.95rem', flexShrink: 0 }}>
+                {formatCurrency(Number(bill.grand_total || 0), 'INR')}
+              </Typography>
             </Box>
           </Box>
         </Box>
-        <CaretRight size={18} weight="regular" color={isDark ? "#555" : "#aaa"} style={{ position: 'absolute', top: 18, right: 16 }} />
-        <Typography variant="subtitle2" sx={{ fontWeight: 800, color: 'primary.main', position: 'absolute', bottom: 16, right: 16, fontSize: { xs: formatCurrency(Number(bill.grand_total || 0), 'INR').length > 10 ? '0.75rem' : '0.85rem', sm: '0.875rem' } }}>
-          {formatCurrency(Number(bill.grand_total || 0), 'INR')}
-        </Typography>
       </ElvanCard>
     );
   };
