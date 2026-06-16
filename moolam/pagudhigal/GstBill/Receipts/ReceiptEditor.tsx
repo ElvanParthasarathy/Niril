@@ -98,12 +98,24 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
       bizInitials = bizName.split(' ').filter((w: string) => w.trim().length > 0).map((w: string) => w[0]).join('').toUpperCase().slice(0, 4) || 'BIZ';
     }
 
-    const count = allRecs.filter(r => r.company_id === profileToUse?.id || (r.receiptNo || '').includes(`/${bizInitials}/`)).length + 1;
     const pfx = 'RCP';
     const sep = '/';
+    const prefixStr = `${pfx}${sep}${bizInitials}${sep}`;
+    
+    let maxFound = 0;
+    const relevantRecs = allRecs.filter(r => r.company_id === profileToUse?.id || (r.receiptNo || '').includes(`/${bizInitials}/`));
+    for (const rcp of relevantRecs) {
+      if (rcp.receiptNo && rcp.receiptNo.startsWith(prefixStr)) {
+        const numPart = parseInt(rcp.receiptNo.replace(prefixStr, ''), 10);
+        if (!isNaN(numPart) && numPart > maxFound) {
+          maxFound = numPart;
+        }
+      }
+    }
 
-    const padded = String(count).padStart(2, '0');
-    return `${pfx}${sep}${bizInitials}${sep}${padded}`;
+    const next = maxFound + 1;
+    const padded = String(next).padStart(2, '0');
+    return `${prefixStr}${padded}`;
   };
 
   useEffect(() => {
