@@ -66,12 +66,16 @@ export default function ElvanEditorLayout({
   let renderHeader = null;
   if (!hideHeaderPortals && isMobile && mounted) {
     const leftTarget = document.getElementById('mobile-topbar-left');
-    const rightTarget = document.getElementById('mobile-topbar-right');
-    if (leftTarget && rightTarget) {
+    if (leftTarget) {
       renderHeader = (
         <>
-          {createPortal(backButtonElement, leftTarget)}
-          {createPortal(titleElement, rightTarget)}
+          {createPortal(
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              {backButtonElement}
+              {titleElement}
+            </Box>, 
+            leftTarget
+          )}
         </>
       );
     }

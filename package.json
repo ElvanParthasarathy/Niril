@@ -117,6 +117,7 @@
     "xlsx-js-style": "^1.2.0"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^8.4.0",
     "@eslint/js": "^9.39.1",
     "@types/node": "^25.9.1",

@@ -8,14 +8,15 @@ import InvoicePreview from './InvoicePreview';
 import SjsTheme from './SjsTheme';
 import { thagaval } from '../Thagaval';
 import { useLanguage } from '../../mozhi/LanguageContext';
-import { formatCurrency, INVOICE_TYPES } from '../../Payanpadu';
+import { formatCurrency, INVOICE_TYPES, getDynamicField, numberToWords, getPrintHeadContent } from '../../Payanpadu';
 import { getInvoiceDisplayOptions } from '../../Avanam';
 import { Box, Paper } from '@mui/material';
 import { usePinchZoom } from '../../hooks/usePinchZoom';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { ViewHeader } from '../ViewHeader';
-
+import NativeDocument from '../NativeDocument';
+import { Capacitor } from '@capacitor/core';
 export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate }) {
   const { t } = useLanguage();
   const printRef = useRef(null);
@@ -119,16 +120,26 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
       setSaving(true);
       const pdf = await buildPDF();
       const fileName = `${typeConfig.prefix}_${details.invoiceNumber.replace(/\//g, '-')}.pdf`;
-      pdf.save(fileName);
       
-      const pdfBlob = pdf.output('blob');
-      const invoiceDate = details.invoiceDate ? new Date(details.invoiceDate) : new Date();
-      const monthName = invoiceDate.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
-      const clientName = client?.name || 'General';
-      const params = new URLSearchParams({ name: fileName, client: clientName, month: monthName });
-      fetch(`/api/save-pdf?${params}`, { method: 'POST', headers: { 'Content-Type': 'application/pdf' }, body: pdfBlob }).catch(() => {});
-
-      thagaval(`Invoice downloaded & saved to Saved Invoices/${clientName}/`, 'success');
+      if (Capacitor.isNativePlatform()) {
+        const pdfBase64 = pdf.output('datauristring').split(',')[1];
+        await NativeDocument.downloadPdf({
+          base64Data: pdfBase64,
+          filename: fileName,
+          appMode: 'Niril Silk',
+          category: 'Invoice'
+        });
+        thagaval(`Invoice downloaded to Niril Silk/Invoice/`, 'success');
+      } else {
+        pdf.save(fileName);
+        const pdfBlob = pdf.output('blob');
+        const invoiceDate = details.invoiceDate ? new Date(details.invoiceDate) : new Date();
+        const monthName = invoiceDate.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+        const clientName = client?.name || 'General';
+        const params = new URLSearchParams({ name: fileName, client: clientName, month: monthName });
+        fetch(`/api/save-pdf?${params}`, { method: 'POST', headers: { 'Content-Type': 'application/pdf' }, body: pdfBlob }).catch(() => {});
+        thagaval(`Invoice downloaded & saved to Saved Invoices/${clientName}/`, 'success');
+      }
     } catch (err) {
       console.error(err);
       thagaval('Failed to generate PDF.', 'error');
@@ -141,11 +152,18 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
     const amount = formatCurrency(items.reduce((s, i) => s + ((i.qty || i.quantity) * i.rate), 0));
     const msg = `*Invoice: ${details.invoiceNumber}*\nClient: ${client?.name || ''}\nAmount: ${amount}\nDate: ${details.invoiceDate}`;
     
-    if (navigator.share) {
-      setSaving(true);
-      try {
-        const pdf = await buildPDF();
-        const fileName = `${typeConfig.prefix}_${details.invoiceNumber.replace(/\//g, '-')}.pdf`;
+    setSaving(true);
+    try {
+      const pdf = await buildPDF();
+      const fileName = `${typeConfig.prefix}_${details.invoiceNumber.replace(/\//g, '-')}.pdf`;
+      
+      if (Capacitor.isNativePlatform()) {
+        const pdfBase64 = pdf.output('datauristring').split(',')[1];
+        await NativeDocument.sharePdf({
+          base64Data: pdfBase64,
+          filename: fileName
+        });
+      } else if (navigator.share) {
         const pdfBlob = pdf.output('blob');
         const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
         
@@ -168,36 +186,25 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
           // If files can't be shared via native share, download it instead
           pdf.save(fileName);
         }
-      } catch (error) {
-        console.error('PDF Generation failed', error);
-        thagaval('Failed to generate PDF for sharing', 'error');
-      } finally {
-        setTimeout(() => setSaving(false), 2000);
+      } else {
+        thagaval(t('featureNotSupported') || 'Native sharing not supported on this device.', 'warning');
       }
-    } else {
-      thagaval(t('featureNotSupported') || 'Native sharing not supported on this device.', 'warning');
+    } catch (error) {
+      console.error('PDF Generation failed', error);
+      thagaval('Failed to generate PDF for sharing', 'error');
+    } finally {
+      setTimeout(() => setSaving(false), 2000);
     }
   };
 
-  const handlePrint = () => {
+  const handlePrint = async () => {
     const printContent = printRef.current;
     if (!printContent) return;
 
-    const iframe = document.createElement('iframe');
-    iframe.style.position = 'fixed';
-    iframe.style.right = '0';
-    iframe.style.bottom = '0';
-    iframe.style.width = '0';
-    iframe.style.height = '0';
-    iframe.style.border = '0';
-    document.body.appendChild(iframe);
-
     const title = details?.invoiceNumber ? `Invoice-${details.invoiceNumber}` : 'Print';
-    const headContent = document.head.innerHTML;
+    const headContent = await getPrintHeadContent();
 
-    const doc = iframe.contentWindow.document;
-    doc.open();
-    doc.write(`
+    const htmlContent = `
       <!DOCTYPE html>
       <html>
         <head>
@@ -223,7 +230,38 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
           ${printContent.outerHTML}
         </body>
       </html>
-    `);
+    `;
+
+    if (Capacitor.isNativePlatform()) {
+      try {
+        setSaving(true);
+        const fileName = `${typeConfig.prefix}_${details.invoiceNumber.replace(/\//g, '-')}`;
+        await NativeDocument.printHtml({
+          html: htmlContent,
+          baseUrl: "file:///android_asset/public/",
+          filename: fileName
+        });
+      } catch (err) {
+        console.error(err);
+        thagaval('Failed to print document.', 'error');
+      } finally {
+        setSaving(false);
+      }
+      return;
+    }
+
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(htmlContent);
     doc.close();
 
     setTimeout(() => {

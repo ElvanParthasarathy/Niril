@@ -3,7 +3,13 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.elvan.niril.lite',
   appName: 'Elvan Niril',
-  webDir: 'dist'
+  webDir: 'dist',
+  plugins: {
+    SplashScreen: {
+      androidScaleType: 'FIT_CENTER',
+      backgroundColor: '#ffffff'
+    }
+  }
 };
 
 export default config;

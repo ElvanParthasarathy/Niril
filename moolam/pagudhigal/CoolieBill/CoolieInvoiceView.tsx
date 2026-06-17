@@ -8,9 +8,12 @@ import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { ViewHeader } from '../ViewHeader';
 import { thagaval } from '../Thagaval';
+import NativeDocument from '../NativeDocument';
+import { Capacitor } from '@capacitor/core';
 import { useLanguage } from '../../mozhi/LanguageContext';
 import './print.css'; // The exact print.css copied from Kananam
 import { getAllCoolieProfiles } from '../../Avanam';
+import { getPrintHeadContent } from '../../Payanpadu';
 import numberToWordsTamil from '../../mozhi/tamilNumbers';
 import numberToWordsEnglish from '../../mozhi/englishNumbers';
 
@@ -102,25 +105,14 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
     const activeProfile = companyProfile || {};
     const displayBillNo = bill.bill_no;
 
-    const handlePrint = () => {
+    const handlePrint = async () => {
         const printContent = printRef.current;
         if (!printContent) return;
 
-        const iframe = document.createElement('iframe');
-        iframe.style.position = 'fixed';
-        iframe.style.right = '0';
-        iframe.style.bottom = '0';
-        iframe.style.width = '0';
-        iframe.style.height = '0';
-        iframe.style.border = '0';
-        document.body.appendChild(iframe);
-
         const title = displayBillNo ? `Invoice-${displayBillNo}` : 'Print';
-        const headContent = document.head.innerHTML;
+        const headContent = await getPrintHeadContent();
 
-        const doc = iframe.contentWindow.document;
-        doc.open();
-        doc.write(`
+        const htmlContent = `
           <!DOCTYPE html>
           <html>
             <head>
@@ -138,7 +130,38 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
               ${printContent.outerHTML}
             </body>
           </html>
-        `);
+        `;
+
+        if (Capacitor.isNativePlatform()) {
+            try {
+                setSaving(true);
+                const fileName = `${displayBillNo.replace(/\//g, '-')}`;
+                await NativeDocument.printHtml({
+                    html: htmlContent,
+                    baseUrl: "file:///android_asset/public/",
+                    filename: fileName
+                });
+            } catch (err) {
+                console.error(err);
+                thagaval('Failed to print document.', 'error');
+            } finally {
+                setSaving(false);
+            }
+            return;
+        }
+
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'fixed';
+        iframe.style.right = '0';
+        iframe.style.bottom = '0';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = '0';
+        document.body.appendChild(iframe);
+
+        const doc = iframe.contentWindow.document;
+        doc.open();
+        doc.write(htmlContent);
         doc.close();
 
         setTimeout(() => {
@@ -210,16 +233,26 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
         setSaving(true);
         const pdf = await buildPDF();
         const fileName = `${displayBillNo.replace(/\//g, '-')}.pdf`;
-        pdf.save(fileName);
         
-        const pdfBlob = pdf.output('blob');
-        const invoiceDate = bill.date ? new Date(bill.date.split('/').reverse().join('-')) : new Date();
-        const monthName = invoiceDate.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
-        const clientName = bill.customer_name || 'General';
-        const params = new URLSearchParams({ name: fileName, client: clientName, month: monthName });
-        fetch(`/api/save-pdf?${params}`, { method: 'POST', headers: { 'Content-Type': 'application/pdf' }, body: pdfBlob }).catch(() => {});
-  
-        thagaval('Invoice saved', 'success');
+        if (Capacitor.isNativePlatform()) {
+          const pdfBase64 = pdf.output('datauristring').split(',')[1];
+          await NativeDocument.downloadPdf({
+            base64Data: pdfBase64,
+            filename: fileName,
+            appMode: 'Niril Coolie',
+            category: 'Invoice'
+          });
+          thagaval('Invoice downloaded to Niril Coolie/Invoice/', 'success');
+        } else {
+          pdf.save(fileName);
+          const pdfBlob = pdf.output('blob');
+          const invoiceDate = bill.date ? new Date(bill.date.split('/').reverse().join('-')) : new Date();
+          const monthName = invoiceDate.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+          const clientName = bill.customer_name || 'General';
+          const params = new URLSearchParams({ name: fileName, client: clientName, month: monthName });
+          fetch(`/api/save-pdf?${params}`, { method: 'POST', headers: { 'Content-Type': 'application/pdf' }, body: pdfBlob }).catch(() => {});
+          thagaval('Invoice saved', 'success');
+        }
       } catch (err) {
         console.error(err);
         thagaval('Failed to generate PDF.', 'error');
@@ -232,11 +265,18 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
       const amount = formatCurrency(totalRs);
       const msg = `*${displayBillNo}*\nClient: ${bill.customer_name || ''}\nAmount: ${amount}\nDate: ${bill.date}`;
       
-      if (navigator.share) {
-        setSaving(true);
-        try {
-          const pdf = await buildPDF();
-          const fileName = `${displayBillNo.replace(/\//g, '-')}.pdf`;
+      setSaving(true);
+      try {
+        const pdf = await buildPDF();
+        const fileName = `${displayBillNo.replace(/\//g, '-')}.pdf`;
+        
+        if (Capacitor.isNativePlatform()) {
+          const pdfBase64 = pdf.output('datauristring').split(',')[1];
+          await NativeDocument.sharePdf({
+            base64Data: pdfBase64,
+            filename: fileName
+          });
+        } else if (navigator.share) {
           const pdfBlob = pdf.output('blob');
           const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
           
@@ -258,14 +298,14 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
             });
             pdf.save(fileName);
           }
-        } catch (error) {
-          console.error('PDF Generation failed', error);
-          thagaval('Failed to generate PDF for sharing', 'error');
-        } finally {
-          setTimeout(() => setSaving(false), 2000);
+        } else {
+          thagaval(t('featureNotSupported') || 'Native sharing not supported on this device.', 'warning');
         }
-      } else {
-        thagaval(t('featureNotSupported') || 'Native sharing not supported on this device.', 'warning');
+      } catch (error) {
+        console.error('PDF Generation failed', error);
+        thagaval('Failed to generate PDF for sharing', 'error');
+      } finally {
+        setTimeout(() => setSaving(false), 2000);
       }
     };
 

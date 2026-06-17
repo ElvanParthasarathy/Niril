@@ -474,7 +474,7 @@ const SjsTheme = React.forwardRef(({ profile = {}, client = {}, details = {}, it
                   {showHSN && <th className="inv-th inv-th-center" rowSpan="2">HSN Code</th>}
                   {showItemQty && <th className="inv-th inv-th-center" rowSpan="2">{renderSubtitleLabel(qtyLabelEn, qtyLabelTa, 'center')}</th>}
                   {showRateColumn && <th className="inv-th inv-th-right" rowSpan="2">{renderSubtitleLabel('Rate', 'விலை', 'flex-end')}</th>}
-                  {hasAnyDiscount && <th className="inv-th inv-th-right" rowSpan="2">{t('hc_disc')}</th>}
+                  {hasAnyDiscount && <th className="inv-th inv-th-right" rowSpan="2">{renderSubtitleLabel('Discount', 'தள்ளுபடி', 'flex-end')}</th>}
                   <th className="inv-th inv-th-center" colSpan="2" style={{ borderBottom: '1px solid #cbd5e1' }}>IGST</th>
                   <th className="inv-th inv-th-right" rowSpan="2">{renderSubtitleLabel('Amount', 'தொகை', 'flex-end')}</th>
                 </tr>
@@ -491,7 +491,7 @@ const SjsTheme = React.forwardRef(({ profile = {}, client = {}, details = {}, it
                   {showHSN && <th className="inv-th inv-th-center" rowSpan="2">HSN Code</th>}
                   {showItemQty && <th className="inv-th inv-th-center" rowSpan="2">{renderSubtitleLabel(qtyLabelEn, qtyLabelTa, 'center')}</th>}
                   {showRateColumn && <th className="inv-th inv-th-right" rowSpan="2">{renderSubtitleLabel('Rate', 'விலை', 'flex-end')}</th>}
-                  {hasAnyDiscount && <th className="inv-th inv-th-right" rowSpan="2">{t('hc_disc')}</th>}
+                  {hasAnyDiscount && <th className="inv-th inv-th-right" rowSpan="2">{renderSubtitleLabel('Discount', 'தள்ளுபடி', 'flex-end')}</th>}
                   <th className="inv-th inv-th-center" colSpan="2" style={{ borderBottom: '1px solid #cbd5e1' }}>CGST</th>
                   <th className="inv-th inv-th-center" colSpan="2" style={{ borderBottom: '1px solid #cbd5e1' }}>SGST</th>
                   <th className="inv-th inv-th-right" rowSpan="2">{renderSubtitleLabel('Amount', 'தொகை', 'flex-end')}</th>
@@ -512,7 +512,7 @@ const SjsTheme = React.forwardRef(({ profile = {}, client = {}, details = {}, it
                   {showHSN && <th className="inv-th inv-th-center" rowSpan="2">HSN Code</th>}
                   {showItemQty && <th className="inv-th inv-th-center" rowSpan="2">{renderSubtitleLabel(qtyLabelEn, qtyLabelTa, 'center')}</th>}
                   {showRateColumn && <th className="inv-th inv-th-right" rowSpan="2">{renderSubtitleLabel('Rate', 'விலை', 'flex-end')}</th>}
-                  {hasAnyDiscount && <th className="inv-th inv-th-right" rowSpan="2">{t('hc_disc')}</th>}
+                  {hasAnyDiscount && <th className="inv-th inv-th-right" rowSpan="2">{renderSubtitleLabel('Discount', 'தள்ளுபடி', 'flex-end')}</th>}
                   <th className="inv-th inv-th-center" colSpan="2" style={{ borderBottom: '1px solid #cbd5e1' }}>{renderSubtitleLabel(taxLabel, taxLabel, 'center')}</th>
                   <th className="inv-th inv-th-right" rowSpan="2">{renderSubtitleLabel('Amount', 'தொகை', 'flex-end')}</th>
                 </tr>
@@ -529,7 +529,7 @@ const SjsTheme = React.forwardRef(({ profile = {}, client = {}, details = {}, it
               {showHSN && <th className="inv-th inv-th-center">HSN Code</th>}
               {showItemQty && <th className="inv-th inv-th-center">{renderSubtitleLabel(qtyLabelEn, qtyLabelTa, 'center')}</th>}
               {showRateColumn && <th className="inv-th inv-th-right">{renderSubtitleLabel('Rate', 'விலை', 'flex-end')}</th>}
-              {hasAnyDiscount && <th className="inv-th inv-th-right">{t('hc_disc')}</th>}
+              {hasAnyDiscount && <th className="inv-th inv-th-right">{renderSubtitleLabel('Discount', 'தள்ளுபடி', 'flex-end')}</th>}
               <th className="inv-th inv-th-right">{renderSubtitleLabel('Amount', 'தொகை', 'flex-end')}</th>
             </tr>
           )}
@@ -693,8 +693,8 @@ const SjsTheme = React.forwardRef(({ profile = {}, client = {}, details = {}, it
             </div>
           )}
           {totals.roundOff !== undefined && totals.roundOff !== 0 && (
-            <div className="inv-total-row" style={{ color: '#64748b', fontStyle: 'italic' }}>
-              <span>{renderKey('hc_roundoff')}</span>
+            <div className="inv-total-row" style={{ color: '#64748b' }}>
+              <span>{profile?.enableBilingual !== false ? 'Round-off' : (profile?.primaryDataLanguage === 'English' ? 'Round-off' : 'முழுமையாக்குதல்')}</span>
               <span>{totals.roundOff > 0 ? '+' : ''}{fmt(totals.roundOff)}</span>
             </div>
           )}

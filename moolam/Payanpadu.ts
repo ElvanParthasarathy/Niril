@@ -1,5 +1,51 @@
 // @ts-nocheck
+import { Capacitor } from '@capacitor/core';
 import numberToWordsTamil from './mozhi/tamilNumbers';
+
+export const getPrintHeadContent = async () => {
+  let headHtml = document.head.innerHTML;
+  
+  if (Capacitor.isNativePlatform()) {
+    let inlineStyles = '';
+    const links = document.querySelectorAll('link[rel="stylesheet"]');
+    for (const link of Array.from(links)) {
+      if (link.href) {
+        try {
+          const response = await fetch(link.href);
+          let cssText = await response.text();
+          // Fix relative font URLs
+          cssText = cssText.replace(/url\(\/([^)]+)\)/g, 'url(file:///android_asset/public/$1)');
+          inlineStyles += cssText + '\n';
+        } catch (e) {
+          console.error('Failed to inline CSS', e);
+        }
+      }
+    }
+    
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(`<html><head>${headHtml}</head></html>`, 'text/html');
+    
+    // Remove original links to prevent failure loading
+    const headLinks = doc.querySelectorAll('link[rel="stylesheet"]');
+    headLinks.forEach(l => l.remove());
+    
+    // Fix all absolute paths in HTML elements
+    const elementsWithSrc = doc.querySelectorAll('[src^="/"], [href^="/"]');
+    elementsWithSrc.forEach(el => {
+      if (el.hasAttribute('src') && el.getAttribute('src').startsWith('/')) {
+        el.setAttribute('src', 'file:///android_asset/public' + el.getAttribute('src'));
+      }
+      if (el.hasAttribute('href') && el.getAttribute('href').startsWith('/')) {
+        el.setAttribute('href', 'file:///android_asset/public' + el.getAttribute('href'));
+      }
+    });
+
+    return doc.head.innerHTML + `<style>${inlineStyles}</style>`;
+  }
+  
+  return headHtml;
+};
+
 
 export const getDynamicField = (obj: any, fieldName: string, profile: any, isPrimary = true): string => {
   if (!obj) return '';

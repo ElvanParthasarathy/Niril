@@ -198,6 +198,16 @@ export default function Patru({ profile: parentProfile, onAddReceipt, onEditRece
     );
   };
 
+  const sortedReceipts = [...receipts].sort((a, b) => {
+    const dateA = new Date(a.date || 0).getTime();
+    const dateB = new Date(b.date || 0).getTime();
+    if (dateB !== dateA) return dateB - dateA;
+    
+    const numA = parseInt((a.receiptNo || '').replace(/\D/g, ''), 10) || 0;
+    const numB = parseInt((b.receiptNo || '').replace(/\D/g, ''), 10) || 0;
+    return numB - numA;
+  });
+
   return (
     <>
       <ElvanListView 
@@ -205,7 +215,7 @@ export default function Patru({ profile: parentProfile, onAddReceipt, onEditRece
         searchPlaceholder={t('search') || 'Search...'}
         addButtonText={t('newReceiptBtn') || 'Add Receipt'}
         onAdd={onAddReceipt ? () => onAddReceipt() : undefined}
-        items={receipts}
+        items={sortedReceipts}
         isLoading={isLoading}
         filterFn={filterFn}
         renderCard={renderCard}

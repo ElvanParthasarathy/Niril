@@ -293,7 +293,10 @@ function Seyali() {
     }
   }, [location.search, setCurrentView]);
   
-  const [dbProfile, setProfile] = useState<any>(null);
+  const [dbProfile, setProfile] = useState<any>(() => {
+    try { return JSON.parse(localStorage.getItem('elvanniril_profile_cache') || 'null'); }
+    catch { return null; }
+  });
   const [devBilingualToggle, setDevBilingualToggle] = useState<boolean | null>(null);
   const [devPrimaryLang, setDevPrimaryLang] = useState<string | null>(null);
   const [devSecondaryLang, setDevSecondaryLang] = useState<string | null>(null);
@@ -502,17 +505,26 @@ function Seyali() {
   const [updateInfo, setUpdateInfo] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
 
-  const [firebaseUser, setFirebaseUser] = useState<any>(null);
-  const [firebaseAuthLoading, setFirebaseAuthLoading] = useState(true);
-  const [isProfileLoading, setIsProfileLoading] = useState(true);
+  const [firebaseUser, setFirebaseUser] = useState<any>(() => {
+    try { return JSON.parse(localStorage.getItem('elvanniril_user_cache') || 'null'); }
+    catch { return null; }
+  });
+  const [firebaseAuthLoading, setFirebaseAuthLoading] = useState(() => !localStorage.getItem('elvanniril_user_cache'));
+  const [isProfileLoading, setIsProfileLoading] = useState(() => !localStorage.getItem('elvanniril_profile_cache'));
   const [postLoginWelcomeDone, setPostLoginWelcomeDone] = useState(false);
   const [hasWelcomed, setHasWelcomed] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       if (u) {
-        setIsProfileLoading(true);
-        profileLoaded.current = false;
+        if (!localStorage.getItem('elvanniril_user_cache')) {
+          setIsProfileLoading(true);
+          profileLoaded.current = false;
+        }
+        localStorage.setItem('elvanniril_user_cache', JSON.stringify({ uid: u.uid, email: u.email }));
+      } else {
+        localStorage.removeItem('elvanniril_user_cache');
+        localStorage.removeItem('elvanniril_profile_cache');
       }
       setFirebaseUser(u);
       setFirebaseAuthLoading(false);
@@ -572,11 +584,12 @@ function Seyali() {
         if (!profileLoaded.current) {
           profileLoaded.current = true;
           setProfile(p);
+          localStorage.setItem('elvanniril_profile_cache', JSON.stringify(p || {}));
           
-          // If the profile object is completely empty, it means no profile exists in DB
-          const isProfileEmpty = !p || Object.keys(p).length === 0;
+          // If the profile object is completely empty or lacks a business name, it means no valid profile exists
+          const isProfileEmpty = !p || Object.keys(p).length === 0 || !p.niruvanathinPeyar;
           
-          if (isProfileEmpty && !localStorage.getItem('elvanniril_onboarded')) {
+          if (isProfileEmpty) {
             // Smart resume: check if any profiles exist in the database before forcing setup
             const existingProfiles = await getAllProfiles();
             if (existingProfiles && existingProfiles.length > 0) {
@@ -587,6 +600,8 @@ function Seyali() {
               await saveProfile(loaded);
               localStorage.setItem('elvanniril_onboarded', 'true');
             } else {
+              // Ignore any stuck local storage state if the DB is genuinely empty
+              localStorage.removeItem('elvanniril_onboarded');
               setShowWelcome(true);
             }
           } else {
@@ -710,6 +725,8 @@ function Seyali() {
 
   const handleNewInvoice = () => {
     sessionStorage.removeItem('gst_invoiceDraft');
+    localStorage.removeItem('niril_draft_invoice');
+    localStorage.removeItem('niril_draft_coolie_bill');
     setEditingBill(null);
     navigate('/dashboard/invoices/new');
   };
@@ -1350,9 +1367,9 @@ function Seyali() {
         {(currentView === 'clients' || currentView === 'client-editor') && (
           <Box sx={{ height: '100%' }}>
             {appMode === 'GST' ? (
-              <Vanigargal key={refreshKey} onAddClient={() => { setEditingClient(null); navigate('/dashboard/clients/new'); }} onEditClient={(c) => { setEditingClient(c); navigate(`/dashboard/clients/edit/${c.id || 'draft'}`); }} profile={profile} />
+              <Vanigargal key={refreshKey} onAddClient={() => { localStorage.removeItem('niril_draft_client'); setEditingClient(null); navigate('/dashboard/clients/new'); }} onEditClient={(c) => { setEditingClient(c); navigate(`/dashboard/clients/edit/${c.id || 'draft'}`); }} profile={profile} />
             ) : (
-              <CoolieMerchants key={refreshKey} onAddClient={() => { setEditingClient(null); navigate('/dashboard/clients/new'); }} onEditClient={(c) => { setEditingClient(c); navigate(`/dashboard/clients/edit/${c.id || 'draft'}`); }} />
+              <CoolieMerchants key={refreshKey} onAddClient={() => { localStorage.removeItem('niril_coolie_draft_client'); setEditingClient(null); navigate('/dashboard/clients/new'); }} onEditClient={(c) => { setEditingClient(c); navigate(`/dashboard/clients/edit/${c.id || 'draft'}`); }} />
             )}
           </Box>
         )}
@@ -1361,9 +1378,9 @@ function Seyali() {
         {(currentView === 'inventory' || currentView === 'product-editor') && (
           <Box sx={{ height: '100%' }}>
             {appMode === 'GST' ? (
-              <Porul key={refreshKey} onAddProduct={() => { setEditingProduct(null); navigate('/dashboard/inventory/new'); }} onEditProduct={(p) => { setEditingProduct(p); navigate(`/dashboard/inventory/edit/${p.id || 'draft'}`); }} profile={profile} />
+              <Porul key={refreshKey} onAddProduct={() => { localStorage.removeItem('niril_draft_product'); setEditingProduct(null); navigate('/dashboard/inventory/new'); }} onEditProduct={(p) => { setEditingProduct(p); navigate(`/dashboard/inventory/edit/${p.id || 'draft'}`); }} profile={profile} />
             ) : (
-              <CoolieItems key={refreshKey} onAddProduct={() => { setEditingProduct(null); navigate('/dashboard/inventory/new'); }} onEditProduct={(p) => { setEditingProduct(p); navigate(`/dashboard/inventory/edit/${p.id || 'draft'}`); }} />
+              <CoolieItems key={refreshKey} onAddProduct={() => { localStorage.removeItem('niril_coolie_draft_product'); setEditingProduct(null); navigate('/dashboard/inventory/new'); }} onEditProduct={(p) => { setEditingProduct(p); navigate(`/dashboard/inventory/edit/${p.id || 'draft'}`); }} />
             )}
           </Box>
         )}
@@ -1373,14 +1390,14 @@ function Seyali() {
             <Patru 
               key={refreshKey}
               profile={profile} 
-              onAddReceipt={() => { setEditingReceipt(null); navigate('/dashboard/receipts/new'); }} 
+              onAddReceipt={() => { localStorage.removeItem('niril_draft_receipt'); setEditingReceipt(null); navigate('/dashboard/receipts/new'); }} 
               onEditReceipt={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/edit/${rcp.id || 'draft'}`); }} 
               onViewReceipt={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/view/${rcp.id || 'draft'}`); }}
             />
           ) : (
             <CoolieReceiptList 
               key={refreshKey}
-              onAddReceipt={() => { setEditingReceipt(null); navigate('/dashboard/receipts/new'); }} 
+              onAddReceipt={() => { localStorage.removeItem('niril_draft_receipt'); setEditingReceipt(null); navigate('/dashboard/receipts/new'); }} 
               onEditReceipt={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/edit/${rcp.id || 'draft'}`); }} 
               onViewReceipt={(rcp) => { setEditingReceipt(rcp); navigate(`/dashboard/receipts/view/${rcp.id || 'draft'}`); }}
             />
@@ -1952,7 +1969,7 @@ function Seyali() {
 
       <Thagaval />
       {/* GLOBAL DEV TOGGLE FOR BILINGUAL TESTING */}
-      {profile && typeof window !== 'undefined' && window.location.hostname === 'localhost' && (
+      {profile && typeof window !== 'undefined' && import.meta.env.DEV && !(window as any).Capacitor && (
         <>
           <Box 
             onClick={(e) => setDevPanelAnchorEl(e.currentTarget)}

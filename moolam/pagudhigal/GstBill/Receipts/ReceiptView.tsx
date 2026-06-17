@@ -6,9 +6,11 @@ import html2canvas from 'html2canvas';
 import { useLanguage } from '../../../mozhi/LanguageContext';
 import { en } from '../../../mozhi/en';
 import { ta } from '../../../mozhi/ta';
-import { formatCurrency, numberToWords, getCountryConfig, getDynamicField, getBilingualStateName, getBilingualCountryName } from '../../../Payanpadu';
+import { formatCurrency, numberToWords, getCountryConfig, getDynamicField, getBilingualStateName, getBilingualCountryName, getPrintHeadContent } from '../../../Payanpadu';
 import { Box, Paper, useTheme, useMediaQuery } from '@mui/material';
 import { ViewHeader } from '../../ViewHeader';
+import NativeDocument from '../../NativeDocument';
+import { Capacitor } from '@capacitor/core';
 import { thagaval } from '../../Thagaval';
 import '../../CoolieBill/print.css';
 import { usePinchZoom } from '../../../hooks/usePinchZoom';
@@ -136,25 +138,14 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
     return pStr;
   };
 
-  const executePrint = () => {
+  const executePrint = async () => {
     const printContent = printRef.current;
     if (!printContent) return;
 
-    const iframe = document.createElement('iframe');
-    iframe.style.position = 'fixed';
-    iframe.style.right = '0';
-    iframe.style.bottom = '0';
-    iframe.style.width = '0';
-    iframe.style.height = '0';
-    iframe.style.border = '0';
-    document.body.appendChild(iframe);
-
     const title = receipt?.receiptNo ? `Receipt-${receipt.receiptNo}` : 'Print';
-    const headContent = document.head.innerHTML;
+    const headContent = await getPrintHeadContent();
 
-    const doc = iframe.contentWindow.document;
-    doc.open();
-    doc.write(`
+    const htmlContent = `
       <!DOCTYPE html>
       <html>
         <head>
@@ -172,7 +163,38 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
           ${printContent.outerHTML}
         </body>
       </html>
-    `);
+    `;
+
+    if (Capacitor.isNativePlatform()) {
+      try {
+        setSaving(true);
+        const fileName = `RCPT_${receipt.receiptNo.replace(/\//g, '-')}`;
+        await NativeDocument.printHtml({
+          html: htmlContent,
+          baseUrl: "file:///android_asset/public/",
+          filename: fileName
+        });
+      } catch (err) {
+        console.error(err);
+        thagaval('Failed to print document.', 'error');
+      } finally {
+        setSaving(false);
+      }
+      return;
+    }
+
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(htmlContent);
     doc.close();
 
     setTimeout(() => {
@@ -238,16 +260,26 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
       setSaving(true);
       const pdf = await buildPDF();
       const fileName = `RCPT_${receipt.receiptNo.replace(/\//g, '-')}.pdf`;
-      pdf.save(fileName);
       
-      const pdfBlob = pdf.output('blob');
-      const clientName = receipt.clientName || 'General';
-      const rcpDate = receipt.date ? new Date(receipt.date) : new Date();
-      const monthName = rcpDate.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
-      const params = new URLSearchParams({ name: fileName, client: clientName, month: monthName });
-      fetch(`/api/save-pdf?${params}`, { method: 'POST', headers: { 'Content-Type': 'application/pdf' }, body: pdfBlob }).catch(() => {});
-
-      thagaval(`Receipt downloaded & saved to Saved Invoices/${clientName}/`, 'success');
+      if (Capacitor.isNativePlatform()) {
+        const pdfBase64 = pdf.output('datauristring').split(',')[1];
+        await NativeDocument.downloadPdf({
+          base64Data: pdfBase64,
+          filename: fileName,
+          appMode: 'Niril Silk',
+          category: 'Receipt'
+        });
+        thagaval(`Receipt downloaded to Niril Silk/Receipt/`, 'success');
+      } else {
+        pdf.save(fileName);
+        const pdfBlob = pdf.output('blob');
+        const clientName = receipt.clientName || 'General';
+        const rcpDate = receipt.date ? new Date(receipt.date) : new Date();
+        const monthName = rcpDate.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+        const params = new URLSearchParams({ name: fileName, client: clientName, month: monthName });
+        fetch(`/api/save-pdf?${params}`, { method: 'POST', headers: { 'Content-Type': 'application/pdf' }, body: pdfBlob }).catch(() => {});
+        thagaval(`Receipt downloaded & saved to Saved Invoices/${clientName}/`, 'success');
+      }
     } catch (err) {
       console.error(err);
       thagaval('Failed to generate PDF.', 'error');
@@ -261,11 +293,18 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
     const amount = formatCurrency(receipt.amount, profileCurrency);
     const msg = `*Receipt: ${receipt.receiptNo}*\nReceived From: ${receipt.clientName}\nAmount: ${amount}\nDate: ${new Date(receipt.date).toLocaleDateString('en-IN')}`;
     
-    if (navigator.share) {
-      setSharing(true);
-      try {
-        const pdf = await buildPDF();
-        const fileName = `RCPT_${receipt.receiptNo.replace(/\//g, '-')}.pdf`;
+    setSharing(true);
+    try {
+      const pdf = await buildPDF();
+      const fileName = `RCPT_${receipt.receiptNo.replace(/\//g, '-')}.pdf`;
+      
+      if (Capacitor.isNativePlatform()) {
+        const pdfBase64 = pdf.output('datauristring').split(',')[1];
+        await NativeDocument.sharePdf({
+          base64Data: pdfBase64,
+          filename: fileName
+        });
+      } else if (navigator.share) {
         const pdfBlob = pdf.output('blob');
         const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
 
@@ -287,14 +326,14 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
           });
           pdf.save(fileName);
         }
-      } catch (error) {
-        console.error('PDF Generation failed', error);
-        thagaval('Failed to generate PDF for sharing', 'error');
-      } finally {
-        setTimeout(() => setSharing(false), 2000);
+      } else {
+        thagaval(t('featureNotSupported') || 'Native sharing not supported on this device.', 'warning');
       }
-    } else {
-      thagaval(t('featureNotSupported') || 'Native sharing not supported on this device.', 'warning');
+    } catch (error) {
+      console.error('PDF Generation failed', error);
+      thagaval('Failed to generate PDF for sharing', 'error');
+    } finally {
+      setTimeout(() => setSharing(false), 2000);
     }
   };
 

@@ -12,8 +12,9 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // Register the custom plugin before calling super.onCreate
+        // Register the custom plugins before calling super.onCreate
         registerPlugin(CustomSplashPlugin.class);
+        registerPlugin(NativeDocumentPlugin.class);
         super.onCreate(savedInstanceState);
 
         // Determine if dark theme is active

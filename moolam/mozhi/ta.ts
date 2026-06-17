@@ -1164,7 +1164,9 @@ export const ta = {
   welcomeAgreeText: 'நிறிள்-ஐத் தொடங்க "தொடங்குக"-ஐத் தட்டவும்.',
   agreeAndContinueBtn: 'தொடங்குக',
   selectLanguageTitle: 'மொழியைத் தேர்ந்தெடு',
-  selectLanguageSubtitle: 'விருப்பமான மொழியை தேர்வு செய்'
+  selectLanguageSubtitle: 'விருப்பமான மொழியை தேர்வு செய்',
+  savedSuccessfully: 'வெற்றிகரமாகச் சேமிக்கப்பட்டது',
+  hc_alsoSaveACopyTo: 'ஒரு நகலை எனது கூகுள் டிரைவிலும் சேமிக்கவும்'
 };
 
 export type TranslationKey = keyof typeof ta;

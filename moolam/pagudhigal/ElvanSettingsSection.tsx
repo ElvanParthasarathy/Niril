@@ -329,13 +329,17 @@ export function SettingsPillRow({
       <Collapse in={!isEditing} timeout={300}>
         <Fade in={!isEditing} timeout={300}>
           <Box sx={{ p: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', pr: 2 }}>
-               <Typography sx={{ fontSize: '13px', color: 'var(--mac-text-secondary, #aaaaaa)', mb: '2px', fontWeight: 500 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', pr: 2, flex: 1, minWidth: 0 }}>
+               <Typography noWrap sx={{ fontSize: '13px', color: 'var(--mac-text-secondary, #aaaaaa)', mb: '2px', fontWeight: 500 }}>
                  {label}
                </Typography>
-               <Typography component="div" sx={{ fontSize: '15px', color: 'var(--mac-text, #ffffff)' }}>
+               <Box sx={{ 
+                 fontSize: '15px', color: 'var(--mac-text, #ffffff)',
+                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                 '& *': { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }
+               }}>
                  {value || <span style={{ fontStyle: 'italic', opacity: 0.5 }}>Not set</span>}
-               </Typography>
+               </Box>
             </Box>
             {!disableEdit && (
               <ButtonBase 

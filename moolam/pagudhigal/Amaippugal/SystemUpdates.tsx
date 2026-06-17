@@ -9,7 +9,6 @@ import { ref, remove } from 'firebase/database';
 
 export default function SystemUpdates({ t }: { t: (key: string) => string }) {
   const [eraseDialogOpen, setEraseDialogOpen] = useState(false);
-  const [cacheDialogOpen, setCacheDialogOpen] = useState(false);
   const [signOutDialogOpen, setSignOutDialogOpen] = useState(false);
   const [confirmEmailInput, setConfirmEmailInput] = useState('');
   const [erasePassword, setErasePassword] = useState('');
@@ -44,9 +43,31 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
       await Promise.all(pathsToClear.map(p => remove(ref(rtdb, p))));
       
       thagaval(t('dataErasedSuccess') || 'App data erased.', 'success');
+      
+      // Clear all local states to ensure a true fresh start
       localStorage.clear();
-      await signOut(auth);
-      window.location.replace('/');
+      sessionStorage.clear();
+      
+      // Attempt to clear Firebase Auth IndexedDB directly to prevent ghost sessions
+      try {
+        const dbs = await window.indexedDB.databases();
+        dbs.forEach(db => {
+          if (db.name && db.name.includes('firebaseLocalStorageDb')) {
+            window.indexedDB.deleteDatabase(db.name);
+          }
+        });
+      } catch (e) {
+        // ignore error if indexedDB API is not fully supported
+      }
+      
+      try {
+        await signOut(auth);
+      } catch (e) {
+        // ignore sign out error so it doesn't block the reload
+      }
+      
+      // Force hard reload
+      window.location.href = '/';
     } catch (error: any) {
       console.error(error);
       if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
@@ -60,11 +81,6 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
     setErasing(false);
   };
 
-  const handleClearCache = () => {
-    localStorage.clear();
-    window.location.replace('/');
-  };
-
   const handleSignOut = async () => {
     await signOut(auth);
     window.location.replace('/');
@@ -74,13 +90,6 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
 
       <SettingsPillContainer>
-        <SettingsRow 
-          icon={<Trash size={20} weight="fill" />} 
-          iconColor="monochrome"
-          title={t('clearCacheTitle') !== 'clearCacheTitle' ? t('clearCacheTitle') : 'Clear Cache'}
-          description={t('clearCacheDesc') !== 'clearCacheDesc' ? t('clearCacheDesc') : 'Fix issues by clearing cache'}
-          onClick={() => setCacheDialogOpen(true)}
-        />
         <SettingsRow 
           icon={<SignOut size={20} weight="fill" />} 
           iconColor="monochrome"
@@ -97,21 +106,6 @@ export default function SystemUpdates({ t }: { t: (key: string) => string }) {
         />
       </SettingsPillContainer>
 
-      {/* Clear Cache Dialog */}
-      <Dialog open={cacheDialogOpen} onClose={() => setCacheDialogOpen(false)} maxWidth="xs" fullWidth slotProps={{ paper: { sx: { borderRadius: 3 } } }}>
-        <DialogTitle sx={{ fontWeight: 600, pb: 1, fontSize: '1.125rem' }}>{t('clearCacheTitle') !== 'clearCacheTitle' ? t('clearCacheTitle') : 'Clear Cache?'}</DialogTitle>
-        <DialogContent sx={{ color: 'text.secondary', fontSize: '0.875rem' }}>
-          {t('clearCacheConfirmDesc') !== 'clearCacheConfirmDesc' ? t('clearCacheConfirmDesc') : 'This will reload the app. You may need to sign in again.'}
-        </DialogContent>
-        <DialogActions sx={{ p: 2, pt: 0 }}>
-          <Button onClick={() => setCacheDialogOpen(false)} sx={{ color: 'text.secondary', fontWeight: 600, borderRadius: 2, fontSize: '0.875rem', textTransform: 'none' }}>
-            {t('cancel') !== 'cancel' ? t('cancel') : 'Cancel'}
-          </Button>
-          <Button onClick={handleClearCache} variant="contained" disableElevation sx={{ bgcolor: 'black', color: 'white', borderRadius: 2, px: 3, fontWeight: 600, fontSize: '0.875rem', textTransform: 'none', '@media (hover: hover)': { '&:hover': { bgcolor: '#333' } } }}>
-            {t('clearCacheBtn') !== 'clearCacheBtn' ? t('clearCacheBtn') : 'Clear'}
-          </Button>
-        </DialogActions>
-      </Dialog>
 
       {/* Sign Out Dialog */}
       <Dialog open={signOutDialogOpen} onClose={() => setSignOutDialogOpen(false)} maxWidth="xs" fullWidth slotProps={{ paper: { sx: { borderRadius: 3 } } }}>

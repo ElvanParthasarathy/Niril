@@ -63,13 +63,14 @@ export default function BusinessSettings({
               displayEmpty
               MenuProps={{ disableScrollLock: true }}
               sx={{ 
+                flex: 1, minWidth: 0,
                 bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)',
                 borderRadius: '100px',
                 fontSize: '15px', color: 'var(--mac-text, #ffffff)', fontWeight: 500,
                 '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
                 '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                '& .MuiSelect-select': { py: 1, px: 2 }
+                '& .MuiSelect-select': { py: 1, px: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }
               }}
             >
               <MenuItem value="" disabled><em>{profile.niruvanathinPeyar || 'Select Profile'}</em></MenuItem>
@@ -94,12 +95,12 @@ export default function BusinessSettings({
           
           <Collapse in={isProfileEditing} sx={{ width: '100%' }} unmountOnExit timeout={300}>
             <Box sx={{ pt: 3 }}>
-              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', width: '100%', flexWrap: 'wrap' }}>
+              <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end', width: '100%', flexWrap: 'nowrap' }}>
                 <ButtonBase 
                   onClick={() => setIsProfileEditing(false)} 
                   sx={{ 
-                    px: 3, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px', fontFamily: '"Elvan Sans", sans-serif',
-                    color: 'text.secondary',
+                    px: 2, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '13px', fontFamily: '"Elvan Sans", sans-serif',
+                    color: 'text.secondary', whiteSpace: 'nowrap',
                     '@media (hover: hover)': { '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' } }
                   }}
                 >
@@ -110,8 +111,8 @@ export default function BusinessSettings({
                     setShowManageProfilesModal(true);
                   }} 
                   sx={{ 
-                    px: 3, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px', fontFamily: '"Elvan Sans", sans-serif',
-                    color: 'text.primary',
+                    px: 2, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '13px', fontFamily: '"Elvan Sans", sans-serif',
+                    color: 'text.primary', whiteSpace: 'nowrap',
                     '@media (hover: hover)': { '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' } }
                   }}
                 >
@@ -122,8 +123,8 @@ export default function BusinessSettings({
                     setShowNewProfileModal(true);
                   }} 
                   sx={{ 
-                    px: 3, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '14px', fontFamily: '"Elvan Sans", sans-serif',
-                    bgcolor: 'primary.main', color: 'primary.contrastText',
+                    px: 2, py: 1, borderRadius: '500px', fontWeight: 600, fontSize: '13px', fontFamily: '"Elvan Sans", sans-serif',
+                    bgcolor: 'primary.main', color: 'primary.contrastText', whiteSpace: 'nowrap',
                     '@media (hover: hover)': { '&:hover': { bgcolor: 'primary.dark' } }
                   }}
                 >

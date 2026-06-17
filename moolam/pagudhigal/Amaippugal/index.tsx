@@ -46,7 +46,7 @@ export default function Amaippugal({ onSaved, appMode, onSwitchModeRequest, dark
   const [currentView, setCurrentView] = useState<any>(() => window.innerWidth > 768 ? 0 : 'hub');
   const [activeTab, setActiveTab] = useState<any>('business');
 
-  const showAppVersion = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || !!(window as any).Capacitor || window.matchMedia('(display-mode: standalone)').matches;
+  const showAppVersion = import.meta.env.DEV && !(window as any).Capacitor;
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);

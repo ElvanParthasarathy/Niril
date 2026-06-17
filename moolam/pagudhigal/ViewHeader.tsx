@@ -4,6 +4,7 @@ import { Box, Typography, IconButton, Tooltip, useMediaQuery, useTheme, Button }
 import { PencilSimple, Printer as PrintIcon, DownloadSimple, ShareNetwork, Spinner } from '@phosphor-icons/react';
 import { FloatingBackButton } from './FloatingBackButton';
 import { useLanguage } from '../mozhi/LanguageContext';
+import { Capacitor } from '@capacitor/core';
 
 export const ViewHeader = ({ onEdit, onPrint, onPDF, onShare, saving, sharing = false, title, onBack, className = '' }: any) => {
   const { t } = useLanguage();
