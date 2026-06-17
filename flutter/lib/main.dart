@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'src/features/printing/presentation/one_ui_template_shell.dart';
+import 'src/features/printing/presentation/elvan_shell.dart';
 
 void main() {
   runApp(
@@ -137,10 +137,14 @@ class _ShellDemoScreenState extends State<ShellDemoScreen> {
       _currentTab = _navItemCount > 0 ? _navItemCount - 1 : 0;
     }
 
+
+    final currentItem = _masterNavItems[_currentTab];
+    final String currentTitle = currentItem.label;
+
     return Stack(
       children: [
-        OneUiTemplateShell(
-          title: 'Albums',
+        ElvanShell(
+          title: currentTitle,
           currentIndex: _currentTab,
           onTabSelected: (index) => setState(() => _currentTab = index),
           navActions: const [
@@ -149,65 +153,68 @@ class _ShellDemoScreenState extends State<ShellDemoScreen> {
             _ActionIcon(icon: Icons.more_vert_rounded, tooltip: 'More options'),
           ],
           navItems: _masterNavItems.take(_navItemCount).toList(),
-          body: SliverPadding(
-            padding: const EdgeInsets.only(
-              left: 12,
-              right: 12,
-              top: 4,
-              bottom: 120, // clearance for the floating pill
-            ),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-                childAspectRatio: 0.82,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => _AlbumCard(album: _albums[index]),
-                childCount: _albums.length,
-              ),
-            ),
-          ),
-        ),
-        // ── Dev Floating Button to change item count ──
-        Positioned(
-          top: 60,
-          right: 16,
-          child: Material(
-            color: Colors.white.withValues(alpha: 0.9),
-            borderRadius: BorderRadius.circular(20),
-            elevation: 4,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(5, (index) {
-                  final count = index + 1;
-                  final isSelected = count == _navItemCount;
-                  return GestureDetector(
-                    onTap: () => setState(() => _navItemCount = count),
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: isSelected ? Colors.blue : Colors.grey.shade200,
+          // Load ALL 5 screens into memory instantly!
+          slivers: List.generate(_navItemCount, (index) {
+            Widget body;
+            if (index == 1) {
+              // Albums Tab
+              body = SliverPadding(
+                padding: const EdgeInsets.only(
+                  left: 12,
+                  right: 12,
+                  top: 32,
+                  bottom: 120, // clearance for the floating pill
+                ),
+                sliver: SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                    childAspectRatio: 0.82,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, gridIndex) => _AlbumCard(album: _albums[gridIndex]),
+                    childCount: _albums.length,
+                  ),
+                ),
+              );
+            } else {
+              // Dummy Screens for all other tabs
+              final item = _masterNavItems[index];
+              body = SliverFillRemaining(
+                hasScrollBody: false,
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        item.activeIcon ?? item.icon,
+                        size: 80,
+                        color: Colors.grey.withValues(alpha: 0.3),
                       ),
-                      child: Text(
-                        '$count',
+                      const SizedBox(height: 16),
+                      Text(
+                        'Dummy screen for ${item.label}',
                         style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.black,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey.withValues(alpha: 0.6),
                         ),
                       ),
-                    ),
-                  );
-                }),
-              ),
-            ),
-          ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            // Hide the inactive screens but keep them fully loaded in memory!
+            return SliverOffstage(
+              offstage: _currentTab != index,
+              sliver: body,
+            );
+          }),
         ),
+
       ],
     );
   }
@@ -329,18 +336,18 @@ class _ActionIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-      child: IconButton(
-        onPressed: () {},
-        icon: Icon(icon),
-        iconSize: 24,
-        color: const Color(0xFF4A4A4A),
-        tooltip: tooltip,
-        splashRadius: 22,
-        style: IconButton.styleFrom(
-          padding: const EdgeInsets.all(10),
-        ),
+    return IconButton(
+      onPressed: () {},
+      icon: Icon(icon),
+      iconSize: 24,
+      color: Colors.black,
+      tooltip: tooltip,
+      splashRadius: 22,
+      constraints: const BoxConstraints(), // Strips the hidden 48x48 minimum size
+      style: IconButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        minimumSize: Size.zero,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap, // Removes extra margin
       ),
     );
   }

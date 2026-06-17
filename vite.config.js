@@ -112,6 +112,7 @@ export default defineConfig(({ command }) => ({
       }
     }),
   ],
+  base: './',
   publicDir: 'podhu',
   build: {
     rollupOptions: {
