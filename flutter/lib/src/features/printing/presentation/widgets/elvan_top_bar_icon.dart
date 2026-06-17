@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// A highly optimized custom icon button for the Elvan Top Bar.
 /// It uses InkResponse directly to draw a perfect circular ripple
 /// without any of the forced padding or stadium shape restrictions of Material 3's IconButton.
-class ElvanTopBarIcon extends StatefulWidget {
+class ElvanTopBarIcon extends StatelessWidget {
   const ElvanTopBarIcon({
     super.key,
     required this.icon,
@@ -14,36 +14,29 @@ class ElvanTopBarIcon extends StatefulWidget {
   final VoidCallback onTap;
 
   @override
-  State<ElvanTopBarIcon> createState() => _ElvanTopBarIconState();
-}
-
-class _ElvanTopBarIconState extends State<ElvanTopBarIcon> {
-  bool _isPressed = false;
-
-  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) => setState(() => _isPressed = false),
-      onTapCancel: () => setState(() => _isPressed = false),
-      onTap: widget.onTap,
-      behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        width: 26,
-        height: 26, // Exact tap target size to prevent overlap
-        child: OverflowBox(
-          maxWidth: 54,
-          maxHeight: 54,
-          child: Container(
-            width: 54,
-            height: 54, // Perfect massive circle size
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: _isPressed 
-                  ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12)
-                  : Colors.transparent,
+    return SizedBox(
+      width: 26,
+      height: 26, // Exact tap target size to prevent layout overlap
+      child: OverflowBox(
+        maxWidth: 40,
+        maxHeight: 40,
+        child: SizedBox(
+          width: 40,
+          height: 40, // Reduced from 54 to 40 to mathematically prevent overlapping
+          child: Material(
+            type: MaterialType.transparency,
+            shape: const CircleBorder(),
+            clipBehavior: Clip.hardEdge, // Strictly confine highlight and splash to this 40px circle
+            child: InkResponse(
+              onTap: onTap,
+              radius: 20, // Expanding circle radius (40px diameter)
+              highlightShape: BoxShape.circle,
+              splashFactory: InkRipple.splashFactory, // Pre-built smooth animation, NO sparkles!
+              splashColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
+              highlightColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+              child: Icon(icon, size: 22),
             ),
-            child: Icon(widget.icon, size: 26),
           ),
         ),
       ),

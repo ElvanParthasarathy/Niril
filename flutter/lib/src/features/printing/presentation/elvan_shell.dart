@@ -438,7 +438,7 @@ class _ElvanHeaderDelegate extends SliverPersistentHeaderDelegate {
                   child: Opacity(
                     opacity: isPinned ? 0.0 : 1.0, // Hand off to Component B when pinned!
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
+                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: navActions,
@@ -457,10 +457,12 @@ class _ElvanHeaderDelegate extends SliverPersistentHeaderDelegate {
                     child: Opacity(
                       opacity: isPinned ? 0.0 : 1.0, // Hand off to Component B when pinned!
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
+                        padding: const EdgeInsets.all(7),
                         child: IconButton(
                           icon: const Icon(CupertinoIcons.back),
                           onPressed: () => Navigator.pop(context),
+                          constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                          padding: EdgeInsets.zero,
                         ),
                       ),
                     ),

@@ -47,8 +47,8 @@ class ElvanTopBar extends StatelessWidget {
         
         // 2. True Pill Logic: Calculate when the gallery cards physically collide with the pill
         // +40 = 32 (original card margin) + 8 (extra card padding gap)
-        // 54.0 is the exact physical height of the new, taller pill
-        final double collisionOffset = (expandedHeight + 40.0) - (ceiling + 54.0);
+        // 50.0 is the exact physical height of the new, tighter pill
+        final double collisionOffset = (expandedHeight + 40.0) - (ceiling + 50.0);
         final double liftStartOffset = collisionOffset - 4.0;
         
         double liftProgress = 0.0;
@@ -80,7 +80,7 @@ class ElvanTopBar extends StatelessWidget {
                   borderRadius: BorderRadius.circular(100),
                   clipBehavior: Clip.antiAlias, // Clips the beautiful circular ripples smoothly to the pill border!
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 14), // Restored vertical padding so pill is tall!
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12), // Tighter vertical padding for 50px pill
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: navActions,
@@ -130,8 +130,8 @@ class ElvanBackButton extends StatelessWidget {
         
         // 2. True Pill Logic
         // +40 = 32 (original card margin) + 8 (extra card padding gap)
-        // 54.0 is the exact physical height of the new, taller pill
-        final double collisionOffset = (expandedHeight + 40.0) - (ceiling + 54.0);
+        // 50.0 is the exact physical height of the new, tighter pill
+        final double collisionOffset = (expandedHeight + 40.0) - (ceiling + 50.0);
         final double liftStartOffset = collisionOffset - 4.0;
         
         double liftProgress = 0.0;
@@ -158,7 +158,7 @@ class ElvanBackButton extends StatelessWidget {
                     )
                   ] : null,
                 ),
-                padding: const EdgeInsets.all(5),
+                padding: const EdgeInsets.all(7),
                 child: IconButton(
                   icon: const Icon(CupertinoIcons.back),
                   onPressed: () => Navigator.pop(context),

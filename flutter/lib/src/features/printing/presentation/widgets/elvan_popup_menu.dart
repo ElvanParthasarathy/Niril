@@ -45,10 +45,13 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
       builder: (context) => Stack(
         children: [
           // Invisible dismiss layer covering the whole screen
+          // We use a translucent Listener instead of GestureDetector so that the touch event
+          // physically passes through this layer down to the ScrollView beneath it!
+          // This allows the user to scroll or tap the background while closing the popup seamlessly.
           Positioned.fill(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: _closeMenu,
+            child: Listener(
+              behavior: HitTestBehavior.translucent,
+              onPointerDown: (_) => _closeMenu(),
               child: Container(),
             ),
           ),
@@ -138,7 +141,7 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
     return CompositedTransformTarget(
       link: _layerLink,
       child: ElvanTopBarIcon(
-        icon: Icons.more_vert,
+        icon: CupertinoIcons.ellipsis_vertical,
         onTap: _toggleMenu,
       ),
     );
