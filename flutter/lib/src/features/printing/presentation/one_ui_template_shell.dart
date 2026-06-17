@@ -323,7 +323,7 @@ class _TranslucentPillNavbar extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 13.0, vertical: 4.0), // Perfect 4px gap all around
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0), // Perfect 4px gap all around with reduced overlap
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -372,12 +372,12 @@ class _TranslucentNavItem extends StatelessWidget {
     const double iconSize = 23.0;
     const double fontSize = 9.5;
     
-    // The visual layout width. Tighter spacing keeps the icons grouped close together.
-    final double layoutWidth = itemCount <= 4 ? 62.0 : 56.0;
+    // The visual layout width. Increased spacing stretches the main white pill and makes room.
+    final double layoutWidth = itemCount <= 4 ? 67.0 : 61.0;
     
-    // The width of the active grey background pill. This is mathematically WIDER than the layout!
-    // It bleeds outward and secretly overlaps into the neighbor's space to create that beautiful Apple pill.
-    final double bgWidth = itemCount <= 4 ? 80.0 : 74.0;
+    // The width of the active grey background pill. Restored to its beautiful elongated shape!
+    // Overlap remains a perfectly safe 4px.
+    final double bgWidth = itemCount <= 4 ? 75.0 : 69.0;
 
     return GestureDetector(
       onTap: onTap,
