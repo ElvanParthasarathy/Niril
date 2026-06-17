@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DATA MODEL — Fully decoupled nav item descriptor
@@ -11,32 +10,20 @@ import 'package:flutter_svg/flutter_svg.dart';
 /// so the shell remains completely agnostic of domain logic.
 class CustomNavItem {
   const CustomNavItem({
-    this.icon,
+    required this.icon,
     required this.label,
-    this.headerLabel,
     this.activeIcon,
-    this.svgString,
-    this.activeSvgString,
-  }) : assert(icon != null || svgString != null);
+  });
 
   /// Icon rendered when this tab is **not** selected.
-  final IconData? icon;
+  final IconData icon;
 
   /// Optional override icon rendered when this tab **is** selected.
+  /// Falls back to [icon] if null.
   final IconData? activeIcon;
 
-  /// The label rendered in the bottom navigation bar.
+  /// Human-readable label displayed beneath the icon.
   final String label;
-
-  /// Optional label rendered in the top header. Defaults to [label] if not provided.
-  final String? headerLabel;
-
-  /// Optional SVG string rendered when this tab is **not** selected.
-  final String? svgString;
-
-  /// Optional override SVG string rendered when this tab **is** selected.
-  final String? activeSvgString;
-
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -77,8 +64,6 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
     final int itemCount = widget.items.length;
     // The visual layout width. Increased spacing stretches the main white pill and makes room.
     final double layoutWidth = itemCount <= 4 ? 67.0 : 61.0;
@@ -118,11 +103,11 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
       child: Container(
         height: 60,
         decoration: BoxDecoration(
-          // ── Translucent background — content is clearly visible beneath ──
-          color: isDark ? const Color(0xFF1E1E1E).withValues(alpha: 0.88) : const Color(0xFFFFFFFF).withValues(alpha: 0.88),
+          // ── Translucent white — content is clearly visible beneath ──
+          color: const Color(0xFFFFFFFF).withValues(alpha: 0.88),
           borderRadius: BorderRadius.circular(100),
           border: Border.all(
-            color: isDark ? const Color(0xFF333333).withValues(alpha: 0.6) : const Color(0xFFFFFFFF).withValues(alpha: 0.6),
+            color: const Color(0xFFFFFFFF).withValues(alpha: 0.6),
             width: 0.5,
           ),
           boxShadow: [
@@ -221,9 +206,9 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
                       curve: Curves.easeOutCubic,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF333333).withValues(alpha: 0.95) : const Color(0xFFE5E5E5).withValues(alpha: 0.95),
+                          color: const Color(0xFFE5E5E5).withValues(alpha: 0.95),
                           borderRadius: BorderRadius.circular(100),
-                          boxShadow: isDark ? null : [
+                          boxShadow: [
                             BoxShadow(
                               blurRadius: 4,
                               offset: const Offset(0, 1),
@@ -276,12 +261,10 @@ class _TranslucentNavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
     final icon = isActive ? (item.activeIcon ?? item.icon) : item.icon;
     final color = isActive
-        ? (isDark ? Colors.white : const Color(0xFF1A1A1A))
-        : (isDark ? Colors.grey.shade500 : const Color(0xFF7C7C80));
+        ? const Color(0xFF1A1A1A)
+        : const Color(0xFF7C7C80);
 
     // Uniform Apple pattern: large icons, small labels
     const double iconSize = 23.0;
@@ -293,19 +276,11 @@ class _TranslucentNavItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (item.svgString != null)
-            SvgPicture.string(
-              isActive ? (item.activeSvgString ?? item.svgString!) : item.svgString!,
-              width: iconSize,
-              height: iconSize,
-              colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-            )
-          else
-            Icon(
-              isActive ? (item.activeIcon ?? item.icon) : item.icon,
-              size: iconSize,
-              color: color,
-            ),
+          Icon(
+            icon,
+            size: iconSize,
+            color: color,
+          ),
           const SizedBox(height: 2),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),

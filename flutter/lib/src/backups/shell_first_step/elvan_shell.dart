@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'dart:math';
 
 export 'elvan_navbar.dart';
 import 'elvan_navbar.dart';
@@ -29,11 +27,10 @@ class ElvanShell extends StatefulWidget {
     super.key,
     required this.slivers,
     required this.title,
-    this.navActions = const [],
-    this.navItems = const [],
-    this.currentIndex = 0,
-    this.onTabSelected,
-    this.showNavbar = true,
+    required this.navActions,
+    required this.navItems,
+    required this.currentIndex,
+    required this.onTabSelected,
   });
 
   /// The scrollable content placed inside the [CustomScrollView] as slivers.
@@ -53,10 +50,7 @@ class ElvanShell extends StatefulWidget {
   final int currentIndex;
 
   /// Callback fired when the user taps a different tab.
-  final ValueChanged<int>? onTabSelected;
-
-  /// Whether to render the floating bottom navbar and its associated fade mask.
-  final bool showNavbar;
+  final ValueChanged<int> onTabSelected;
 
   @override
   State<ElvanShell> createState() => _ElvanShellState();
@@ -69,8 +63,7 @@ class _ElvanShellState extends State<ElvanShell>
   late final Animation<double> _navbarOpacity;
   
   // ── Scroll tracking for One UI Physics ────────────────────────────────
-  late ScrollController _scrollController;
-  bool _isScrollInitialized = false;
+  late final ScrollController _scrollController;
 
   /// Navbar total height including internal padding.
   static const double _kNavbarHeight = 60.0;
@@ -104,26 +97,8 @@ class _ElvanShellState extends State<ElvanShell>
       curve: Curves.easeOutCubic,
       reverseCurve: Curves.easeInCubic,
     ));
-  }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_isScrollInitialized) {
-      _scrollController = ScrollController();
-      _isScrollInitialized = true;
-
-      // Defer the scroll jump until after the first frame,
-      // when Android has reported the correct status bar height.
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final double statusBarHeight = MediaQuery.paddingOf(context).top;
-        // Hand-off formula: exact point where icons first stick to ceiling
-        final double handOffOffset = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
-        if (_scrollController.hasClients) {
-          _scrollController.jumpTo(handOffOffset);
-        }
-      });
-    }
+    _scrollController = ScrollController();
   }
 
   @override
@@ -147,7 +122,7 @@ class _ElvanShellState extends State<ElvanShell>
         final double statusBarHeight = MediaQuery.paddingOf(context).top;
         final double ceiling = statusBarHeight + 20.0;
         
-        final double collisionOffset = (_kExpandedHeight + 40.0) - (ceiling + 50.0);
+        final double collisionOffset = (_kExpandedHeight + 32.0) - (ceiling + 50.0);
         final double liftStartOffset = collisionOffset - 4.0;
         
         final bool isTruePill = _scrollController.offset > liftStartOffset;
@@ -173,24 +148,20 @@ class _ElvanShellState extends State<ElvanShell>
       }
 
       // ── Samsung One UI Physics: Snapping the Header ──
-      // Snap to the hand-off point where icons first stick to ceiling
+      // Calculate how far the header travels before collapsing
       final double statusBarHeight = MediaQuery.paddingOf(context).top;
-      final double snapThreshold = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
+      final double snapThreshold = _kExpandedHeight - kToolbarHeight - statusBarHeight;
       
       final currentOffset = _scrollController.offset;
       if (currentOffset > 0 && currentOffset < snapThreshold) {
         // We are caught in the middle! Snap to the closest stage.
         final targetOffset = currentOffset > (snapThreshold / 2) ? snapThreshold : 0.0;
-        final double distance = (currentOffset - targetOffset).abs();
-        
-        // Adaptive duration: longer minimum duration for a gentle settle, softer scaling
-        final int durationMs = (250 + (distance * 0.5)).toInt().clamp(250, 450);
         
         Future.microtask(() {
           _scrollController.animateTo(
             targetOffset,
-            duration: Duration(milliseconds: durationMs),
-            curve: Curves.decelerate, // Soft, natural deceleration like a weak magnet
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeOutCubic,
           );
         });
       }
@@ -215,30 +186,29 @@ class _ElvanShellState extends State<ElvanShell>
           ),
 
           // ─── Layer 2: Bottom boundary gradient fade mask ──────────────
-          if (widget.showNavbar)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              height: _kFadeMaskHeight + _kNavbarHeight + _kNavbarBottomMargin,
-              child: IgnorePointer(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        backgroundColor.withAlpha(0),
-                        backgroundColor.withAlpha(40),
-                        backgroundColor.withAlpha(140),
-                        backgroundColor,
-                      ],
-                      stops: const [0.0, 0.3, 0.65, 1.0],
-                    ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: _kFadeMaskHeight + _kNavbarHeight + _kNavbarBottomMargin,
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      backgroundColor.withAlpha(0),
+                      backgroundColor.withAlpha(40),
+                      backgroundColor.withAlpha(140),
+                      backgroundColor,
+                    ],
+                    stops: const [0.0, 0.3, 0.65, 1.0],
                   ),
                 ),
               ),
             ),
+          ),
 
           // ─── Layer 2.5: Top boundary gradient fade mask ───────────────
           Positioned(
@@ -266,31 +236,30 @@ class _ElvanShellState extends State<ElvanShell>
           ),
 
           // ─── Layer 3: Floating pill navbar ────────────────────────────
-          if (widget.showNavbar)
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: _kNavbarBottomMargin,
-              child: Center(
-                child: FadeTransition(
-                  opacity: _navbarOpacity,
-                  child: AnimatedBuilder(
-                    animation: _navbarOpacity,
-                    builder: (context, child) {
-                      return IgnorePointer(
-                        ignoring: _navbarOpacity.value < 0.5,
-                        child: child,
-                      );
-                    },
-                    child: ElvanNavbar(
-                      items: widget.navItems,
-                      currentIndex: widget.currentIndex,
-                      onTabSelected: widget.onTabSelected ?? (_) {},
-                    ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: _kNavbarBottomMargin,
+            child: Center(
+              child: FadeTransition(
+                opacity: _navbarOpacity,
+                child: AnimatedBuilder(
+                  animation: _navbarOpacity,
+                  builder: (context, child) {
+                    return IgnorePointer(
+                      ignoring: _navbarOpacity.value < 0.5,
+                      child: child,
+                    );
+                  },
+                  child: ElvanNavbar(
+                    items: widget.navItems,
+                    currentIndex: widget.currentIndex,
+                    onTabSelected: widget.onTabSelected,
                   ),
                 ),
               ),
             ),
+          ),
 
           // ── Component B: Independent Top Bar (Pill) ──
           ElvanTopBar(
@@ -299,14 +268,6 @@ class _ElvanShellState extends State<ElvanShell>
             navActions: widget.navActions,
             expandedHeight: _kExpandedHeight,
           ),
-
-          // ── Back Button (Left side equivalent of Component B) ──
-          ElvanBackButton(
-            scrollController: _scrollController,
-            hideAnimation: _navbarOpacity,
-            expandedHeight: _kExpandedHeight,
-          ),
-
         ],
       ),
     );
@@ -328,33 +289,8 @@ class _ElvanShellState extends State<ElvanShell>
           ),
         ),
 
-        // ── Small gap so cards sit slightly below the naked icons ──
-        const SliverToBoxAdapter(
-          child: SizedBox(height: 8),
-        ),
-
         // ── Body content slivers ──
         ...widget.slivers,
-
-        // ── Smart Bottom Padding ──
-        // Only adds empty space if the cards aren't tall enough to allow the header to collapse.
-        // If you have lots of cards, it adds 0 padding!
-        SliverLayoutBuilder(
-          builder: (context, constraints) {
-            final double statusBarHeight = MediaQuery.paddingOf(context).top;
-            final double handOffOffset = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
-            
-            // The absolute minimum total scroll height required to collapse the header
-            final double requiredTotalHeight = constraints.viewportMainAxisExtent + handOffOffset;
-            final double currentHeight = constraints.precedingScrollExtent;
-            
-            final double missingHeight = requiredTotalHeight - currentHeight;
-            
-            return SliverToBoxAdapter(
-              child: SizedBox(height: missingHeight > 0 ? missingHeight : 0),
-            );
-          },
-        ),
       ],
     );
   }
@@ -419,17 +355,17 @@ class _ElvanHeaderDelegate extends SliverPersistentHeaderDelegate {
                   child: Text(
                     title,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 34,
                       fontWeight: FontWeight.w700,
-                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
+                      color: Colors.black87,
                       letterSpacing: -0.5,
                       height: 1.15,
                     ),
                   ),
                 ),
               ),
-              // ── Component A: The Page Header Icons (Right) ──
+              // ── Component A: The Page Header Icons ──
               Positioned(
                 top: currentTop,
                 right: 16,
@@ -447,25 +383,6 @@ class _ElvanHeaderDelegate extends SliverPersistentHeaderDelegate {
                   ),
                 ),
               ),
-              // ── Component A: The Back Button (Left) ──
-              if (Navigator.canPop(context))
-                Positioned(
-                  top: currentTop,
-                  left: 16,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Opacity(
-                      opacity: isPinned ? 0.0 : 1.0, // Hand off to Component B when pinned!
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
-                        child: IconButton(
-                          icon: const Icon(CupertinoIcons.back),
-                          onPressed: () => Navigator.pop(context),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
             ],
           ),
         );

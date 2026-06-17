@@ -10,6 +10,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  shared_preferences: ^2.2.3
 
   # State Management
   flutter_riverpod: ^2.5.1
@@ -17,6 +21,7 @@ dependencies:
 
   # UI / Presentation
   cupertino_icons: ^1.0.6
+  flutter_svg: ^2.3.0
 
 dev_dependencies:
   flutter_test:
