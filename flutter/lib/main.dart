@@ -6,7 +6,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'src/core/preferences_service.dart';
 import 'src/core/theme_provider.dart';
+import 'src/core/state/app_state.dart';
+import 'src/core/models/app_mode.dart';
 import 'src/localization/locale_provider.dart';
+import 'src/features/auth/presentation/mode_selector_screen.dart';
 import 'src/features/pages/chaandru_page.dart';
 import 'src/features/pages/mugappu_page.dart';
 import 'src/features/pages/pattiyal_page.dart';
@@ -72,7 +75,19 @@ class ElvanNirilApp extends ConsumerWidget {
         scaffoldBackgroundColor: Colors.black, // AMOLED Black
         useMaterial3: true,
       ),
-      home: const ShellDemoScreen(),
+      home: Consumer(
+        builder: (context, ref, _) {
+          final mode = ref.watch(appModeProvider);
+          if (mode == null) {
+            return ModeSelectorScreen(
+              onModeSelected: (newMode) {
+                ref.read(appModeProvider.notifier).setMode(newMode);
+              },
+            );
+          }
+          return const ShellDemoScreen();
+        },
+      ),
     );
   }
 }
