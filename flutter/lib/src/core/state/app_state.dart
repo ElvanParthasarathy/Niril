@@ -17,3 +17,6 @@ class AppStateNotifier extends Notifier<AppMode?> {
 final appModeProvider = NotifierProvider<AppStateNotifier, AppMode?>(() {
   return AppStateNotifier();
 });
+
+// Tracks the selected segment inside the Uruvakku tab (0 = Invoices, 1 = Receipts)
+final uruvakkuSegmentProvider = StateProvider<int>((ref) => 0);

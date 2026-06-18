@@ -211,10 +211,10 @@ class _ElvanShellState extends State<ElvanShell>
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final double statusBarHeight = MediaQuery.paddingOf(context).top;
         final double handOffOffset = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
-        if (_scrollController.hasClients) {
-          _scrollController.jumpTo(handOffOffset);
-          _isHeaderExpandedNotifier.value = false; // Initialize to collapsed state on start
-        }
+        // if (_scrollController.hasClients) {
+        //   _scrollController.jumpTo(handOffOffset);
+        //   _isHeaderExpandedNotifier.value = false; // Initialize to collapsed state on start
+        // }
       });
     }
   }
