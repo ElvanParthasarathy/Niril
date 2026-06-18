@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'dart:math';
 
 export 'elvan_navbar.dart';
 import 'elvan_navbar.dart';
-import 'elvan_top_bar.dart';
+import 'elvan_collapsed_bar.dart';
+import 'elvan_expanded_bar.dart';
+import 'elvan_page_content.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ONE UI TEMPLATE SHELL — The reusable page scaffold
@@ -88,6 +89,7 @@ class _ElvanShellState extends State<ElvanShell>
   static const double _kExpandedHeight = 320.0;
 
   bool _isNavbarVisible = true;
+  final ValueNotifier<bool> _isHeaderExpandedNotifier = ValueNotifier<bool>(true);
 
   @override
   void initState() {
@@ -113,14 +115,12 @@ class _ElvanShellState extends State<ElvanShell>
       _scrollController = ScrollController();
       _isScrollInitialized = true;
 
-      // Defer the scroll jump until after the first frame,
-      // when Android has reported the correct status bar height.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final double statusBarHeight = MediaQuery.paddingOf(context).top;
-        // Hand-off formula: exact point where icons first stick to ceiling
         final double handOffOffset = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
         if (_scrollController.hasClients) {
           _scrollController.jumpTo(handOffOffset);
+          _isHeaderExpandedNotifier.value = false; // Initialize to collapsed state on start
         }
       });
     }
@@ -136,17 +136,45 @@ class _ElvanShellState extends State<ElvanShell>
   // ── Scroll direction listener ─────────────────────────────────────────
 
   bool _handleScrollNotification(ScrollNotification notification) {
+    final double statusBarHeight = MediaQuery.paddingOf(context).top;
+    final double snapThreshold = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
+    
+    // ── Update State Flags ──
+    if (_scrollController.hasClients) {
+      final double offset = _scrollController.offset;
+      if (_isHeaderExpandedNotifier.value && offset >= snapThreshold) {
+        _isHeaderExpandedNotifier.value = false; // Flagged as hidden/collapsed
+      } else if (!_isHeaderExpandedNotifier.value) {
+        // Detect explicit manual pull down against the brick wall!
+        if (notification is OverscrollNotification && notification.overscroll < 0) {
+          _isHeaderExpandedNotifier.value = true;
+        } else if (offset < snapThreshold && notification is ScrollUpdateNotification && notification.dragDetails != null) {
+          // Fallback just in case physics allowed a slight sub-pixel crossing
+          _isHeaderExpandedNotifier.value = true;
+        }
+      }
+    }
+
     if (notification is ScrollUpdateNotification) {
       final delta = notification.scrollDelta ?? 0;
+      final double offset = _scrollController.offset;
       
+      // ── BRICK WALL: Stop momentum if it tries to expand the header ──
+      // This is now mathematically handled by BrickWallScrollPhysics!
+      // But we still snap it perfectly just in case.
+      if (!_isHeaderExpandedNotifier.value && offset < snapThreshold && notification.dragDetails == null) {
+         _scrollController.position.hold(() {});
+         WidgetsBinding.instance.addPostFrameCallback((_) {
+           if (_scrollController.hasClients) {
+             _scrollController.jumpTo(snapThreshold);
+           }
+         });
+      }
+
+      // ── Navbar hide/show logic ──
       if (delta > 0) {
         // Scrolling DOWN (finger moving up)
-        
-        // Calculate if the gallery cards have physically collided with the icons 
-        // to turn on the white background (the TRUE pill state!)
-        final double statusBarHeight = MediaQuery.paddingOf(context).top;
         final double ceiling = statusBarHeight + 20.0;
-        
         final double collisionOffset = (_kExpandedHeight + 40.0) - (ceiling + 50.0);
         final double liftStartOffset = collisionOffset - 4.0;
         
@@ -211,7 +239,14 @@ class _ElvanShellState extends State<ElvanShell>
           // ─── Layer 1: Scrollable content with SliverAppBar ────────────
           NotificationListener<ScrollNotification>(
             onNotification: _handleScrollNotification,
-            child: _buildScrollView(context, backgroundColor),
+            child: ElvanPageContent(
+              scrollController: _scrollController,
+              title: widget.title,
+              navActions: widget.navActions,
+              slivers: widget.slivers,
+              expandedHeight: _kExpandedHeight,
+              isHeaderExpandedNotifier: _isHeaderExpandedNotifier, // Passed to content
+            ),
           ),
 
           // ─── Layer 2: Bottom boundary gradient fade mask ──────────────
@@ -293,11 +328,12 @@ class _ElvanShellState extends State<ElvanShell>
             ),
 
           // ── Component B: Independent Top Bar (Pill) ──
-          ElvanTopBar(
+          ElvanCollapsedBar(
             scrollController: _scrollController,
             hideAnimation: _navbarOpacity,
             navActions: widget.navActions,
             expandedHeight: _kExpandedHeight,
+            isHeaderExpandedNotifier: _isHeaderExpandedNotifier,
           ),
 
           // ── Back Button (Left side equivalent of Component B) ──
@@ -305,180 +341,11 @@ class _ElvanShellState extends State<ElvanShell>
             scrollController: _scrollController,
             hideAnimation: _navbarOpacity,
             expandedHeight: _kExpandedHeight,
+            isHeaderExpandedNotifier: _isHeaderExpandedNotifier,
           ),
 
         ],
       ),
     );
-  }
-
-  // ── CustomScrollView with SliverAppBar + body ─────────────────────────
-
-  Widget _buildScrollView(BuildContext context, Color bg) {
-    return CustomScrollView(
-      controller: _scrollController,
-      physics: const AlwaysScrollableScrollPhysics(),
-      slivers: [
-        SliverPersistentHeader(
-          pinned: true,
-          delegate: _ElvanHeaderDelegate(
-            title: widget.title,
-            navActions: widget.navActions,
-            statusBarHeight: MediaQuery.paddingOf(context).top,
-          ),
-        ),
-
-        // ── Small gap so cards sit slightly below the naked icons ──
-        const SliverToBoxAdapter(
-          child: SizedBox(height: 8),
-        ),
-
-        // ── Body content slivers ──
-        ...widget.slivers,
-
-        // ── Smart Bottom Padding ──
-        // Only adds empty space if the cards aren't tall enough to allow the header to collapse.
-        // If you have lots of cards, it adds 0 padding!
-        SliverLayoutBuilder(
-          builder: (context, constraints) {
-            final double statusBarHeight = MediaQuery.paddingOf(context).top;
-            final double handOffOffset = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
-            
-            // The absolute minimum total scroll height required to collapse the header
-            final double requiredTotalHeight = constraints.viewportMainAxisExtent + handOffOffset;
-            final double currentHeight = constraints.precedingScrollExtent;
-            
-            final double missingHeight = requiredTotalHeight - currentHeight;
-            
-            return SliverToBoxAdapter(
-              child: SizedBox(height: missingHeight > 0 ? missingHeight : 0),
-            );
-          },
-        ),
-      ],
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// NATIVE SAMSUNG ONE UI HEADER DELEGATE
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _ElvanHeaderDelegate extends SliverPersistentHeaderDelegate {
-  _ElvanHeaderDelegate({
-    required this.title,
-    required this.navActions,
-    required this.statusBarHeight,
-  });
-
-  final String title;
-  final List<Widget> navActions;
-  final double statusBarHeight;
-
-  @override
-  double get maxExtent => 320.0;
-
-  @override
-  double get minExtent => statusBarHeight + 72.0;
-
-  // Crucial: Allow the header to physically stretch during Android overscroll!
-  // Note: We don't need a StretchConfiguration here because returning stretch=true isn't supported directly,
-  // but Flutter passes constraints.maxHeight directly anyway for stretches if physics allows it!
-
-  @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final double currentHeight = constraints.maxHeight;
-        final double maxShrink = maxExtent - minExtent;
-        final double shrinkProgress = (shrinkOffset / maxShrink).clamp(0.0, 1.0);
-        final double titleOpacity = (1.0 - (shrinkProgress * 1.5)).clamp(0.0, 1.0);
-
-        final double expandedButtonsBottom = 8.0;
-        double currentTop = currentHeight - expandedButtonsBottom - kToolbarHeight;
-        final double ceiling = statusBarHeight + 20.0;
-        
-        bool isPinned = currentTop <= ceiling;
-        if (isPinned) {
-           currentTop = ceiling;
-        }
-
-        return Container(
-          color: Colors.transparent,
-          child: Stack(
-            clipBehavior: Clip.none,
-            fit: StackFit.expand,
-            children: [
-              // ── Massive Title ──
-              Positioned(
-                left: 24,
-                right: 24,
-                bottom: 64 + expandedButtonsBottom + kToolbarHeight, 
-                child: Opacity(
-                  opacity: titleOpacity,
-                  child: Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 34,
-                      fontWeight: FontWeight.w700,
-                      color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black87,
-                      letterSpacing: -0.5,
-                      height: 1.15,
-                    ),
-                  ),
-                ),
-              ),
-              // ── Component A: The Page Header Icons (Right) ──
-              Positioned(
-                top: currentTop,
-                right: 16,
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Opacity(
-                    opacity: isPinned ? 0.0 : 1.0, // Hand off to Component B when pinned!
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: navActions,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              // ── Component A: The Back Button (Left) ──
-              if (Navigator.canPop(context))
-                Positioned(
-                  top: currentTop,
-                  left: 16,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Opacity(
-                      opacity: isPinned ? 0.0 : 1.0, // Hand off to Component B when pinned!
-                      child: Container(
-                        padding: const EdgeInsets.all(7),
-                        child: IconButton(
-                          icon: const Icon(CupertinoIcons.back),
-                          onPressed: () => Navigator.pop(context),
-                          constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-                          padding: EdgeInsets.zero,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  @override
-  bool shouldRebuild(covariant _ElvanHeaderDelegate oldDelegate) {
-    return title != oldDelegate.title ||
-        navActions != oldDelegate.navActions ||
-        statusBarHeight != oldDelegate.statusBarHeight;
   }
 }

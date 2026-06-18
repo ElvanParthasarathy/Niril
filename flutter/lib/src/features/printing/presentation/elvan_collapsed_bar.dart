@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 
 /// A reusable, independent Top Bar component that seamlessly handles the "Visual Hand-off"
 /// and white pill background physics for the One UI design language.
-class ElvanTopBar extends StatelessWidget {
-  const ElvanTopBar({
+class ElvanCollapsedBar extends StatelessWidget {
+  const ElvanCollapsedBar({
     super.key,
     required this.scrollController,
     required this.hideAnimation,
     required this.navActions,
+    required this.isHeaderExpandedNotifier,
     this.expandedHeight = 320.0,
   });
 
@@ -25,6 +26,9 @@ class ElvanTopBar extends StatelessWidget {
 
   /// The maximum physical height of the page header before scrolling.
   final double expandedHeight;
+
+  /// Flag indicating if the expanded header is logically visible.
+  final ValueNotifier<bool> isHeaderExpandedNotifier;
 
   @override
   Widget build(BuildContext context) {
@@ -45,15 +49,22 @@ class ElvanTopBar extends StatelessWidget {
         // Component B remains completely invisible.
         if (!isPinned) return const SizedBox.shrink(); 
         
-        // 2. True Pill Logic: Calculate when the gallery cards physically collide with the pill
-        // +40 = 32 (original card margin) + 8 (extra card padding gap)
-        // 50.0 is the exact physical height of the new, tighter pill
-        final double collisionOffset = (expandedHeight + 40.0) - (ceiling + 50.0);
-        final double liftStartOffset = collisionOffset - 4.0;
-        
         double liftProgress = 0.0;
-        if (shrinkOffset > liftStartOffset) {
-          liftProgress = ((shrinkOffset - liftStartOffset) / 12.0).clamp(0.0, 1.0);
+        
+        final bool isExpanded = isHeaderExpandedNotifier.value;
+        if (!isExpanded) {
+           // We are in collapsed mode. Ignore physics and fully lock the pill!
+           liftProgress = 1.0;
+        } else {
+           // 2. True Pill Logic: Calculate when the gallery cards physically collide with the pill
+           // +40 = 32 (original card margin) + 8 (extra card padding gap)
+           // 50.0 is the exact physical height of the new, tighter pill
+           final double collisionOffset = (expandedHeight + 40.0) - (ceiling + 50.0);
+           final double liftStartOffset = collisionOffset - 4.0;
+           
+           if (shrinkOffset > liftStartOffset) {
+             liftProgress = ((shrinkOffset - liftStartOffset) / 12.0).clamp(0.0, 1.0);
+           }
         }
         
         return Positioned(
@@ -97,23 +108,25 @@ class ElvanTopBar extends StatelessWidget {
 }
 
 /// A reusable back button component that follows the exact same "Visual Hand-off"
-/// and white circle background physics as ElvanTopBar, but positioned on the left.
+/// and white circle background physics as ElvanCollapsedBar, but positioned on the left.
 class ElvanBackButton extends StatelessWidget {
   const ElvanBackButton({
     super.key,
     required this.scrollController,
     required this.hideAnimation,
+    required this.isHeaderExpandedNotifier,
     this.expandedHeight = 320.0,
   });
 
   final ScrollController scrollController;
   final Animation<double> hideAnimation;
+  final ValueNotifier<bool> isHeaderExpandedNotifier;
   final double expandedHeight;
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: Listenable.merge([scrollController, hideAnimation]),
+      animation: Listenable.merge([scrollController, hideAnimation, isHeaderExpandedNotifier]),
       builder: (context, child) {
         if (!scrollController.hasClients) return const SizedBox.shrink();
         if (!Navigator.canPop(context)) return const SizedBox.shrink();
@@ -128,15 +141,21 @@ class ElvanBackButton extends StatelessWidget {
         
         if (!isPinned) return const SizedBox.shrink(); 
         
-        // 2. True Pill Logic
-        // +40 = 32 (original card margin) + 8 (extra card padding gap)
-        // 50.0 is the exact physical height of the new, tighter pill
-        final double collisionOffset = (expandedHeight + 40.0) - (ceiling + 50.0);
-        final double liftStartOffset = collisionOffset - 4.0;
-        
         double liftProgress = 0.0;
-        if (shrinkOffset > liftStartOffset) {
-          liftProgress = ((shrinkOffset - liftStartOffset) / 12.0).clamp(0.0, 1.0);
+        
+        final bool isExpanded = isHeaderExpandedNotifier.value;
+        if (!isExpanded) {
+           liftProgress = 1.0;
+        } else {
+           // 2. True Pill Logic
+           // +40 = 32 (original card margin) + 8 (extra card padding gap)
+           // 50.0 is the exact physical height of the new, tighter pill
+           final double collisionOffset = (expandedHeight + 40.0) - (ceiling + 50.0);
+           final double liftStartOffset = collisionOffset - 4.0;
+           
+           if (shrinkOffset > liftStartOffset) {
+             liftProgress = ((shrinkOffset - liftStartOffset) / 12.0).clamp(0.0, 1.0);
+           }
         }
         
         return Positioned(
