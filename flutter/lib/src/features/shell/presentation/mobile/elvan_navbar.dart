@@ -67,6 +67,7 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
   double _touchOffsetFromCenter = 0.0;
   int? _hoverIndex;
   int? _localLockedIndex;
+  bool _snapNextFrame = false;
 
   @override
   void didUpdateWidget(covariant ElvanNavbar oldWidget) {
@@ -74,6 +75,16 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
     // Clear the local visual lock once the parent finally updates the actual screen
     if (widget.currentIndex != oldWidget.currentIndex) {
       _localLockedIndex = null;
+      // The tab just switched (which means this shell might have just become visible).
+      // Instantly snap the pill so it doesn't replay an old animation and cause a visual glitch.
+      _snapNextFrame = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _snapNextFrame) {
+          setState(() {
+            _snapNextFrame = false;
+          });
+        }
+      });
     }
   }
 
@@ -210,10 +221,10 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
                 children: [
                   // ── Master Background Pill (Detached & Draggable) ──
                   AnimatedPositioned(
-                    duration: (_isInteracting && _dragOffset != null)
+                    duration: _snapNextFrame || (_isInteracting && _dragOffset != null)
                         ? Duration.zero // Track finger instantly with zero lag while sliding
                         : const Duration(milliseconds: 150), // Fast snap to lock on release
-                    curve: (_isInteracting && _dragOffset != null)
+                    curve: _snapNextFrame || (_isInteracting && _dragOffset != null)
                         ? Curves.linear
                         : Curves.easeOutCubic, // Clean fast curve so it doesn't jerk
                     left: targetLeft,

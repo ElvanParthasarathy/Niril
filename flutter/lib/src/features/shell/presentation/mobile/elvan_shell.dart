@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
+
+import 'header_state.dart';
 
 export 'elvan_navbar.dart';
 import 'elvan_navbar.dart';
@@ -27,7 +30,7 @@ import 'elvan_search_bar.dart';
 ///
 /// This widget is **fully decoupled** — pass any [body], [title],
 /// [navActions], [navItems], [currentIndex], and [onTabSelected] callback.
-class ElvanShell extends StatefulWidget {
+class ElvanShell extends ConsumerStatefulWidget {
   const ElvanShell({
     super.key,
     required this.slivers,
@@ -41,6 +44,7 @@ class ElvanShell extends StatefulWidget {
     this.showLeadingWidgetInExpandedBar = true,
     this.showSearchIcon = false,
     this.onSearchChanged,
+    this.assignedIndex,
   });
 
   /// The scrollable content placed inside the [CustomScrollView] as slivers.
@@ -78,11 +82,14 @@ class ElvanShell extends StatefulWidget {
   /// Callback when search query changes
   final ValueChanged<String>? onSearchChanged;
 
+  /// Optional index of this shell in a tabbed environment. Used to detect when this shell becomes active.
+  final int? assignedIndex;
+
   @override
-  State<ElvanShell> createState() => _ElvanShellState();
+  ConsumerState<ElvanShell> createState() => _ElvanShellState();
 }
 
-class _ElvanShellState extends State<ElvanShell>
+class _ElvanShellState extends ConsumerState<ElvanShell>
     with SingleTickerProviderStateMixin {
   // ── Navbar hide / show animation ──────────────────────────────────────
   // ── State for sequential search animation ──
@@ -205,17 +212,38 @@ class _ElvanShellState extends State<ElvanShell>
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isScrollInitialized) {
-      _scrollController = ScrollController();
-      _isScrollInitialized = true;
+      final isGlobalExpanded = ref.read(headerExpandedProvider);
+      final double statusBarHeight = MediaQuery.paddingOf(context).top;
+      final double handOffOffset = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
 
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final double statusBarHeight = MediaQuery.paddingOf(context).top;
-        final double handOffOffset = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
-        // if (_scrollController.hasClients) {
-        //   _scrollController.jumpTo(handOffOffset);
-        //   _isHeaderExpandedNotifier.value = false; // Initialize to collapsed state on start
-        // }
-      });
+      _scrollController = ScrollController(
+        initialScrollOffset: isGlobalExpanded ? 0.0 : handOffOffset,
+      );
+      _isHeaderExpandedNotifier.value = isGlobalExpanded;
+      _isScrollInitialized = true;
+    }
+  }
+
+  @override
+  void didUpdateWidget(ElvanShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    
+    // Check if we are in a tabbed environment and this specific tab just became active!
+    if (widget.assignedIndex != null &&
+        oldWidget.currentIndex != widget.currentIndex &&
+        widget.currentIndex == widget.assignedIndex) {
+      if (_scrollController.hasClients) {
+        final isGlobalExpanded = ref.read(headerExpandedProvider);
+        if (isGlobalExpanded) {
+          _scrollController.jumpTo(0.0);
+          _isHeaderExpandedNotifier.value = true;
+        } else {
+          final double statusBarHeight = MediaQuery.paddingOf(context).top;
+          final double handOffOffset = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
+          _scrollController.jumpTo(handOffOffset);
+          _isHeaderExpandedNotifier.value = false;
+        }
+      }
     }
   }
 
@@ -241,13 +269,16 @@ class _ElvanShellState extends State<ElvanShell>
       final double offset = _scrollController.offset;
       if (_isHeaderExpandedNotifier.value && offset >= snapThreshold) {
         _isHeaderExpandedNotifier.value = false; // Flagged as hidden/collapsed
+        ref.read(headerExpandedProvider.notifier).state = false;
       } else if (!_isHeaderExpandedNotifier.value) {
         // Detect explicit manual pull down against the brick wall!
         if (notification is OverscrollNotification && notification.overscroll < 0) {
           _isHeaderExpandedNotifier.value = true;
+          ref.read(headerExpandedProvider.notifier).state = true;
         } else if (offset < snapThreshold && notification is ScrollUpdateNotification && notification.dragDetails != null) {
           // Fallback just in case physics allowed a slight sub-pixel crossing
           _isHeaderExpandedNotifier.value = true;
+          ref.read(headerExpandedProvider.notifier).state = true;
         }
       }
     }
@@ -327,6 +358,23 @@ class _ElvanShellState extends State<ElvanShell>
 
   @override
   Widget build(BuildContext context) {
+    // ── Global Header State Sync (For IndexedStack) ──
+    ref.listen<bool>(headerExpandedProvider, (previous, isGlobalExpanded) {
+      if (!isGlobalExpanded && _isHeaderExpandedNotifier.value) {
+        final double statusBarHeight = MediaQuery.paddingOf(context).top;
+        final double handOffOffset = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
+        if (_scrollController.hasClients && _scrollController.offset < handOffOffset) {
+          _scrollController.jumpTo(handOffOffset);
+          _isHeaderExpandedNotifier.value = false;
+        }
+      } else if (isGlobalExpanded && !_isHeaderExpandedNotifier.value) {
+        if (_scrollController.hasClients) {
+          _scrollController.jumpTo(0.0);
+          _isHeaderExpandedNotifier.value = true;
+        }
+      }
+    });
+
     final backgroundColor =
         Theme.of(context).scaffoldBackgroundColor;
 
@@ -438,7 +486,20 @@ class _ElvanShellState extends State<ElvanShell>
                             child: ElvanNavbar(
                               items: widget.navItems,
                               currentIndex: widget.currentIndex,
-                              onTabSelected: widget.onTabSelected ?? (_) {},
+                              onTabSelected: (index) {
+                                if (index == widget.currentIndex) {
+                                  // Scroll to top if tapping the already active tab!
+                                  if (_scrollController.hasClients) {
+                                    _scrollController.animateTo(
+                                      0.0,
+                                      duration: const Duration(milliseconds: 400),
+                                      curve: Curves.easeOutCubic,
+                                    );
+                                  }
+                                } else {
+                                  widget.onTabSelected?.call(index);
+                                }
+                              },
                               hideContent: _searchStep1HideIcons,
                             ),
                           ),

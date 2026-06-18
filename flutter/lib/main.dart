@@ -227,43 +227,34 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
           );
         }
 
-        return Stack(
+        return IndexedStack(
+          index: _currentTab,
           children: [
-            ElvanShell(
-              title: currentTitle,
-              currentIndex: _currentTab,
-              onTabSelected: (index) => setState(() => _currentTab = index),
-              showSearchIcon: _currentTab != 0,
-              navActions: [
-                const SizedBox(width: 7),
-                ElvanTopBarIcon(
-                  icon: CupertinoIcons.add,
-                  onTap: _onAddPressed,
-                ),
-                const SizedBox(width: 14),
-                const ElvanPopupMenu(),
-                const SizedBox(width: 7),
-              ],
-              navItems: _masterNavItems.take(_navItemCount).toList(),
-              slivers: [
-                SliverOffstage(
-                  offstage: _currentTab != 0,
-                  sliver: const MugappuPage(),
-                ),
-                SliverOffstage(
-                  offstage: _currentTab != 1,
-                  sliver: const UruvakkuPage(),
-                ),
-                SliverOffstage(
-                  offstage: _currentTab != 2,
-                  sliver: const VanigarPage(),
-                ),
-                SliverOffstage(
-                  offstage: _currentTab != 3,
-                  sliver: const PorulPage(),
-                ),
-              ],
-            ),
+            for (int i = 0; i < 4; i++)
+              ElvanShell(
+                assignedIndex: i,
+                title: _masterNavItems[i].headerLabel ?? _masterNavItems[i].label,
+                currentIndex: _currentTab,
+                onTabSelected: (index) => setState(() => _currentTab = index),
+                showSearchIcon: i != 0,
+                navActions: [
+                  const SizedBox(width: 7),
+                  ElvanTopBarIcon(
+                    icon: CupertinoIcons.add,
+                    onTap: _onAddPressed,
+                  ),
+                  const SizedBox(width: 14),
+                  const ElvanPopupMenu(),
+                  const SizedBox(width: 7),
+                ],
+                navItems: _masterNavItems.take(_navItemCount).toList(),
+                slivers: [
+                  if (i == 0) const MugappuPage(),
+                  if (i == 1) const UruvakkuPage(),
+                  if (i == 2) const VanigarPage(),
+                  if (i == 3) const PorulPage(),
+                ],
+              ),
           ],
         );
       },
