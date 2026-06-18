@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../localization/locale_provider.dart';
-import '../../../settings/presentation/settings_screen.dart';
+import '../../../../../localization/locale_provider.dart';
+import '../../../../settings/presentation/settings_screen.dart';
 import 'elvan_top_bar_icon.dart';
 
 /// A highly optimized custom popup component.
@@ -98,7 +98,7 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                           _closeMenu();
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
+                            CupertinoPageRoute(
                               builder: (context) => const SettingsScreen(),
                             ),
                           );

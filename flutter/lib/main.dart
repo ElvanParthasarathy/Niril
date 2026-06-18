@@ -13,15 +13,31 @@ import 'src/features/auth/presentation/mode_selector_screen.dart';
 import 'src/features/pages/chaandru_page.dart';
 import 'src/features/pages/mugappu_page.dart';
 import 'src/features/pages/pattiyal_page.dart';
+import 'src/features/shell/presentation/mobile/elvan_navbar.dart';
 import 'src/features/pages/porul_page.dart';
 import 'src/features/pages/vanigar_page.dart';
-import 'src/features/printing/presentation/elvan_shell.dart';
-import 'src/features/printing/presentation/widgets/elvan_popup_menu.dart';
-import 'src/features/printing/presentation/widgets/elvan_top_bar_icon.dart';
+import 'src/features/shell/presentation/mobile/elvan_shell.dart';
+import 'src/features/shell/presentation/desktop/elvan_desktop_shell.dart';
+import 'src/features/shell/presentation/mobile/widgets/elvan_popup_menu.dart';
+import 'src/features/shell/presentation/mobile/widgets/elvan_top_bar_icon.dart';
+import 'src/features/shell/presentation/mobile/widgets/float_elvan_title.dart';
 import 'src/features/settings/presentation/settings_screen.dart';
+
+import 'dart:io';
+import 'package:flutter_displaymode/flutter_displaymode.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Force 120Hz display mode on supported Android devices (Samsung, OnePlus, Xiaomi)
+  if (Platform.isAndroid) {
+    try {
+      await FlutterDisplayMode.setHighRefreshRate();
+    } catch (e) {
+      // Ignore if device doesn't support it
+    }
+  }
+
   final sharedPrefs = await SharedPreferences.getInstance();
 
   runApp(
@@ -152,62 +168,90 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
     final currentItem = _masterNavItems[_currentTab];
     final String currentTitle = currentItem.headerLabel ?? currentItem.label;
 
-    return Stack(
-      children: [
-        ElvanShell(
-          title: currentTitle,
-          currentIndex: _currentTab,
-          onTabSelected: (index) => setState(() => _currentTab = index),
-          navActions: [
-            const SizedBox(width: 7), // Left padding inside the pill (adjusted to perfectly kiss the pill edge)
-            ElvanTopBarIcon(
-              icon: CupertinoIcons.add,
-              onTap: () {
-                // Real action here
-              },
-            ),
-            if (_currentTab != 0) ...[
-              const SizedBox(width: 14), // Tighter gap between icons
-              ElvanTopBarIcon(
-                icon: CupertinoIcons.search,
-                onTap: () {
-                  // Real action here
-                },
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isDesktop = constraints.maxWidth >= 800;
+
+        if (isDesktop) {
+          return ElvanDesktopShell(
+            currentIndex: _currentTab,
+            onTabSelected: (index) => setState(() => _currentTab = index),
+            navItems: _masterNavItems.take(_navItemCount).toList(),
+            slivers: [
+              SliverOffstage(
+                offstage: _currentTab != 0,
+                sliver: const MugappuPage(),
+              ),
+              SliverOffstage(
+                offstage: _currentTab != 1,
+                sliver: const PattiyalPage(),
+              ),
+              SliverOffstage(
+                offstage: _currentTab != 2,
+                sliver: const VanigarPage(),
+              ),
+              SliverOffstage(
+                offstage: _currentTab != 3,
+                sliver: const PorulPage(),
+              ),
+              SliverOffstage(
+                offstage: _currentTab != 4,
+                sliver: const ChaandruPage(),
               ),
             ],
-            const SizedBox(width: 14), // Tighter gap between icons
-            const ElvanPopupMenu(), // Our brand new custom popup trigger!
-            const SizedBox(width: 7), // Right padding inside the pill (adjusted to perfectly kiss the pill edge)
-          ],
-          navItems: _masterNavItems.take(_navItemCount).toList(),
-          // Load ALL screens into memory instantly, using SliverOffstage to show the active one!
-          slivers: [
-            SliverOffstage(
-              offstage: _currentTab != 0,
-              sliver: const MugappuPage(),
-            ),
-            SliverOffstage(
-              offstage: _currentTab != 1,
-              sliver: const PattiyalPage(),
-            ),
-            SliverOffstage(
-              offstage: _currentTab != 2,
-              sliver: const VanigarPage(),
-            ),
-            SliverOffstage(
-              offstage: _currentTab != 3,
-              sliver: const PorulPage(),
-            ),
-            SliverOffstage(
-              offstage: _currentTab != 4,
-              sliver: const ChaandruPage(),
-            ),
-          ],
-        ),
+          );
+        }
 
-      ],
+        return Stack(
+          children: [
+            ElvanShell(
+              title: currentTitle,
+              currentIndex: _currentTab,
+              onTabSelected: (index) => setState(() => _currentTab = index),
+              navActions: [
+                const SizedBox(width: 7),
+                ElvanTopBarIcon(
+                  icon: CupertinoIcons.add,
+                  onTap: () {},
+                ),
+                if (_currentTab != 0) ...[
+                  const SizedBox(width: 14),
+                  ElvanTopBarIcon(
+                    icon: CupertinoIcons.search,
+                    onTap: () {},
+                  ),
+                ],
+                const SizedBox(width: 14),
+                const ElvanPopupMenu(),
+                const SizedBox(width: 7),
+              ],
+              navItems: _masterNavItems.take(_navItemCount).toList(),
+              slivers: [
+                SliverOffstage(
+                  offstage: _currentTab != 0,
+                  sliver: const MugappuPage(),
+                ),
+                SliverOffstage(
+                  offstage: _currentTab != 1,
+                  sliver: const PattiyalPage(),
+                ),
+                SliverOffstage(
+                  offstage: _currentTab != 2,
+                  sliver: const VanigarPage(),
+                ),
+                SliverOffstage(
+                  offstage: _currentTab != 3,
+                  sliver: const PorulPage(),
+                ),
+                SliverOffstage(
+                  offstage: _currentTab != 4,
+                  sliver: const ChaandruPage(),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }
-
-

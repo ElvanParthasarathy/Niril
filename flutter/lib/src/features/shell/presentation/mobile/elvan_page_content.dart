@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'elvan_expanded_bar.dart';
@@ -15,6 +16,8 @@ class ElvanPageContent extends StatelessWidget {
     required this.slivers,
     required this.expandedHeight,
     required this.isHeaderExpandedNotifier,
+    this.leadingWidget,
+    this.showLeadingWidgetInExpandedBar = true,
   });
 
   final ScrollController scrollController;
@@ -23,54 +26,83 @@ class ElvanPageContent extends StatelessWidget {
   final List<Widget> slivers;
   final double expandedHeight;
   final ValueNotifier<bool> isHeaderExpandedNotifier;
+  final Widget? leadingWidget;
+  final bool showLeadingWidgetInExpandedBar;
 
   @override
   Widget build(BuildContext context) {
     final double statusBarHeight = MediaQuery.paddingOf(context).top;
     final double snapThreshold = expandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
 
-    return CustomScrollView(
-      controller: scrollController,
-      physics: ElvanBrickWallPhysics(
-        isHeaderExpandedNotifier: isHeaderExpandedNotifier,
-        snapThreshold: snapThreshold,
-        parent: const AlwaysScrollableScrollPhysics(),
-      ),
-      slivers: [
-        SliverPersistentHeader(
-          pinned: true,
-          delegate: ElvanExpandedBarDelegate(
-            title: title,
-            navActions: navActions,
-            statusBarHeight: MediaQuery.paddingOf(context).top,
+    return Stack(
+      children: [
+        CustomScrollView(
+          controller: scrollController,
+          cacheExtent: 1500, // Pre-builds items off-screen to prevent frame drops during slow scrolling!
+          dragStartBehavior: DragStartBehavior.down, // Forces scroll to start instantly, ignoring Cupertino back-swipe delay!
+          physics: ElvanBrickWallPhysics(
+            isHeaderExpandedNotifier: isHeaderExpandedNotifier,
+            snapThreshold: snapThreshold,
+            parent: const AlwaysScrollableScrollPhysics(),
+          ),
+          slivers: [
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: ElvanExpandedBarDelegate(
+                title: title,
+                navActions: navActions,
+                statusBarHeight: MediaQuery.paddingOf(context).top,
+                expandedHeight: expandedHeight,
+                leadingWidget: showLeadingWidgetInExpandedBar ? leadingWidget : null,
+              ),
+            ),
+
+            // ── Small gap so cards sit slightly below the naked icons ──
+            const SliverToBoxAdapter(
+              child: SizedBox(height: 8),
+            ),
+
+            // ── Body content slivers ──
+            ...slivers,
+
+            // ── Smart Bottom Padding ──
+            // Only adds empty space if the cards aren't tall enough to allow the header to collapse.
+            SliverLayoutBuilder(
+              builder: (context, constraints) {
+                final double statusBarHeight = MediaQuery.paddingOf(context).top;
+                final double handOffOffset = expandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
+                
+                // The absolute minimum total scroll height required to collapse the header
+                final double requiredTotalHeight = constraints.viewportMainAxisExtent + handOffOffset;
+                final double currentSliversHeight = constraints.precedingScrollExtent;
+                
+                final double missingHeight = requiredTotalHeight - currentSliversHeight;
+                
+                return SliverToBoxAdapter(
+                  child: SizedBox(height: missingHeight > 0 ? missingHeight : 0),
+                );
+              },
+            ),
+          ],
+        ),
+
+        // ── EDGE SCROLL BLOCKERS ──
+        // These invisible shields sit on the far left and right edges.
+        // They swallow vertical gestures so the ScrollView doesn't wobble,
+        // but they let horizontal gestures pass through for the system back-swipe!
+        Positioned(
+          left: 0, top: 0, bottom: 0, width: 24,
+          child: GestureDetector(
+            onVerticalDragUpdate: (_) {}, // Catch and kill vertical drags
+            behavior: HitTestBehavior.translucent, // Let horizontal drags pass to system
           ),
         ),
-
-        // ── Small gap so cards sit slightly below the naked icons ──
-        const SliverToBoxAdapter(
-          child: SizedBox(height: 8),
-        ),
-
-        // ── Body content slivers ──
-        ...slivers,
-
-        // ── Smart Bottom Padding ──
-        // Only adds empty space if the cards aren't tall enough to allow the header to collapse.
-        SliverLayoutBuilder(
-          builder: (context, constraints) {
-            final double statusBarHeight = MediaQuery.paddingOf(context).top;
-            final double handOffOffset = expandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
-            
-            // The absolute minimum total scroll height required to collapse the header
-            final double requiredTotalHeight = constraints.viewportMainAxisExtent + handOffOffset;
-            final double currentHeight = constraints.precedingScrollExtent;
-            
-            final double missingHeight = requiredTotalHeight - currentHeight;
-            
-            return SliverToBoxAdapter(
-              child: SizedBox(height: missingHeight > 0 ? missingHeight : 0),
-            );
-          },
+        Positioned(
+          right: 0, top: 0, bottom: 0, width: 24,
+          child: GestureDetector(
+            onVerticalDragUpdate: (_) {},
+            behavior: HitTestBehavior.translucent,
+          ),
         ),
       ],
     );

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme_provider.dart';
 import '../../../localization/locale_provider.dart';
-import '../../printing/presentation/elvan_shell.dart';
+import '../../shell/presentation/mobile/elvan_subpage_shell.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -13,9 +13,8 @@ class SettingsScreen extends ConsumerWidget {
     final currentTheme = ref.watch(themeModeProvider);
     final currentLocale = ref.watch(localeProvider);
 
-    return ElvanShell(
+    return ElvanSubpageShell(
       title: 'settings'.tr(context, ref),
-      showNavbar: false,
       slivers: [
         SliverPadding(
           padding: const EdgeInsets.only(left: 16, right: 16, bottom: 32),

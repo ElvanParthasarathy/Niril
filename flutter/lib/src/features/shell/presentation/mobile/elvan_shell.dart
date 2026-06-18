@@ -35,6 +35,8 @@ class ElvanShell extends StatefulWidget {
     this.currentIndex = 0,
     this.onTabSelected,
     this.showNavbar = true,
+    this.leadingWidget,
+    this.showLeadingWidgetInExpandedBar = true,
   });
 
   /// The scrollable content placed inside the [CustomScrollView] as slivers.
@@ -58,6 +60,13 @@ class ElvanShell extends StatefulWidget {
 
   /// Whether to render the floating bottom navbar and its associated fade mask.
   final bool showNavbar;
+
+  /// Optional widget rendered on the leading edge (e.g., Back button or Page Title)
+  final Widget? leadingWidget;
+
+  /// Whether the leadingWidget should also be rendered flat in the expanded header.
+  /// Set to true for Back buttons. Set to false for floating page titles.
+  final bool showLeadingWidgetInExpandedBar;
 
   @override
   State<ElvanShell> createState() => _ElvanShellState();
@@ -90,6 +99,8 @@ class _ElvanShellState extends State<ElvanShell>
 
   bool _isNavbarVisible = true;
   final ValueNotifier<bool> _isHeaderExpandedNotifier = ValueNotifier<bool>(true);
+  final ValueNotifier<double> _dynamicPillHeightNotifier = ValueNotifier<double>(50.0);
+  final GlobalKey _pillKey = GlobalKey();
 
   @override
   void initState() {
@@ -246,6 +257,8 @@ class _ElvanShellState extends State<ElvanShell>
               slivers: widget.slivers,
               expandedHeight: _kExpandedHeight,
               isHeaderExpandedNotifier: _isHeaderExpandedNotifier, // Passed to content
+              leadingWidget: widget.leadingWidget,
+              showLeadingWidgetInExpandedBar: widget.showLeadingWidgetInExpandedBar,
             ),
           ),
 
@@ -334,16 +347,49 @@ class _ElvanShellState extends State<ElvanShell>
             navActions: widget.navActions,
             expandedHeight: _kExpandedHeight,
             isHeaderExpandedNotifier: _isHeaderExpandedNotifier,
+            dynamicPillHeightNotifier: _dynamicPillHeightNotifier,
+            pillKey: _pillKey,
+            leadingWidget: widget.leadingWidget,
+            expandedSmallTitle: (widget.title != null && widget.leadingWidget == null) ? Text(
+              widget.title!,
+              style: TextStyle(
+                fontSize: 20, // Slightly larger and bolder
+                fontWeight: FontWeight.bold,
+                letterSpacing: -0.3,
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.white.withOpacity(0.95) 
+                    : Colors.black,
+                height: 1.15,
+              ),
+            ) : null,
           ),
 
-          // ── Back Button (Left side equivalent of Component B) ──
-          ElvanBackButton(
-            scrollController: _scrollController,
-            hideAnimation: _navbarOpacity,
-            expandedHeight: _kExpandedHeight,
-            isHeaderExpandedNotifier: _isHeaderExpandedNotifier,
+          // ── Dev Scroll Offset Badge ──
+          Positioned(
+            top: MediaQuery.paddingOf(context).top + 16,
+            left: 16,
+            child: AnimatedBuilder(
+              animation: _scrollController,
+              builder: (context, _) {
+                final offset = _scrollController.hasClients ? _scrollController.offset : 0.0;
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withAlpha(200),
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: Text(
+                    'Offset: ${offset.toStringAsFixed(1)}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
-
         ],
       ),
     );
