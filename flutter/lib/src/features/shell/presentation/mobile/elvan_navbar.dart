@@ -49,11 +49,13 @@ class ElvanNavbar extends StatefulWidget {
     required this.items,
     required this.currentIndex,
     required this.onTabSelected,
+    this.hideContent = false,
   });
 
   final List<CustomNavItem> items;
   final int currentIndex;
   final ValueChanged<int> onTabSelected;
+  final bool hideContent;
 
   @override
   State<ElvanNavbar> createState() => _ElvanNavbarState();
@@ -137,22 +139,25 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
         child: Padding(
           padding: const EdgeInsets.symmetric(
               horizontal: horizontalPadding, vertical: verticalPadding),
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTapUp: (details) {
-              int index = (details.localPosition.dx / layoutWidth).floor().clamp(0, itemCount - 1);
-              setState(() {
-                _localLockedIndex = index; // Visually snap the pill immediately
-                _isInteracting = false;
-                _dragOffset = null;
-                _hoverIndex = null;
-              });
-              // Give the pill exactly 150ms to finish its fast-snap before the layout spike hits!
-              Future.delayed(const Duration(milliseconds: 150), () {
-                if (mounted) widget.onTabSelected(index);
-              });
-            },
-            onHorizontalDragDown: (details) {
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 150),
+            opacity: widget.hideContent ? 0.0 : 1.0,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapUp: (details) {
+                int index = (details.localPosition.dx / layoutWidth).floor().clamp(0, itemCount - 1);
+                setState(() {
+                  _localLockedIndex = index; // Visually snap the pill immediately
+                  _isInteracting = false;
+                  _dragOffset = null;
+                  _hoverIndex = null;
+                });
+                // Give the pill exactly 150ms to finish its fast-snap before the layout spike hits!
+                Future.delayed(const Duration(milliseconds: 150), () {
+                  if (mounted) widget.onTabSelected(index);
+                });
+              },
+              onHorizontalDragDown: (details) {
               setState(() {
                 _isInteracting = true;
                 _hoverIndex = (details.localPosition.dx / layoutWidth).floor().clamp(0, itemCount - 1);
@@ -250,6 +255,7 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
                     }),
                   ),
                 ],
+                ),
               ),
             ),
           ),

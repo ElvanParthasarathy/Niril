@@ -10,6 +10,7 @@ class ElvanCollapsedBar extends StatelessWidget {
     required this.hideAnimation,
     required this.isHeaderExpandedNotifier,
     required this.dynamicPillHeightNotifier,
+    required this.isSearchActiveNotifier,
     this.pillKey,
     required this.navActions,
     this.expandedHeight = 320.0,
@@ -22,6 +23,7 @@ class ElvanCollapsedBar extends StatelessWidget {
   final Animation<double> hideAnimation;
   final ValueNotifier<bool> isHeaderExpandedNotifier;
   final ValueNotifier<double> dynamicPillHeightNotifier;
+  final ValueNotifier<bool> isSearchActiveNotifier;
   final GlobalKey? pillKey;
   final List<Widget> navActions;
   final double expandedHeight;
@@ -33,7 +35,7 @@ class ElvanCollapsedBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: Listenable.merge([scrollController, hideAnimation]),
+      animation: Listenable.merge([scrollController, hideAnimation, isSearchActiveNotifier]),
       builder: (context, child) {
         if (!scrollController.hasClients) return const SizedBox.shrink();
         
@@ -119,30 +121,36 @@ class ElvanCollapsedBar extends StatelessWidget {
                 right: 16,
                 child: Align(
                   alignment: Alignment.centerRight,
-                  child: Opacity(
-                    opacity: hideAnimation.value, // Fade out when the page tells us to hide
-                    child: Container(
-                      key: pillKey,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        boxShadow: liftProgress > 0 ? [
-                          BoxShadow(
-                            blurRadius: 16 * liftProgress,
-                            offset: Offset(0, 4 * liftProgress),
-                            color: Colors.black.withValues(alpha: 0.05 * liftProgress),
-                          )
-                        ] : null,
-                      ),
-                      child: Material(
-                        type: MaterialType.canvas,
-                        color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white).withValues(alpha: 0.88 * liftProgress),
-                        borderRadius: BorderRadius.circular(100),
-                        clipBehavior: Clip.antiAlias, // Clips the beautiful circular ripples smoothly to the pill border!
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12), // Tighter vertical padding for 50px pill
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: navActions,
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: isSearchActiveNotifier.value ? 0.0 : 1.0,
+                    child: IgnorePointer(
+                      ignoring: isSearchActiveNotifier.value,
+                      child: Opacity(
+                        opacity: hideAnimation.value, // Fade out when the page tells us to hide
+                        child: Container(
+                          key: pillKey,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(100),
+                          boxShadow: liftProgress > 0 ? [
+                            BoxShadow(
+                              blurRadius: 16 * liftProgress,
+                              offset: Offset(0, 4 * liftProgress),
+                              color: Colors.black.withValues(alpha: 0.05 * liftProgress),
+                            )
+                          ] : null,
+                        ),
+                        child: Material(
+                          type: MaterialType.canvas,
+                          color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white).withValues(alpha: 0.88 * liftProgress),
+                          borderRadius: BorderRadius.circular(100),
+                          clipBehavior: Clip.antiAlias, // Clips the beautiful circular ripples smoothly to the pill border!
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12), // Tighter vertical padding for 50px pill
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: navActions,
+                            ),
                           ),
                         ),
                       ),
@@ -150,6 +158,7 @@ class ElvanCollapsedBar extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
           ],
         );
       },

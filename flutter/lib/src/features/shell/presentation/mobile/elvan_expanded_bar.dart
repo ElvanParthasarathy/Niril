@@ -11,6 +11,7 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
     required this.navActions,
     required this.statusBarHeight,
     required this.expandedHeight,
+    required this.isSearchActiveNotifier,
     this.leadingWidget,
   });
 
@@ -18,6 +19,7 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
   final List<Widget> navActions;
   final double statusBarHeight;
   final double expandedHeight;
+  final ValueNotifier<bool> isSearchActiveNotifier;
   final Widget? leadingWidget;
 
   @override
@@ -28,8 +30,11 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: isSearchActiveNotifier,
+      builder: (context, isSearchActive, child) {
+        return LayoutBuilder(
+          builder: (context, constraints) {
         final double currentHeight = constraints.maxHeight;
         final double maxShrink = maxExtent - minExtent;
         final double shrinkProgress = (shrinkOffset / maxShrink).clamp(0.0, 1.0);
@@ -120,13 +125,20 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                   right: 16,
                   child: Align(
                     alignment: Alignment.centerRight,
-                    child: Opacity(
-                      opacity: isPinned ? 0.0 : 1.0, // Hand off to Collapsed Bar when pinned!
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: navActions,
+                    child: AnimatedCrossFade(
+                      duration: const Duration(milliseconds: 250),
+                      crossFadeState: isSearchActive 
+                          ? CrossFadeState.showSecond 
+                          : CrossFadeState.showFirst,
+                      secondChild: const SizedBox.shrink(),
+                      firstChild: Opacity(
+                        opacity: isPinned ? 0.0 : 1.0, // Hand off to Collapsed Bar when pinned!
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: navActions,
+                          ),
                         ),
                       ),
                     ),
@@ -136,6 +148,8 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
           ),
         );
       },
+    );
+  }
     );
   }
 

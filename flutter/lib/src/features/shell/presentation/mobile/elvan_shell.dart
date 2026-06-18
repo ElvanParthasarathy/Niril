@@ -7,6 +7,8 @@ import 'elvan_navbar.dart';
 import 'elvan_collapsed_bar.dart';
 import 'elvan_expanded_bar.dart';
 import 'elvan_page_content.dart';
+import 'widgets/elvan_top_bar_icon.dart';
+import 'elvan_search_bar.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ONE UI TEMPLATE SHELL — The reusable page scaffold
@@ -37,6 +39,8 @@ class ElvanShell extends StatefulWidget {
     this.showNavbar = true,
     this.leadingWidget,
     this.showLeadingWidgetInExpandedBar = true,
+    this.showSearchIcon = false,
+    this.onSearchChanged,
   });
 
   /// The scrollable content placed inside the [CustomScrollView] as slivers.
@@ -68,6 +72,12 @@ class ElvanShell extends StatefulWidget {
   /// Set to true for Back buttons. Set to false for floating page titles.
   final bool showLeadingWidgetInExpandedBar;
 
+  /// Determines if the search icon should be automatically injected
+  final bool showSearchIcon;
+
+  /// Callback when search query changes
+  final ValueChanged<String>? onSearchChanged;
+
   @override
   State<ElvanShell> createState() => _ElvanShellState();
 }
@@ -75,6 +85,12 @@ class ElvanShell extends StatefulWidget {
 class _ElvanShellState extends State<ElvanShell>
     with SingleTickerProviderStateMixin {
   // ── Navbar hide / show animation ──────────────────────────────────────
+  // ── State for sequential search animation ──
+  bool _searchStep1HideIcons = false;
+  bool _searchStep2ShowSearchContainer = false;
+  bool _searchStep3ExpandSearch = false;
+  
+  // Controls the fade and hit-testing of the entire Layer 3 bottom floating pill
   late final AnimationController _navbarController;
   late final Animation<double> _navbarOpacity;
   
@@ -99,8 +115,10 @@ class _ElvanShellState extends State<ElvanShell>
 
   bool _isNavbarVisible = true;
   final ValueNotifier<bool> _isHeaderExpandedNotifier = ValueNotifier<bool>(true);
+  final ValueNotifier<bool> _isSearchActiveNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<double> _dynamicPillHeightNotifier = ValueNotifier<double>(50.0);
   final GlobalKey _pillKey = GlobalKey();
+  final FocusNode _searchFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -117,6 +135,70 @@ class _ElvanShellState extends State<ElvanShell>
       curve: Curves.easeOutCubic,
       reverseCurve: Curves.easeInCubic,
     ));
+  }
+
+  void _activateSearch() {
+    // Auto-Collapse logic
+    if (!_scrollController.hasClients) {
+      _isSearchActiveNotifier.value = true;
+      return;
+    }
+    
+    final double statusBarHeight = MediaQuery.paddingOf(context).top;
+    final double snapThreshold = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
+    
+    // Scroll slightly past the threshold to perfectly snap the header to its collapsed pill state
+    final double targetOffset = snapThreshold + 20.0;
+    
+    // Animate the scroll, but start the choreography immediately!
+    _scrollController.animateTo(
+      targetOffset,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutCubic,
+    );
+    
+    // --- The Choreographed Container Transform Sequence ---
+    
+    // Step 1: Smoothly fade out the Navbar icons (leaves empty glassy pill)
+    setState(() => _searchStep1HideIcons = true);
+    
+    Future.delayed(const Duration(milliseconds: 150), () {
+      if (!mounted) return;
+      // Step 2: Render the small Search container precisely on top of the empty Navbar
+      setState(() => _searchStep2ShowSearchContainer = true);
+      
+      // Step 3: Now stretch the Search container to full width and fade in its contents
+      Future.delayed(const Duration(milliseconds: 50), () {
+        if (!mounted) return;
+        setState(() {
+          _searchStep3ExpandSearch = true;
+          _isSearchActiveNotifier.value = true;
+        });
+        _searchFocusNode.requestFocus();
+      });
+    });
+  }
+
+  void _closeSearchSequence() {
+    _searchFocusNode.unfocus();
+    
+    // Reverse Step 3: Shrink the Search container and fade out its contents
+    setState(() {
+      _searchStep3ExpandSearch = false;
+      _isSearchActiveNotifier.value = false;
+    });
+    
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (!mounted) return;
+      // Reverse Step 2: Remove the small Search container to reveal the empty Navbar below
+      setState(() => _searchStep2ShowSearchContainer = false);
+      
+      Future.delayed(const Duration(milliseconds: 50), () {
+        if (!mounted) return;
+        // Reverse Step 1: Fade the Navbar icons back in
+        setState(() => _searchStep1HideIcons = false);
+      });
+    });
   }
 
   @override
@@ -141,6 +223,10 @@ class _ElvanShellState extends State<ElvanShell>
   void dispose() {
     _navbarController.dispose();
     _scrollController.dispose();
+    _isHeaderExpandedNotifier.dispose();
+    _isSearchActiveNotifier.dispose();
+    _dynamicPillHeightNotifier.dispose();
+    _searchFocusNode.dispose();
     super.dispose();
   }
 
@@ -245,18 +331,28 @@ class _ElvanShellState extends State<ElvanShell>
         Theme.of(context).scaffoldBackgroundColor;
 
     return Scaffold(
-      body: Stack(
-        children: [
-          // ─── Layer 1: Scrollable content with SliverAppBar ────────────
+      body: GestureDetector(
+        onTap: () {
+          if (_isSearchActiveNotifier.value) {
+            _searchFocusNode.unfocus();
+            // We intentionally do NOT set _isSearchActiveNotifier.value to false
+            // so the search pill stays visible while scrolling results!
+          }
+        },
+        behavior: HitTestBehavior.translucent,
+        child: Stack(
+          children: [
+          // ─── Layer 1: Scrollable content ────────────
           NotificationListener<ScrollNotification>(
             onNotification: _handleScrollNotification,
             child: ElvanPageContent(
               scrollController: _scrollController,
               title: widget.title,
-              navActions: widget.navActions,
+              navActions: _buildEffectiveNavActions(),
               slivers: widget.slivers,
               expandedHeight: _kExpandedHeight,
               isHeaderExpandedNotifier: _isHeaderExpandedNotifier, // Passed to content
+              isSearchActiveNotifier: _isSearchActiveNotifier,
               leadingWidget: widget.leadingWidget,
               showLeadingWidgetInExpandedBar: widget.showLeadingWidgetInExpandedBar,
             ),
@@ -330,10 +426,44 @@ class _ElvanShellState extends State<ElvanShell>
                         child: child,
                       );
                     },
-                    child: ElvanNavbar(
-                      items: widget.navItems,
-                      currentIndex: widget.currentIndex,
-                      onTabSelected: widget.onTabSelected ?? (_) {},
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // The base Navbar (icons fade out on command, but background stays!)
+                        AnimatedOpacity(
+                          duration: const Duration(milliseconds: 200),
+                          opacity: _searchStep3ExpandSearch ? 0.0 : 1.0,
+                          child: IgnorePointer(
+                            ignoring: _searchStep2ShowSearchContainer,
+                            child: ElvanNavbar(
+                              items: widget.navItems,
+                              currentIndex: widget.currentIndex,
+                              onTabSelected: widget.onTabSelected ?? (_) {},
+                              hideContent: _searchStep1HideIcons,
+                            ),
+                          ),
+                        ),
+                        
+                        // The Search Overlay (appears exactly on top of Navbar, then stretches!)
+                        if (_searchStep2ShowSearchContainer)
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeOutCubic,
+                            // Exact mathematical width of the Navbar vs full screen
+                            width: _searchStep3ExpandSearch
+                                ? MediaQuery.of(context).size.width - 32
+                                : ((widget.navItems.length <= 4 ? 67.0 : 61.0) * widget.navItems.length + 16.0),
+                            child: ElvanSearchBar(
+                              focusNode: _searchFocusNode,
+                              onChanged: widget.onSearchChanged,
+                              onClose: () {
+                                _closeSearchSequence();
+                                widget.onSearchChanged?.call(''); // Clear query
+                              },
+                              isExpanded: _searchStep3ExpandSearch,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
@@ -344,7 +474,7 @@ class _ElvanShellState extends State<ElvanShell>
           ElvanCollapsedBar(
             scrollController: _scrollController,
             hideAnimation: _navbarOpacity,
-            navActions: widget.navActions,
+            navActions: _buildEffectiveNavActions(),
             expandedHeight: _kExpandedHeight,
             isHeaderExpandedNotifier: _isHeaderExpandedNotifier,
             dynamicPillHeightNotifier: _dynamicPillHeightNotifier,
@@ -362,36 +492,33 @@ class _ElvanShellState extends State<ElvanShell>
                 height: 1.15,
               ),
             ) : null,
-          ),
-
-          // ── Dev Scroll Offset Badge ──
-          Positioned(
-            top: MediaQuery.paddingOf(context).top + 16,
-            left: 16,
-            child: AnimatedBuilder(
-              animation: _scrollController,
-              builder: (context, _) {
-                final offset = _scrollController.hasClients ? _scrollController.offset : 0.0;
-                return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.red.withAlpha(200),
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                  child: Text(
-                    'Offset: ${offset.toStringAsFixed(1)}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                );
-              },
-            ),
+            isSearchActiveNotifier: _isSearchActiveNotifier,
           ),
         ],
       ),
+      ),
     );
+  }
+
+  List<Widget> _buildEffectiveNavActions() {
+    if (!widget.showSearchIcon) return widget.navActions;
+    
+    final actions = List<Widget>.from(widget.navActions);
+    
+    // Insert search icon before the last item (PopupMenu)
+    final searchWidget = ElvanTopBarIcon(
+      icon: CupertinoIcons.search,
+      onTap: _activateSearch,
+    );
+    
+    if (actions.length > 1) {
+      actions.insert(actions.length - 2, searchWidget); // -2 because of SizedBox
+      actions.insert(actions.length - 2, const SizedBox(width: 14));
+    } else {
+      actions.add(searchWidget);
+      actions.add(const SizedBox(width: 14));
+    }
+    
+    return actions;
   }
 }

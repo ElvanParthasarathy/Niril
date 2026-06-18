@@ -208,19 +208,13 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
               title: currentTitle,
               currentIndex: _currentTab,
               onTabSelected: (index) => setState(() => _currentTab = index),
+              showSearchIcon: _currentTab != 0,
               navActions: [
                 const SizedBox(width: 7),
                 ElvanTopBarIcon(
                   icon: CupertinoIcons.add,
                   onTap: () {},
                 ),
-                if (_currentTab != 0) ...[
-                  const SizedBox(width: 14),
-                  ElvanTopBarIcon(
-                    icon: CupertinoIcons.search,
-                    onTap: () {},
-                  ),
-                ],
                 const SizedBox(width: 14),
                 const ElvanPopupMenu(),
                 const SizedBox(width: 7),

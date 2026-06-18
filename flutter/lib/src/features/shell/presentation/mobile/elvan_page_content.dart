@@ -18,6 +18,7 @@ class ElvanPageContent extends StatelessWidget {
     required this.isHeaderExpandedNotifier,
     this.leadingWidget,
     this.showLeadingWidgetInExpandedBar = true,
+    this.isSearchActiveNotifier,
   });
 
   final ScrollController scrollController;
@@ -28,6 +29,7 @@ class ElvanPageContent extends StatelessWidget {
   final ValueNotifier<bool> isHeaderExpandedNotifier;
   final Widget? leadingWidget;
   final bool showLeadingWidgetInExpandedBar;
+  final ValueNotifier<bool>? isSearchActiveNotifier;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +56,7 @@ class ElvanPageContent extends StatelessWidget {
                 statusBarHeight: MediaQuery.paddingOf(context).top,
                 expandedHeight: expandedHeight,
                 leadingWidget: showLeadingWidgetInExpandedBar ? leadingWidget : null,
+                isSearchActiveNotifier: isSearchActiveNotifier ?? ValueNotifier(false),
               ),
             ),
 
