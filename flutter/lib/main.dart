@@ -17,6 +17,16 @@ import 'src/features/shell/presentation/mobile/elvan_navbar.dart';
 import 'src/features/pages/porul_page.dart';
 import 'src/features/pages/vanigar_page.dart';
 import 'src/features/shell/presentation/mobile/elvan_shell.dart';
+import 'src/features/pages/chaandru_page.dart';
+import 'src/features/auth/presentation/mode_selector_screen.dart';
+import 'src/features/niril_silk/presentation/editors/silk_invoice_editor.dart';
+import 'src/features/niril_silk/presentation/editors/silk_receipt_editor.dart';
+import 'src/features/niril_silk/presentation/editors/silk_merchant_editor.dart';
+import 'src/features/niril_silk/presentation/editors/silk_item_editor.dart';
+import 'src/features/niril_coolie/presentation/editors/coolie_invoice_editor.dart';
+import 'src/features/niril_coolie/presentation/editors/coolie_receipt_editor.dart';
+import 'src/features/niril_coolie/presentation/editors/coolie_merchant_editor.dart';
+import 'src/features/niril_coolie/presentation/editors/coolie_item_editor.dart';
 import 'src/features/shell/presentation/desktop/elvan_desktop_shell.dart';
 import 'src/features/shell/presentation/mobile/widgets/elvan_popup_menu.dart';
 import 'src/features/shell/presentation/mobile/widgets/elvan_top_bar_icon.dart';
@@ -123,6 +133,29 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
   int _currentTab = 0; // Start on "Invoices" tab
   int _navItemCount = 5; // Dev testing count
 
+  void _onAddPressed() {
+    final mode = ref.read(appModeProvider);
+    Widget? editor;
+
+    if (_currentTab == 0 || _currentTab == 1) {
+      // Home Screen or Invoices Screen -> Open Invoice Editor
+      editor = mode == AppMode.coolie ? const CoolieInvoiceEditor() : const SilkInvoiceEditor();
+    } else if (_currentTab == 2) {
+      // Merchants
+      editor = mode == AppMode.coolie ? const CoolieMerchantEditor() : const SilkMerchantEditor();
+    } else if (_currentTab == 3) {
+      // Items/Inventory
+      editor = mode == AppMode.coolie ? const CoolieItemEditor() : const SilkItemEditor();
+    } else if (_currentTab == 4) {
+      // Receipts
+      editor = mode == AppMode.coolie ? const CoolieReceiptEditor() : const SilkReceiptEditor();
+    }
+
+    if (editor != null) {
+      Navigator.of(context).push(CupertinoPageRoute(builder: (_) => editor!));
+    }
+  }
+
   // ── 5 Tabs for the React app port ───────────────────────────────
   List<CustomNavItem> get _masterNavItems => [
     CustomNavItem(
@@ -213,7 +246,7 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
                 const SizedBox(width: 7),
                 ElvanTopBarIcon(
                   icon: CupertinoIcons.add,
-                  onTap: () {},
+                  onTap: _onAddPressed,
                 ),
                 const SizedBox(width: 14),
                 const ElvanPopupMenu(),

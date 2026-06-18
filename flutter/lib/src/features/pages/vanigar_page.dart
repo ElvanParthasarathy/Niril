@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/models/app_mode.dart';
 import '../../core/state/app_state.dart';
-import 'components/vanigar/vanigar_gst.dart';
-import 'components/vanigar/vanigar_coolie.dart';
+import '../niril_silk/presentation/pages/silk_merchants_page.dart';
+import '../niril_coolie/presentation/pages/coolie_merchants_page.dart';
 
 class VanigarPage extends ConsumerWidget {
   const VanigarPage({super.key});
@@ -13,10 +13,10 @@ class VanigarPage extends ConsumerWidget {
     final mode = ref.watch(appModeProvider);
 
     if (mode == AppMode.coolie) {
-      return const VanigarCoolie();
+      return const CoolieMerchantsPage();
     }
     
     // Default to GST mode
-    return const VanigarGst();
+    return const SilkMerchantsPage();
   }
 }

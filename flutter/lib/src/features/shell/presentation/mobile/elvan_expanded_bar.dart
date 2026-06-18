@@ -11,16 +11,18 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
     required this.navActions,
     required this.statusBarHeight,
     required this.expandedHeight,
-    required this.isSearchActiveNotifier,
     this.leadingWidget,
+    required this.isSearchActiveNotifier,
+    required this.isMenuOpen,
   });
 
   final String title;
   final List<Widget> navActions;
   final double statusBarHeight;
   final double expandedHeight;
-  final ValueNotifier<bool> isSearchActiveNotifier;
   final Widget? leadingWidget;
+  final ValueNotifier<bool> isSearchActiveNotifier;
+  final bool isMenuOpen;
 
   @override
   double get maxExtent => expandedHeight;
@@ -125,19 +127,19 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                   right: 16,
                   child: Align(
                     alignment: Alignment.centerRight,
-                    child: AnimatedCrossFade(
-                      duration: const Duration(milliseconds: 250),
-                      crossFadeState: isSearchActive 
-                          ? CrossFadeState.showSecond 
-                          : CrossFadeState.showFirst,
-                      secondChild: const SizedBox.shrink(),
-                      firstChild: Opacity(
-                        opacity: isPinned ? 0.0 : 1.0, // Hand off to Collapsed Bar when pinned!
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: navActions,
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 200),
+                      opacity: (isSearchActive || isMenuOpen) ? 0.0 : 1.0,
+                      child: IgnorePointer(
+                        ignoring: isSearchActive || isMenuOpen,
+                        child: Opacity(
+                          opacity: isPinned ? 0.0 : 1.0, // Hand off to Collapsed Bar when pinned!
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: navActions,
+                            ),
                           ),
                         ),
                       ),
@@ -157,7 +159,9 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(covariant ElvanExpandedBarDelegate oldDelegate) {
     return title != oldDelegate.title ||
         navActions != oldDelegate.navActions ||
-        statusBarHeight != oldDelegate.statusBarHeight ||
-        expandedHeight != oldDelegate.expandedHeight;
+        expandedHeight != oldDelegate.expandedHeight ||
+        leadingWidget != oldDelegate.leadingWidget ||
+        isSearchActiveNotifier != oldDelegate.isSearchActiveNotifier ||
+        isMenuOpen != oldDelegate.isMenuOpen;
   }
 }

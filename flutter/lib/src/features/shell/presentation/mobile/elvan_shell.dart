@@ -501,22 +501,46 @@ class _ElvanShellState extends State<ElvanShell>
   }
 
   List<Widget> _buildEffectiveNavActions() {
-    if (!widget.showSearchIcon) return widget.navActions;
-    
     final actions = List<Widget>.from(widget.navActions);
     
-    // Insert search icon before the last item (PopupMenu)
-    final searchWidget = ElvanTopBarIcon(
-      icon: CupertinoIcons.search,
-      onTap: _activateSearch,
+    // THE OPTIMIZATION: We NEVER unmount the search icon. It stays permanently in the widget tree.
+    // By using a simple SizedBox that instantly toggles width, we completely remove the "sliding" animation
+    // so it perfectly matches the instant snap of the page switch, while STILL preventing mount lag!
+    // Wrapping the icon in a SingleChildScrollView ensures it never gets squeezed or forced to re-layout!
+    final searchWidget = SizedBox(
+      width: widget.showSearchIcon ? 26.0 : 0.0,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const NeverScrollableScrollPhysics(),
+        clipBehavior: Clip.none,
+        child: SizedBox(
+          width: 26.0,
+          child: Opacity(
+            opacity: widget.showSearchIcon ? 1.0 : 0.0,
+            child: IgnorePointer(
+              ignoring: !widget.showSearchIcon,
+              child: ElvanTopBarIcon(
+                icon: CupertinoIcons.search,
+                onTap: _activateSearch,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
     
+    // The padding between the search icon and the next icon
+    final searchPadding = SizedBox(
+      width: widget.showSearchIcon ? 14.0 : 0.0,
+    );
+    
+    // Insert search icon and its padding before the popup menu (which is at the end)
     if (actions.length > 1) {
-      actions.insert(actions.length - 2, searchWidget); // -2 because of SizedBox
-      actions.insert(actions.length - 2, const SizedBox(width: 14));
+      actions.insert(actions.length - 2, searchWidget); 
+      actions.insert(actions.length - 2, searchPadding);
     } else {
       actions.add(searchWidget);
-      actions.add(const SizedBox(width: 14));
+      actions.add(searchPadding);
     }
     
     return actions;

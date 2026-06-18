@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/models/app_mode.dart';
 import '../../core/state/app_state.dart';
-import 'components/chaandru/chaandru_gst.dart';
-import 'components/chaandru/chaandru_coolie.dart';
+import '../niril_silk/presentation/pages/silk_receipts_page.dart';
+import '../niril_coolie/presentation/pages/coolie_receipts_page.dart';
 
 class ChaandruPage extends ConsumerWidget {
   const ChaandruPage({super.key});
@@ -13,10 +13,10 @@ class ChaandruPage extends ConsumerWidget {
     final mode = ref.watch(appModeProvider);
 
     if (mode == AppMode.coolie) {
-      return const ChaandruCoolie();
+      return const CoolieReceiptsPage();
     }
     
     // Default to GST mode
-    return const ChaandruGst();
+    return const SilkReceiptsPage();
   }
 }

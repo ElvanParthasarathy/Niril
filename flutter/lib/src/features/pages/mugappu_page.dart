@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/models/app_mode.dart';
 import '../../core/state/app_state.dart';
-import 'components/mugappu/mugappu_gst.dart';
-import 'components/mugappu/mugappu_coolie.dart';
+import '../niril_silk/presentation/pages/silk_home_page.dart';
+import '../niril_coolie/presentation/pages/coolie_home_page.dart';
 
 class MugappuPage extends ConsumerWidget {
   const MugappuPage({super.key});
@@ -13,10 +13,10 @@ class MugappuPage extends ConsumerWidget {
     final mode = ref.watch(appModeProvider);
 
     if (mode == AppMode.coolie) {
-      return const MugappuCoolie();
+      return const CoolieHomePage();
     }
     
     // Default to GST mode
-    return const MugappuGst();
+    return const SilkHomePage();
   }
 }

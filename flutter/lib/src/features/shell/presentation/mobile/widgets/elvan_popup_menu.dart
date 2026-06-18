@@ -6,6 +6,12 @@ import '../../../../../localization/locale_provider.dart';
 import '../../../../settings/presentation/settings_screen.dart';
 import 'elvan_top_bar_icon.dart';
 
+import 'package:flutter_svg/flutter_svg.dart';
+
+const String _settingsOutlineSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm109.94-52.79a8,8,0,0,0-3.89-5.4l-29.83-17-.12-33.62a8,8,0,0,0-2.83-6.08,111.91,111.91,0,0,0-36.72-20.67,8,8,0,0,0-6.46.59L128,41.85,97.88,25a8,8,0,0,0-6.47-.6A112.1,112.1,0,0,0,54.73,45.15a8,8,0,0,0-2.83,6.07l-.15,33.65-29.83,17a8,8,0,0,0-3.89,5.4,106.47,106.47,0,0,0,0,41.56,8,8,0,0,0,3.89,5.4l29.83,17,.12,33.62a8,8,0,0,0,2.83,6.08,111.91,111.91,0,0,0,36.72,20.67,8,8,0,0,0,6.46-.59L128,214.15,158.12,231a7.91,7.91,0,0,0,3.9,1,8.09,8.09,0,0,0,2.57-.42,112.1,112.1,0,0,0,36.68-20.73,8,8,0,0,0,2.83-6.07l.15-33.65,29.83-17a8,8,0,0,0,3.89-5.4A106.47,106.47,0,0,0,237.94,107.21Zm-15,34.91-28.57,16.25a8,8,0,0,0-3,3c-.58,1-1.19,2.06-1.81,3.06a7.94,7.94,0,0,0-1.22,4.21l-.15,32.25a95.89,95.89,0,0,1-25.37,14.3L134,199.13a8,8,0,0,0-3.91-1h-.19c-1.21,0-2.43,0-3.64,0a8.08,8.08,0,0,0-4.1,1l-28.84,16.1A96,96,0,0,1,67.88,201l-.11-32.2a8,8,0,0,0-1.22-4.22c-.62-1-1.23-2-1.8-3.06a8.09,8.09,0,0,0-3-3.06l-28.6-16.29a90.49,90.49,0,0,1,0-28.26L61.67,97.63a8,8,0,0,0,3-3c.58-1,1.19-2.06,1.81-3.06a7.94,7.94,0,0,0,1.22-4.21l.15-32.25a95.89,95.89,0,0,1,25.37-14.3L122,56.87a8,8,0,0,0,4.1,1c1.21,0,2.43,0,3.64,0a8.08,8.08,0,0,0,4.1-1l28.84-16.1A96,96,0,0,1,188.12,55l.11,32.2a8,8,0,0,0,1.22,4.22c.62,1,1.23,2,1.8,3.06a8.09,8.09,0,0,0,3,3.06l28.6,16.29A90.49,90.49,0,0,1,222.9,142.12Z"></path></svg>';
+
+final popupMenuOpenProvider = StateProvider<bool>((ref) => false);
+
 /// A highly optimized custom popup component.
 /// Completely bypasses Material's PopupMenuButton to provide precise styling,
 /// animations, and zero-padding logic.
@@ -17,7 +23,6 @@ class ElvanPopupMenu extends ConsumerStatefulWidget {
 }
 
 class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
-  final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
   bool _isOpen = false;
 
@@ -32,14 +37,17 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
   void _closeMenu() {
     _overlayEntry?.remove();
     _overlayEntry = null;
+    ref.read(popupMenuOpenProvider.notifier).state = false;
     setState(() {
       _isOpen = false;
     });
   }
 
   void _showMenu() {
+    ref.read(popupMenuOpenProvider.notifier).state = true;
     final RenderBox renderBox = context.findRenderObject() as RenderBox;
     final size = renderBox.size;
+    final globalOffset = renderBox.localToGlobal(Offset.zero);
 
     _overlayEntry = OverlayEntry(
       builder: (context) => Stack(
@@ -55,9 +63,9 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
               child: Container(),
             ),
           ),
-          CompositedTransformFollower(
-            link: _layerLink,
-            offset: Offset(-220 + size.width, size.height + 16), // Position below and aligned right with new width
+          Positioned(
+            left: globalOffset.dx - 180 + size.width + 11,
+            top: globalOffset.dy - 12,
             child: Material(
               color: Colors.transparent,
               child: TweenAnimationBuilder<double>(
@@ -67,7 +75,7 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                 builder: (context, value, child) {
                   return Transform.scale(
                     scale: 0.95 + (0.05 * value),
-                    alignment: Alignment.topRight,
+                    alignment: Alignment.centerRight, // Grow out directly from the 3-dot icon's center!
                     child: Opacity(
                       opacity: value,
                       child: child,
@@ -75,17 +83,15 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                   );
                 },
                 child: Container(
-                  width: 220, // Increased width to prevent text overflow in other languages
+                  width: 180, // Compact pill size
                   decoration: BoxDecoration(
-                    color: Theme.of(context).brightness == Brightness.dark 
-                        ? const Color(0xFF2A2A2A) 
-                        : Colors.white,
-                    borderRadius: BorderRadius.circular(16),
+                    color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white).withValues(alpha: 0.88),
+                    borderRadius: BorderRadius.circular(100), // Perfect circular pill!
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
+                        color: Colors.black.withValues(alpha: 0.12),
+                        blurRadius: 24,
+                        offset: const Offset(0, 8),
                       ),
                     ],
                   ),
@@ -93,7 +99,12 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       InkWell(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(100),
+                        splashFactory: NoSplash.splashFactory, // Instantly fills, no growing!
+                        splashColor: Colors.transparent,
+                        highlightColor: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.white.withValues(alpha: 0.25) 
+                            : Colors.black.withValues(alpha: 0.15), // Highly visible instant highlight
                         onTap: () {
                           _closeMenu();
                           Navigator.push(
@@ -104,10 +115,20 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                           );
                         },
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14), // Exactly 50px tall (14 + 22 + 14)
                           child: Row(
                             children: [
-                              const Icon(CupertinoIcons.settings, size: 20),
+                              SvgPicture.string(
+                                _settingsOutlineSvg,
+                                width: 22,
+                                height: 22,
+                                colorFilter: ColorFilter.mode(
+                                  Theme.of(context).brightness == Brightness.dark 
+                                      ? Colors.white 
+                                      : Colors.black,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
                               const SizedBox(width: 12),
                               Text('settings'.tr(context, ref), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
                             ],
@@ -138,12 +159,9 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
 
   @override
   Widget build(BuildContext context) {
-    return CompositedTransformTarget(
-      link: _layerLink,
-      child: ElvanTopBarIcon(
-        icon: CupertinoIcons.ellipsis_vertical,
-        onTap: _toggleMenu,
-      ),
+    return ElvanTopBarIcon(
+      icon: CupertinoIcons.ellipsis_vertical,
+      onTap: _toggleMenu,
     );
   }
 }

@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme_provider.dart';
 import '../../../localization/locale_provider.dart';
+import '../../../core/models/app_mode.dart';
+import '../../../core/state/app_state.dart';
 import '../../shell/presentation/mobile/elvan_subpage_shell.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -12,6 +14,7 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentTheme = ref.watch(themeModeProvider);
     final currentLocale = ref.watch(localeProvider);
+    final currentAppMode = ref.watch(appModeProvider);
 
     return ElvanSubpageShell(
       title: 'settings'.tr(context, ref),
@@ -63,6 +66,46 @@ class SettingsScreen extends ConsumerWidget {
                       groupValue: currentTheme,
                       onChanged: (val) {
                         if (val != null) ref.read(themeModeProvider.notifier).setThemeMode(val);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Text(
+                  'businessProfilesTitle'.tr(context, ref),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+              Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                child: Column(
+                  children: [
+                    RadioListTile<AppMode>(
+                      title: Text('nirilSilk'.tr(context, ref)),
+                      value: AppMode.gst,
+                      groupValue: currentAppMode ?? AppMode.gst,
+                      onChanged: (val) {
+                        if (val != null) ref.read(appModeProvider.notifier).setMode(val);
+                      },
+                    ),
+                    const Divider(height: 1, indent: 16, endIndent: 16),
+                    RadioListTile<AppMode>(
+                      title: Text('nirilCoolie'.tr(context, ref)),
+                      value: AppMode.coolie,
+                      groupValue: currentAppMode ?? AppMode.gst,
+                      onChanged: (val) {
+                        if (val != null) ref.read(appModeProvider.notifier).setMode(val);
                       },
                     ),
                   ],

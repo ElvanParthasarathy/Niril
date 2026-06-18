@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../localization/locale_provider.dart';
 
-class ElvanSearchBar extends StatelessWidget {
+class ElvanSearchBar extends ConsumerWidget {
   const ElvanSearchBar({
     super.key,
     required this.focusNode,
@@ -16,7 +18,7 @@ class ElvanSearchBar extends StatelessWidget {
   final bool isExpanded;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Container(
@@ -50,9 +52,9 @@ class ElvanSearchBar extends StatelessWidget {
                 child: TextField(
                   focusNode: focusNode,
                   onChanged: onChanged,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     isDense: true,
-                    hintText: 'Search...',
+                    hintText: 'search'.tr(context, ref),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
                   ),

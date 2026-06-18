@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/models/app_mode.dart';
 import '../../core/state/app_state.dart';
-import 'components/porul/porul_gst.dart';
-import 'components/porul/porul_coolie.dart';
+import '../niril_silk/presentation/pages/silk_items_page.dart';
+import '../niril_coolie/presentation/pages/coolie_items_page.dart';
 
 class PorulPage extends ConsumerWidget {
   const PorulPage({super.key});
@@ -13,10 +13,10 @@ class PorulPage extends ConsumerWidget {
     final mode = ref.watch(appModeProvider);
 
     if (mode == AppMode.coolie) {
-      return const PorulCoolie();
+      return const CoolieItemsPage();
     }
     
     // Default to GST mode
-    return const PorulGst();
+    return const SilkItemsPage();
   }
 }

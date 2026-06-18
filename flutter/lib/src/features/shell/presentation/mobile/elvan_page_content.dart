@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'elvan_expanded_bar.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'widgets/elvan_popup_menu.dart';
+
 // ─────────────────────────────────────────────────────────────────────────────
 // PAGE CONTENT (Scroll View & Slivers)
 // ─────────────────────────────────────────────────────────────────────────────
 
-class ElvanPageContent extends StatelessWidget {
+class ElvanPageContent extends ConsumerWidget {
   const ElvanPageContent({
     super.key,
     required this.scrollController,
@@ -32,7 +35,8 @@ class ElvanPageContent extends StatelessWidget {
   final ValueNotifier<bool>? isSearchActiveNotifier;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isMenuOpen = ref.watch(popupMenuOpenProvider);
     final double statusBarHeight = MediaQuery.paddingOf(context).top;
     final double snapThreshold = expandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
 
@@ -57,6 +61,7 @@ class ElvanPageContent extends StatelessWidget {
                 expandedHeight: expandedHeight,
                 leadingWidget: showLeadingWidgetInExpandedBar ? leadingWidget : null,
                 isSearchActiveNotifier: isSearchActiveNotifier ?? ValueNotifier(false),
+                isMenuOpen: isMenuOpen,
               ),
             ),
 

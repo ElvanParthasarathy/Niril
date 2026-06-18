@@ -32,9 +32,9 @@ class ElvanTopBarIcon extends StatelessWidget {
               onTap: onTap,
               radius: 20, // Expanding circle radius (40px diameter)
               highlightShape: BoxShape.circle,
-              splashFactory: InkRipple.splashFactory, // Pre-built smooth animation, NO sparkles!
-              splashColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
-              highlightColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+              splashFactory: NoSplash.splashFactory, // Instantly fills the circle, no growing!
+              splashColor: Colors.transparent, 
+              highlightColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12), // Instant full circle flash
               child: Icon(icon, size: 22),
             ),
           ),
