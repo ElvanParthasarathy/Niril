@@ -74,9 +74,9 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         // 2. t < detachThreshold: The text smoothly detaches from the row, grows, and sweeps into the giant title position.
         const double detachThreshold = 0.45;
         final double rawSlant = (t / detachThreshold).clamp(0.0, 1.0);
-        // Using easeInCubic inverts the curve: it snaps away from the top quickly,
-        // then gracefully decelerates and settles smoothly into the bottom giant position.
-        final double slantT = Curves.easeInCubic.transform(rawSlant);
+        // Using a pure linear diagonal (1-to-1 movement) because the user's scrolling thumb
+        // is already providing the physical curve. This creates the most connected, tactile feel.
+        final double slantT = rawSlant;
         
         final double currentScale = 1.0 - (1.0 - (20.0 / 34.0)) * slantT;
         // Native text X offset: 16 (Positioned) + 4 (Padding) + 8 (SizedBox) = 28px
