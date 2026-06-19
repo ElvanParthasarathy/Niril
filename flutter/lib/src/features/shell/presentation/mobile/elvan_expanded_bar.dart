@@ -138,12 +138,13 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                             letterSpacing: -0.5,
                             height: 1.15,
                           ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
 
               // ── The Page Header Leading Icon (Left) ──
               if (leadingWidget != null)
