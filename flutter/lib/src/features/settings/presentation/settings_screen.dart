@@ -44,7 +44,7 @@ class SettingsScreen extends ConsumerWidget {
       startCollapsed: false, // Settings Home acts like a Main Tab, so it MUST start fully expanded!
       slivers: [
         SliverPadding(
-          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 32),
+          padding: const EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 32),
           sliver: SliverList.list(
             children: [
               _buildSettingsTile(

@@ -20,7 +20,7 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
       title: 'seyali_amaippugal'.tr(context, ref),
       slivers: [
         SliverPadding(
-          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 32),
+          padding: const EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 32),
           sliver: SliverList.list(
             children: [
               Padding(

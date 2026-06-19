@@ -67,7 +67,7 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
 
         // MICRO-NUDGES for sub-pixel font-hinting alignment:
         const double xNudge = 1.5; // Horizontal tweak (scaled 34px vs native 20px side-bearings)
-        const double yNudge = -3.0; // Negative = title sits ABOVE collapsed text at handoff, hiding font-swap wobble
+        const double yNudge = 0.6; // Vertical tweak (positive = down at handoff)
 
         final double t = normalizedProgress; // Hits 1.0 at the exact handoff frame
 
