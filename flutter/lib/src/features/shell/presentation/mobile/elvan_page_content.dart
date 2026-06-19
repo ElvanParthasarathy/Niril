@@ -45,7 +45,6 @@ class ElvanPageContent extends ConsumerWidget {
         CustomScrollView(
           controller: scrollController,
           cacheExtent: 1500, // Pre-builds items off-screen to prevent frame drops during slow scrolling!
-          dragStartBehavior: DragStartBehavior.down, // Forces scroll to start instantly, ignoring Cupertino back-swipe delay!
           physics: ElvanBrickWallPhysics(
             isHeaderExpandedNotifier: isHeaderExpandedNotifier,
             snapThreshold: snapThreshold,
@@ -92,25 +91,6 @@ class ElvanPageContent extends ConsumerWidget {
               },
             ),
           ],
-        ),
-
-        // ── EDGE SCROLL BLOCKERS ──
-        // These invisible shields sit on the far left and right edges.
-        // They swallow vertical gestures so the ScrollView doesn't wobble,
-        // but they let horizontal gestures pass through for the system back-swipe!
-        Positioned(
-          left: 0, top: 0, bottom: 0, width: 24,
-          child: GestureDetector(
-            onVerticalDragUpdate: (_) {}, // Catch and kill vertical drags
-            behavior: HitTestBehavior.translucent, // Let horizontal drags pass to system
-          ),
-        ),
-        Positioned(
-          right: 0, top: 0, bottom: 0, width: 24,
-          child: GestureDetector(
-            onVerticalDragUpdate: (_) {},
-            behavior: HitTestBehavior.translucent,
-          ),
         ),
       ],
     );
