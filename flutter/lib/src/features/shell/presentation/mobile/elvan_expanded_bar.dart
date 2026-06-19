@@ -56,6 +56,14 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         final double handoffShrinkOffset = maxExtent - handoffHeight;
         final double handoffProgress = (handoffShrinkOffset / maxShrink).clamp(0.001, 1.0);
         
+        // DYNAMIC ISLAND IMPACT BUMP: Matches the Collapsed Bar's 12-pixel physical scale bounce!
+        final double liftStartOffset = maxExtent - ceiling - 12.0;
+        final double liftProgress = (shrinkOffset > liftStartOffset) 
+            ? ((shrinkOffset - liftStartOffset) / 12.0).clamp(0.0, 1.0) 
+            : 0.0;
+        final double impactBump = 4.0 * liftProgress * (1.0 - liftProgress);
+        final double impactScale = 1.0 + (impactBump * 0.05);
+        
         // This progress hits exactly 1.0 at the precise millisecond of the hand-off.
         final double normalizedProgress = (shrinkProgress / handoffProgress).clamp(0.0, 1.0);
         
@@ -115,10 +123,13 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                         alignment: leadingWidget != null
                             ? Alignment.bottomCenter
                             : Alignment.lerp(Alignment.bottomCenter, Alignment.bottomLeft, t)!,
-                        child: Text(
-                          title,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
+                        child: Transform.scale(
+                          scale: leadingWidget != null ? 1.0 : impactScale,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            title,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
                             fontSize: 34,
                             fontWeight: leadingWidget != null ? FontWeight.w700 : FontWeight.bold,
                             color: Theme.of(context).brightness == Brightness.dark 
