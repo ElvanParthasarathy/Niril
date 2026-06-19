@@ -169,30 +169,7 @@ class ElvanCollapsedBar extends ConsumerWidget {
                 ),
               ),
 
-              // ── NATIVE TEXT DEV HUD ──
-              if (expandedSmallTitle != null)
-                Positioned(
-                  top: ceiling + 60, // Moved down to not hide the text
-                  left: 16,
-                  child: IgnorePointer(
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.8),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        'Native AbsX: ${16 + 4 + collapsedXNudge}\n(16 + 4 + $collapsedXNudge)', // 16 (Positioned) + 4 (Padding) + Nudge
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'monospace',
-                          fontSize: 10,
-                          decoration: TextDecoration.none,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+
           ],
         );
       },

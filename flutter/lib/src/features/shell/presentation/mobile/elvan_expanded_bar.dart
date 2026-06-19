@@ -173,36 +173,7 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                   ),
                 ),
                 
-              // ── DEV PIXEL HUD ──
-              Positioned(
-                top: ceiling + 10,
-                right: 16,
-                child: IgnorePointer(
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.black87,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.greenAccent.withOpacity(0.5)),
-                    ),
-                    child: Text(
-                      't: ${t.toStringAsFixed(6)}\n'
-                      'slantT: ${slantT.toStringAsFixed(6)}\n'
-                      'Scale: ${currentScale.toStringAsFixed(6)}\n'
-                      'LeftPad: ${currentLeftPadding.toStringAsFixed(6)}\n'
-                      'AbsX: ${(currentLeftPadding + 4.0 * currentScale).toStringAsFixed(6)}\n'
-                      'Bottom: ${currentBottom.toStringAsFixed(6)}',
-                      style: const TextStyle(
-                        color: Colors.greenAccent,
-                        fontFamily: 'monospace',
-                        fontSize: 10,
-                        height: 1.5,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+
             ],
           ),
         );
