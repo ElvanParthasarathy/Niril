@@ -37,32 +37,85 @@ class SettingsScreen extends ConsumerWidget {
           padding: const EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 120),
           sliver: SliverList.list(
             children: [
-              // ── Mode Switcher (Big Pill) ──
-              GestureDetector(
-                onTap: () {
-                  final currentMode = ref.read(appModeProvider);
-                  ref.read(appModeProvider.notifier).setMode(
-                    currentMode == AppMode.coolie ? AppMode.gst : AppMode.coolie
-                  );
-                },
-                child: _SettingsSection(
-                  cardColor: cardColor,
-                  dividerColor: dividerColor,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Center(
-                        child: Icon(
-                          ref.watch(appModeProvider) == AppMode.coolie 
-                              ? CupertinoIcons.money_dollar_circle_fill // Coolie equivalent
-                              : CupertinoIcons.doc_text_fill, // Receipt equivalent
-                          size: 32,
-                          color: Theme.of(context).colorScheme.onSurface,
+              // ── Mode Switcher & Merchant Settings (Big Pill) ──
+              _SettingsSection(
+                cardColor: cardColor,
+                dividerColor: dividerColor,
+                children: [
+                  Stack(
+                    children: [
+                      // The main pill body (Navigates to Merchant Settings)
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(context, CupertinoPageRoute(builder: (_) => const VanigarAmaippugalPage()));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 98, right: 32, top: 14, bottom: 14),
+                          child: SizedBox(
+                            height: 64,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'vanigar_amaippugal'.tr(context, ref),
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.2,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  ref.watch(appModeProvider) == AppMode.coolie 
+                                      ? 'nirilCoolie'.tr(context, ref) 
+                                      : 'nirilSilk'.tr(context, ref),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                      
+                      // The circular Mode Switcher on the left
+                      Positioned(
+                        left: 14,
+                        top: 14,
+                        child: Material(
+                          color: iconBgColor,
+                          shape: const CircleBorder(),
+                          clipBehavior: Clip.hardEdge,
+                          child: InkWell(
+                            onTap: () {
+                              final currentMode = ref.read(appModeProvider);
+                              ref.read(appModeProvider.notifier).setMode(
+                                currentMode == AppMode.coolie ? AppMode.gst : AppMode.coolie
+                              );
+                            },
+                            child: SizedBox(
+                              width: 64,
+                              height: 64,
+                              child: Center(
+                                child: Icon(
+                                  ref.watch(appModeProvider) == AppMode.coolie 
+                                      ? CupertinoIcons.money_dollar_circle_fill
+                                      : CupertinoIcons.doc_text_fill,
+                                  size: 32,
+                                  color: Theme.of(context).colorScheme.onSurface,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
               const SizedBox(height: 24),
 
@@ -71,13 +124,6 @@ class SettingsScreen extends ConsumerWidget {
                 cardColor: cardColor,
                 dividerColor: dividerColor,
                 children: [
-                  _SettingsRow(
-                    icon: CupertinoIcons.building_2_fill,
-                    iconBgColor: iconBgColor,
-                    title: 'vanigar_amaippugal'.tr(context, ref),
-                    description: 'Merchant profiles & GST info',
-                    onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (_) => const VanigarAmaippugalPage())),
-                  ),
                   _SettingsRow(
                     icon: CupertinoIcons.location_solid,
                     iconBgColor: iconBgColor,
