@@ -69,23 +69,23 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         // SCALE AND MOVE LOGIC:
         final double t = normalizedProgress; // Use normalizedProgress to finish exactly at handoff!
         
-        // 1. "Not on start itself": We start slanting immediately at t=0 (expanded).
-        // 2. "Smooth curve": We use easeOutCubic to smoothly decelerate the slanting.
-        // 3. "Pure vertical then": We finish the slant early at 85%, leaving the last 15% as a pure vertical line.
-        const double detachThreshold = 0.85;
+        // THE "PILL DETACH" CHOREOGRAPHY:
+        // 1. t > detachThreshold: The text is fully scaled and locked. It is pinned to the bottom of the bar, moving perfectly in sync with the 3-dot pill.
+        // 2. t < detachThreshold: The text smoothly detaches from the row, grows, and sweeps into the giant title position.
+        const double detachThreshold = 0.45;
         final double rawSlant = (t / detachThreshold).clamp(0.0, 1.0);
         final double slantT = Curves.easeOutCubic.transform(rawSlant);
         
-        final double linearScale = 1.0 - (1.0 - (20.0 / 34.0)) * t;
         final double currentScale = 1.0 - (1.0 - (20.0 / 34.0)) * slantT;
-        final double currentLeftPadding = (28.0 + xNudge) * slantT; // 0 to 28 ± xNudge
+        // Native text X offset: 16 (Positioned) + 4 (Padding) + 8 (SizedBox) = 28px
+        // Scaled text X offset: 0 (Positioned) + 4 (Padding * scale factor 20/34) + currentLeftPadding
+        // Therefore, currentLeftPadding + 2.353 = 28.0 -> currentLeftPadding must be EXACTLY 25.65.
+        final double currentLeftPadding = (25.65 + xNudge) * slantT; // 0 to 25.65 ± xNudge
         
-        // MATHEMATICAL ANCHOR CORRECTION:
-        // Because the text shrinks early, its visual center of mass would drift and look "broken".
-        // We calculate the exact pixel difference and counteract it, keeping the text flawlessly glued!
-        // (34px font * 1.2 height + 24px padding) / 2 = 32.4px half-height.
-        final double centerCorrection = 32.4 * (currentScale - linearScale);
-        final double currentBottom = 128.0 - ((99.0 + yNudge) * t) - centerCorrection;
+        // By using slantT for the vertical bottom anchor, the text's vertical offset completely locks
+        // alongside its horizontal offset and scale. This perfectly synchronizes its vertical scrolling speed 
+        // with the 3-dot pill during the locked phase!
+        final double currentBottom = 128.0 - ((99.0 + yNudge) * slantT); 
 
         return Container(
           color: Colors.transparent,
@@ -173,6 +173,36 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                     ),
                   ),
                 ),
+                
+              // ── DEV PIXEL HUD ──
+              Positioned(
+                top: ceiling + 10,
+                right: 16,
+                child: IgnorePointer(
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black87,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.greenAccent.withOpacity(0.5)),
+                    ),
+                    child: Text(
+                      't: ${t.toStringAsFixed(6)}\n'
+                      'slantT: ${slantT.toStringAsFixed(6)}\n'
+                      'Scale: ${currentScale.toStringAsFixed(6)}\n'
+                      'LeftPad: ${currentLeftPadding.toStringAsFixed(6)}\n'
+                      'Bottom: ${currentBottom.toStringAsFixed(6)}',
+                      style: const TextStyle(
+                        color: Colors.greenAccent,
+                        fontFamily: 'monospace',
+                        fontSize: 10,
+                        height: 1.5,
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         );
