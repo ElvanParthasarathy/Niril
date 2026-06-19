@@ -6,7 +6,7 @@ class SilkHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 120),
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 120),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) => Container(

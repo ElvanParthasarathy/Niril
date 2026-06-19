@@ -37,7 +37,7 @@ class SettingsScreen extends ConsumerWidget {
           children: [
             // ── Mode Switcher & Merchant Settings (Big Pill) ──
             Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, top: 32),
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
               child: _SettingsSection(
                 cardColor: cardColor,
                 dividerColor: dividerColor,
