@@ -41,7 +41,7 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
     final double layoutWidth = 140.0; // Wider to fit icon + long text like 'பற்றுச்சீட்டுகள்'
     final double bgWidth = 148.0;     // Slightly larger than layoutWidth for overlap
     
-    const double horizontalPadding = 8.0;
+    const double horizontalPadding = 10.0; // 4px inner overlap + 6px gap = 10px total padding
     const double verticalPadding = 6.0; // Tweaked for 50px total height
 
     int activeVisualIndex = (_isInteracting && _hoverIndex != null) 
