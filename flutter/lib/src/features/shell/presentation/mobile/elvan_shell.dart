@@ -571,6 +571,8 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
   }
 
   List<Widget> _buildEffectiveNavActions() {
+    if (widget.navActions.isEmpty && !widget.showSearchIcon) return [];
+
     final actions = List<Widget>.from(widget.navActions);
     
     // THE OPTIMIZATION: We NEVER unmount the search icon. It stays permanently in the widget tree.
