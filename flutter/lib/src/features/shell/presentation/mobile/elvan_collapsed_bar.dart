@@ -71,12 +71,6 @@ class ElvanCollapsedBar extends ConsumerWidget {
           liftProgress = ((shrinkOffset - liftStartOffset) / 12.0).clamp(0.0, 1.0);
         }
         
-        // DYNAMIC ISLAND IMPACT BUMP:
-        // A parabola that peaks at 1.0 exactly halfway through the 12-pixel handoff.
-        // It creates a 5% physical "squash and stretch" scaling effect to completely mask the seam!
-        final double impactBump = 4.0 * liftProgress * (1.0 - liftProgress);
-        final double impactScale = 1.0 + (impactBump * 0.05);
-        
         // STANDARD LAYOUT: Native pill uses standard 8.0 internal spacing.
         const double collapsedXNudge = 8.0; 
         
@@ -116,13 +110,9 @@ class ElvanCollapsedBar extends ConsumerWidget {
                                 children: [
                                   // MICRO-NUDGE: Tune this value to perfectly match the Expanded Bar's AbsX.
                                   SizedBox(width: collapsedXNudge), // Change this number to adjust native text position
-                                  Transform.scale(
-                                    scale: impactScale,
-                                    alignment: Alignment.centerLeft,
-                                    child: Opacity(
-                                      opacity: liftProgress,
-                                      child: expandedSmallTitle!,
-                                    ),
+                                  Opacity(
+                                    opacity: 1.0 - liftProgress,
+                                    child: expandedSmallTitle!,
                                   ),
                                 ],
                               ),
