@@ -73,14 +73,7 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
             color: isDark ? const Color(0xFF333333).withValues(alpha: 0.6) : const Color(0xFFFFFFFF).withValues(alpha: 0.6),
             width: 0.5,
           ),
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 16,
-              spreadRadius: 0,
-              offset: const Offset(0, 4),
-              color: Colors.black.withValues(alpha: 0.05),
-            ),
-          ],
+
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
