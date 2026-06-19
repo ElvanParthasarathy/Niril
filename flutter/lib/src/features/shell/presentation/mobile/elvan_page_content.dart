@@ -66,7 +66,7 @@ class ElvanPageContent extends ConsumerWidget {
 
             // ── Small gap so cards sit slightly below the naked icons ──
             const SliverToBoxAdapter(
-              child: SizedBox(height: 24),
+              child: SizedBox(height: 12),
             ),
 
             // ── Body content slivers ──
