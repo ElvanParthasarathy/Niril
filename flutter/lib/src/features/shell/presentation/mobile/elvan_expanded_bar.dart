@@ -79,11 +79,8 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         // Native text X offset: 16 (Positioned) + 4 (Padding) + 8 (SizedBox) = 28px
         // Scaled text X offset: 0 (Positioned) + 4 (Padding * scale factor 20/34) + currentLeftPadding
         // Therefore, currentLeftPadding + 2.353 = 28.0 -> currentLeftPadding must be EXACTLY 25.65.
-        final double currentLeftPadding = (25.65 + xNudge) * slantT; // 0 to 25.65 ± xNudge
-        
-        // NEW MATH FOR SUBPAGES:
-        // Native text X offset for subpages: 16 (Positioned) + 50 (Button Width) + 12 (Padding left) = 78.0px
-        final double subpageLeftPadding = (78.0 + xNudge) * slantT; // 0 to 78.0 ± xNudge
+        final double targetLeftPadding = leadingWidget != null ? 75.65 : 25.65;
+        final double currentLeftPadding = (targetLeftPadding + xNudge) * slantT; // 0 to target ± xNudge
         
         // By using slantT for the vertical bottom anchor, the text's vertical offset completely locks
         // alongside its horizontal offset and scale. This perfectly synchronizes its vertical scrolling speed 
@@ -97,6 +94,8 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
             fit: StackFit.expand,
             children: [
               // ── The Dynamic Scale-and-Move Title ──
+              // If there's a leading widget (subpage), we fade out the big title.
+              // Otherwise, we physically move and shrink it into the small title!
               Positioned(
                 left: 0,
                 right: 0,
@@ -106,7 +105,7 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                   child: Align(
                     alignment: Alignment.lerp(Alignment.bottomCenter, Alignment.bottomLeft, slantT)!,
                     child: Padding(
-                      padding: EdgeInsets.only(left: leadingWidget != null ? subpageLeftPadding : currentLeftPadding),
+                      padding: EdgeInsets.only(left: currentLeftPadding),
                       child: Transform.scale(
                         scale: currentScale,
                         alignment: Alignment.lerp(Alignment.bottomCenter, Alignment.bottomLeft, t)!,
@@ -115,7 +114,7 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 34,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: leadingWidget != null ? FontWeight.w700 : FontWeight.bold,
                             color: Theme.of(context).brightness == Brightness.dark 
                                 ? Color.lerp(Colors.white, Colors.white.withOpacity(0.95), t)
                                 : Colors.black87,
