@@ -11,11 +11,13 @@ class ElvanSubpageShell extends StatelessWidget {
     required this.title,
     required this.slivers,
     this.navActions = const [],
+    this.startCollapsed = true,
   });
 
   final String title;
   final List<Widget> slivers;
   final List<Widget> navActions;
+  final bool startCollapsed;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +27,7 @@ class ElvanSubpageShell extends StatelessWidget {
       showNavbar: false,
       leadingWidget: const ElvanBackButton(),
       navActions: navActions,
+      startCollapsed: startCollapsed,
     );
   }
 }

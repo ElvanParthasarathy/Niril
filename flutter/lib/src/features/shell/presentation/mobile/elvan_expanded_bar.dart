@@ -59,12 +59,18 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         // This progress hits exactly 1.0 at the precise millisecond of the hand-off.
         final double normalizedProgress = (shrinkProgress / handoffProgress).clamp(0.0, 1.0);
         
+        // MICRO-NUDGES for Sub-pixel Alignment:
+        // A native 20px font and a scaled 34px font have slightly different internal baselines and kerning (font hinting).
+        // We apply a fractional pixel offset to the final scaled position to perfectly eclipse the native text.
+        // Tune these numbers (e.g. 0.2, -0.5, 1.0) until the "shake" completely disappears to your eye!
+        const double xNudge = 0.8; // Left/Right tweak (positive moves scaled text RIGHT at handoff)
+        const double yNudge = 0.6; // Up/Down tweak (positive moves scaled text DOWN at handoff)
+
         // SCALE AND MOVE LOGIC:
         final double t = normalizedProgress; // Use normalizedProgress to finish exactly at handoff!
-        final double currentBottom = 128.0 - (99.0 * t); // 128 down to 29 (fixes the Y-axis jump!)
-        final double currentLeftPadding = 28.0 * t; // 0 to 28
-        final double currentFontSize = 34.0 - (14.0 * t); // 34 to 20
-        final double currentLetterSpacing = -0.5 + (0.2 * t); // -0.5 to -0.3
+        final double currentBottom = 128.0 - ((99.0 + yNudge) * t); // 128 down to 29 ± yNudge
+        final double currentLeftPadding = (28.0 + xNudge) * t; // 0 to 28 ± xNudge
+        final double currentScale = 1.0 - (1.0 - (20.0 / 34.0)) * t;
 
         return Container(
           color: Colors.transparent,
@@ -89,17 +95,23 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                         : Alignment.lerp(Alignment.bottomCenter, Alignment.bottomLeft, t)!,
                     child: Padding(
                       padding: EdgeInsets.only(left: leadingWidget != null ? 0 : currentLeftPadding),
-                      child: Text(
-                        title,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: leadingWidget != null ? 34 : currentFontSize,
-                          fontWeight: leadingWidget != null ? FontWeight.w700 : FontWeight.bold,
-                          color: Theme.of(context).brightness == Brightness.dark 
-                              ? Color.lerp(Colors.white, Colors.white.withOpacity(0.95), t)
-                              : Colors.black87,
-                          letterSpacing: leadingWidget != null ? -0.5 : currentLetterSpacing,
-                          height: 1.15,
+                      child: Transform.scale(
+                        scale: leadingWidget != null ? 1.0 : currentScale,
+                        alignment: leadingWidget != null
+                            ? Alignment.bottomCenter
+                            : Alignment.lerp(Alignment.bottomCenter, Alignment.bottomLeft, t)!,
+                        child: Text(
+                          title,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 34,
+                            fontWeight: leadingWidget != null ? FontWeight.w700 : FontWeight.bold,
+                            color: Theme.of(context).brightness == Brightness.dark 
+                                ? Color.lerp(Colors.white, Colors.white.withOpacity(0.95), t)
+                                : Colors.black87,
+                            letterSpacing: -0.5,
+                            height: 1.15,
+                          ),
                         ),
                       ),
                     ),

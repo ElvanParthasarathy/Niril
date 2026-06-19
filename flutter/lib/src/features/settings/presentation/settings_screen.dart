@@ -41,6 +41,7 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return ElvanSubpageShell(
       title: 'settings'.tr(context, ref),
+      startCollapsed: false, // Settings Home acts like a Main Tab, so it MUST start fully expanded!
       slivers: [
         SliverPadding(
           padding: const EdgeInsets.only(left: 16, right: 16, bottom: 32),

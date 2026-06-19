@@ -45,6 +45,7 @@ class ElvanShell extends ConsumerStatefulWidget {
     this.showSearchIcon = false,
     this.onSearchChanged,
     this.assignedIndex,
+    this.startCollapsed = false,
   });
 
   /// The scrollable content placed inside the [CustomScrollView] as slivers.
@@ -84,6 +85,9 @@ class ElvanShell extends ConsumerStatefulWidget {
 
   /// Optional index of this shell in a tabbed environment. Used to detect when this shell becomes active.
   final int? assignedIndex;
+
+  /// Whether to start the page with the header already collapsed.
+  final bool startCollapsed;
 
   @override
   ConsumerState<ElvanShell> createState() => _ElvanShellState();
@@ -212,14 +216,19 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_isScrollInitialized) {
-      final isGlobalExpanded = ref.read(headerExpandedProvider);
+      // Determine initial state:
+      // If we are given an explicit startCollapsed directive, use that.
+      // Otherwise, sync with the global hive mind.
+      final bool isGlobalExpanded = ref.read(headerExpandedProvider);
+      final bool shouldStartExpanded = widget.startCollapsed ? false : isGlobalExpanded;
+      
       final double statusBarHeight = MediaQuery.paddingOf(context).top;
       final double handOffOffset = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
-
+      
       _scrollController = ScrollController(
-        initialScrollOffset: isGlobalExpanded ? 0.0 : handOffOffset,
+        initialScrollOffset: shouldStartExpanded ? 0.0 : handOffOffset,
       );
-      _isHeaderExpandedNotifier.value = isGlobalExpanded;
+      _isHeaderExpandedNotifier.value = shouldStartExpanded;
       _isScrollInitialized = true;
     }
   }
