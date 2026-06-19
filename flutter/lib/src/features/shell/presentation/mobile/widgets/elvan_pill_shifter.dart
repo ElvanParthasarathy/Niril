@@ -142,11 +142,11 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
                     curve: (_isInteracting && _dragOffset != null)
                         ? Curves.linear
                         : Curves.easeOutCubic,
-                    // Mathematically perfect scale: expands exactly 6px on all 4 sides to touch the container edges
-                    left: _isInteracting ? targetLeft - 6.0 : targetLeft,
-                    top: _isInteracting ? -6.0 : 0.0,
-                    bottom: _isInteracting ? -6.0 : 0.0,
-                    width: _isInteracting ? bgWidth + 12.0 : bgWidth,
+                    // Mathematically perfect scale: expands exactly 4px on all 4 sides to leave a 2px minimal gap
+                    left: _isInteracting ? targetLeft - 4.0 : targetLeft,
+                    top: _isInteracting ? -4.0 : 0.0,
+                    bottom: _isInteracting ? -4.0 : 0.0,
+                    width: _isInteracting ? bgWidth + 8.0 : bgWidth,
                     child: Container(
                       decoration: BoxDecoration(
                         color: isDark ? const Color(0xFF212121).withValues(alpha: 0.95) : const Color(0xFFE5E5E5).withValues(alpha: 0.95),
