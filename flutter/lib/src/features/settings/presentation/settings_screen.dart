@@ -41,6 +41,7 @@ class SettingsScreen extends ConsumerWidget {
               _SettingsSection(
                 cardColor: cardColor,
                 dividerColor: dividerColor,
+                borderRadius: 999.0,
                 children: [
                   Stack(
                     children: [
@@ -199,12 +200,14 @@ class _SettingsSection extends StatelessWidget {
     required this.cardColor,
     required this.dividerColor,
     this.title,
+    this.borderRadius = 24.0,
   });
 
   final List<Widget> children;
   final Color cardColor;
   final Color dividerColor;
   final String? title;
+  final double borderRadius;
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +228,7 @@ class _SettingsSection extends StatelessWidget {
             ),
           ),
         ClipRRect(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(borderRadius),
           child: Material(
             color: cardColor,
             child: Column(
