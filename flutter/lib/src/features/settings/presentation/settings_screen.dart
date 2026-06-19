@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../../localization/locale_provider.dart';
+import '../../../../core/state/app_state.dart';
+import '../../../../core/models/app_mode.dart';
 import '../../shell/presentation/mobile/elvan_subpage_shell.dart';
 import 'pages/vanigar_amaippugal_page.dart';
 import 'pages/mugavari_page.dart';
@@ -35,6 +37,35 @@ class SettingsScreen extends ConsumerWidget {
           padding: const EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 120),
           sliver: SliverList.list(
             children: [
+              // ── Mode Switcher (Big Pill) ──
+              GestureDetector(
+                onTap: () {
+                  final currentMode = ref.read(appModeProvider);
+                  ref.read(appModeProvider.notifier).setMode(
+                    currentMode == AppMode.coolie ? AppMode.gst : AppMode.coolie
+                  );
+                },
+                child: _SettingsSection(
+                  cardColor: cardColor,
+                  dividerColor: dividerColor,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Center(
+                        child: Icon(
+                          ref.watch(appModeProvider) == AppMode.coolie 
+                              ? CupertinoIcons.money_dollar_circle_fill // Coolie equivalent
+                              : CupertinoIcons.doc_text_fill, // Receipt equivalent
+                          size: 32,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+
               // ── Section 1: Domain-specific settings ──
               _SettingsSection(
                 cardColor: cardColor,
