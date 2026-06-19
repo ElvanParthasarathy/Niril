@@ -33,12 +33,12 @@ class SettingsScreen extends ConsumerWidget {
       title: 'settings'.tr(context, ref),
       startCollapsed: false,
       slivers: [
-        SliverPadding(
-          padding: const EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 120),
-          sliver: SliverList.list(
-            children: [
-              // ── Mode Switcher & Merchant Settings (Big Pill) ──
-              _SettingsSection(
+        SliverList.list(
+          children: [
+            // ── Mode Switcher & Merchant Settings (Big Pill) ──
+            Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16, top: 32),
+              child: _SettingsSection(
                 cardColor: cardColor,
                 dividerColor: dividerColor,
                 borderRadius: 999.0,
@@ -119,10 +119,13 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+            ),
+            const SizedBox(height: 24),
 
-              // ── Section 1: Domain-specific settings ──
-              _SettingsSection(
+            // ── Section 1: Domain-specific settings ──
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: _SettingsSection(
                 cardColor: cardColor,
                 dividerColor: dividerColor,
                 children: [
@@ -142,11 +145,14 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 ],
               ),
+            ),
 
-              const SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-              // ── Section 2: Creation settings ──
-              _SettingsSection(
+            // ── Section 2: Creation settings ──
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: _SettingsSection(
                 cardColor: cardColor,
                 dividerColor: dividerColor,
                 children: [
@@ -159,11 +165,14 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 ],
               ),
+            ),
 
-              const SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-              // ── Section 3: Global settings ──
-              _SettingsSection(
+            // ── Section 3: Global settings ──
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: _SettingsSection(
                 cardColor: cardColor,
                 dividerColor: dividerColor,
                 children: [
@@ -183,8 +192,9 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 120), // Bottom padding restored as a spacer at the end of the list
+          ],
         ),
       ],
     );
