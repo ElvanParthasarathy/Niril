@@ -146,22 +146,17 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
                     top: 0,
                     bottom: 0,
                     width: bgWidth,
-                    child: AnimatedScale(
-                      scale: _isInteracting ? 1.05 : 1.0, // Subdued inner zoom
-                      duration: const Duration(milliseconds: 150),
-                      curve: Curves.easeOutCubic,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF212121).withValues(alpha: 0.95) : const Color(0xFFE5E5E5).withValues(alpha: 0.95),
-                          borderRadius: BorderRadius.circular(100),
-                          boxShadow: isDark ? null : [
-                            BoxShadow(
-                              blurRadius: 4,
-                              offset: const Offset(0, 1),
-                              color: Colors.black.withValues(alpha: 0.04),
-                            ),
-                          ],
-                        ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF212121).withValues(alpha: 0.95) : const Color(0xFFE5E5E5).withValues(alpha: 0.95),
+                        borderRadius: BorderRadius.circular(100),
+                        boxShadow: isDark ? null : [
+                          BoxShadow(
+                            blurRadius: 4,
+                            offset: const Offset(0, 1),
+                            color: Colors.black.withValues(alpha: 0.04),
+                          ),
+                        ],
                       ),
                     ),
                   ),
