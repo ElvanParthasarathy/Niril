@@ -71,8 +71,10 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
 
         final double t = normalizedProgress; // Hits 1.0 at the exact handoff frame
 
-        // 1. Measure the title's intrinsic width at 34px so we can center it mathematically
-        final titleStyle = TextStyle(
+        // 1. Measure the title's intrinsic width at 34px so we can center it mathematically.
+        //    We inherit from DefaultTextStyle to pick up the theme's fontFamily,
+        //    and apply the MediaQuery textScaler so the measurement matches the render exactly.
+        final titleStyle = DefaultTextStyle.of(context).style.copyWith(
           fontSize: 34,
           fontWeight: leadingWidget != null ? FontWeight.w700 : FontWeight.bold,
           letterSpacing: -0.5,
@@ -81,6 +83,7 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         final textPainter = TextPainter(
           text: TextSpan(text: title, style: titleStyle),
           textDirection: TextDirection.ltr,
+          textScaler: MediaQuery.textScalerOf(context),
         )..layout();
         final double textWidth = textPainter.width;
         final double screenWidth = constraints.maxWidth;
