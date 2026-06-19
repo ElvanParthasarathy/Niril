@@ -69,8 +69,8 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1E1E1E).withValues(alpha: 0.88) : const Color(0xFFFFFFFF).withValues(alpha: 0.88),
           borderRadius: BorderRadius.circular(100),
-          border: Border.all(
-            color: isDark ? const Color(0xFF333333).withValues(alpha: 0.6) : const Color(0xFFFFFFFF).withValues(alpha: 0.6),
+          border: isDark ? null : Border.all(
+            color: const Color(0xFFFFFFFF).withValues(alpha: 0.6),
             width: 0.5,
           ),
 
