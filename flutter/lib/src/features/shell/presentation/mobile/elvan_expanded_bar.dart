@@ -56,16 +56,6 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         final double handoffShrinkOffset = maxExtent - handoffHeight;
         final double handoffProgress = (handoffShrinkOffset / maxShrink).clamp(0.001, 1.0);
         
-        // DYNAMIC ISLAND IMPACT BUMP (THE BUILD-UP): 
-        // A 12-pixel scale bounce leading up to the handoff. The text physically bulges outwards,
-        // hitting exactly 1.05 scale at the precise millisecond it hits the ceiling.
-        // It then hands off to the Collapsed Bar which completes the wave.
-        final double bumpStartOffset = handoffShrinkOffset - 12.0;
-        final double bumpProgress = (shrinkOffset > bumpStartOffset) 
-            ? ((shrinkOffset - bumpStartOffset) / 12.0).clamp(0.0, 1.0) 
-            : 0.0;
-        final double impactScale = 1.0 + (bumpProgress * 0.05);
-        
         // This progress hits exactly 1.0 at the precise millisecond of the hand-off.
         final double normalizedProgress = (shrinkProgress / handoffProgress).clamp(0.0, 1.0);
         
@@ -84,7 +74,9 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         // 2. t < detachThreshold: The text smoothly detaches from the row, grows, and sweeps into the giant title position.
         const double detachThreshold = 0.45;
         final double rawSlant = (t / detachThreshold).clamp(0.0, 1.0);
-        final double slantT = Curves.easeOutCubic.transform(rawSlant);
+        // Using easeInCubic inverts the curve: it snaps away from the top quickly,
+        // then gracefully decelerates and settles smoothly into the bottom giant position.
+        final double slantT = Curves.easeInCubic.transform(rawSlant);
         
         final double currentScale = 1.0 - (1.0 - (20.0 / 34.0)) * slantT;
         // Native text X offset: 16 (Positioned) + 4 (Padding) + 8 (SizedBox) = 28px
@@ -125,13 +117,10 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                         alignment: leadingWidget != null
                             ? Alignment.bottomCenter
                             : Alignment.lerp(Alignment.bottomCenter, Alignment.bottomLeft, t)!,
-                        child: Transform.scale(
-                          scale: leadingWidget != null ? 1.0 : impactScale,
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            title,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
+                        child: Text(
+                          title,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
                             fontSize: 34,
                             fontWeight: leadingWidget != null ? FontWeight.w700 : FontWeight.bold,
                             color: Theme.of(context).brightness == Brightness.dark 
@@ -140,13 +129,12 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                             letterSpacing: -0.5,
                             height: 1.15,
                           ),
-                            ),
-                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
+              ),
 
               // ── The Page Header Leading Icon (Left) ──
               if (leadingWidget != null)
