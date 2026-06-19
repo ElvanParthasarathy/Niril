@@ -16,8 +16,13 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
     final currentLocale = ref.watch(localeProvider);
     final currentAppMode = ref.watch(appModeProvider);
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardColor = isDark ? const Color(0xFF111111) : Colors.white;
+    final dividerColor = isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1);
+
     return ElvanSubpageShell(
       title: 'seyali_amaippugal'.tr(context, ref),
+      backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
       slivers: [
         SliverPadding(
           padding: const EdgeInsets.only(left: 16, right: 16, top: 32, bottom: 32),
@@ -36,10 +41,11 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
               ),
               Card(
                 elevation: 0,
+                margin: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(24),
                 ),
-                color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                color: cardColor,
                 child: Column(
                   children: [
                     RadioListTile<ThemeMode>(
@@ -50,7 +56,7 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
                         if (val != null) ref.read(themeModeProvider.notifier).setThemeMode(val);
                       },
                     ),
-                    const Divider(height: 1, indent: 16, endIndent: 16),
+                    Divider(height: 1, indent: 16, endIndent: 16, color: dividerColor),
                     RadioListTile<ThemeMode>(
                       title: Text('lightMode'.tr(context, ref)),
                       value: ThemeMode.light,
@@ -59,7 +65,7 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
                         if (val != null) ref.read(themeModeProvider.notifier).setThemeMode(val);
                       },
                     ),
-                    const Divider(height: 1, indent: 16, endIndent: 16),
+                    Divider(height: 1, indent: 16, endIndent: 16, color: dividerColor),
                     RadioListTile<ThemeMode>(
                       title: Text('darkMode'.tr(context, ref)),
                       value: ThemeMode.dark,
@@ -85,10 +91,11 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
               ),
               Card(
                 elevation: 0,
+                margin: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(24),
                 ),
-                color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                color: cardColor,
                 child: Column(
                   children: [
                     RadioListTile<AppMode>(
@@ -99,7 +106,7 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
                         if (val != null) ref.read(appModeProvider.notifier).setMode(val);
                       },
                     ),
-                    const Divider(height: 1, indent: 16, endIndent: 16),
+                    Divider(height: 1, indent: 16, endIndent: 16, color: dividerColor),
                     RadioListTile<AppMode>(
                       title: Text('nirilCoolie'.tr(context, ref)),
                       value: AppMode.coolie,
@@ -125,10 +132,11 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
               ),
               Card(
                 elevation: 0,
+                margin: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(24),
                 ),
-                color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                color: cardColor,
                 child: Column(
                   children: [
                     RadioListTile<Locale?>(
@@ -139,7 +147,7 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
                         ref.read(localeProvider.notifier).setLocale(val);
                       },
                     ),
-                    const Divider(height: 1, indent: 16, endIndent: 16),
+                    Divider(height: 1, indent: 16, endIndent: 16, color: dividerColor),
                     RadioListTile<Locale?>(
                       title: Text('tamil'.tr(context, ref)),
                       value: const Locale('ta'),
@@ -148,7 +156,7 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
                         ref.read(localeProvider.notifier).setLocale(val);
                       },
                     ),
-                    const Divider(height: 1, indent: 16, endIndent: 16),
+                    Divider(height: 1, indent: 16, endIndent: 16, color: dividerColor),
                     RadioListTile<Locale?>(
                       title: Text('english'.tr(context, ref)),
                       value: const Locale('en'),
