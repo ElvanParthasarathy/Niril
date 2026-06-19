@@ -96,10 +96,21 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         //   Subpage:    Positioned(left:16) + Chevron(50) + Gap(12) = 78px
         final double targetLeft = (leadingWidget != null ? 78.0 : 24.0) + xNudge;
 
-        // 3. Pure linear interpolation — one formula, zero fighting forces
-        final double currentLeft = centeredLeft + (targetLeft - centeredLeft) * t;
-        final double currentScale = 1.0 - (1.0 - (20.0 / 34.0)) * t;
-        final double currentBottom = 128.0 - ((99.0 + yNudge) * t);
+        // 3. TWO-PHASE CHOREOGRAPHY:
+        //    Phase 1 (t: 0→0.3): Pure vertical lift. Title stays big and centered, just floats up.
+        //    Phase 2 (t: 0.3→1.0): Diagonal scale-and-move. Title shrinks and slides to target.
+        const double phase1End = 0.3;
+        final double phase1T = (t / phase1End).clamp(0.0, 1.0);
+        final double phase2T = ((t - phase1End) / (1.0 - phase1End)).clamp(0.0, 1.0);
+
+        // Vertical: phase 1 lifts 20px, phase 2 covers the remaining distance
+        const double phase1Lift = 20.0;
+        final double totalVertical = 99.0 + yNudge;
+        final double currentBottom = 128.0 - (phase1Lift * phase1T) - ((totalVertical - phase1Lift) * phase2T);
+
+        // Scale & horizontal: only during phase 2
+        final double currentScale = 1.0 - (1.0 - (20.0 / 34.0)) * phase2T;
+        final double currentLeft = centeredLeft + (targetLeft - centeredLeft) * phase2T;
 
         return Container(
           color: Colors.transparent,
