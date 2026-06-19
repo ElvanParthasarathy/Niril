@@ -550,16 +550,20 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
             dynamicPillHeightNotifier: _dynamicPillHeightNotifier,
             pillKey: _pillKey,
             leadingWidget: widget.leadingWidget,
-            expandedSmallTitle: widget.title != null ? Text(
-              widget.title!,
-              style: TextStyle(
-                fontSize: 20, // Slightly larger and bolder
-                fontWeight: FontWeight.bold,
-                letterSpacing: -0.3,
-                color: Theme.of(context).brightness == Brightness.dark 
-                    ? Colors.white.withOpacity(0.95) 
-                    : Colors.black,
-                height: 1.15,
+            expandedSmallTitle: widget.title != null ? Transform.scale(
+              scale: 20.0 / 34.0,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                widget.title!,
+                style: TextStyle(
+                  fontSize: 34, // Identical to expanded bar — scaled to 20px visually
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: -0.5,
+                  color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.white.withOpacity(0.95) 
+                      : Colors.black,
+                  height: 1.15,
+                ),
               ),
             ) : null,
             isSearchActiveNotifier: _isSearchActiveNotifier,
