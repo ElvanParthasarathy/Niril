@@ -23,6 +23,8 @@ import 'src/features/niril_silk/presentation/editors/silk_merchant_editor.dart';
 import 'src/features/niril_silk/presentation/editors/silk_item_editor.dart';
 import 'src/features/niril_coolie/presentation/editors/coolie_invoice_editor.dart';
 import 'src/features/niril_coolie/presentation/editors/coolie_receipt_editor.dart';
+
+import 'src/core/state/search_state.dart';
 import 'src/features/niril_coolie/presentation/editors/coolie_merchant_editor.dart';
 import 'src/features/niril_coolie/presentation/editors/coolie_item_editor.dart';
 import 'src/features/shell/presentation/desktop/elvan_desktop_shell.dart';
@@ -237,6 +239,25 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
                 currentIndex: _currentTab,
                 onTabSelected: (index) => setState(() => _currentTab = index),
                 showSearchIcon: i != 0,
+                onSearchChanged: (query) {
+                  final mode = ref.read(appModeProvider);
+                  if (i == 1) { // Uruvakku
+                    final segment = ref.read(uruvakkuSegmentProvider);
+                    if (mode == AppMode.coolie) {
+                      if (segment == 0) ref.read(coolieInvoicesSearchQueryProvider.notifier).state = query;
+                      else ref.read(coolieReceiptsSearchQueryProvider.notifier).state = query;
+                    } else {
+                      if (segment == 0) ref.read(silkInvoicesSearchQueryProvider.notifier).state = query;
+                      else ref.read(silkReceiptsSearchQueryProvider.notifier).state = query;
+                    }
+                  } else if (i == 2) { // Viyabarigal
+                    if (mode == AppMode.coolie) ref.read(coolieMerchantsSearchQueryProvider.notifier).state = query;
+                    else ref.read(silkMerchantsSearchQueryProvider.notifier).state = query;
+                  } else if (i == 3) { // Porul
+                    if (mode == AppMode.coolie) ref.read(coolieItemsSearchQueryProvider.notifier).state = query;
+                    else ref.read(silkItemsSearchQueryProvider.notifier).state = query;
+                  }
+                },
                 navActions: [
                   const SizedBox(width: 7),
                   ElvanTopBarIcon(

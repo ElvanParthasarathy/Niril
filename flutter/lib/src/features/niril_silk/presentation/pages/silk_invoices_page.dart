@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/state/search_state.dart';
 // ─────────────────────────────────────────────────────────────────────────────
 // MOCK DATA MODEL
 // ─────────────────────────────────────────────────────────────────────────────
@@ -87,11 +88,16 @@ const List<_AlbumMock> _albums = [
 ];
 
 
-class SilkInvoicesPage extends StatelessWidget {
+class SilkInvoicesPage extends ConsumerWidget {
   const SilkInvoicesPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final query = ref.watch(silkInvoicesSearchQueryProvider).toLowerCase();
+    final filteredAlbums = query.isEmpty 
+        ? _albums 
+        : _albums.where((a) => a.name.toLowerCase().contains(query)).toList();
+
     return SliverPadding(
       padding: const EdgeInsets.only(
         left: 12,
@@ -107,8 +113,11 @@ class SilkInvoicesPage extends StatelessWidget {
           childAspectRatio: 0.82,
         ),
         delegate: SliverChildBuilderDelegate(
-          (context, gridIndex) => _AlbumCard(album: _albums[gridIndex]),
-          childCount: _albums.length,
+          (context, index) {
+            final album = filteredAlbums[index];
+            return _AlbumCard(album: album);
+          },
+          childCount: filteredAlbums.length,
         ),
       ),
     );
