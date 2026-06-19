@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../../localization/locale_provider.dart';
-import '../../../../core/state/app_state.dart';
-import '../../../../core/models/app_mode.dart';
+import '../../../core/state/app_state.dart';
+import '../../../core/models/app_mode.dart';
 import '../../shell/presentation/mobile/elvan_subpage_shell.dart';
 import 'pages/vanigar_amaippugal_page.dart';
 import 'pages/mugavari_page.dart';
