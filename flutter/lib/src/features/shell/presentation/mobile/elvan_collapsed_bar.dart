@@ -102,22 +102,25 @@ class ElvanCollapsedBar extends ConsumerWidget {
                           : Colors.transparent,
                         borderRadius: BorderRadius.circular(100),
                         clipBehavior: Clip.antiAlias,
-                        child: expandedSmallTitle != null 
-                          ? Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  // MICRO-NUDGE: Tune this value to perfectly match the Expanded Bar's AbsX.
-                                  SizedBox(width: collapsedXNudge), // Change this number to adjust native text position
-                                  Opacity(
-                                    opacity: 1.0 - liftProgress,
-                                    child: expandedSmallTitle!,
-                                  ),
-                                ],
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (leadingWidget != null) leadingWidget!,
+                            if (expandedSmallTitle != null)
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: leadingWidget != null ? 4 : collapsedXNudge,
+                                  top: 12,
+                                  bottom: 12,
+                                  right: 16,
+                                ),
+                                child: Opacity(
+                                  opacity: 1.0 - liftProgress,
+                                  child: expandedSmallTitle!,
+                                ),
                               ),
-                            )
-                          : leadingWidget,
+                          ],
+                        ),
                       ),
                     ),
                   ),

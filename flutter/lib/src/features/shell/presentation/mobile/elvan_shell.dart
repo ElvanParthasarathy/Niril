@@ -550,7 +550,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
             dynamicPillHeightNotifier: _dynamicPillHeightNotifier,
             pillKey: _pillKey,
             leadingWidget: widget.leadingWidget,
-            expandedSmallTitle: (widget.title != null && widget.leadingWidget == null) ? Text(
+            expandedSmallTitle: widget.title != null ? Text(
               widget.title!,
               style: TextStyle(
                 fontSize: 20, // Slightly larger and bolder
