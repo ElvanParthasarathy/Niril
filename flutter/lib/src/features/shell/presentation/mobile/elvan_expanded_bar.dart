@@ -68,9 +68,15 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
 
         // SCALE AND MOVE LOGIC:
         final double t = normalizedProgress; // Use normalizedProgress to finish exactly at handoff!
-        final double currentBottom = 128.0 - ((99.0 + yNudge) * t); // 128 down to 29 ± yNudge
-        final double currentLeftPadding = (28.0 + xNudge) * t; // 0 to 28 ± xNudge
-        final double currentScale = 1.0 - (1.0 - (20.0 / 34.0)) * t;
+        
+        // Smooth "Vertical Lift -> Slant" Choreography
+        // By applying an EaseInOut curve to the horizontal movement, the text lifts perfectly vertically 
+        // at the start and end of the animation, and slants gracefully in the middle!
+        final double slantT = Curves.easeInOutCubic.transform(t);
+        
+        final double currentBottom = 128.0 - ((99.0 + yNudge) * t); // Vertical MUST stay linear to match scroll speed!
+        final double currentLeftPadding = (28.0 + xNudge) * slantT; 
+        final double currentScale = 1.0 - (1.0 - (20.0 / 34.0)) * slantT;
 
         return Container(
           color: Colors.transparent,
@@ -92,7 +98,7 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                   child: Align(
                     alignment: leadingWidget != null 
                         ? Alignment.bottomCenter 
-                        : Alignment.lerp(Alignment.bottomCenter, Alignment.bottomLeft, t)!,
+                        : Alignment.lerp(Alignment.bottomCenter, Alignment.bottomLeft, slantT)!,
                     child: Padding(
                       padding: EdgeInsets.only(left: leadingWidget != null ? 0 : currentLeftPadding),
                       child: Transform.scale(

@@ -244,13 +244,13 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
       if (_scrollController.hasClients) {
         final isGlobalExpanded = ref.read(headerExpandedProvider);
         if (isGlobalExpanded) {
-          _scrollController.jumpTo(0.0);
           _isHeaderExpandedNotifier.value = true;
+          _scrollController.jumpTo(0.0);
         } else {
+          _isHeaderExpandedNotifier.value = false;
           final double statusBarHeight = MediaQuery.paddingOf(context).top;
           final double handOffOffset = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
           _scrollController.jumpTo(handOffOffset);
-          _isHeaderExpandedNotifier.value = false;
         }
       }
     }
@@ -370,16 +370,16 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
     // ── Global Header State Sync (For IndexedStack) ──
     ref.listen<bool>(headerExpandedProvider, (previous, isGlobalExpanded) {
       if (!isGlobalExpanded && _isHeaderExpandedNotifier.value) {
+        _isHeaderExpandedNotifier.value = false;
         final double statusBarHeight = MediaQuery.paddingOf(context).top;
         final double handOffOffset = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
         if (_scrollController.hasClients && _scrollController.offset < handOffOffset) {
           _scrollController.jumpTo(handOffOffset);
-          _isHeaderExpandedNotifier.value = false;
         }
       } else if (isGlobalExpanded && !_isHeaderExpandedNotifier.value) {
+        _isHeaderExpandedNotifier.value = true;
         if (_scrollController.hasClients) {
           _scrollController.jumpTo(0.0);
-          _isHeaderExpandedNotifier.value = true;
         }
       }
     });
