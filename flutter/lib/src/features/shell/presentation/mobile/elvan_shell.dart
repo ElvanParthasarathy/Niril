@@ -47,6 +47,7 @@ class ElvanShell extends ConsumerStatefulWidget {
     this.assignedIndex,
     this.startCollapsed = false,
     this.backgroundColor,
+    this.syncWithGlobalHeader = true,
   });
 
   /// The scrollable content placed inside the [CustomScrollView] as slivers.
@@ -92,6 +93,9 @@ class ElvanShell extends ConsumerStatefulWidget {
 
   /// Background color override for the Scaffold.
   final Color? backgroundColor;
+
+  /// Whether to sync header collapse/expand state with the global headerExpandedProvider.
+  final bool syncWithGlobalHeader;
 
   @override
   ConsumerState<ElvanShell> createState() => _ElvanShellState();
@@ -246,7 +250,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
         oldWidget.currentIndex != widget.currentIndex &&
         widget.currentIndex == widget.assignedIndex) {
       if (_scrollController.hasClients) {
-        final isGlobalExpanded = ref.read(headerExpandedProvider);
+        final isGlobalExpanded = widget.syncWithGlobalHeader ? ref.read(headerExpandedProvider) : true;
         if (isGlobalExpanded) {
           _isHeaderExpandedNotifier.value = true;
           _scrollController.jumpTo(0.0);
@@ -282,16 +286,22 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
       final double offset = _scrollController.offset;
       if (_isHeaderExpandedNotifier.value && offset >= snapThreshold) {
         _isHeaderExpandedNotifier.value = false; // Flagged as hidden/collapsed
-        ref.read(headerExpandedProvider.notifier).state = false;
+        if (widget.syncWithGlobalHeader) {
+          ref.read(headerExpandedProvider.notifier).state = false;
+        }
       } else if (!_isHeaderExpandedNotifier.value) {
         // Detect explicit manual pull down against the brick wall!
         if (notification is OverscrollNotification && notification.overscroll < 0) {
           _isHeaderExpandedNotifier.value = true;
-          ref.read(headerExpandedProvider.notifier).state = true;
+          if (widget.syncWithGlobalHeader) {
+            ref.read(headerExpandedProvider.notifier).state = true;
+          }
         } else if (offset < snapThreshold && notification is ScrollUpdateNotification && notification.dragDetails != null) {
           // Fallback just in case physics allowed a slight sub-pixel crossing
           _isHeaderExpandedNotifier.value = true;
-          ref.read(headerExpandedProvider.notifier).state = true;
+          if (widget.syncWithGlobalHeader) {
+            ref.read(headerExpandedProvider.notifier).state = true;
+          }
         }
       }
     }
@@ -377,6 +387,8 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
   Widget build(BuildContext context) {
     // ── Global Header State Sync (For IndexedStack) ──
     ref.listen<bool>(headerExpandedProvider, (previous, isGlobalExpanded) {
+      if (!widget.syncWithGlobalHeader) return;
+      
       if (!isGlobalExpanded && _isHeaderExpandedNotifier.value) {
         _isHeaderExpandedNotifier.value = false;
         final double statusBarHeight = MediaQuery.paddingOf(context).top;

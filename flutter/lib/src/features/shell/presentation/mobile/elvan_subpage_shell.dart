@@ -31,6 +31,7 @@ class ElvanSubpageShell extends StatelessWidget {
       navActions: navActions,
       startCollapsed: startCollapsed,
       backgroundColor: backgroundColor,
+      syncWithGlobalHeader: false,
     );
   }
 }
