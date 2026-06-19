@@ -199,86 +199,106 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
     final currentItem = _masterNavItems[_currentTab];
     final String currentTitle = currentItem.headerLabel ?? currentItem.label;
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isDesktop = constraints.maxWidth >= 800;
+    return PopScope(
+      canPop: _currentTab == 0,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
 
-        if (isDesktop) {
-          return ElvanDesktopShell(
-            currentIndex: _currentTab,
-            onTabSelected: (index) => setState(() => _currentTab = index),
-            navItems: _masterNavItems.take(_navItemCount).toList(),
-            slivers: [
-              SliverOffstage(
-                offstage: _currentTab != 0,
-                sliver: const MugappuPage(),
-              ),
-              SliverOffstage(
-                offstage: _currentTab != 1,
-                sliver: const UruvakkuPage(),
-              ),
-              SliverOffstage(
-                offstage: _currentTab != 2,
-                sliver: const VanigarPage(),
-              ),
-              SliverOffstage(
-                offstage: _currentTab != 3,
-                sliver: const PorulPage(),
-              ),
-            ],
-          );
+        // If we are in the Uruvakku tab and viewing Receipts, go back to Invoices first
+        if (_currentTab == 1) {
+          final uruvakkuSegment = ref.read(uruvakkuSegmentProvider);
+          if (uruvakkuSegment == 1) {
+            ref.read(uruvakkuSegmentProvider.notifier).state = 0;
+            return;
+          }
         }
 
-        return IndexedStack(
-          index: _currentTab,
-          children: [
-            for (int i = 0; i < 4; i++)
-              ElvanShell(
-                assignedIndex: i,
-                title: _masterNavItems[i].headerLabel ?? _masterNavItems[i].label,
-                currentIndex: _currentTab,
-                onTabSelected: (index) => setState(() => _currentTab = index),
-                showSearchIcon: i != 0,
-                onSearchChanged: (query) {
-                  final mode = ref.read(appModeProvider);
-                  if (i == 1) { // Uruvakku
-                    final segment = ref.read(uruvakkuSegmentProvider);
-                    if (mode == AppMode.coolie) {
-                      if (segment == 0) ref.read(coolieInvoicesSearchQueryProvider.notifier).state = query;
-                      else ref.read(coolieReceiptsSearchQueryProvider.notifier).state = query;
-                    } else {
-                      if (segment == 0) ref.read(silkInvoicesSearchQueryProvider.notifier).state = query;
-                      else ref.read(silkReceiptsSearchQueryProvider.notifier).state = query;
-                    }
-                  } else if (i == 2) { // Viyabarigal
-                    if (mode == AppMode.coolie) ref.read(coolieMerchantsSearchQueryProvider.notifier).state = query;
-                    else ref.read(silkMerchantsSearchQueryProvider.notifier).state = query;
-                  } else if (i == 3) { // Porul
-                    if (mode == AppMode.coolie) ref.read(coolieItemsSearchQueryProvider.notifier).state = query;
-                    else ref.read(silkItemsSearchQueryProvider.notifier).state = query;
-                  }
-                },
-                navActions: [
-                  const SizedBox(width: 7),
-                  ElvanTopBarIcon(
-                    icon: CupertinoIcons.add,
-                    onTap: _onAddPressed,
-                  ),
-                  const SizedBox(width: 14),
-                  const ElvanPopupMenu(),
-                  const SizedBox(width: 7),
-                ],
-                navItems: _masterNavItems.take(_navItemCount).toList(),
-                slivers: [
-                  if (i == 0) const MugappuPage(),
-                  if (i == 1) const UruvakkuPage(),
-                  if (i == 2) const VanigarPage(),
-                  if (i == 3) const PorulPage(),
-                ],
-              ),
-          ],
-        );
+        // Otherwise, always fall back to the Home tab
+        setState(() {
+          _currentTab = 0;
+        });
       },
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isDesktop = constraints.maxWidth >= 800;
+
+          if (isDesktop) {
+            return ElvanDesktopShell(
+              currentIndex: _currentTab,
+              onTabSelected: (index) => setState(() => _currentTab = index),
+              navItems: _masterNavItems.take(_navItemCount).toList(),
+              slivers: [
+                SliverOffstage(
+                  offstage: _currentTab != 0,
+                  sliver: const MugappuPage(),
+                ),
+                SliverOffstage(
+                  offstage: _currentTab != 1,
+                  sliver: const UruvakkuPage(),
+                ),
+                SliverOffstage(
+                  offstage: _currentTab != 2,
+                  sliver: const VanigarPage(),
+                ),
+                SliverOffstage(
+                  offstage: _currentTab != 3,
+                  sliver: const PorulPage(),
+                ),
+              ],
+            );
+          }
+
+          return IndexedStack(
+            index: _currentTab,
+            children: [
+              for (int i = 0; i < 4; i++)
+                ElvanShell(
+                  assignedIndex: i,
+                  title: _masterNavItems[i].headerLabel ?? _masterNavItems[i].label,
+                  currentIndex: _currentTab,
+                  onTabSelected: (index) => setState(() => _currentTab = index),
+                  showSearchIcon: i != 0,
+                  onSearchChanged: (query) {
+                    final mode = ref.read(appModeProvider);
+                    if (i == 1) { // Uruvakku
+                      final segment = ref.read(uruvakkuSegmentProvider);
+                      if (mode == AppMode.coolie) {
+                        if (segment == 0) ref.read(coolieInvoicesSearchQueryProvider.notifier).state = query;
+                        else ref.read(coolieReceiptsSearchQueryProvider.notifier).state = query;
+                      } else {
+                        if (segment == 0) ref.read(silkInvoicesSearchQueryProvider.notifier).state = query;
+                        else ref.read(silkReceiptsSearchQueryProvider.notifier).state = query;
+                      }
+                    } else if (i == 2) { // Viyabarigal
+                      if (mode == AppMode.coolie) ref.read(coolieMerchantsSearchQueryProvider.notifier).state = query;
+                      else ref.read(silkMerchantsSearchQueryProvider.notifier).state = query;
+                    } else if (i == 3) { // Porul
+                      if (mode == AppMode.coolie) ref.read(coolieItemsSearchQueryProvider.notifier).state = query;
+                      else ref.read(silkItemsSearchQueryProvider.notifier).state = query;
+                    }
+                  },
+                  navActions: [
+                    const SizedBox(width: 7),
+                    ElvanTopBarIcon(
+                      icon: CupertinoIcons.add,
+                      onTap: _onAddPressed,
+                    ),
+                    const SizedBox(width: 14),
+                    const ElvanPopupMenu(),
+                    const SizedBox(width: 7),
+                  ],
+                  navItems: _masterNavItems.take(_navItemCount).toList(),
+                  slivers: [
+                    if (i == 0) const MugappuPage(),
+                    if (i == 1) const UruvakkuPage(),
+                    if (i == 2) const VanigarPage(),
+                    if (i == 3) const PorulPage(),
+                  ],
+                ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
