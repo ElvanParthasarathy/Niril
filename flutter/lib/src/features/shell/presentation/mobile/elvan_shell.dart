@@ -302,6 +302,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
       if (!_isHeaderExpandedNotifier.value && offset < snapThreshold && notification.dragDetails == null) {
          _scrollController.position.hold(() {});
          WidgetsBinding.instance.addPostFrameCallback((_) {
+           if (!mounted) return;
            if (_scrollController.hasClients) {
              _scrollController.jumpTo(snapThreshold);
            }
@@ -352,11 +353,14 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
         final int durationMs = (250 + (distance * 0.5)).toInt().clamp(250, 450);
         
         Future.microtask(() {
-          _scrollController.animateTo(
-            targetOffset,
-            duration: Duration(milliseconds: durationMs),
-            curve: Curves.decelerate, // Soft, natural deceleration like a weak magnet
-          );
+          if (!mounted) return;
+          if (_scrollController.hasClients) {
+            _scrollController.animateTo(
+              targetOffset,
+              duration: Duration(milliseconds: durationMs),
+              curve: Curves.decelerate, // Soft, natural deceleration like a weak magnet
+            );
+          }
         });
       }
     }
