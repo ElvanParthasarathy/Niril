@@ -12,12 +12,14 @@ class ElvanSubpageShell extends StatelessWidget {
     required this.slivers,
     this.navActions = const [],
     this.startCollapsed = true,
+    this.backgroundColor,
   });
 
   final String title;
   final List<Widget> slivers;
   final List<Widget> navActions;
   final bool startCollapsed;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class ElvanSubpageShell extends StatelessWidget {
       leadingWidget: const ElvanBackButton(),
       navActions: navActions,
       startCollapsed: startCollapsed,
+      backgroundColor: backgroundColor,
     );
   }
 }

@@ -46,6 +46,7 @@ class ElvanShell extends ConsumerStatefulWidget {
     this.onSearchChanged,
     this.assignedIndex,
     this.startCollapsed = false,
+    this.backgroundColor,
   });
 
   /// The scrollable content placed inside the [CustomScrollView] as slivers.
@@ -88,6 +89,9 @@ class ElvanShell extends ConsumerStatefulWidget {
 
   /// Whether to start the page with the header already collapsed.
   final bool startCollapsed;
+
+  /// Background color override for the Scaffold.
+  final Color? backgroundColor;
 
   @override
   ConsumerState<ElvanShell> createState() => _ElvanShellState();
@@ -388,8 +392,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
       }
     });
 
-    final backgroundColor =
-        Theme.of(context).scaffoldBackgroundColor;
+    final backgroundColor = widget.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
 
     return Scaffold(
       body: GestureDetector(
