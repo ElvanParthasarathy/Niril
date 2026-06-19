@@ -69,11 +69,12 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         // SCALE AND MOVE LOGIC:
         final double t = normalizedProgress; // Use normalizedProgress to finish exactly at handoff!
         
-        // THE "PILL DETACH" CHOREOGRAPHY:
-        // 1. t > detachThreshold: The text is fully scaled and locked. It is pinned to the bottom of the bar, moving perfectly in sync with the 3-dot pill.
-        // 2. t < detachThreshold: The text smoothly detaches from the row, grows, and sweeps into the giant title position.
-        const double detachThreshold = 0.45;
-        final double rawSlant = (t / detachThreshold).clamp(0.0, 1.0);
+        // THE "LATE SCALE" CHOREOGRAPHY (iOS Native Style):
+        // 1. t < startScaleThreshold: The text is HUGE and locked to the bottom of the bar. It moves straight up linearly.
+        // 2. t > startScaleThreshold: The text rapidly shrinks and sweeps diagonally to lock into the sticky header.
+        const double startScaleThreshold = 0.55; // Wait until 55% scrolled before doing ANY scaling.
+        final double rawSlant = ((t - startScaleThreshold) / (1.0 - startScaleThreshold)).clamp(0.0, 1.0);
+        
         // Using a pure linear diagonal (1-to-1 movement) because the user's scrolling thumb
         // is already providing the physical curve. This creates the most connected, tactile feel.
         final double slantT = rawSlant;
