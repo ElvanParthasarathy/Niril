@@ -84,44 +84,42 @@ class ElvanCollapsedBar extends ConsumerWidget {
                   alignment: Alignment.centerLeft,
                   child: Opacity(
                     opacity: hideAnimation.value,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        boxShadow: liftProgress > 0 && leadingWidget != null ? [
-                          BoxShadow(
-                            blurRadius: 16 * liftProgress,
-                            offset: Offset(0, 4 * liftProgress),
-                            color: Colors.black.withAlpha((255 * 0.05 * liftProgress).round()),
-                          )
-                        ] : null,
-                      ),
-                      child: Material(
-                        type: MaterialType.canvas,
-                        color: leadingWidget != null 
-                          ? (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white).withAlpha((255 * 0.88 * liftProgress).round())
-                          : Colors.transparent,
-                        borderRadius: BorderRadius.circular(100),
-                        clipBehavior: Clip.antiAlias,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (leadingWidget != null) leadingWidget!,
-                            if (expandedSmallTitle != null)
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: leadingWidget != null ? 4 : collapsedXNudge,
-                                  top: 12,
-                                  bottom: 12,
-                                  right: 16,
-                                ),
-                                child: Opacity(
-                                  opacity: 1.0 - liftProgress,
-                                  child: expandedSmallTitle!,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (leadingWidget != null)
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(100),
+                              boxShadow: liftProgress > 0 ? [
+                                BoxShadow(
+                                  blurRadius: 16 * liftProgress,
+                                  offset: Offset(0, 4 * liftProgress),
+                                  color: Colors.black.withAlpha((255 * 0.05 * liftProgress).round()),
+                                )
+                              ] : null,
+                            ),
+                            child: Material(
+                              type: MaterialType.canvas,
+                              color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white).withAlpha((255 * 0.88 * liftProgress).round()),
+                              borderRadius: BorderRadius.circular(100),
+                              clipBehavior: Clip.antiAlias,
+                              child: leadingWidget!,
+                            ),
+                          ),
+                        if (expandedSmallTitle != null)
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: leadingWidget != null ? 12 : collapsedXNudge,
+                              top: 12,
+                              bottom: 12,
+                            ),
+                            child: Opacity(
+                              opacity: 1.0 - liftProgress,
+                              child: expandedSmallTitle!,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
