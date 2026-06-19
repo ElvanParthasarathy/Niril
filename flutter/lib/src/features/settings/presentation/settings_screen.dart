@@ -53,6 +53,7 @@ class SettingsScreen extends ConsumerWidget {
                         child: Padding(
                           padding: const EdgeInsets.only(left: 98, right: 32, top: 14, bottom: 14),
                           child: SizedBox(
+                            width: double.infinity,
                             height: 64,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
