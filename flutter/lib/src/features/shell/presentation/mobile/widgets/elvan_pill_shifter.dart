@@ -152,7 +152,7 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
                       curve: Curves.easeOutCubic,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF262626).withValues(alpha: 0.95) : const Color(0xFFE5E5E5).withValues(alpha: 0.95),
+                          color: isDark ? const Color(0xFF212121).withValues(alpha: 0.95) : const Color(0xFFE5E5E5).withValues(alpha: 0.95),
                           borderRadius: BorderRadius.circular(100),
                           boxShadow: isDark ? null : [
                             BoxShadow(
