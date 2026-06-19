@@ -69,14 +69,23 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         // SCALE AND MOVE LOGIC:
         final double t = normalizedProgress; // Use normalizedProgress to finish exactly at handoff!
         
-        // Smooth "Vertical Lift -> Slant" Choreography
-        // By applying an EaseInOut curve to the horizontal movement, the text lifts perfectly vertically 
-        // at the start and end of the animation, and slants gracefully in the middle!
-        final double slantT = Curves.easeInOutCubic.transform(t);
+        // 1. "Not on start itself": We start slanting immediately at t=0 (expanded).
+        // 2. "Smooth curve": We use easeOutCubic to smoothly decelerate the slanting.
+        // 3. "Pure vertical then": We finish the slant early at 85%, leaving the last 15% as a pure vertical line.
+        const double detachThreshold = 0.85;
+        final double rawSlant = (t / detachThreshold).clamp(0.0, 1.0);
+        final double slantT = Curves.easeOutCubic.transform(rawSlant);
         
-        final double currentBottom = 128.0 - ((99.0 + yNudge) * t); // Vertical MUST stay linear to match scroll speed!
-        final double currentLeftPadding = (28.0 + xNudge) * slantT; 
+        final double linearScale = 1.0 - (1.0 - (20.0 / 34.0)) * t;
         final double currentScale = 1.0 - (1.0 - (20.0 / 34.0)) * slantT;
+        final double currentLeftPadding = (28.0 + xNudge) * slantT; // 0 to 28 ± xNudge
+        
+        // MATHEMATICAL ANCHOR CORRECTION:
+        // Because the text shrinks early, its visual center of mass would drift and look "broken".
+        // We calculate the exact pixel difference and counteract it, keeping the text flawlessly glued!
+        // (34px font * 1.2 height + 24px padding) / 2 = 32.4px half-height.
+        final double centerCorrection = 32.4 * (currentScale - linearScale);
+        final double currentBottom = 128.0 - ((99.0 + yNudge) * t) - centerCorrection;
 
         return Container(
           color: Colors.transparent,
