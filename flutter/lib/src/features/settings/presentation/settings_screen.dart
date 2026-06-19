@@ -333,12 +333,6 @@ class _SettingsRow extends StatelessWidget {
                 ],
               ),
             ),
-            // Trailing chevron
-            Icon(
-              CupertinoIcons.chevron_right,
-              size: 16,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
-            ),
           ],
         ),
       ),
