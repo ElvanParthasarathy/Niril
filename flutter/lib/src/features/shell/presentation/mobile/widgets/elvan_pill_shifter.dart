@@ -67,7 +67,7 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
       child: Container(
         height: 52, // Match comfortable touch target size
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1E1E).withValues(alpha: 0.88) : const Color(0xFFFFFFFF).withValues(alpha: 0.88),
+          color: isDark ? const Color(0xFF121212).withValues(alpha: 0.88) : const Color(0xFFFFFFFF).withValues(alpha: 0.88),
           borderRadius: BorderRadius.circular(100),
           border: isDark ? null : Border.all(
             color: const Color(0xFFFFFFFF).withValues(alpha: 0.6),
