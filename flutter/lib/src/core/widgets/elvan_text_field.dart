@@ -13,6 +13,8 @@ class ElvanTextField extends StatelessWidget {
   final int? maxLines;
   final int? minLines;
   final ValueChanged<String>? onChanged;
+  final VoidCallback? onEditingComplete;
+  final bool? enabled;
 
   const ElvanTextField({
     super.key,
@@ -27,6 +29,8 @@ class ElvanTextField extends StatelessWidget {
     this.maxLines = 1,
     this.minLines,
     this.onChanged,
+    this.onEditingComplete,
+    this.enabled,
   });
 
   @override
@@ -44,6 +48,8 @@ class ElvanTextField extends StatelessWidget {
       maxLines: maxLines,
       minLines: minLines,
       onChanged: onChanged,
+      onEditingComplete: onEditingComplete,
+      enabled: enabled,
     );
   }
 }

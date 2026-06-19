@@ -82,7 +82,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
           : Colors.white,
       builder: (BuildContext context) {
         return ElvanSettingsSelectionBottomSheet(
-          title: 'தன்னுருவை மாற்றவும்', // "Switch Profile"
+          title: 'switchProfile'.tr(context, ref),
           items: businesses,
           currentValue: businesses.first,
           onSelected: (value) {
@@ -196,7 +196,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                             ElvanSettingsSection(
                               children: [
                                 ElvanSettingsDisplayRow(
-                                  title: 'தன்னுரு',
+                                  title: 'profile'.tr(context, ref),
                                   primaryValue: 'Test Business 1',
                                   icon: CupertinoIcons.delete_solid,
                                   onEdit: _showDeleteConfirmModal,
@@ -207,7 +207,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                             ElvanSettingsSection(
                               children: [
                                 ElvanSettingsDisplayRow(
-                                  title: 'தன்னுரு',
+                                  title: 'profile'.tr(context, ref),
                                   primaryValue: 'Test Business 2',
                                   icon: CupertinoIcons.delete_solid,
                                   onEdit: _showDeleteConfirmModal,
@@ -218,7 +218,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                             ElvanSettingsSection(
                               children: [
                                 ElvanSettingsDisplayRow(
-                                  title: 'தன்னுரு',
+                                  title: 'profile'.tr(context, ref),
                                   primaryValue: 'Test Business 3',
                                   icon: CupertinoIcons.delete_solid,
                                   onEdit: _showDeleteConfirmModal,
@@ -256,8 +256,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
       title: 'addNewProfile'.tr(context, ref),
       cancelText: 'cancelBtn'.tr(context, ref),
       confirmText: 'createBtn'.tr(context, ref),
-      customContent: TextFormField(
-        contextMenuBuilder: buildElvanContextMenu,
+      customContent: ElvanTextField(
         textAlign: TextAlign.center,
         onChanged: (val) => newName = val,
         decoration: InputDecoration(

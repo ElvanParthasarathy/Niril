@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../localization/locale_provider.dart';
-import '../../../../settings/presentation/widgets/elvan_settings_controls.dart';
+import '../widgets/elvan_settings_controls.dart';
 import '../../../../core/widgets/elvan_text_field.dart';
 import '../../../shell/presentation/mobile/elvan_subpage_shell.dart';
 import '../widgets/elvan_settings_section.dart';
@@ -233,7 +233,7 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'businessLogo'.tr(context, ref),
-                    primaryValue: _logoPath != null ? 'Logo Uploaded' : 'சின்னம் இல்லை',
+                    primaryValue: _logoPath != null ? 'logoUploaded'.tr(context, ref) : 'noLogo'.tr(context, ref),
                     onEdit: () => _beginEdit('logo'),
                   ),
                 ),
@@ -252,7 +252,7 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'wideLogoLabel'.tr(context, ref),
-                    primaryValue: _wideLogoPath != null ? 'Wide Logo Uploaded' : 'இல்லை',
+                    primaryValue: _wideLogoPath != null ? 'wideLogoUploaded'.tr(context, ref) : 'noneLabel'.tr(context, ref),
                     onEdit: () => _beginEdit('wide_logo'),
                   ),
                 ),
@@ -348,7 +348,7 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'signature'.tr(context, ref),
-                    primaryValue: _signaturePath != null ? _signatoryName : 'கையொப்பம் இல்லை',
+                    primaryValue: _signaturePath != null ? _signatoryName : 'noSignature'.tr(context, ref),
                     onEdit: () => _beginEdit('signature'),
                   ),
                 ),
