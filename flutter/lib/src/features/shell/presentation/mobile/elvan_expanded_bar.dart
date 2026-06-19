@@ -56,13 +56,15 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         final double handoffShrinkOffset = maxExtent - handoffHeight;
         final double handoffProgress = (handoffShrinkOffset / maxShrink).clamp(0.001, 1.0);
         
-        // DYNAMIC ISLAND IMPACT BUMP: A 12-pixel physical scale bounce right BEFORE it hits the ceiling!
+        // DYNAMIC ISLAND IMPACT BUMP (THE BUILD-UP): 
+        // A 12-pixel scale bounce leading up to the handoff. The text physically bulges outwards,
+        // hitting exactly 1.05 scale at the precise millisecond it hits the ceiling.
+        // It then hands off to the Collapsed Bar which completes the wave.
         final double bumpStartOffset = handoffShrinkOffset - 12.0;
         final double bumpProgress = (shrinkOffset > bumpStartOffset) 
             ? ((shrinkOffset - bumpStartOffset) / 12.0).clamp(0.0, 1.0) 
             : 0.0;
-        final double impactBump = 4.0 * bumpProgress * (1.0 - bumpProgress);
-        final double impactScale = 1.0 + (impactBump * 0.05);
+        final double impactScale = 1.0 + (bumpProgress * 0.05);
         
         // This progress hits exactly 1.0 at the precise millisecond of the hand-off.
         final double normalizedProgress = (shrinkProgress / handoffProgress).clamp(0.0, 1.0);

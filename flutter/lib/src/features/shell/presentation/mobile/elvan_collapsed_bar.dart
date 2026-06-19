@@ -71,6 +71,15 @@ class ElvanCollapsedBar extends ConsumerWidget {
           liftProgress = ((shrinkOffset - liftStartOffset) / 12.0).clamp(0.0, 1.0);
         }
         
+        // DYNAMIC ISLAND IMPACT BUMP (THE RELEASE):
+        // The Expanded Bar hands off at exactly 1.05 scale. Over the next 12 pixels of scroll,
+        // the Collapsed Bar physically shrinks back down to 1.0, completing the squash-and-stretch wave!
+        final double handoffShrinkOffset = expandedHeight - 8.0 - kToolbarHeight - ceiling;
+        final double releaseProgress = (shrinkOffset > handoffShrinkOffset)
+            ? ((shrinkOffset - handoffShrinkOffset) / 12.0).clamp(0.0, 1.0)
+            : 0.0;
+        final double impactScale = 1.0 + ((1.0 - releaseProgress) * 0.05);
+        
         // STANDARD LAYOUT: Native pill uses standard 8.0 internal spacing.
         const double collapsedXNudge = 8.0; 
         
@@ -110,9 +119,13 @@ class ElvanCollapsedBar extends ConsumerWidget {
                                 children: [
                                   // MICRO-NUDGE: Tune this value to perfectly match the Expanded Bar's AbsX.
                                   SizedBox(width: collapsedXNudge), // Change this number to adjust native text position
-                                  Opacity(
-                                    opacity: 1.0 - liftProgress,
-                                    child: expandedSmallTitle!,
+                                  Transform.scale(
+                                    scale: impactScale,
+                                    alignment: Alignment.centerLeft,
+                                    child: Opacity(
+                                      opacity: 1.0 - liftProgress,
+                                      child: expandedSmallTitle!,
+                                    ),
                                   ),
                                 ],
                               ),
