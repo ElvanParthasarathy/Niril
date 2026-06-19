@@ -80,7 +80,7 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         // Scaled text X offset: 0 (Positioned) + 4 (Padding * scale factor 20/34) + currentLeftPadding
         // Therefore, currentLeftPadding + 2.353 = 28.0 -> currentLeftPadding must be EXACTLY 25.65.
         final double targetLeftPadding = leadingWidget != null ? 75.65 : 25.65;
-        final double currentLeftPadding = (targetLeftPadding + xNudge) * slantT; // 0 to target ± xNudge
+        final double translateX = (targetLeftPadding + xNudge) * slantT; // Pure linear translation
         
         // By using slantT for the vertical bottom anchor, the text's vertical offset completely locks
         // alongside its horizontal offset and scale. This perfectly synchronizes its vertical scrolling speed 
@@ -104,11 +104,11 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                   opacity: isPinned ? 0.0 : 1.0, // Hand off to Collapsed Bar when pinned!
                   child: Align(
                     alignment: Alignment.lerp(Alignment.bottomCenter, Alignment.bottomLeft, slantT)!,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: currentLeftPadding),
+                    child: Transform.translate(
+                      offset: Offset(translateX, 0),
                       child: Transform.scale(
                         scale: currentScale,
-                        alignment: Alignment.lerp(Alignment.bottomCenter, Alignment.bottomLeft, t)!,
+                        alignment: Alignment.bottomLeft,
                         child: Text(
                           title,
                           textAlign: TextAlign.center,
