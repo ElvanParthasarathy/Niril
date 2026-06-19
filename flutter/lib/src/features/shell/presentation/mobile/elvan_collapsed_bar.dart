@@ -172,7 +172,7 @@ class ElvanCollapsedBar extends ConsumerWidget {
               // ── NATIVE TEXT DEV HUD ──
               if (expandedSmallTitle != null)
                 Positioned(
-                  top: ceiling + 10,
+                  top: ceiling + 60, // Moved down to not hide the text
                   left: 16,
                   child: IgnorePointer(
                     child: Container(
