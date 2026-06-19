@@ -62,8 +62,8 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         // MICRO-NUDGES for Sub-pixel Alignment:
         // A native 20px font and a scaled 34px font have slightly different internal baselines and kerning (font hinting).
         // We apply a fractional pixel offset to the final scaled position to perfectly eclipse the native text.
-        // Tune these numbers (e.g. 0.2, -0.5, 1.0) until the "shake" completely disappears to your eye!
-        const double xNudge = 0.8; // Left/Right tweak (positive moves scaled text RIGHT at handoff)
+        // -0.002941 perfectly offsets the math to exactly 28.000000 on screen.
+        const double xNudge = -0.002941; // Left/Right tweak (positive moves scaled text RIGHT at handoff)
         const double yNudge = 0.6; // Up/Down tweak (positive moves scaled text DOWN at handoff)
 
         // SCALE AND MOVE LOGIC:
@@ -191,6 +191,7 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                       'slantT: ${slantT.toStringAsFixed(6)}\n'
                       'Scale: ${currentScale.toStringAsFixed(6)}\n'
                       'LeftPad: ${currentLeftPadding.toStringAsFixed(6)}\n'
+                      'AbsX: ${(currentLeftPadding + 4.0 * currentScale).toStringAsFixed(6)}\n'
                       'Bottom: ${currentBottom.toStringAsFixed(6)}',
                       style: const TextStyle(
                         color: Colors.greenAccent,

@@ -71,6 +71,9 @@ class ElvanCollapsedBar extends ConsumerWidget {
           liftProgress = ((shrinkOffset - liftStartOffset) / 12.0).clamp(0.0, 1.0);
         }
         
+        // STANDARD LAYOUT: Native pill uses standard 8.0 internal spacing.
+        const double collapsedXNudge = 8.0; 
+        
         return Stack(
           children: [
             if (leadingWidget != null || expandedSmallTitle != null)
@@ -105,10 +108,8 @@ class ElvanCollapsedBar extends ConsumerWidget {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  // MICRO-NUDGE: Sub-pixel correction to perfectly catch the Expanded Bar's text.
-                                  // Since it was jumping slightly to the right, we reduced this from 8.0 to 7.2 to shift the native text left.
-                                  // Tune this slightly (e.g. 7.5 or 7.0) if it still jumps.
-                                  const SizedBox(width: 7.2), // Replicate the internal left padding of the Pill
+                                  // MICRO-NUDGE: Tune this value to perfectly match the Expanded Bar's AbsX.
+                                  SizedBox(width: collapsedXNudge), // Change this number to adjust native text position
                                   Opacity(
                                     opacity: 1.0 - liftProgress,
                                     child: expandedSmallTitle!,
@@ -167,6 +168,31 @@ class ElvanCollapsedBar extends ConsumerWidget {
                   ),
                 ),
               ),
+
+              // ── NATIVE TEXT DEV HUD ──
+              if (expandedSmallTitle != null)
+                Positioned(
+                  top: ceiling + 10,
+                  left: 16,
+                  child: IgnorePointer(
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'Native AbsX: ${16 + 4 + collapsedXNudge}\n(16 + 4 + $collapsedXNudge)', // 16 (Positioned) + 4 (Padding) + Nudge
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'monospace',
+                          fontSize: 10,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
           ],
         );
       },
