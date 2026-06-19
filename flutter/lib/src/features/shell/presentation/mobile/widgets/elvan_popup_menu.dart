@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../localization/locale_provider.dart';
+import 'elvan_page_route.dart';
 import '../../../../settings/presentation/settings_screen.dart';
 import 'elvan_top_bar_icon.dart';
 
@@ -109,7 +110,7 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                           _closeMenu();
                           Navigator.push(
                             context,
-                            CupertinoPageRoute(
+                            ElvanPageRoute(
                               builder: (context) => const SettingsScreen(),
                             ),
                           );

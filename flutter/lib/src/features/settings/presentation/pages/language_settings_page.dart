@@ -2,22 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../localization/locale_provider.dart';
-import '../../../../core/theme_provider.dart';
-import '../../../../core/models/app_mode.dart';
-import '../../../../core/state/app_state.dart';
 import '../../../shell/presentation/mobile/elvan_subpage_shell.dart';
 import '../widgets/elvan_settings_section.dart';
 
-class SeyaliAmaippugalPage extends ConsumerWidget {
-  const SeyaliAmaippugalPage({super.key});
+class LanguageSettingsPage extends ConsumerWidget {
+  const LanguageSettingsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentAppMode = ref.watch(appModeProvider);
+    final currentLocale = ref.watch(localeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return ElvanSubpageShell(
-      title: 'seyali_amaippugal'.tr(context, ref),
+      title: 'appLanguage'.tr(context, ref),
       backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
       slivers: [
         SliverPadding(
@@ -32,20 +29,28 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
               ElvanSettingsSection(
                 dividerIndent: 16.0,
                 children: [
-                  ElvanRadioSettingsRow<AppMode>(
-                    title: 'nirilSilk'.tr(context, ref),
-                    value: AppMode.gst,
-                    groupValue: currentAppMode ?? AppMode.gst,
+                  ElvanRadioSettingsRow<Locale?>(
+                    title: 'system_auto'.tr(context, ref),
+                    value: null,
+                    groupValue: currentLocale,
                     onChanged: (val) {
-                      if (val != null) ref.read(appModeProvider.notifier).setMode(val);
+                      ref.read(localeProvider.notifier).setLocale(val);
                     },
                   ),
-                  ElvanRadioSettingsRow<AppMode>(
-                    title: 'nirilCoolie'.tr(context, ref),
-                    value: AppMode.coolie,
-                    groupValue: currentAppMode ?? AppMode.gst,
+                  ElvanRadioSettingsRow<Locale?>(
+                    title: 'tamil'.tr(context, ref),
+                    value: const Locale('ta'),
+                    groupValue: currentLocale,
                     onChanged: (val) {
-                      if (val != null) ref.read(appModeProvider.notifier).setMode(val);
+                      ref.read(localeProvider.notifier).setLocale(val);
+                    },
+                  ),
+                  ElvanRadioSettingsRow<Locale?>(
+                    title: 'english'.tr(context, ref),
+                    value: const Locale('en'),
+                    groupValue: currentLocale,
+                    onChanged: (val) {
+                      ref.read(localeProvider.notifier).setLocale(val);
                     },
                   ),
                 ],

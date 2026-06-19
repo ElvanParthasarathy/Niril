@@ -3,14 +3,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../../localization/locale_provider.dart';
+import '../../shell/presentation/mobile/widgets/elvan_page_route.dart';
 import '../../../core/state/app_state.dart';
 import '../../../core/models/app_mode.dart';
 import '../../shell/presentation/mobile/elvan_subpage_shell.dart';
-import 'pages/vanigar_amaippugal_page.dart';
+import 'pages/vaniga_amaippugal_page.dart';
 import 'pages/mugavari_page.dart';
 import 'pages/vangi_page.dart';
+import 'pages/coolie_vaniga_adaiyalangal_page.dart';
+import 'pages/silk_vaniga_adaiyalangal_page.dart';
+import 'pages/about_developer_page.dart';
 import 'pages/uruvakku_amaippugal_page.dart';
-import 'pages/seyali_amaippugal_page.dart';
+import 'pages/display_settings_page.dart';
+import 'pages/language_settings_page.dart';
+import 'package:elvan_niril/src/features/settings/presentation/widgets/elvan_settings_section.dart';
+import 'package:elvan_niril/src/features/niril_common/presentation/widgets/elvan_settings_icon.dart';
 import 'pages/pathugappu_amaippugal_page.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -18,13 +25,8 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentAppMode = ref.watch(appModeProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardColor = isDark
-        ? const Color(0xFF111111)
-        : Colors.white;
-    final dividerColor = isDark
-        ? Colors.white.withValues(alpha: 0.1)
-        : Colors.black.withValues(alpha: 0.1);
     final iconBgColor = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -39,9 +41,7 @@ class SettingsScreen extends ConsumerWidget {
             // ── Mode Switcher & Merchant Settings (Big Pill) ──
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _SettingsSection(
-                cardColor: cardColor,
-                dividerColor: dividerColor,
+              child: ElvanSettingsSection(
                 borderRadius: 999.0,
                 children: [
                   Stack(
@@ -49,7 +49,7 @@ class SettingsScreen extends ConsumerWidget {
                       // The main pill body (Navigates to Merchant Settings)
                       InkWell(
                         onTap: () {
-                          Navigator.push(context, CupertinoPageRoute(builder: (_) => const VanigarAmaippugalPage()));
+                          Navigator.push(context, ElvanPageRoute(builder: (_) => const VanigaAmaippugalPage()));
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(left: 98, right: 32, top: 14, bottom: 14),
@@ -61,7 +61,7 @@ class SettingsScreen extends ConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'vanigar_amaippugal'.tr(context, ref),
+                                  'vaniga_amaippugal'.tr(context, ref),
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
@@ -123,46 +123,59 @@ class SettingsScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 24),
 
-            // ── Section 1: Domain-specific settings ──
+            // ── Section 1: Business Profile & Identity ──
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _SettingsSection(
-                cardColor: cardColor,
-                dividerColor: dividerColor,
+              child: ElvanSettingsSection(
                 children: [
-                  _SettingsRow(
+
+                  if (currentAppMode == AppMode.coolie)
+                    ElvanSettingsRow(
+                      icon: CupertinoIcons.briefcase_fill,
+                      iconBgColor: iconBgColor,
+                      title: 'adaiyalam'.tr(context, ref),
+                      description: 'desc_coolie_identifiers'.tr(context, ref),
+                      onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const CoolieVanigaAdaiyalangalPage())),
+                    )
+                  else
+                    ElvanSettingsRow(
+                      icon: CupertinoIcons.briefcase_fill,
+                      iconBgColor: iconBgColor,
+                      title: 'adaiyalam'.tr(context, ref),
+                      description: 'desc_silk_identifiers'.tr(context, ref),
+                      onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const SilkVanigaAdaiyalangalPage())),
+                    ),
+                  ElvanSettingsRow(
                     icon: CupertinoIcons.location_solid,
                     iconBgColor: iconBgColor,
                     title: 'settings_mugavari'.tr(context, ref),
-                    description: 'Company address details',
-                    onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (_) => const MugavariPage())),
+                    description: 'desc_address'.tr(context, ref),
+                    onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const MugavariPage())),
                   ),
-                  _SettingsRow(
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // ── Section 2: Finance & Creation ──
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ElvanSettingsSection(
+                children: [
+                  ElvanSettingsRow(
                     icon: CupertinoIcons.creditcard_fill,
                     iconBgColor: iconBgColor,
                     title: 'vangi'.tr(context, ref),
-                    description: 'Account number & IFSC',
-                    onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (_) => const VangiPage())),
+                    description: 'desc_bank'.tr(context, ref),
+                    onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const VangiPage())),
                   ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // ── Section 2: Creation settings ──
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _SettingsSection(
-                cardColor: cardColor,
-                dividerColor: dividerColor,
-                children: [
-                  _SettingsRow(
+                  ElvanSettingsRow(
                     icon: CupertinoIcons.doc_text_fill,
                     iconBgColor: iconBgColor,
-                    title: 'uruvakku_amaippugal'.tr(context, ref),
-                    description: 'Invoice styling options',
-                    onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (_) => const UruvakkuAmaippugalPage())),
+                    title: 'uruvakku'.tr(context, ref),
+                    description: 'desc_invoice'.tr(context, ref),
+                    onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const UruvakkuAmaippugalPage())),
                   ),
                 ],
               ),
@@ -170,173 +183,58 @@ class SettingsScreen extends ConsumerWidget {
 
             const SizedBox(height: 24),
 
-            // ── Section 3: Global settings ──
+            // ── Section 3: App Experience & Display ──
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _SettingsSection(
-                cardColor: cardColor,
-                dividerColor: dividerColor,
+              child: ElvanSettingsSection(
                 children: [
-                  _SettingsRow(
-                    icon: CupertinoIcons.settings_solid,
+                  ElvanSettingsRow(
+                    icon: CupertinoIcons.sun_max_fill,
                     iconBgColor: iconBgColor,
-                    title: 'seyali_amaippugal'.tr(context, ref),
-                    description: 'UI language & theme',
-                    onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (_) => const SeyaliAmaippugalPage())),
+                    title: 'thirai'.tr(context, ref),
+                    description: 'desc_display'.tr(context, ref),
+                    onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const DisplaySettingsPage())),
                   ),
-                  _SettingsRow(
+                  ElvanSettingsRow(
+                    icon: Icons.language,
+                    iconBgColor: iconBgColor,
+                    title: 'appLanguage'.tr(context, ref),
+                    description: 'desc_language'.tr(context, ref),
+                    onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const LanguageSettingsPage())),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // ── Section 4: System & About ──
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ElvanSettingsSection(
+                children: [
+                  ElvanSettingsRow(
                     icon: CupertinoIcons.lock_fill,
                     iconBgColor: iconBgColor,
-                    title: 'pathugappu_amaippugal'.tr(context, ref),
-                    description: 'Clear cache, Account security',
-                    onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (_) => const PathugappuAmaippugalPage())),
+                    title: 'pathugappu'.tr(context, ref),
+                    description: 'desc_security'.tr(context, ref),
+                    onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const PathugappuAmaippugalPage())),
+                  ),
+                  ElvanSettingsRow(
+                    icon: CupertinoIcons.info_circle_fill,
+                    iconBgColor: iconBgColor,
+                    title: 'menporul_vadivalar'.tr(context, ref),
+                    description: 'desc_about'.tr(context, ref),
+                    onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const AboutDeveloperPage())),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 120), // Bottom padding restored as a spacer at the end of the list
+
+            const SizedBox(height: 48),
           ],
         ),
       ],
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// SettingsSection — Groups rows inside a single rounded card with dividers
-// Mirrors the React ElvanSettingsSection SettingsSection component exactly.
-// ─────────────────────────────────────────────────────────────────────────────
-class _SettingsSection extends StatelessWidget {
-  const _SettingsSection({
-    required this.children,
-    required this.cardColor,
-    required this.dividerColor,
-    this.title,
-    this.borderRadius = 24.0,
-  });
-
-  final List<Widget> children;
-  final Color cardColor;
-  final Color dividerColor;
-  final String? title;
-  final double borderRadius;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (title != null)
-          Padding(
-            padding: const EdgeInsets.only(left: 20, bottom: 8),
-            child: Text(
-              title!.toUpperCase(),
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.5,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-              ),
-            ),
-          ),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(borderRadius),
-          child: Material(
-            color: cardColor,
-            child: Column(
-              children: [
-                for (int i = 0; i < children.length; i++) ...[
-                  children[i],
-                  if (i < children.length - 1)
-                    Divider(
-                      height: 1,
-                      thickness: 1,
-                      indent: 72,
-                      endIndent: 20,
-                      color: dividerColor,
-                    ),
-                ],
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// SettingsRow — A single settings item with circular icon, title, description
-// Mirrors the React ElvanSettingsSection SettingsRow component exactly.
-// Padding: 16px vertical, 20px horizontal (matches React's p: '16px 20px')
-// Icon: 36px circle with monochrome background
-// ─────────────────────────────────────────────────────────────────────────────
-class _SettingsRow extends StatelessWidget {
-  const _SettingsRow({
-    required this.icon,
-    required this.iconBgColor,
-    required this.title,
-    this.description,
-    this.onTap,
-  });
-
-  final IconData icon;
-  final Color iconBgColor;
-  final String title;
-  final String? description;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        child: Row(
-          children: [
-            // Circular icon container — 36px, monochrome background
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: iconBgColor,
-              ),
-              child: Center(
-                child: Icon(icon, size: 20, color: Theme.of(context).colorScheme.onSurface),
-              ),
-            ),
-            const SizedBox(width: 16),
-            // Title + Description
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      height: 1.3,
-                    ),
-                  ),
-                  if (description != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2),
-                      child: Text(
-                        description!,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

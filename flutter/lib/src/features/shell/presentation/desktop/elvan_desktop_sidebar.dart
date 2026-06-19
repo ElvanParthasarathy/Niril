@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../localization/locale_provider.dart';
+import '../mobile/widgets/elvan_page_route.dart';
+import '../../../niril_common/presentation/widgets/elvan_settings_icon.dart';
 import '../../../../core/models/app_mode.dart';
 import '../mobile/elvan_navbar.dart'; // For CustomNavItem
 import '../../../settings/presentation/settings_screen.dart';
@@ -400,7 +402,7 @@ class _DesktopCollapsedProfileState extends ConsumerState<_DesktopCollapsedProfi
           onPressed: () {
             Navigator.push(
               context,
-              CupertinoPageRoute(
+              ElvanPageRoute(
                 builder: (context) => const SettingsScreen(),
               ),
             );
@@ -478,12 +480,12 @@ class _DesktopExpandedProfileState extends ConsumerState<_DesktopExpandedProfile
                 ),
               ),
               IconButton(
-                icon: const Icon(CupertinoIcons.settings, size: 18),
+                icon: const ElvanSettingsIcon(size: 18),
                 color: widget.isDark ? const Color(0xFFAAAAAA) : const Color(0xFF666666),
                 onPressed: () {
                   Navigator.push(
                     context,
-                    CupertinoPageRoute(
+                    ElvanPageRoute(
                       builder: (context) => const SettingsScreen(),
                     ),
                   );

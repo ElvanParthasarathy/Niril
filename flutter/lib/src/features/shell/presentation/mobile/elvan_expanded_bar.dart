@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -89,8 +90,8 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         final double screenWidth = constraints.maxWidth;
 
         // 2. Compute the two endpoints
-        // START (t=0): text visually centered on screen
-        final double centeredLeft = (screenWidth - textWidth) / 2;
+        // START (t=0): text visually centered on screen (but clamped to left margin if too long)
+        final double centeredLeft = math.max(16.0, (screenWidth - textWidth) / 2);
         // END (t=1): text lands exactly where the collapsed bar's small title sits
         //   Home page:  Positioned(left:16) + Padding(left:8)  = 24px
         //   Subpage:    Positioned(left:16) + Chevron(50) + Gap(12) = 78px
@@ -118,13 +119,20 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                   child: Transform.scale(
                     scale: currentScale,
                     alignment: Alignment.bottomLeft,
-                    child: Text(
-                      title,
-                      textAlign: TextAlign.left,
-                      style: titleStyle.copyWith(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Color.lerp(Colors.white, Colors.white.withOpacity(0.95), t)
-                            : Colors.black87,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: math.max(0.0, (screenWidth - currentLeft - 16.0) / currentScale),
+                      ),
+                      child: Text(
+                        title,
+                        textAlign: TextAlign.left,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: titleStyle.copyWith(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Color.lerp(Colors.white, Colors.white.withOpacity(0.95), t)
+                              : Colors.black87,
+                        ),
                       ),
                     ),
                   ),

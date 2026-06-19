@@ -385,6 +385,26 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
 
   @override
   Widget build(BuildContext context) {
+    // ── Keyboard Auto-Collapse ──
+    final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+    if (bottomInset > 0) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(const Duration(milliseconds: 150), () {
+          if (!mounted || !_scrollController.hasClients) return;
+          final double statusBarHeight = MediaQuery.paddingOf(context).top;
+          final double snapThreshold = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
+          final double targetOffset = snapThreshold + 20.0;
+          if (_scrollController.offset < targetOffset) {
+            _scrollController.animateTo(
+              targetOffset,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutCubic,
+            );
+          }
+        });
+      });
+    }
+
     // ── Global Header State Sync (For IndexedStack) ──
     ref.listen<bool>(headerExpandedProvider, (previous, isGlobalExpanded) {
       if (!widget.syncWithGlobalHeader) return;
@@ -484,6 +504,27 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
               ),
             ),
           ),
+          // ─── Layer 2.75: Edge Gesture Blockers (Industry standard for horizontal navigation) ───
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: 24, // Absorbs touches within 24 pixels of the left edge
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onVerticalDragUpdate: (_) {}, // Swallows vertical scrolling but lets horizontal pass!
+            ),
+          ),
+          Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: 24, // Absorbs touches within 24 pixels of the right edge
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onVerticalDragUpdate: (_) {},
+            ),
+          ),
 
           // ─── Layer 3: Floating pill navbar ────────────────────────────
           if (widget.showNavbar)
@@ -571,6 +612,8 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
             leadingWidget: widget.leadingWidget,
             expandedSmallTitle: widget.title != null ? Text(
               widget.title!,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontSize: 20, // Slightly larger and bolder
                 fontWeight: FontWeight.bold,

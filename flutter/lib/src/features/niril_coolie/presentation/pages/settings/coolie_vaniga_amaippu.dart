@@ -4,17 +4,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../localization/locale_provider.dart';
 import '../../../../shell/presentation/mobile/elvan_subpage_shell.dart';
 
-class SilkVanigarAmaippuPage extends ConsumerWidget {
-  const SilkVanigarAmaippuPage({super.key});
+class CoolieVanigaAmaippuPage extends ConsumerWidget {
+  const CoolieVanigaAmaippuPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ElvanSubpageShell(
-      title: 'vanigar_amaippugal'.tr(context, ref) + " (Silk)",
+      title: 'vanigam'.tr(context, ref) + " (Coolie)",
       slivers: const [
         SliverFillRemaining(
           child: Center(
-            child: Text('Silk Merchant Settings Dummy'),
+            child: Text('Coolie Merchant Settings Dummy'),
           ),
         ),
       ],

@@ -9,6 +9,7 @@ import 'src/core/theme_provider.dart';
 import 'src/core/state/app_state.dart';
 import 'src/core/models/app_mode.dart';
 import 'src/localization/locale_provider.dart';
+import 'src/features/shell/presentation/mobile/widgets/elvan_page_route.dart';
 import 'src/features/auth/presentation/mode_selector_screen.dart';
 import 'src/features/pages/mugappu_page.dart';
 import 'src/features/pages/uruvakku_page.dart';
@@ -91,6 +92,14 @@ class ElvanNirilApp extends ConsumerWidget {
         ),
         scaffoldBackgroundColor: const Color(0xFFF7F7F7),
         useMaterial3: true,
+        textTheme: ThemeData.light().textTheme.apply(fontFamily: 'ElvanSans'),
+        cupertinoOverrideTheme: const CupertinoThemeData(
+          primaryColor: CupertinoColors.activeBlue,
+          textTheme: CupertinoTextThemeData(
+            textStyle: TextStyle(fontFamily: 'ElvanSans', color: Colors.black),
+            actionTextStyle: TextStyle(fontFamily: 'ElvanSans', color: CupertinoColors.activeBlue),
+          ),
+        ),
       ),
       darkTheme: ThemeData(
         fontFamily: 'ElvanSans',
@@ -100,6 +109,14 @@ class ElvanNirilApp extends ConsumerWidget {
         ),
         scaffoldBackgroundColor: Colors.black, // AMOLED Black
         useMaterial3: true,
+        textTheme: ThemeData.dark().textTheme.apply(fontFamily: 'ElvanSans'),
+        cupertinoOverrideTheme: const CupertinoThemeData(
+          primaryColor: CupertinoColors.activeBlue,
+          textTheme: CupertinoTextThemeData(
+            textStyle: TextStyle(fontFamily: 'ElvanSans', color: Colors.white),
+            actionTextStyle: TextStyle(fontFamily: 'ElvanSans', color: CupertinoColors.activeBlue),
+          ),
+        ),
       ),
       home: Consumer(
         builder: (context, ref, _) {
@@ -156,7 +173,7 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
     }
 
     if (editor != null) {
-      Navigator.of(context).push(CupertinoPageRoute(builder: (_) => editor!));
+      Navigator.of(context).push(ElvanPageRoute(builder: (_) => editor!));
     }
   }
 

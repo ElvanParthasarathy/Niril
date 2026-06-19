@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'translations.dart';
+import 'language_keys/ta.dart';
+import 'language_keys/en.dart';
 import '../core/preferences_service.dart';
 
 class LocaleNotifier extends Notifier<Locale?> {
