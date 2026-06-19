@@ -105,7 +105,10 @@ class ElvanCollapsedBar extends ConsumerWidget {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const SizedBox(width: 8), // Replicate the internal left padding of the Pill
+                                  // MICRO-NUDGE: Sub-pixel correction to perfectly catch the Expanded Bar's text.
+                                  // Since it was jumping slightly to the right, we reduced this from 8.0 to 7.2 to shift the native text left.
+                                  // Tune this slightly (e.g. 7.5 or 7.0) if it still jumps.
+                                  const SizedBox(width: 7.2), // Replicate the internal left padding of the Pill
                                   Opacity(
                                     opacity: 1.0 - liftProgress,
                                     child: expandedSmallTitle!,
