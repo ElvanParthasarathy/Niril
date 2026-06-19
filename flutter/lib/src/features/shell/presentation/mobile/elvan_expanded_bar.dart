@@ -69,15 +69,11 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         // SCALE AND MOVE LOGIC:
         final double t = normalizedProgress; // Use normalizedProgress to finish exactly at handoff!
         
-        // THE "LATE SCALE" CHOREOGRAPHY (iOS Native Style):
-        // 1. t < startScaleThreshold: The text is HUGE and locked to the bottom of the bar. It moves straight up linearly.
-        // 2. t > startScaleThreshold: The text rapidly shrinks and sweeps diagonally to lock into the sticky header.
-        const double startScaleThreshold = 0.55; // Wait until 55% scrolled before doing ANY scaling.
-        final double rawSlant = ((t - startScaleThreshold) / (1.0 - startScaleThreshold)).clamp(0.0, 1.0);
-        
+        // CONTINUOUS DIAGONAL CHOREOGRAPHY:
+        // No locked phases. The text scales and moves continuously for the entire duration of the scroll.
         // Using a pure linear diagonal (1-to-1 movement) because the user's scrolling thumb
         // is already providing the physical curve. This creates the most connected, tactile feel.
-        final double slantT = rawSlant;
+        final double slantT = t;
         
         final double currentScale = 1.0 - (1.0 - (20.0 / 34.0)) * slantT;
         // Native text X offset: 16 (Positioned) + 4 (Padding) + 8 (SizedBox) = 28px
