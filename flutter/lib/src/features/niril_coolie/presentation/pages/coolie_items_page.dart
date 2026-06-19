@@ -17,7 +17,7 @@ class CoolieItemsPage extends ConsumerWidget {
         : allItems.where((item) => item.toLowerCase().contains(query)).toList();
 
     return SliverPadding(
-      padding: const EdgeInsets.only(left: 12, right: 12, top: 32, bottom: 120),
+      padding: const EdgeInsets.only(left: 12, right: 12, bottom: 120),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
