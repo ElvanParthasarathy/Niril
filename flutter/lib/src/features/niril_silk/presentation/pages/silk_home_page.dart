@@ -10,7 +10,7 @@ class SilkHomePage extends StatelessWidget {
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) => Container(
-            margin: const EdgeInsets.only(bottom: 24),
+            margin: const EdgeInsets.only(bottom: 16),
             height: 100,
             decoration: BoxDecoration(
               color: Colors.blue.withValues(alpha: 0.1),

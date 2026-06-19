@@ -17,12 +17,7 @@ class SilkReceiptsPage extends ConsumerWidget {
         : allItems.where((item) => item.toLowerCase().contains(query)).toList();
 
     return SliverPadding(
-      padding: const EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 0,
-        bottom: 120, // clearance for the floating pill
-      ),
+      padding: const EdgeInsets.only(left: 12, right: 12, top: 32, bottom: 120),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate(
           (context, index) {
