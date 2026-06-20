@@ -301,7 +301,9 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
                       onTap: _onAddPressed,
                     ),
                     const SizedBox(width: 14),
-                    const ElvanPopupMenu(),
+                    ElvanPopupMenu(
+                      showSelectOption: i > 0,
+                    ),
                     const SizedBox(width: 7),
                   ],
                   navItems: _masterNavItems.take(_navItemCount).toList(),

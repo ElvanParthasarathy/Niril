@@ -89,7 +89,12 @@ class PathugappuAmaippugalPage extends ConsumerWidget {
                                   color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                                 ),
                                 filled: true,
-                                fillColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+                                fillColor: WidgetStateColor.resolveWith((states) {
+                                  if (states.contains(WidgetState.focused)) {
+                                    return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12);
+                                  }
+                                  return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08);
+                                }),
                                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(100),

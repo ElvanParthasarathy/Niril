@@ -17,7 +17,12 @@ final popupMenuOpenProvider = StateProvider<bool>((ref) => false);
 /// Completely bypasses Material's PopupMenuButton to provide precise styling,
 /// animations, and zero-padding logic.
 class ElvanPopupMenu extends ConsumerStatefulWidget {
-  const ElvanPopupMenu({super.key});
+  final bool showSelectOption;
+  
+  const ElvanPopupMenu({
+    super.key,
+    this.showSelectOption = false,
+  });
 
   @override
   ConsumerState<ElvanPopupMenu> createState() => _ElvanPopupMenuState();
@@ -136,6 +141,41 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                           ),
                         ),
                       ),
+                      if (widget.showSelectOption) ...[
+                        Divider(
+                          height: 1, 
+                          thickness: 1, 
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1)
+                        ),
+                        InkWell(
+                          borderRadius: BorderRadius.circular(100),
+                          splashFactory: NoSplash.splashFactory,
+                          splashColor: Colors.transparent,
+                          highlightColor: Theme.of(context).brightness == Brightness.dark 
+                              ? Colors.white.withValues(alpha: 0.25) 
+                              : Colors.black.withValues(alpha: 0.15),
+                          onTap: () {
+                            _closeMenu();
+                            // TODO: Add selection logic
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  CupertinoIcons.checkmark_circle,
+                                  size: 22,
+                                  color: Theme.of(context).brightness == Brightness.dark 
+                                      ? Colors.white 
+                                      : Colors.black,
+                                ),
+                                const SizedBox(width: 12),
+                                Text('select'.tr(context, ref), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
