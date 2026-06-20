@@ -141,14 +141,20 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
     return ElvanSubpageShell(
       title: title,
       slivers: [
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: ElvanSettingsSection(
-              dividerIndent: 16.0,
-              children: [
-                // 1. Address (Mugavari)
-                ElvanSettingsAnimatedExpand(
+        SliverPadding(
+          padding: const EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 0,
+            bottom: 32,
+          ),
+          sliver: SliverList.list(
+            children: [
+              ElvanSettingsSection(
+                dividerIndent: 16.0,
+                children: [
+                  // 1. Address (Mugavari)
+                  ElvanSettingsAnimatedExpand(
                   keyPrefix: 'mugavari',
                   isEditing: _editingSection == 'mugavari',
                   editChild: _buildEditContainer(
@@ -379,9 +385,9 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
                     onEdit: () => _beginEdit('country', _countryPrimary, _countrySecondary),
                   ),
                 ),
-
               ],
             ),
+            ],
           ),
         ),
       ],

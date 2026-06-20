@@ -424,13 +424,17 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
     return ElvanSubpageShell(
       title: title,
       slivers: [
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Column(
-              children: [
-                _buildProfileSwitcher(),
-                ElvanSettingsSection(
+        SliverPadding(
+          padding: const EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 0,
+            bottom: 32,
+          ),
+          sliver: SliverList.list(
+            children: [
+              _buildProfileSwitcher(),
+              ElvanSettingsSection(
                   dividerIndent: 16.0,
                   children: [
                     // 1. Business Name (Niruvanathin Peyar)
@@ -620,11 +624,10 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                 ),
               ],
             ),
-              ], // Closes Column children
-            ), // Closes Column
-          ), // Closes Padding
-        ), // Closes SliverToBoxAdapter
-      ], // Closes slivers
+            ],
+          ),
+        ),
+      ],
     ); // Closes ElvanSubpageShell
   }
 }

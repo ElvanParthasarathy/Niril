@@ -163,7 +163,7 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                         overflow: TextOverflow.ellipsis,
                         style: titleStyle.copyWith(
                           color: Theme.of(context).brightness == Brightness.dark
-                              ? Color.lerp(Colors.white, Colors.white.withOpacity(0.95), t)
+                              ? Colors.white
                               : Colors.black87,
                         ),
                       ),
