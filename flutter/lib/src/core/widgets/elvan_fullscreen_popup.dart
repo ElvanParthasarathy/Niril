@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:elvan_niril/src/features/shell/presentation/mobile/elvan_shell.dart';
-import 'widgets/elvan_close_button.dart';
+import '../../features/shell/presentation/mobile/widgets/elvan_close_button.dart';
 
 /// A wrapper around [ElvanShell] exclusively designed for fullscreen popups (modals).
 /// It inherently injects the [ElvanCloseButton] into the shell's physics engine

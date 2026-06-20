@@ -29,7 +29,7 @@ class ElvanSubpageShell extends StatelessWidget {
       showNavbar: false,
       leadingWidget: const ElvanBackButton(),
       navActions: navActions,
-      startCollapsed: startCollapsed,
+      startCollapsed: true,
       backgroundColor: backgroundColor,
       syncWithGlobalHeader: false,
     );

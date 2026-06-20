@@ -82,6 +82,7 @@ class ElvanSettingsTextField extends StatelessWidget {
   final ValueChanged<String> onChanged;
   final int maxLines;
   final TextInputType? keyboardType;
+  final Widget? suffixIcon;
 
   const ElvanSettingsTextField({
     super.key,
@@ -90,6 +91,7 @@ class ElvanSettingsTextField extends StatelessWidget {
     required this.onChanged,
     this.maxLines = 1,
     this.keyboardType,
+    this.suffixIcon,
   });
 
   @override
@@ -138,6 +140,7 @@ class ElvanSettingsTextField extends StatelessWidget {
               borderRadius: BorderRadius.circular(maxLines > 1 ? 16 : 100),
               borderSide: BorderSide.none,
             ),
+            suffixIcon: suffixIcon,
           ),
         ),
       ],

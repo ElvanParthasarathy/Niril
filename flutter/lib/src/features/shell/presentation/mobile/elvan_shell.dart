@@ -133,6 +133,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
   static const double _kExpandedHeight = 320.0;
 
   bool _isNavbarVisible = true;
+  double _lastScrollDelta = 0.0;
   final ValueNotifier<bool> _isHeaderExpandedNotifier = ValueNotifier<bool>(true);
   final ValueNotifier<bool> _isSearchActiveNotifier = ValueNotifier<bool>(false);
   final ValueNotifier<double> _dynamicPillHeightNotifier = ValueNotifier<double>(50.0);
@@ -308,20 +309,10 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
 
     if (notification is ScrollUpdateNotification) {
       final delta = notification.scrollDelta ?? 0;
-      final double offset = _scrollController.offset;
-      
-      // ── BRICK WALL: Stop momentum if it tries to expand the header ──
-      // This is now mathematically handled by BrickWallScrollPhysics!
-      // But we still snap it perfectly just in case.
-      if (!_isHeaderExpandedNotifier.value && offset < snapThreshold && notification.dragDetails == null) {
-         _scrollController.position.hold(() {});
-         WidgetsBinding.instance.addPostFrameCallback((_) {
-           if (!mounted) return;
-           if (_scrollController.hasClients) {
-             _scrollController.jumpTo(snapThreshold);
-           }
-         });
-      }
+      // Track last scroll direction for velocity-based snapping
+      if (delta != 0) _lastScrollDelta = delta;
+      // Brick wall is handled entirely by ElvanBrickWallPhysics at the physics level.
+      // No redundant hold()+jumpTo() needed here — one clean layer only.
 
       // ── Navbar hide/show logic ──
       if (delta > 0) {
@@ -352,17 +343,26 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
         _navbarController.reverse();
       }
 
-      // ── Samsung One UI Physics: Snapping the Header ──
-      // Snap to the hand-off point where icons first stick to ceiling
+      // ── Samsung One UI Physics: Velocity-Based Header Snapping ──
+      // Uses last scroll direction (velocity) to decide snap target.
+      // Fast swipe down → always collapse. Fast swipe up → always expand.
+      // Gentle release (near-zero velocity) → snap to nearest.
       final double statusBarHeight = MediaQuery.paddingOf(context).top;
       final double snapThreshold = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
       
       final currentOffset = _scrollController.offset;
       if (currentOffset > 0 && currentOffset < snapThreshold) {
-        // We are caught in the middle! Snap to the closest stage.
-        final targetOffset = currentOffset > (snapThreshold / 2) ? snapThreshold : 0.0;
-        final double distance = (currentOffset - targetOffset).abs();
+        // Determine target based on velocity, not just position!
+        final double targetOffset;
+        if (_lastScrollDelta.abs() > 1.0) {
+          // Has clear velocity → snap in the direction of movement
+          targetOffset = _lastScrollDelta > 0 ? snapThreshold : 0.0;
+        } else {
+          // Near-zero velocity (gentle release) → snap to nearest
+          targetOffset = currentOffset > (snapThreshold / 2) ? snapThreshold : 0.0;
+        }
         
+        final double distance = (currentOffset - targetOffset).abs();
         // Adaptive duration: longer minimum duration for a gentle settle, softer scaling
         final int durationMs = (250 + (distance * 0.5)).toInt().clamp(250, 450);
         
@@ -376,6 +376,9 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
             );
           }
         });
+        
+        // Reset velocity tracker
+        _lastScrollDelta = 0.0;
       }
     }
     return false; // allow notification to continue bubbling
@@ -558,13 +561,35 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
                               currentIndex: widget.currentIndex,
                               onTabSelected: (index) {
                                 if (index == widget.currentIndex) {
-                                  // Scroll to top if tapping the already active tab!
+                                  // Two-step scroll-to-top logic!
                                   if (_scrollController.hasClients) {
-                                    _scrollController.animateTo(
-                                      0.0,
-                                      duration: const Duration(milliseconds: 400),
-                                      curve: Curves.easeOutCubic,
-                                    );
+                                    final double statusBarHeight = MediaQuery.paddingOf(context).top;
+                                    final double snapThreshold = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
+                                    
+                                    if (_scrollController.offset > snapThreshold + 5.0) {
+                                      // 1st Tap: Scroll to the top of the list (header remains collapsed)
+                                      _scrollController.animateTo(
+                                        snapThreshold,
+                                        duration: const Duration(milliseconds: 400),
+                                        curve: Curves.easeOutCubic,
+                                      );
+                                    } else if (_scrollController.offset > 0.5) {
+                                      // 2nd Tap: Expand the header!
+                                      // Set expanded BEFORE animating so physics layer lets it pass.
+                                      // animateTo() uses DrivenScrollActivity which the brick wall
+                                      // physics naturally ignores (it only blocks BallisticScrollActivity).
+                                      _isHeaderExpandedNotifier.value = true;
+                                      if (widget.syncWithGlobalHeader) {
+                                        ref.read(headerExpandedProvider.notifier).state = true;
+                                      }
+                                      
+                                      _scrollController.animateTo(
+                                        0.0,
+                                        duration: const Duration(milliseconds: 400),
+                                        curve: Curves.easeOutCubic,
+                                      );
+                                    }
+                                    // If already at 0.0, do nothing (prevents "hitting the brick wall" bounce)
                                   }
                                 } else {
                                   widget.onTabSelected?.call(index);

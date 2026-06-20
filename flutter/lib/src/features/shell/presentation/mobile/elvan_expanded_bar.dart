@@ -109,9 +109,10 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         // 2. Where should the text end exactly at t=1?
         // We want its visual center to align with the icons' center.
         // Icons top = ceiling. Icons center = ceiling + 24.0.
-        // Scaled text height is ~23px. We add a 3px optical adjustment to push it down
+        // Scaled text height is ~23px. We add an optical adjustment to push it down
         // because font bounding boxes usually have empty space at the top.
-        final double targetTextBottomFromTop = ceiling + 24.0 + 14.5;
+        // We use 12.5 for subpages to perfectly center with the chevron, and 14.5 elsewhere.
+        final double targetTextBottomFromTop = ceiling + 24.0 + (leadingWidget != null ? 12.5 : 14.5);
         
         // 3. Linearly interpolate the absolute distance from the top of the container
         final double currentTextBottomFromTop = startTextBottomFromTop + (targetTextBottomFromTop - startTextBottomFromTop) * t;

@@ -100,8 +100,8 @@ class SilkInvoicesPage extends ConsumerWidget {
 
     return SliverPadding(
       padding: const EdgeInsets.only(
-        left: 12,
-        right: 12,
+        left: 16,
+        right: 16,
         top: 32,
         bottom: 120, // clearance for the floating pill
       ),

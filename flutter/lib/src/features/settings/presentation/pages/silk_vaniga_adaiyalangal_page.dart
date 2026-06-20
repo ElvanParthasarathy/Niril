@@ -6,8 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../localization/locale_provider.dart';
-import '../widgets/elvan_settings_controls.dart';
+import '../../../../core/widgets/elvan_bottom_sheet.dart';
 import '../../../../core/widgets/elvan_text_field.dart';
+import '../../../../core/widgets/elvan_snackbar.dart';
 import '../../../shell/presentation/mobile/elvan_subpage_shell.dart';
 import '../widgets/elvan_settings_section.dart';
 import '../widgets/elvan_settings_edit_card.dart';
@@ -28,8 +29,8 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
   String _headerStyle = 'small'; // 'small' or 'wide'
   String _tempHeaderStyle = 'small';
 
-  String _signatoryName = 'பா. வனிதாஶ்ரீ';
-  String _tempSignatoryName = 'பா. வனிதாஶ்ரீ';
+  String _signatoryName = '';
+  String _tempSignatoryName = '';
 
   String? _logoPath;
   String? _wideLogoPath;
@@ -49,29 +50,28 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
     });
   }
 
+  void _saveSection() {
+    setState(() {
+      _editingSection = null;
+    });
+    if (context.mounted) {
+      ElvanSnackbar.show(context, 'detailsSaved'.tr(context, ref));
+    }
+  }
+
   void _showHeaderStyleActionSheet() {
     final smallLabel = 'smallLogoBusinessName'.tr(context, ref);
     final wideLabel = 'wideLogoOnly'.tr(context, ref);
 
-    showModalBottomSheet(
+    showElvanSelectionBottomSheet(
       context: context,
-      useRootNavigator: true,
-      showDragHandle: true,
-      backgroundColor: Theme.of(context).brightness == Brightness.dark 
-          ? const Color(0xFF111111) 
-          : Colors.white,
-      builder: (BuildContext context) {
-        return ElvanSettingsSelectionBottomSheet(
-          title: 'billHeaderStyle'.tr(context, ref),
-          items: [smallLabel, wideLabel],
-          currentValue: _tempHeaderStyle == 'wide' ? wideLabel : smallLabel,
-          onSelected: (val) {
-            setState(() {
-              _tempHeaderStyle = val == wideLabel ? 'wide' : 'small';
-            });
-            Navigator.pop(context);
-          },
-        );
+      title: 'billHeaderStyle'.tr(context, ref),
+      items: [smallLabel, wideLabel],
+      currentValue: _tempHeaderStyle == 'wide' ? wideLabel : smallLabel,
+      onSelected: (val) {
+        setState(() {
+          _tempHeaderStyle = val == wideLabel ? 'wide' : 'small';
+        });
       },
     );
   }
@@ -216,7 +216,7 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
       slivers: [
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 32),
             child: ElvanSettingsSection(
               children: [
                 // 1. Logo
@@ -229,7 +229,7 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                       imagePath: _logoPath,
                       onChange: (path) => setState(() => _logoPath = path),
                     ),
-                    onSave: () => setState(() => _editingSection = null),
+                    onSave: _saveSection,
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'businessLogo'.tr(context, ref),
@@ -256,7 +256,7 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                       imagePath: _wideLogoPath,
                       onChange: (path) => setState(() => _wideLogoPath = path),
                     ),
-                    onSave: () => setState(() => _editingSection = null),
+                    onSave: _saveSection,
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'wideLogoLabel'.tr(context, ref),
@@ -306,8 +306,8 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                     onSave: () {
                       setState(() {
                         _headerStyle = _tempHeaderStyle;
-                        _editingSection = null;
                       });
+                      _saveSection();
                     },
                   ),
                   displayChild: ElvanSettingsDisplayRow(
@@ -363,8 +363,8 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                     onSave: () {
                       setState(() {
                         _signatoryName = _tempSignatoryName;
-                        _editingSection = null;
                       });
+                      _saveSection();
                     },
                   ),
                   displayChild: ElvanSettingsDisplayRow(

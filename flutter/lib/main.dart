@@ -100,6 +100,12 @@ class ElvanNirilApp extends ConsumerWidget {
             actionTextStyle: TextStyle(fontFamily: 'ElvanSans', color: CupertinoColors.activeBlue),
           ),
         ),
+        snackBarTheme: SnackBarThemeData(
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(100),
+          ),
+        ),
       ),
       darkTheme: ThemeData(
         fontFamily: 'ElvanSans',
@@ -115,6 +121,12 @@ class ElvanNirilApp extends ConsumerWidget {
           textTheme: CupertinoTextThemeData(
             textStyle: TextStyle(fontFamily: 'ElvanSans', color: Colors.white),
             actionTextStyle: TextStyle(fontFamily: 'ElvanSans', color: CupertinoColors.activeBlue),
+          ),
+        ),
+        snackBarTheme: SnackBarThemeData(
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(100),
           ),
         ),
       ),
@@ -303,6 +315,7 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
                     const SizedBox(width: 14),
                     ElvanPopupMenu(
                       showSelectOption: i > 0,
+                      isSilkHome: ref.watch(appModeProvider) != AppMode.coolie && i == 0,
                     ),
                     const SizedBox(width: 7),
                   ],

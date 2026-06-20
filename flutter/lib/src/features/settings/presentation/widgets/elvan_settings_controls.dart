@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../localization/locale_provider.dart';
+import '../../../../core/widgets/elvan_bottom_sheet.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/elvan_text_field.dart';
 import '../../../../localization/locale_provider.dart';
 
@@ -26,80 +29,6 @@ class ElvanSettingsSwitch extends StatelessWidget {
       inactiveThumbColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
       inactiveTrackColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
       onChanged: onChanged,
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// ElvanSettingsSelectionBottomSheet — The standard bottom sheet for selections
-// ─────────────────────────────────────────────────────────────────────────────
-class ElvanSettingsSelectionBottomSheet extends ConsumerWidget {
-  final String title;
-  final List<String> items;
-  final String currentValue;
-  final ValueChanged<String> onSelected;
-
-  const ElvanSettingsSelectionBottomSheet({
-    super.key,
-    required this.title,
-    required this.items,
-    required this.currentValue,
-    required this.onSelected,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 24, right: 24, bottom: 8, top: 12),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-              ),
-            ),
-          ),
-          ...items.map((item) {
-            final isSelected = item == currentValue;
-            return InkWell(
-              onTap: () {
-                onSelected(item);
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                child: Row(
-                  children: [
-                    Text(
-                      item.toLowerCase().tr(context, ref),
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                        color: isSelected 
-                            ? Theme.of(context).colorScheme.onSurface 
-                            : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-                      ),
-                    ),
-                    const Spacer(),
-                    if (isSelected)
-                      Icon(
-                        Icons.check,
-                        color: Theme.of(context).colorScheme.onSurface,
-                        size: 20,
-                      ),
-                  ],
-                ),
-              ),
-            );
-          }),
-          const SizedBox(height: 16),
-        ],
-      ),
     );
   }
 }
@@ -140,24 +69,12 @@ class ElvanSettingsDropdown extends ConsumerWidget {
         ),
         InkWell(
           onTap: () {
-            showModalBottomSheet(
+            showElvanSelectionBottomSheet(
               context: context,
-              useRootNavigator: true,
-              showDragHandle: true,
-              backgroundColor: Theme.of(context).brightness == Brightness.dark 
-                  ? const Color(0xFF111111) 
-                  : Colors.white,
-              builder: (BuildContext context) {
-                return ElvanSettingsSelectionBottomSheet(
-                  title: label,
-                  items: items,
-                  currentValue: value,
-                  onSelected: (val) {
-                    Navigator.pop(context);
-                    onChanged(val);
-                  },
-                );
-              },
+              title: label,
+              items: items,
+              currentValue: value,
+              onSelected: onChanged,
             );
           },
           borderRadius: BorderRadius.circular(100),

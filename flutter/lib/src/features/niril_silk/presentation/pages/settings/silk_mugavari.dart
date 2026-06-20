@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/widgets/elvan_snackbar.dart';
 
 import '../../../../../localization/locale_provider.dart';
+import '../../../../../core/state/app_state.dart';
 import '../../../../shell/presentation/mobile/elvan_subpage_shell.dart';
 import '../../../../settings/presentation/widgets/elvan_settings_section.dart';
 import '../../../../settings/presentation/widgets/elvan_settings_edit_card.dart';
@@ -41,8 +42,14 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
   @override
   void initState() {
     super.initState();
-    _countryPrimary = 'இந்தியா';
-    _countrySecondary = 'India';
+    final primaryLang = ref.read(primaryLanguageProvider).toLowerCase();
+    if (primaryLang == 'english') {
+      _countryPrimary = 'India';
+      _countrySecondary = 'இந்தியா';
+    } else {
+      _countryPrimary = 'இந்தியா';
+      _countrySecondary = 'India';
+    }
   }
 
   @override
@@ -113,20 +120,20 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
     });
   }
 
-  void _handleAutoFill(String val, bool isPrimary, List<Map<String, String>> dataSet) {
+  void _handleAutoFill(String val, bool isPrimary, List<Map<String, String>> dataSet, String primaryKey, String secondaryKey) {
     if (isPrimary) {
-      final match = dataSet.where((d) => d['ta'] == val).firstOrNull;
+      final match = dataSet.where((d) => d[primaryKey] == val).firstOrNull;
       if (match != null) {
         setState(() {
-          _tempSecondary = match['en']!;
+          _tempSecondary = match[secondaryKey]!;
           _secondaryController.text = _tempSecondary;
         });
       }
     } else {
-      final match = dataSet.where((d) => d['en'] == val).firstOrNull;
+      final match = dataSet.where((d) => d[secondaryKey] == val).firstOrNull;
       if (match != null) {
         setState(() {
-          _tempPrimary = match['ta']!;
+          _tempPrimary = match[primaryKey]!;
           _primaryController.text = _tempPrimary;
         });
       }
@@ -136,7 +143,24 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
   @override
   Widget build(BuildContext context) {
     final title = 'settings_mugavari'.tr(context, ref);
-    final isBilingual = true; // Assume bilingual is enabled for now
+    final isBilingual = ref.watch(bilingualProvider);
+    final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
+    final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
+    
+    ref.listen<String>(primaryLanguageProvider, (previous, next) {
+      if (previous != null && previous != next) {
+        setState(() {
+          final tMug = _mugavariPrimary; _mugavariPrimary = _mugavariSecondary; _mugavariSecondary = tMug;
+          final tOor = _oorPrimary; _oorPrimary = _oorSecondary; _oorSecondary = tOor;
+          final tMaav = _maavattamPrimary; _maavattamPrimary = _maavattamSecondary; _maavattamSecondary = tMaav;
+          final tMaan = _maanilamPrimary; _maanilamPrimary = _maanilamSecondary; _maanilamSecondary = tMaan;
+          final tCoun = _countryPrimary; _countryPrimary = _countrySecondary; _countrySecondary = tCoun;
+        });
+      }
+    });
+
+    final primaryKey = primaryLang == 'english' ? 'en' : 'ta';
+    final secondaryKey = secondaryLang == 'english' ? 'en' : 'ta';
 
     return ElvanSubpageShell(
       title: title,
@@ -161,7 +185,7 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
                     title: 'mugavari'.tr(context, ref),
                     inputFields: [
                       ElvanSettingsTextField(
-                        label: '${'mugavari'.tr(context, ref)} (${'tamil'.tr(context, ref)})',
+                        label: '${'mugavari'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
                         initialValue: _tempPrimary,
                         onChanged: (val) => _tempPrimary = val,
                         maxLines: 2,
@@ -169,7 +193,7 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
                       if (isBilingual) const SizedBox(height: 16),
                       if (isBilingual)
                         ElvanSettingsTextField(
-                          label: '${'mugavari'.tr(context, ref)} (${'english'.tr(context, ref)})',
+                          label: '${'mugavari'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                           initialValue: _tempSecondary,
                           onChanged: (val) => _tempSecondary = val,
                           maxLines: 2,
@@ -201,14 +225,14 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
                     title: 'oor'.tr(context, ref),
                     inputFields: [
                       ElvanSettingsTextField(
-                        label: '${'oor'.tr(context, ref)} (${'tamil'.tr(context, ref)})',
+                        label: '${'oor'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
                         initialValue: _tempPrimary,
                         onChanged: (val) => _tempPrimary = val,
                       ),
                       if (isBilingual) const SizedBox(height: 16),
                       if (isBilingual)
                         ElvanSettingsTextField(
-                          label: '${'oor'.tr(context, ref)} (${'english'.tr(context, ref)})',
+                          label: '${'oor'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                           initialValue: _tempSecondary,
                           onChanged: (val) => _tempSecondary = val,
                         ),
@@ -239,14 +263,14 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
                     title: 'maavattam'.tr(context, ref),
                     inputFields: [
                       ElvanSettingsTextField(
-                        label: '${'maavattam'.tr(context, ref)} (${'tamil'.tr(context, ref)})',
+                        label: '${'maavattam'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
                         initialValue: _tempPrimary,
                         onChanged: (val) => _tempPrimary = val,
                       ),
                       if (isBilingual) const SizedBox(height: 16),
                       if (isBilingual)
                         ElvanSettingsTextField(
-                          label: '${'maavattam'.tr(context, ref)} (${'english'.tr(context, ref)})',
+                          label: '${'maavattam'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                           initialValue: _tempSecondary,
                           onChanged: (val) => _tempSecondary = val,
                         ),
@@ -277,9 +301,9 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
                     title: 'maanilam'.tr(context, ref),
                     inputFields: [
                       ElvanSettingsAutocomplete(
-                        label: '${'maanilam'.tr(context, ref)} (${'tamil'.tr(context, ref)})',
+                        label: '${'maanilam'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
                         controller: _primaryController,
-                        options: silkIndianStates.map((d) => d['ta']!).toList(),
+                        options: silkIndianStates.map((d) => d[primaryKey]!).toList(),
                         onChanged: (val) {
                           _tempPrimary = val;
                           if (val.isEmpty && isBilingual) {
@@ -287,9 +311,9 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
                             _secondaryController.clear();
                           }
                         },
-                        onSelected: (val) => _handleAutoFill(val, true, silkIndianStates),
+                        onSelected: (val) => _handleAutoFill(val, true, silkIndianStates, primaryKey, secondaryKey),
                         searchMatch: (option, query) {
-                          final match = silkIndianStates.firstWhere((d) => d['ta'] == option, orElse: () => {});
+                          final match = silkIndianStates.firstWhere((d) => d[primaryKey] == option, orElse: () => {});
                           if (match.isEmpty) return false;
                           final q = query.toLowerCase();
                           return match['ta']!.toLowerCase().contains(q) || match['en']!.toLowerCase().contains(q);
@@ -298,14 +322,14 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
                       if (isBilingual) const SizedBox(height: 16),
                       if (isBilingual)
                         ElvanSettingsAutocomplete(
-                          label: '${'maanilam'.tr(context, ref)} (${'english'.tr(context, ref)})',
+                          label: '${'maanilam'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                           controller: _secondaryController,
-                          options: silkIndianStates.map((d) => d['en']!).toList(),
+                          options: silkIndianStates.map((d) => d[secondaryKey]!).toList(),
                           onChanged: (val) => _tempSecondary = val,
-                          onSelected: (val) => _handleAutoFill(val, false, silkIndianStates),
+                          onSelected: (val) => _handleAutoFill(val, false, silkIndianStates, primaryKey, secondaryKey),
                           enabled: false,
                           searchMatch: (option, query) {
-                            final match = silkIndianStates.firstWhere((d) => d['en'] == option, orElse: () => {});
+                            final match = silkIndianStates.firstWhere((d) => d[secondaryKey] == option, orElse: () => {});
                             if (match.isEmpty) return false;
                             final q = query.toLowerCase();
                             return match['ta']!.toLowerCase().contains(q) || match['en']!.toLowerCase().contains(q);
@@ -338,14 +362,14 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
                     title: 'countryLabel'.tr(context, ref),
                     inputFields: [
                       ElvanSettingsAutocomplete(
-                        label: '${'countryLabel'.tr(context, ref)} (${'tamil'.tr(context, ref)})',
+                        label: '${'countryLabel'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
                         controller: _primaryController,
-                        options: silkCountries.map((d) => d['ta']!).toList(),
+                        options: silkCountries.map((d) => d[primaryKey]!).toList(),
                         onChanged: (val) => _tempPrimary = val,
-                        onSelected: (val) => _handleAutoFill(val, true, silkCountries),
+                        onSelected: (val) => _handleAutoFill(val, true, silkCountries, primaryKey, secondaryKey),
                         enabled: false,
                         searchMatch: (option, query) {
-                          final match = silkCountries.firstWhere((d) => d['ta'] == option, orElse: () => {});
+                          final match = silkCountries.firstWhere((d) => d[primaryKey] == option, orElse: () => {});
                           if (match.isEmpty) return false;
                           final q = query.toLowerCase();
                           return match['ta']!.toLowerCase().contains(q) || match['en']!.toLowerCase().contains(q);
@@ -354,14 +378,14 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
                       if (isBilingual) const SizedBox(height: 16),
                       if (isBilingual)
                         ElvanSettingsAutocomplete(
-                          label: '${'countryLabel'.tr(context, ref)} (${'english'.tr(context, ref)})',
+                          label: '${'countryLabel'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                           controller: _secondaryController,
-                          options: silkCountries.map((d) => d['en']!).toList(),
+                          options: silkCountries.map((d) => d[secondaryKey]!).toList(),
                           onChanged: (val) => _tempSecondary = val,
-                          onSelected: (val) => _handleAutoFill(val, false, silkCountries),
+                          onSelected: (val) => _handleAutoFill(val, false, silkCountries, primaryKey, secondaryKey),
                           enabled: false,
                           searchMatch: (option, query) {
-                            final match = silkCountries.firstWhere((d) => d['en'] == option, orElse: () => {});
+                            final match = silkCountries.firstWhere((d) => d[secondaryKey] == option, orElse: () => {});
                             if (match.isEmpty) return false;
                             final q = query.toLowerCase();
                             return match['ta']!.toLowerCase().contains(q) || match['en']!.toLowerCase().contains(q);

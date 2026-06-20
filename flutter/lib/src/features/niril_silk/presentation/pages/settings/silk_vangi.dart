@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/widgets/elvan_snackbar.dart';
 
 import '../../../../../localization/locale_provider.dart';
+import '../../../../../core/state/app_state.dart';
 import '../../../../shell/presentation/mobile/elvan_subpage_shell.dart';
 import '../../../../settings/presentation/widgets/elvan_settings_section.dart';
 import '../../../../settings/presentation/widgets/elvan_settings_edit_card.dart';
@@ -83,6 +84,23 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isBilingual = ref.watch(bilingualProvider);
+    final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
+    final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
+
+    ref.listen<String>(primaryLanguageProvider, (previous, next) {
+      if (previous != null && previous != next) {
+        setState(() {
+          final t1 = _bankNameTamil;
+          _bankNameTamil = _bankNameEnglish;
+          _bankNameEnglish = t1;
+
+          final t2 = _branchNameTamil;
+          _branchNameTamil = _branchNameEnglish;
+          _branchNameEnglish = t2;
+        });
+      }
+    });
 
     return ElvanSubpageShell(
       title: 'vangi'.tr(context, ref),
@@ -108,16 +126,17 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
                       title: 'bankName'.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
-                          label: 'bankNameTamil'.tr(context, ref),
+                          label: '${'bankName'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
                           initialValue: _tempPrimary,
                           onChanged: (v) => _tempPrimary = v,
                         ),
-                        const SizedBox(height: 16),
-                        ElvanSettingsTextField(
-                          label: 'bankNameEnglish'.tr(context, ref),
-                          initialValue: _tempSecondary,
-                          onChanged: (v) => _tempSecondary = v,
-                        ),
+                        if (isBilingual) const SizedBox(height: 16),
+                        if (isBilingual)
+                          ElvanSettingsTextField(
+                            label: '${'bankName'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
+                            initialValue: _tempSecondary,
+                            onChanged: (v) => _tempSecondary = v,
+                          ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
                       onSave: () {
@@ -132,7 +151,7 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'bankName'.tr(context, ref),
                       primaryValue: _bankNameTamil,
-                      secondaryValue: _bankNameEnglish,
+                      secondaryValue: isBilingual ? _bankNameEnglish : null,
                       onEdit: () {
                         setState(() {
                           _tempPrimary = _bankNameTamil;
@@ -150,16 +169,17 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
                       title: 'branchName'.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
-                          label: 'branchNameTamil'.tr(context, ref),
+                          label: '${'branchName'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
                           initialValue: _tempPrimary,
                           onChanged: (v) => _tempPrimary = v,
                         ),
-                        const SizedBox(height: 16),
-                        ElvanSettingsTextField(
-                          label: 'branchNameEnglish'.tr(context, ref),
-                          initialValue: _tempSecondary,
-                          onChanged: (v) => _tempSecondary = v,
-                        ),
+                        if (isBilingual) const SizedBox(height: 16),
+                        if (isBilingual)
+                          ElvanSettingsTextField(
+                            label: '${'branchName'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
+                            initialValue: _tempSecondary,
+                            onChanged: (v) => _tempSecondary = v,
+                          ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
                       onSave: () {
@@ -174,7 +194,7 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'branchName'.tr(context, ref),
                       primaryValue: _branchNameTamil,
-                      secondaryValue: _branchNameEnglish,
+                      secondaryValue: isBilingual ? _branchNameEnglish : null,
                       onEdit: () {
                         setState(() {
                           _tempPrimary = _branchNameTamil;
