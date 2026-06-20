@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/widgets/elvan_snackbar.dart';
+import '../../../../../core/widgets/elvan_snackbar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../../localization/locale_provider.dart';

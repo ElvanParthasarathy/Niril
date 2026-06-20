@@ -92,7 +92,7 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                   width: 180, // Compact pill size
                   decoration: BoxDecoration(
                     color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white).withValues(alpha: 0.88),
-                    borderRadius: BorderRadius.circular(100), // Perfect circular pill!
+                    borderRadius: BorderRadius.circular(widget.showSelectOption ? 24 : 100), // Dynamic corner radius!
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.12),
@@ -105,7 +105,9 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       InkWell(
-                        borderRadius: BorderRadius.circular(100),
+                        borderRadius: widget.showSelectOption 
+                            ? const BorderRadius.vertical(top: Radius.circular(24)) 
+                            : BorderRadius.circular(100),
                         splashFactory: NoSplash.splashFactory, // Instantly fills, no growing!
                         splashColor: Colors.transparent,
                         highlightColor: Theme.of(context).brightness == Brightness.dark 
@@ -148,7 +150,7 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                           color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1)
                         ),
                         InkWell(
-                          borderRadius: BorderRadius.circular(100),
+                          borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
                           splashFactory: NoSplash.splashFactory,
                           splashColor: Colors.transparent,
                           highlightColor: Theme.of(context).brightness == Brightness.dark 
