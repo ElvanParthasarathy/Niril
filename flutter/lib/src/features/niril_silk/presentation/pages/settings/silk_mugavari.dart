@@ -43,13 +43,10 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
   void initState() {
     super.initState();
     final primaryLang = ref.read(primaryLanguageProvider).toLowerCase();
-    if (primaryLang == 'english') {
-      _countryPrimary = 'India';
-      _countrySecondary = 'இந்தியா';
-    } else {
-      _countryPrimary = 'இந்தியா';
-      _countrySecondary = 'India';
-    }
+    final secondaryLang = ref.read(secondaryLanguageProvider).toLowerCase();
+    
+    _countryPrimary = primaryLang == 'english' ? 'India' : 'இந்தியா';
+    _countrySecondary = secondaryLang == 'english' ? 'India' : 'இந்தியா';
   }
 
   @override
