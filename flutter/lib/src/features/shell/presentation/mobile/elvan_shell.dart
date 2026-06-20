@@ -449,6 +449,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
               expandedHeight: _kExpandedHeight,
               isHeaderExpandedNotifier: _isHeaderExpandedNotifier, // Passed to content
               isSearchActiveNotifier: _isSearchActiveNotifier,
+              dynamicPillHeightNotifier: _dynamicPillHeightNotifier, // Pass to sync text fade
               leadingWidget: widget.leadingWidget,
               showLeadingWidgetInExpandedBar: widget.showLeadingWidgetInExpandedBar,
             ),
@@ -610,20 +611,6 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
             dynamicPillHeightNotifier: _dynamicPillHeightNotifier,
             pillKey: _pillKey,
             leadingWidget: widget.leadingWidget,
-            expandedSmallTitle: widget.title != null ? Text(
-              widget.title!,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 20, // Slightly larger and bolder
-                fontWeight: FontWeight.bold,
-                letterSpacing: -0.3,
-                color: Theme.of(context).brightness == Brightness.dark 
-                    ? Colors.white.withOpacity(0.95) 
-                    : Colors.black,
-                height: 1.15,
-              ),
-            ) : null,
             isSearchActiveNotifier: _isSearchActiveNotifier,
           ),
         ],

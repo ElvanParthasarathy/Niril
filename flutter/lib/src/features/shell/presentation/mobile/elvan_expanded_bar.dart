@@ -12,6 +12,7 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
     required this.navActions,
     required this.statusBarHeight,
     required this.expandedHeight,
+    this.dynamicPillHeightNotifier,
     this.leadingWidget,
     required this.isSearchActiveNotifier,
     required this.isMenuOpen,
@@ -21,6 +22,7 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
   final List<Widget> navActions;
   final double statusBarHeight;
   final double expandedHeight;
+  final ValueNotifier<double>? dynamicPillHeightNotifier;
   final Widget? leadingWidget;
   final ValueNotifier<bool> isSearchActiveNotifier;
   final bool isMenuOpen;
@@ -92,15 +94,46 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
         // 2. Compute the two endpoints
         // START (t=0): text visually centered on screen (but clamped to left margin if too long)
         final double centeredLeft = math.max(16.0, (screenWidth - textWidth) / 2);
-        // END (t=1): text lands exactly where the collapsed bar's small title sits
-        //   Home page:  Positioned(left:16) + Padding(left:8)  = 24px
+        // END (t=1): text lands further to the right
         //   Subpage:    Positioned(left:16) + Chevron(50) + Gap(12) = 78px
-        final double targetLeft = (leadingWidget != null ? 78.0 : 24.0) + xNudge;
+        final double targetLeft = leadingWidget != null ? 78.0 + xNudge : 32.0;
 
-        // 3. Pure linear interpolation — one formula, zero fighting forces
+        // Pure linear interpolation — one formula, zero fighting forces
         final double currentLeft = centeredLeft + (targetLeft - centeredLeft) * t;
         final double currentScale = 1.0 - (1.0 - (20.0 / 34.0)) * t;
-        final double currentBottom = 128.0 - ((99.0 + yNudge) * t);
+        
+        // ── PERFECT DIAGONAL TRAJECTORY & PINNING ──
+        // 1. Where does the text start relative to the top of the container?
+        final double startTextBottomFromTop = maxExtent - 128.0;
+        
+        // 2. Where should the text end exactly at t=1?
+        // We want its visual center to align with the icons' center.
+        // Icons top = ceiling. Icons center = ceiling + 24.0.
+        // Scaled text height is ~23px. We add a 3px optical adjustment to push it down
+        // because font bounding boxes usually have empty space at the top.
+        final double targetTextBottomFromTop = ceiling + 24.0 + 14.5;
+        
+        // 3. Linearly interpolate the absolute distance from the top of the container
+        final double currentTextBottomFromTop = startTextBottomFromTop + (targetTextBottomFromTop - startTextBottomFromTop) * t;
+        
+        // 4. Convert back to "bottom" coordinate so Positioned and Transform.scale work natively.
+        // Since currentHeight shrinks during the final 12px (when t=1), subtracting from currentHeight
+        // mathematically glues the text to the ceiling with the icons, completely eliminating the overshoot!
+        final double currentBottom = currentHeight - currentTextBottomFromTop;
+        
+        // ── MATCH THE PILL FADE TIMING ──
+        // The text will stay perfectly visible and locked into place right up until
+        // the list cards collide with the icons. At the exact moment the pill background
+        // starts to fade IN to protect the icons, the text will synchronously fade OUT!
+        double liftProgress = 0.0;
+        final double currentPillHeight = dynamicPillHeightNotifier?.value ?? 48.0;
+        const double cardPadding = 21.0; // Matches ElvanCollapsedBar default
+        final double collisionOffset = (expandedHeight + cardPadding) - (ceiling + currentPillHeight);
+        final double liftStartOffset = collisionOffset - 4.0;
+        
+        if (shrinkOffset > liftStartOffset) {
+          liftProgress = ((shrinkOffset - liftStartOffset) / 12.0).clamp(0.0, 1.0);
+        }
 
         return Container(
           color: Colors.transparent,
@@ -115,7 +148,7 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                 left: currentLeft,
                 bottom: currentBottom,
                 child: Opacity(
-                  opacity: isPinned ? 0.0 : 1.0, // Hand off to Collapsed Bar when pinned!
+                  opacity: 1.0 - liftProgress, // Fade OUT exactly when pill fades IN!
                   child: Transform.scale(
                     scale: currentScale,
                     alignment: Alignment.bottomLeft,

@@ -148,7 +148,7 @@ class ShellDemoScreen extends ConsumerStatefulWidget {
 
 class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
   int _currentTab = 0; // Start on "Invoices" tab
-  int _navItemCount = 4; // Dev testing count
+  int _navItemCount = 4; // Finalized count without debug
 
   void _onAddPressed() {
     final mode = ref.read(appModeProvider);

@@ -135,7 +135,7 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
           color: isDark ? const Color(0xFF1E1E1E).withValues(alpha: 0.88) : const Color(0xFFFFFFFF).withValues(alpha: 0.88),
           borderRadius: BorderRadius.circular(100),
           border: Border.all(
-            color: isDark ? const Color(0xFF333333).withValues(alpha: 0.6) : const Color(0xFFFFFFFF).withValues(alpha: 0.6),
+            color: isDark ? const Color(0xFF333333).withValues(alpha: 0.15) : const Color(0xFFFFFFFF).withValues(alpha: 0.6),
             width: 0.5,
           ),
           boxShadow: [

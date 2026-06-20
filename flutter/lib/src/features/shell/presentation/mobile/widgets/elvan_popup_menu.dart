@@ -80,8 +80,8 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                 curve: Curves.easeOutCubic,
                 builder: (context, value, child) {
                   return Transform.scale(
-                    scale: 0.95 + (0.05 * value),
-                    alignment: Alignment.centerRight, // Grow out directly from the 3-dot icon's center!
+                    scale: 0.2 + (0.8 * value), // Grows from 20% to 100% size
+                    alignment: Alignment.topRight, // Originates from the top right corner (where the 3 dots are)
                     child: Opacity(
                       opacity: value,
                       child: child,
@@ -93,26 +93,36 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                   decoration: BoxDecoration(
                     color: (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white).withValues(alpha: 0.88),
                     borderRadius: BorderRadius.circular(widget.showSelectOption ? 24 : 100), // Dynamic corner radius!
+                    border: Border.all(
+                      color: Theme.of(context).brightness == Brightness.dark 
+                          ? const Color(0xFF333333).withValues(alpha: 0.15) 
+                          : const Color(0xFFFFFFFF).withValues(alpha: 0.6),
+                      width: 0.5,
+                    ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.12),
-                        blurRadius: 24,
-                        offset: const Offset(0, 8),
+                        blurRadius: 16,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 4),
+                        color: Colors.black.withValues(alpha: 0.05),
                       ),
                     ],
                   ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
+                  child: Material(
+                    color: Colors.transparent,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
                       InkWell(
                         borderRadius: widget.showSelectOption 
                             ? const BorderRadius.vertical(top: Radius.circular(24)) 
                             : BorderRadius.circular(100),
-                        splashFactory: NoSplash.splashFactory, // Instantly fills, no growing!
-                        splashColor: Colors.transparent,
                         highlightColor: Theme.of(context).brightness == Brightness.dark 
-                            ? Colors.white.withValues(alpha: 0.25) 
-                            : Colors.black.withValues(alpha: 0.15), // Highly visible instant highlight
+                            ? Colors.white.withValues(alpha: 0.35) 
+                            : Colors.black.withValues(alpha: 0.45),
+                        splashColor: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.white.withValues(alpha: 0.15) 
+                            : Colors.black.withValues(alpha: 0.25),
                         onTap: () {
                           _closeMenu();
                           Navigator.push(
@@ -144,18 +154,14 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                         ),
                       ),
                       if (widget.showSelectOption) ...[
-                        Divider(
-                          height: 1, 
-                          thickness: 1, 
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1)
-                        ),
                         InkWell(
                           borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
-                          splashFactory: NoSplash.splashFactory,
-                          splashColor: Colors.transparent,
                           highlightColor: Theme.of(context).brightness == Brightness.dark 
-                              ? Colors.white.withValues(alpha: 0.25) 
-                              : Colors.black.withValues(alpha: 0.15),
+                              ? Colors.white.withValues(alpha: 0.35) 
+                              : Colors.black.withValues(alpha: 0.45),
+                          splashColor: Theme.of(context).brightness == Brightness.dark 
+                              ? Colors.white.withValues(alpha: 0.15) 
+                              : Colors.black.withValues(alpha: 0.25),
                           onTap: () {
                             _closeMenu();
                             // TODO: Add selection logic
@@ -172,13 +178,14 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                                       : Colors.black,
                                 ),
                                 const SizedBox(width: 12),
-                                Text('select'.tr(context, ref), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                                Text('selectLabel'.tr(context, ref), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
                               ],
                             ),
                           ),
                         ),
                       ],
                     ],
+                  ),
                   ),
                 ),
               ),

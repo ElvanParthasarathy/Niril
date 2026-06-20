@@ -19,6 +19,7 @@ class ElvanPageContent extends ConsumerWidget {
     required this.slivers,
     required this.expandedHeight,
     required this.isHeaderExpandedNotifier,
+    this.dynamicPillHeightNotifier,
     this.leadingWidget,
     this.showLeadingWidgetInExpandedBar = true,
     this.isSearchActiveNotifier,
@@ -30,6 +31,7 @@ class ElvanPageContent extends ConsumerWidget {
   final List<Widget> slivers;
   final double expandedHeight;
   final ValueNotifier<bool> isHeaderExpandedNotifier;
+  final ValueNotifier<double>? dynamicPillHeightNotifier;
   final Widget? leadingWidget;
   final bool showLeadingWidgetInExpandedBar;
   final ValueNotifier<bool>? isSearchActiveNotifier;
@@ -58,6 +60,7 @@ class ElvanPageContent extends ConsumerWidget {
                 navActions: navActions,
                 statusBarHeight: MediaQuery.paddingOf(context).top,
                 expandedHeight: expandedHeight,
+                dynamicPillHeightNotifier: dynamicPillHeightNotifier,
                 leadingWidget: showLeadingWidgetInExpandedBar ? leadingWidget : null,
                 isSearchActiveNotifier: isSearchActiveNotifier ?? ValueNotifier(false),
                 isMenuOpen: isMenuOpen,
@@ -124,12 +127,17 @@ class ElvanBrickWallPhysics extends ScrollPhysics {
   @override
   double applyBoundaryConditions(ScrollMetrics position, double value) {
     if (!isHeaderExpandedNotifier.value) {
-      // Enforce our custom hard boundary!
-      if (value < snapThreshold && position.pixels <= snapThreshold) {
-        return value - position.pixels; // Prevent overscroll past threshold
-      }
-      if (value < snapThreshold && position.pixels > snapThreshold) {
-        return value - snapThreshold; // Prevent momentum past threshold
+      // ONLY block if it's momentum/fling! Allow manual drag to bypass the wall.
+      final bool isMomentum = position is ScrollPosition && position.activity is BallisticScrollActivity;
+      
+      if (isMomentum) {
+        // Enforce our custom hard boundary!
+        if (value < snapThreshold && position.pixels <= snapThreshold) {
+          return value - position.pixels; // Prevent overscroll past threshold
+        }
+        if (value < snapThreshold && position.pixels > snapThreshold) {
+          return value - snapThreshold; // Prevent momentum past threshold
+        }
       }
     }
     
