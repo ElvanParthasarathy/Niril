@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/widgets/elvan_snackbar.dart';
 
 import '../../../../../localization/locale_provider.dart';
 import '../../../../shell/presentation/mobile/elvan_subpage_shell.dart';
@@ -29,34 +30,7 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
   String _tempSecondary = '';
 
   void _showSuccessToast() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              Icons.check_circle, 
-              color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black87, 
-              size: 20
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'savedSuccessfully'.tr(context, ref),
-              style: TextStyle(
-                color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black87, 
-                fontWeight: FontWeight.w500
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: Theme.of(context).brightness == Brightness.light 
-            ? Colors.grey.shade800 
-            : Colors.white,
-        elevation: 0,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    ElvanSnackbar.show(context, 'detailsSaved'.tr(context, ref));
   }
 
   Widget _buildEditContainer({

@@ -233,7 +233,15 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'businessLogo'.tr(context, ref),
-                    primaryValue: _logoPath != null ? 'logoUploaded'.tr(context, ref) : 'noLogo'.tr(context, ref),
+                    primaryValue: _logoPath != null ? '' : 'noLogo'.tr(context, ref),
+                    primaryWidget: _logoPath != null
+                        ? Image.file(
+                            File(_logoPath!),
+                            height: 36,
+                            fit: BoxFit.contain,
+                            alignment: Alignment.centerLeft,
+                          )
+                        : null,
                     onEdit: () => _beginEdit('logo'),
                   ),
                 ),
@@ -252,7 +260,15 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'wideLogoLabel'.tr(context, ref),
-                    primaryValue: _wideLogoPath != null ? 'wideLogoUploaded'.tr(context, ref) : 'noneLabel'.tr(context, ref),
+                    primaryValue: _wideLogoPath != null ? '' : 'noneLabel'.tr(context, ref),
+                    primaryWidget: _wideLogoPath != null
+                        ? Image.file(
+                            File(_wideLogoPath!),
+                            height: 36,
+                            fit: BoxFit.contain,
+                            alignment: Alignment.centerLeft,
+                          )
+                        : null,
                     onEdit: () => _beginEdit('wide_logo'),
                   ),
                 ),
@@ -349,6 +365,14 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'signature'.tr(context, ref),
                     primaryValue: _signaturePath != null ? _signatoryName : 'noSignature'.tr(context, ref),
+                    primaryWidget: _signaturePath != null
+                        ? Image.file(
+                            File(_signaturePath!),
+                            height: 48,
+                            fit: BoxFit.contain,
+                            alignment: Alignment.centerLeft,
+                          )
+                        : null,
                     onEdit: () => _beginEdit('signature'),
                   ),
                 ),

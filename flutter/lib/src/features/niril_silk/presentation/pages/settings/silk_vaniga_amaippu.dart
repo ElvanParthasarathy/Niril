@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/widgets/elvan_snackbar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../../localization/locale_provider.dart';
@@ -36,33 +37,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
   final ValueNotifier<bool> _hasProfiles = ValueNotifier(true);
 
   void _showSuccessToast() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              Icons.check_circle, 
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'profileSaved'.tr(context, ref),
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(100),
-        ),
-        elevation: 8,
-        margin: const EdgeInsets.only(bottom: 24, left: 24, right: 24),
-      ),
-    );
+    ElvanSnackbar.show(context, 'profileSaved'.tr(context, ref));
   }
 
   void _showBusinessSelectorModal() {

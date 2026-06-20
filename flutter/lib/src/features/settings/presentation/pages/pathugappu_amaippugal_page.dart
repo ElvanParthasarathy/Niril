@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:ui' as dart_ui;
 import 'package:flutter/cupertino.dart';
+import '../../../../core/widgets/elvan_snackbar.dart';
 
 import '../../../../localization/locale_provider.dart';
 import '../../../../localization/locale_provider.dart';
@@ -163,13 +164,7 @@ class PathugappuAmaippugalPage extends ConsumerWidget {
                               Future.delayed(const Duration(seconds: 2), () {
                                 Navigator.pop(context); // Close loading
                                 if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('dataErasedSuccess'.tr(context, ref)),
-                                      behavior: SnackBarBehavior.floating,
-                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-                                    ),
-                                  );
+                                  ElvanSnackbar.show(context, 'dataErasedSuccess'.tr(context, ref));
                                 }
                               });
                             },

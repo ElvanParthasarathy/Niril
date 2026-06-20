@@ -175,6 +175,7 @@ class ElvanSettingsDisplayRow extends StatelessWidget {
   final VoidCallback? onTap;
   final IconData icon;
   final Color? iconColor;
+  final Widget? primaryWidget;
 
   const ElvanSettingsDisplayRow({
     super.key,
@@ -185,6 +186,7 @@ class ElvanSettingsDisplayRow extends StatelessWidget {
     this.onTap,
     this.icon = Icons.edit_rounded,
     this.iconColor,
+    this.primaryWidget,
   });
 
   @override
@@ -209,15 +211,21 @@ class ElvanSettingsDisplayRow extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 6),
-                Text(
-                  primaryValue.isEmpty ? '-' : primaryValue,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                if (primaryWidget != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 6.0),
+                    child: primaryWidget!,
                   ),
-                ),
+                if (primaryWidget == null || primaryValue.isNotEmpty)
+                  Text(
+                    primaryWidget != null && primaryValue.isEmpty ? '' : (primaryValue.isEmpty ? '-' : primaryValue),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 if (secondaryValue != null && secondaryValue!.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 2.0),
