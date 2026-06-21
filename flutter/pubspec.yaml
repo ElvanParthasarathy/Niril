@@ -61,12 +61,4 @@ flutter:
         - asset: assets/fonts/ElvanSans-Bold.ttf
           weight: 700
 
-    - family: ElvanSansHinted
-      fonts:
-        - asset: assets/fonts/windows/ElvanSansHinted-Regular.ttf
-        - asset: assets/fonts/windows/ElvanSansHinted-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/windows/ElvanSansHinted-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/windows/ElvanSansHinted-Bold.ttf
-          weight: 700
+
