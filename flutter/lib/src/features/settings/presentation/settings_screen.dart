@@ -20,6 +20,8 @@ import 'package:elvan_niril/src/features/settings/presentation/widgets/elvan_set
 import 'package:elvan_niril/src/features/niril_common/presentation/widgets/elvan_settings_icon.dart';
 import 'pages/pathugappu_amaippugal_page.dart';
 
+import '../../shell/presentation/desktop/elvan_desktop_subpage_shell.dart';
+
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
@@ -53,31 +55,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               children: [
                 // Left Panel (Hub)
                 Expanded(
-                  child: SettingsHubScreen(onPageSelected: _onMenuSelected),
+                  child: ElvanSubpagePadding(
+                    padding: const EdgeInsets.only(left: 24, right: 0),
+                    child: SettingsHubScreen(onPageSelected: _onMenuSelected),
+                  ),
                 ),
                     
-                    const SizedBox(width: 32),
+                const SizedBox(width: 32),
                     
-                    // Right Panel (Detail)
-                    Expanded(
-                      child: _selectedDetail ?? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(CupertinoIcons.settings, size: 64, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2)),
-                            const SizedBox(height: 16),
-                            Text(
-                              'settings'.tr(context, ref),
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                // Right Panel (Detail)
+                Expanded(
+                  child: ElvanSubpagePadding(
+                    padding: const EdgeInsets.only(left: 0, right: 24),
+                    child: _selectedDetail ?? const VanigaAmaippugalPage(),
+                  ),
+                ),
                   ],
                 ),
           );

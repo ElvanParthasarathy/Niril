@@ -235,39 +235,49 @@ class _DesktopExpandedNavItemState extends State<_DesktopExpandedNavItem> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTapDown: (_) => setState(() => _isPressed = true),
-        onTapUp: (_) => setState(() => _isPressed = false),
-        onTapCancel: () => setState(() => _isPressed = false),
-        onTap: widget.onTap,
-        behavior: HitTestBehavior.opaque,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: const Cubic(0.2, 0.0, 0.0, 1.0),
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-          decoration: BoxDecoration(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: const Cubic(0.2, 0.0, 0.0, 1.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(100),
+          color: bgColor,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
             borderRadius: BorderRadius.circular(100),
-            color: bgColor,
-          ),
-          child: Row(
-            children: [
-              AnimatedScale(
-                scale: _isPressed ? 0.85 : 1.0,
-                duration: const Duration(milliseconds: 150),
-                curve: const Cubic(0.4, 0.0, 0.2, 1.0),
-                child: _buildIcon(fgColor, 20.0),
+            onTap: widget.onTap,
+            onTapDown: (_) => setState(() => _isPressed = true),
+            onTapCancel: () => setState(() => _isPressed = false),
+            onHighlightChanged: (highlighted) {
+              if (!highlighted) setState(() => _isPressed = false);
+            },
+            hoverColor: widget.isDark ? Colors.white.withOpacity(0.04) : Colors.black.withOpacity(0.04),
+            splashColor: widget.isDark ? Colors.white.withOpacity(0.12) : Colors.black.withOpacity(0.12),
+            highlightColor: widget.isDark ? Colors.white.withOpacity(0.04) : Colors.black.withOpacity(0.04),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+              child: Row(
+                children: [
+                  AnimatedScale(
+                    scale: _isPressed ? 0.85 : 1.0,
+                    duration: const Duration(milliseconds: 150),
+                    curve: const Cubic(0.4, 0.0, 0.2, 1.0),
+                    child: _buildIcon(fgColor, 20.0),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    widget.item.label,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: widget.isSelected ? FontWeight.w700 : FontWeight.w500,
+                      color: fgColor,
+                      height: 1.2,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 10),
-              Text(
-                widget.item.label,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: widget.isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: fgColor,
-                  height: 1.2,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -329,50 +339,57 @@ class _DesktopCollapsedNavItemState extends State<_DesktopCollapsedNavItem> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTapDown: (_) => setState(() => _isPressed = true),
-        onTapUp: (_) => setState(() => _isPressed = false),
-        onTapCancel: () => setState(() => _isPressed = false),
-        onTap: widget.onTap,
-        behavior: HitTestBehavior.opaque,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                curve: const Cubic(0.2, 0.0, 0.0, 1.0),
-                width: 56,
-                height: 32,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: pillBgColor,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: widget.onTap,
+          onTapDown: (_) => setState(() => _isPressed = true),
+          onTapCancel: () => setState(() => _isPressed = false),
+          onHighlightChanged: (highlighted) {
+            if (!highlighted) setState(() => _isPressed = false);
+          },
+          hoverColor: widget.isDark ? Colors.white.withOpacity(0.04) : Colors.black.withOpacity(0.04),
+          splashColor: widget.isDark ? Colors.white.withOpacity(0.12) : Colors.black.withOpacity(0.12),
+          highlightColor: widget.isDark ? Colors.white.withOpacity(0.04) : Colors.black.withOpacity(0.04),
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  curve: const Cubic(0.2, 0.0, 0.0, 1.0),
+                  width: 56,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: pillBgColor,
+                  ),
+                  alignment: Alignment.center,
+                  child: AnimatedScale(
+                    scale: _isPressed ? 0.85 : 1.0,
+                    duration: const Duration(milliseconds: 150),
+                    curve: const Cubic(0.4, 0.0, 0.2, 1.0),
+                    child: _buildIcon(fgColor, 24.0),
+                  ),
                 ),
-                alignment: Alignment.center,
-                child: AnimatedScale(
-                  scale: _isPressed ? 0.85 : 1.0,
-                  duration: const Duration(milliseconds: 150),
-                  curve: const Cubic(0.4, 0.0, 0.2, 1.0),
-                  child: _buildIcon(fgColor, 24.0),
+                const SizedBox(height: 8),
+                AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 200),
+                  curve: const Cubic(0.2, 0.0, 0.0, 1.0),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: widget.isSelected ? FontWeight.w700 : FontWeight.w500,
+                    color: fgColor,
+                    height: 1.2,
+                    letterSpacing: 0.2,
+                  ),
+                  child: Text(widget.item.label),
                 ),
-              ),
-              const SizedBox(height: 8),
-              AnimatedDefaultTextStyle(
-                duration: const Duration(milliseconds: 200),
-                curve: const Cubic(0.2, 0.0, 0.0, 1.0),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: widget.isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: fgColor,
-                  height: 1.2,
-                  letterSpacing: 0.2,
-                  fontFamily: DefaultTextStyle.of(context).style.fontFamily,
-                ),
-                child: Text(widget.item.label),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -486,26 +503,31 @@ class _DesktopExpandedProfileState extends ConsumerState<_DesktopExpandedProfile
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: () {
-          Navigator.of(context).push(
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => ModeSelectorScreen(
-                onModeSelected: (mode) {
-                  ref.read(appModeProvider.notifier).setMode(mode);
-                  Navigator.of(context).pop();
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            Navigator.of(context).push(
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) => ModeSelectorScreen(
+                  onModeSelected: (mode) {
+                    ref.read(appModeProvider.notifier).setMode(mode);
+                    Navigator.of(context).pop();
+                  },
+                ),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(opacity: animation, child: child);
                 },
+                fullscreenDialog: true,
+                transitionDuration: const Duration(milliseconds: 300),
               ),
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-              fullscreenDialog: true,
-              transitionDuration: const Duration(milliseconds: 300),
-            ),
-          );
-        },
-        behavior: HitTestBehavior.opaque,
-        child: Container(
+            );
+          },
+          hoverColor: widget.isDark ? Colors.white.withOpacity(0.04) : Colors.black.withOpacity(0.04),
+          splashColor: widget.isDark ? Colors.white.withOpacity(0.12) : Colors.black.withOpacity(0.12),
+          highlightColor: widget.isDark ? Colors.white.withOpacity(0.04) : Colors.black.withOpacity(0.04),
+          child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
           height: 52,
           decoration: BoxDecoration(
@@ -565,6 +587,7 @@ class _DesktopExpandedProfileState extends ConsumerState<_DesktopExpandedProfile
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

@@ -17,8 +17,10 @@ class CoolieReceiptsPage extends ConsumerWidget {
         ? allItems 
         : allItems.where((item) => item.toLowerCase().contains(query)).toList();
 
+    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+
     return SliverPadding(
-      padding: const EdgeInsets.only(left: 12, right: 12, top: 32, bottom: 120),
+      padding: EdgeInsets.only(left: 16, right: 16, top: isDesktop ? 0 : 32, bottom: 120),
       sliver: ElvanResponsiveGrid(
         itemCount: filteredItems.length,
         desktopCrossAxisCount: 2,

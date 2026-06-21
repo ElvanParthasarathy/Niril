@@ -98,11 +98,13 @@ class CoolieInvoicesPage extends ConsumerWidget {
         ? _albums 
         : _albums.where((a) => a.name.toLowerCase().contains(query)).toList();
 
+    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+
     return SliverPadding(
-      padding: const EdgeInsets.only(
-        left: 12,
-        right: 12,
-        top: 32,
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: isDesktop ? 0 : 32,
         bottom: 120, // clearance for the floating pill
       ),
       sliver: ElvanResponsiveGrid(

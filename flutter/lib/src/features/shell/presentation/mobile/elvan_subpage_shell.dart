@@ -16,6 +16,7 @@ class ElvanSubpageShell extends StatefulWidget {
     this.startCollapsed = true,
     this.backgroundColor,
     this.hideHeaderOnDesktop = false,
+    this.contentPadding,
   });
 
   final String title;
@@ -24,6 +25,7 @@ class ElvanSubpageShell extends StatefulWidget {
   final bool startCollapsed;
   final Color? backgroundColor;
   final bool hideHeaderOnDesktop;
+  final EdgeInsetsGeometry? contentPadding;
 
   @override
   State<ElvanSubpageShell> createState() => _ElvanSubpageShellState();
@@ -43,6 +45,7 @@ class _ElvanSubpageShellState extends State<ElvanSubpageShell> {
         slivers: widget.slivers,
         backgroundColor: widget.backgroundColor,
         hideHeaderOnDesktop: widget.hideHeaderOnDesktop,
+        contentPadding: widget.contentPadding,
       );
     }
 

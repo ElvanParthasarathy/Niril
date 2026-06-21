@@ -22,6 +22,10 @@ import 'src/features/pages/porul_page.dart';
 import 'src/features/pages/vanigar_page.dart';
 import 'src/features/shell/presentation/mobile/elvan_shell.dart';
 import 'src/features/auth/presentation/mode_selector_screen.dart';
+import 'src/features/niril_silk/presentation/pages/silk_invoices_page.dart';
+import 'src/features/niril_silk/presentation/pages/silk_receipts_page.dart';
+import 'src/features/niril_coolie/presentation/pages/coolie_invoices_page.dart';
+import 'src/features/niril_coolie/presentation/pages/coolie_receipts_page.dart';
 import 'src/features/niril_silk/presentation/editors/silk_invoice_editor.dart';
 import 'src/features/niril_silk/presentation/editors/silk_receipt_editor.dart';
 import 'src/features/niril_silk/presentation/editors/silk_merchant_editor.dart';
@@ -286,15 +290,51 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final isDesktop = constraints.maxWidth >= 800;
+          final mode = ref.watch(appModeProvider);
 
           if (isDesktop) {
+            int desktopIndex = 0;
+            if (_currentTab == 0) desktopIndex = 0;
+            else if (_currentTab == 1) {
+              final segment = ref.read(uruvakkuSegmentProvider);
+              desktopIndex = segment == 0 ? 1 : 2;
+            } else if (_currentTab == 2) desktopIndex = 3;
+            else if (_currentTab == 3) desktopIndex = 4;
+
+            final desktopNavItems = [
+              _masterNavItems[0], // Home
+              CustomNavItem(
+                icon: CupertinoIcons.doc_text,
+                activeIcon: CupertinoIcons.doc_text_fill,
+                label: 'invoices'.tr(context, ref),
+                headerLabel: 'pill_invoices'.tr(context, ref),
+              ),
+              CustomNavItem(
+                svgString: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M72,104a8,8,0,0,1,8-8h96a8,8,0,0,1,0,16H80A8,8,0,0,1,72,104Zm8,40h96a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16ZM232,56V208a8,8,0,0,1-11.58,7.15L192,200.94l-28.42,14.21a8,8,0,0,1-7.16,0L128,200.94,99.58,215.15a8,8,0,0,1-7.16,0L64,200.94,35.58,215.15A8,8,0,0,1,24,208V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56Zm-16,0H40V195.06l20.42-10.22a8,8,0,0,1,7.16,0L96,199.06l28.42-14.22a8,8,0,0,1,7.16,0L160,199.06l28.42-14.22a8,8,0,0,1,7.16,0L216,195.06Z"></path></svg>',
+                activeSvgString: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M216,40H40A16,16,0,0,0,24,56V208a8,8,0,0,0,11.58,7.15L64,200.94l28.42,14.21a8,8,0,0,0,7.16,0L128,200.94l28.42,14.21a8,8,0,0,0,7.16,0L192,200.94l28.42,14.21A8,8,0,0,0,232,208V56A16,16,0,0,0,216,40ZM176,144H80a8,8,0,0,1,0-16h96a8,8,0,0,1,0,16Zm0-32H80a8,8,0,0,1,0-16h96a8,8,0,0,1,0,16Z"></path></svg>',
+                label: 'receipt'.tr(context, ref),
+                headerLabel: 'pill_receipts'.tr(context, ref),
+              ),
+              _masterNavItems[2], // Merchants
+              _masterNavItems[3], // Products
+            ];
+
             return ElvanDesktopShell(
-              currentIndex: _currentTab,
+              currentIndex: desktopIndex,
               onTabSelected: (index) {
-                setState(() {
-                  _currentTab = index;
-                  _isSettingsOpen = false;
-                });
+                if (index == 0) {
+                  setState(() { _currentTab = 0; _isSettingsOpen = false; });
+                } else if (index == 1) {
+                  ref.read(uruvakkuSegmentProvider.notifier).state = 0;
+                  setState(() { _currentTab = 1; _isSettingsOpen = false; });
+                } else if (index == 2) {
+                  ref.read(uruvakkuSegmentProvider.notifier).state = 1;
+                  setState(() { _currentTab = 1; _isSettingsOpen = false; });
+                } else if (index == 3) {
+                  setState(() { _currentTab = 2; _isSettingsOpen = false; });
+                } else if (index == 4) {
+                  setState(() { _currentTab = 3; _isSettingsOpen = false; });
+                }
               },
               onSettingsPressed: () {
                 setState(() {
@@ -302,23 +342,27 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
                 });
               },
               customContent: _isSettingsOpen ? const SettingsScreen() : null,
-              title: _isSettingsOpen ? 'settings'.tr(context, ref) : currentTitle,
-              navItems: _masterNavItems.take(_navItemCount).toList(),
+              title: _isSettingsOpen ? 'settings'.tr(context, ref) : (desktopNavItems[desktopIndex].headerLabel ?? desktopNavItems[desktopIndex].label),
+              navItems: desktopNavItems,
               slivers: [
                 SliverOffstage(
-                  offstage: _currentTab != 0,
+                  offstage: desktopIndex != 0,
                   sliver: const MugappuPage(),
                 ),
                 SliverOffstage(
-                  offstage: _currentTab != 1,
-                  sliver: const UruvakkuPage(),
+                  offstage: desktopIndex != 1,
+                  sliver: mode == AppMode.coolie ? const CoolieInvoicesPage() : const SilkInvoicesPage(),
                 ),
                 SliverOffstage(
-                  offstage: _currentTab != 2,
+                  offstage: desktopIndex != 2,
+                  sliver: mode == AppMode.coolie ? const CoolieReceiptsPage() : const SilkReceiptsPage(),
+                ),
+                SliverOffstage(
+                  offstage: desktopIndex != 3,
                   sliver: const VanigarPage(),
                 ),
                 SliverOffstage(
-                  offstage: _currentTab != 3,
+                  offstage: desktopIndex != 4,
                   sliver: const PorulPage(),
                 ),
               ],

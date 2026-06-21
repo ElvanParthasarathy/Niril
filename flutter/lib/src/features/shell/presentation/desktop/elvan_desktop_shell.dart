@@ -79,30 +79,34 @@ class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
           Expanded(
             child: Container(
               color: Theme.of(context).scaffoldBackgroundColor,
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: widget.customContent ?? ElvanSmoothScroll(
-                controller: _scrollController,
-                child: CustomScrollView(
-                  controller: _scrollController,
-                  slivers: [
-                    if (widget.title != null)
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 32, left: 36, bottom: 24),
-                          child: Text(
-                            widget.title!,
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                              color: Theme.of(context).colorScheme.onSurface,
+              child: widget.customContent != null 
+                  ? widget.customContent
+                  : ElvanSmoothScroll(
+                      controller: _scrollController,
+                      child: CustomScrollView(
+                        controller: _scrollController,
+                        slivers: [
+                          if (widget.title != null)
+                            SliverToBoxAdapter(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 32, left: 60, bottom: 24),
+                                child: Text(
+                                  widget.title!,
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w700,
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
+                          ...widget.slivers.map((sliver) => SliverPadding(
+                                padding: const EdgeInsets.symmetric(horizontal: 24),
+                                sliver: sliver,
+                              )),
+                        ],
                       ),
-                    ...widget.slivers,
-                  ],
-                ),
-              ),
+                    ),
             ),
           ),
         ],

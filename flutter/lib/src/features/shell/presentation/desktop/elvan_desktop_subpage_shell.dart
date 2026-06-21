@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/elvan_smooth_scroll.dart';
 
+class ElvanSubpagePadding extends InheritedWidget {
+  final EdgeInsetsGeometry padding;
+  const ElvanSubpagePadding({super.key, required this.padding, required super.child});
+
+  static EdgeInsetsGeometry? of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<ElvanSubpagePadding>()?.padding;
+  }
+
+  @override
+  bool updateShouldNotify(ElvanSubpagePadding oldWidget) => padding != oldWidget.padding;
+}
+
 class ElvanDesktopSubpageShell extends StatefulWidget {
   const ElvanDesktopSubpageShell({
     super.key,
@@ -8,12 +20,14 @@ class ElvanDesktopSubpageShell extends StatefulWidget {
     required this.slivers,
     this.backgroundColor,
     this.hideHeaderOnDesktop = false,
+    this.contentPadding,
   });
 
   final String title;
   final List<Widget> slivers;
   final Color? backgroundColor;
   final bool hideHeaderOnDesktop;
+  final EdgeInsetsGeometry? contentPadding;
 
   @override
   State<ElvanDesktopSubpageShell> createState() => _ElvanDesktopSubpageShellState();
@@ -56,7 +70,7 @@ class _ElvanDesktopSubpageShellState extends State<ElvanDesktopSubpageShell> {
             if (!widget.hideHeaderOnDesktop)
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.only(top: 56, left: 36, bottom: 24),
+                padding: const EdgeInsets.only(top: 56, left: 60, bottom: 24),
                 child: Row(
                   children: [
                     if (showBackButton) ...[
@@ -83,7 +97,10 @@ class _ElvanDesktopSubpageShellState extends State<ElvanDesktopSubpageShell> {
             else
               const SliverToBoxAdapter(child: SizedBox(height: 56)),
             
-            ...widget.slivers,
+            ...widget.slivers.map((sliver) => SliverPadding(
+                  padding: widget.contentPadding ?? ElvanSubpagePadding.of(context) ?? const EdgeInsets.symmetric(horizontal: 24),
+                  sliver: sliver,
+                )),
           ],
         ),
       ),

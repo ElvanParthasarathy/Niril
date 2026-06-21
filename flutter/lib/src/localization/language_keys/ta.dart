@@ -46,6 +46,7 @@ const Map<String, String> ta = {
   'inventory': 'பொருள்',
   'header_inventory': 'பொருட்கள்',
   'receipts': 'சான்று',
+  'receipt': 'பற்றுச்சீட்டு',
   'header_receipts': 'சான்றுகள்',
   'pill_invoices': 'பட்டியல்கள்',
   'pill_receipts': 'பற்றுச்சீட்டுகள்',

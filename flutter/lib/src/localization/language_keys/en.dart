@@ -49,6 +49,7 @@ const Map<String, String> en = {
   'wideLogoUploaded': 'Wide Logo Uploaded',
   'noSignature': 'No Signature',
   'receipts': 'Receipts',
+  'receipt': 'Receipt',
   'header_receipts': 'Receipts',
   'pill_invoices': 'Invoices',
   'pill_receipts': 'Receipts',

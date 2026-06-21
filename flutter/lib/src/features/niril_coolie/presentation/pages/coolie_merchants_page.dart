@@ -18,7 +18,7 @@ class CoolieMerchantsPage extends ConsumerWidget {
         : allItems.where((item) => item.toLowerCase().contains(query)).toList();
 
     return SliverPadding(
-      padding: const EdgeInsets.only(left: 12, right: 12, bottom: 120),
+      padding: const EdgeInsets.only(left: 16, right: 16, bottom: 120),
       sliver: ElvanResponsiveGrid(
         itemCount: filteredItems.length,
         desktopCrossAxisCount: 2,
