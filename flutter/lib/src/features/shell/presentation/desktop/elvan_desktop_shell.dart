@@ -88,7 +88,7 @@ class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
                     if (widget.title != null)
                       SliverToBoxAdapter(
                         child: Padding(
-                          padding: const EdgeInsets.only(top: 24, left: 36, bottom: 24),
+                          padding: const EdgeInsets.only(top: 32, left: 36, bottom: 24),
                           child: Text(
                             widget.title!,
                             style: TextStyle(

@@ -119,8 +119,8 @@ class ElvanDesktopSidebar extends ConsumerWidget {
       firstChild: Container(
         width: 260,
         height: 80,
-        padding: const EdgeInsets.only(top: 24, bottom: 8, left: 32, right: 24),
-        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.only(top: 32, bottom: 8, left: 32, right: 24),
+        alignment: Alignment.topLeft,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -151,8 +151,8 @@ class ElvanDesktopSidebar extends ConsumerWidget {
       secondChild: Container(
         width: 80,
         height: 80,
-        padding: const EdgeInsets.only(top: 24, bottom: 8),
-        alignment: Alignment.center,
+        padding: const EdgeInsets.only(top: 32, bottom: 8),
+        alignment: Alignment.topCenter,
         child: IconButton(
           icon: Transform.scale(
             scaleX: -1,

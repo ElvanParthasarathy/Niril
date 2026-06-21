@@ -20,8 +20,89 @@ import 'package:elvan_niril/src/features/settings/presentation/widgets/elvan_set
 import 'package:elvan_niril/src/features/niril_common/presentation/widgets/elvan_settings_icon.dart';
 import 'pages/pathugappu_amaippugal_page.dart';
 
-class SettingsScreen extends ConsumerWidget {
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  Widget? _selectedDetail;
+
+  void _onMenuSelected(Widget detailPage) {
+    setState(() {
+      _selectedDetail = detailPage;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWideDesktop = constraints.maxWidth >= 800; // Keep 800 for consistency with Flutter layout
+        
+        if (isWideDesktop) {
+          final isDark = Theme.of(context).brightness == Brightness.dark;
+          final bgColor = isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6);
+          
+          return Scaffold(
+            backgroundColor: bgColor,
+            body: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Left Panel (Hub)
+                Expanded(
+                  child: SettingsHubScreen(onPageSelected: _onMenuSelected),
+                ),
+                    
+                    const SizedBox(width: 32),
+                    
+                    // Right Panel (Detail)
+                    Expanded(
+                      child: _selectedDetail ?? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(CupertinoIcons.settings, size: 64, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2)),
+                            const SizedBox(height: 16),
+                            Text(
+                              'settings'.tr(context, ref),
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+          );
+        }
+        
+        // Mobile layout
+        return const SettingsHubScreen();
+      },
+    );
+  }
+}
+
+class SettingsHubScreen extends ConsumerWidget {
+  final void Function(Widget page)? onPageSelected;
+
+  const SettingsHubScreen({super.key, this.onPageSelected});
+
+  void _navigateTo(BuildContext context, Widget page) {
+    if (onPageSelected != null) {
+      onPageSelected!(page);
+    } else {
+      Navigator.push(context, ElvanPageRoute(builder: (_) => page));
+    }
+  }
+  
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,6 +115,7 @@ class SettingsScreen extends ConsumerWidget {
     return ElvanSubpageShell(
       title: 'settings'.tr(context, ref),
       startCollapsed: true,
+      hideHeaderOnDesktop: true,
       backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
       slivers: [
         SliverList.list(
@@ -49,7 +131,7 @@ class SettingsScreen extends ConsumerWidget {
                       // The main pill body (Navigates to Merchant Settings)
                       InkWell(
                         onTap: () {
-                          Navigator.push(context, ElvanPageRoute(builder: (_) => const VanigaAmaippugalPage()));
+                          _navigateTo(context, const VanigaAmaippugalPage());
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(left: 98, right: 32, top: 14, bottom: 14),
@@ -135,7 +217,7 @@ class SettingsScreen extends ConsumerWidget {
                       iconBgColor: iconBgColor,
                       title: 'adaiyalam'.tr(context, ref),
                       description: 'desc_coolie_identifiers'.tr(context, ref),
-                      onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const CoolieVanigaAdaiyalangalPage())),
+                      onTap: () => _navigateTo(context, const CoolieVanigaAdaiyalangalPage()),
                     )
                   else
                     ElvanSettingsRow(
@@ -143,14 +225,14 @@ class SettingsScreen extends ConsumerWidget {
                       iconBgColor: iconBgColor,
                       title: 'adaiyalam'.tr(context, ref),
                       description: 'desc_silk_identifiers'.tr(context, ref),
-                      onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const SilkVanigaAdaiyalangalPage())),
+                      onTap: () => _navigateTo(context, const SilkVanigaAdaiyalangalPage()),
                     ),
                   ElvanSettingsRow(
                     icon: CupertinoIcons.location_solid,
                     iconBgColor: iconBgColor,
                     title: 'settings_mugavari'.tr(context, ref),
                     description: 'desc_address'.tr(context, ref),
-                    onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const MugavariPage())),
+                    onTap: () => _navigateTo(context, const MugavariPage()),
                   ),
                 ],
               ),
@@ -168,14 +250,14 @@ class SettingsScreen extends ConsumerWidget {
                     iconBgColor: iconBgColor,
                     title: 'vangi'.tr(context, ref),
                     description: 'desc_bank'.tr(context, ref),
-                    onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const VangiPage())),
+                    onTap: () => _navigateTo(context, const VangiPage()),
                   ),
                   ElvanSettingsRow(
                     icon: CupertinoIcons.doc_text_fill,
                     iconBgColor: iconBgColor,
                     title: 'uruvakku'.tr(context, ref),
                     description: 'desc_invoice'.tr(context, ref),
-                    onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const UruvakkuAmaippugalPage())),
+                    onTap: () => _navigateTo(context, const UruvakkuAmaippugalPage()),
                   ),
                 ],
               ),
@@ -193,14 +275,14 @@ class SettingsScreen extends ConsumerWidget {
                     iconBgColor: iconBgColor,
                     title: 'thirai'.tr(context, ref),
                     description: 'desc_display'.tr(context, ref),
-                    onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const DisplaySettingsPage())),
+                    onTap: () => _navigateTo(context, const DisplaySettingsPage()),
                   ),
                   ElvanSettingsRow(
                     icon: Icons.language,
                     iconBgColor: iconBgColor,
                     title: 'appLanguage'.tr(context, ref),
                     description: 'desc_language'.tr(context, ref),
-                    onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const LanguageSettingsPage())),
+                    onTap: () => _navigateTo(context, const LanguageSettingsPage()),
                   ),
                 ],
               ),
@@ -218,14 +300,14 @@ class SettingsScreen extends ConsumerWidget {
                     iconBgColor: iconBgColor,
                     title: 'pathugappu'.tr(context, ref),
                     description: 'desc_security'.tr(context, ref),
-                    onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const PathugappuAmaippugalPage())),
+                    onTap: () => _navigateTo(context, const PathugappuAmaippugalPage()),
                   ),
                   ElvanSettingsRow(
                     icon: CupertinoIcons.info_circle_fill,
                     iconBgColor: iconBgColor,
                     title: 'menporul_vadivalar'.tr(context, ref),
                     description: 'desc_about'.tr(context, ref),
-                    onTap: () => Navigator.push(context, ElvanPageRoute(builder: (_) => const AboutDeveloperPage())),
+                    onTap: () => _navigateTo(context, const AboutDeveloperPage()),
                   ),
                 ],
               ),

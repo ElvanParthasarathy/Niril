@@ -56,7 +56,7 @@ class _ElvanDesktopSubpageShellState extends State<ElvanDesktopSubpageShell> {
             if (!widget.hideHeaderOnDesktop)
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.only(top: 56, left: 16, bottom: 24),
+                padding: const EdgeInsets.only(top: 56, left: 36, bottom: 24),
                 child: Row(
                   children: [
                     if (showBackButton) ...[
@@ -81,7 +81,7 @@ class _ElvanDesktopSubpageShellState extends State<ElvanDesktopSubpageShell> {
               ),
             )
             else
-              const SliverToBoxAdapter(child: SizedBox(height: 24)),
+              const SliverToBoxAdapter(child: SizedBox(height: 56)),
             
             ...widget.slivers,
           ],
