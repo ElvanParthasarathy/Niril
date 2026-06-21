@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -347,7 +348,7 @@ class _AuthInputState extends State<AuthInput> {
           children: [
             if (widget.label.isNotEmpty) ...[
               Padding(
-                padding: const EdgeInsets.only(left: 24.0, bottom: 8.0),
+                padding: const EdgeInsets.only(left: 20.0, bottom: 8.0),
                 child: Text(
                   widget.label,
                   style: TextStyle(
@@ -382,7 +383,7 @@ class _AuthInputState extends State<AuthInput> {
                     color: labelColor,
                     fontWeight: FontWeight.w400,
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
@@ -478,6 +479,45 @@ class AuthButton extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class AuthBackButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const AuthBackButton({super.key, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 24.0),
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+          shape: BoxShape.circle,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(24),
+            onTap: onPressed,
+            child: const Center(
+              child: Padding(
+                padding: EdgeInsets.only(right: 2.0), // Optical centering for chevron
+                child: Icon(
+                  CupertinoIcons.chevron_back,
+                  size: 24,
+                ),
+              ),
+            ),
           ),
         ),
       ),

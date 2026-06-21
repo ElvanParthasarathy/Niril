@@ -64,44 +64,53 @@ class _ElvanDesktopSubpageShellState extends State<ElvanDesktopSubpageShell> {
       color: widget.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
       child: ElvanSmoothScroll(
         controller: _scrollController,
-        child: CustomScrollView(
-          controller: _scrollController,
-          slivers: [
-            if (!widget.hideHeaderOnDesktop)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 56, left: 60, bottom: 24),
-                child: Row(
-                  children: [
-                    if (showBackButton) ...[
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                      const SizedBox(width: 16),
-                    ] else ...[
-                      const SizedBox(width: 20),
-                    ],
-                    Text(
-                      widget.title,
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: isSplitView ? double.infinity : 680),
+            child: CustomScrollView(
+              controller: _scrollController,
+              slivers: [
+                if (!widget.hideHeaderOnDesktop)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      top: 56, 
+                      left: isSplitView ? 40 : 24, 
+                      bottom: 24
                     ),
-                  ],
-                ),
-              ),
-            )
-            else
-              const SliverToBoxAdapter(child: SizedBox(height: 56)),
-            
-            ...widget.slivers.map((sliver) => SliverPadding(
-                  padding: widget.contentPadding ?? ElvanSubpagePadding.of(context) ?? const EdgeInsets.symmetric(horizontal: 24),
-                  sliver: sliver,
-                )),
-          ],
+                    child: Row(
+                      children: [
+                        if (showBackButton) ...[
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          const SizedBox(width: 16),
+                        ] else if (isSplitView) ...[
+                          const SizedBox(width: 20),
+                        ],
+                        Text(
+                          widget.title,
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+                else
+                  const SliverToBoxAdapter(child: SizedBox(height: 56)),
+                
+                ...widget.slivers.map((sliver) => SliverPadding(
+                      padding: widget.contentPadding ?? ElvanSubpagePadding.of(context) ?? EdgeInsets.symmetric(horizontal: isSplitView ? 24 : 0),
+                      sliver: sliver,
+                    )),
+              ],
+            ),
+          ),
         ),
       ),
     );

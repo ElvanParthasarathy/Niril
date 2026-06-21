@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:elvan_niril/src/features/shell/presentation/mobile/elvan_shell.dart';
-import '../../../../core/widgets/elvan_smooth_scroll.dart';
 import '../desktop/elvan_desktop_subpage_shell.dart';
 import 'widgets/elvan_back_button.dart';
 
@@ -34,10 +34,9 @@ class ElvanSubpageShell extends StatefulWidget {
 class _ElvanSubpageShellState extends State<ElvanSubpageShell> {
   @override
   Widget build(BuildContext context) {
-    // Use MediaQuery instead of LayoutBuilder constraints! 
-    // In a desktop split view, the constraints.maxWidth might only be 600px 
-    // (half the screen), which incorrectly triggers mobile mode.
-    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+    // Always use desktop shell on desktop platforms to avoid jarring transitions to mobile AppBars
+    final isDesktopPlatform = Platform.isWindows || Platform.isMacOS || Platform.isLinux;
+    final isDesktop = isDesktopPlatform || MediaQuery.sizeOf(context).width >= 800;
 
     if (isDesktop) {
       return ElvanDesktopSubpageShell(

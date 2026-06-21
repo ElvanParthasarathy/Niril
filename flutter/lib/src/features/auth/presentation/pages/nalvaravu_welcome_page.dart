@@ -94,57 +94,68 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
     final inputBg = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFFFFFFF);
     final dividerColor = isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFE0E0E0);
 
-    return AuthLayout(
-      hideLogo: true,
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 900),
-        reverseDuration: Duration.zero,
-        transitionBuilder: (Widget child, Animation<double> animation) {
-          // Pixel-perfect match of React's 100ms delay + 800ms bouncy cubic-bezier
-          final delayedTranslateAnimation = CurvedAnimation(
-            parent: animation,
-            curve: const Interval(
-              100 / 900, 
-              1.0, 
-              curve: Curves.easeOutBack,
-            ),
-          );
+    return PopScope(
+      canPop: _phase == WelcomePhase.greeting || _phase == WelcomePhase.language,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        if (_phase == WelcomePhase.businessName) {
+          setState(() => _phase = WelcomePhase.billingLanguage);
+        } else if (_phase == WelcomePhase.billingLanguage) {
+          setState(() => _phase = WelcomePhase.language);
+        }
+      },
+      child: AuthLayout(
+        hideLogo: true,
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 900),
+          reverseDuration: Duration.zero,
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            // Pixel-perfect match of React's 100ms delay + 800ms bouncy cubic-bezier
+            final delayedTranslateAnimation = CurvedAnimation(
+              parent: animation,
+              curve: const Interval(
+                100 / 900, 
+                1.0, 
+                curve: Curves.easeOutBack,
+              ),
+            );
 
-          final delayedOpacityAnimation = CurvedAnimation(
-            parent: animation,
-            curve: const Interval(
-              100 / 900, 
-              1.0, 
-              curve: Curves.easeOut,
-            ),
-          );
-          
-          final dyAnimation = Tween<double>(
-            begin: 20.0, // Fixed 20px translation
-            end: 0.0,
-          ).animate(delayedTranslateAnimation);
+            final delayedOpacityAnimation = CurvedAnimation(
+              parent: animation,
+              curve: const Interval(
+                100 / 900, 
+                1.0, 
+                curve: Curves.easeOut,
+              ),
+            );
+            
+            final dyAnimation = Tween<double>(
+              begin: 20.0, // Fixed 20px translation
+              end: 0.0,
+            ).animate(delayedTranslateAnimation);
 
-          return FadeTransition(
-            opacity: delayedOpacityAnimation,
-            child: AnimatedBuilder(
-              animation: dyAnimation,
-              builder: (context, childWidget) {
-                return Transform.translate(
-                  offset: Offset(0, dyAnimation.value),
-                  child: childWidget,
-                );
-              },
-              child: child,
-            ),
-          );
-        },
-        child: _buildPhaseContent(
-          theme,
-          textColor,
-          textSecondary,
-          inputBg,
-          dividerColor,
-          currentLang,
+            return FadeTransition(
+              opacity: delayedOpacityAnimation,
+              child: AnimatedBuilder(
+                animation: dyAnimation,
+                builder: (context, childWidget) {
+                  return Transform.translate(
+                    offset: Offset(0, dyAnimation.value),
+                    child: childWidget,
+                  );
+                },
+                child: child,
+              ),
+            );
+          },
+          child: _buildPhaseContent(
+            theme,
+            textColor,
+            textSecondary,
+            inputBg,
+            dividerColor,
+            currentLang,
+          ),
         ),
       ),
     );
@@ -258,18 +269,12 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               if (currentLang == 'ta' || currentLang == 'en')
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    icon: const Icon(CupertinoIcons.chevron_back, size: 28),
-                    padding: EdgeInsets.zero,
-                    alignment: Alignment.centerLeft,
-                    onPressed: () {
-                      setState(() {
-                        _phase = WelcomePhase.language;
-                      });
-                    },
-                  ),
+                AuthBackButton(
+                  onPressed: () {
+                    setState(() {
+                      _phase = WelcomePhase.language;
+                    });
+                  },
                 ),
               Icon(
                 CupertinoIcons.doc_text_fill,

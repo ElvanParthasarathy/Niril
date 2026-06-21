@@ -21,7 +21,7 @@ import 'src/features/shell/presentation/mobile/elvan_navbar.dart';
 import 'src/features/pages/porul_page.dart';
 import 'src/features/pages/vanigar_page.dart';
 import 'src/features/shell/presentation/mobile/elvan_shell.dart';
-import 'src/features/auth/presentation/mode_selector_screen.dart';
+import 'src/features/auth/presentation/widgets/auth_components.dart';
 import 'src/features/niril_silk/presentation/pages/silk_invoices_page.dart';
 import 'src/features/niril_silk/presentation/pages/silk_receipts_page.dart';
 import 'src/features/niril_coolie/presentation/pages/coolie_invoices_page.dart';
@@ -149,38 +149,133 @@ class ElvanNirilApp extends ConsumerWidget {
       ),
       home: Consumer(
         builder: (context, ref, _) {
+          Widget child;
+
           // 1. Authentication Check
           final isLoggedIn = ref.watch(isLoggedInProvider);
           if (!isLoggedIn) {
-            return const WelcomePage();
+            child = const WelcomePage(key: ValueKey('welcome'));
+          } else {
+            // 1.5. Prevent UI flashing by waiting for database stream to initialize
+            final isLoadingProfiles = ref.watch(profilesLoadingProvider);
+            if (isLoadingProfiles) {
+              child = const Scaffold(key: ValueKey('loading'), backgroundColor: Colors.black);
+            } else {
+              // 2. Smart Onboarding Check
+              final hasBothProfiles = ref.watch(hasBothProfilesProvider);
+              if (!hasBothProfiles) {
+                child = const NalvaravuWelcomePage(key: ValueKey('onboarding'));
+              } else {
+                // 3. Mode Selection
+                final mode = ref.watch(appModeProvider);
+                if (mode == null) {
+                  child = ModeSelectorScreen(
+                    key: const ValueKey('mode_selector'),
+                    onModeSelected: (newMode) {
+                      ref.read(appModeProvider.notifier).setMode(newMode);
+                    },
+                  );
+                } else {
+                  // 4. Main App Dashboard (Deferred to guarantee smooth 60fps mode transition)
+                  child = DeferredShellLoader(
+                    key: const ValueKey('shell_demo'),
+                    child: const ShellDemoScreen(),
+                  );
+                }
+              }
+            }
           }
 
-          // 1.5. Prevent UI flashing by waiting for database stream to initialize
-          final isLoadingProfiles = ref.watch(profilesLoadingProvider);
-          if (isLoadingProfiles) {
-            return const Scaffold(backgroundColor: Colors.black);
-          }
-
-          // 2. Smart Onboarding Check
-          final hasBothProfiles = ref.watch(hasBothProfilesProvider);
-          if (!hasBothProfiles) {
-            return const NalvaravuWelcomePage();
-          }
-
-          // 3. Mode Selection
-          final mode = ref.watch(appModeProvider);
-          if (mode == null) {
-            return ModeSelectorScreen(
-              onModeSelected: (newMode) {
-                ref.read(appModeProvider.notifier).setMode(newMode);
-              },
-            );
-          }
-
-          // 4. Main App Dashboard
-          return const ShellDemoScreen();
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 600),
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+            child: child,
+          );
         },
       ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DEFERRED SHELL LOADER — Prevents UI Jank during complex route transitions
+// ─────────────────────────────────────────────────────────────────────────────
+
+class DeferredShellLoader extends ConsumerStatefulWidget {
+  final Widget child;
+  const DeferredShellLoader({super.key, required this.child});
+
+  @override
+  ConsumerState<DeferredShellLoader> createState() => _DeferredShellLoaderState();
+}
+
+class _DeferredShellLoaderState extends ConsumerState<DeferredShellLoader> {
+  bool _buildReal = false;
+  bool _showReal = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // 1. Wait for the main AnimatedSwitcher transition (600ms) to completely finish.
+    Future.delayed(const Duration(milliseconds: 650), () {
+      if (mounted) {
+        // 2. Add the heavy widget to the tree (with 0 opacity). 
+        // This causes the "lag spike" while it builds, but the screen is static so it's invisible.
+        setState(() => _buildReal = true);
+        
+        // 3. Wait a tiny fraction of a second for Flutter to finish layout/paint of the heavy widget.
+        Future.delayed(const Duration(milliseconds: 150), () {
+          if (mounted) {
+            // 4. Trigger the actual visual fade animation. Since the widget is already built, it's 60fps!
+            setState(() => _showReal = true);
+          }
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        // The heavy dashboard
+        if (_buildReal)
+          AnimatedOpacity(
+            duration: const Duration(milliseconds: 600),
+            opacity: _showReal ? 1.0 : 0.0,
+            child: widget.child,
+          ),
+          
+        // The loading spinner (fades out as dashboard fades in)
+        IgnorePointer(
+          ignoring: _showReal,
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 600),
+            opacity: _showReal ? 0.0 : 1.0,
+            child: AuthLayout(
+              hideLogo: true,
+              child: Center(
+                child: Text(
+                  'appName'.tr(context, ref),
+                  style: TextStyle(
+                    fontSize: 36,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -1.0,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

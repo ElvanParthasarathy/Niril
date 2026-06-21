@@ -86,15 +86,7 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (widget.onBack != null)
-            Align(
-              alignment: Alignment.centerLeft,
-              child: IconButton(
-                icon: const Icon(CupertinoIcons.chevron_back, size: 28),
-                onPressed: widget.onBack,
-                padding: EdgeInsets.zero,
-                alignment: Alignment.centerLeft,
-              ),
-            ),
+            AuthBackButton(onPressed: widget.onBack!),
           AuthHeader(
             title: language == 'ta' ? 'தரவுகளை உள்ளிடுக' : 'Enter Business Details',
             subtitle: '',

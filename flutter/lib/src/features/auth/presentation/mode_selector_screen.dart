@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/models/app_mode.dart';
+import '../../../localization/locale_provider.dart';
+import 'widgets/auth_components.dart';
+import '../../../core/utils/app_svgs.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-class ModeSelectorScreen extends StatelessWidget {
+class ModeSelectorScreen extends ConsumerWidget {
   const ModeSelectorScreen({
     super.key,
     required this.onModeSelected,
@@ -11,65 +16,56 @@ class ModeSelectorScreen extends StatelessWidget {
   final ValueChanged<AppMode> onModeSelected;
 
   @override
-  Widget build(BuildContext context) {
-    // Force dark mode look for premium cinematic feel, matching React/Netflix
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF141414) : const Color(0xFFF3F4F6); // Netflix dark is #141414
-    final textColor = isDark ? Colors.white : const Color(0xFF111827);
-    final subtextColor = isDark ? Colors.grey.shade400 : Colors.grey.shade600;
 
-    return Scaffold(
-      backgroundColor: bgColor,
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Who's working today?",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.w600,
-                  color: textColor,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Select your operating mode',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                  color: subtextColor,
-                ),
-              ),
-              const SizedBox(height: 60),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _NetflixProfileCard(
-                    title: 'Niril Silk',
-                    icon: CupertinoIcons.doc_text_fill,
-                    boxColor: isDark ? const Color(0xFF2C3E50) : const Color(0xFF34495E),
-                    isDark: isDark,
-                    onTap: () => onModeSelected(AppMode.silk),
-                  ),
-                  const SizedBox(width: 40),
-                  _NetflixProfileCard(
-                    title: 'Niril Coolie',
-                    icon: CupertinoIcons.money_dollar_circle_fill,
-                    boxColor: isDark ? const Color(0xFF8E44AD) : const Color(0xFF9B59B6),
-                    isDark: isDark,
-                    onTap: () => onModeSelected(AppMode.coolie),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 60),
-            ],
+    return AuthLayout(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AuthHeader(
+            title: 'whoIsWorkingToday'.tr(context, ref),
+            subtitle: 'selectYourOperatingMode'.tr(context, ref),
           ),
-        ),
+          const SizedBox(height: 60),
+          AuthAnimatedElement(
+            delayIndex: 2,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 24,
+              runSpacing: 32,
+              children: [
+                _NetflixProfileCard(
+                  title: 'nirilSilk'.tr(context, ref),
+                  iconBuilder: (color, size) => SvgPicture.string(
+                    AppSvgs.silkMode,
+                    width: size,
+                    height: size,
+                    colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                  ),
+                  boxColor: isDark ? const Color(0xFF222222) : Colors.white,
+                  iconColor: isDark ? Colors.white : const Color(0xFF111111),
+                  isDark: isDark,
+                  onTap: () => onModeSelected(AppMode.silk),
+                ),
+                _NetflixProfileCard(
+                  title: 'nirilCoolie'.tr(context, ref),
+                  iconBuilder: (color, size) => SvgPicture.string(
+                    AppSvgs.coolieMode,
+                    width: size,
+                    height: size,
+                    colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                  ),
+                  boxColor: isDark ? const Color(0xFF222222) : Colors.white,
+                  iconColor: isDark ? Colors.white : const Color(0xFF111111),
+                  isDark: isDark,
+                  onTap: () => onModeSelected(AppMode.coolie),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 40),
+        ],
       ),
     );
   }
@@ -78,15 +74,17 @@ class ModeSelectorScreen extends StatelessWidget {
 class _NetflixProfileCard extends StatefulWidget {
   const _NetflixProfileCard({
     required this.title,
-    required this.icon,
+    required this.iconBuilder,
     required this.boxColor,
+    required this.iconColor,
     required this.isDark,
     required this.onTap,
   });
 
   final String title;
-  final IconData icon;
+  final Widget Function(Color color, double size) iconBuilder;
   final Color boxColor;
+  final Color iconColor;
   final bool isDark;
   final VoidCallback onTap;
 
@@ -107,51 +105,58 @@ class _NetflixProfileCardState extends State<_NetflixProfileCard> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
-      child: AnimatedScale(
-        scale: _isPressed ? 0.94 : 1.0, // Netflix scale down on press
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.easeOutCubic,
-        child: Column(
-          children: [
+      child: Listener(
+        onPointerDown: (_) => setState(() => _isPressed = true),
+        onPointerUp: (_) => setState(() => _isPressed = false),
+        onPointerCancel: (_) => setState(() => _isPressed = false),
+        child: GestureDetector(
+          onTap: widget.onTap,
+          behavior: HitTestBehavior.opaque,
+          child: AnimatedScale(
+            scale: _isPressed ? 0.94 : 1.0, // Slightly deeper press for better mobile feedback
+            duration: const Duration(milliseconds: 150),
+            curve: Curves.easeOutCubic,
+            child: Column(
+            children: [
             // Netflix-style Square Avatar Box
             AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 150,
-              height: 150,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutCubic,
+              width: 120,
+              height: 120,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8), // Netflix standard outer radius
+                shape: BoxShape.circle,
                 border: Border.all(
                   color: _isHovered ? textHoverColor : Colors.transparent,
-                  width: 4,
+                  width: 2, // 2px transparent-to-solid transition like React
                 ),
                 boxShadow: _isHovered
                     ? [
                         BoxShadow(
-                          color: widget.isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
+                          color: widget.isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.15),
+                          blurRadius: 40,
+                          offset: const Offset(0, 20),
                         )
                       ]
-                    : [],
+                    : [
+                        BoxShadow(
+                          color: widget.isDark ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.08),
+                          blurRadius: 16,
+                          offset: const Offset(0, 8),
+                        )
+                      ],
               ),
               child: Material(
                 color: widget.boxColor,
-                borderRadius: BorderRadius.circular(4), // Inner radius matches outer-border width
+                shape: const CircleBorder(),
                 clipBehavior: Clip.antiAlias,
-                child: InkWell(
-                  // NATIVE ANDROID RIPPLE
-                  onTap: widget.onTap,
-                  onHighlightChanged: (isHighlighted) {
-                    setState(() => _isPressed = isHighlighted);
-                  },
-                  splashColor: Colors.white.withValues(alpha: 0.3),
-                  highlightColor: Colors.black.withValues(alpha: 0.1),
-                  child: Center(
-                    child: Icon(
-                      widget.icon,
-                      size: 72,
-                      color: Colors.white,
+                child: Center(
+                  child: AnimatedDefaultTextStyle(
+                    duration: const Duration(milliseconds: 300),
+                    style: TextStyle(
+                      color: widget.iconColor,
                     ),
+                    child: widget.iconBuilder(widget.iconColor, 56),
                   ),
                 ),
               ),
@@ -159,16 +164,20 @@ class _NetflixProfileCardState extends State<_NetflixProfileCard> {
             const SizedBox(height: 16),
             // Netflix-style title
             AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeOutCubic,
               style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
+                fontFamily: 'ElvanSans',
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
                 color: _isHovered ? textHoverColor : textColor,
               ),
               child: Text(widget.title),
             ),
           ],
         ),
+      ),
+      ),
       ),
     );
   }

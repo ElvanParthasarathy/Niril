@@ -12,6 +12,7 @@ import '../../../settings/data/mock_profile.dart';
 import '../../../../core/models/app_mode.dart';
 import '../../../settings/data/vaniga_tharavugal_provider.dart';
 import '../../../shell/presentation/mobile/widgets/elvan_page_route.dart';
+import '../../../../localization/locale_provider.dart';
 
 class WelcomePage extends ConsumerWidget {
   const WelcomePage({super.key});
@@ -72,9 +73,9 @@ class WelcomePage extends ConsumerWidget {
           const SizedBox(height: 40),
 
           // TEXT SECTION
-          const AuthHeader(
-            title: 'Welcome to Niril',
-            subtitle: 'Your Billing & GST, Sorted.',
+          AuthHeader(
+            title: 'welcomeTitle'.tr(context, ref),
+            subtitle: 'welcomeSubtitle'.tr(context, ref),
           ),
 
           const SizedBox(height: 40),
@@ -83,7 +84,7 @@ class WelcomePage extends ConsumerWidget {
           AuthAnimatedElement(
             delayIndex: 2,
             child: Text(
-              'Tap "Get Started" to continue with Niril.',
+              'welcomeAgreeText'.tr(context, ref),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 12,
@@ -94,7 +95,7 @@ class WelcomePage extends ConsumerWidget {
           ),
           
           AuthButton(
-            text: 'Get Started',
+            text: 'agreeAndContinueBtn'.tr(context, ref),
             onPressed: () {
               Navigator.push(
                 context,

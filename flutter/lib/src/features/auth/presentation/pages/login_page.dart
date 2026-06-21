@@ -6,6 +6,7 @@ import '../widgets/auth_components.dart';
 import '../../../../../main.dart'; // To access ShellDemoScreen
 import '../../../../core/state/app_state.dart';
 import '../mode_selector_screen.dart';
+import '../../../../localization/locale_provider.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -23,7 +24,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   void _handleLogin() async {
     if (_email.isEmpty || _password.isEmpty) {
       setState(() {
-        _error = 'Please fill in all fields.';
+        _error = 'pleaseFillAllFields'.tr(context, ref);
       });
       return;
     }
@@ -53,23 +54,30 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const AuthHeader(
-            title: 'Niril',
-            subtitle: 'Login to access your app',
+          AuthAnimatedElement(
+            delayIndex: 0,
+            child: AuthBackButton(
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+          const SizedBox(height: 16),
+          AuthHeader(
+            title: 'nirilBrand'.tr(context, ref), // Brand name
+            subtitle: 'loginSubtitle'.tr(context, ref),
           ),
           
           const SizedBox(height: 32),
 
           AuthInput(
-            label: 'Email Address',
-            placeholder: 'Enter your email',
+            label: 'emailAddress'.tr(context, ref),
+            placeholder: 'enterEmail'.tr(context, ref),
             value: _email,
             onChange: (val) => setState(() => _email = val),
           ),
 
           AuthInput(
-            label: 'Password',
-            placeholder: 'Enter your password',
+            label: 'password'.tr(context, ref),
+            placeholder: 'enterPassword'.tr(context, ref),
             value: _password,
             onChange: (val) => setState(() => _password = val),
             isPassword: true,
@@ -79,7 +87,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           const SizedBox(height: 32),
 
           AuthButton(
-            text: 'Sign In',
+            text: 'signIn'.tr(context, ref),
             loading: _loading,
             onPressed: _handleLogin,
           ),

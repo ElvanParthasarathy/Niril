@@ -5,6 +5,8 @@ import 'dart:io';
 
 import '../../../localization/locale_provider.dart';
 import '../../shell/presentation/mobile/widgets/elvan_page_route.dart';
+import '../../../core/utils/app_svgs.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../core/state/app_state.dart';
 import '../../../core/models/app_mode.dart';
 import '../../shell/presentation/mobile/elvan_subpage_shell.dart';
@@ -57,17 +59,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 // Left Panel (Hub)
                 Expanded(
                   child: ElvanSubpagePadding(
-                    padding: const EdgeInsets.only(left: 24, right: 0),
+                    padding: const EdgeInsets.only(left: 24, right: 16),
                     child: SettingsHubScreen(onPageSelected: _onMenuSelected),
                   ),
                 ),
                     
-                const SizedBox(width: 32),
-                    
                 // Right Panel (Detail)
                 Expanded(
                   child: ElvanSubpagePadding(
-                    padding: const EdgeInsets.only(left: 0, right: 24),
+                    padding: const EdgeInsets.only(left: 24, right: 24),
                     child: _selectedDetail ?? const VanigaAmaippugalPage(),
                   ),
                 ),
@@ -188,12 +188,16 @@ class SettingsHubScreen extends ConsumerWidget {
                               width: 64,
                               height: 64,
                               child: Center(
-                                child: Icon(
+                                child: SvgPicture.string(
                                   ref.watch(appModeProvider) == AppMode.coolie 
-                                      ? CupertinoIcons.money_dollar_circle_fill
-                                      : CupertinoIcons.doc_text_fill,
-                                  size: 32,
-                                  color: Theme.of(context).colorScheme.onSurface,
+                                      ? AppSvgs.coolieMode
+                                      : AppSvgs.silkMode,
+                                  width: 32,
+                                  height: 32,
+                                  colorFilter: ColorFilter.mode(
+                                    Theme.of(context).colorScheme.onSurface,
+                                    BlendMode.srcIn,
+                                  ),
                                 ),
                               ),
                             ),

@@ -9,6 +9,7 @@ import '../../../niril_common/presentation/widgets/elvan_settings_icon.dart';
 import '../../../../core/models/app_mode.dart';
 import '../../../../core/state/app_state.dart';
 import '../mobile/elvan_navbar.dart'; // For CustomNavItem
+import '../../../../core/utils/app_svgs.dart';
 import '../../../auth/presentation/mode_selector_screen.dart';
 import '../../../settings/presentation/settings_screen.dart';
 
@@ -552,10 +553,11 @@ class _DesktopExpandedProfileState extends ConsumerState<_DesktopExpandedProfile
                     scale: _isIconPressed ? 0.85 : 1.0,
                     duration: const Duration(milliseconds: 150),
                     curve: const Cubic(0.4, 0.0, 0.2, 1.0),
-                    child: Icon(
-                      widget.appMode == AppMode.coolie ? CupertinoIcons.money_dollar_circle_fill : CupertinoIcons.doc_text_fill,
-                      size: 16,
-                      color: fgColor,
+                    child: SvgPicture.string(
+                      widget.appMode == AppMode.coolie ? AppSvgs.coolieMode : AppSvgs.silkMode,
+                      width: 16,
+                      height: 16,
+                      colorFilter: ColorFilter.mode(fgColor, BlendMode.srcIn),
                     ),
                   ),
                 ),
