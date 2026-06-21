@@ -29,8 +29,8 @@ extension StringLocalization on String {
   String tr(BuildContext context, WidgetRef ref) {
     final currentLocale = ref.watch(localeProvider);
     
-    // If system default, force Tamil instead of guessing from context
-    Locale effectiveLocale = currentLocale ?? const Locale('ta');
+    // If system default, try to guess from context
+    Locale effectiveLocale = currentLocale ?? Localizations.localeOf(context);
 
     // Our keys in translations.dart are mainly English strings, mapped to Tamil in `ta`.
     if (effectiveLocale.languageCode == 'ta') {
