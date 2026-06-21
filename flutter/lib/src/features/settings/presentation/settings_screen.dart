@@ -33,7 +33,7 @@ class SettingsScreen extends ConsumerWidget {
 
     return ElvanSubpageShell(
       title: 'settings'.tr(context, ref),
-      startCollapsed: false,
+      startCollapsed: true,
       backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
       slivers: [
         SliverList.list(
