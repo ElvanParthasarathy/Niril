@@ -11,6 +11,7 @@ import 'src/core/models/app_mode.dart';
 import 'src/localization/locale_provider.dart';
 import 'src/features/shell/presentation/mobile/widgets/elvan_page_route.dart';
 import 'src/features/auth/presentation/mode_selector_screen.dart';
+import 'src/features/auth/presentation/pages/welcome_page.dart';
 import 'src/features/pages/mugappu_page.dart';
 import 'src/features/pages/uruvakku_page.dart';
 import 'src/features/shell/presentation/mobile/elvan_navbar.dart';
@@ -22,8 +23,12 @@ import 'src/features/niril_silk/presentation/editors/silk_invoice_editor.dart';
 import 'src/features/niril_silk/presentation/editors/silk_receipt_editor.dart';
 import 'src/features/niril_silk/presentation/editors/silk_merchant_editor.dart';
 import 'src/features/niril_silk/presentation/editors/silk_item_editor.dart';
+import 'src/features/niril_coolie/presentation/pages/settings/coolie_vaniga_amaippu.dart';
+import 'src/features/niril_silk/presentation/pages/settings/silk_vaniga_amaippu.dart';
 import 'src/features/niril_coolie/presentation/editors/coolie_invoice_editor.dart';
 import 'src/features/niril_coolie/presentation/editors/coolie_receipt_editor.dart';
+import 'src/features/settings/data/vaniga_tharavugal_provider.dart';
+import 'src/core/database/app_database.dart';
 
 import 'src/core/state/search_state.dart';
 import 'src/features/niril_coolie/presentation/editors/coolie_merchant_editor.dart';
@@ -51,11 +56,15 @@ void main() async {
 
   final sharedPrefs = await SharedPreferences.getInstance();
 
+  // Initialize Drift (SQLite) database
+  final database = AppDatabase(AppDatabase.openConnection());
+
   runApp(
     // Wrap the entire app with ProviderScope for Riverpod state management
     ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sharedPrefs),
+        appDatabaseProvider.overrideWithValue(database),
       ],
       child: const ElvanNirilApp(),
     ),
@@ -132,6 +141,11 @@ class ElvanNirilApp extends ConsumerWidget {
       ),
       home: Consumer(
         builder: (context, ref, _) {
+          final isOnboarded = ref.watch(onboardedProvider);
+          if (!isOnboarded) {
+            return const WelcomePage();
+          }
+
           final mode = ref.watch(appModeProvider);
           if (mode == null) {
             return ModeSelectorScreen(
@@ -140,6 +154,23 @@ class ElvanNirilApp extends ConsumerWidget {
               },
             );
           }
+
+          final hasProfile = ref.watch(hasProfileForCurrentModeProvider);
+          if (!hasProfile) {
+            // Show profile creation screen for the current mode
+            // We use PopScope so the hardware back button will return to the mode selector
+            return PopScope(
+              canPop: false,
+              onPopInvoked: (didPop) {
+                if (didPop) return;
+                ref.read(appModeProvider.notifier).setMode(null);
+              },
+              child: mode == AppMode.coolie
+                  ? CoolieVanigaAmaippuPage()
+                  : SilkVanigaAmaippuPage(),
+            );
+          }
+
           return const ShellDemoScreen();
         },
       ),
@@ -277,12 +308,13 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
             );
           }
 
-          return IndexedStack(
-            index: _currentTab,
-            children: [
-              for (int i = 0; i < 4; i++)
-                ElvanShell(
-                  assignedIndex: i,
+          return Scaffold(
+            body: IndexedStack(
+              index: _currentTab,
+              children: [
+                for (int i = 0; i < 4; i++)
+                  ElvanShell(
+                    assignedIndex: i,
                   title: _masterNavItems[i].headerLabel ?? _masterNavItems[i].label,
                   currentIndex: _currentTab,
                   onTabSelected: (index) => setState(() => _currentTab = index),
@@ -328,7 +360,36 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
                   ],
                 ),
             ],
-          );
+          ),
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(bottom: 80.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton.extended(
+                  heroTag: 'dev_seed',
+                  onPressed: () {
+                    ref.read(vanigaTharavugalProvider.notifier).seedData();
+                  },
+                  label: const Text('Dev: Seed'),
+                  icon: const Icon(CupertinoIcons.rocket),
+                  backgroundColor: Colors.green,
+                ),
+                const SizedBox(height: 8),
+                FloatingActionButton.extended(
+                  heroTag: 'dev_erase',
+                  onPressed: () {
+                    ref.read(vanigaTharavugalProvider.notifier).clearProfile();
+                  },
+                  label: const Text('Dev: Erase'),
+                  icon: const Icon(CupertinoIcons.trash),
+                  backgroundColor: Colors.red,
+                ),
+              ],
+            ),
+          ),
+        );
         },
       ),
     );

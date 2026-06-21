@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import '../../../../../localization/locale_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/widgets/elvan_snackbar.dart';
-
+import '../../../../../localization/locale_provider.dart';
+import '../../../../../core/state/app_state.dart';
 import '../../../../shell/presentation/mobile/elvan_subpage_shell.dart';
 import '../../../../../core/widgets/elvan_fullscreen_popup.dart';
+import '../../../../../core/widgets/elvan_action_sheet.dart';
 import '../../../../settings/presentation/widgets/elvan_settings_section.dart';
 import '../../../../settings/presentation/widgets/elvan_settings_edit_card.dart';
-import '../../../../settings/presentation/widgets/elvan_settings_controls.dart';
-import '../../../../../core/widgets/elvan_action_sheet.dart';
 import '../../../../settings/presentation/widgets/elvan_delete_confirm_modal.dart';
 import '../../../../../core/widgets/elvan_bottom_sheet.dart';
 import '../../../../../core/widgets/elvan_text_field.dart';
+import '../../../../settings/data/vaniga_tharavugal_provider.dart';
+import '../../../../settings/data/vaniga_tharavugal.dart';
 
 class CoolieVanigaAmaippuPage extends ConsumerStatefulWidget {
   const CoolieVanigaAmaippuPage({super.key});
@@ -24,38 +25,28 @@ class CoolieVanigaAmaippuPage extends ConsumerStatefulWidget {
 class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPage> {
   String? _editingSection;
 
-  // State – blank by default
-  String _niruvanathinPeyarPrimary = '';
-  String _niruvanathinPeyarSecondary = '';
-  String _shortBusinessName = '';
-  List<String> _phones = [];
-  String _email = '';
-
   String _tempPrimary = '';
   String _tempSecondary = '';
-  List<String> _tempPhones = [];
-
-  final ValueNotifier<bool> _hasProfiles = ValueNotifier(false);
 
   void _showSuccessToast() {
     ElvanSnackbar.show(context, 'profileSaved'.tr(context, ref));
   }
 
   void _showBusinessSelectorModal() {
-    final List<String> businesses = [
-      _niruvanathinPeyarPrimary.isEmpty ? 'activeProfile'.tr(context, ref) : _niruvanathinPeyarPrimary,
-    ];
+    final profile = ref.read(vanigaTharavugalProvider);
+    final primaryName = profile?.getPrimary('niruvanathinPeyar') ?? '';
+    final displayName = primaryName.isEmpty ? 'activeProfile'.tr(context, ref) : primaryName;
+
+    final List<String> businesses = [displayName];
 
     showElvanSelectionBottomSheet(
       context: context,
       title: 'activeProfile'.tr(context, ref),
       items: businesses,
-      currentValue: _niruvanathinPeyarPrimary.isEmpty ? 'activeProfile'.tr(context, ref) : _niruvanathinPeyarPrimary,
+      currentValue: displayName,
       onSelected: (val) {},
     );
   }
-
-
 
   void _showManageProfilesModal() {
     showGeneralDialog(
@@ -67,68 +58,67 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
         return StatefulBuilder(
           builder: (context, setModalState) {
             return Dialog.fullscreen(
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            floatingActionButton: Padding(
-              padding: const EdgeInsets.only(bottom: 48.0),
-              child: FloatingActionButton(
-                onPressed: _showNewProfileModal,
-                backgroundColor: Theme.of(context).colorScheme.onSurface,
-                foregroundColor: Theme.of(context).colorScheme.surface,
-                child: const Icon(Icons.add),
-              ),
-            ),
-            body: ElvanFullscreenPopup(
-              title: 'vaniga_nirvagam'.tr(context, ref),
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.all(16),
-                  sliver: SliverToBoxAdapter(
-                    child: ValueListenableBuilder<bool>(
-                      valueListenable: _hasProfiles,
-                      builder: (context, hasProfiles, _) {
-                        if (!hasProfiles) {
-                          return Center(
-                            child: Padding(
-                              padding: const EdgeInsets.all(32.0),
-                              child: Text(
-                                'noSavedProfiles'.tr(context, ref),
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-                        return Column(
-                          children: [
-                            ElvanSettingsSection(
-                              children: [
-                                ElvanSettingsDisplayRow(
-                                  title: 'activeProfile'.tr(context, ref),
-                                  primaryValue: _niruvanathinPeyarPrimary.isEmpty ? 'activeProfile'.tr(context, ref) : _niruvanathinPeyarPrimary,
-                                  icon: CupertinoIcons.delete_solid,
-                                  onEdit: () => showElvanDeleteConfirmModal(context, ref, () {
-                                    _hasProfiles.value = false;
-                                    setState(() {
-                                      _niruvanathinPeyarPrimary = '';
-                                    });
-                                    setModalState(() {});
-                                    ElvanSnackbar.show(context, 'profileDeleted'.tr(context, ref));
-                                  }),
-                                ),
-                              ],
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                floatingActionButton: Padding(
+                  padding: const EdgeInsets.only(bottom: 48.0),
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      _showNewProfileModal();
+                    },
+                    backgroundColor: Theme.of(context).colorScheme.onSurface,
+                    foregroundColor: Theme.of(context).colorScheme.surface,
+                    child: const Icon(Icons.add),
                   ),
                 ),
-              ],
-            ),
-          ),
-        );
+                body: Consumer(
+                  builder: (context, ref, child) {
+                    final profile = ref.watch(vanigaTharavugalProvider);
+                    final hasProfile = profile != null;
+                    
+                    return ElvanFullscreenPopup(
+                      title: 'vaniga_nirvagam'.tr(context, ref),
+                      slivers: [
+                        SliverPadding(
+                          padding: const EdgeInsets.all(16),
+                          sliver: SliverToBoxAdapter(
+                            child: !hasProfile 
+                                ? Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(32.0),
+                                      child: Text(
+                                        'noSavedProfiles'.tr(context, ref),
+                                        style: TextStyle(
+                                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Column(
+                                    children: [
+                                      ElvanSettingsSection(
+                                        children: [
+                                          ElvanSettingsDisplayRow(
+                                            title: 'activeProfile'.tr(context, ref),
+                                            primaryValue: profile.getPrimary('niruvanathinPeyar').isEmpty ? 'activeProfile'.tr(context, ref) : profile.getPrimary('niruvanathinPeyar'),
+                                            icon: CupertinoIcons.delete_solid,
+                                            onEdit: () => showElvanDeleteConfirmModal(context, ref, () {
+                                              ref.read(vanigaTharavugalProvider.notifier).clearProfile();
+                                              ElvanSnackbar.show(context, 'profileDeleted'.tr(context, ref));
+                                            }),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                ),
+              ),
+            );
           },
         );
       },
@@ -231,14 +221,10 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
       ),
       onConfirm: () {
         if (newNamePrimary.trim().isNotEmpty) {
-          setState(() {
-            _niruvanathinPeyarPrimary = newNamePrimary;
-            _niruvanathinPeyarSecondary = newNameSecondary;
-            _shortBusinessName = '';
-            _phones = [];
-            _email = '';
-            _hasProfiles.value = true;
-          });
+          final newProfile = VanigaTharavugal();
+          newProfile.setBilingual('niruvanathinPeyar', newProfile.mudhanMozhi, newNamePrimary);
+          newProfile.setBilingual('niruvanathinPeyar', newProfile.thunaiMozhi, newNameSecondary);
+          ref.read(vanigaTharavugalProvider.notifier).updateProfile(newProfile);
           _showSuccessToast();
         }
       },
@@ -248,6 +234,9 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
   Widget _buildProfileSwitcher() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? const Color(0xFF111111) : Colors.white;
+    final profile = ref.watch(vanigaTharavugalProvider);
+    final primaryName = profile?.getPrimary('niruvanathinPeyar') ?? '';
+    final displayName = primaryName.isEmpty ? 'activeProfile'.tr(context, ref) : primaryName;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
@@ -283,7 +272,7 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
                 children: [
                   Expanded(
                     child: Text(
-                      _niruvanathinPeyarPrimary.isEmpty ? 'activeProfile'.tr(context, ref) : _niruvanathinPeyarPrimary,
+                      displayName,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
@@ -305,33 +294,21 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
 
   Widget _buildEditContainer({
     required String title,
-    Widget? titleTrailing,
-    Widget? bottomLeading,
     required List<Widget> inputFields,
     required VoidCallback onCancel,
     required VoidCallback onSave,
   }) {
     return ElvanSettingsEditContainer(
-      child: AnimatedSize(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.fastOutSlowIn,
-        alignment: Alignment.topCenter,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-              if (titleTrailing != null) titleTrailing,
-            ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: 16),
           ...inputFields,
@@ -339,10 +316,6 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              if (bottomLeading != null) ...[
-                bottomLeading,
-                const SizedBox(width: 8),
-              ],
               TextButton(
                 onPressed: onCancel,
                 style: TextButton.styleFrom(
@@ -363,7 +336,6 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
           ),
         ],
       ),
-      ),
     );
   }
 
@@ -382,19 +354,51 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
     });
   }
 
-  void _beginEditPhones(List<String> phones) {
-    setState(() {
-      _tempPhones = List.from(phones);
-      if (_tempPhones.isEmpty) {
-        _tempPhones.add('');
-      }
-      _editingSection = 'phone';
-    });
+  void _saveBilingualField(VanigaTharavugal profile, String fieldName) {
+    final updatedProfile = profile.copyWith();
+    updatedProfile.setBilingual(fieldName, profile.mudhanMozhi, _tempPrimary);
+    updatedProfile.setBilingual(fieldName, profile.thunaiMozhi, _tempSecondary);
+    ref.read(vanigaTharavugalProvider.notifier).updateProfile(updatedProfile);
+    setState(() => _editingSection = null);
+    _showSuccessToast();
+  }
+
+  void _saveSingleField(VanigaTharavugal profile, String fieldName) {
+    final updatedProfile = profile.copyWith();
+    switch (fieldName) {
+      case 'kurumPeyar':
+        updatedProfile.kurumPeyar = _tempPrimary;
+        break;
+      case 'tholaipesi_1':
+        updatedProfile.tholaipesi1 = _tempPrimary;
+        break;
+      case 'tholaipesi_2':
+        updatedProfile.tholaipesi2 = _tempPrimary;
+        break;
+      case 'minnanchal':
+        updatedProfile.minnanchal = _tempPrimary;
+        break;
+    }
+    ref.read(vanigaTharavugalProvider.notifier).updateProfile(updatedProfile);
+    setState(() => _editingSection = null);
+    _showSuccessToast();
   }
 
   @override
   Widget build(BuildContext context) {
     final title = 'vanigam'.tr(context, ref);
+    final isBilingual = ref.watch(bilingualProvider);
+    final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
+    final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
+
+    final profile = ref.watch(vanigaTharavugalProvider);
+    final currentProfile = profile ?? VanigaTharavugal();
+
+    final niruvanathinPeyarPrimary = currentProfile.getPrimary('niruvanathinPeyar');
+    final niruvanathinPeyarSecondary = currentProfile.getSecondary('niruvanathinPeyar');
+
+    final adaimozhiPrimary = currentProfile.getPrimary('adaimozhi');
+    final adaimozhiSecondary = currentProfile.getSecondary('adaimozhi');
 
     return ElvanSubpageShell(
       title: title,
@@ -415,40 +419,33 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
                       title: 'businessNameLabel'.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
-                          label: '${'businessNameLabel'.tr(context, ref)} (${'tamil'.tr(context, ref)})',
+                          label: '${'businessNameLabel'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                         ),
-                        const SizedBox(height: 16),
-                        ElvanSettingsTextField(
-                          label: '${'businessNameLabel'.tr(context, ref)} (${'english'.tr(context, ref)})',
-                          initialValue: _tempSecondary,
-                          onChanged: (val) => _tempSecondary = val,
-                        ),
+                        if (isBilingual) const SizedBox(height: 16),
+                        if (isBilingual)
+                          ElvanSettingsTextField(
+                            label: '${'businessNameLabel'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
+                            initialValue: _tempSecondary,
+                            onChanged: (val) => _tempSecondary = val,
+                          ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () {
-                        setState(() {
-                          _niruvanathinPeyarPrimary = _tempPrimary;
-                          _niruvanathinPeyarSecondary = _tempSecondary;
-                          _hasProfiles.value = _tempPrimary.isNotEmpty;
-                          _editingSection = null;
-                        });
-                        _showSuccessToast();
-                      },
+                      onSave: () => _saveBilingualField(currentProfile, 'niruvanathinPeyar'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'businessNameLabel'.tr(context, ref),
-                      primaryValue: _niruvanathinPeyarPrimary,
-                      secondaryValue: _niruvanathinPeyarSecondary,
-                      onEdit: () => _beginEditPrimarySecondary('niruvanathinPeyar', _niruvanathinPeyarPrimary, _niruvanathinPeyarSecondary),
+                      primaryValue: niruvanathinPeyarPrimary,
+                      secondaryValue: isBilingual ? niruvanathinPeyarSecondary : null,
+                      onEdit: () => _beginEditPrimarySecondary('niruvanathinPeyar', niruvanathinPeyarPrimary, niruvanathinPeyarSecondary),
                     ),
                   ),
 
                   // 2. Short Business Name
                   ElvanSettingsAnimatedExpand(
                     keyPrefix: 'short_business_name',
-                    isEditing: _editingSection == 'shortBusinessName',
+                    isEditing: _editingSection == 'kurumPeyar',
                     editChild: _buildEditContainer(
                       title: 'shortBusinessName'.tr(context, ref),
                       inputFields: [
@@ -459,91 +456,98 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
                         ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () {
-                        setState(() {
-                          _shortBusinessName = _tempPrimary;
-                          _editingSection = null;
-                        });
-                        _showSuccessToast();
-                      },
+                      onSave: () => _saveSingleField(currentProfile, 'kurumPeyar'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'shortBusinessName'.tr(context, ref),
-                      primaryValue: _shortBusinessName,
-                      onEdit: () => _beginEditSingle('shortBusinessName', _shortBusinessName),
+                      primaryValue: currentProfile.kurumPeyar,
+                      onEdit: () => _beginEditSingle('kurumPeyar', currentProfile.kurumPeyar),
                     ),
                   ),
 
-                  // 3. Phone
+                  // Tagline
                   ElvanSettingsAnimatedExpand(
-                    keyPrefix: 'phone',
-                    isEditing: _editingSection == 'phone',
+                    keyPrefix: 'tagline',
+                    isEditing: _editingSection == 'adaimozhi',
                     editChild: _buildEditContainer(
-                      title: 'tholaipesiLabel'.tr(context, ref),
-                      bottomLeading: _tempPhones.length < 2
-                          ? TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  _tempPhones.add('');
-                                });
-                              },
-                              style: TextButton.styleFrom(
-                                foregroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
-                              ),
-                              child: Text('add'.tr(context, ref)),
-                            )
-                          : null,
+                      title: 'Tagline',
                       inputFields: [
-                        ..._tempPhones.asMap().entries.map((entry) {
-                          final idx = entry.key;
-                          final phone = entry.value;
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12.0),
-                            child: ElvanSettingsTextField(
-                              label: 'tholaipesiLabel'.tr(context, ref),
-                              initialValue: phone,
-                              onChanged: (val) {
-                                _tempPhones[idx] = val;
-                              },
-                              keyboardType: TextInputType.phone,
-                              suffixIcon: Padding(
-                                padding: const EdgeInsets.only(right: 8.0),
-                                child: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _tempPhones.removeAt(idx);
-                                    });
-                                  },
-                                  icon: const Icon(Icons.close, size: 18),
-                                  style: IconButton.styleFrom(
-                                    foregroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
+                        ElvanSettingsTextField(
+                          label: 'Tagline (${primaryLang.tr(context, ref)})',
+                          initialValue: _tempPrimary,
+                          onChanged: (val) => _tempPrimary = val,
+                        ),
+                        if (isBilingual) const SizedBox(height: 16),
+                        if (isBilingual)
+                          ElvanSettingsTextField(
+                            label: 'Tagline (${secondaryLang.tr(context, ref)})',
+                            initialValue: _tempSecondary,
+                            onChanged: (val) => _tempSecondary = val,
+                          ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () {
-                        setState(() {
-                          _phones = List.from(_tempPhones);
-                          _editingSection = null;
-                        });
-                        _showSuccessToast();
-                      },
+                      onSave: () => _saveBilingualField(currentProfile, 'adaimozhi'),
+                    ),
+                    displayChild: ElvanSettingsDisplayRow(
+                      title: 'Tagline',
+                      primaryValue: adaimozhiPrimary,
+                      secondaryValue: isBilingual ? adaimozhiSecondary : null,
+                      onEdit: () => _beginEditPrimarySecondary('adaimozhi', adaimozhiPrimary, adaimozhiSecondary),
+                    ),
+                  ),
+
+                  // 3. Phone 1
+                  ElvanSettingsAnimatedExpand(
+                    keyPrefix: 'tholaipesi_1',
+                    isEditing: _editingSection == 'tholaipesi_1',
+                    editChild: _buildEditContainer(
+                      title: 'tholaipesiLabel'.tr(context, ref),
+                      inputFields: [
+                        ElvanSettingsTextField(
+                          label: 'tholaipesiLabel'.tr(context, ref),
+                          initialValue: _tempPrimary,
+                          onChanged: (val) => _tempPrimary = val,
+                          keyboardType: TextInputType.phone,
+                        ),
+                      ],
+                      onCancel: () => setState(() => _editingSection = null),
+                      onSave: () => _saveSingleField(currentProfile, 'tholaipesi_1'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'tholaipesiLabel'.tr(context, ref),
-                      primaryValue: _phones.where((p) => p.trim().isNotEmpty).join(', '),
-                      onEdit: () => _beginEditPhones(_phones),
+                      primaryValue: currentProfile.tholaipesi1,
+                      onEdit: () => _beginEditSingle('tholaipesi_1', currentProfile.tholaipesi1),
                     ),
                   ),
 
-                  // 4. Email
+                  // 4. Phone 2
+                  ElvanSettingsAnimatedExpand(
+                    keyPrefix: 'tholaipesi_2',
+                    isEditing: _editingSection == 'tholaipesi_2',
+                    editChild: _buildEditContainer(
+                      title: 'mobileLabel'.tr(context, ref),
+                      inputFields: [
+                        ElvanSettingsTextField(
+                          label: 'mobileLabel'.tr(context, ref),
+                          initialValue: _tempPrimary,
+                          onChanged: (val) => _tempPrimary = val,
+                          keyboardType: TextInputType.phone,
+                        ),
+                      ],
+                      onCancel: () => setState(() => _editingSection = null),
+                      onSave: () => _saveSingleField(currentProfile, 'tholaipesi_2'),
+                    ),
+                    displayChild: ElvanSettingsDisplayRow(
+                      title: 'mobileLabel'.tr(context, ref),
+                      primaryValue: currentProfile.tholaipesi2,
+                      onEdit: () => _beginEditSingle('tholaipesi_2', currentProfile.tholaipesi2),
+                    ),
+                  ),
+
+                  // 5. Email
                   ElvanSettingsAnimatedExpand(
                     keyPrefix: 'email',
-                    isEditing: _editingSection == 'email',
+                    isEditing: _editingSection == 'minnanchal',
                     editChild: _buildEditContainer(
                       title: 'email'.tr(context, ref),
                       inputFields: [
@@ -555,18 +559,12 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
                         ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () {
-                        setState(() {
-                          _email = _tempPrimary;
-                          _editingSection = null;
-                        });
-                        _showSuccessToast();
-                      },
+                      onSave: () => _saveSingleField(currentProfile, 'minnanchal'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'email'.tr(context, ref),
-                      primaryValue: _email,
-                      onEdit: () => _beginEditSingle('email', _email),
+                      primaryValue: currentProfile.minnanchal,
+                      onEdit: () => _beginEditSingle('minnanchal', currentProfile.minnanchal),
                     ),
                   ),
                 ],

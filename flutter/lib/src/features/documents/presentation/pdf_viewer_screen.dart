@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:elvan_niril/src/core/services/share_service.dart';
 
-import 'package:elvan_niril/src/features/printing/presentation/widgets/elvan_back_button.dart';
+import 'package:elvan_niril/src/features/shell/presentation/mobile/widgets/elvan_back_button.dart';
 
 class PdfViewerScreen extends ConsumerWidget {
   final File pdfFile;

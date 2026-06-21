@@ -1,19 +1,31 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../../core/state/app_state.dart';
 
 /// A circular back button designed to be passed into ElvanShell as a [leadingWidget].
 /// The shell's physics engine automatically handles its background, drop shadow, and scroll fading.
-class ElvanBackButton extends StatelessWidget {
+class ElvanBackButton extends ConsumerWidget {
   const ElvanBackButton({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
       width: 50,
       height: 50,
       child: InkResponse(
         onTap: () {
-          Navigator.maybePop(context);
+          if (Navigator.canPop(context)) {
+            Navigator.pop(context);
+          } else {
+            // If we are at the root route (e.g. forced onboarding screen),
+            // hitting back should take us back to the mode selector.
+            final mode = ref.read(appModeProvider);
+            if (mode != null) {
+              ref.read(appModeProvider.notifier).setMode(null);
+            }
+          }
         },
         radius: 25,
         highlightShape: BoxShape.circle,

@@ -3,10 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/widgets/elvan_snackbar.dart';
 
 import '../../../../../localization/locale_provider.dart';
+import '../../../../../core/state/app_state.dart';
 import '../../../../shell/presentation/mobile/elvan_subpage_shell.dart';
 import '../../../../settings/presentation/widgets/elvan_settings_section.dart';
 import '../../../../settings/presentation/widgets/elvan_settings_edit_card.dart';
 import '../../../../settings/presentation/widgets/elvan_settings_controls.dart';
+import '../../../../settings/data/vaniga_tharavugal_provider.dart';
+import '../../../../settings/data/vaniga_tharavugal.dart';
 
 class CoolieMugavariPage extends ConsumerStatefulWidget {
   const CoolieMugavariPage({super.key});
@@ -17,15 +20,6 @@ class CoolieMugavariPage extends ConsumerStatefulWidget {
 
 class _CoolieMugavariPageState extends ConsumerState<CoolieMugavariPage> {
   String? _editingSection;
-
-  // All blank by default
-  String _mugavariPrimary = '';
-  String _mugavariSecondary = '';
-  String _oorPrimary = '';
-  String _oorSecondary = '';
-  String _maavattamPrimary = '';
-  String _maavattamSecondary = '';
-  String _pincode = '';
 
   String _tempPrimary = '';
   String _tempSecondary = '';
@@ -96,8 +90,43 @@ class _CoolieMugavariPageState extends ConsumerState<CoolieMugavariPage> {
     });
   }
 
+  void _saveBilingualField(VanigaTharavugal profile, String fieldName) {
+    final updatedProfile = profile.copyWith();
+    updatedProfile.setBilingual(fieldName, profile.mudhanMozhi, _tempPrimary);
+    updatedProfile.setBilingual(fieldName, profile.thunaiMozhi, _tempSecondary);
+    ref.read(vanigaTharavugalProvider.notifier).updateProfile(updatedProfile);
+    setState(() => _editingSection = null);
+    _showSuccessToast();
+  }
+
+  void _saveSingleField(VanigaTharavugal profile, String fieldName) {
+    final updatedProfile = profile.copyWith();
+    switch (fieldName) {
+      case 'anchalkuriyeedu':
+        updatedProfile.anchalkuriyeedu = _tempPrimary;
+        break;
+    }
+    ref.read(vanigaTharavugalProvider.notifier).updateProfile(updatedProfile);
+    setState(() => _editingSection = null);
+    _showSuccessToast();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isBilingual = ref.watch(bilingualProvider);
+    final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
+    final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
+
+    final profile = ref.watch(vanigaTharavugalProvider);
+    final currentProfile = profile ?? VanigaTharavugal();
+
+    final mugavariPrimary = currentProfile.getPrimary('mugavari');
+    final mugavariSecondary = currentProfile.getSecondary('mugavari');
+    final oorPrimary = currentProfile.getPrimary('oor');
+    final oorSecondary = currentProfile.getSecondary('oor');
+    final maavattamPrimary = currentProfile.getPrimary('maavattam');
+    final maavattamSecondary = currentProfile.getSecondary('maavattam');
+
     return ElvanSubpageShell(
       title: 'settings_mugavari'.tr(context, ref),
       slivers: [
@@ -116,34 +145,28 @@ class _CoolieMugavariPageState extends ConsumerState<CoolieMugavariPage> {
                       title: 'mugavari'.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
-                          label: '${'mugavari'.tr(context, ref)} (${'tamil'.tr(context, ref)})',
+                          label: '${'mugavari'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                           maxLines: 2,
                         ),
-                        const SizedBox(height: 16),
-                        ElvanSettingsTextField(
-                          label: '${'mugavari'.tr(context, ref)} (${'english'.tr(context, ref)})',
-                          initialValue: _tempSecondary,
-                          onChanged: (val) => _tempSecondary = val,
-                          maxLines: 2,
-                        ),
+                        if (isBilingual) const SizedBox(height: 16),
+                        if (isBilingual)
+                          ElvanSettingsTextField(
+                            label: '${'mugavari'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
+                            initialValue: _tempSecondary,
+                            onChanged: (val) => _tempSecondary = val,
+                            maxLines: 2,
+                          ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () {
-                        setState(() {
-                          _mugavariPrimary = _tempPrimary;
-                          _mugavariSecondary = _tempSecondary;
-                          _editingSection = null;
-                        });
-                        _showSuccessToast();
-                      },
+                      onSave: () => _saveBilingualField(currentProfile, 'mugavari'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'mugavari'.tr(context, ref),
-                      primaryValue: _mugavariPrimary,
-                      secondaryValue: _mugavariSecondary,
-                      onEdit: () => _beginEditPrimarySecondary('mugavari', _mugavariPrimary, _mugavariSecondary),
+                      primaryValue: mugavariPrimary,
+                      secondaryValue: isBilingual ? mugavariSecondary : null,
+                      onEdit: () => _beginEditPrimarySecondary('mugavari', mugavariPrimary, mugavariSecondary),
                     ),
                   ),
 
@@ -155,32 +178,26 @@ class _CoolieMugavariPageState extends ConsumerState<CoolieMugavariPage> {
                       title: 'oor'.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
-                          label: '${'oor'.tr(context, ref)} (${'tamil'.tr(context, ref)})',
+                          label: '${'oor'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                         ),
-                        const SizedBox(height: 16),
-                        ElvanSettingsTextField(
-                          label: '${'oor'.tr(context, ref)} (${'english'.tr(context, ref)})',
-                          initialValue: _tempSecondary,
-                          onChanged: (val) => _tempSecondary = val,
-                        ),
+                        if (isBilingual) const SizedBox(height: 16),
+                        if (isBilingual)
+                          ElvanSettingsTextField(
+                            label: '${'oor'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
+                            initialValue: _tempSecondary,
+                            onChanged: (val) => _tempSecondary = val,
+                          ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () {
-                        setState(() {
-                          _oorPrimary = _tempPrimary;
-                          _oorSecondary = _tempSecondary;
-                          _editingSection = null;
-                        });
-                        _showSuccessToast();
-                      },
+                      onSave: () => _saveBilingualField(currentProfile, 'oor'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'oor'.tr(context, ref),
-                      primaryValue: _oorPrimary,
-                      secondaryValue: _oorSecondary,
-                      onEdit: () => _beginEditPrimarySecondary('oor', _oorPrimary, _oorSecondary),
+                      primaryValue: oorPrimary,
+                      secondaryValue: isBilingual ? oorSecondary : null,
+                      onEdit: () => _beginEditPrimarySecondary('oor', oorPrimary, oorSecondary),
                     ),
                   ),
 
@@ -192,39 +209,33 @@ class _CoolieMugavariPageState extends ConsumerState<CoolieMugavariPage> {
                       title: 'maavattam'.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
-                          label: '${'maavattam'.tr(context, ref)} (${'tamil'.tr(context, ref)})',
+                          label: '${'maavattam'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                         ),
-                        const SizedBox(height: 16),
-                        ElvanSettingsTextField(
-                          label: '${'maavattam'.tr(context, ref)} (${'english'.tr(context, ref)})',
-                          initialValue: _tempSecondary,
-                          onChanged: (val) => _tempSecondary = val,
-                        ),
+                        if (isBilingual) const SizedBox(height: 16),
+                        if (isBilingual)
+                          ElvanSettingsTextField(
+                            label: '${'maavattam'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
+                            initialValue: _tempSecondary,
+                            onChanged: (val) => _tempSecondary = val,
+                          ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () {
-                        setState(() {
-                          _maavattamPrimary = _tempPrimary;
-                          _maavattamSecondary = _tempSecondary;
-                          _editingSection = null;
-                        });
-                        _showSuccessToast();
-                      },
+                      onSave: () => _saveBilingualField(currentProfile, 'maavattam'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'maavattam'.tr(context, ref),
-                      primaryValue: _maavattamPrimary,
-                      secondaryValue: _maavattamSecondary,
-                      onEdit: () => _beginEditPrimarySecondary('maavattam', _maavattamPrimary, _maavattamSecondary),
+                      primaryValue: maavattamPrimary,
+                      secondaryValue: isBilingual ? maavattamSecondary : null,
+                      onEdit: () => _beginEditPrimarySecondary('maavattam', maavattamPrimary, maavattamSecondary),
                     ),
                   ),
 
                   // 4. Pincode
                   ElvanSettingsAnimatedExpand(
-                    keyPrefix: 'pincode',
-                    isEditing: _editingSection == 'pincode',
+                    keyPrefix: 'anchalkuriyeedu',
+                    isEditing: _editingSection == 'anchalkuriyeedu',
                     editChild: _buildEditContainer(
                       title: 'pincode'.tr(context, ref),
                       inputFields: [
@@ -236,18 +247,12 @@ class _CoolieMugavariPageState extends ConsumerState<CoolieMugavariPage> {
                         ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () {
-                        setState(() {
-                          _pincode = _tempPrimary;
-                          _editingSection = null;
-                        });
-                        _showSuccessToast();
-                      },
+                      onSave: () => _saveSingleField(currentProfile, 'anchalkuriyeedu'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'pincode'.tr(context, ref),
-                      primaryValue: _pincode,
-                      onEdit: () => _beginEditSingle('pincode', _pincode),
+                      primaryValue: currentProfile.anchalkuriyeedu,
+                      onEdit: () => _beginEditSingle('anchalkuriyeedu', currentProfile.anchalkuriyeedu),
                     ),
                   ),
                 ],

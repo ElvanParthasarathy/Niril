@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../localization/locale_provider.dart';
-import '../../../../core/theme_provider.dart';
 import '../../../../core/models/app_mode.dart';
 import '../../../../core/state/app_state.dart';
 import '../../../shell/presentation/mobile/elvan_subpage_shell.dart';
@@ -34,8 +33,8 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
                 children: [
                   ElvanRadioSettingsRow<AppMode>(
                     title: 'nirilSilk'.tr(context, ref),
-                    value: AppMode.gst,
-                    groupValue: currentAppMode ?? AppMode.gst,
+                    value: AppMode.silk,
+                    groupValue: currentAppMode ?? AppMode.silk,
                     onChanged: (val) {
                       if (val != null) ref.read(appModeProvider.notifier).setMode(val);
                     },
@@ -43,7 +42,7 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
                   ElvanRadioSettingsRow<AppMode>(
                     title: 'nirilCoolie'.tr(context, ref),
                     value: AppMode.coolie,
-                    groupValue: currentAppMode ?? AppMode.gst,
+                    groupValue: currentAppMode ?? AppMode.silk,
                     onChanged: (val) {
                       if (val != null) ref.read(appModeProvider.notifier).setMode(val);
                     },

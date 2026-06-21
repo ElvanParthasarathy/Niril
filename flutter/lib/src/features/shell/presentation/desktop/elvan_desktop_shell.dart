@@ -56,7 +56,7 @@ class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
               currentIndex: widget.currentIndex,
               onTabSelected: widget.onTabSelected,
               navItems: widget.navItems,
-              appMode: mode ?? AppMode.gst,
+              appMode: mode ?? AppMode.silk,
             ),
           ),
           

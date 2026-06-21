@@ -12,7 +12,8 @@ import '../../../../core/widgets/elvan_snackbar.dart';
 import '../../../shell/presentation/mobile/elvan_subpage_shell.dart';
 import '../widgets/elvan_settings_section.dart';
 import '../widgets/elvan_settings_edit_card.dart';
-import '../widgets/elvan_settings_controls.dart';
+import '../../data/vaniga_tharavugal_provider.dart';
+import '../../data/vaniga_tharavugal.dart';
 
 class SilkVanigaAdaiyalangalPage extends ConsumerStatefulWidget {
   const SilkVanigaAdaiyalangalPage({super.key});
@@ -25,22 +26,33 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
   String? _editingSection;
   final ImagePicker _picker = ImagePicker();
 
-  // Local state for our mocked branding values
-  String _headerStyle = 'small'; // 'small' or 'wide'
-  String _tempHeaderStyle = 'small';
-
-  String _signatoryName = '';
+  String _tempHeaderStyle = '';
   String _tempSignatoryName = '';
+  String? _tempImagePath;
 
-  String? _logoPath;
-  String? _wideLogoPath;
-  String? _signaturePath;
-
-  void _beginEdit(String sectionId) {
+  void _beginEditSingle(String sectionId, String val) {
     setState(() {
       _editingSection = sectionId;
-      _tempHeaderStyle = _headerStyle;
-      _tempSignatoryName = _signatoryName;
+      if (sectionId == 'header_style') {
+        _tempHeaderStyle = val;
+      } else if (sectionId == 'signature') {
+        _tempSignatoryName = val;
+      }
+    });
+  }
+
+  void _beginEditImage(String sectionId, String? currentPath) {
+    setState(() {
+      _editingSection = sectionId;
+      _tempImagePath = currentPath;
+    });
+  }
+
+  void _beginEditSignature(String currentPath, String currentName) {
+    setState(() {
+      _editingSection = 'signature';
+      _tempImagePath = currentPath;
+      _tempSignatoryName = currentName;
     });
   }
 
@@ -50,13 +62,37 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
     });
   }
 
-  void _saveSection() {
-    setState(() {
-      _editingSection = null;
-    });
+  void _showSuccessToast() {
     if (context.mounted) {
       ElvanSnackbar.show(context, 'detailsSaved'.tr(context, ref));
     }
+  }
+
+  void _saveSingleField(VanigaTharavugal profile, String fieldName, String value) {
+    final updatedProfile = profile.copyWith();
+    switch (fieldName) {
+      case 'thallaippuVadivu':
+        updatedProfile.thallaippuVadivu = value;
+        break;
+      case 'ovuru':
+        updatedProfile.ovuru = value;
+        break;
+      case 'agalaOvuru':
+        updatedProfile.agalaOvuru = value;
+        break;
+    }
+    ref.read(vanigaTharavugalProvider.notifier).updateProfile(updatedProfile);
+    setState(() => _editingSection = null);
+    _showSuccessToast();
+  }
+
+  void _saveSignatureField(VanigaTharavugal profile, String path, String name) {
+    final updatedProfile = profile.copyWith();
+    updatedProfile.kaiyoppam = path;
+    updatedProfile.oppamPeyar = name;
+    ref.read(vanigaTharavugalProvider.notifier).updateProfile(updatedProfile);
+    setState(() => _editingSection = null);
+    _showSuccessToast();
   }
 
   void _showHeaderStyleActionSheet() {
@@ -150,7 +186,7 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 image: hasImage ? DecorationImage(
-                  image: FileImage(File(imagePath!)),
+                  image: FileImage(File(imagePath)),
                   fit: BoxFit.contain,
                 ) : null,
               ),
@@ -211,6 +247,15 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
 
   @override
   Widget build(BuildContext context) {
+    final profile = ref.watch(vanigaTharavugalProvider);
+    final currentProfile = profile ?? VanigaTharavugal();
+
+    final headerStyle = currentProfile.thallaippuVadivu.isEmpty ? 'small' : currentProfile.thallaippuVadivu;
+    final logoPath = currentProfile.ovuru.isEmpty ? null : currentProfile.ovuru;
+    final wideLogoPath = currentProfile.agalaOvuru.isEmpty ? null : currentProfile.agalaOvuru;
+    final signaturePath = currentProfile.kaiyoppam.isEmpty ? null : currentProfile.kaiyoppam;
+    final signatoryName = currentProfile.oppamPeyar;
+
     return ElvanSubpageShell(
       title: 'adaiyalam'.tr(context, ref),
       slivers: [
@@ -226,23 +271,23 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                   editChild: _buildEditContainer(
                     title: 'businessLogo'.tr(context, ref),
                     customContent: _buildImageUploader(
-                      imagePath: _logoPath,
-                      onChange: (path) => setState(() => _logoPath = path),
+                      imagePath: _tempImagePath,
+                      onChange: (path) => setState(() => _tempImagePath = path),
                     ),
-                    onSave: _saveSection,
+                    onSave: () => _saveSingleField(currentProfile, 'ovuru', _tempImagePath ?? ''),
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'businessLogo'.tr(context, ref),
-                    primaryValue: _logoPath != null ? '' : 'noLogo'.tr(context, ref),
-                    primaryWidget: _logoPath != null
+                    primaryValue: logoPath != null ? '' : 'noLogo'.tr(context, ref),
+                    primaryWidget: logoPath != null
                         ? Image.file(
-                            File(_logoPath!),
+                            File(logoPath),
                             height: 36,
                             fit: BoxFit.contain,
                             alignment: Alignment.centerLeft,
                           )
                         : null,
-                    onEdit: () => _beginEdit('logo'),
+                    onEdit: () => _beginEditImage('logo', logoPath),
                   ),
                 ),
 
@@ -253,23 +298,23 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                   editChild: _buildEditContainer(
                     title: 'wideLogoLabel'.tr(context, ref),
                     customContent: _buildImageUploader(
-                      imagePath: _wideLogoPath,
-                      onChange: (path) => setState(() => _wideLogoPath = path),
+                      imagePath: _tempImagePath,
+                      onChange: (path) => setState(() => _tempImagePath = path),
                     ),
-                    onSave: _saveSection,
+                    onSave: () => _saveSingleField(currentProfile, 'agalaOvuru', _tempImagePath ?? ''),
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'wideLogoLabel'.tr(context, ref),
-                    primaryValue: _wideLogoPath != null ? '' : 'noneLabel'.tr(context, ref),
-                    primaryWidget: _wideLogoPath != null
+                    primaryValue: wideLogoPath != null ? '' : 'noneLabel'.tr(context, ref),
+                    primaryWidget: wideLogoPath != null
                         ? Image.file(
-                            File(_wideLogoPath!),
+                            File(wideLogoPath),
                             height: 36,
                             fit: BoxFit.contain,
                             alignment: Alignment.centerLeft,
                           )
                         : null,
-                    onEdit: () => _beginEdit('wide_logo'),
+                    onEdit: () => _beginEditImage('wide_logo', wideLogoPath),
                   ),
                 ),
 
@@ -303,17 +348,12 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                         ),
                       ),
                     ),
-                    onSave: () {
-                      setState(() {
-                        _headerStyle = _tempHeaderStyle;
-                      });
-                      _saveSection();
-                    },
+                    onSave: () => _saveSingleField(currentProfile, 'thallaippuVadivu', _tempHeaderStyle),
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'billHeaderStyle'.tr(context, ref),
-                    primaryValue: _headerStyle == 'wide' ? 'wideLogoOnly'.tr(context, ref) : 'smallLogoBusinessName'.tr(context, ref),
-                    onEdit: () => _beginEdit('header_style'),
+                    primaryValue: headerStyle == 'wide' ? 'wideLogoOnly'.tr(context, ref) : 'smallLogoBusinessName'.tr(context, ref),
+                    onEdit: () => _beginEditSingle('header_style', headerStyle),
                   ),
                 ),
 
@@ -327,8 +367,8 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         _buildImageUploader(
-                          imagePath: _signaturePath,
-                          onChange: (path) => setState(() => _signaturePath = path),
+                          imagePath: _tempImagePath,
+                          onChange: (path) => setState(() => _tempImagePath = path),
                         ),
                         const SizedBox(height: 16),
                         ElvanTextField(
@@ -360,25 +400,20 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                         ),
                       ],
                     ),
-                    onSave: () {
-                      setState(() {
-                        _signatoryName = _tempSignatoryName;
-                      });
-                      _saveSection();
-                    },
+                    onSave: () => _saveSignatureField(currentProfile, _tempImagePath ?? '', _tempSignatoryName),
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'signature'.tr(context, ref),
-                    primaryValue: _signaturePath != null ? _signatoryName : 'noSignature'.tr(context, ref),
-                    primaryWidget: _signaturePath != null
+                    primaryValue: signaturePath != null ? signatoryName : 'noSignature'.tr(context, ref),
+                    primaryWidget: signaturePath != null
                         ? Image.file(
-                            File(_signaturePath!),
+                            File(signaturePath),
                             height: 48,
                             fit: BoxFit.contain,
                             alignment: Alignment.centerLeft,
                           )
                         : null,
-                    onEdit: () => _beginEdit('signature'),
+                    onEdit: () => _beginEditSignature(signaturePath ?? '', signatoryName),
                   ),
                 ),
               ],

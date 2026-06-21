@@ -6,13 +6,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../localization/locale_provider.dart';
-import '../../../../core/widgets/elvan_bottom_sheet.dart';
 import '../../../../core/widgets/elvan_text_field.dart';
 import '../../../../core/widgets/elvan_snackbar.dart';
 import '../../../shell/presentation/mobile/elvan_subpage_shell.dart';
 import '../widgets/elvan_settings_section.dart';
 import '../widgets/elvan_settings_edit_card.dart';
-import '../widgets/elvan_settings_controls.dart';
+import '../../data/vaniga_tharavugal_provider.dart';
+import '../../data/vaniga_tharavugal.dart';
 
 class CoolieVanigaAdaiyalangalPage extends ConsumerStatefulWidget {
   const CoolieVanigaAdaiyalangalPage({super.key});
@@ -25,16 +25,21 @@ class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiy
   String? _editingSection;
   final ImagePicker _picker = ImagePicker();
 
-  String _signatoryName = '';
   String _tempSignatoryName = '';
+  String? _tempImagePath;
 
-  String? _logoPath;
-  String? _signaturePath;
-
-  void _beginEdit(String sectionId) {
+  void _beginEditImage(String sectionId, String? currentPath) {
     setState(() {
       _editingSection = sectionId;
-      _tempSignatoryName = _signatoryName;
+      _tempImagePath = currentPath;
+    });
+  }
+
+  void _beginEditSignature(String currentPath, String currentName) {
+    setState(() {
+      _editingSection = 'signature';
+      _tempImagePath = currentPath;
+      _tempSignatoryName = currentName;
     });
   }
 
@@ -44,16 +49,32 @@ class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiy
     });
   }
 
-  void _saveSection() {
-    setState(() {
-      _editingSection = null;
-    });
+  void _showSuccessToast() {
     if (context.mounted) {
       ElvanSnackbar.show(context, 'detailsSaved'.tr(context, ref));
     }
   }
 
+  void _saveSingleField(VanigaTharavugal profile, String fieldName, String value) {
+    final updatedProfile = profile.copyWith();
+    switch (fieldName) {
+      case 'ovuru':
+        updatedProfile.ovuru = value;
+        break;
+    }
+    ref.read(vanigaTharavugalProvider.notifier).updateProfile(updatedProfile);
+    setState(() => _editingSection = null);
+    _showSuccessToast();
+  }
 
+  void _saveSignatureField(VanigaTharavugal profile, String path, String name) {
+    final updatedProfile = profile.copyWith();
+    updatedProfile.kaiyoppam = path;
+    updatedProfile.oppamPeyar = name;
+    ref.read(vanigaTharavugalProvider.notifier).updateProfile(updatedProfile);
+    setState(() => _editingSection = null);
+    _showSuccessToast();
+  }
 
   Widget _buildEditContainer({
     required String title,
@@ -129,7 +150,7 @@ class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiy
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 image: hasImage ? DecorationImage(
-                  image: FileImage(File(imagePath!)),
+                  image: FileImage(File(imagePath)),
                   fit: BoxFit.contain,
                 ) : null,
               ),
@@ -190,6 +211,13 @@ class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiy
 
   @override
   Widget build(BuildContext context) {
+    final profile = ref.watch(vanigaTharavugalProvider);
+    final currentProfile = profile ?? VanigaTharavugal();
+
+    final logoPath = currentProfile.ovuru.isEmpty ? null : currentProfile.ovuru;
+    final signaturePath = currentProfile.kaiyoppam.isEmpty ? null : currentProfile.kaiyoppam;
+    final signatoryName = currentProfile.oppamPeyar;
+
     return ElvanSubpageShell(
       title: 'adaiyalam'.tr(context, ref),
       slivers: [
@@ -205,29 +233,27 @@ class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiy
                   editChild: _buildEditContainer(
                     title: 'businessLogo'.tr(context, ref),
                     customContent: _buildImageUploader(
-                      imagePath: _logoPath,
-                      onChange: (path) => setState(() => _logoPath = path),
+                      imagePath: _tempImagePath,
+                      onChange: (path) => setState(() => _tempImagePath = path),
                     ),
-                    onSave: _saveSection,
+                    onSave: () => _saveSingleField(currentProfile, 'ovuru', _tempImagePath ?? ''),
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'businessLogo'.tr(context, ref),
-                    primaryValue: _logoPath != null ? '' : 'noLogo'.tr(context, ref),
-                    primaryWidget: _logoPath != null
+                    primaryValue: logoPath != null ? '' : 'noLogo'.tr(context, ref),
+                    primaryWidget: logoPath != null
                         ? Image.file(
-                            File(_logoPath!),
+                            File(logoPath),
                             height: 36,
                             fit: BoxFit.contain,
                             alignment: Alignment.centerLeft,
                           )
                         : null,
-                    onEdit: () => _beginEdit('logo'),
+                    onEdit: () => _beginEditImage('logo', logoPath),
                   ),
                 ),
 
-
-
-                // 4. Signature
+                // 2. Signature
                 ElvanSettingsAnimatedExpand(
                   keyPrefix: 'signature',
                   isEditing: _editingSection == 'signature',
@@ -237,8 +263,8 @@ class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiy
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         _buildImageUploader(
-                          imagePath: _signaturePath,
-                          onChange: (path) => setState(() => _signaturePath = path),
+                          imagePath: _tempImagePath,
+                          onChange: (path) => setState(() => _tempImagePath = path),
                         ),
                         const SizedBox(height: 16),
                         ElvanTextField(
@@ -270,25 +296,20 @@ class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiy
                         ),
                       ],
                     ),
-                    onSave: () {
-                      setState(() {
-                        _signatoryName = _tempSignatoryName;
-                      });
-                      _saveSection();
-                    },
+                    onSave: () => _saveSignatureField(currentProfile, _tempImagePath ?? '', _tempSignatoryName),
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'signature'.tr(context, ref),
-                    primaryValue: _signaturePath != null ? _signatoryName : 'noSignature'.tr(context, ref),
-                    primaryWidget: _signaturePath != null
+                    primaryValue: signaturePath != null ? signatoryName : 'noSignature'.tr(context, ref),
+                    primaryWidget: signaturePath != null
                         ? Image.file(
-                            File(_signaturePath!),
+                            File(signaturePath),
                             height: 48,
                             fit: BoxFit.contain,
                             alignment: Alignment.centerLeft,
                           )
                         : null,
-                    onEdit: () => _beginEdit('signature'),
+                    onEdit: () => _beginEditSignature(signaturePath ?? '', signatoryName),
                   ),
                 ),
               ],

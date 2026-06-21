@@ -840,6 +840,10 @@ const Map<String, String> en = {
   'gstinCol': 'Gstin',
   'taxableCol': 'Taxable',
   'recurringInvoicesSubtitle': 'Automate invoices for regular clients',
+  'invoiceLimitDesc': 'Total number of invoices you can create across all clients',
+  'signing_out': 'Signing out...',
+  'signOutSuccess': 'Signed out successfully',
+
   'newTemplateBtn': 'New Template',
   'dueForGeneration': 'Due For Generation',
   'editTemplateTitle': 'Edit Template',

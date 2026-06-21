@@ -113,7 +113,7 @@ class _ModeSelectorScreenState extends State<ModeSelectorScreen> with SingleTick
                       title: 'Niril Silk',
                       icon: CupertinoIcons.doc_text_fill,
                       isDark: isDark,
-                      onTap: () => _handleSelect(AppMode.gst),
+                      onTap: () => _handleSelect(AppMode.silk),
                     ),
                     const SizedBox(width: 32),
                     _ModeCard(

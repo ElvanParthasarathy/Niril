@@ -97,7 +97,7 @@ class SettingsScreen extends ConsumerWidget {
                             onTap: () {
                               final currentMode = ref.read(appModeProvider);
                               ref.read(appModeProvider.notifier).setMode(
-                                currentMode == AppMode.coolie ? AppMode.gst : AppMode.coolie
+                                currentMode == AppMode.coolie ? AppMode.silk : AppMode.coolie
                               );
                             },
                             child: SizedBox(

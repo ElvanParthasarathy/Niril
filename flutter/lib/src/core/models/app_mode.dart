@@ -1,5 +1,5 @@
 enum AppMode {
-  gst,
+  silk,
   coolie;
 
   String get id => name.toUpperCase();

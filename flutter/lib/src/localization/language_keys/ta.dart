@@ -588,6 +588,10 @@ const Map<String, String> ta = {
   'gstinCol': 'GSTIN',
   'taxableCol': 'வரிக்குட்பட்டது',
   'recurringInvoicesSubtitle': 'நிலையான வணிகர்களுக்கான பட்டியல்களை தானியங்கியாக உருவாக்குங்கள்',
+  'invoiceLimitDesc': 'அனைத்து வணிகர்களுக்கான மொத்தப் பட்டியல்கள்',
+  'signing_out': 'வெளியேறுகிறது...',
+  'signOutSuccess': 'வெற்றிகரமாக வெளியேற்றப்பட்டது',
+
   'newTemplateBtn': 'புதிய வார்ப்புரு',
   'dueForGeneration': 'உருவாக்கப்பட வேண்டியவை',
   'editTemplateTitle': 'வார்ப்புருவைத் திருத்து',

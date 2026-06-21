@@ -7,6 +7,8 @@ import '../../../../../core/state/app_state.dart';
 import '../../../../shell/presentation/mobile/elvan_subpage_shell.dart';
 import '../../../../settings/presentation/widgets/elvan_settings_section.dart';
 import '../../../../settings/presentation/widgets/elvan_settings_edit_card.dart';
+import '../../../../settings/data/vaniga_tharavugal_provider.dart';
+import '../../../../settings/data/vaniga_tharavugal.dart';
 
 class SilkVangiPage extends ConsumerStatefulWidget {
   const SilkVangiPage({super.key});
@@ -17,14 +19,6 @@ class SilkVangiPage extends ConsumerStatefulWidget {
 
 class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
   String? _editingSection;
-
-  // Empty State
-  String _bankNameTamil = '';
-  String _bankNameEnglish = '';
-  String _branchNameTamil = '';
-  String _branchNameEnglish = '';
-  String _accountNumber = '';
-  String _ifscCode = '';
 
   // Temp State for editing
   String _tempPrimary = '';
@@ -81,6 +75,45 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
     );
   }
 
+  void _beginEditPrimarySecondary(String section, String p, String s) {
+    setState(() {
+      _tempPrimary = p;
+      _tempSecondary = s;
+      _editingSection = section;
+    });
+  }
+
+  void _beginEditSingle(String section, String val) {
+    setState(() {
+      _tempPrimary = val;
+      _editingSection = section;
+    });
+  }
+
+  void _saveBilingualField(VanigaTharavugal profile, String fieldName) {
+    final updatedProfile = profile.copyWith();
+    updatedProfile.setBilingual(fieldName, profile.mudhanMozhi, _tempPrimary);
+    updatedProfile.setBilingual(fieldName, profile.thunaiMozhi, _tempSecondary);
+    ref.read(vanigaTharavugalProvider.notifier).updateProfile(updatedProfile);
+    setState(() => _editingSection = null);
+    _showSuccessToast();
+  }
+
+  void _saveSingleField(VanigaTharavugal profile, String fieldName) {
+    final updatedProfile = profile.copyWith();
+    switch (fieldName) {
+      case 'vangiKanakku':
+        updatedProfile.vangiKanakku = _tempPrimary;
+        break;
+      case 'ifsc':
+        updatedProfile.ifsc = _tempPrimary;
+        break;
+    }
+    ref.read(vanigaTharavugalProvider.notifier).updateProfile(updatedProfile);
+    setState(() => _editingSection = null);
+    _showSuccessToast();
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -88,19 +121,13 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
     final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
     final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
 
-    ref.listen<String>(primaryLanguageProvider, (previous, next) {
-      if (previous != null && previous != next) {
-        setState(() {
-          final t1 = _bankNameTamil;
-          _bankNameTamil = _bankNameEnglish;
-          _bankNameEnglish = t1;
+    final profile = ref.watch(vanigaTharavugalProvider);
+    final currentProfile = profile ?? VanigaTharavugal();
 
-          final t2 = _branchNameTamil;
-          _branchNameTamil = _branchNameEnglish;
-          _branchNameEnglish = t2;
-        });
-      }
-    });
+    final vangiPeyarPrimary = currentProfile.getPrimary('vangiPeyar');
+    final vangiPeyarSecondary = currentProfile.getSecondary('vangiPeyar');
+    final vangiKilaiPrimary = currentProfile.getPrimary('vangiKilai');
+    final vangiKilaiSecondary = currentProfile.getSecondary('vangiKilai');
 
     return ElvanSubpageShell(
       title: 'vangi'.tr(context, ref),
@@ -120,8 +147,8 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
                 children: [
                   // --- BANK NAME ---
                   ElvanSettingsAnimatedExpand(
-                    isEditing: _editingSection == 'bankName',
-                    keyPrefix: 'bankName',
+                    isEditing: _editingSection == 'vangiPeyar',
+                    keyPrefix: 'vangiPeyar',
                     editChild: _buildEditContainer(
                       title: 'bankName'.tr(context, ref),
                       inputFields: [
@@ -139,32 +166,19 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
                           ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () {
-                        setState(() {
-                          _bankNameTamil = _tempPrimary;
-                          _bankNameEnglish = _tempSecondary;
-                          _editingSection = null;
-                        });
-                        _showSuccessToast();
-                      },
+                      onSave: () => _saveBilingualField(currentProfile, 'vangiPeyar'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'bankName'.tr(context, ref),
-                      primaryValue: _bankNameTamil,
-                      secondaryValue: isBilingual ? _bankNameEnglish : null,
-                      onEdit: () {
-                        setState(() {
-                          _tempPrimary = _bankNameTamil;
-                          _tempSecondary = _bankNameEnglish;
-                          _editingSection = 'bankName';
-                        });
-                      },
+                      primaryValue: vangiPeyarPrimary,
+                      secondaryValue: isBilingual ? vangiPeyarSecondary : null,
+                      onEdit: () => _beginEditPrimarySecondary('vangiPeyar', vangiPeyarPrimary, vangiPeyarSecondary),
                     ),
                   ),
                   // --- BRANCH NAME ---
                   ElvanSettingsAnimatedExpand(
-                    isEditing: _editingSection == 'branchName',
-                    keyPrefix: 'branchName',
+                    isEditing: _editingSection == 'vangiKilai',
+                    keyPrefix: 'vangiKilai',
                     editChild: _buildEditContainer(
                       title: 'branchName'.tr(context, ref),
                       inputFields: [
@@ -182,32 +196,19 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
                           ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () {
-                        setState(() {
-                          _branchNameTamil = _tempPrimary;
-                          _branchNameEnglish = _tempSecondary;
-                          _editingSection = null;
-                        });
-                        _showSuccessToast();
-                      },
+                      onSave: () => _saveBilingualField(currentProfile, 'vangiKilai'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'branchName'.tr(context, ref),
-                      primaryValue: _branchNameTamil,
-                      secondaryValue: isBilingual ? _branchNameEnglish : null,
-                      onEdit: () {
-                        setState(() {
-                          _tempPrimary = _branchNameTamil;
-                          _tempSecondary = _branchNameEnglish;
-                          _editingSection = 'branchName';
-                        });
-                      },
+                      primaryValue: vangiKilaiPrimary,
+                      secondaryValue: isBilingual ? vangiKilaiSecondary : null,
+                      onEdit: () => _beginEditPrimarySecondary('vangiKilai', vangiKilaiPrimary, vangiKilaiSecondary),
                     ),
                   ),
                   // --- ACCOUNT NUMBER ---
                   ElvanSettingsAnimatedExpand(
-                    isEditing: _editingSection == 'accountNumber',
-                    keyPrefix: 'accountNumber',
+                    isEditing: _editingSection == 'kanakkuEn',
+                    keyPrefix: 'kanakkuEn',
                     editChild: _buildEditContainer(
                       title: 'accountNumber'.tr(context, ref),
                       inputFields: [
@@ -218,29 +219,18 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
                         ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () {
-                        setState(() {
-                          _accountNumber = _tempPrimary;
-                          _editingSection = null;
-                        });
-                        _showSuccessToast();
-                      },
+                      onSave: () => _saveSingleField(currentProfile, 'vangiKanakku'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'accountNumber'.tr(context, ref),
-                      primaryValue: _accountNumber,
-                      onEdit: () {
-                        setState(() {
-                          _tempPrimary = _accountNumber;
-                          _editingSection = 'accountNumber';
-                        });
-                      },
+                      primaryValue: currentProfile.vangiKanakku,
+                      onEdit: () => _beginEditSingle('vangiKanakku', currentProfile.vangiKanakku),
                     ),
                   ),
                   // --- IFSC CODE ---
                   ElvanSettingsAnimatedExpand(
-                    isEditing: _editingSection == 'ifsc',
-                    keyPrefix: 'ifsc',
+                    isEditing: _editingSection == 'ifscKuriyeedu',
+                    keyPrefix: 'ifscKuriyeedu',
                     editChild: _buildEditContainer(
                       title: 'ifscCode'.tr(context, ref),
                       inputFields: [
@@ -251,23 +241,12 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
                         ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () {
-                        setState(() {
-                          _ifscCode = _tempPrimary;
-                          _editingSection = null;
-                        });
-                        _showSuccessToast();
-                      },
+                      onSave: () => _saveSingleField(currentProfile, 'ifsc'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'ifscCode'.tr(context, ref),
-                      primaryValue: _ifscCode,
-                      onEdit: () {
-                        setState(() {
-                          _tempPrimary = _ifscCode;
-                          _editingSection = 'ifsc';
-                        });
-                      },
+                      primaryValue: currentProfile.ifsc,
+                      onEdit: () => _beginEditSingle('ifsc', currentProfile.ifsc),
                     ),
                   ),
                 ],
