@@ -7,14 +7,26 @@ import '../../../../localization/locale_provider.dart';
 import '../mobile/widgets/elvan_page_route.dart';
 import '../../../niril_common/presentation/widgets/elvan_settings_icon.dart';
 import '../../../../core/models/app_mode.dart';
+import '../../../../core/state/app_state.dart';
 import '../mobile/elvan_navbar.dart'; // For CustomNavItem
+import '../../../auth/presentation/mode_selector_screen.dart';
 import '../../../settings/presentation/settings_screen.dart';
+
+const String _sidebarCollapseSvg = '''
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M10 6L5 9L10 12" />
+  <path d="M14 6H19" />
+  <path d="M14 12H19" />
+  <path d="M5 18H19" />
+</svg>
+''';
 
 class ElvanDesktopSidebar extends ConsumerWidget {
   final bool isCollapsed;
   final VoidCallback onToggleCollapse;
   final int currentIndex;
   final ValueChanged<int> onTabSelected;
+  final VoidCallback onSettingsPressed;
   final List<CustomNavItem> navItems;
   final AppMode appMode;
 
@@ -24,6 +36,7 @@ class ElvanDesktopSidebar extends ConsumerWidget {
     required this.onToggleCollapse,
     required this.currentIndex,
     required this.onTabSelected,
+    required this.onSettingsPressed,
     required this.navItems,
     required this.appMode,
   });
@@ -117,16 +130,20 @@ class ElvanDesktopSidebar extends ConsumerWidget {
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
                 letterSpacing: -0.4,
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.onSurface,
                 height: 1.0,
               ),
             ),
             IconButton(
-              icon: const Icon(CupertinoIcons.chevron_left),
-              color: Theme.of(context).colorScheme.primary,
+              icon: SvgPicture.string(
+                _sidebarCollapseSvg,
+                width: 20,
+                height: 20,
+                colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+              ),
               onPressed: onToggleCollapse,
               splashRadius: 20,
-              hoverColor: isDark ? Colors.white.withOpacity(0.08) : Colors.black.withOpacity(0.04),
+              hoverColor: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.04),
             ),
           ],
         ),
@@ -137,11 +154,18 @@ class ElvanDesktopSidebar extends ConsumerWidget {
         padding: const EdgeInsets.only(top: 24, bottom: 8),
         alignment: Alignment.center,
         child: IconButton(
-          icon: const Icon(CupertinoIcons.chevron_right),
-          color: Theme.of(context).colorScheme.primary,
+          icon: Transform.scale(
+            scaleX: -1,
+            child: SvgPicture.string(
+              _sidebarCollapseSvg,
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+            ),
+          ),
           onPressed: onToggleCollapse,
           splashRadius: 20,
-          hoverColor: isDark ? Colors.white.withOpacity(0.08) : Colors.black.withOpacity(0.04),
+          hoverColor: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.04),
         ),
       ),
     );
@@ -166,11 +190,11 @@ class ElvanDesktopSidebar extends ConsumerWidget {
   }
 
   Widget _buildCollapsedProfile(BuildContext context, bool isDark) {
-    return _DesktopCollapsedProfile(isDark: isDark);
+    return _DesktopCollapsedProfile(isDark: isDark, onSettingsPressed: onSettingsPressed);
   }
 
   Widget _buildExpandedProfile(BuildContext context, bool isDark, WidgetRef ref) {
-    return _DesktopExpandedProfile(isDark: isDark, appMode: appMode);
+    return _DesktopExpandedProfile(isDark: isDark, appMode: appMode, onSettingsPressed: onSettingsPressed);
   }
 }
 
@@ -193,6 +217,7 @@ class _DesktopExpandedNavItem extends StatefulWidget {
 
 class _DesktopExpandedNavItemState extends State<_DesktopExpandedNavItem> {
   bool _isHovered = false;
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -211,6 +236,9 @@ class _DesktopExpandedNavItemState extends State<_DesktopExpandedNavItem> {
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
         onTap: widget.onTap,
         behavior: HitTestBehavior.opaque,
         child: AnimatedContainer(
@@ -223,7 +251,12 @@ class _DesktopExpandedNavItemState extends State<_DesktopExpandedNavItem> {
           ),
           child: Row(
             children: [
-              _buildIcon(fgColor, 20.0),
+              AnimatedScale(
+                scale: _isPressed ? 0.85 : 1.0,
+                duration: const Duration(milliseconds: 150),
+                curve: const Cubic(0.4, 0.0, 0.2, 1.0),
+                child: _buildIcon(fgColor, 20.0),
+              ),
               const SizedBox(width: 10),
               Text(
                 widget.item.label,
@@ -278,6 +311,7 @@ class _DesktopCollapsedNavItem extends StatefulWidget {
 
 class _DesktopCollapsedNavItemState extends State<_DesktopCollapsedNavItem> {
   bool _isHovered = false;
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -296,6 +330,9 @@ class _DesktopCollapsedNavItemState extends State<_DesktopCollapsedNavItem> {
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
         onTap: widget.onTap,
         behavior: HitTestBehavior.opaque,
         child: Container(
@@ -313,7 +350,12 @@ class _DesktopCollapsedNavItemState extends State<_DesktopCollapsedNavItem> {
                   color: pillBgColor,
                 ),
                 alignment: Alignment.center,
-                child: _buildIcon(fgColor, 24.0),
+                child: AnimatedScale(
+                  scale: _isPressed ? 0.85 : 1.0,
+                  duration: const Duration(milliseconds: 150),
+                  curve: const Cubic(0.4, 0.0, 0.2, 1.0),
+                  child: _buildIcon(fgColor, 24.0),
+                ),
               ),
               const SizedBox(height: 8),
               AnimatedDefaultTextStyle(
@@ -362,8 +404,9 @@ const String _settingsFilledSvg = '<svg xmlns="http://www.w3.org/2000/svg" width
 
 class _DesktopCollapsedProfile extends ConsumerStatefulWidget {
   final bool isDark;
+  final VoidCallback onSettingsPressed;
   
-  const _DesktopCollapsedProfile({required this.isDark});
+  const _DesktopCollapsedProfile({required this.isDark, required this.onSettingsPressed});
 
   @override
   ConsumerState<_DesktopCollapsedProfile> createState() => _DesktopCollapsedProfileState();
@@ -371,6 +414,7 @@ class _DesktopCollapsedProfile extends ConsumerStatefulWidget {
 
 class _DesktopCollapsedProfileState extends ConsumerState<_DesktopCollapsedProfile> {
   bool _isHovered = false;
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -384,30 +428,33 @@ class _DesktopCollapsedProfileState extends ConsumerState<_DesktopCollapsedProfi
       child: MouseRegion(
         onEnter: (_) => setState(() => _isHovered = true),
         onExit: (_) => setState(() => _isHovered = false),
-        child: IconButton(
-          icon: SvgPicture.string(
-            _isHovered ? _settingsFilledSvg : _settingsOutlineSvg,
-            width: 20,
-            height: 20,
-            colorFilter: ColorFilter.mode(
-              _isHovered 
+        child: Listener(
+          onPointerDown: (_) => setState(() => _isPressed = true),
+          onPointerUp: (_) => setState(() => _isPressed = false),
+          onPointerCancel: (_) => setState(() => _isPressed = false),
+          child: AnimatedScale(
+            scale: _isPressed ? 0.85 : 1.0,
+            duration: const Duration(milliseconds: 150),
+            curve: const Cubic(0.4, 0.0, 0.2, 1.0),
+            child: IconButton(
+              icon: SvgPicture.string(
+                _isHovered ? _settingsFilledSvg : _settingsOutlineSvg,
+                width: 20,
+                height: 20,
+                colorFilter: ColorFilter.mode(
+                  _isHovered 
+                      ? (widget.isDark ? Colors.white : Colors.black) 
+                      : (widget.isDark ? const Color(0xFFAAAAAA) : const Color(0xFF666666)),
+                  BlendMode.srcIn,
+                ),
+              ),
+              color: _isHovered 
                   ? (widget.isDark ? Colors.white : Colors.black) 
                   : (widget.isDark ? const Color(0xFFAAAAAA) : const Color(0xFF666666)),
-              BlendMode.srcIn,
+              onPressed: widget.onSettingsPressed,
+              hoverColor: widget.isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.04),
             ),
           ),
-          color: _isHovered 
-              ? (widget.isDark ? Colors.white : Colors.black) 
-              : (widget.isDark ? const Color(0xFFAAAAAA) : const Color(0xFF666666)),
-          onPressed: () {
-            Navigator.push(
-              context,
-              ElvanPageRoute(
-                builder: (context) => const SettingsScreen(),
-              ),
-            );
-          },
-          hoverColor: widget.isDark ? Colors.white.withOpacity(0.08) : Colors.black.withOpacity(0.04),
         ),
       ),
     );
@@ -417,8 +464,9 @@ class _DesktopCollapsedProfileState extends ConsumerState<_DesktopCollapsedProfi
 class _DesktopExpandedProfile extends ConsumerStatefulWidget {
   final bool isDark;
   final AppMode appMode;
+  final VoidCallback onSettingsPressed;
 
-  const _DesktopExpandedProfile({required this.isDark, required this.appMode});
+  const _DesktopExpandedProfile({required this.isDark, required this.appMode, required this.onSettingsPressed});
 
   @override
   ConsumerState<_DesktopExpandedProfile> createState() => _DesktopExpandedProfileState();
@@ -426,6 +474,7 @@ class _DesktopExpandedProfile extends ConsumerStatefulWidget {
 
 class _DesktopExpandedProfileState extends ConsumerState<_DesktopExpandedProfile> {
   bool _isHovered = false;
+  bool _isIconPressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -438,7 +487,23 @@ class _DesktopExpandedProfileState extends ConsumerState<_DesktopExpandedProfile
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
-        onTap: () {},
+        onTap: () {
+          Navigator.of(context).push(
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => ModeSelectorScreen(
+                onModeSelected: (mode) {
+                  ref.read(appModeProvider.notifier).setMode(mode);
+                  Navigator.of(context).pop();
+                },
+              ),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              fullscreenDialog: true,
+              transitionDuration: const Duration(milliseconds: 300),
+            ),
+          );
+        },
         behavior: HitTestBehavior.opaque,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
@@ -448,18 +513,29 @@ class _DesktopExpandedProfileState extends ConsumerState<_DesktopExpandedProfile
           ),
           child: Row(
             children: [
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: widget.isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
-                ),
-                alignment: Alignment.center,
-                child: Icon(
-                  widget.appMode == AppMode.coolie ? CupertinoIcons.money_dollar_circle_fill : CupertinoIcons.doc_text_fill,
-                  size: 16,
-                  color: fgColor,
+              GestureDetector(
+                onTapDown: (_) => setState(() => _isIconPressed = true),
+                onTapUp: (_) => setState(() => _isIconPressed = false),
+                onTapCancel: () => setState(() => _isIconPressed = false),
+                onTap: widget.onSettingsPressed,
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: widget.isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05),
+                  ),
+                  alignment: Alignment.center,
+                  child: AnimatedScale(
+                    scale: _isIconPressed ? 0.85 : 1.0,
+                    duration: const Duration(milliseconds: 150),
+                    curve: const Cubic(0.4, 0.0, 0.2, 1.0),
+                    child: Icon(
+                      widget.appMode == AppMode.coolie ? CupertinoIcons.money_dollar_circle_fill : CupertinoIcons.doc_text_fill,
+                      size: 16,
+                      color: fgColor,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 10),
@@ -482,14 +558,7 @@ class _DesktopExpandedProfileState extends ConsumerState<_DesktopExpandedProfile
               IconButton(
                 icon: const ElvanSettingsIcon(size: 18),
                 color: widget.isDark ? const Color(0xFFAAAAAA) : const Color(0xFF666666),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    ElvanPageRoute(
-                      builder: (context) => const SettingsScreen(),
-                    ),
-                  );
-                },
+                onPressed: widget.onSettingsPressed,
                 hoverColor: widget.isDark ? Colors.white.withOpacity(0.15) : Colors.black.withOpacity(0.08),
               ),
             ],

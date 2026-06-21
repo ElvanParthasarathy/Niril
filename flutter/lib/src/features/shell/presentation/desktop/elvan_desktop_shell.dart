@@ -5,19 +5,26 @@ import '../../../../core/models/app_mode.dart';
 import '../../../../core/state/app_state.dart';
 import '../mobile/elvan_navbar.dart'; // For CustomNavItem
 import 'elvan_desktop_sidebar.dart';
+import '../../../../core/widgets/elvan_smooth_scroll.dart';
 
 class ElvanDesktopShell extends ConsumerStatefulWidget {
   final int currentIndex;
   final ValueChanged<int> onTabSelected;
+  final VoidCallback onSettingsPressed;
   final List<CustomNavItem> navItems;
   final List<Widget> slivers; // The pages (SliverOffstage)
+  final Widget? customContent;
+  final String? title;
 
   const ElvanDesktopShell({
     super.key,
     required this.currentIndex,
     required this.onTabSelected,
+    required this.onSettingsPressed,
     required this.navItems,
     required this.slivers,
+    this.customContent,
+    this.title,
   });
 
   @override
@@ -26,6 +33,13 @@ class ElvanDesktopShell extends ConsumerStatefulWidget {
 
 class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
   bool isCollapsed = false;
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +69,7 @@ class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
               onToggleCollapse: () => setState(() => isCollapsed = !isCollapsed),
               currentIndex: widget.currentIndex,
               onTabSelected: widget.onTabSelected,
+              onSettingsPressed: widget.onSettingsPressed,
               navItems: widget.navItems,
               appMode: mode ?? AppMode.silk,
             ),
@@ -64,8 +79,29 @@ class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
           Expanded(
             child: Container(
               color: Theme.of(context).scaffoldBackgroundColor,
-              child: CustomScrollView(
-                slivers: widget.slivers,
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: widget.customContent ?? ElvanSmoothScroll(
+                controller: _scrollController,
+                child: CustomScrollView(
+                  controller: _scrollController,
+                  slivers: [
+                    if (widget.title != null)
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 24, left: 36, bottom: 24),
+                          child: Text(
+                            widget.title!,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ...widget.slivers,
+                  ],
+                ),
               ),
             ),
           ),

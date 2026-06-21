@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/state/search_state.dart';
+import '../../../shell/presentation/widgets/elvan_responsive_grid.dart';
 
 class CoolieMerchantsPage extends ConsumerWidget {
   const CoolieMerchantsPage({super.key});
@@ -18,24 +19,23 @@ class CoolieMerchantsPage extends ConsumerWidget {
 
     return SliverPadding(
       padding: const EdgeInsets.only(left: 12, right: 12, bottom: 120),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final item = filteredItems[index];
-            return Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              height: 100,
-              decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Center(
-                child: Text(item, style: TextStyle(color: Colors.orange.withValues(alpha: 0.8), fontSize: 16)),
-              ),
-            );
-          },
-          childCount: filteredItems.length,
-        ),
+      sliver: ElvanResponsiveGrid(
+        itemCount: filteredItems.length,
+        desktopCrossAxisCount: 2,
+        childAspectRatio: 2.5,
+        itemBuilder: (context, index) {
+          final item = filteredItems[index];
+          return Container(
+            height: 100, // Mobile only
+            decoration: BoxDecoration(
+              color: Colors.orange.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Center(
+              child: Text(item, style: TextStyle(color: Colors.orange.withOpacity(0.8), fontSize: 16)),
+            ),
+          );
+        },
       ),
     );
   }

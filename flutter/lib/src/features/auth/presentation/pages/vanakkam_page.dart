@@ -22,10 +22,14 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
   String _coolieBusinessName = '';
   bool _saving = false;
 
+  bool get _needsSilk => ref.read(missingProfilesProvider).contains('silk');
+  bool get _needsCoolie => ref.read(missingProfilesProvider).contains('coolie');
+
   void _handleFinish() async {
-    if (_gstBusinessName.trim().isEmpty || _coolieBusinessName.trim().isEmpty) {
+    if ((_needsSilk && _gstBusinessName.trim().isEmpty) || 
+        (_needsCoolie && _coolieBusinessName.trim().isEmpty)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter both business names.')),
+        const SnackBar(content: Text('Please enter all required business names.')),
       );
       return;
     }
@@ -42,45 +46,39 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
     // Insert initial profiles into the database
     final db = ref.read(appDatabaseProvider);
     
-    // Insert Silk profile
-    await db.into(db.vanigaTharavugalTable).insert(
-      VanigaTharavugalTableCompanion.insert(
-        seyaliVagai: 'silk',
-        niruvanathinPeyar: Value({'Tamil': _gstBusinessName, 'English': _gstBusinessName}),
-      ),
-    );
+    // Insert Silk profile if needed
+    if (_needsSilk) {
+      await db.into(db.vanigaTharavugalTable).insert(
+        VanigaTharavugalTableCompanion.insert(
+          seyaliVagai: 'silk',
+          niruvanathinPeyar: Value({'Tamil': _gstBusinessName, 'English': _gstBusinessName}),
+        ),
+      );
+    }
 
-    // Insert Coolie profile
-    await db.into(db.vanigaTharavugalTable).insert(
-      VanigaTharavugalTableCompanion.insert(
-        seyaliVagai: 'coolie',
-        niruvanathinPeyar: Value({'Tamil': _coolieBusinessName, 'English': _coolieBusinessName}),
-      ),
-    );
+    // Insert Coolie profile if needed
+    if (_needsCoolie) {
+      await db.into(db.vanigaTharavugalTable).insert(
+        VanigaTharavugalTableCompanion.insert(
+          seyaliVagai: 'coolie',
+          niruvanathinPeyar: Value({'Tamil': _coolieBusinessName, 'English': _coolieBusinessName}),
+        ),
+      );
+    }
 
     if (!mounted) return;
 
-    // Route to Mode Selector
-    Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => ModeSelectorScreen(
-          onModeSelected: (newMode) {
-            ref.read(appModeProvider.notifier).setMode(newMode);
-          },
-        ),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-      ),
-    );
+    // Trigger router re-evaluation by setting Mode to null
+    // The declarative router in main.dart will instantly catch it and send us to ModeSelectorScreen
+    ref.read(appModeProvider.notifier).setMode(null);
   }
 
   @override
   Widget build(BuildContext context) {
     final language = ref.watch(localeProvider)?.languageCode ?? 'en';
 
-    return AuthLayout(
+    return KeyedSubtree(
+      key: const ValueKey('businessName'),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -91,28 +89,30 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
           
           const SizedBox(height: 32),
 
-          AuthInput(
-            label: 'hc_businessName'.tr(context, ref).isNotEmpty ? 'hc_businessName'.tr(context, ref) : 'GST Business Name',
-            placeholder: language == 'ta' ? 'பெயரை உள்ளிடுக' : 'Enter name',
-            helperText: 'Used for regular GST invoices.',
-            value: _gstBusinessName,
-            onChange: (val) => setState(() => _gstBusinessName = val),
-          ),
+          if (_needsSilk)
+            AuthInput(
+              label: 'hc_businessName'.tr(context, ref).isNotEmpty ? 'hc_businessName'.tr(context, ref) : 'GST Business Name',
+              placeholder: language == 'ta' ? 'பெயரை உள்ளிடுக' : 'Enter name',
+              helperText: 'Used for regular GST invoices.',
+              value: _gstBusinessName,
+              onChange: (val) => setState(() => _gstBusinessName = val),
+            ),
 
-          AuthInput(
-            label: language == 'ta' ? 'கூலி வணிகப் பெயர்' : 'Coolie Business Name',
-            placeholder: language == 'ta' ? 'பெயரை உள்ளிடுக' : 'Enter name',
-            helperText: 'Used for Coolie bills and receipts.',
-            value: _coolieBusinessName,
-            onChange: (val) => setState(() => _coolieBusinessName = val),
-          ),
+          if (_needsCoolie)
+            AuthInput(
+              label: language == 'ta' ? 'கூலி வணிகப் பெயர்' : 'Coolie Business Name',
+              placeholder: language == 'ta' ? 'பெயரை உள்ளிடுக' : 'Enter name',
+              helperText: 'Used for Coolie bills and receipts.',
+              value: _coolieBusinessName,
+              onChange: (val) => setState(() => _coolieBusinessName = val),
+            ),
 
           const SizedBox(height: 32),
 
           AuthButton(
             text: language == 'ta' ? 'தொடரவும்' : 'Continue',
             loading: _saving,
-            disabled: _gstBusinessName.trim().isEmpty || _coolieBusinessName.trim().isEmpty,
+            disabled: (_needsSilk && _gstBusinessName.trim().isEmpty) || (_needsCoolie && _coolieBusinessName.trim().isEmpty),
             onPressed: _handleFinish,
           ),
         ],

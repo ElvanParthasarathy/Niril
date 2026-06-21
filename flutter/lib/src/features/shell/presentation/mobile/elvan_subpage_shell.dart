@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:elvan_niril/src/features/shell/presentation/mobile/elvan_shell.dart';
+import '../../../../core/widgets/elvan_smooth_scroll.dart';
+import '../desktop/elvan_desktop_subpage_shell.dart';
 import 'widgets/elvan_back_button.dart';
 
 /// A wrapper around [ElvanShell] exclusively designed for subpages (e.g. Settings, PDF Viewer).
 /// It inherently injects the [ElvanBackButton] into the shell's physics engine
 /// and disables the bottom navigation bar.
-class ElvanSubpageShell extends StatelessWidget {
+class ElvanSubpageShell extends StatefulWidget {
   const ElvanSubpageShell({
     super.key,
     required this.title,
@@ -13,6 +15,7 @@ class ElvanSubpageShell extends StatelessWidget {
     this.navActions = const [],
     this.startCollapsed = true,
     this.backgroundColor,
+    this.hideHeaderOnDesktop = false,
   });
 
   final String title;
@@ -20,17 +23,39 @@ class ElvanSubpageShell extends StatelessWidget {
   final List<Widget> navActions;
   final bool startCollapsed;
   final Color? backgroundColor;
+  final bool hideHeaderOnDesktop;
 
   @override
+  State<ElvanSubpageShell> createState() => _ElvanSubpageShellState();
+}
+
+class _ElvanSubpageShellState extends State<ElvanSubpageShell> {
+  @override
   Widget build(BuildContext context) {
+    // Use MediaQuery instead of LayoutBuilder constraints! 
+    // In a desktop split view, the constraints.maxWidth might only be 600px 
+    // (half the screen), which incorrectly triggers mobile mode.
+    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+
+    if (isDesktop) {
+      return ElvanDesktopSubpageShell(
+        title: widget.title,
+        slivers: widget.slivers,
+        backgroundColor: widget.backgroundColor,
+        hideHeaderOnDesktop: widget.hideHeaderOnDesktop,
+      );
+    }
+
+    // Mobile view uses the full ElvanShell with draggable physics
     return ElvanShell(
-      title: title,
-      slivers: slivers,
+      title: widget.title,
       showNavbar: false,
+      startCollapsed: widget.startCollapsed,
+      navActions: widget.navActions,
       leadingWidget: const ElvanBackButton(),
-      navActions: navActions,
-      startCollapsed: true,
-      backgroundColor: backgroundColor,
+      showLeadingWidgetInExpandedBar: true,
+      slivers: widget.slivers,
+      backgroundColor: widget.backgroundColor,
       syncWithGlobalHeader: false,
     );
   }

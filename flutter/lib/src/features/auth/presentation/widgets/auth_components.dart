@@ -214,11 +214,14 @@ class _AuthLayoutState extends State<AuthLayout> with TickerProviderStateMixin {
           // Main Content
           SafeArea(
             child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 480),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: widget.child,
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 480),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                    child: widget.child,
+                  ),
                 ),
               ),
             ),
@@ -357,7 +360,6 @@ class _AuthInputState extends State<AuthInput> {
               ),
             ],
             Container(
-              height: 56,
               decoration: BoxDecoration(
                 color: inputBg,
                 borderRadius: BorderRadius.circular(50),
@@ -367,18 +369,20 @@ class _AuthInputState extends State<AuthInput> {
                 focusNode: _focusNode,
                 obscureText: _obscureText,
                 onChanged: widget.onChange,
+                textAlignVertical: TextAlignVertical.center,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                   color: textColor,
                 ),
                 decoration: InputDecoration(
+                  isDense: true,
                   hintText: widget.placeholder,
                   hintStyle: TextStyle(
                     color: labelColor,
                     fontWeight: FontWeight.w400,
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,

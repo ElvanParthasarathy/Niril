@@ -38,56 +38,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     if (!mounted) return;
 
-    final isOnboarded = ref.read(onboardedProvider);
-
     if (_email == 'test@niril.com' && _password == 'password') {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) {
-            if (!isOnboarded) {
-              return const NalvaravuWelcomePage();
-            } else {
-              final mode = ref.read(appModeProvider);
-              if (mode == null) {
-                return ModeSelectorScreen(
-                  onModeSelected: (newMode) {
-                    ref.read(appModeProvider.notifier).setMode(newMode);
-                  },
-                );
-              }
-              return const ShellDemoScreen();
-            }
-          },
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-        ),
-      );
+      ref.read(isLoggedInProvider.notifier).setLoggedIn(true);
+      Navigator.popUntil(context, (route) => route.isFirst);
     } else {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) {
-            if (!isOnboarded) {
-              return const NalvaravuWelcomePage();
-            } else {
-              final mode = ref.read(appModeProvider);
-              if (mode == null) {
-                return ModeSelectorScreen(
-                  onModeSelected: (newMode) {
-                    ref.read(appModeProvider.notifier).setMode(newMode);
-                  },
-                );
-              }
-              return const ShellDemoScreen();
-            }
-          },
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-        ),
-      );
+      ref.read(isLoggedInProvider.notifier).setLoggedIn(true);
+      Navigator.popUntil(context, (route) => route.isFirst);
     }
   }
 
@@ -98,8 +54,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const AuthHeader(
-            title: 'Elvan Niril',
-            subtitle: 'Sign in to your secure database',
+            title: 'Niril',
+            subtitle: 'Login to access your app',
           ),
           
           const SizedBox(height: 32),

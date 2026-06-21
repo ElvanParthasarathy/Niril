@@ -13,6 +13,7 @@ import '../../../../core/state/app_state.dart';
 import '../../../../core/database/app_database.dart';
 import '../../data/vaniga_tharavugal_provider.dart';
 import '../../../auth/presentation/pages/login_page.dart';
+import '../../../auth/presentation/pages/welcome_page.dart';
 
 class AccountSecuritySection extends ConsumerWidget {
   const AccountSecuritySection({super.key});
@@ -65,20 +66,17 @@ class AccountSecuritySection extends ConsumerWidget {
         showElvanLoadingOverlay(context: context, text: 'signing_out'.tr(context, ref));
         Future.delayed(const Duration(seconds: 1), () {
           if (context.mounted) {
-            Navigator.pop(context); // close loader
-            Navigator.pop(context); // close action sheet
-            // In a real app, this would clear auth and redirect
-            Navigator.pushAndRemoveUntil(
-              context,
-              PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) => const LoginPage(),
-                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-              ),
-              (route) => false,
-            );
-            ElvanSnackbar.show(context, 'signOutSuccess'.tr(context, ref));
+            final successMsg = 'signOutSuccess'.tr(context, ref);
+            // Update global state
+            ref.read(appModeProvider.notifier).setMode(null);
+            ref.read(isLoggedInProvider.notifier).setLoggedIn(false);
+
+            // Pop all dialogs and screens back to the root route.
+            // Because we set isLoggedIn to false, main.dart will automatically
+            // render the WelcomePage at the root!
+            Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+            
+            ElvanSnackbar.show(context, successMsg);
           }
         });
       },
@@ -176,12 +174,9 @@ class AccountSecuritySection extends ConsumerWidget {
             await Future.delayed(const Duration(seconds: 2));
             
             if (context.mounted) {
-              // Close loader
-              Navigator.pop(context);
-              // Close password sheet
-              Navigator.pop(context);
-              // Close email sheet
-              Navigator.pop(context);
+              // We do not manually pop dialogs here, as that triggers overlapping 
+              // pop animations that crash the Navigator (!_debugLocked).
+              // pushAndRemoveUntil below will cleanly destroy all dialogs instantly.
               
               // Wipe local DB profiles
               final db = ref.read(appDatabaseProvider);
@@ -192,11 +187,18 @@ class AccountSecuritySection extends ConsumerWidget {
               await prefs.clear();
 
               if (context.mounted) {
-                // Mock fresh install redirect by resetting mode
-                ref.invalidate(appModeProvider);
-                ref.invalidate(appDatabaseProvider);
-                Navigator.popUntil(context, (route) => route.isFirst);
-                ElvanSnackbar.show(context, 'dataErasedSuccess'.tr(context, ref));
+                final successMsg = 'dataErasedSuccess'.tr(context, ref);
+                
+                // Mock fresh install redirect by resetting mode and auth
+                ref.read(appModeProvider.notifier).setMode(null);
+                ref.read(isLoggedInProvider.notifier).setLoggedIn(false);
+
+                // Pop all dialogs and screens back to the root route.
+                // Because we set isLoggedIn to false, main.dart will automatically
+                // render the WelcomePage at the root!
+                Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
+                
+                ElvanSnackbar.show(context, successMsg);
               }
             }
           },

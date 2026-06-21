@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import '../models/app_mode.dart';
 import '../preferences_service.dart';
 import '../database/app_database.dart';
@@ -26,12 +27,25 @@ final _profilesStreamProvider = StreamProvider<List<VanigaTharavugalEntry>>((ref
   return db.select(db.vanigaTharavugalTable).watch();
 });
 
-// Derived provider: Do we have ANY profile at all? (If false, go to Welcome Page)
-final hasAnyProfileProvider = Provider<bool>((ref) {
-  final profiles = ref.watch(_profilesStreamProvider).valueOrNull;
-  // If still loading or null, we assume we might have profiles to avoid flashing Welcome screen
-  if (profiles == null) return true;
-  return profiles.isNotEmpty;
+// Derived provider: Which profiles are missing from the DB?
+// Returns a list of AppMode strings (e.g. ['silk', 'coolie'], ['coolie'], or [])
+final missingProfilesProvider = Provider<List<String>>((ref) {
+  final profiles = ref.watch(_profilesStreamProvider).value;
+  if (profiles == null) return []; // Assume none missing while loading to prevent flashes
+  
+  final existingModes = profiles.map((p) => p.seyaliVagai).toList();
+  final missing = <String>[];
+  
+  if (!existingModes.contains('silk')) missing.add('silk');
+  if (!existingModes.contains('coolie')) missing.add('coolie');
+  
+  return missing;
+});
+
+// Derived provider: Do we have BOTH profiles setup?
+final hasBothProfilesProvider = Provider<bool>((ref) {
+  final missing = ref.watch(missingProfilesProvider);
+  return missing.isEmpty;
 });
 
 // Derived provider: Do we have a profile for the currently selected mode?
@@ -39,29 +53,139 @@ final hasProfileForCurrentModeProvider = Provider<bool>((ref) {
   final mode = ref.watch(appModeProvider);
   if (mode == null) return false;
   
-  final profiles = ref.watch(_profilesStreamProvider).valueOrNull;
+  final profiles = ref.watch(_profilesStreamProvider).value;
   if (profiles == null) return true; // Assume true while loading
   
   final modeKey = mode == AppMode.coolie ? 'coolie' : 'silk';
   return profiles.any((p) => p.seyaliVagai == modeKey);
 });
 
-// We keep the old onboardedProvider strictly for any legacy references, 
-// but we map it to our reactive database check.
-final onboardedProvider = Provider<bool>((ref) {
-  return ref.watch(hasAnyProfileProvider);
-});
-
 
 // Tracks the selected segment inside the Uruvakku tab (0 = Invoices, 1 = Receipts)
-final uruvakkuSegmentProvider = StateProvider<int>((ref) => 0);
+final silkUruvakkuSegmentProvider = StateProvider<int>((ref) => 0);
+final coolieUruvakkuSegmentProvider = StateProvider<int>((ref) => 0);
 
-// Tracks whether bilingual mode is enabled across the app
-final bilingualProvider = StateProvider<bool>((ref) => false);
+class UruvakkuSegmentNotifier extends Notifier<int> {
+  @override
+  int build() {
+    final mode = ref.watch(appModeProvider);
+    if (mode == AppMode.coolie) {
+      return ref.watch(coolieUruvakkuSegmentProvider);
+    } else {
+      return ref.watch(silkUruvakkuSegmentProvider);
+    }
+  }
+  set state(int value) {
+    final mode = ref.read(appModeProvider);
+    if (mode == AppMode.coolie) {
+      ref.read(coolieUruvakkuSegmentProvider.notifier).state = value;
+    } else {
+      ref.read(silkUruvakkuSegmentProvider.notifier).state = value;
+    }
+  }
+}
+
+final uruvakkuSegmentProvider = NotifierProvider<UruvakkuSegmentNotifier, int>(() {
+  return UruvakkuSegmentNotifier();
+});
+
+// Tracks whether bilingual mode is enabled across the app (Firewalled by AppMode)
+final silkBilingualProvider = StateProvider<bool>((ref) => false);
+
+class BilingualNotifier extends Notifier<bool> {
+  @override
+  bool build() {
+    final mode = ref.watch(appModeProvider);
+    if (mode == AppMode.coolie) {
+      // Coolie mode always collects both languages in settings
+      return true;
+    } else {
+      return ref.watch(silkBilingualProvider);
+    }
+  }
+
+  set state(bool value) {
+    final mode = ref.read(appModeProvider);
+    if (mode == AppMode.coolie) {
+      // Ignore: Coolie settings are strictly always bilingual for data entry
+    } else {
+      ref.read(silkBilingualProvider.notifier).state = value;
+    }
+  }
+}
+
+final bilingualProvider = NotifierProvider<BilingualNotifier, bool>(() {
+  return BilingualNotifier();
+});
 
 // Tracks primary and secondary language for data entry
-final primaryLanguageProvider = StateProvider<String>((ref) => 'Tamil');
-final secondaryLanguageProvider = StateProvider<String>((ref) => 'English');
+final silkPrimaryLanguageProvider = StateProvider<String>((ref) => 'Tamil');
+final cooliePrimaryLanguageProvider = StateProvider<String>((ref) => 'Tamil');
 
-// Tracks mock authentication state
-final isLoggedInProvider = StateProvider<bool>((ref) => false);
+class PrimaryLanguageNotifier extends Notifier<String> {
+  @override
+  String build() {
+    final mode = ref.watch(appModeProvider);
+    if (mode == AppMode.coolie) {
+      return ref.watch(cooliePrimaryLanguageProvider);
+    } else {
+      return ref.watch(silkPrimaryLanguageProvider);
+    }
+  }
+  set state(String value) {
+    final mode = ref.read(appModeProvider);
+    if (mode == AppMode.coolie) {
+      ref.read(cooliePrimaryLanguageProvider.notifier).state = value;
+    } else {
+      ref.read(silkPrimaryLanguageProvider.notifier).state = value;
+    }
+  }
+}
+
+final primaryLanguageProvider = NotifierProvider<PrimaryLanguageNotifier, String>(() {
+  return PrimaryLanguageNotifier();
+});
+
+final silkSecondaryLanguageProvider = StateProvider<String>((ref) => 'English');
+final coolieSecondaryLanguageProvider = StateProvider<String>((ref) => 'English');
+
+class SecondaryLanguageNotifier extends Notifier<String> {
+  @override
+  String build() {
+    final mode = ref.watch(appModeProvider);
+    if (mode == AppMode.coolie) {
+      return ref.watch(coolieSecondaryLanguageProvider);
+    } else {
+      return ref.watch(silkSecondaryLanguageProvider);
+    }
+  }
+  set state(String value) {
+    final mode = ref.read(appModeProvider);
+    if (mode == AppMode.coolie) {
+      ref.read(coolieSecondaryLanguageProvider.notifier).state = value;
+    } else {
+      ref.read(silkSecondaryLanguageProvider.notifier).state = value;
+    }
+  }
+}
+
+final secondaryLanguageProvider = NotifierProvider<SecondaryLanguageNotifier, String>(() {
+  return SecondaryLanguageNotifier();
+});
+
+// Tracks authentication state via SharedPreferences
+class IsLoggedInNotifier extends Notifier<bool> {
+  @override
+  bool build() {
+    return ref.watch(preferencesServiceProvider).getIsLoggedIn();
+  }
+
+  void setLoggedIn(bool value) {
+    state = value;
+    ref.read(preferencesServiceProvider).setIsLoggedIn(value);
+  }
+}
+
+final isLoggedInProvider = NotifierProvider<IsLoggedInNotifier, bool>(() {
+  return IsLoggedInNotifier();
+});

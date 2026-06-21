@@ -7,10 +7,11 @@ import '../../../../localization/locale_provider.dart';
 import '../../../../core/preferences_service.dart';
 import 'vanakkam_page.dart';
 import '../widgets/auth_components.dart';
+import '../../../../core/state/app_state.dart';
 
 const List<String> _greetings = ["வணக்கம்!", "Hello!", "നമസ്കാരം!"];
 
-enum WelcomePhase { greeting, language, billingLanguage }
+enum WelcomePhase { greeting, language, billingLanguage, businessName }
 
 class NalvaravuWelcomePage extends ConsumerStatefulWidget {
   const NalvaravuWelcomePage({super.key});
@@ -29,7 +30,20 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
   @override
   void initState() {
     super.initState();
-    _startGreetingSequence();
+    // We must wait until after build to read providers safely that might trigger navigation
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final missing = ref.read(missingProfilesProvider);
+      if (missing.length == 1) {
+        // Only one profile is missing. Skip the grand greeting and language selection.
+        if (mounted) {
+          setState(() {
+            _phase = WelcomePhase.businessName;
+          });
+        }
+      } else {
+        _startGreetingSequence();
+      }
+    });
   }
 
   @override
@@ -87,8 +101,9 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
         switchInCurve: Curves.easeOutQuart,
         switchOutCurve: Curves.easeInQuart,
         transitionBuilder: (Widget child, Animation<double> animation) {
+          // Gentle vertical slide up animation
           final offsetAnimation = Tween<Offset>(
-            begin: const Offset(0.0, 0.05),
+            begin: const Offset(0.0, 0.05), // Slide from the bottom
             end: Offset.zero,
           ).animate(animation);
           return FadeTransition(
@@ -120,6 +135,8 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
     String currentLang,
   ) {
     switch (_phase) {
+      case WelcomePhase.businessName:
+        return const VanakkamPage();
       case WelcomePhase.greeting:
         return Center(
           key: const ValueKey('greeting'),
@@ -267,15 +284,9 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
                   
                   if (!context.mounted) return;
 
-                  Navigator.pushReplacement(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) => const VanakkamPage(),
-                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                        return FadeTransition(opacity: animation, child: child);
-                      },
-                    ),
-                  );
+                  setState(() {
+                    _phase = WelcomePhase.businessName;
+                  });
                 },
               ),
             ],

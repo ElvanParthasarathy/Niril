@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'src/core/widgets/elvan_scroll_behavior.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +14,7 @@ import 'src/localization/locale_provider.dart';
 import 'src/features/shell/presentation/mobile/widgets/elvan_page_route.dart';
 import 'src/features/auth/presentation/mode_selector_screen.dart';
 import 'src/features/auth/presentation/pages/welcome_page.dart';
+import 'src/features/auth/presentation/pages/nalvaravu_welcome_page.dart';
 import 'src/features/pages/mugappu_page.dart';
 import 'src/features/pages/uruvakku_page.dart';
 import 'src/features/shell/presentation/mobile/elvan_navbar.dart';
@@ -82,6 +85,7 @@ class ElvanNirilApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Elvan Niril Next-Gen',
       debugShowCheckedModeBanner: false,
+      scrollBehavior: ElvanScrollBehavior(),
       themeMode: themeMode,
       locale: locale,
       supportedLocales: const [
@@ -141,11 +145,19 @@ class ElvanNirilApp extends ConsumerWidget {
       ),
       home: Consumer(
         builder: (context, ref, _) {
-          final isOnboarded = ref.watch(onboardedProvider);
-          if (!isOnboarded) {
+          // 1. Authentication Check
+          final isLoggedIn = ref.watch(isLoggedInProvider);
+          if (!isLoggedIn) {
             return const WelcomePage();
           }
 
+          // 2. Smart Onboarding Check
+          final hasBothProfiles = ref.watch(hasBothProfilesProvider);
+          if (!hasBothProfiles) {
+            return const NalvaravuWelcomePage();
+          }
+
+          // 3. Mode Selection
           final mode = ref.watch(appModeProvider);
           if (mode == null) {
             return ModeSelectorScreen(
@@ -155,22 +167,7 @@ class ElvanNirilApp extends ConsumerWidget {
             );
           }
 
-          final hasProfile = ref.watch(hasProfileForCurrentModeProvider);
-          if (!hasProfile) {
-            // Show profile creation screen for the current mode
-            // We use PopScope so the hardware back button will return to the mode selector
-            return PopScope(
-              canPop: false,
-              onPopInvoked: (didPop) {
-                if (didPop) return;
-                ref.read(appModeProvider.notifier).setMode(null);
-              },
-              child: mode == AppMode.coolie
-                  ? CoolieVanigaAmaippuPage()
-                  : SilkVanigaAmaippuPage(),
-            );
-          }
-
+          // 4. Main App Dashboard
           return const ShellDemoScreen();
         },
       ),
@@ -192,6 +189,7 @@ class ShellDemoScreen extends ConsumerStatefulWidget {
 class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
   int _currentTab = 0; // Start on "Invoices" tab
   int _navItemCount = 4; // Finalized count without debug
+  bool _isSettingsOpen = false;
 
   void _onAddPressed() {
     final mode = ref.read(appModeProvider);
@@ -260,9 +258,16 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
     final String currentTitle = currentItem.headerLabel ?? currentItem.label;
 
     return PopScope(
-      canPop: _currentTab == 0,
+      canPop: _currentTab == 0 && !_isSettingsOpen,
       onPopInvoked: (didPop) {
         if (didPop) return;
+
+        if (_isSettingsOpen) {
+          setState(() {
+            _isSettingsOpen = false;
+          });
+          return;
+        }
 
         // If we are in the Uruvakku tab and viewing Receipts, go back to Invoices first
         if (_currentTab == 1) {
@@ -285,7 +290,19 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
           if (isDesktop) {
             return ElvanDesktopShell(
               currentIndex: _currentTab,
-              onTabSelected: (index) => setState(() => _currentTab = index),
+              onTabSelected: (index) {
+                setState(() {
+                  _currentTab = index;
+                  _isSettingsOpen = false;
+                });
+              },
+              onSettingsPressed: () {
+                setState(() {
+                  _isSettingsOpen = true;
+                });
+              },
+              customContent: _isSettingsOpen ? const SettingsScreen() : null,
+              title: _isSettingsOpen ? 'settings'.tr(context, ref) : currentTitle,
               navItems: _masterNavItems.take(_navItemCount).toList(),
               slivers: [
                 SliverOffstage(
@@ -381,6 +398,8 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
                   heroTag: 'dev_erase',
                   onPressed: () {
                     ref.read(vanigaTharavugalProvider.notifier).clearProfile();
+                    ref.read(appModeProvider.notifier).setMode(null); // Sign out
+                    Navigator.popUntil(context, (route) => route.isFirst);
                   },
                   label: const Text('Dev: Erase'),
                   icon: const Icon(CupertinoIcons.trash),

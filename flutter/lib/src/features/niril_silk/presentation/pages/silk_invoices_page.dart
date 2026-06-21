@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/state/search_state.dart';
-// ─────────────────────────────────────────────────────────────────────────────
+import '../../../shell/presentation/widgets/elvan_responsive_grid.dart';
 // MOCK DATA MODEL
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -105,20 +105,14 @@ class SilkInvoicesPage extends ConsumerWidget {
         top: 32,
         bottom: 120, // clearance for the floating pill
       ),
-      sliver: SliverGrid(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
-          childAspectRatio: 0.82,
-        ),
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final album = filteredAlbums[index];
-            return _AlbumCard(album: album);
-          },
-          childCount: filteredAlbums.length,
-        ),
+      sliver: ElvanResponsiveGrid(
+        itemCount: filteredAlbums.length,
+        desktopCrossAxisCount: 3,
+        childAspectRatio: 0.82,
+        itemBuilder: (context, index) {
+          final album = filteredAlbums[index];
+          return _AlbumCard(album: album);
+        },
       ),
     );
   }

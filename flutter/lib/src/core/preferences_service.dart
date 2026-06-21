@@ -14,6 +14,16 @@ class PreferencesService {
 
   static const _themeKey = 'app_theme_mode';
   static const _localeKey = 'app_locale';
+  static const _isLoggedInKey = 'is_logged_in';
+
+  // --- Auth ---
+  bool getIsLoggedIn() {
+    return _prefs.getBool(_isLoggedInKey) ?? false;
+  }
+
+  Future<void> setIsLoggedIn(bool value) async {
+    await _prefs.setBool(_isLoggedInKey, value);
+  }
 
   // --- Theme ---
   ThemeMode getThemeMode() {

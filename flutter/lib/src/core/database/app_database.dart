@@ -5,6 +5,7 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:sqlite3/sqlite3.dart';
 
 part 'app_database.g.dart';
 
@@ -87,11 +88,25 @@ class AppDatabase extends _$AppDatabase {
   @override
   int get schemaVersion => 1;
 
-  /// Opens the SQLite file at the app documents directory.
+  /// Opens the SQLite file safely on all platforms.
   static LazyDatabase openConnection() {
     return LazyDatabase(() async {
-      final dbFolder = await getApplicationDocumentsDirectory();
+      // Use Support Directory instead of Documents Directory.
+      // Windows Documents dir is often locked by OneDrive or permissions, preventing SQLite journaling.
+      final dbFolder = await getApplicationSupportDirectory();
+      
+      if (!await dbFolder.exists()) {
+        await dbFolder.create(recursive: true);
+      }
+      
       final file = File(p.join(dbFolder.path, 'elvan_niril.db'));
+      
+      if (Platform.isWindows) {
+        // Essential for Windows: tell SQLite where to store temporary files (like WAL journals)
+        // Otherwise, changes might be lost when the app closes.
+        sqlite3.tempDirectory = dbFolder.path;
+      }
+      
       return NativeDatabase.createInBackground(file);
     });
   }

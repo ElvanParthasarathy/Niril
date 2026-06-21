@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
 
 import 'header_state.dart';
+import '../../../../core/widgets/elvan_smooth_scroll.dart';
 
 export 'elvan_navbar.dart';
 import 'elvan_navbar.dart';
@@ -442,19 +443,22 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
         child: Stack(
           children: [
           // ─── Layer 1: Scrollable content ────────────
-          NotificationListener<ScrollNotification>(
-            onNotification: _handleScrollNotification,
-            child: ElvanPageContent(
-              scrollController: _scrollController,
-              title: widget.title,
-              navActions: _buildEffectiveNavActions(),
-              slivers: widget.slivers,
-              expandedHeight: _kExpandedHeight,
-              isHeaderExpandedNotifier: _isHeaderExpandedNotifier, // Passed to content
-              isSearchActiveNotifier: _isSearchActiveNotifier,
-              dynamicPillHeightNotifier: _dynamicPillHeightNotifier, // Pass to sync text fade
-              leadingWidget: widget.leadingWidget,
-              showLeadingWidgetInExpandedBar: widget.showLeadingWidgetInExpandedBar,
+          ElvanSmoothScroll(
+            controller: _scrollController,
+            child: NotificationListener<ScrollNotification>(
+              onNotification: _handleScrollNotification,
+              child: ElvanPageContent(
+                scrollController: _scrollController,
+                title: widget.title,
+                navActions: _buildEffectiveNavActions(),
+                slivers: widget.slivers,
+                expandedHeight: _kExpandedHeight,
+                isHeaderExpandedNotifier: _isHeaderExpandedNotifier, // Passed to content
+                isSearchActiveNotifier: _isSearchActiveNotifier,
+                dynamicPillHeightNotifier: _dynamicPillHeightNotifier, // Pass to sync text fade
+                leadingWidget: widget.leadingWidget,
+                showLeadingWidgetInExpandedBar: widget.showLeadingWidgetInExpandedBar,
+              ),
             ),
           ),
 
@@ -508,7 +512,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
               ),
             ),
           ),
-          // ─── Layer 2.75: Edge Gesture Blockers (Industry standard for horizontal navigation) ───
+          // ─── Layer 2: Main Desktop Sidebar (when in desktop split-view) ─for horizontal navigation) ───
           Positioned(
             left: 0,
             top: 0,

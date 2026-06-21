@@ -11,6 +11,7 @@ import '../../../../core/state/app_state.dart';
 import '../../../settings/data/mock_profile.dart';
 import '../../../../core/models/app_mode.dart';
 import '../../../settings/data/vaniga_tharavugal_provider.dart';
+import '../../../shell/presentation/mobile/widgets/elvan_page_route.dart';
 
 class WelcomePage extends ConsumerWidget {
   const WelcomePage({super.key});
@@ -32,7 +33,7 @@ class WelcomePage extends ConsumerWidget {
           
           if (context.mounted) {
             ref.read(appModeProvider.notifier).setMode(AppMode.silk);
-            ref.read(isLoggedInProvider.notifier).state = true;
+            ref.read(isLoggedInProvider.notifier).setLoggedIn(true);
           }
         },
         label: const Text('Seed App (Dev)'),
@@ -97,12 +98,7 @@ class WelcomePage extends ConsumerWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) => const LoginPage(),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
-                ),
+                ElvanPageRoute(builder: (_) => const LoginPage()),
               );
             },
           ),
