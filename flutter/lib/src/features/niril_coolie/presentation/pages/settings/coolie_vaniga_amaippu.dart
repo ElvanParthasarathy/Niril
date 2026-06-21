@@ -222,8 +222,8 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
       onConfirm: () {
         if (newNamePrimary.trim().isNotEmpty) {
           final newProfile = VanigaTharavugal();
-          newProfile.setBilingual('niruvanathinPeyar', newProfile.mudhanMozhi, newNamePrimary);
-          newProfile.setBilingual('niruvanathinPeyar', newProfile.thunaiMozhi, newNameSecondary);
+          newProfile.setBilingual('niruvanathinPeyar', 'Tamil', newNamePrimary);
+          newProfile.setBilingual('niruvanathinPeyar', 'English', newNameSecondary);
           ref.read(vanigaTharavugalProvider.notifier).updateProfile(newProfile);
           _showSuccessToast();
         }
@@ -235,7 +235,7 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? const Color(0xFF111111) : Colors.white;
     final profile = ref.watch(vanigaTharavugalProvider);
-    final primaryName = profile?.getPrimary('niruvanathinPeyar') ?? '';
+    final primaryName = profile?.niruvanathinPeyar['Tamil'] ?? '';
     final displayName = primaryName.isEmpty ? 'activeProfile'.tr(context, ref) : primaryName;
 
     return Padding(
@@ -356,8 +356,8 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
 
   void _saveBilingualField(VanigaTharavugal profile, String fieldName) {
     final updatedProfile = profile.copyWith();
-    updatedProfile.setBilingual(fieldName, profile.mudhanMozhi, _tempPrimary);
-    updatedProfile.setBilingual(fieldName, profile.thunaiMozhi, _tempSecondary);
+    updatedProfile.setBilingual(fieldName, 'Tamil', _tempPrimary);
+    updatedProfile.setBilingual(fieldName, 'English', _tempSecondary);
     ref.read(vanigaTharavugalProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
@@ -388,17 +388,17 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
   Widget build(BuildContext context) {
     final title = 'vanigam'.tr(context, ref);
     final isBilingual = ref.watch(bilingualProvider);
-    final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
-    final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
+    final primaryLang = 'tamil';
+    final secondaryLang = 'english';
 
     final profile = ref.watch(vanigaTharavugalProvider);
     final currentProfile = profile ?? VanigaTharavugal();
 
-    final niruvanathinPeyarPrimary = currentProfile.getPrimary('niruvanathinPeyar');
-    final niruvanathinPeyarSecondary = currentProfile.getSecondary('niruvanathinPeyar');
+    final niruvanathinPeyarPrimary = currentProfile.niruvanathinPeyar['Tamil'] ?? '';
+    final niruvanathinPeyarSecondary = currentProfile.niruvanathinPeyar['English'] ?? '';
 
-    final adaimozhiPrimary = currentProfile.getPrimary('adaimozhi');
-    final adaimozhiSecondary = currentProfile.getSecondary('adaimozhi');
+    final adaimozhiPrimary = currentProfile.adaimozhi['Tamil'] ?? '';
+    final adaimozhiSecondary = currentProfile.adaimozhi['English'] ?? '';
 
     return ElvanSubpageShell(
       title: title,

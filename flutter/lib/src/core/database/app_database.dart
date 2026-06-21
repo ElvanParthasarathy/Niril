@@ -86,7 +86,17 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (Migrator m) async {
+      await m.createAll();
+    },
+    onUpgrade: (Migrator m, int from, int to) async {
+      // Version 2 removed SeyaliAmaippugalTable. No action needed.
+    },
+  );
 
   /// Opens the SQLite file safely on all platforms.
   static LazyDatabase openConnection() {

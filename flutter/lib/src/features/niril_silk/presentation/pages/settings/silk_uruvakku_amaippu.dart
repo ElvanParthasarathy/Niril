@@ -35,7 +35,12 @@ class _SilkUruvakkuAmaippuPageState extends ConsumerState<SilkUruvakkuAmaippuPag
             value: _tempPrimaryLanguage,
             items: const ['Tamil', 'English'],
             onChanged: (val) {
-              setState(() => _tempPrimaryLanguage = val);
+              setState(() {
+                _tempPrimaryLanguage = val;
+                if (_tempPrimaryLanguage == _tempSecondaryLanguage) {
+                  _tempSecondaryLanguage = val == 'English' ? 'Tamil' : 'English';
+                }
+              });
             },
           ),
           if (ref.watch(bilingualProvider)) ...[
@@ -45,7 +50,12 @@ class _SilkUruvakkuAmaippuPageState extends ConsumerState<SilkUruvakkuAmaippuPag
               value: _tempSecondaryLanguage,
               items: const ['Tamil', 'English'],
               onChanged: (val) {
-                setState(() => _tempSecondaryLanguage = val);
+                setState(() {
+                  _tempSecondaryLanguage = val;
+                  if (_tempSecondaryLanguage == _tempPrimaryLanguage) {
+                    _tempPrimaryLanguage = val == 'English' ? 'Tamil' : 'English';
+                  }
+                });
               },
             ),
           ],

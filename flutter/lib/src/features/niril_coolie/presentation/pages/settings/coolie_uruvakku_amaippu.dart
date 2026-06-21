@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/widgets/elvan_snackbar.dart';
 
 import '../../../../../localization/locale_provider.dart';
+import '../../../../../core/state/app_state.dart';
 import '../../../../shell/presentation/mobile/elvan_subpage_shell.dart';
 import '../../../../settings/presentation/widgets/elvan_settings_section.dart';
 import '../../../../settings/presentation/widgets/elvan_settings_edit_card.dart';
@@ -18,7 +19,6 @@ class CoolieUruvakkuAmaippuPage extends ConsumerStatefulWidget {
 
 class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaippuPage> {
   bool _isEditingLanguages = false;
-  String _primaryLanguage = 'Tamil';
   String _tempPrimaryLanguage = 'Tamil';
 
   bool _isEditingTheme = false;
@@ -65,7 +65,7 @@ class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaipp
               FilledButton(
                 onPressed: () {
                   setState(() {
-                    _primaryLanguage = _tempPrimaryLanguage;
+                    ref.read(primaryLanguageProvider.notifier).state = _tempPrimaryLanguage;
                     _isEditingLanguages = false;
                   });
                   ElvanSnackbar.show(context, 'savedSuccessfully'.tr(context, ref));
@@ -291,11 +291,11 @@ class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaipp
                     editChild: _buildEditState(),
                     displayChild: ElvanSimpleSettingsRow(
                       title: 'cooliePrintLanguage'.tr(context, ref),
-                      description: _primaryLanguage.toLowerCase().tr(context, ref),
+                      description: ref.watch(primaryLanguageProvider).toLowerCase().tr(context, ref),
                       trailing: IconButton(
                         onPressed: () {
                           setState(() {
-                            _tempPrimaryLanguage = _primaryLanguage;
+                            _tempPrimaryLanguage = ref.read(primaryLanguageProvider);
                             _isEditingLanguages = true;
                           });
                         },

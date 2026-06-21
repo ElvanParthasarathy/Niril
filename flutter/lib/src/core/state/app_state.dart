@@ -20,7 +20,6 @@ final appModeProvider = NotifierProvider<AppStateNotifier, AppMode?>(() {
   return AppStateNotifier();
 });
 
-
 // Stream of all profiles in the database
 final _profilesStreamProvider = StreamProvider<List<VanigaTharavugalEntry>>((ref) {
   final db = ref.watch(appDatabaseProvider);
@@ -96,8 +95,6 @@ final uruvakkuSegmentProvider = NotifierProvider<UruvakkuSegmentNotifier, int>((
 });
 
 // Tracks whether bilingual mode is enabled across the app (Firewalled by AppMode)
-final silkBilingualProvider = StateProvider<bool>((ref) => false);
-
 class BilingualNotifier extends Notifier<bool> {
   @override
   bool build() {
@@ -106,7 +103,8 @@ class BilingualNotifier extends Notifier<bool> {
       // Coolie mode always collects both languages in settings
       return true;
     } else {
-      return ref.watch(silkBilingualProvider);
+      final profile = ref.watch(vanigaTharavugalProvider);
+      return profile?.iruMozhi ?? false;
     }
   }
 
@@ -115,7 +113,11 @@ class BilingualNotifier extends Notifier<bool> {
     if (mode == AppMode.coolie) {
       // Ignore: Coolie settings are strictly always bilingual for data entry
     } else {
-      ref.read(silkBilingualProvider.notifier).state = value;
+      final profile = ref.read(vanigaTharavugalProvider);
+      if (profile != null) {
+        final newProfile = profile.copyWith(iruMozhi: value);
+        ref.read(vanigaTharavugalProvider.notifier).updateProfile(newProfile);
+      }
     }
   }
 }
@@ -124,26 +126,18 @@ final bilingualProvider = NotifierProvider<BilingualNotifier, bool>(() {
   return BilingualNotifier();
 });
 
-// Tracks primary and secondary language for data entry
-final silkPrimaryLanguageProvider = StateProvider<String>((ref) => 'Tamil');
-final cooliePrimaryLanguageProvider = StateProvider<String>((ref) => 'Tamil');
-
+// Tracks primary language for data entry
 class PrimaryLanguageNotifier extends Notifier<String> {
   @override
   String build() {
-    final mode = ref.watch(appModeProvider);
-    if (mode == AppMode.coolie) {
-      return ref.watch(cooliePrimaryLanguageProvider);
-    } else {
-      return ref.watch(silkPrimaryLanguageProvider);
-    }
+    final profile = ref.watch(vanigaTharavugalProvider);
+    return profile?.mudhanMozhi ?? 'Tamil';
   }
   set state(String value) {
-    final mode = ref.read(appModeProvider);
-    if (mode == AppMode.coolie) {
-      ref.read(cooliePrimaryLanguageProvider.notifier).state = value;
-    } else {
-      ref.read(silkPrimaryLanguageProvider.notifier).state = value;
+    final profile = ref.read(vanigaTharavugalProvider);
+    if (profile != null) {
+      final newProfile = profile.copyWith(mudhanMozhi: value);
+      ref.read(vanigaTharavugalProvider.notifier).updateProfile(newProfile);
     }
   }
 }
@@ -152,25 +146,18 @@ final primaryLanguageProvider = NotifierProvider<PrimaryLanguageNotifier, String
   return PrimaryLanguageNotifier();
 });
 
-final silkSecondaryLanguageProvider = StateProvider<String>((ref) => 'English');
-final coolieSecondaryLanguageProvider = StateProvider<String>((ref) => 'English');
-
+// Tracks secondary language for data entry
 class SecondaryLanguageNotifier extends Notifier<String> {
   @override
   String build() {
-    final mode = ref.watch(appModeProvider);
-    if (mode == AppMode.coolie) {
-      return ref.watch(coolieSecondaryLanguageProvider);
-    } else {
-      return ref.watch(silkSecondaryLanguageProvider);
-    }
+    final profile = ref.watch(vanigaTharavugalProvider);
+    return profile?.thunaiMozhi ?? 'English';
   }
   set state(String value) {
-    final mode = ref.read(appModeProvider);
-    if (mode == AppMode.coolie) {
-      ref.read(coolieSecondaryLanguageProvider.notifier).state = value;
-    } else {
-      ref.read(silkSecondaryLanguageProvider.notifier).state = value;
+    final profile = ref.read(vanigaTharavugalProvider);
+    if (profile != null) {
+      final newProfile = profile.copyWith(thunaiMozhi: value);
+      ref.read(vanigaTharavugalProvider.notifier).updateProfile(newProfile);
     }
   }
 }

@@ -87,7 +87,7 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final locale = ref.watch(localeProvider);
-    final currentLang = locale?.languageCode ?? 'en';
+    final currentLang = locale?.languageCode ?? 'ta';
 
     final textColor = isDark ? Colors.white : const Color(0xFF1A1A1A);
     final textSecondary = isDark ? Colors.white.withValues(alpha: 0.6) : const Color(0xFF666666);
@@ -172,6 +172,7 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
     switch (_phase) {
       case WelcomePhase.businessName:
         return VanakkamPage(
+          billingLanguage: _billingLanguage,
           onBack: () {
             setState(() {
               _phase = WelcomePhase.billingLanguage;
@@ -210,12 +211,8 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
               ),
               const SizedBox(height: 24),
               AuthHeader(
-                title: 'selectLanguageTitle'.tr(context, ref) != 'selectLanguageTitle' 
-                    ? 'selectLanguageTitle'.tr(context, ref) 
-                    : 'Select Language',
-                subtitle: 'selectLanguageSubtitle'.tr(context, ref) != 'selectLanguageSubtitle' 
-                    ? 'selectLanguageSubtitle'.tr(context, ref) 
-                    : 'Choose your preferred language',
+                title: 'muzhiyayTherthde'.tr(context, ref),
+                subtitle: 'viruppamanaMozhiyayThervuSeiga'.tr(context, ref),
               ),
               const SizedBox(height: 32),
               AuthAnimatedElement(
@@ -251,8 +248,12 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
               ),
               const SizedBox(height: 24),
               AuthButton(
-                text: currentLang == 'ta' ? 'தொடரவும்' : 'Continue',
+                text: 'continue'.tr(context, ref),
                 onPressed: () {
+                  // If they hit continue without picking, explicitly save the default Tamil
+                  if (ref.read(localeProvider) == null) {
+                    ref.read(localeProvider.notifier).setLocale(const Locale('ta'));
+                  }
                   setState(() {
                     _phase = WelcomePhase.billingLanguage;
                   });
@@ -283,10 +284,8 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
               ),
               const SizedBox(height: 24),
               AuthHeader(
-                title: currentLang == 'ta' ? 'பில் முதன்மை மொழி' : 'Select Primary Billing Language',
-                subtitle: currentLang == 'ta' 
-                    ? 'பில்களுக்கு எந்த மொழியைப் பயன்படுத்த விரும்புகிறீர்கள்?' 
-                    : 'Which language would you like to use for your bills?',
+                title: 'pattiyalMuthanmozhi'.tr(context, ref),
+                subtitle: 'pattiyalilEmmozhiyayPayanpaduttaVendum'.tr(context, ref),
               ),
               const SizedBox(height: 32),
               AuthAnimatedElement(
@@ -326,7 +325,7 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
               ),
               const SizedBox(height: 24),
               AuthButton(
-                text: _billingLanguage == 'Tamil' || currentLang == 'ta' ? 'தொடரவும்' : 'Continue',
+                text: 'continue'.tr(context, ref),
                 onPressed: () async {
                   final prefs = ref.read(sharedPreferencesProvider);
                   await prefs.setString('elvanniril_setup_billingLang', _billingLanguage);

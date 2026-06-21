@@ -11,6 +11,7 @@ import '../../../../core/widgets/elvan_snackbar.dart';
 import '../../../../core/preferences_service.dart';
 import '../../../../core/state/app_state.dart';
 import '../../../../core/database/app_database.dart';
+import '../../../../core/theme_provider.dart';
 import '../../data/vaniga_tharavugal_provider.dart';
 import '../../../auth/presentation/pages/login_page.dart';
 import '../../../auth/presentation/pages/welcome_page.dart';
@@ -192,6 +193,10 @@ class AccountSecuritySection extends ConsumerWidget {
                 // Mock fresh install redirect by resetting mode and auth
                 ref.read(appModeProvider.notifier).setMode(null);
                 ref.read(isLoggedInProvider.notifier).setLoggedIn(false);
+
+                // Instantly wipe in-memory settings so UI snaps back to default
+                ref.invalidate(themeModeProvider);
+                ref.invalidate(localeProvider);
 
                 // Pop all dialogs and screens back to the root route.
                 // Because we set isLoggedIn to false, main.dart will automatically

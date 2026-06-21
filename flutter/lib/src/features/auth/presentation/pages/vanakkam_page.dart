@@ -13,7 +13,8 @@ import '../widgets/auth_components.dart';
 
 class VanakkamPage extends ConsumerStatefulWidget {
   final VoidCallback? onBack;
-  const VanakkamPage({super.key, this.onBack});
+  final String billingLanguage;
+  const VanakkamPage({super.key, required this.billingLanguage, this.onBack});
 
   @override
   ConsumerState<VanakkamPage> createState() => _VanakkamPageState();
@@ -53,7 +54,10 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
       await db.into(db.vanigaTharavugalTable).insert(
         VanigaTharavugalTableCompanion.insert(
           seyaliVagai: 'silk',
-          niruvanathinPeyar: Value({'Tamil': _gstBusinessName, 'English': _gstBusinessName}),
+          niruvanathinPeyar: Value({widget.billingLanguage: _gstBusinessName}),
+          mudhanMozhi: Value(widget.billingLanguage),
+          thunaiMozhi: Value(widget.billingLanguage == 'English' ? 'Tamil' : 'English'),
+          iruMozhi: const Value(true), // default bilingual on for silk
         ),
       );
     }
@@ -63,7 +67,8 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
       await db.into(db.vanigaTharavugalTable).insert(
         VanigaTharavugalTableCompanion.insert(
           seyaliVagai: 'coolie',
-          niruvanathinPeyar: Value({'Tamil': _coolieBusinessName, 'English': _coolieBusinessName}),
+          niruvanathinPeyar: Value({widget.billingLanguage: _coolieBusinessName}),
+          mudhanMozhi: Value(widget.billingLanguage),
         ),
       );
     }
@@ -88,7 +93,7 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
           if (widget.onBack != null)
             AuthBackButton(onPressed: widget.onBack!),
           AuthHeader(
-            title: language == 'ta' ? 'தரவுகளை உள்ளிடுக' : 'Enter Business Details',
+            title: 'tharavugalaiUlliduga'.tr(context, ref),
             subtitle: '',
           ),
           
@@ -97,17 +102,17 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
           if (_needsSilk)
             AuthInput(
               label: 'hc_businessName'.tr(context, ref).isNotEmpty ? 'hc_businessName'.tr(context, ref) : 'GST Business Name',
-              placeholder: language == 'ta' ? 'பெயரை உள்ளிடுக' : 'Enter name',
-              helperText: 'Used for regular GST invoices.',
+              placeholder: 'peyaraiUlliduga'.tr(context, ref),
+              helperText: 'gstPattiyalukkuPayanpadum'.tr(context, ref),
               value: _gstBusinessName,
               onChange: (val) => setState(() => _gstBusinessName = val),
             ),
 
           if (_needsCoolie)
             AuthInput(
-              label: language == 'ta' ? 'கூலி வணிகப் பெயர்' : 'Coolie Business Name',
-              placeholder: language == 'ta' ? 'பெயரை உள்ளிடுக' : 'Enter name',
-              helperText: 'Used for Coolie bills and receipts.',
+              label: 'coolieVanigaPeyar'.tr(context, ref),
+              placeholder: 'peyaraiUlliduga'.tr(context, ref),
+              helperText: 'cooliePattiyalMatrumRaseethukkuPayanpadum'.tr(context, ref),
               value: _coolieBusinessName,
               onChange: (val) => setState(() => _coolieBusinessName = val),
             ),
@@ -115,7 +120,7 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
           const SizedBox(height: 32),
 
           AuthButton(
-            text: language == 'ta' ? 'தொடரவும்' : 'Continue',
+            text: 'continue'.tr(context, ref),
             loading: _saving,
             disabled: (_needsSilk && _gstBusinessName.trim().isEmpty) || (_needsCoolie && _coolieBusinessName.trim().isEmpty),
             onPressed: _handleFinish,
