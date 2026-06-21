@@ -90,7 +90,7 @@ class ElvanNirilApp extends ConsumerWidget {
       title: 'Elvan Niril Next-Gen',
       debugShowCheckedModeBanner: false,
       scrollBehavior: ElvanScrollBehavior(),
-      themeMode: themeMode,
+      themeMode: Platform.isWindows ? ThemeMode.dark : themeMode,
       locale: locale,
       supportedLocales: const [
         Locale('en'),
@@ -110,7 +110,7 @@ class ElvanNirilApp extends ConsumerWidget {
         scaffoldBackgroundColor: const Color(0xFFF7F7F7),
         useMaterial3: true,
         textTheme: ThemeData.light().textTheme.apply(fontFamily: 'ElvanSans'),
-        cupertinoOverrideTheme: const CupertinoThemeData(
+        cupertinoOverrideTheme: CupertinoThemeData(
           primaryColor: CupertinoColors.activeBlue,
           textTheme: CupertinoTextThemeData(
             textStyle: TextStyle(fontFamily: 'ElvanSans', color: Colors.black),
@@ -133,7 +133,7 @@ class ElvanNirilApp extends ConsumerWidget {
         scaffoldBackgroundColor: Colors.black, // AMOLED Black
         useMaterial3: true,
         textTheme: ThemeData.dark().textTheme.apply(fontFamily: 'ElvanSans'),
-        cupertinoOverrideTheme: const CupertinoThemeData(
+        cupertinoOverrideTheme: CupertinoThemeData(
           primaryColor: CupertinoColors.activeBlue,
           textTheme: CupertinoTextThemeData(
             textStyle: TextStyle(fontFamily: 'ElvanSans', color: Colors.white),
@@ -153,6 +153,12 @@ class ElvanNirilApp extends ConsumerWidget {
           final isLoggedIn = ref.watch(isLoggedInProvider);
           if (!isLoggedIn) {
             return const WelcomePage();
+          }
+
+          // 1.5. Prevent UI flashing by waiting for database stream to initialize
+          final isLoadingProfiles = ref.watch(profilesLoadingProvider);
+          if (isLoadingProfiles) {
+            return const Scaffold(backgroundColor: Colors.black);
           }
 
           // 2. Smart Onboarding Check

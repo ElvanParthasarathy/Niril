@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../localization/locale_provider.dart';
@@ -11,7 +12,8 @@ import '../mode_selector_screen.dart';
 import '../widgets/auth_components.dart';
 
 class VanakkamPage extends ConsumerStatefulWidget {
-  const VanakkamPage({super.key});
+  final VoidCallback? onBack;
+  const VanakkamPage({super.key, this.onBack});
 
   @override
   ConsumerState<VanakkamPage> createState() => _VanakkamPageState();
@@ -81,7 +83,18 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
       key: const ValueKey('businessName'),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          if (widget.onBack != null)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                icon: const Icon(CupertinoIcons.chevron_back, size: 28),
+                onPressed: widget.onBack,
+                padding: EdgeInsets.zero,
+                alignment: Alignment.centerLeft,
+              ),
+            ),
           AuthHeader(
             title: language == 'ta' ? 'தரவுகளை உள்ளிடுக' : 'Enter Business Details',
             subtitle: '',

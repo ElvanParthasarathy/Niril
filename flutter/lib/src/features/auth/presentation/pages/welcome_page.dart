@@ -98,7 +98,13 @@ class WelcomePage extends ConsumerWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                ElvanPageRoute(builder: (_) => const LoginPage()),
+                PageRouteBuilder(
+                  pageBuilder: (context, animation, secondaryAnimation) => const LoginPage(),
+                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                  transitionDuration: const Duration(milliseconds: 300),
+                ),
               );
             },
           ),

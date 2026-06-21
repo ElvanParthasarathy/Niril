@@ -36,6 +36,7 @@ dependencies:
   path: ^1.9.1
   web_smooth_scroll: ^2.0.0
   smooth_scroll_multiplatform: ^1.0.8
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -58,4 +59,14 @@ flutter:
         - asset: assets/fonts/ElvanSans-SemiBold.ttf
           weight: 600
         - asset: assets/fonts/ElvanSans-Bold.ttf
+          weight: 700
+
+    - family: ElvanSansHinted
+      fonts:
+        - asset: assets/fonts/windows/ElvanSansHinted-Regular.ttf
+        - asset: assets/fonts/windows/ElvanSansHinted-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/windows/ElvanSansHinted-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/windows/ElvanSansHinted-Bold.ttf
           weight: 700

@@ -97,19 +97,43 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
     return AuthLayout(
       hideLogo: true,
       child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 800),
-        switchInCurve: Curves.easeOutQuart,
-        switchOutCurve: Curves.easeInQuart,
+        duration: const Duration(milliseconds: 900),
+        reverseDuration: Duration.zero,
         transitionBuilder: (Widget child, Animation<double> animation) {
-          // Gentle vertical slide up animation
-          final offsetAnimation = Tween<Offset>(
-            begin: const Offset(0.0, 0.05), // Slide from the bottom
-            end: Offset.zero,
-          ).animate(animation);
+          // Pixel-perfect match of React's 100ms delay + 800ms bouncy cubic-bezier
+          final delayedTranslateAnimation = CurvedAnimation(
+            parent: animation,
+            curve: const Interval(
+              100 / 900, 
+              1.0, 
+              curve: Curves.easeOutBack,
+            ),
+          );
+
+          final delayedOpacityAnimation = CurvedAnimation(
+            parent: animation,
+            curve: const Interval(
+              100 / 900, 
+              1.0, 
+              curve: Curves.easeOut,
+            ),
+          );
+          
+          final dyAnimation = Tween<double>(
+            begin: 20.0, // Fixed 20px translation
+            end: 0.0,
+          ).animate(delayedTranslateAnimation);
+
           return FadeTransition(
-            opacity: animation,
-            child: SlideTransition(
-              position: offsetAnimation,
+            opacity: delayedOpacityAnimation,
+            child: AnimatedBuilder(
+              animation: dyAnimation,
+              builder: (context, childWidget) {
+                return Transform.translate(
+                  offset: Offset(0, dyAnimation.value),
+                  child: childWidget,
+                );
+              },
               child: child,
             ),
           );
@@ -136,7 +160,13 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
   ) {
     switch (_phase) {
       case WelcomePhase.businessName:
-        return const VanakkamPage();
+        return VanakkamPage(
+          onBack: () {
+            setState(() {
+              _phase = WelcomePhase.billingLanguage;
+            });
+          },
+        );
       case WelcomePhase.greeting:
         return Center(
           key: const ValueKey('greeting'),
@@ -227,6 +257,20 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              if (currentLang == 'ta' || currentLang == 'en')
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    icon: const Icon(CupertinoIcons.chevron_back, size: 28),
+                    padding: EdgeInsets.zero,
+                    alignment: Alignment.centerLeft,
+                    onPressed: () {
+                      setState(() {
+                        _phase = WelcomePhase.language;
+                      });
+                    },
+                  ),
+                ),
               Icon(
                 CupertinoIcons.doc_text_fill,
                 size: 80,

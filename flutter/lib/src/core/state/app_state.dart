@@ -27,6 +27,12 @@ final _profilesStreamProvider = StreamProvider<List<VanigaTharavugalEntry>>((ref
   return db.select(db.vanigaTharavugalTable).watch();
 });
 
+// Exposes the loading state of the profiles stream
+final profilesLoadingProvider = Provider<bool>((ref) {
+  final asyncValue = ref.watch(_profilesStreamProvider);
+  return asyncValue.isLoading && !asyncValue.hasValue;
+});
+
 // Derived provider: Which profiles are missing from the DB?
 // Returns a list of AppMode strings (e.g. ['silk', 'coolie'], ['coolie'], or [])
 final missingProfilesProvider = Provider<List<String>>((ref) {

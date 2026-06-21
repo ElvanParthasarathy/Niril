@@ -14,7 +14,7 @@ class AuthAnimatedElement extends StatefulWidget {
     super.key,
     required this.child,
     this.delayIndex = 1,
-    this.duration = const Duration(milliseconds: 500),
+    this.duration = const Duration(milliseconds: 800), // Match React's 0.8s duration
   });
 
   @override
@@ -35,8 +35,8 @@ class _AuthAnimatedElementState extends State<AuthAnimatedElement> with SingleTi
       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
 
-    _offset = Tween<Offset>(begin: const Offset(0, 20), end: Offset.zero).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    _offset = Tween<Offset>(begin: const Offset(0, 20.0), end: Offset.zero).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
     );
 
     // Staggered delay based on index (delay-1 = 100ms, delay-2 = 200ms)

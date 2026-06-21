@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
+import 'dart:io';
 
 import '../../../localization/locale_provider.dart';
 import '../../shell/presentation/mobile/widgets/elvan_page_route.dart';
@@ -74,7 +75,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
           );
         }
-        
+        // Narrow Desktop layout: Use a nested Navigator to keep the global sidebar visible
+        final isDesktop = Platform.isWindows || Platform.isMacOS || Platform.isLinux;
+        if (isDesktop) {
+          return Navigator(
+            onGenerateRoute: (settings) {
+              return ElvanPageRoute(builder: (_) => const SettingsHubScreen());
+            },
+          );
+        }
+
         // Mobile layout
         return const SettingsHubScreen();
       },
@@ -262,13 +272,14 @@ class SettingsHubScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ElvanSettingsSection(
                 children: [
-                  ElvanSettingsRow(
-                    icon: CupertinoIcons.sun_max_fill,
-                    iconBgColor: iconBgColor,
-                    title: 'thirai'.tr(context, ref),
-                    description: 'desc_display'.tr(context, ref),
-                    onTap: () => _navigateTo(context, const DisplaySettingsPage()),
-                  ),
+                  if (!Platform.isWindows)
+                    ElvanSettingsRow(
+                      icon: CupertinoIcons.sun_max_fill,
+                      iconBgColor: iconBgColor,
+                      title: 'thirai'.tr(context, ref),
+                      description: 'desc_display'.tr(context, ref),
+                      onTap: () => _navigateTo(context, const DisplaySettingsPage()),
+                    ),
                   ElvanSettingsRow(
                     icon: Icons.language,
                     iconBgColor: iconBgColor,
