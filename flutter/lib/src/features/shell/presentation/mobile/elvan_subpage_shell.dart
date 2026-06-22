@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
+
 import 'package:elvan_niril/src/features/shell/presentation/mobile/elvan_shell.dart';
 import '../desktop/elvan_desktop_subpage_shell.dart';
 import 'widgets/elvan_back_button.dart';
@@ -34,11 +34,9 @@ class ElvanSubpageShell extends StatefulWidget {
 class _ElvanSubpageShellState extends State<ElvanSubpageShell> {
   @override
   Widget build(BuildContext context) {
-    // Always use desktop shell on desktop platforms to avoid jarring transitions to mobile AppBars
-    final isDesktopPlatform =
-        Platform.isWindows || Platform.isMacOS || Platform.isLinux;
-    final isDesktop =
-        isDesktopPlatform || MediaQuery.sizeOf(context).width >= 800;
+    // Use width-based detection instead of Platform checks so that resizing
+    // the window on desktop correctly switches between mobile and desktop shells.
+    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
 
     if (isDesktop) {
       return ElvanDesktopSubpageShell(

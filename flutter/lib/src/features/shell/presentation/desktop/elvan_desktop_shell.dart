@@ -39,6 +39,8 @@ class ElvanDesktopShell extends ConsumerStatefulWidget {
   ConsumerState<ElvanDesktopShell> createState() => _ElvanDesktopShellState();
 }
 
+final GlobalKey<NavigatorState> desktopNavigatorKey = GlobalKey<NavigatorState>();
+
 class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
   bool isCollapsed = false;
   double _sidebarOpacity = 1.0;
@@ -91,6 +93,7 @@ class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
               },
               currentIndex: widget.currentIndex,
               onTabSelected: (index) {
+                desktopNavigatorKey.currentState?.popUntil((route) => route.isFirst);
                 if (_scrollController.hasClients) {
                   if (widget.currentIndex == index) {
                     _scrollController.animateTo(0,
@@ -102,9 +105,18 @@ class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
                 }
                 widget.onTabSelected(index);
               },
-              onSettingsPressed: widget.onSettingsPressed,
-              onReportsPressed: widget.onReportsPressed,
-              onGstReturnsPressed: widget.onGstReturnsPressed,
+              onSettingsPressed: () {
+                desktopNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+                widget.onSettingsPressed();
+              },
+              onReportsPressed: () {
+                desktopNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+                widget.onReportsPressed();
+              },
+              onGstReturnsPressed: () {
+                desktopNavigatorKey.currentState?.popUntil((route) => route.isFirst);
+                widget.onGstReturnsPressed();
+              },
               navItems: widget.navItems,
               appMode: mode ?? AppMode.silk,
             ),
@@ -112,47 +124,56 @@ class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
 
           // Main Content Area
           Expanded(
-            child: Container(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: widget.customContent != null
-                  ? widget.customContent
-                  : ElvanSmoothScroll(
-                      controller: _scrollController,
-                      child: CustomScrollView(
-                        controller: _scrollController,
-                        slivers: [
-                          if (widget.title != null)
-                            SliverToBoxAdapter(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 32, left: 60, bottom: 24),
-                                child: Text(
-                                  widget.title!,
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w700,
-                                    color:
-                                        Theme.of(context).colorScheme.onSurface,
+            child: Navigator(
+              key: desktopNavigatorKey,
+              onPopPage: (route, result) => route.didPop(result),
+              pages: [
+                MaterialPage(
+                  key: const ValueKey('desktop_root'),
+                  child: Container(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    child: widget.customContent != null
+                        ? widget.customContent
+                        : ElvanSmoothScroll(
+                            controller: _scrollController,
+                            child: CustomScrollView(
+                              controller: _scrollController,
+                              slivers: [
+                                if (widget.title != null)
+                                  SliverToBoxAdapter(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 32, left: 60, bottom: 24),
+                                      child: Text(
+                                        widget.title!,
+                                        style: TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w700,
+                                          color:
+                                              Theme.of(context).colorScheme.onSurface,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
+                                if (widget.toolbar != null)
+                                  SliverPadding(
+                                    padding:
+                                        const EdgeInsets.symmetric(horizontal: 24),
+                                    sliver: SliverToBoxAdapter(
+                                      child: widget.toolbar!,
+                                    ),
+                                  ),
+                                ...widget.slivers.map((sliver) => SliverPadding(
+                                      padding:
+                                          const EdgeInsets.symmetric(horizontal: 24),
+                                      sliver: sliver,
+                                    )),
+                              ],
                             ),
-                          if (widget.toolbar != null)
-                            SliverPadding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 24),
-                              sliver: SliverToBoxAdapter(
-                                child: widget.toolbar!,
-                              ),
-                            ),
-                          ...widget.slivers.map((sliver) => SliverPadding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 24),
-                                sliver: sliver,
-                              )),
-                        ],
-                      ),
-                    ),
+                          ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

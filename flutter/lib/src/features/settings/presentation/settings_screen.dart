@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'dart:io';
 
 import '../../../localization/locale_provider.dart';
-import '../../shell/presentation/mobile/widgets/elvan_page_route.dart';
+import '../../../navigation/niril_nav.dart';
 import '../../../core/utils/app_svgs.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../core/state/app_state.dart';
@@ -78,18 +78,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
           );
         }
-        // Narrow Desktop layout: Use a nested Navigator to keep the global sidebar visible
-        final isDesktop =
-            Platform.isWindows || Platform.isMacOS || Platform.isLinux;
-        if (isDesktop) {
-          return Navigator(
-            onGenerateRoute: (settings) {
-              return ElvanPageRoute(builder: (_) => const SettingsHubScreen());
-            },
-          );
-        }
-
-        // Mobile layout
+        // Mobile / Narrow layout — renders with ElvanSubpageShell back button
         return const SettingsHubScreen();
       },
     );
@@ -105,7 +94,7 @@ class SettingsHubScreen extends ConsumerWidget {
     if (onPageSelected != null) {
       onPageSelected!(page);
     } else {
-      Navigator.push(context, ElvanPageRoute(builder: (_) => page));
+      NirilNav.push(context, page);
     }
   }
 
