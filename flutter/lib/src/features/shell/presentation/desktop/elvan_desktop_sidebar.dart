@@ -139,7 +139,7 @@ class ElvanDesktopSidebar extends ConsumerWidget {
                           padding: EdgeInsets.only(bottom: isCollapsed ? 0 : 10),
                           child: _DesktopNavItem(
                             item: CustomNavItem(
-                                icon: CupertinoIcons.percent,
+                                icon: CupertinoIcons.doc_checkmark,
                                 label: 'gstReturnsSidebar'.tr(context, ref)),
                             isSelected: isGstReturnsSelected,
                             isDark: isDark,
