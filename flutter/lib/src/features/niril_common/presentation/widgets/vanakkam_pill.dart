@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../localization/locale_provider.dart';
 import '../../../auth/presentation/mode_selector_screen.dart';
 import '../../../../core/state/app_state.dart';
+import '../../../../core/utils/app_svgs.dart';
 
 class VanakkamPill extends ConsumerWidget {
   final String subtitleKey;
@@ -15,6 +17,7 @@ class VanakkamPill extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final appMode = ref.watch(appModeProvider);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -67,10 +70,16 @@ class VanakkamPill extends ConsumerWidget {
                         width: isMobile ? 60 : 48,
                         height: isMobile ? 60 : 48,
                         child: Center(
-                          child: Icon(
-                            Icons.receipt_long,
-                            size: isMobile ? 24 : 20,
-                            color: isDark ? Colors.white : Colors.black,
+                          child: SvgPicture.string(
+                            appMode == AppMode.coolie
+                                ? AppSvgs.coolieMode
+                                : AppSvgs.silkMode,
+                            width: isMobile ? 24 : 20,
+                            height: isMobile ? 24 : 20,
+                            colorFilter: ColorFilter.mode(
+                              isDark ? Colors.white : Colors.black,
+                              BlendMode.srcIn,
+                            ),
                           ),
                         ),
                       ),
