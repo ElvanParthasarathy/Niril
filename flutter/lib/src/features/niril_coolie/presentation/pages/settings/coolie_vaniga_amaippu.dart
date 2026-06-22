@@ -29,6 +29,18 @@ class _CoolieVanigaAmaippuPageState
 
   String _tempPrimary = '';
   String _tempSecondary = '';
+  bool _showExtraPhone = false;
+
+  void _savePhoneNumbers(VanigaTharavugal currentProfile) {
+    currentProfile.tholaipesi1 = _tempPrimary;
+    currentProfile.tholaipesi2 = _showExtraPhone ? _tempSecondary : '';
+    ref.read(vanigaTharavugalProvider.notifier).updateProfile(currentProfile);
+    setState(() {
+      _editingSection = null;
+      _showExtraPhone = false;
+    });
+    _showSuccessToast();
+  }
 
   void _showSuccessToast() {
     ElvanSnackbar.show(context, 'profileSaved'.tr(context, ref));
@@ -569,12 +581,12 @@ class _CoolieVanigaAmaippuPageState
                     ),
                   ),
 
-                  // 3. Phone 1
+                  // 3. Phone Numbers
                   ElvanSettingsAnimatedExpand(
-                    keyPrefix: 'tholaipesi_1',
-                    isEditing: _editingSection == 'tholaipesi_1',
+                    keyPrefix: 'tholaipesigal',
+                    isEditing: _editingSection == 'tholaipesigal',
                     editChild: _buildEditContainer(
-                      title: 'tholaipesiLabel'.tr(context, ref),
+                      title: 'phoneNumbers'.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
                           label: 'tholaipesiLabel'.tr(context, ref),
@@ -582,42 +594,45 @@ class _CoolieVanigaAmaippuPageState
                           onChanged: (val) => _tempPrimary = val,
                           keyboardType: TextInputType.phone,
                         ),
+                        if (_showExtraPhone) const SizedBox(height: 16),
+                        if (_showExtraPhone)
+                          ElvanSettingsTextField(
+                            label: 'mobileLabel'.tr(context, ref),
+                            initialValue: _tempSecondary,
+                            onChanged: (val) => _tempSecondary = val,
+                            keyboardType: TextInputType.phone,
+                          ),
+                        if (!_showExtraPhone) const SizedBox(height: 16),
+                        if (!_showExtraPhone)
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: TextButton.icon(
+                              onPressed: () => setState(() => _showExtraPhone = true),
+                              icon: const Icon(CupertinoIcons.add_circled),
+                              label: Text('addAlternateMobile'.tr(context, ref)),
+                              style: TextButton.styleFrom(
+                                foregroundColor: Theme.of(context).colorScheme.primary,
+                                padding: EdgeInsets.zero,
+                              ),
+                            ),
+                          ),
                       ],
-                      onCancel: () => setState(() => _editingSection = null),
-                      onSave: () =>
-                          _saveSingleField(currentProfile, 'tholaipesi_1'),
+                      onCancel: () => setState(() {
+                        _editingSection = null;
+                        _showExtraPhone = false;
+                      }),
+                      onSave: () => _savePhoneNumbers(currentProfile),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
-                      title: 'tholaipesiLabel'.tr(context, ref),
+                      title: 'phoneNumbers'.tr(context, ref),
                       primaryValue: currentProfile.tholaipesi1,
-                      onEdit: () => _beginEditSingle(
-                          'tholaipesi_1', currentProfile.tholaipesi1),
-                    ),
-                  ),
-
-                  // 4. Phone 2
-                  ElvanSettingsAnimatedExpand(
-                    keyPrefix: 'tholaipesi_2',
-                    isEditing: _editingSection == 'tholaipesi_2',
-                    editChild: _buildEditContainer(
-                      title: 'mobileLabel'.tr(context, ref),
-                      inputFields: [
-                        ElvanSettingsTextField(
-                          label: 'mobileLabel'.tr(context, ref),
-                          initialValue: _tempPrimary,
-                          onChanged: (val) => _tempPrimary = val,
-                          keyboardType: TextInputType.phone,
-                        ),
-                      ],
-                      onCancel: () => setState(() => _editingSection = null),
-                      onSave: () =>
-                          _saveSingleField(currentProfile, 'tholaipesi_2'),
-                    ),
-                    displayChild: ElvanSettingsDisplayRow(
-                      title: 'mobileLabel'.tr(context, ref),
-                      primaryValue: currentProfile.tholaipesi2,
-                      onEdit: () => _beginEditSingle(
-                          'tholaipesi_2', currentProfile.tholaipesi2),
+                      secondaryValue: currentProfile.tholaipesi2.isNotEmpty ? currentProfile.tholaipesi2 : null,
+                      onEdit: () => setState(() {
+                        _editingSection = 'tholaipesigal';
+                        _tempPrimary = currentProfile.tholaipesi1;
+                        _tempSecondary = currentProfile.tholaipesi2;
+                        _showExtraPhone = currentProfile.tholaipesi2.isNotEmpty;
+                      }),
                     ),
                   ),
 
