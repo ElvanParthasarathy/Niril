@@ -497,9 +497,6 @@ class _DesktopCollapsedProfileState
     return Container(
       width: 48,
       height: 48,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-      ),
       alignment: Alignment.center,
       child: MouseRegion(
         onEnter: (_) => setState(() => _isSettingsHovered = true),
@@ -507,7 +504,7 @@ class _DesktopCollapsedProfileState
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            borderRadius: BorderRadius.circular(16),
+            customBorder: const CircleBorder(),
             onTap: widget.onSettingsPressed,
             hoverColor: widget.isDark
                 ? Colors.white.withValues(alpha: 0.08)
@@ -612,9 +609,6 @@ class _DesktopExpandedProfileState
                   height: 52,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
-                    color: widget.isDark
-                        ? Colors.white.withValues(alpha: 0.04)
-                        : Colors.black.withValues(alpha: 0.04),
                   ),
                   child: Row(
                     children: [
@@ -662,22 +656,15 @@ class _DesktopExpandedProfileState
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              borderRadius: BorderRadius.circular(16),
+              customBorder: const CircleBorder(),
               onTap: widget.onSettingsPressed,
-              hoverColor: widget.isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.black.withValues(alpha: 0.04),
-              splashColor: widget.isDark
-                  ? Colors.white.withValues(alpha: 0.12)
-                  : Colors.black.withValues(alpha: 0.12),
+              hoverColor: widget.isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.04),
+              splashColor: widget.isDark ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.12),
               child: Container(
                 width: 52,
                 height: 52,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: widget.isDark
-                      ? Colors.white.withValues(alpha: 0.1)
-                      : Colors.black.withValues(alpha: 0.05),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
                 child: SvgPicture.string(
