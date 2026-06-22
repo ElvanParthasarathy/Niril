@@ -271,16 +271,12 @@ class _DesktopNavItemState extends State<_DesktopNavItem> {
       onTapCancel: () => setState(() => _isPressed = false),
       onTapUp: (_) => setState(() => _isPressed = false),
       behavior: HitTestBehavior.opaque,
-      child: MouseRegion(
-        onEnter: (_) => setState(() => _isHovered = true),
-        onExit: (_) => setState(() => _isHovered = false),
-        cursor: SystemMouseCursors.click,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: const Cubic(0.2, 0.0, 0.0, 1.0),
-          width: widget.isCollapsed ? 56 : 236,
-          height: widget.isCollapsed ? 78 : 40,
-          child: Stack(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: const Cubic(0.2, 0.0, 0.0, 1.0),
+        width: widget.isCollapsed ? 56 : 236,
+        height: widget.isCollapsed ? 78 : 40,
+        child: Stack(
           children: [
             // Expanded Pill Background
             IgnorePointer(
@@ -288,34 +284,39 @@ class _DesktopNavItemState extends State<_DesktopNavItem> {
               child: AnimatedOpacity(
                 duration: const Duration(milliseconds: 150),
                 opacity: widget.isCollapsed ? 0.0 : 1.0,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  curve: const Cubic(0.2, 0.0, 0.0, 1.0),
-                  width: double.infinity,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: expandedBgColor,
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
+                child: MouseRegion(
+                  onEnter: (_) => setState(() => _isHovered = true),
+                  onExit: (_) => setState(() => _isHovered = false),
+                  cursor: SystemMouseCursors.click,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    curve: const Cubic(0.2, 0.0, 0.0, 1.0),
+                    width: double.infinity,
+                    height: 40,
+                    decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100),
-                      onTap: widget.isCollapsed ? null : widget.onTap,
-                      onTapDown: widget.isCollapsed
-                          ? null
-                          : (_) => setState(() => _isPressed = true),
-                      onTapCancel: widget.isCollapsed
-                          ? null
-                          : () => setState(() => _isPressed = false),
-                      onHighlightChanged: widget.isCollapsed
-                          ? null
-                          : (h) {
-                              if (!h) setState(() => _isPressed = false);
-                            },
-                      hoverColor: expandedHighlight,
-                      splashColor: expandedSplash,
-                      highlightColor: expandedHighlight,
+                      color: expandedBgColor,
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(100),
+                        onTap: widget.isCollapsed ? null : widget.onTap,
+                        onTapDown: widget.isCollapsed
+                            ? null
+                            : (_) => setState(() => _isPressed = true),
+                        onTapCancel: widget.isCollapsed
+                            ? null
+                            : () => setState(() => _isPressed = false),
+                        onHighlightChanged: widget.isCollapsed
+                            ? null
+                            : (h) {
+                                if (!h) setState(() => _isPressed = false);
+                              },
+                        hoverColor: expandedHighlight,
+                        splashColor: expandedSplash,
+                        highlightColor: expandedHighlight,
+                      ),
                     ),
                   ),
                 ),
@@ -334,34 +335,39 @@ class _DesktopNavItemState extends State<_DesktopNavItem> {
                   opacity: widget.isCollapsed ? 1.0 : 0.0,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 12),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      curve: const Cubic(0.2, 0.0, 0.0, 1.0),
-                      width: 56,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: collapsedBgColor,
-                      ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
+                    child: MouseRegion(
+                      onEnter: (_) => setState(() => _isHovered = true),
+                      onExit: (_) => setState(() => _isHovered = false),
+                      cursor: SystemMouseCursors.click,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        curve: const Cubic(0.2, 0.0, 0.0, 1.0),
+                        width: 56,
+                        height: 32,
+                        decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(16),
-                          onTap: widget.isCollapsed ? widget.onTap : null,
-                          onTapDown: widget.isCollapsed
-                              ? (_) => setState(() => _isPressed = true)
-                              : null,
-                          onTapCancel: widget.isCollapsed
-                              ? () => setState(() => _isPressed = false)
-                              : null,
-                          onHighlightChanged: widget.isCollapsed
-                              ? (h) {
-                                  if (!h) setState(() => _isPressed = false);
-                                }
-                              : null,
-                          hoverColor: Colors.transparent,
-                          splashColor: expandedSplash,
-                          highlightColor: expandedHighlight,
+                          color: collapsedBgColor,
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: widget.isCollapsed ? widget.onTap : null,
+                            onTapDown: widget.isCollapsed
+                                ? (_) => setState(() => _isPressed = true)
+                                : null,
+                            onTapCancel: widget.isCollapsed
+                                ? () => setState(() => _isPressed = false)
+                                : null,
+                            onHighlightChanged: widget.isCollapsed
+                                ? (h) {
+                                    if (!h) setState(() => _isPressed = false);
+                                  }
+                                : null,
+                            hoverColor: Colors.transparent,
+                            splashColor: expandedSplash,
+                            highlightColor: expandedHighlight,
+                          ),
                         ),
                       ),
                     ),
