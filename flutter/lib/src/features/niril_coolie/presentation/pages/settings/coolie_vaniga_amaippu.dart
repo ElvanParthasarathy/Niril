@@ -608,6 +608,15 @@ class _CoolieVanigaAmaippuPageState
                             initialValue: _tempSecondary,
                             onChanged: (val) => _tempSecondary = val,
                             keyboardType: TextInputType.phone,
+                            suffixIcon: IconButton(
+                              icon: const Icon(CupertinoIcons.clear, size: 18),
+                              onPressed: () {
+                                setState(() {
+                                  _tempSecondary = '';
+                                  _showExtraPhone = false;
+                                });
+                              },
+                            ),
                           ),
                       ],
                       extraAction: !_showExtraPhone
