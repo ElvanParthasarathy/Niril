@@ -255,6 +255,7 @@ const Map<String, String> en = {
   'shortBusinessName': 'Short Business Name',
   'shortBusinessNameHint':
       'Used as the default prefix for your invoice numbers.',
+  'adaimozhi': 'Tagline',
   'phoneNumbers': 'Phone Numbers',
   'address': 'Address',
   'contactBank': 'Contact & Bank',

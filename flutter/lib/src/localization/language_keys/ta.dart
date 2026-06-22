@@ -231,6 +231,7 @@ const Map<String, String> ta = {
   'shortBusinessName': 'குறுகிய வணிக பெயர்',
   'shortBusinessNameHint':
       'இது தானியங்கி பில் எண்ணில் முன்னொட்டாக பயன்படுத்தப்படும்.',
+  'adaimozhi': 'அடைமொழி',
   'phoneNumbers': 'பேசி எண்கள்',
   'address': 'முகவரி',
   'contactBank': 'தொடர்பு & வங்கி',

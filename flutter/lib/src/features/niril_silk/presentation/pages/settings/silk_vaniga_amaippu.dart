@@ -500,13 +500,15 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
 
                   // Tagline
                   ElvanSettingsAnimatedExpand(
-                    keyPrefix: 'tagline',
+                    keyPrefix: 'adaimozhi',
                     isEditing: _editingSection == 'adaimozhi',
                     editChild: _buildEditContainer(
-                      title: 'Tagline',
+                      title: 'adaimozhi'.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
-                          label: 'Tagline (${primaryLang.tr(context, ref)})',
+                          label: isBilingual
+                              ? '${'adaimozhi'.tr(context, ref)} (${primaryLang.tr(context, ref)})'
+                              : 'adaimozhi'.tr(context, ref),
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                         ),
@@ -514,7 +516,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                         if (isBilingual)
                           ElvanSettingsTextField(
                             label:
-                                'Tagline (${secondaryLang.tr(context, ref)})',
+                                '${'adaimozhi'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                             initialValue: _tempSecondary,
                             onChanged: (val) => _tempSecondary = val,
                           ),
@@ -524,7 +526,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                           _saveBilingualField(currentProfile, 'adaimozhi'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
-                      title: 'Tagline',
+                      title: 'adaimozhi'.tr(context, ref),
                       primaryValue: adaimozhiPrimary,
                       secondaryValue: isBilingual ? adaimozhiSecondary : null,
                       onEdit: () => _beginEditPrimarySecondary(
