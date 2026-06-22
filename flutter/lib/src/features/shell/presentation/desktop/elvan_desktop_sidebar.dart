@@ -558,8 +558,7 @@ class _DesktopExpandedProfile extends ConsumerStatefulWidget {
 
 class _DesktopExpandedProfileState
     extends ConsumerState<_DesktopExpandedProfile> {
-  bool _isModePillHovered = false;
-  bool _isModeIconHovered = false;
+  bool _isModeHovered = false;
   bool _isSettingsHovered = false;
   bool _isSettingsPressed = false;
 
@@ -584,110 +583,75 @@ class _DesktopExpandedProfileState
 
   @override
   Widget build(BuildContext context) {
-    final modeFgColor = _isModePillHovered
+    final modeFgColor = _isModeHovered
         ? (widget.isDark ? Colors.white : Colors.black)
         : (widget.isDark ? const Color(0xFFAAAAAA) : const Color(0xFF666666));
-
-    final bool showPillBg = _isModePillHovered && !_isModeIconHovered;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(16),
+          child: MouseRegion(
+            onEnter: (_) => setState(() => _isModeHovered = true),
+            onExit: (_) => setState(() => _isModeHovered = false),
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
               onTap: _openModeSelector,
-              hoverColor: Colors.transparent,
-              splashColor: widget.isDark
-                  ? Colors.white.withValues(alpha: 0.12)
-                  : Colors.black.withValues(alpha: 0.12),
-              highlightColor: widget.isDark
-                  ? Colors.white.withValues(alpha: 0.04)
-                  : Colors.black.withValues(alpha: 0.04),
-              child: MouseRegion(
-                onEnter: (_) => setState(() => _isModePillHovered = true),
-                onExit: (_) => setState(() => _isModePillHovered = false),
-                cursor: SystemMouseCursors.click,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 150),
-                  padding: const EdgeInsets.only(left: 6, right: 18),
-                  height: 52,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: showPillBg
-                        ? (widget.isDark
-                            ? Colors.white.withValues(alpha: 0.04)
-                            : Colors.black.withValues(alpha: 0.04))
-                        : Colors.transparent,
-                  ),
-                  child: Row(
-                    children: [
-                      MouseRegion(
-                        onEnter: (_) =>
-                            setState(() => _isModeIconHovered = true),
-                        onExit: (_) =>
-                            setState(() => _isModeIconHovered = false),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            customBorder: const CircleBorder(),
-                            onTap: _openModeSelector,
-                            hoverColor: widget.isDark
-                                ? Colors.white.withValues(alpha: 0.08)
-                                : Colors.black.withValues(alpha: 0.04),
-                            splashColor: widget.isDark
-                                ? Colors.white.withValues(alpha: 0.12)
-                                : Colors.black.withValues(alpha: 0.12),
-                            child: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: _isModeIconHovered
-                                    ? (widget.isDark
-                                        ? Colors.white.withValues(alpha: 0.04)
-                                        : Colors.black.withValues(alpha: 0.04))
-                                    : Colors.transparent,
-                              ),
-                              child: Center(
-                                child: SvgPicture.string(
-                                  widget.appMode == AppMode.coolie
-                                      ? AppSvgs.coolieMode
-                                      : AppSvgs.silkMode,
-                                  width: 16,
-                                  height: 16,
-                                  colorFilter: ColorFilter.mode(
-                                      modeFgColor, BlendMode.srcIn),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+              behavior: HitTestBehavior.opaque,
+              child: Container(
+                padding: const EdgeInsets.only(left: 6, right: 18),
+                height: 52,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.transparent,
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: widget.isDark
+                            ? Colors.white.withValues(alpha: 0.1)
+                            : Colors.black.withValues(alpha: 0.05),
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: AnimatedDefaultTextStyle(
+                      child: Center(
+                        child: AnimatedContainer(
                           duration: const Duration(milliseconds: 200),
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: modeFgColor,
-                            fontFamily:
-                                DefaultTextStyle.of(context).style.fontFamily,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          child: Text(
+                          child: SvgPicture.string(
                             widget.appMode == AppMode.coolie
-                                ? 'nirilCoolie'.tr(context, ref)
-                                : 'nirilSilk'.tr(context, ref),
+                                ? AppSvgs.coolieMode
+                                : AppSvgs.silkMode,
+                            width: 16,
+                            height: 16,
+                            colorFilter:
+                                ColorFilter.mode(modeFgColor, BlendMode.srcIn),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: AnimatedDefaultTextStyle(
+                        duration: const Duration(milliseconds: 200),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: modeFgColor,
+                          fontFamily:
+                              DefaultTextStyle.of(context).style.fontFamily,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        child: Text(
+                          widget.appMode == AppMode.coolie
+                              ? 'nirilCoolie'.tr(context, ref)
+                              : 'nirilSilk'.tr(context, ref),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
