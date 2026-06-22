@@ -349,7 +349,7 @@ class _DesktopNavItemState extends State<_DesktopNavItem> {
         duration: const Duration(milliseconds: 300),
         curve: const Cubic(0.2, 0.0, 0.0, 1.0),
         width: widget.isCollapsed ? 56 : 236,
-        height: widget.isCollapsed ? 78 : 40,
+        height: widget.isCollapsed ? 82 : 40,
         child: Stack(
           children: [
             // Expanded Pill Background
@@ -489,7 +489,7 @@ class _DesktopNavItemState extends State<_DesktopNavItem> {
                   duration: const Duration(milliseconds: 150),
                   opacity: widget.isCollapsed ? 1.0 : 0.0,
                   child: Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.only(bottom: 6),
                     child: Stack(
                       clipBehavior: Clip.none,
                       alignment: Alignment.topCenter,
