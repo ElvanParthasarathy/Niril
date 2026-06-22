@@ -491,6 +491,7 @@ class _DesktopCollapsedProfile extends ConsumerStatefulWidget {
 class _DesktopCollapsedProfileState
     extends ConsumerState<_DesktopCollapsedProfile> {
   bool _isSettingsHovered = false;
+  bool _isSettingsPressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -506,6 +507,7 @@ class _DesktopCollapsedProfileState
           child: InkWell(
             customBorder: const CircleBorder(),
             onTap: widget.onSettingsPressed,
+            onHighlightChanged: (isPressed) => setState(() => _isSettingsPressed = isPressed),
             hoverColor: widget.isDark
                 ? Colors.white.withValues(alpha: 0.08)
                 : Colors.black.withValues(alpha: 0.04),
@@ -517,7 +519,7 @@ class _DesktopCollapsedProfileState
               height: 40,
               child: Center(
                 child: SvgPicture.string(
-                  _isSettingsHovered ? _settingsFilledSvg : _settingsOutlineSvg,
+                  _isSettingsPressed ? _settingsFilledSvg : _settingsOutlineSvg,
                   width: 20,
                   height: 20,
                   colorFilter: ColorFilter.mode(
@@ -557,6 +559,7 @@ class _DesktopExpandedProfileState
     extends ConsumerState<_DesktopExpandedProfile> {
   bool _isModeHovered = false;
   bool _isSettingsHovered = false;
+  bool _isSettingsPressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -658,6 +661,7 @@ class _DesktopExpandedProfileState
             child: InkWell(
               customBorder: const CircleBorder(),
               onTap: widget.onSettingsPressed,
+              onHighlightChanged: (isPressed) => setState(() => _isSettingsPressed = isPressed),
               hoverColor: widget.isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.04),
               splashColor: widget.isDark ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.12),
               child: Container(
@@ -668,7 +672,7 @@ class _DesktopExpandedProfileState
                 ),
                 alignment: Alignment.center,
                 child: SvgPicture.string(
-                  _isSettingsHovered ? _settingsFilledSvg : _settingsOutlineSvg,
+                  _isSettingsPressed ? _settingsFilledSvg : _settingsOutlineSvg,
                   width: 20,
                   height: 20,
                   colorFilter: ColorFilter.mode(
