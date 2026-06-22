@@ -265,16 +265,22 @@ class _DesktopNavItemState extends State<_DesktopNavItem> {
         ? Colors.white.withOpacity(0.04)
         : Colors.black.withOpacity(0.04);
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      cursor: SystemMouseCursors.click,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: const Cubic(0.2, 0.0, 0.0, 1.0),
-        width: widget.isCollapsed ? 56 : 236,
-        height: widget.isCollapsed ? 78 : 40,
-        child: Stack(
+    return GestureDetector(
+      onTap: widget.onTap,
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapCancel: () => setState(() => _isPressed = false),
+      onTapUp: (_) => setState(() => _isPressed = false),
+      behavior: HitTestBehavior.opaque,
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        cursor: SystemMouseCursors.click,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: const Cubic(0.2, 0.0, 0.0, 1.0),
+          width: widget.isCollapsed ? 56 : 236,
+          height: widget.isCollapsed ? 78 : 40,
+          child: Stack(
           children: [
             // Expanded Pill Background
             IgnorePointer(
