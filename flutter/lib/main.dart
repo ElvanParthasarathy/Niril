@@ -22,6 +22,7 @@ import 'src/features/shell/presentation/niril_app_screen.dart';
 
 import 'dart:io';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
+import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +34,19 @@ void main() async {
     } catch (e) {
       // Ignore if device doesn't support it
     }
+  }
+
+  // Set minimum window size on desktop platforms.
+  // This prevents the window from shrinking below the desktop breakpoint (800px),
+  // so the app never switches to mobile layout on desktop.
+  if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+    await windowManager.ensureInitialized();
+    const minSize = Size(800, 600);
+    await windowManager.setMinimumSize(minSize);
+    // Set a comfortable default size on first launch
+    await windowManager.setSize(const Size(1280, 800));
+    await windowManager.center();
+    await windowManager.show();
   }
 
   final sharedPrefs = await SharedPreferences.getInstance();

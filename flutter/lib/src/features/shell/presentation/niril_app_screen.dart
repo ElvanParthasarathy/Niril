@@ -237,15 +237,6 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
     final desktopIndex = navState.desktopSidebarIndex;
     final desktopNavItems = _desktopNavItems(context);
 
-    // When switching from mobile to desktop, any routes pushed onto the
-    // root navigator (Settings, editors, etc.) are sitting ABOVE the desktop
-    // shell and block it. Pop them so the desktop state-driven layout takes over.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      final myRoute = ModalRoute.of(context);
-      if (myRoute == null) return;
-      Navigator.of(context).popUntil((route) => route == myRoute);
-    });
 
     // Build desktop toolbar for non-home, non-custom-view pages
     Widget? desktopToolbar;
@@ -352,13 +343,6 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
     AppMode? mode,
   ) {
     final nav = ref.read(nirilNavigationProvider.notifier);
-
-    // If we resized from desktop while a custom view was open (state-driven),
-    // auto-reset to the last primary tab. Mobile doesn't use state-driven
-    // custom views — it pushes them as routes from the popup menu.
-    if (navState.isCustomView) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => nav.goBack());
-    }
 
     final mobileTabIndex = navState.mobileTabIndex;
     final navItems = _mobileNavItems;
