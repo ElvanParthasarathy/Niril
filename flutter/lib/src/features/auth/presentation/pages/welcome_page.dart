@@ -23,23 +23,25 @@ class WelcomePage extends ConsumerWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return AuthLayout(
-      floatingActionButton: kDebugMode ? FloatingActionButton.extended(
-        onPressed: () async {
-          // Seed the app with test data in both modes
-          ref.read(appModeProvider.notifier).setMode(AppMode.silk);
-          await ref.read(vanigaTharavugalProvider.notifier).seedData();
+      floatingActionButton: kDebugMode
+          ? FloatingActionButton.extended(
+              onPressed: () async {
+                // Seed the app with test data in both modes
+                ref.read(appModeProvider.notifier).setMode(AppMode.silk);
+                await ref.read(vanigaTharavugalProvider.notifier).seedData();
 
-          ref.read(appModeProvider.notifier).setMode(AppMode.coolie);
-          await ref.read(vanigaTharavugalProvider.notifier).seedData();
-          
-          if (context.mounted) {
-            ref.read(appModeProvider.notifier).setMode(AppMode.silk);
-            ref.read(isLoggedInProvider.notifier).setLoggedIn(true);
-          }
-        },
-        label: const Text('Seed App (Dev)'),
-        icon: const Icon(Icons.bug_report),
-      ) : null,
+                ref.read(appModeProvider.notifier).setMode(AppMode.coolie);
+                await ref.read(vanigaTharavugalProvider.notifier).seedData();
+
+                if (context.mounted) {
+                  ref.read(appModeProvider.notifier).setMode(AppMode.silk);
+                  ref.read(isLoggedInProvider.notifier).setLoggedIn(true);
+                }
+              },
+              label: const Text('Seed App (Dev)'),
+              icon: const Icon(Icons.bug_report),
+            )
+          : null,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -54,7 +56,9 @@ class WelcomePage extends ConsumerWidget {
                 borderRadius: BorderRadius.circular(28),
                 boxShadow: [
                   BoxShadow(
-                    color: isDark ? Colors.white.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.08),
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.15)
+                        : Colors.black.withValues(alpha: 0.08),
                     blurRadius: 40,
                     offset: const Offset(0, 20),
                   ),
@@ -62,14 +66,15 @@ class WelcomePage extends ConsumerWidget {
               ),
               child: Center(
                 child: Icon(
-                  CupertinoIcons.square_stack_3d_up_fill, // Approximation of Database icon
+                  CupertinoIcons
+                      .square_stack_3d_up_fill, // Approximation of Database icon
                   size: 48,
                   color: isDark ? Colors.black : Colors.white,
                 ),
               ),
             ),
           ),
-          
+
           const SizedBox(height: 40),
 
           // TEXT SECTION
@@ -88,20 +93,24 @@ class WelcomePage extends ConsumerWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 12,
-                color: isDark ? Colors.white.withValues(alpha: 0.4) : const Color(0xFF999999),
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.4)
+                    : const Color(0xFF999999),
                 height: 1.5,
               ),
             ),
           ),
-          
+
           AuthButton(
             text: 'agreeAndContinueBtn'.tr(context, ref),
             onPressed: () {
               Navigator.push(
                 context,
                 PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) => const LoginPage(),
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      const LoginPage(),
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
                     return FadeTransition(opacity: animation, child: child);
                   },
                   transitionDuration: const Duration(milliseconds: 300),

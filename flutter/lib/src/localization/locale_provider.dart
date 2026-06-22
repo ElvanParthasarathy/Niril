@@ -28,7 +28,7 @@ extension StringLocalization on String {
   /// If [ref] is provided, it watches the provider. Otherwise it attempts a read.
   String tr(BuildContext context, WidgetRef ref) {
     final currentLocale = ref.watch(localeProvider);
-    
+
     // If system default, try to guess from context
     Locale effectiveLocale = currentLocale ?? Localizations.localeOf(context);
 
@@ -36,7 +36,7 @@ extension StringLocalization on String {
     if (effectiveLocale.languageCode == 'ta') {
       return ta[this] ?? this;
     }
-    
+
     // Fallback to english map if it exists, otherwise just return the key.
     return en[this] ?? this;
   }

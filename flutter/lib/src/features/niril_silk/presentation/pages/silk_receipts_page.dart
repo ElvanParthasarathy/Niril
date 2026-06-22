@@ -10,17 +10,19 @@ class SilkReceiptsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final query = ref.watch(silkReceiptsSearchQueryProvider).toLowerCase();
-    
+
     // Mock data generation
-    final allItems = List.generate(50, (index) => 'Silk Receipts Page - Item $index');
-    final filteredItems = query.isEmpty 
-        ? allItems 
+    final allItems =
+        List.generate(50, (index) => 'Silk Receipts Page - Item $index');
+    final filteredItems = query.isEmpty
+        ? allItems
         : allItems.where((item) => item.toLowerCase().contains(query)).toList();
 
     final isDesktop = MediaQuery.sizeOf(context).width >= 800;
 
     return SliverPadding(
-      padding: EdgeInsets.only(left: 16, right: 16, top: isDesktop ? 0 : 32, bottom: 120),
+      padding: EdgeInsets.only(
+          left: 16, right: 16, top: isDesktop ? 0 : 32, bottom: 120),
       sliver: ElvanResponsiveGrid(
         itemCount: filteredItems.length,
         desktopCrossAxisCount: 2,
@@ -34,7 +36,9 @@ class SilkReceiptsPage extends ConsumerWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Center(
-              child: Text(item, style: TextStyle(color: Colors.blue.withOpacity(0.8), fontSize: 16)),
+              child: Text(item,
+                  style: TextStyle(
+                      color: Colors.blue.withOpacity(0.8), fontSize: 16)),
             ),
           );
         },

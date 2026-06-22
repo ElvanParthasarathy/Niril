@@ -40,13 +40,15 @@ class ElvanPageContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isMenuOpen = ref.watch(popupMenuOpenProvider);
     final double statusBarHeight = MediaQuery.paddingOf(context).top;
-    final double snapThreshold = expandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
+    final double snapThreshold =
+        expandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
 
     return Stack(
       children: [
         CustomScrollView(
           controller: scrollController,
-          cacheExtent: 1500, // Pre-builds items off-screen to prevent frame drops during slow scrolling!
+          cacheExtent:
+              1500, // Pre-builds items off-screen to prevent frame drops during slow scrolling!
           physics: ElvanBrickWallPhysics(
             isHeaderExpandedNotifier: isHeaderExpandedNotifier,
             snapThreshold: snapThreshold,
@@ -61,8 +63,10 @@ class ElvanPageContent extends ConsumerWidget {
                 statusBarHeight: MediaQuery.paddingOf(context).top,
                 expandedHeight: expandedHeight,
                 dynamicPillHeightNotifier: dynamicPillHeightNotifier,
-                leadingWidget: showLeadingWidgetInExpandedBar ? leadingWidget : null,
-                isSearchActiveNotifier: isSearchActiveNotifier ?? ValueNotifier(false),
+                leadingWidget:
+                    showLeadingWidgetInExpandedBar ? leadingWidget : null,
+                isSearchActiveNotifier:
+                    isSearchActiveNotifier ?? ValueNotifier(false),
                 isMenuOpen: isMenuOpen,
               ),
             ),
@@ -79,17 +83,26 @@ class ElvanPageContent extends ConsumerWidget {
             // Only adds empty space if the cards aren't tall enough to allow the header to collapse.
             SliverLayoutBuilder(
               builder: (context, constraints) {
-                final double statusBarHeight = MediaQuery.paddingOf(context).top;
-                final double handOffOffset = expandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
-                
+                final double statusBarHeight =
+                    MediaQuery.paddingOf(context).top;
+                final double handOffOffset = expandedHeight -
+                    8.0 -
+                    kToolbarHeight -
+                    statusBarHeight -
+                    20.0;
+
                 // The absolute minimum total scroll height required to collapse the header
-                final double requiredTotalHeight = constraints.viewportMainAxisExtent + handOffOffset;
-                final double currentSliversHeight = constraints.precedingScrollExtent;
-                
-                final double missingHeight = requiredTotalHeight - currentSliversHeight;
-                
+                final double requiredTotalHeight =
+                    constraints.viewportMainAxisExtent + handOffOffset;
+                final double currentSliversHeight =
+                    constraints.precedingScrollExtent;
+
+                final double missingHeight =
+                    requiredTotalHeight - currentSliversHeight;
+
                 return SliverToBoxAdapter(
-                  child: SizedBox(height: missingHeight > 0 ? missingHeight : 0),
+                  child:
+                      SizedBox(height: missingHeight > 0 ? missingHeight : 0),
                 );
               },
             ),
@@ -128,8 +141,9 @@ class ElvanBrickWallPhysics extends ScrollPhysics {
   double applyBoundaryConditions(ScrollMetrics position, double value) {
     if (!isHeaderExpandedNotifier.value) {
       // ONLY block if it's momentum/fling! Allow manual drag to bypass the wall.
-      final bool isMomentum = position is ScrollPosition && position.activity is BallisticScrollActivity;
-      
+      final bool isMomentum = position is ScrollPosition &&
+          position.activity is BallisticScrollActivity;
+
       if (isMomentum) {
         // Enforce our custom hard boundary!
         if (value < snapThreshold && position.pixels <= snapThreshold) {
@@ -140,13 +154,14 @@ class ElvanBrickWallPhysics extends ScrollPhysics {
         }
       }
     }
-    
+
     // Normal bounds
     return super.applyBoundaryConditions(position, value);
   }
 
   @override
-  Simulation? createBallisticSimulation(ScrollMetrics position, double velocity) {
+  Simulation? createBallisticSimulation(
+      ScrollMetrics position, double velocity) {
     if (!isHeaderExpandedNotifier.value) {
       // If we are at or below the threshold, and trying to go further up (velocity < 0), stop it immediately.
       if (position.pixels <= snapThreshold && velocity <= 0.0) {

@@ -4,12 +4,11 @@ class ElvanSnackbar {
   /// Shows a standard floating snackbar with the given message.
   static void show(BuildContext context, String message) {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    
+
     final screenWidth = MediaQuery.of(context).size.width;
     final snackBarWidth = 400.0;
-    final lateralMargin = screenWidth > snackBarWidth 
-        ? (screenWidth - snackBarWidth) / 2 
-        : 16.0;
+    final lateralMargin =
+        screenWidth > snackBarWidth ? (screenWidth - snackBarWidth) / 2 : 16.0;
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

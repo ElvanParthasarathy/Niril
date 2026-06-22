@@ -16,7 +16,10 @@ class SilkReportsPage extends ConsumerWidget {
             child: Text(
               'arikkaigal'.tr(context, ref),
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.5),
               ),
             ),
           ),

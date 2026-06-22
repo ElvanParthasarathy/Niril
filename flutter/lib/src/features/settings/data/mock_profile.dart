@@ -58,8 +58,7 @@ const Map<String, dynamic> mockProfileData = {
   'oppamPeyar': 'பா. வனிதாஶ்ரீ', // ஒப்பம் பெயர் — Signatory name
 
   // ── Additional ──
-  'adaimozhi_Tamil':
-      'கைத்தறி பட்டு சேலைகள் & ராசில்க்', // அடைமொழி — Tagline
+  'adaimozhi_Tamil': 'கைத்தறி பட்டு சேலைகள் & ராசில்க்', // அடைமொழி — Tagline
   'adaimozhi_English': 'Handloom Silk Sarees & Rawsilk',
   'upiId': '', // UPI (acronym)
 };

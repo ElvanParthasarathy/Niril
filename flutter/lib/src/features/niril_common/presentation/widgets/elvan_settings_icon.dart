@@ -27,7 +27,8 @@ class ElvanSettingsIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final defaultColor = IconTheme.of(context).color ?? Theme.of(context).colorScheme.onSurface;
+    final defaultColor =
+        IconTheme.of(context).color ?? Theme.of(context).colorScheme.onSurface;
     final effectiveColor = color ?? defaultColor;
 
     return SvgPicture.string(

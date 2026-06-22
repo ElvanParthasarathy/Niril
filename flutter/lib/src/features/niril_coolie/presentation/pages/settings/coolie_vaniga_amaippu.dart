@@ -19,10 +19,12 @@ class CoolieVanigaAmaippuPage extends ConsumerStatefulWidget {
   const CoolieVanigaAmaippuPage({super.key});
 
   @override
-  ConsumerState<CoolieVanigaAmaippuPage> createState() => _CoolieVanigaAmaippuPageState();
+  ConsumerState<CoolieVanigaAmaippuPage> createState() =>
+      _CoolieVanigaAmaippuPageState();
 }
 
-class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPage> {
+class _CoolieVanigaAmaippuPageState
+    extends ConsumerState<CoolieVanigaAmaippuPage> {
   String? _editingSection;
 
   String _tempPrimary = '';
@@ -35,7 +37,8 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
   void _showBusinessSelectorModal() {
     final profile = ref.read(vanigaTharavugalProvider);
     final primaryName = profile?.getPrimary('niruvanathinPeyar') ?? '';
-    final displayName = primaryName.isEmpty ? 'activeProfile'.tr(context, ref) : primaryName;
+    final displayName =
+        primaryName.isEmpty ? 'activeProfile'.tr(context, ref) : primaryName;
 
     final List<String> businesses = [displayName];
 
@@ -71,52 +74,68 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
                     child: const Icon(Icons.add),
                   ),
                 ),
-                body: Consumer(
-                  builder: (context, ref, child) {
-                    final profile = ref.watch(vanigaTharavugalProvider);
-                    final hasProfile = profile != null;
-                    
-                    return ElvanFullscreenPopup(
-                      title: 'vaniga_nirvagam'.tr(context, ref),
-                      slivers: [
-                        SliverPadding(
-                          padding: const EdgeInsets.all(16),
-                          sliver: SliverToBoxAdapter(
-                            child: !hasProfile 
-                                ? Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(32.0),
-                                      child: Text(
-                                        'noSavedProfiles'.tr(context, ref),
-                                        style: TextStyle(
-                                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-                                        ),
+                body: Consumer(builder: (context, ref, child) {
+                  final profile = ref.watch(vanigaTharavugalProvider);
+                  final hasProfile = profile != null;
+
+                  return ElvanFullscreenPopup(
+                    title: 'vaniga_nirvagam'.tr(context, ref),
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.all(16),
+                        sliver: SliverToBoxAdapter(
+                          child: !hasProfile
+                              ? Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(32.0),
+                                    child: Text(
+                                      'noSavedProfiles'.tr(context, ref),
+                                      style: TextStyle(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withValues(alpha: 0.5),
                                       ),
                                     ),
-                                  )
-                                : Column(
-                                    children: [
-                                      ElvanSettingsSection(
-                                        children: [
-                                          ElvanSettingsDisplayRow(
-                                            title: 'activeProfile'.tr(context, ref),
-                                            primaryValue: profile.getPrimary('niruvanathinPeyar').isEmpty ? 'activeProfile'.tr(context, ref) : profile.getPrimary('niruvanathinPeyar'),
-                                            icon: CupertinoIcons.delete_solid,
-                                            onEdit: () => showElvanDeleteConfirmModal(context, ref, () {
-                                              ref.read(vanigaTharavugalProvider.notifier).clearProfile();
-                                              ElvanSnackbar.show(context, 'profileDeleted'.tr(context, ref));
-                                            }),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
                                   ),
-                          ),
+                                )
+                              : Column(
+                                  children: [
+                                    ElvanSettingsSection(
+                                      children: [
+                                        ElvanSettingsDisplayRow(
+                                          title:
+                                              'activeProfile'.tr(context, ref),
+                                          primaryValue: profile
+                                                  .getPrimary(
+                                                      'niruvanathinPeyar')
+                                                  .isEmpty
+                                              ? 'activeProfile'.tr(context, ref)
+                                              : profile.getPrimary(
+                                                  'niruvanathinPeyar'),
+                                          icon: CupertinoIcons.delete_solid,
+                                          onEdit: () =>
+                                              showElvanDeleteConfirmModal(
+                                                  context, ref, () {
+                                            ref
+                                                .read(vanigaTharavugalProvider
+                                                    .notifier)
+                                                .clearProfile();
+                                            ElvanSnackbar.show(
+                                                context,
+                                                'profileDeleted'
+                                                    .tr(context, ref));
+                                          }),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                         ),
-                      ],
-                    );
-                  }
-                ),
+                      ),
+                    ],
+                  );
+                }),
               ),
             );
           },
@@ -126,7 +145,8 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
         const begin = Offset(0.0, 1.0);
         const end = Offset.zero;
         const curve = Curves.easeOutCubic;
-        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        final tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
         return SlideTransition(
           position: animation.drive(tween),
           child: child,
@@ -150,19 +170,30 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
             textAlign: TextAlign.center,
             onChanged: (val) => newNamePrimary = val,
             decoration: InputDecoration(
-              hintText: '${'businessNameLabel'.tr(context, ref)} (${'tamil'.tr(context, ref)})',
+              hintText:
+                  '${'businessNameLabel'.tr(context, ref)} (${'tamil'.tr(context, ref)})',
               hintStyle: TextStyle(
                 fontSize: 13,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.4),
               ),
               filled: true,
               fillColor: WidgetStateColor.resolveWith((states) {
                 if (states.contains(WidgetState.focused)) {
-                  return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12);
+                  return Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.12);
                 }
-                return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08);
+                return Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.08);
               }),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(100),
                 borderSide: BorderSide.none,
@@ -186,19 +217,30 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
             textAlign: TextAlign.center,
             onChanged: (val) => newNameSecondary = val,
             decoration: InputDecoration(
-              hintText: '${'businessNameLabel'.tr(context, ref)} (${'english'.tr(context, ref)})',
+              hintText:
+                  '${'businessNameLabel'.tr(context, ref)} (${'english'.tr(context, ref)})',
               hintStyle: TextStyle(
                 fontSize: 13,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.4),
               ),
               filled: true,
               fillColor: WidgetStateColor.resolveWith((states) {
                 if (states.contains(WidgetState.focused)) {
-                  return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12);
+                  return Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.12);
                 }
-                return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08);
+                return Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.08);
               }),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(100),
                 borderSide: BorderSide.none,
@@ -223,7 +265,8 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
         if (newNamePrimary.trim().isNotEmpty) {
           final newProfile = VanigaTharavugal();
           newProfile.setBilingual('niruvanathinPeyar', 'Tamil', newNamePrimary);
-          newProfile.setBilingual('niruvanathinPeyar', 'English', newNameSecondary);
+          newProfile.setBilingual(
+              'niruvanathinPeyar', 'English', newNameSecondary);
           ref.read(vanigaTharavugalProvider.notifier).updateProfile(newProfile);
           _showSuccessToast();
         }
@@ -236,7 +279,8 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
     final cardColor = isDark ? const Color(0xFF111111) : Colors.white;
     final profile = ref.watch(vanigaTharavugalProvider);
     final primaryName = profile?.niruvanathinPeyar['Tamil'] ?? '';
-    final displayName = primaryName.isEmpty ? 'activeProfile'.tr(context, ref) : primaryName;
+    final displayName =
+        primaryName.isEmpty ? 'activeProfile'.tr(context, ref) : primaryName;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
@@ -247,11 +291,17 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
             icon: Icon(
               CupertinoIcons.briefcase_fill,
               size: 24,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.7),
             ),
             style: IconButton.styleFrom(
               backgroundColor: cardColor,
-              foregroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+              foregroundColor: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.7),
               fixedSize: const Size(48, 48),
             ),
           ),
@@ -262,7 +312,8 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
               style: TextButton.styleFrom(
                 backgroundColor: cardColor,
                 foregroundColor: Theme.of(context).colorScheme.onSurface,
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(100),
                 ),
@@ -275,13 +326,17 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
                       displayName,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w600),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Icon(
                     Icons.arrow_drop_down,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.7),
                   ),
                 ],
               ),
@@ -319,7 +374,10 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
               TextButton(
                 onPressed: onCancel,
                 style: TextButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                  foregroundColor: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7),
                 ),
                 child: Text('cancelBtn'.tr(context, ref)),
               ),
@@ -394,8 +452,10 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
     final profile = ref.watch(vanigaTharavugalProvider);
     final currentProfile = profile ?? VanigaTharavugal();
 
-    final niruvanathinPeyarPrimary = currentProfile.niruvanathinPeyar['Tamil'] ?? '';
-    final niruvanathinPeyarSecondary = currentProfile.niruvanathinPeyar['English'] ?? '';
+    final niruvanathinPeyarPrimary =
+        currentProfile.niruvanathinPeyar['Tamil'] ?? '';
+    final niruvanathinPeyarSecondary =
+        currentProfile.niruvanathinPeyar['English'] ?? '';
 
     final adaimozhiPrimary = currentProfile.adaimozhi['Tamil'] ?? '';
     final adaimozhiSecondary = currentProfile.adaimozhi['English'] ?? '';
@@ -404,7 +464,8 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
       title: title,
       slivers: [
         SliverPadding(
-          padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 32),
+          padding:
+              const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 32),
           sliver: SliverList.list(
             children: [
               _buildProfileSwitcher(),
@@ -419,26 +480,33 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
                       title: 'businessNameLabel'.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
-                          label: '${'businessNameLabel'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
+                          label:
+                              '${'businessNameLabel'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                         ),
                         if (isBilingual) const SizedBox(height: 16),
                         if (isBilingual)
                           ElvanSettingsTextField(
-                            label: '${'businessNameLabel'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
+                            label:
+                                '${'businessNameLabel'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                             initialValue: _tempSecondary,
                             onChanged: (val) => _tempSecondary = val,
                           ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () => _saveBilingualField(currentProfile, 'niruvanathinPeyar'),
+                      onSave: () => _saveBilingualField(
+                          currentProfile, 'niruvanathinPeyar'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'businessNameLabel'.tr(context, ref),
                       primaryValue: niruvanathinPeyarPrimary,
-                      secondaryValue: isBilingual ? niruvanathinPeyarSecondary : null,
-                      onEdit: () => _beginEditPrimarySecondary('niruvanathinPeyar', niruvanathinPeyarPrimary, niruvanathinPeyarSecondary),
+                      secondaryValue:
+                          isBilingual ? niruvanathinPeyarSecondary : null,
+                      onEdit: () => _beginEditPrimarySecondary(
+                          'niruvanathinPeyar',
+                          niruvanathinPeyarPrimary,
+                          niruvanathinPeyarSecondary),
                     ),
                   ),
 
@@ -456,12 +524,14 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
                         ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () => _saveSingleField(currentProfile, 'kurumPeyar'),
+                      onSave: () =>
+                          _saveSingleField(currentProfile, 'kurumPeyar'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'shortBusinessName'.tr(context, ref),
                       primaryValue: currentProfile.kurumPeyar,
-                      onEdit: () => _beginEditSingle('kurumPeyar', currentProfile.kurumPeyar),
+                      onEdit: () => _beginEditSingle(
+                          'kurumPeyar', currentProfile.kurumPeyar),
                     ),
                   ),
 
@@ -480,19 +550,22 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
                         if (isBilingual) const SizedBox(height: 16),
                         if (isBilingual)
                           ElvanSettingsTextField(
-                            label: 'Tagline (${secondaryLang.tr(context, ref)})',
+                            label:
+                                'Tagline (${secondaryLang.tr(context, ref)})',
                             initialValue: _tempSecondary,
                             onChanged: (val) => _tempSecondary = val,
                           ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () => _saveBilingualField(currentProfile, 'adaimozhi'),
+                      onSave: () =>
+                          _saveBilingualField(currentProfile, 'adaimozhi'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'Tagline',
                       primaryValue: adaimozhiPrimary,
                       secondaryValue: isBilingual ? adaimozhiSecondary : null,
-                      onEdit: () => _beginEditPrimarySecondary('adaimozhi', adaimozhiPrimary, adaimozhiSecondary),
+                      onEdit: () => _beginEditPrimarySecondary(
+                          'adaimozhi', adaimozhiPrimary, adaimozhiSecondary),
                     ),
                   ),
 
@@ -511,12 +584,14 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
                         ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () => _saveSingleField(currentProfile, 'tholaipesi_1'),
+                      onSave: () =>
+                          _saveSingleField(currentProfile, 'tholaipesi_1'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'tholaipesiLabel'.tr(context, ref),
                       primaryValue: currentProfile.tholaipesi1,
-                      onEdit: () => _beginEditSingle('tholaipesi_1', currentProfile.tholaipesi1),
+                      onEdit: () => _beginEditSingle(
+                          'tholaipesi_1', currentProfile.tholaipesi1),
                     ),
                   ),
 
@@ -535,12 +610,14 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
                         ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () => _saveSingleField(currentProfile, 'tholaipesi_2'),
+                      onSave: () =>
+                          _saveSingleField(currentProfile, 'tholaipesi_2'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'mobileLabel'.tr(context, ref),
                       primaryValue: currentProfile.tholaipesi2,
-                      onEdit: () => _beginEditSingle('tholaipesi_2', currentProfile.tholaipesi2),
+                      onEdit: () => _beginEditSingle(
+                          'tholaipesi_2', currentProfile.tholaipesi2),
                     ),
                   ),
 
@@ -559,12 +636,14 @@ class _CoolieVanigaAmaippuPageState extends ConsumerState<CoolieVanigaAmaippuPag
                         ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () => _saveSingleField(currentProfile, 'minnanchal'),
+                      onSave: () =>
+                          _saveSingleField(currentProfile, 'minnanchal'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'email'.tr(context, ref),
                       primaryValue: currentProfile.minnanchal,
-                      onEdit: () => _beginEditSingle('minnanchal', currentProfile.minnanchal),
+                      onEdit: () => _beginEditSingle(
+                          'minnanchal', currentProfile.minnanchal),
                     ),
                   ),
                 ],

@@ -23,18 +23,24 @@ class ElvanTopBarIcon extends StatelessWidget {
         maxHeight: 40,
         child: SizedBox(
           width: 40,
-          height: 40, // Reduced from 54 to 40 to mathematically prevent overlapping
+          height:
+              40, // Reduced from 54 to 40 to mathematically prevent overlapping
           child: Material(
             type: MaterialType.transparency,
             shape: const CircleBorder(),
-            clipBehavior: Clip.hardEdge, // Strictly confine highlight and splash to this 40px circle
+            clipBehavior: Clip
+                .hardEdge, // Strictly confine highlight and splash to this 40px circle
             child: InkResponse(
               onTap: onTap,
               radius: 20, // Expanding circle radius (40px diameter)
               highlightShape: BoxShape.circle,
-              splashFactory: NoSplash.splashFactory, // Instantly fills the circle, no growing!
-              splashColor: Colors.transparent, 
-              highlightColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12), // Instant full circle flash
+              splashFactory: NoSplash
+                  .splashFactory, // Instantly fills the circle, no growing!
+              splashColor: Colors.transparent,
+              highlightColor: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.12), // Instant full circle flash
               child: Icon(icon, size: 22),
             ),
           ),

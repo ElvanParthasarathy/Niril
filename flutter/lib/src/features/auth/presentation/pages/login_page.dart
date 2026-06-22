@@ -65,16 +65,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             title: 'nirilBrand'.tr(context, ref), // Brand name
             subtitle: 'loginSubtitle'.tr(context, ref),
           ),
-          
           const SizedBox(height: 32),
-
           AuthInput(
             label: 'emailAddress'.tr(context, ref),
             placeholder: 'enterEmail'.tr(context, ref),
             value: _email,
             onChange: (val) => setState(() => _email = val),
           ),
-
           AuthInput(
             label: 'password'.tr(context, ref),
             placeholder: 'enterPassword'.tr(context, ref),
@@ -83,9 +80,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             isPassword: true,
             errorText: _error.isNotEmpty ? _error : null,
           ),
-
           const SizedBox(height: 32),
-
           AuthButton(
             text: 'signIn'.tr(context, ref),
             loading: _loading,

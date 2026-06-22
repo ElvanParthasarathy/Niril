@@ -15,7 +15,7 @@ class PorulPage extends ConsumerWidget {
     if (mode == AppMode.coolie) {
       return const CoolieItemsPage();
     }
-    
+
     // Default to GST mode
     return const SilkItemsPage();
   }

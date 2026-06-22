@@ -32,7 +32,7 @@ class ElvanThemeSelector extends ConsumerWidget {
                 isDarkModeDesign: false,
                 onTap: () => handleThemeChange(ThemeMode.light),
               ),
-              
+
               // Dark Mode Option
               _ThemeOptionBox(
                 title: 'darkMode'.tr(context, ref),
@@ -43,12 +43,14 @@ class ElvanThemeSelector extends ConsumerWidget {
             ],
           ),
         ),
-        
+
         // Auto Mode Switch Row
         Divider(
           height: 1,
           thickness: 1,
-          color: isDark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.04),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.04)
+              : Colors.black.withValues(alpha: 0.04),
           indent: 16,
         ),
         GestureDetector(
@@ -80,7 +82,8 @@ class ElvanThemeSelector extends ConsumerWidget {
                     if (val) {
                       handleThemeChange(ThemeMode.system);
                     } else {
-                      handleThemeChange(isDark ? ThemeMode.dark : ThemeMode.light);
+                      handleThemeChange(
+                          isDark ? ThemeMode.dark : ThemeMode.light);
                     }
                   },
                 ),
@@ -110,16 +113,22 @@ class _ThemeOptionBox extends StatelessWidget {
   Widget build(BuildContext context) {
     final scale = isSelected ? 1.02 : 1.0;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     // Colors matching React design
-    final boxBgColor = isDarkModeDesign ? const Color(0xFF1E1E1E) : const Color(0xFFF5F5F5);
-    final borderColor = isSelected 
+    final boxBgColor =
+        isDarkModeDesign ? const Color(0xFF1E1E1E) : const Color(0xFFF5F5F5);
+    final borderColor = isSelected
         ? (isDarkModeDesign ? const Color(0xFF888888) : const Color(0xFF555555))
-        : (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08));
-        
-    final bar1Color = isDarkModeDesign ? Colors.white.withValues(alpha: 0.8) : Colors.black.withValues(alpha: 0.7);
-    final bar2Color = isDarkModeDesign ? const Color(0xFF444444) : const Color(0xCFCFCFCF);
-    
+        : (isDark
+            ? Colors.white.withValues(alpha: 0.08)
+            : Colors.black.withValues(alpha: 0.08));
+
+    final bar1Color = isDarkModeDesign
+        ? Colors.white.withValues(alpha: 0.8)
+        : Colors.black.withValues(alpha: 0.7);
+    final bar2Color =
+        isDarkModeDesign ? const Color(0xFF444444) : const Color(0xCFCFCFCF);
+
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -175,16 +184,21 @@ class _ThemeOptionBox extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-              color: isSelected 
-                  ? Theme.of(context).colorScheme.onSurface 
-                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+              color: isSelected
+                  ? Theme.of(context).colorScheme.onSurface
+                  : Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.5),
             ),
           ),
           const SizedBox(height: 8),
           Icon(
-            isSelected ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+            isSelected
+                ? Icons.check_circle_rounded
+                : Icons.radio_button_unchecked_rounded,
             size: 24,
-            color: isSelected 
+            color: isSelected
                 ? (isDarkModeDesign ? Colors.white : Colors.black)
                 : const Color(0xFF888888),
           ),

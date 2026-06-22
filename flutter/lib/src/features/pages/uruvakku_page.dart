@@ -15,7 +15,7 @@ class UruvakkuPage extends ConsumerWidget {
     if (mode == AppMode.coolie) {
       return const CoolieUruvakkuPage();
     }
-    
+
     // Default to GST mode
     return const SilkUruvakkuPage();
   }

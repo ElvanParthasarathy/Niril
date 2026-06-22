@@ -10,7 +10,8 @@ import 'vaniga_tharavugal.dart';
 /// Provider for the Drift database instance.
 /// Overridden in main.dart with the actual database.
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
-  throw UnimplementedError('appDatabaseProvider must be overridden in ProviderScope');
+  throw UnimplementedError(
+      'appDatabaseProvider must be overridden in ProviderScope');
 });
 
 /// Provider for the business profile (வணிக தரவுகள்).

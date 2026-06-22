@@ -87,15 +87,14 @@ const List<_AlbumMock> _albums = [
   _AlbumMock('Test Folder 50', 500, Color(0xFFB0BEC5)),
 ];
 
-
 class SilkInvoicesPage extends ConsumerWidget {
   const SilkInvoicesPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final query = ref.watch(silkInvoicesSearchQueryProvider).toLowerCase();
-    final filteredAlbums = query.isEmpty 
-        ? _albums 
+    final filteredAlbums = query.isEmpty
+        ? _albums
         : _albums.where((a) => a.name.toLowerCase().contains(query)).toList();
 
     final isDesktop = MediaQuery.sizeOf(context).width >= 800;
@@ -138,74 +137,76 @@ class _AlbumCard extends StatelessWidget {
           color: album.color,
         ),
         clipBehavior: Clip.hardEdge,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          // ── Placeholder gradient fill ──
-          DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  album.color,
-                  Color.lerp(album.color, Colors.black, 0.15)!,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // ── Placeholder gradient fill ──
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    album.color,
+                    Color.lerp(album.color, Colors.black, 0.15)!,
+                  ],
+                ),
+              ),
+            ),
+            // ── Cached Network Image ──
+            CachedNetworkImage(
+              imageUrl:
+                  'https://picsum.photos/id/${(album.count ~/ 10) % 1000}/300/300',
+              fit: BoxFit.cover,
+              // Keep the beautiful gradient while it loads
+              placeholder: (context, url) => const SizedBox.shrink(),
+              errorWidget: (context, url, error) =>
+                  const Icon(CupertinoIcons.photo, color: Colors.white54),
+            ),
+            // ── Bottom label overlay ──
+            Positioned(
+              left: 8,
+              right: 8,
+              bottom: 8,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    album.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      shadows: [
+                        Shadow(
+                          blurRadius: 4,
+                          color: Colors.black38,
+                        ),
+                      ],
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    '${album.count}',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.8),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                      shadows: const [
+                        Shadow(
+                          blurRadius: 4,
+                          color: Colors.black38,
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-          ),
-          // ── Cached Network Image ──
-          CachedNetworkImage(
-            imageUrl: 'https://picsum.photos/id/${(album.count ~/ 10) % 1000}/300/300',
-            fit: BoxFit.cover,
-            // Keep the beautiful gradient while it loads
-            placeholder: (context, url) => const SizedBox.shrink(),
-            errorWidget: (context, url, error) => const Icon(CupertinoIcons.photo, color: Colors.white54),
-          ),
-          // ── Bottom label overlay ──
-          Positioned(
-            left: 8,
-            right: 8,
-            bottom: 8,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  album.name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    shadows: [
-                      Shadow(
-                        blurRadius: 4,
-                        color: Colors.black38,
-                      ),
-                    ],
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  '${album.count}',
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.8),
-                    fontSize: 11,
-                    fontWeight: FontWeight.w400,
-                    shadows: const [
-                      Shadow(
-                        blurRadius: 4,
-                        color: Colors.black38,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }

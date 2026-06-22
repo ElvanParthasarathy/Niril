@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// A component that renders the page title inside the leadingWidget slot of the Collapsed Bar.
-/// This gives the user context of the current page when they have scrolled down and the main 
+/// This gives the user context of the current page when they have scrolled down and the main
 /// large header title has faded away.
 class FloatElvanTitle extends StatelessWidget {
   const FloatElvanTitle({

@@ -17,12 +17,13 @@ class StorageService {
   /// Gets a specific folder inside the documents directory (creates it if it doesn't exist)
   Future<Directory> getAppFolder(String folderName) async {
     final rootDir = await getAppDocumentsDirectory();
-    final folder = Directory('${rootDir.path}${Platform.pathSeparator}$folderName');
-    
+    final folder =
+        Directory('${rootDir.path}${Platform.pathSeparator}$folderName');
+
     if (!await folder.exists()) {
       await folder.create(recursive: true);
     }
-    
+
     return folder;
   }
 

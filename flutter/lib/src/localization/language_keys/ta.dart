@@ -120,9 +120,11 @@ const Map<String, String> ta = {
   'noMerchants': 'வணிகர்கள் இல்லை',
   'deleteMerchantConfirm': 'இந்த வணிகரை உறுதியாக நீக்க வேண்டுமா?',
   'duplicateCustomersTitle': 'வணிகர்களை நகலெடுக்கவா?',
-  'duplicateCustomersMessage': 'தேர்ந்தெடுக்கப்பட்ட {count} வணிகர்களின் நகல்களை உருவாக்க வேண்டுமா?',
+  'duplicateCustomersMessage':
+      'தேர்ந்தெடுக்கப்பட்ட {count} வணிகர்களின் நகல்களை உருவாக்க வேண்டுமா?',
   'deleteMerchantsTitle': 'வணிகர்களை நீக்க வேண்டுமா?',
-  'deleteMerchantsMessage': 'தேர்ந்தெடுக்கப்பட்ட {count} வணிகரை(களை) நீக்க வேண்டுமா? இதை மாற்ற இயலாது.',
+  'deleteMerchantsMessage':
+      'தேர்ந்தெடுக்கப்பட்ட {count} வணிகரை(களை) நீக்க வேண்டுமா? இதை மாற்ற இயலாது.',
   'customersDuplicatedSuccess': 'வணிகர்கள் வெற்றிகரமாக நகலெடுக்கப்பட்டனர்',
   'newItem': 'புதிய பொருள்',
   'noItems': 'பொருட்கள் இல்லை',
@@ -165,7 +167,8 @@ const Map<String, String> ta = {
   'settingsTitle': 'அமைப்புகள்',
   'settingsSubtitle': 'நிறுவனத் தரவுகள், வணிக அடையாளம் & தரவுகள்',
   'modulesTitle': 'தொகுதிகள்',
-  'settingsDesc': 'உங்கள் செயலி அமைப்புகள் மற்றும் விருப்பங்களை நிர்வகிக்கவும்.',
+  'settingsDesc':
+      'உங்கள் செயலி அமைப்புகள் மற்றும் விருப்பங்களை நிர்வகிக்கவும்.',
   'switchProfile': 'தன்னுருவை மாற்றவும்',
   'noLogo': 'சின்னம் இல்லை',
   'logoUploaded': 'சின்னம் பதிவேற்றப்பட்டது',
@@ -182,13 +185,16 @@ const Map<String, String> ta = {
   'businessLogo': 'நிறுவனத்தின் சின்னம்',
   'signature': 'கையொப்பம்',
   'cloudBackupTitle': 'கிளவுட் காப்பு (Google Drive)',
-  'cloudBackupDesc': 'உங்கள் பட்டியல்களை Google Drive உடன் தானாக ஒத்திசைக்கலாம்.',
+  'cloudBackupDesc':
+      'உங்கள் பட்டியல்களை Google Drive உடன் தானாக ஒத்திசைக்கலாம்.',
   'exportImportTitle': 'தரவு ஏற்றுமதி & இறக்குமதி',
   'exportImportDesc': 'உங்கள் தரவை உள்ளூரில் பாதுகாப்பாக காப்பு எடுக்கலாம்.',
   'resetToDefault': 'இயல்புநிலைக்கு மீட்டமை',
   'moduleGroup_sales': 'விற்பனை & பட்டியல்கள்',
-  'moduleDesc_sales': 'பட்டியல் உருவாக்கம், தொடர் பட்டியல்கள், கட்டணப் பற்றுச்சீட்டுகள்',
-  'module_invoicing': 'வரி பட்டியல்கள், மதிப்பீட்டுப் பட்டியல்கள், கடன் குறிப்புகள்',
+  'moduleDesc_sales':
+      'பட்டியல் உருவாக்கம், தொடர் பட்டியல்கள், கட்டணப் பற்றுச்சீட்டுகள்',
+  'module_invoicing':
+      'வரி பட்டியல்கள், மதிப்பீட்டுப் பட்டியல்கள், கடன் குறிப்புகள்',
   'module_recurring': 'தொடர் பட்டியல்கள்',
   'module_receipts': 'கட்டணப் பற்றுச்சீட்டுகள்',
   'moduleGroup_directory': 'அடைவு',
@@ -221,7 +227,8 @@ const Map<String, String> ta = {
   'mobileLabel': 'கைபேசி',
   'orgNameEn': 'நிறுவனத்தின் பெயர் (ஆங்கிலத்தில்)',
   'shortBusinessName': 'குறுகிய வணிக பெயர்',
-  'shortBusinessNameHint': 'இது தானியங்கி பில் எண்ணில் முன்னொட்டாக பயன்படுத்தப்படும்.',
+  'shortBusinessNameHint':
+      'இது தானியங்கி பில் எண்ணில் முன்னொட்டாக பயன்படுத்தப்படும்.',
   'phoneNumbers': 'தொலைபேசி எண்கள்',
   'address': 'முகவரி',
   'contactBank': 'தொடர்பு & வங்கி',
@@ -282,8 +289,10 @@ const Map<String, String> ta = {
   'saveProfile': 'சேமி',
   'termsTemplatesTitle': 'விதிமுறைகள் & வரையறைகள் வார்ப்புருக்கள்',
   'newTemplate': 'புதிய வார்ப்புரு',
-  'termsTemplatesDesc': 'மீண்டும் பயன்படுத்தக்கூடிய வார்ப்புருக்களை உருவாக்கவும் அல்லது கீழேயுள்ளவற்றிலிருந்து தேர்ந்தெடுக்கவும்.',
-  'quickStartTemplate': 'விரைவான தொடக்கம் — உங்கள் வணிகத்திற்கான வார்ப்புருவைத் தேர்ந்தெடுக்கவும்:',
+  'termsTemplatesDesc':
+      'மீண்டும் பயன்படுத்தக்கூடிய வார்ப்புருக்களை உருவாக்கவும் அல்லது கீழேயுள்ளவற்றிலிருந்து தேர்ந்தெடுக்கவும்.',
+  'quickStartTemplate':
+      'விரைவான தொடக்கம் — உங்கள் வணிகத்திற்கான வார்ப்புருவைத் தேர்ந்தெடுக்கவும்:',
   'templateName': 'வார்ப்புரு பெயர்',
   'templateContent': 'உள்ளடக்கம் (உங்கள் விதிமுறைகளை இங்கே ஒட்டவும்)',
   'saveTemplate': 'சேமி',
@@ -291,7 +300,8 @@ const Map<String, String> ta = {
   'businessProfilesTitle': 'வணிக தன்னுருக்கள்',
   'addNewProfile': 'புதிய தன்னுரு சேர்',
   'saveAsProfile': 'சேமி',
-  'businessProfilesDesc1': 'பல வணிக தன்னுருக்களைச் சேமித்து, அவற்றை உடனடியாக மாற்றிக் கொள்ளலாம்.',
+  'businessProfilesDesc1':
+      'பல வணிக தன்னுருக்களைச் சேமித்து, அவற்றை உடனடியாக மாற்றிக் கொள்ளலாம்.',
   'businessProfilesDesc2': 'தன்னுருக்கள் இல்லை',
   'appUpdatesTitle': 'பயன்பாட்டு புதுப்பிப்புகள்',
   'appStorageDesc': 'தற்காலிக நினைவகம்',
@@ -299,8 +309,10 @@ const Map<String, String> ta = {
   'checkingUpdate': 'சரிபார்க்கப்படுகிறது...',
   'checkForUpdates': 'புதுப்பிப்புகளை சரிபார்',
   'dataManagementTitle': 'தரவு மேலாண்மை (Data Management)',
-  'dataNoticeText': '<strong>உங்கள் தரவு இந்தக் கணினியில் மட்டுமே உள்ளது.</strong> எங்களுக்கு, எங்கள் சேவையகங்களுக்கு அல்லது எந்த மூன்றாம் தரப்பினருக்கும் எதுவும் பதிவேற்றப்படவில்லை. நீங்கள் வெளிப்படையாகக் கோரும்போது மட்டுமே தரவு உங்கள் சொந்த Google Drive-க்குச் செல்லும்.',
-  'dataManagementDesc': 'எதை காப்புப் பிரதி எடுக்க வேண்டும் அல்லது மீட்டெடுக்க வேண்டும் என்பதைத் தேர்வுசெய்க. காப்பு கோப்புகளை USB டிரைவ் அல்லது Google Drive-ல் பாதுகாப்பாக வைக்கலாம்.',
+  'dataNoticeText':
+      '<strong>உங்கள் தரவு இந்தக் கணினியில் மட்டுமே உள்ளது.</strong> எங்களுக்கு, எங்கள் சேவையகங்களுக்கு அல்லது எந்த மூன்றாம் தரப்பினருக்கும் எதுவும் பதிவேற்றப்படவில்லை. நீங்கள் வெளிப்படையாகக் கோரும்போது மட்டுமே தரவு உங்கள் சொந்த Google Drive-க்குச் செல்லும்.',
+  'dataManagementDesc':
+      'எதை காப்புப் பிரதி எடுக்க வேண்டும் அல்லது மீட்டெடுக்க வேண்டும் என்பதைத் தேர்வுசெய்க. காப்பு கோப்புகளை USB டிரைவ் அல்லது Google Drive-ல் பாதுகாப்பாக வைக்கலாம்.',
   'exportBackup': 'காப்புப் பிரதியை ஏற்றுமதி செய்...',
   'importBackup': 'காப்புப் பிரதியை இறக்குமதி செய்...',
   'recentActivity': 'நடப்பு வினைகள்',
@@ -318,10 +330,12 @@ const Map<String, String> ta = {
   'bilingualBills': 'இருமொழிப் பதிவு',
   'enabled': 'ஆம்',
   'disabled': 'இல்லை',
-  'languagesUsedForBilling': 'பட்டியல் உருவாக்கத்தில் பயன்படுத்தப்படும் மொழிகள்',
+  'languagesUsedForBilling':
+      'பட்டியல் உருவாக்கத்தில் பயன்படுத்தப்படும் மொழிகள்',
   'enableBilingualBills': 'இருமொழிப் பதிவு',
   'showItemizedGstTable': 'GST பிரிப்புகளைக் காட்டு',
-  'displayDetailedItemizedGst': 'ஒவ்வொரு பொருளுக்கும் தனித்தனியாக ஜிஎஸ்டி விவரங்களை காண்பி',
+  'displayDetailedItemizedGst':
+      'ஒவ்வொரு பொருளுக்கும் தனித்தனியாக ஜிஎஸ்டி விவரங்களை காண்பி',
   'overviewOfInvoices': 'உங்கள் பட்டியல்களின் சுருக்கம்',
   'totalInvoiced': 'மொத்த பட்டியல்',
   'taxCollected': 'வசூலித்த வரி',
@@ -360,7 +374,8 @@ const Map<String, String> ta = {
   'egMumbai': 'எ.கா. சென்னை',
   'selectState': 'மாநிலத்தை தேர்வு செய்க',
   'optionalLabel': 'விருப்பத்திற்குரியது',
-  'pdfPreviewHeader': 'PDF முன்னோட்டம் — உங்கள் பட்டியல் இப்படித்தான் இருக்கும்',
+  'pdfPreviewHeader':
+      'PDF முன்னோட்டம் — உங்கள் பட்டியல் இப்படித்தான் இருக்கும்',
   'termsAndConditionsLabel': 'விதிமுறைகள் & வரையறைகள்',
   'invoiceTypes_tax_invoice': 'வரிப் பட்டியல்',
   'invoiceTypes_proforma': 'மதிப்பீட்டுப் பட்டியல்',
@@ -370,10 +385,13 @@ const Map<String, String> ta = {
   'invoiceTypes_delivery_challan': 'வழங்கல் சீட்டு',
   'invoiceDesc_tax_invoice': 'பொருட்கள் விற்பனைக்கான சாதாரண வரிப் பட்டியல்',
   'invoiceDesc_proforma': 'விற்பனைக்கு முந்தைய மதிப்பீடு',
-  'invoiceDesc_bill_of_supply': 'வரி விலக்கு அளிக்கப்பட்ட பொருட்களுக்கான பட்டியல்',
-  'invoiceDesc_composition': 'காம்போசிஷன் திட்டத்தின் கீழ் உள்ள வணிகங்களுக்கானது',
+  'invoiceDesc_bill_of_supply':
+      'வரி விலக்கு அளிக்கப்பட்ட பொருட்களுக்கான பட்டியல்',
+  'invoiceDesc_composition':
+      'காம்போசிஷன் திட்டத்தின் கீழ் உள்ள வணிகங்களுக்கானது',
   'invoiceDesc_credit_note': 'விற்பனைத் திருப்பம் அல்லது தொகையைக் குறைக்க',
-  'invoiceDesc_delivery_challan': 'பொருட்களை வேலைக்கு அல்லது வேறு கிளைக்கு அனுப்ப',
+  'invoiceDesc_delivery_challan':
+      'பொருட்களை வேலைக்கு அல்லது வேறு கிளைக்கு அனுப்ப',
   'totalDueLabel': 'செலுத்த வேண்டிய மொத்தத் தொகை',
   'descriptionCol': 'விளக்கம்',
   'hsnSacCol': 'HSN/SAC',
@@ -382,14 +400,18 @@ const Map<String, String> ta = {
   'termsHeading': 'விதிமுறைகள் & வரையறைகள்',
   'insertPreset': 'முன்-அமைப்பைச் செருகு',
   'pickBusinessType': 'வணிக வகையைத் தேர்ந்தெடு',
-  'indiaSpecificStarter': 'இந்திய வணிகங்களுக்கான மாதிரி வரிகள். தேவைக்கேற்ப திருத்தலாம்.',
+  'indiaSpecificStarter':
+      'இந்திய வணிகங்களுக்கான மாதிரி வரிகள். தேவைக்கேற்ப திருத்தலாம்.',
   'loadSavedTemplate': 'வார்ப்புருவை ஏற்று',
-  'termsAppearsOnInvoice': 'விதிமுறைகள் (பட்டியலில் தோன்றும் — rich formatting ஆதரவு)',
+  'termsAppearsOnInvoice':
+      'விதிமுறைகள் (பட்டியலில் தோன்றும் — rich formatting ஆதரவு)',
   'privateNote': 'தனிப்பட்ட குறிப்பு (பட்டியலில் தோன்றாது)',
-  'privateNoteEg': 'எ.கா. வணிகர் 15 நாள் கடன் கேட்டார், ரவியால் பரிந்துரைக்கப்பட்டது...',
+  'privateNoteEg':
+      'எ.கா. வணிகர் 15 நாள் கடன் கேட்டார், ரவியால் பரிந்துரைக்கப்பட்டது...',
   'additionalPages': 'கூடுதல் பக்கங்கள் / பிரிவுகள்',
   'addSectionBtn': 'பிரிவைச் சேர்',
-  'addExtraSectionsDesc': 'பட்டியல் அடிக்குறிப்புக்குப் பிறகு தோன்றும் கூடுதல் பிரிவுகளைச் சேர்க்கவும். (HTML உள்ளடக்கத்தை ஒட்டலாம்).',
+  'addExtraSectionsDesc':
+      'பட்டியல் அடிக்குறிப்புக்குப் பிறகு தோன்றும் கூடுதல் பிரிவுகளைச் சேர்க்கவும். (HTML உள்ளடக்கத்தை ஒட்டலாம்).',
   'noExtraSections': 'பிரிவுகள் இல்லை',
   'clientsTitle': 'வணிகர்கள்',
   'clientsSubtitle': 'வணிகர் வாரியான பட்டியல் மற்றும் நிலுவை',
@@ -451,7 +473,8 @@ const Map<String, String> ta = {
   'emailPlaceholder': 'client@example.com',
   'phoneLabel': 'தொலைபேசி',
   'phonePlaceholder': '+91 98765 43210',
-  'sezUnitTitle': 'SEZ / Developer — மாநிலத்தைப் பொருட்படுத்தாமல் IGST விதிக்கப்படும் (பிரிவு 16, IGST சட்டம்).',
+  'sezUnitTitle':
+      'SEZ / Developer — மாநிலத்தைப் பொருட்படுத்தாமல் IGST விதிக்கப்படும் (பிரிவு 16, IGST சட்டம்).',
   'updateClientModalBtn': 'புதுப்பி',
   'saveClientModalBtn': 'சேமி',
   'cancelModalBtn': 'கைவிடு',
@@ -515,7 +538,8 @@ const Map<String, String> ta = {
   'receiptSavedToast': 'பற்றுச்சீட்டு சேமிக்கப்பட்டது',
   'deleteReceiptConfirmMsg': 'இந்த ரசீதை நீக்க வேண்டுமா?',
   'deletedToast': 'நீக்கப்பட்டது',
-  'expensesSubtitle': 'P&L மற்றும் ITC கோரிக்கைகளுக்கான வணிக செலவுகளைக் கண்காணிக்கவும்',
+  'expensesSubtitle':
+      'P&L மற்றும் ITC கோரிக்கைகளுக்கான வணிக செலவுகளைக் கண்காணிக்கவும்',
   'exportCsvBtn': 'CSV ஏற்றுமதி செய்',
   'addExpenseBtn': 'செலவைச் சேர்',
   'totalExpensesCard': 'மொத்த செலவுகள்',
@@ -550,7 +574,8 @@ const Map<String, String> ta = {
   'expensesCsvDownloadedToast': 'செலவுகள் CSV பதிவிறக்கப்பட்டது',
   'gstCol': 'GST',
   'vendorCol': 'விற்பனையாளர்',
-  'purchasesSubtitle': 'GSTR-3B இல் ITC கோருவதற்கு சப்ளையர் பில்களைக் கண்காணிக்கவும்',
+  'purchasesSubtitle':
+      'GSTR-3B இல் ITC கோருவதற்கு சப்ளையர் பில்களைக் கண்காணிக்கவும்',
   'addPurchaseBtn': 'கொள்முதலைச் சேர்',
   'totalPurchasesCard': 'மொத்த கொள்முதல்',
   'gstItcEligibleCard': 'GST (ITC தகுதியுடையது)',
@@ -569,7 +594,8 @@ const Map<String, String> ta = {
   'invoiceNumberPlaceholder': 'சப்ளையர் பட்டியல் எண்',
   'interstatePurchaseLabel': 'மாநிலங்களுக்கு இடையேயான கொள்முதல்',
   'interstatePurchaseDesc': 'சப்ளையர் IGST வசூலித்துள்ளார் (வேறு மாநிலம்)',
-  'interstatePurchaseTip': 'CGST + SGST-க்கு பதிலாக GSTR-3B இல் ITC-ஐ IGST-க்கு மாற்றுகிறது. குறிப்பு: சப்ளையர் GSTIN இன் முதல் 2 இலக்கங்கள் = அவர்களின் மாநிலக் குறியீடு.',
+  'interstatePurchaseTip':
+      'CGST + SGST-க்கு பதிலாக GSTR-3B இல் ITC-ஐ IGST-க்கு மாற்றுகிறது. குறிப்பு: சப்ளையர் GSTIN இன் முதல் 2 இலக்கங்கள் = அவர்களின் மாநிலக் குறியீடு.',
   'itemsTitle': 'பொருட்கள்',
   'qtyCol': 'அளவு',
   'taxPercentCol': 'வரி %',
@@ -589,11 +615,11 @@ const Map<String, String> ta = {
   'supplierCol': 'சப்ளையர்',
   'gstinCol': 'GSTIN',
   'taxableCol': 'வரிக்குட்பட்டது',
-  'recurringInvoicesSubtitle': 'நிலையான வணிகர்களுக்கான பட்டியல்களை தானியங்கியாக உருவாக்குங்கள்',
+  'recurringInvoicesSubtitle':
+      'நிலையான வணிகர்களுக்கான பட்டியல்களை தானியங்கியாக உருவாக்குங்கள்',
   'invoiceLimitDesc': 'அனைத்து வணிகர்களுக்கான மொத்தப் பட்டியல்கள்',
   'signing_out': 'வெளியேறுகிறது...',
   'signOutSuccess': 'வெற்றிகரமாக வெளியேற்றப்பட்டது',
-
   'newTemplateBtn': 'புதிய வார்ப்புரு',
   'dueForGeneration': 'உருவாக்கப்பட வேண்டியவை',
   'editTemplateTitle': 'வார்ப்புருவைத் திருத்து',
@@ -608,10 +634,12 @@ const Map<String, String> ta = {
   'createTemplateBtn': 'புதிய வார்ப்புரு',
   'frequencyCol': 'நிகழ்வெண்',
   'nextDueCol': 'அடுத்த தேதி',
-  'addAtLeastOneItemToast': 'விளக்கம் மற்றும் விலையுடன் குறைந்தது ஒரு பொருளையாவது சேர்க்கவும்',
+  'addAtLeastOneItemToast':
+      'விளக்கம் மற்றும் விலையுடன் குறைந்தது ஒரு பொருளையாவது சேர்க்கவும்',
   'templateUpdatedToast': 'வார்ப்புரு புதுப்பிக்கப்பட்டது',
   'recurringCreatedToast': 'தொடர் பட்டியல் உருவாக்கப்பட்டது',
-  'deleteTemplateConfirmMsg': 'இந்தத் தொடர் பட்டியல் வார்ப்புருவை நீக்க வேண்டுமா?',
+  'deleteTemplateConfirmMsg':
+      'இந்தத் தொடர் பட்டியல் வார்ப்புருவை நீக்க வேண்டுமா?',
   'pausedToast': 'இடைநிறுத்தப்பட்டது',
   'activatedToast': 'செயல்படுத்தப்பட்டது',
   'failedToGenerateToast': 'உருவாக்க முடியவில்லை:',
@@ -725,7 +753,8 @@ const Map<String, String> ta = {
   'codesWord': 'குறியீடுகள்',
   'notificationsTitle': 'அறிவிப்புகள்',
   'allClearNotif': 'எல்லாம் சரி ✨',
-  'recurringAutoFireNotif': 'இன்று தானியங்கியாக உருவாக்கப்பட்ட தொடர் பட்டியல்கள்',
+  'recurringAutoFireNotif':
+      'இன்று தானியங்கியாக உருவாக்கப்பட்ட தொடர் பட்டியல்கள்',
   'checkDashboardForNewBills': 'பட்டியல்களுக்கு முகப்பைப் பார்க்கவும்',
   'overdueInvoicesNotif': 'காலதாமதமான பட்டியல்கள்',
   'moreWord': 'மேலும்',
@@ -735,12 +764,14 @@ const Map<String, String> ta = {
   'lowStockNotif': 'இருப்பு குறைவாக உள்ள பொருட்கள்',
   'leftWord': 'மீதம்',
   'duplicateProductsTitle': 'பொருட்களை நகலெடுக்கவா?',
-  'duplicateProductsMessage': 'தேர்ந்தெடுக்கப்பட்ட பொருட்களை நகலெடுக்க விரும்புகிறீர்களா?',
+  'duplicateProductsMessage':
+      'தேர்ந்தெடுக்கப்பட்ட பொருட்களை நகலெடுக்க விரும்புகிறீர்களா?',
   'saveDuplicate': 'நகலெடு',
   'productsDuplicatedSuccess': 'பொருட்கள் வெற்றிகரமாக நகலெடுக்கப்பட்டன',
   'errorDuplicating': 'நகலெடுப்பதில் பிழை',
   'deleteProductsTitle': 'பொருட்களை நீக்கவா?',
-  'deleteProductsMessage': 'தேர்ந்தெடுக்கப்பட்ட பொருட்களை நீக்க விரும்புகிறீர்களா? இதை மாற்ற முடியாது.',
+  'deleteProductsMessage':
+      'தேர்ந்தெடுக்கப்பட்ட பொருட்களை நீக்க விரும்புகிறீர்களா? இதை மாற்ற முடியாது.',
   'deletedSuccessfully': 'வெற்றிகரமாக நீக்கப்பட்டது',
   'errorDeleting': 'நீக்குவதில் பிழை',
   'hc_100Safe': '100% பாதுகாப்பானது',
@@ -749,10 +780,12 @@ const Map<String, String> ta = {
   'hc_onYourDesktop': 'திரையகத்தில்',
   'hc_2OrSearch': '2. அல்லது தேடுங்கள்',
   'hc_inStartMenu': 'தொடக்கப் பட்டியலில்',
-  'hc_startingThisPageWillOpen': 'தொடங்குகிறது... இந்தப் பக்கம் தானாகவே திறக்கப்படும்.',
+  'hc_startingThisPageWillOpen':
+      'தொடங்குகிறது... இந்தப் பக்கம் தானாகவே திறக்கப்படும்.',
   'hc_typeACommandOrPage': 'கட்டளை அல்லது பக்கப் பெயரை உள்ளிடுக…',
   'hc_yourDataIsSafe': 'உங்கள் தரவு பாதுகாப்பானது.',
-  'hc_updatesOnlyRefreshTheApp': 'புதுப்பிப்புகள் செயலி நிரலை மட்டுமே புதுப்பிக்கும் — உங்கள்',
+  'hc_updatesOnlyRefreshTheApp':
+      'புதுப்பிப்புகள் செயலி நிரலை மட்டுமே புதுப்பிக்கும் — உங்கள்',
   'hc_pdfArchiveAre': 'PDF காப்பகங்கள்',
   'hc_neverTouched': 'மாற்றப்படாது',
   'hc_githubReleases': 'GitHub வெளியீடுகள்',
@@ -767,8 +800,10 @@ const Map<String, String> ta = {
   'hc_primaryLanguage': 'முதன்மை மொழி',
   'hc_secondaryLanguage': 'இரண்டாம் நிலை மொழி',
   'hc_active': 'செயலில்',
-  'hc_yourExistingBankDetailsAre': 'உங்கள் தற்போதைய வங்கி தரவுகள் இந்தத் தன்னுருவில் உள்ளன.',
-  'hc_clickBelowToImportThem': 'அவற்றை முதல் கட்டணக் கணக்காக இறக்குமதி செய்யக் கீழே சொடுக்கவும், பின்னர் மேலும் சேர்க்கவும்.',
+  'hc_yourExistingBankDetailsAre':
+      'உங்கள் தற்போதைய வங்கி தரவுகள் இந்தத் தன்னுருவில் உள்ளன.',
+  'hc_clickBelowToImportThem':
+      'அவற்றை முதல் கட்டணக் கணக்காக இறக்குமதி செய்யக் கீழே சொடுக்கவும், பின்னர் மேலும் சேர்க்கவும்.',
   'hc_defaultAccount': 'இயல்புநிலைக் கணக்கு',
   'hc_inactive': 'செயலற்றது',
   'hc_setAsDefault': 'இயல்புநிலையாக அமை',
@@ -792,10 +827,12 @@ const Map<String, String> ta = {
   'hc_openGoogleCloudConsole': 'Google Cloud Console-ஐத் திற',
   'hc_driveFolderName': 'Drive கோப்புறையின் பெயர்',
   'hc_status': 'நிலை',
-  'hc_yourDataWillNotBe': 'உங்கள் தரவு பாதிக்கப்படாது. புதுப்பிக்கக் கீழே சொடுக்கவும்:',
+  'hc_yourDataWillNotBe':
+      'உங்கள் தரவு பாதிக்கப்படாது. புதுப்பிக்கக் கீழே சொடுக்கவும்:',
   'hc_preferences': 'விருப்பங்கள்',
   'hc_uiLanguageDataLanguages': 'பயனர் இடைமுக மொழி, தரவு மொழிகள்',
-  'hc_accountsInvoiceFormatsTerms': 'கணக்குகள், பட்டியல் வடிவங்கள், விதிமுறைகள்',
+  'hc_accountsInvoiceFormatsTerms':
+      'கணக்குகள், பட்டியல் வடிவங்கள், விதிமுறைகள்',
   'hc_advanced': 'மேம்பட்டவை',
   'hc_appVersionsCache': 'செயலி பதிப்புகள், தற்காலிக சேமிப்பு',
   'hc_selectASetting': 'அமைப்பைத் தேர்ந்தெடுக்கவும்',
@@ -848,7 +885,8 @@ const Map<String, String> ta = {
   'hc_noDocumentsIssued': 'ஆவணங்கள் வழங்கப்படவில்லை.',
   'hc_natureOfSupplies': 'வழங்கலின் தன்மை',
   'hc_na': 'பொருந்தாது',
-  'hc_table32IntermaanilamSuppliesTo': 'அட்டவணை 3.2 — பதிவு செய்யப்படாதவர்களுக்கான மாநிலங்களுக்கு இடையிலான வழங்கல்',
+  'hc_table32IntermaanilamSuppliesTo':
+      'அட்டவணை 3.2 — பதிவு செய்யப்படாதவர்களுக்கான மாநிலங்களுக்கு இடையிலான வழங்கல்',
   'hc_placeOfSupply': 'வழங்கல் இடம்',
   'hc_details': 'தரவுகள்',
   'hc_netItcAvailable': 'கிடைக்கக்கூடிய நிகர ITC',
@@ -860,13 +898,15 @@ const Map<String, String> ta = {
   'hc_howToUse': 'எப்படிப் பயன்படுத்துவது:',
   'hc_import2bJson': '2B JSON-ஐ இறக்குமதி செய்',
   'hc_purchaseBills': 'கொள்முதல் பட்டியல்கள்',
-  'hc_importYourGstr2bJsonTo': 'உங்கள் கொள்முதல் தரவுகளுடன் ஒப்பிட உங்கள் GSTR-2B JSON-ஐ இறக்குமதி செய்யவும்.',
+  'hc_importYourGstr2bJsonTo':
+      'உங்கள் கொள்முதல் தரவுகளுடன் ஒப்பிட உங்கள் GSTR-2B JSON-ஐ இறக்குமதி செய்யவும்.',
   'hc_supplier': 'வழங்குபவர்',
   'hc_invoiceNo1': 'பட்டியல் எண்.',
   'hc_2bValue': '2B மதிப்பு',
   'hc_booksValue': 'கணக்கு மதிப்பு',
   'hc_diff': 'வித்தியாசம்',
-  'hc_noEntriesMatchThisFilter': 'இந்த வடிகட்டிக்குப் பொருத்தமான பதிவுகள் ஏதுமில்லை.',
+  'hc_noEntriesMatchThisFilter':
+      'இந்த வடிகட்டிக்குப் பொருத்தமான பதிவுகள் ஏதுமில்லை.',
   'hc_whatThisIs': 'இது என்ன:',
   'hc_form26q': 'படிவம் 26Q',
   'hc_form27eq': 'படிவம் 27EQ',
@@ -879,15 +919,19 @@ const Map<String, String> ta = {
   'hc_totalTcsCollected': 'வசூலிக்கப்பட்ட மொத்த TCS',
   'hc_customizeTcs': 'தனிப்பயனாக்கு → TCS',
   'hc_steps': 'படிகள்:',
-  'hc_dueR1By11th3b': '| கெடு: R1 11ஆம் தேதிக்குள், 3B அடுத்த மாதம் 20ஆம் தேதிக்குள் | தாமதக் கட்டணம்: நாள் ஒன்றுக்கு ₹50',
+  'hc_dueR1By11th3b':
+      '| கெடு: R1 11ஆம் தேதிக்குள், 3B அடுத்த மாதம் 20ஆம் தேதிக்குள் | தாமதக் கட்டணம்: நாள் ஒன்றுக்கு ₹50',
   'hc_gstr1ProTips': 'GSTR-1 சிறப்பு வழிகாட்டுதல்கள்',
   'hc_fastestMethod': 'விரைவான முறை:',
-  'hc_exportGstr1JsonFromThe': 'மேலேயுள்ள GSTR-1 பட்டியில் இருந்து GSTR-1 JSON-ஐ ஏற்றுமதி செய் → GST இணையதளத்திற்குச் செல் → GSTR-1 → இணையத்தொடர்பின்றி தயார் செய் → ஆஃப்லைன் கருவியைப் பதிவிறக்கு → JSON-ஐ இறக்குமதி செய் → பதிவேற்று. 90% நேரத்தைச் சேமிக்கிறது.',
+  'hc_exportGstr1JsonFromThe':
+      'மேலேயுள்ள GSTR-1 பட்டியில் இருந்து GSTR-1 JSON-ஐ ஏற்றுமதி செய் → GST இணையதளத்திற்குச் செல் → GSTR-1 → இணையத்தொடர்பின்றி தயார் செய் → ஆஃப்லைன் கருவியைப் பதிவிறக்கு → JSON-ஐ இறக்குமதி செய் → பதிவேற்று. 90% நேரத்தைச் சேமிக்கிறது.',
   'hc_gstr3bProTips': 'GSTR-3B சிறப்பு வழிகாட்டுதல்கள்',
   'hc_fromJuly2025': 'ஜூலை 2025 முதல்:',
-  'hc_table3AutopopulatesFromGstr1': 'அட்டவணை 3 GSTR-1 இலிருந்து தானாகவே நிரப்பப்படும் — சரிபார்க்கவும், மதிப்புகளை மீண்டும் உள்ளிட வேண்டாம்.',
+  'hc_table3AutopopulatesFromGstr1':
+      'அட்டவணை 3 GSTR-1 இலிருந்து தானாகவே நிரப்பப்படும் — சரிபார்க்கவும், மதிப்புகளை மீண்டும் உள்ளிட வேண்டாம்.',
   'hc_itcMatching': 'ITC பொருத்துதல்:',
-  'hc_alwaysCheckGstr2bStatementBefore': 'ITC-ஐக் கோருவதற்கு முன் எப்போதும் GSTR-2B அறிக்கையைச் சரிபார்க்கவும். படிவங்கள் → GSTR-2B → பதிவிறக்கு. GSTR-2B-இல் தோன்றும் ITC-ஐ மட்டுமே கோரவும்.',
+  'hc_alwaysCheckGstr2bStatementBefore':
+      'ITC-ஐக் கோருவதற்கு முன் எப்போதும் GSTR-2B அறிக்கையைச் சரிபார்க்கவும். படிவங்கள் → GSTR-2B → பதிவிறக்கு. GSTR-2B-இல் தோன்றும் ITC-ஐ மட்டுமே கோரவும்.',
   'hc_payment': 'பணம் செலுத்துதல்:',
   'hc_interestCalculation': 'வட்டி கணக்கீடு:',
   'hc_reverseCharge': 'எதிர்மறை வரி:',
@@ -900,29 +944,40 @@ const Map<String, String> ta = {
   'hc_noTaxLiability': 'வரிப் பொறுப்பு ஏதுமில்லை',
   'hc_noInwardSupplies': 'உள்ளே வரும் வழங்கல்கள் ஏதுமில்லை',
   'hc_liableToReverseCharge': 'எதிர்மறை வரிக்கு உட்பட்டது',
-  'hc_ifAnyOfTheAbove': 'மேற்கூறியவற்றில் ஏதேனும் மதிப்பு இருந்தால், நீங்கள் வழக்கமான படிவத்தைத்தான் தாக்கல் செய்ய வேண்டும் — NIL அல்ல',
-  'hc_nilGstr3bFileAfterNil': 'NIL GSTR-3B — NIL GSTR-1-க்குப் பிறகு தாக்கல் செய்யவும்',
+  'hc_ifAnyOfTheAbove':
+      'மேற்கூறியவற்றில் ஏதேனும் மதிப்பு இருந்தால், நீங்கள் வழக்கமான படிவத்தைத்தான் தாக்கல் செய்ய வேண்டும் — NIL அல்ல',
+  'hc_nilGstr3bFileAfterNil':
+      'NIL GSTR-3B — NIL GSTR-1-க்குப் பிறகு தாக்கல் செய்யவும்',
   'hc_nilReturnQuickSummary': 'NIL படிவம் விரைவான சுருக்கம்',
   'hc_nilGstr1AndNilGstr3b': 'NIL GSTR-1 மற்றும் NIL GSTR-3B ஆகியவை',
   'hc_separateReturns': 'தனித்தனிப் படிவங்கள்',
   'hc_fileBoth': '— இரண்டையும் தாக்கல் செய்யவும்',
-  'hc_nilFilingTakes23Minutes': 'NIL தாக்கல் செய்யப் படிவம் ஒன்றுக்கு 2-3 நிமிடங்கள் ஆகும் — உள்நுழையவும், பூஜ்ஜியங்களைச் சரிபார்க்கவும், சமர்ப்பிக்கவும், தாக்கல் செய்யவும்',
-  'hc_youCanFileNilReturns': 'குறுஞ்செய்தி மூலமாகவும் NIL படிவங்களைத் தாக்கல் செய்யலாம்: அனுப்புக',
+  'hc_nilFilingTakes23Minutes':
+      'NIL தாக்கல் செய்யப் படிவம் ஒன்றுக்கு 2-3 நிமிடங்கள் ஆகும் — உள்நுழையவும், பூஜ்ஜியங்களைச் சரிபார்க்கவும், சமர்ப்பிக்கவும், தாக்கல் செய்யவும்',
+  'hc_youCanFileNilReturns':
+      'குறுஞ்செய்தி மூலமாகவும் NIL படிவங்களைத் தாக்கல் செய்யலாம்: அனுப்புக',
   'hc_nilSpaceGstinSpaceReturn': 'NIL இடைவெளி GSTIN இடைவெளி படிவக் காலம்',
-  'hc_to14409VerifyWithOtp': '14409 என்ற எண்ணிற்கு. OTP-ஐக் கொண்டு சரிபார்க்கவும்.',
-  'hc_qrmpUsersFilingQuarterlyNil': 'காலாண்டுக்கு ஒருமுறை தாக்கல் செய்யும் QRMP பயனர்கள்: NIL படிவம் முழு காலாண்டையும் உள்ளடக்கும்',
+  'hc_to14409VerifyWithOtp':
+      '14409 என்ற எண்ணிற்கு. OTP-ஐக் கொண்டு சரிபார்க்கவும்.',
+  'hc_qrmpUsersFilingQuarterlyNil':
+      'காலாண்டுக்கு ஒருமுறை தாக்கல் செய்யும் QRMP பயனர்கள்: NIL படிவம் முழு காலாண்டையும் உள்ளடக்கும்',
   'hc_keyGstRulesToRemember': 'நினைவில் கொள்ள வேண்டிய முக்கிய GST விதிகள்',
-  'hc_itcForAnyInvoiceMust': 'எந்தவொரு பட்டியலுக்கான ITC-யும் அடுத்த நிதியாண்டின் செப்டம்பர் மாதப் படிவத்தின் கெடு தேதிக்குள் அல்லது ஆண்டுப் படிவம் தாக்கல் செய்யும் தேதிக்குள் — இதில் எது முந்தியதோ அதற்குள் கோரப்பட வேண்டும்.',
+  'hc_itcForAnyInvoiceMust':
+      'எந்தவொரு பட்டியலுக்கான ITC-யும் அடுத்த நிதியாண்டின் செப்டம்பர் மாதப் படிவத்தின் கெடு தேதிக்குள் அல்லது ஆண்டுப் படிவம் தாக்கல் செய்யும் தேதிக்குள் — இதில் எது முந்தியதோ அதற்குள் கோரப்பட வேண்டும்.',
   'hc_section34': 'பிரிவு 34:',
-  'hc_creditNotesMustBeIssued': 'அசல் பட்டியலின் நிதியாண்டு முடிந்த செப்டம்பர் 30-க்கு முன் அல்லது ஆண்டுப் படிவம் தாக்கல் செய்வதற்கு முன் — இதில் எது முந்தியதோ அதற்குள் வரவுக் குறிப்புகள் வழங்கப்பட வேண்டும்.',
+  'hc_creditNotesMustBeIssued':
+      'அசல் பட்டியலின் நிதியாண்டு முடிந்த செப்டம்பர் 30-க்கு முன் அல்லது ஆண்டுப் படிவம் தாக்கல் செய்வதற்கு முன் — இதில் எது முந்தியதோ அதற்குள் வரவுக் குறிப்புகள் வழங்கப்பட வேண்டும்.',
   'hc_section31': 'பிரிவு 31:',
-  'hc_taxInvoiceMustBeIssued': 'வழங்கும் நேரத்திலோ அல்லது அதற்கு முன்போ வரிப் பட்டியல் வழங்கப்பட வேண்டும். சேவைகளுக்கு, வழங்கிய 30 நாட்களுக்குள்.',
+  'hc_taxInvoiceMustBeIssued':
+      'வழங்கும் நேரத்திலோ அல்லது அதற்கு முன்போ வரிப் பட்டியல் வழங்கப்பட வேண்டும். சேவைகளுக்கு, வழங்கிய 30 நாட்களுக்குள்.',
   'hc_section49': 'பிரிவு 49:',
-  'hc_itcCanOnlyBeClaimed': 'GSTR-2B-இல் தோன்றும் பட்டியல்களுக்கு மட்டுமே ITC கோர முடியும். GSTR-2B-க்கு அப்பால் தற்காலிக ITC இல்லை.',
+  'hc_itcCanOnlyBeClaimed':
+      'GSTR-2B-இல் தோன்றும் பட்டியல்களுக்கு மட்டுமே ITC கோர முடியும். GSTR-2B-க்கு அப்பால் தற்காலிக ITC இல்லை.',
   'hc_section50': 'பிரிவு 50:',
   'hc_section7374': 'பிரிவு 73/74:',
   'hc_ewayBill': 'மின்னணு வழி ரசீது:',
-  'hc_cannotGenerateEwayBillsIf': 'தொடர்ந்து 2+ மாதங்களுக்கு GSTR-3B தாக்கல் செய்யப்படாவிட்டால் மின்னணு வழி ரசீதுகளை உருவாக்க முடியாது.',
+  'hc_cannotGenerateEwayBillsIf':
+      'தொடர்ந்து 2+ மாதங்களுக்கு GSTR-3B தாக்கல் செய்யப்படாவிட்டால் மின்னணு வழி ரசீதுகளை உருவாக்க முடியாது.',
   'hc_bulletList': 'புள்ளிப் பட்டியல்',
   'hc_numberedList': 'எண் பட்டியல்',
   'hc_heading': 'தலைப்பு',
@@ -930,7 +985,8 @@ const Map<String, String> ta = {
   'hc_insertLink': 'இணைப்பைச் செருகு',
   'hc_clearFormatting': 'வடிவமைப்பை அகற்று',
   'hc_allChangesSaved': 'மாற்றங்கள் சேமிக்கப்பட்டன',
-  'hc_addAClientNameAnd': 'சேமிக்க ஒரு வாடிக்கையாளர் பெயரையும் குறைந்தது ஒரு பொருளையாவது சேர்க்கவும்',
+  'hc_addAClientNameAnd':
+      'சேமிக்க ஒரு வாடிக்கையாளர் பெயரையும் குறைந்தது ஒரு பொருளையாவது சேர்க்கவும்',
   'hc_sacCode': 'SAC குறியீடு',
   'hc_invoiceTitle': 'பட்டியலின் தலைப்பு',
   'hc_currency': 'நாணயம்',
@@ -957,7 +1013,8 @@ const Map<String, String> ta = {
   'hc_saveChangesBeforeClosing': 'மூடுவதற்கு முன் மாற்றங்களைச் சேமிக்கவா?',
   'hc_forEstimationPurposesOnly': 'மதிப்பீட்டு நோக்கங்களுக்காக மட்டும்',
   'hc_against': 'இதற்கு எதிராக:',
-  'hc_thisIsNotATax': 'இது ஒரு வரிப் பட்டியல் அல்ல. மதிப்பீட்டு நோக்கங்களுக்காக மட்டும்.',
+  'hc_thisIsNotATax':
+      'இது ஒரு வரிப் பட்டியல் அல்ல. மதிப்பீட்டு நோக்கங்களுக்காக மட்டும்.',
   'hc_againstInvoice': 'பட்டியலுக்கு எதிராக:',
   'hc_disc': 'தள்ளுபடி',
   'hc_subtotal': 'உப மொத்தம்',
@@ -967,7 +1024,8 @@ const Map<String, String> ta = {
   'hc_reverseChargeApplicable': 'எதிர்மறை வரி பொருந்தும்.',
   'hc_exchangeRate': 'பரிமாற்ற விகிதம்',
   'hc_discardChanges': 'மாற்றங்களை நிராகரி',
-  'hc_discardWarning': 'நீங்கள் சேமிக்காத மாற்றங்களை உறுதியாக நிராகரிக்க வேண்டுமா?',
+  'hc_discardWarning':
+      'நீங்கள் சேமிக்காத மாற்றங்களை உறுதியாக நிராகரிக்க வேண்டுமா?',
   'hc_cancel': 'கைவிடு',
   'hc_discard': 'நிராகரி',
   'receiptDetails': 'ரசீது தரவுகள்',
@@ -1005,7 +1063,8 @@ const Map<String, String> ta = {
   'manage': 'நெறி',
   'addNew': 'புதிய',
   'shortBusinessNameLabel': 'குறுகிய வணிக பெயர் (பில் எண்ணுக்கு)',
-  'shortBusinessNameHelper': 'இது தானியங்கி பில் எண்ணில் முன்னொட்டாக பயன்படுத்தப்படும்.',
+  'shortBusinessNameHelper':
+      'இது தானியங்கி பில் எண்ணில் முன்னொட்டாக பயன்படுத்தப்படும்.',
   'authorizedSignatoryName': 'அங்கீகரிக்கப்பட்ட கையொப்பத்தின் பெயர்',
   'profileSaved': 'தன்னுரு சேமிக்கப்பட்டது!',
   'unsavedChangesWarning': 'சேமிக்கப்படாத மாற்றங்கள் உள்ளன. தொடரவா?',
@@ -1025,11 +1084,13 @@ const Map<String, String> ta = {
   'invoiceCount': 'பட்டியல் எண்ணிக்கை',
   'selectYourOperatingMode': 'உங்கள் கணக்குப் பகுதியைத் தேர்ந்தெடுக்கவும்',
   'languageSettingsSaved': 'அமைப்புகள் சேமிக்கப்பட்டன',
-  'usedAsTheDefaultPrefixForYourI': 'இது தானியங்கி பில் எண்ணில் முன்னொட்டாக பயன்படுத்தப்படும் (உதாரணமாக SJS/2026-27/0001).',
+  'usedAsTheDefaultPrefixForYourI':
+      'இது தானியங்கி பில் எண்ணில் முன்னொட்டாக பயன்படுத்தப்படும் (உதாரணமாக SJS/2026-27/0001).',
   'addAlternateMobile': 'மாற்று கைபேசி எண் சேர்க்க',
   'changeTheLanguageOfTheApplicat': 'பயன்பாட்டின் மொழியை மாற்றவும்.',
   'appUserName': 'பயனர் பெயர் (பயன்பாடு)',
-  'thisNameWillAppearOnTheAppHome': 'இந்த பெயர் பயன்பாட்டின் முகப்புத்திரையில் தோன்றும்.',
+  'thisNameWillAppearOnTheAppHome':
+      'இந்த பெயர் பயன்பாட்டின் முகப்புத்திரையில் தோன்றும்.',
   'userName': 'பயனர் பெயர்',
   'allowDataEntryInTwoLanguages': 'இரு மொழிகளிலும் தரவை உள்ளிட அனுமதிக்கவும்',
   'bankDetailsShownOnYourInvoices': 'பில்களில் காட்டப்படும் வங்கி தரவுகள்.',
@@ -1055,7 +1116,8 @@ const Map<String, String> ta = {
   'pincode': 'அஞ்சல் குறியீடு',
   'branchTamil': 'கிளை (தமிழ்)',
   'branchEnglish': 'கிளை (ஆங்கிலம்)',
-  'appearanceDescription': 'பில்லின் நிறம் மற்றும் அச்சிடும் மொழிகளை அமைக்கவும்.',
+  'appearanceDescription':
+      'பில்லின் நிறம் மற்றும் அச்சிடும் மொழிகளை அமைக்கவும்.',
   'billTheme': 'பில் தீம் (நிறம்)',
   'pachai': 'பச்சை',
   'uudha': 'ஊதா',
@@ -1074,10 +1136,12 @@ const Map<String, String> ta = {
   'clearCacheTitle': 'தேக்கத்தை அழி',
   'clearCacheDesc': 'தேக்கத்தை அழித்து பிழைகளை சரிசெய்யவும்.',
   'clearCacheBtn': 'தேக்கத்தை அழி',
-  'clearCacheConfirmDesc': 'பயன்பாடு மீண்டும் ஏற்றப்படும். மீண்டும் உள்நுழைய நேரிடலாம்.',
+  'clearCacheConfirmDesc':
+      'பயன்பாடு மீண்டும் ஏற்றப்படும். மீண்டும் உள்நுழைய நேரிடலாம்.',
   'signOutConfirmTitle': 'வெளியேற வேண்டுமா?',
   'signOutConfirmDesc': 'தரவை மீண்டும் அணுக உங்கள் கடவுச்சொல் தேவைப்படும்.',
-  'eraseConfirmDesc': 'மேகக்கணி தரவுகள் நிரந்தரமாக அழிக்கப்படும். இதை செயல்தவிர்க்க முடியாது.',
+  'eraseConfirmDesc':
+      'மேகக்கணி தரவுகள் நிரந்தரமாக அழிக்கப்படும். இதை செயல்தவிர்க்க முடியாது.',
   'confirmEmailLabel': 'மின்னஞ்சலை உறுதிசெய்க',
   'incorrectEmail': 'மின்னஞ்சல் பொருந்தவில்லை.',
   'confirmPassword': 'உறுதிசெய்க',
@@ -1103,12 +1167,14 @@ const Map<String, String> ta = {
   'muzhiyayTherthde': 'மொழியை தேர்ந்தெடு',
   'viruppamanaMozhiyayThervuSeiga': 'விருப்பமான மொழியை தேர்வு செய்க',
   'pattiyalMuthanmozhi': 'பட்டியல் முதன்மொழி',
-  'pattiyalilEmmozhiyayPayanpaduttaVendum': 'பட்டியலில் எம்மொழியை பயன்படுத்த வேண்டும்?',
+  'pattiyalilEmmozhiyayPayanpaduttaVendum':
+      'பட்டியலில் எம்மொழியை பயன்படுத்த வேண்டும்?',
   'tharavugalaiUlliduga': 'தரவுகளை உள்ளிடுக',
   'peyaraiUlliduga': 'பெயரை உள்ளிடுக',
   'gstPattiyalukkuPayanpadum': 'வழக்கமான GST பில்களுக்குப் பயன்படுத்தப்படும்.',
   'coolieVanigaPeyar': 'கூலி வணிகப் பெயர்',
-  'cooliePattiyalMatrumRaseethukkuPayanpadum': 'கூலி பில்கள் மற்றும் ரசீதுகளுக்குப் பயன்படுத்தப்படும்.',
+  'cooliePattiyalMatrumRaseethukkuPayanpadum':
+      'கூலி பில்கள் மற்றும் ரசீதுகளுக்குப் பயன்படுத்தப்படும்.',
   'savedSuccessfully': 'வெற்றிகரமாகச் சேமிக்கப்பட்டது',
   'hc_alsoSaveACopyTo': 'ஒரு நகலை எனது கூகுள் டிரைவிலும் சேமிக்கவும்',
   'vanigam': 'வணிகம்',
@@ -1118,7 +1184,6 @@ const Map<String, String> ta = {
   'uruvakku_amaippugal': 'உருவாக்கு அமைப்புகள்',
   'seyali_amaippugal': 'செயலி அமைப்புகள்',
   'pathugappu_amaippugal': 'பாதுகாப்பு அமைப்புகள்',
-
   'thirai': 'திரை',
   'pathugappu': 'பாதுகாப்பு',
   'menporul_vadivalar': 'மென்பொருள் வடிவாளர்',

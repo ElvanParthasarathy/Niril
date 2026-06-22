@@ -46,13 +46,15 @@ import 'src/features/shell/presentation/mobile/widgets/elvan_popup_menu.dart';
 import 'src/features/shell/presentation/mobile/widgets/elvan_top_bar_icon.dart';
 import 'src/features/shell/presentation/mobile/widgets/float_elvan_title.dart';
 import 'src/features/settings/presentation/settings_screen.dart';
+import 'src/features/niril_silk/presentation/pages/reports/silk_reports_page.dart';
+import 'src/features/niril_silk/presentation/pages/reports/silk_gst_returns_page.dart';
 
 import 'dart:io';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Force 120Hz display mode on supported Android devices (Samsung, OnePlus, Xiaomi)
   if (Platform.isAndroid) {
     try {
@@ -115,7 +117,8 @@ class ElvanNirilApp extends ConsumerWidget {
           primaryColor: CupertinoColors.activeBlue,
           textTheme: CupertinoTextThemeData(
             textStyle: TextStyle(fontFamily: 'ElvanSans', color: Colors.black),
-            actionTextStyle: TextStyle(fontFamily: 'ElvanSans', color: CupertinoColors.activeBlue),
+            actionTextStyle: TextStyle(
+                fontFamily: 'ElvanSans', color: CupertinoColors.activeBlue),
           ),
         ),
         snackBarTheme: SnackBarThemeData(
@@ -138,7 +141,8 @@ class ElvanNirilApp extends ConsumerWidget {
           primaryColor: CupertinoColors.activeBlue,
           textTheme: CupertinoTextThemeData(
             textStyle: TextStyle(fontFamily: 'ElvanSans', color: Colors.white),
-            actionTextStyle: TextStyle(fontFamily: 'ElvanSans', color: CupertinoColors.activeBlue),
+            actionTextStyle: TextStyle(
+                fontFamily: 'ElvanSans', color: CupertinoColors.activeBlue),
           ),
         ),
         snackBarTheme: SnackBarThemeData(
@@ -160,7 +164,8 @@ class ElvanNirilApp extends ConsumerWidget {
             // 1.5. Prevent UI flashing by waiting for database stream to initialize
             final isLoadingProfiles = ref.watch(profilesLoadingProvider);
             if (isLoadingProfiles) {
-              child = const Scaffold(key: ValueKey('loading'), backgroundColor: Colors.black);
+              child = const Scaffold(
+                  key: ValueKey('loading'), backgroundColor: Colors.black);
             } else {
               // 2. Smart Onboarding Check
               final hasBothProfiles = ref.watch(hasBothProfilesProvider);
@@ -214,7 +219,8 @@ class DeferredShellLoader extends ConsumerStatefulWidget {
   const DeferredShellLoader({super.key, required this.child});
 
   @override
-  ConsumerState<DeferredShellLoader> createState() => _DeferredShellLoaderState();
+  ConsumerState<DeferredShellLoader> createState() =>
+      _DeferredShellLoaderState();
 }
 
 class _DeferredShellLoaderState extends ConsumerState<DeferredShellLoader> {
@@ -227,10 +233,10 @@ class _DeferredShellLoaderState extends ConsumerState<DeferredShellLoader> {
     // 1. Wait for the main AnimatedSwitcher transition (600ms) to completely finish.
     Future.delayed(const Duration(milliseconds: 650), () {
       if (mounted) {
-        // 2. Add the heavy widget to the tree (with 0 opacity). 
+        // 2. Add the heavy widget to the tree (with 0 opacity).
         // This causes the "lag spike" while it builds, but the screen is static so it's invisible.
         setState(() => _buildReal = true);
-        
+
         // 3. Wait a tiny fraction of a second for Flutter to finish layout/paint of the heavy widget.
         Future.delayed(const Duration(milliseconds: 150), () {
           if (mounted) {
@@ -253,7 +259,7 @@ class _DeferredShellLoaderState extends ConsumerState<DeferredShellLoader> {
             opacity: _showReal ? 1.0 : 0.0,
             child: widget.child,
           ),
-          
+
         // The loading spinner (fades out as dashboard fades in)
         IgnorePointer(
           ignoring: _showReal,
@@ -296,6 +302,17 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
   int _currentTab = 0; // Start on "Invoices" tab
   int _navItemCount = 4; // Finalized count without debug
   bool _isSettingsOpen = false;
+  bool _isReportsOpen = false;
+  bool _isGstReturnsOpen = false;
+
+  void _clearCustomViews() {
+    _isSettingsOpen = false;
+    _isReportsOpen = false;
+    _isGstReturnsOpen = false;
+  }
+
+  bool get _hasCustomViewOpen =>
+      _isSettingsOpen || _isReportsOpen || _isGstReturnsOpen;
 
   void _onAddPressed() {
     final mode = ref.read(appModeProvider);
@@ -306,17 +323,25 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
       final uruvakkuSegment = ref.read(uruvakkuSegmentProvider);
       if (_currentTab == 1 && uruvakkuSegment == 1) {
         // Uruvakku Tab -> Receipts segment active
-        editor = mode == AppMode.coolie ? const CoolieReceiptEditor() : const SilkReceiptEditor();
+        editor = mode == AppMode.coolie
+            ? const CoolieReceiptEditor()
+            : const SilkReceiptEditor();
       } else {
         // Home Screen OR Uruvakku Tab -> Invoices segment active
-        editor = mode == AppMode.coolie ? const CoolieInvoiceEditor() : const SilkInvoiceEditor();
+        editor = mode == AppMode.coolie
+            ? const CoolieInvoiceEditor()
+            : const SilkInvoiceEditor();
       }
     } else if (_currentTab == 2) {
       // Merchants
-      editor = mode == AppMode.coolie ? const CoolieMerchantEditor() : const SilkMerchantEditor();
+      editor = mode == AppMode.coolie
+          ? const CoolieMerchantEditor()
+          : const SilkMerchantEditor();
     } else if (_currentTab == 3) {
       // Items/Inventory
-      editor = mode == AppMode.coolie ? const CoolieItemEditor() : const SilkItemEditor();
+      editor = mode == AppMode.coolie
+          ? const CoolieItemEditor()
+          : const SilkItemEditor();
     }
 
     if (editor != null) {
@@ -326,31 +351,35 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
 
   // ── 5 Tabs for the React app port ───────────────────────────────
   List<CustomNavItem> get _masterNavItems => [
-    CustomNavItem(
-      svgString: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V160h32v56a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H160V152a8,8,0,0,0-8-8H104a8,8,0,0,0-8,8v56H48V120l80-80,80,80Z"></path></svg>',
-      activeSvgString: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M224,120v96a8,8,0,0,1-8,8H160a8,8,0,0,1-8-8V164a4,4,0,0,0-4-4H108a4,4,0,0,0-4,4v52a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V120a16,16,0,0,1,4.69-11.31l80-80a16,16,0,0,1,22.62,0l80,80A16,16,0,0,1,224,120Z"></path></svg>',
-      label: 'home'.tr(context, ref),
-      headerLabel: 'appName'.tr(context, ref),
-    ),
-    CustomNavItem(
-      icon: CupertinoIcons.plus_app,
-      activeIcon: CupertinoIcons.plus_app_fill,
-      label: 'aakku'.tr(context, ref),
-      headerLabel: 'uruvakku'.tr(context, ref),
-    ),
-    CustomNavItem(
-      svgString: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"></path></svg>',
-      activeSvgString: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M164.47,195.63a8,8,0,0,1-6.7,12.37H10.23a8,8,0,0,1-6.7-12.37,95.83,95.83,0,0,1,47.22-37.71,60,60,0,1,1,66.5,0A95.83,95.83,0,0,1,164.47,195.63Zm87.91-.15a95.87,95.87,0,0,0-47.13-37.56A60,60,0,0,0,144.7,54.59a4,4,0,0,0-1.33,6A75.83,75.83,0,0,1,147,150.53a4,4,0,0,0,1.07,5.53,112.32,112.32,0,0,1,29.85,30.83,23.92,23.92,0,0,1,3.65,16.47,4,4,0,0,0,3.95,4.64h60.3a8,8,0,0,0,7.73-5.93A8.22,8.22,0,0,0,252.38,195.48Z"></path></svg>',
-      label: 'merchants'.tr(context, ref),
-      headerLabel: 'header_merchants'.tr(context, ref),
-    ),
-    CustomNavItem(
-      icon: CupertinoIcons.cube_box,
-      activeIcon: CupertinoIcons.cube_box_fill,
-      label: 'inventory'.tr(context, ref),
-      headerLabel: 'header_inventory'.tr(context, ref),
-    ),
-  ];
+        CustomNavItem(
+          svgString:
+              '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V160h32v56a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H160V152a8,8,0,0,0-8-8H104a8,8,0,0,0-8,8v56H48V120l80-80,80,80Z"></path></svg>',
+          activeSvgString:
+              '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M224,120v96a8,8,0,0,1-8,8H160a8,8,0,0,1-8-8V164a4,4,0,0,0-4-4H108a4,4,0,0,0-4,4v52a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V120a16,16,0,0,1,4.69-11.31l80-80a16,16,0,0,1,22.62,0l80,80A16,16,0,0,1,224,120Z"></path></svg>',
+          label: 'home'.tr(context, ref),
+          headerLabel: 'appName'.tr(context, ref),
+        ),
+        CustomNavItem(
+          icon: CupertinoIcons.plus_app,
+          activeIcon: CupertinoIcons.plus_app_fill,
+          label: 'aakku'.tr(context, ref),
+          headerLabel: 'uruvakku'.tr(context, ref),
+        ),
+        CustomNavItem(
+          svgString:
+              '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"></path></svg>',
+          activeSvgString:
+              '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M164.47,195.63a8,8,0,0,1-6.7,12.37H10.23a8,8,0,0,1-6.7-12.37,95.83,95.83,0,0,1,47.22-37.71,60,60,0,1,1,66.5,0A95.83,95.83,0,0,1,164.47,195.63Zm87.91-.15a95.87,95.87,0,0,0-47.13-37.56A60,60,0,0,0,144.7,54.59a4,4,0,0,0-1.33,6A75.83,75.83,0,0,1,147,150.53a4,4,0,0,0,1.07,5.53,112.32,112.32,0,0,1,29.85,30.83,23.92,23.92,0,0,1,3.65,16.47,4,4,0,0,0,3.95,4.64h60.3a8,8,0,0,0,7.73-5.93A8.22,8.22,0,0,0,252.38,195.48Z"></path></svg>',
+          label: 'merchants'.tr(context, ref),
+          headerLabel: 'header_merchants'.tr(context, ref),
+        ),
+        CustomNavItem(
+          icon: CupertinoIcons.cube_box,
+          activeIcon: CupertinoIcons.cube_box_fill,
+          label: 'inventory'.tr(context, ref),
+          headerLabel: 'header_inventory'.tr(context, ref),
+        ),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -359,18 +388,17 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
       _currentTab = _navItemCount > 0 ? _navItemCount - 1 : 0;
     }
 
-
     final currentItem = _masterNavItems[_currentTab];
     final String currentTitle = currentItem.headerLabel ?? currentItem.label;
 
     return PopScope(
-      canPop: _currentTab == 0 && !_isSettingsOpen,
+      canPop: _currentTab == 0 && !_hasCustomViewOpen,
       onPopInvoked: (didPop) {
         if (didPop) return;
 
-        if (_isSettingsOpen) {
+        if (_hasCustomViewOpen) {
           setState(() {
-            _isSettingsOpen = false;
+            _clearCustomViews();
           });
           return;
         }
@@ -396,11 +424,13 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
 
           if (isDesktop) {
             int desktopIndex = 0;
-            if (_currentTab == 0) desktopIndex = 0;
+            if (_currentTab == 0)
+              desktopIndex = 0;
             else if (_currentTab == 1) {
               final segment = ref.read(uruvakkuSegmentProvider);
               desktopIndex = segment == 0 ? 1 : 2;
-            } else if (_currentTab == 2) desktopIndex = 3;
+            } else if (_currentTab == 2)
+              desktopIndex = 3;
             else if (_currentTab == 3) desktopIndex = 4;
 
             final desktopNavItems = [
@@ -412,8 +442,10 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
                 headerLabel: 'pill_invoices'.tr(context, ref),
               ),
               CustomNavItem(
-                svgString: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M72,104a8,8,0,0,1,8-8h96a8,8,0,0,1,0,16H80A8,8,0,0,1,72,104Zm8,40h96a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16ZM232,56V208a8,8,0,0,1-11.58,7.15L192,200.94l-28.42,14.21a8,8,0,0,1-7.16,0L128,200.94,99.58,215.15a8,8,0,0,1-7.16,0L64,200.94,35.58,215.15A8,8,0,0,1,24,208V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56Zm-16,0H40V195.06l20.42-10.22a8,8,0,0,1,7.16,0L96,199.06l28.42-14.22a8,8,0,0,1,7.16,0L160,199.06l28.42-14.22a8,8,0,0,1,7.16,0L216,195.06Z"></path></svg>',
-                activeSvgString: '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M216,40H40A16,16,0,0,0,24,56V208a8,8,0,0,0,11.58,7.15L64,200.94l28.42,14.21a8,8,0,0,0,7.16,0L128,200.94l28.42,14.21a8,8,0,0,0,7.16,0L192,200.94l28.42,14.21A8,8,0,0,0,232,208V56A16,16,0,0,0,216,40ZM176,144H80a8,8,0,0,1,0-16h96a8,8,0,0,1,0,16Zm0-32H80a8,8,0,0,1,0-16h96a8,8,0,0,1,0,16Z"></path></svg>',
+                svgString:
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M72,104a8,8,0,0,1,8-8h96a8,8,0,0,1,0,16H80A8,8,0,0,1,72,104Zm8,40h96a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16ZM232,56V208a8,8,0,0,1-11.58,7.15L192,200.94l-28.42,14.21a8,8,0,0,1-7.16,0L128,200.94,99.58,215.15a8,8,0,0,1-7.16,0L64,200.94,35.58,215.15A8,8,0,0,1,24,208V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56Zm-16,0H40V195.06l20.42-10.22a8,8,0,0,1,7.16,0L96,199.06l28.42-14.22a8,8,0,0,1,7.16,0L160,199.06l28.42-14.22a8,8,0,0,1,7.16,0L216,195.06Z"></path></svg>',
+                activeSvgString:
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M216,40H40A16,16,0,0,0,24,56V208a8,8,0,0,0,11.58,7.15L64,200.94l28.42,14.21a8,8,0,0,0,7.16,0L128,200.94l28.42,14.21a8,8,0,0,0,7.16,0L192,200.94l28.42,14.21A8,8,0,0,0,232,208V56A16,16,0,0,0,216,40ZM176,144H80a8,8,0,0,1,0-16h96a8,8,0,0,1,0,16Zm0-32H80a8,8,0,0,1,0-16h96a8,8,0,0,1,0,16Z"></path></svg>',
                 label: 'receipt'.tr(context, ref),
                 headerLabel: 'pill_receipts'.tr(context, ref),
               ),
@@ -423,18 +455,22 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
 
             // Build the desktop toolbar for non-home pages
             Widget? desktopToolbar;
-            if (!_isSettingsOpen && desktopIndex != 0) {
+            if (!_hasCustomViewOpen && desktopIndex != 0) {
               final mode = ref.read(appModeProvider);
               String btnText = 'add'.tr(context, ref);
-              if (desktopIndex == 1) { // Invoices
-                btnText = mode == AppMode.coolie 
-                    ? 'newBill'.tr(context, ref) 
+              if (desktopIndex == 1) {
+                // Invoices
+                btnText = mode == AppMode.coolie
+                    ? 'newBill'.tr(context, ref)
                     : 'newInvoiceBtn'.tr(context, ref);
-              } else if (desktopIndex == 2) { // Receipts
+              } else if (desktopIndex == 2) {
+                // Receipts
                 btnText = 'newReceiptBtn'.tr(context, ref);
-              } else if (desktopIndex == 3) { // Merchants
+              } else if (desktopIndex == 3) {
+                // Merchants
                 btnText = 'addClient'.tr(context, ref);
-              } else if (desktopIndex == 4) { // Items
+              } else if (desktopIndex == 4) {
+                // Items
                 btnText = 'addProductBtn'.tr(context, ref);
               }
 
@@ -442,18 +478,42 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
                 searchPlaceholder: 'search'.tr(context, ref),
                 addButtonText: btnText,
                 onSearchChanged: (query) {
-                  if (desktopIndex == 1) { // Invoices
-                    if (mode == AppMode.coolie) ref.read(coolieInvoicesSearchQueryProvider.notifier).state = query;
-                    else ref.read(silkInvoicesSearchQueryProvider.notifier).state = query;
-                  } else if (desktopIndex == 2) { // Receipts
-                    if (mode == AppMode.coolie) ref.read(coolieReceiptsSearchQueryProvider.notifier).state = query;
-                    else ref.read(silkReceiptsSearchQueryProvider.notifier).state = query;
-                  } else if (desktopIndex == 3) { // Merchants
-                    if (mode == AppMode.coolie) ref.read(coolieMerchantsSearchQueryProvider.notifier).state = query;
-                    else ref.read(silkMerchantsSearchQueryProvider.notifier).state = query;
-                  } else if (desktopIndex == 4) { // Items
-                    if (mode == AppMode.coolie) ref.read(coolieItemsSearchQueryProvider.notifier).state = query;
-                    else ref.read(silkItemsSearchQueryProvider.notifier).state = query;
+                  if (desktopIndex == 1) {
+                    // Invoices
+                    if (mode == AppMode.coolie)
+                      ref
+                          .read(coolieInvoicesSearchQueryProvider.notifier)
+                          .state = query;
+                    else
+                      ref.read(silkInvoicesSearchQueryProvider.notifier).state =
+                          query;
+                  } else if (desktopIndex == 2) {
+                    // Receipts
+                    if (mode == AppMode.coolie)
+                      ref
+                          .read(coolieReceiptsSearchQueryProvider.notifier)
+                          .state = query;
+                    else
+                      ref.read(silkReceiptsSearchQueryProvider.notifier).state =
+                          query;
+                  } else if (desktopIndex == 3) {
+                    // Merchants
+                    if (mode == AppMode.coolie)
+                      ref
+                          .read(coolieMerchantsSearchQueryProvider.notifier)
+                          .state = query;
+                    else
+                      ref
+                          .read(silkMerchantsSearchQueryProvider.notifier)
+                          .state = query;
+                  } else if (desktopIndex == 4) {
+                    // Items
+                    if (mode == AppMode.coolie)
+                      ref.read(coolieItemsSearchQueryProvider.notifier).state =
+                          query;
+                    else
+                      ref.read(silkItemsSearchQueryProvider.notifier).state =
+                          query;
                   }
                 },
                 onAdd: _onAddPressed,
@@ -461,29 +521,70 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
             }
 
             return ElvanDesktopShell(
-              currentIndex: _isSettingsOpen ? -1 : desktopIndex,
+              currentIndex: _hasCustomViewOpen ? -1 : desktopIndex,
               onTabSelected: (index) {
                 if (index == 0) {
-                  setState(() { _currentTab = 0; _isSettingsOpen = false; });
+                  setState(() {
+                    _currentTab = 0;
+                    _clearCustomViews();
+                  });
                 } else if (index == 1) {
                   ref.read(uruvakkuSegmentProvider.notifier).state = 0;
-                  setState(() { _currentTab = 1; _isSettingsOpen = false; });
+                  setState(() {
+                    _currentTab = 1;
+                    _clearCustomViews();
+                  });
                 } else if (index == 2) {
                   ref.read(uruvakkuSegmentProvider.notifier).state = 1;
-                  setState(() { _currentTab = 1; _isSettingsOpen = false; });
+                  setState(() {
+                    _currentTab = 1;
+                    _clearCustomViews();
+                  });
                 } else if (index == 3) {
-                  setState(() { _currentTab = 2; _isSettingsOpen = false; });
+                  setState(() {
+                    _currentTab = 2;
+                    _clearCustomViews();
+                  });
                 } else if (index == 4) {
-                  setState(() { _currentTab = 3; _isSettingsOpen = false; });
+                  setState(() {
+                    _currentTab = 3;
+                    _clearCustomViews();
+                  });
                 }
               },
               onSettingsPressed: () {
                 setState(() {
+                  _clearCustomViews();
                   _isSettingsOpen = true;
                 });
               },
-              customContent: _isSettingsOpen ? const SettingsScreen() : null,
-              title: _isSettingsOpen ? 'settings'.tr(context, ref) : (desktopNavItems[desktopIndex].headerLabel ?? desktopNavItems[desktopIndex].label),
+              onReportsPressed: () {
+                setState(() {
+                  _clearCustomViews();
+                  _isReportsOpen = true;
+                });
+              },
+              onGstReturnsPressed: () {
+                setState(() {
+                  _clearCustomViews();
+                  _isGstReturnsOpen = true;
+                });
+              },
+              customContent: _isSettingsOpen
+                  ? const SettingsScreen()
+                  : _isReportsOpen
+                      ? const SilkReportsPage()
+                      : _isGstReturnsOpen
+                          ? const SilkGstReturnsPage()
+                          : null,
+              title: _isSettingsOpen
+                  ? 'settings'.tr(context, ref)
+                  : _isReportsOpen
+                      ? 'reports'.tr(context, ref)
+                      : _isGstReturnsOpen
+                          ? 'gstReturns'.tr(context, ref)
+                          : (desktopNavItems[desktopIndex].headerLabel ??
+                              desktopNavItems[desktopIndex].label),
               toolbar: desktopToolbar,
               navItems: desktopNavItems,
               slivers: [
@@ -493,11 +594,15 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
                 ),
                 SliverOffstage(
                   offstage: desktopIndex != 1,
-                  sliver: mode == AppMode.coolie ? const CoolieInvoicesPage() : const SilkInvoicesPage(),
+                  sliver: mode == AppMode.coolie
+                      ? const CoolieInvoicesPage()
+                      : const SilkInvoicesPage(),
                 ),
                 SliverOffstage(
                   offstage: desktopIndex != 2,
-                  sliver: mode == AppMode.coolie ? const CoolieReceiptsPage() : const SilkReceiptsPage(),
+                  sliver: mode == AppMode.coolie
+                      ? const CoolieReceiptsPage()
+                      : const SilkReceiptsPage(),
                 ),
                 SliverOffstage(
                   offstage: desktopIndex != 3,
@@ -518,83 +623,120 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
                 for (int i = 0; i < 4; i++)
                   ElvanShell(
                     assignedIndex: i,
-                  title: _masterNavItems[i].headerLabel ?? _masterNavItems[i].label,
-                  currentIndex: _currentTab,
-                  onTabSelected: (index) => setState(() => _currentTab = index),
-                  showSearchIcon: i != 0,
-                  onSearchChanged: (query) {
-                    final mode = ref.read(appModeProvider);
-                    if (i == 1) { // Uruvakku
-                      final segment = ref.read(uruvakkuSegmentProvider);
-                      if (mode == AppMode.coolie) {
-                        if (segment == 0) ref.read(coolieInvoicesSearchQueryProvider.notifier).state = query;
-                        else ref.read(coolieReceiptsSearchQueryProvider.notifier).state = query;
-                      } else {
-                        if (segment == 0) ref.read(silkInvoicesSearchQueryProvider.notifier).state = query;
-                        else ref.read(silkReceiptsSearchQueryProvider.notifier).state = query;
+                    title: _masterNavItems[i].headerLabel ??
+                        _masterNavItems[i].label,
+                    currentIndex: _currentTab,
+                    onTabSelected: (index) =>
+                        setState(() => _currentTab = index),
+                    showSearchIcon: i != 0,
+                    onSearchChanged: (query) {
+                      final mode = ref.read(appModeProvider);
+                      if (i == 1) {
+                        // Uruvakku
+                        final segment = ref.read(uruvakkuSegmentProvider);
+                        if (mode == AppMode.coolie) {
+                          if (segment == 0)
+                            ref
+                                .read(
+                                    coolieInvoicesSearchQueryProvider.notifier)
+                                .state = query;
+                          else
+                            ref
+                                .read(
+                                    coolieReceiptsSearchQueryProvider.notifier)
+                                .state = query;
+                        } else {
+                          if (segment == 0)
+                            ref
+                                .read(silkInvoicesSearchQueryProvider.notifier)
+                                .state = query;
+                          else
+                            ref
+                                .read(silkReceiptsSearchQueryProvider.notifier)
+                                .state = query;
+                        }
+                      } else if (i == 2) {
+                        // Viyabarigal
+                        if (mode == AppMode.coolie)
+                          ref
+                              .read(coolieMerchantsSearchQueryProvider.notifier)
+                              .state = query;
+                        else
+                          ref
+                              .read(silkMerchantsSearchQueryProvider.notifier)
+                              .state = query;
+                      } else if (i == 3) {
+                        // Porul
+                        if (mode == AppMode.coolie)
+                          ref
+                              .read(coolieItemsSearchQueryProvider.notifier)
+                              .state = query;
+                        else
+                          ref
+                              .read(silkItemsSearchQueryProvider.notifier)
+                              .state = query;
                       }
-                    } else if (i == 2) { // Viyabarigal
-                      if (mode == AppMode.coolie) ref.read(coolieMerchantsSearchQueryProvider.notifier).state = query;
-                      else ref.read(silkMerchantsSearchQueryProvider.notifier).state = query;
-                    } else if (i == 3) { // Porul
-                      if (mode == AppMode.coolie) ref.read(coolieItemsSearchQueryProvider.notifier).state = query;
-                      else ref.read(silkItemsSearchQueryProvider.notifier).state = query;
-                    }
-                  },
-                  navActions: [
-                    const SizedBox(width: 7),
-                    ElvanTopBarIcon(
-                      icon: CupertinoIcons.add,
-                      onTap: _onAddPressed,
-                    ),
-                    const SizedBox(width: 14),
-                    ElvanPopupMenu(
-                      showSelectOption: i > 0,
-                      isSilkHome: ref.watch(appModeProvider) != AppMode.coolie && i == 0,
-                    ),
-                    const SizedBox(width: 7),
-                  ],
-                  navItems: _masterNavItems.take(_navItemCount).toList(),
-                  slivers: [
-                    if (i == 0) const MugappuPage(),
-                    if (i == 1) const UruvakkuPage(),
-                    if (i == 2) const VanigarPage(),
-                    if (i == 3) const PorulPage(),
-                  ],
-                ),
-            ],
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 80.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FloatingActionButton.extended(
-                  heroTag: 'dev_seed',
-                  onPressed: () {
-                    ref.read(vanigaTharavugalProvider.notifier).seedData();
-                  },
-                  label: const Text('Dev: Seed'),
-                  icon: const Icon(CupertinoIcons.rocket),
-                  backgroundColor: Colors.green,
-                ),
-                const SizedBox(height: 8),
-                FloatingActionButton.extended(
-                  heroTag: 'dev_erase',
-                  onPressed: () {
-                    ref.read(vanigaTharavugalProvider.notifier).clearProfile();
-                    ref.read(appModeProvider.notifier).setMode(null); // Sign out
-                    Navigator.popUntil(context, (route) => route.isFirst);
-                  },
-                  label: const Text('Dev: Erase'),
-                  icon: const Icon(CupertinoIcons.trash),
-                  backgroundColor: Colors.red,
-                ),
+                    },
+                    navActions: [
+                      const SizedBox(width: 7),
+                      ElvanTopBarIcon(
+                        icon: CupertinoIcons.add,
+                        onTap: _onAddPressed,
+                      ),
+                      const SizedBox(width: 14),
+                      ElvanPopupMenu(
+                        showSelectOption: i > 0,
+                        isSilkHome:
+                            ref.watch(appModeProvider) != AppMode.coolie &&
+                                i == 0,
+                      ),
+                      const SizedBox(width: 7),
+                    ],
+                    navItems: _masterNavItems.take(_navItemCount).toList(),
+                    slivers: [
+                      if (i == 0) const MugappuPage(),
+                      if (i == 1) const UruvakkuPage(),
+                      if (i == 2) const VanigarPage(),
+                      if (i == 3) const PorulPage(),
+                    ],
+                  ),
               ],
             ),
-          ),
-        );
+            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+            floatingActionButton: Padding(
+              padding: const EdgeInsets.only(bottom: 80.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton.extended(
+                    heroTag: 'dev_seed',
+                    onPressed: () {
+                      ref.read(vanigaTharavugalProvider.notifier).seedData();
+                    },
+                    label: const Text('Dev: Seed'),
+                    icon: const Icon(CupertinoIcons.rocket),
+                    backgroundColor: Colors.green,
+                  ),
+                  const SizedBox(height: 8),
+                  FloatingActionButton.extended(
+                    heroTag: 'dev_erase',
+                    onPressed: () {
+                      ref
+                          .read(vanigaTharavugalProvider.notifier)
+                          .clearProfile();
+                      ref
+                          .read(appModeProvider.notifier)
+                          .setMode(null); // Sign out
+                      Navigator.popUntil(context, (route) => route.isFirst);
+                    },
+                    label: const Text('Dev: Erase'),
+                    icon: const Icon(CupertinoIcons.trash),
+                    backgroundColor: Colors.red,
+                  ),
+                ],
+              ),
+            ),
+          );
         },
       ),
     );

@@ -9,7 +9,8 @@ Future<T?> showElvanBottomSheet<T>({
   required BuildContext context,
   required WidgetBuilder builder,
 }) {
-  final isDesktop = !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
+  final isDesktop =
+      !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
 
   if (isDesktop) {
     return showDialog<T>(
@@ -17,7 +18,8 @@ Future<T?> showElvanBottomSheet<T>({
       useRootNavigator: true,
       builder: (context) {
         return Dialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           backgroundColor: Theme.of(context).brightness == Brightness.dark
               ? const Color(0xFF111111)
               : Colors.white,
@@ -86,13 +88,17 @@ class ElvanSelectionBottomSheet extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 24, right: 24, bottom: 8, top: 12),
+            padding:
+                const EdgeInsets.only(left: 24, right: 24, bottom: 8, top: 12),
             child: Text(
               title,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.5),
               ),
             ),
           ),
@@ -103,17 +109,22 @@ class ElvanSelectionBottomSheet extends ConsumerWidget {
                 onSelected(item);
               },
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 child: Row(
                   children: [
                     Text(
                       item.toLowerCase().tr(context, ref),
                       style: TextStyle(
                         fontSize: 16,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                        color: isSelected 
-                            ? Theme.of(context).colorScheme.onSurface 
-                            : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                        fontWeight:
+                            isSelected ? FontWeight.w600 : FontWeight.w400,
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.onSurface
+                            : Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withValues(alpha: 0.7),
                       ),
                     ),
                     const Spacer(),

@@ -49,7 +49,10 @@ const List<Map<String, String>> silkIndianStates = [
   {"en": "Bihar", "ta": "பீகார்"},
   {"en": "Chandigarh", "ta": "சண்டிகர்"},
   {"en": "Chhattisgarh", "ta": "சத்தீஸ்கர்"},
-  {"en": "Dadra and Nagar Haveli and Daman and Diu", "ta": "தாத்ரா நகர் ஹவேலி மற்றும் டாமன் டையூ"},
+  {
+    "en": "Dadra and Nagar Haveli and Daman and Diu",
+    "ta": "தாத்ரா நகர் ஹவேலி மற்றும் டாமன் டையூ"
+  },
   {"en": "Delhi", "ta": "டெல்லி"},
   {"en": "Goa", "ta": "கோவா"},
   {"en": "Gujarat", "ta": "குஜராத்"},

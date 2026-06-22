@@ -35,6 +35,8 @@ class ElvanDesktopSidebar extends ConsumerWidget {
   final int currentIndex;
   final ValueChanged<int> onTabSelected;
   final VoidCallback onSettingsPressed;
+  final VoidCallback onReportsPressed;
+  final VoidCallback onGstReturnsPressed;
   final List<CustomNavItem> navItems;
   final AppMode appMode;
 
@@ -45,6 +47,8 @@ class ElvanDesktopSidebar extends ConsumerWidget {
     required this.currentIndex,
     required this.onTabSelected,
     required this.onSettingsPressed,
+    required this.onReportsPressed,
+    required this.onGstReturnsPressed,
     required this.navItems,
     required this.appMode,
   });
@@ -119,13 +123,7 @@ class ElvanDesktopSidebar extends ConsumerWidget {
                           isSelected: false,
                           isDark: isDark,
                           isCollapsed: isCollapsed,
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                ElvanPageRoute(
-                                    builder: (context) =>
-                                        const SilkReportsPage()));
-                          },
+                          onTap: onReportsPressed,
                         ),
                       ),
                     ),
@@ -140,13 +138,7 @@ class ElvanDesktopSidebar extends ConsumerWidget {
                           isSelected: false,
                           isDark: isDark,
                           isCollapsed: isCollapsed,
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                ElvanPageRoute(
-                                    builder: (context) =>
-                                        const SilkGstReturnsPage()));
-                          },
+                          onTap: onGstReturnsPressed,
                         ),
                       ),
                     ),

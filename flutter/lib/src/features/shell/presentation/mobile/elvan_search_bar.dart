@@ -20,14 +20,18 @@ class ElvanSearchBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       height: 60,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E).withValues(alpha: 0.88) : const Color(0xFFFFFFFF).withValues(alpha: 0.88),
+        color: isDark
+            ? const Color(0xFF1E1E1E).withValues(alpha: 0.88)
+            : const Color(0xFFFFFFFF).withValues(alpha: 0.88),
         borderRadius: BorderRadius.circular(100),
         border: Border.all(
-          color: isDark ? const Color(0xFF333333).withValues(alpha: 0.6) : const Color(0xFFFFFFFF).withValues(alpha: 0.6),
+          color: isDark
+              ? const Color(0xFF333333).withValues(alpha: 0.6)
+              : const Color(0xFFFFFFFF).withValues(alpha: 0.6),
           width: 0.5,
         ),
         boxShadow: [
@@ -66,7 +70,8 @@ class ElvanSearchBar extends ConsumerWidget {
                 behavior: HitTestBehavior.opaque,
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-                  child: Icon(CupertinoIcons.clear_circled_solid, size: 22, color: Colors.grey),
+                  child: Icon(CupertinoIcons.clear_circled_solid,
+                      size: 22, color: Colors.grey),
                 ),
               ),
             ],

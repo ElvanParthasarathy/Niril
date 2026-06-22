@@ -19,10 +19,12 @@ class SilkVanigaAdaiyalangalPage extends ConsumerStatefulWidget {
   const SilkVanigaAdaiyalangalPage({super.key});
 
   @override
-  ConsumerState<SilkVanigaAdaiyalangalPage> createState() => _SilkVanigaAdaiyalangalPageState();
+  ConsumerState<SilkVanigaAdaiyalangalPage> createState() =>
+      _SilkVanigaAdaiyalangalPageState();
 }
 
-class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalangalPage> {
+class _SilkVanigaAdaiyalangalPageState
+    extends ConsumerState<SilkVanigaAdaiyalangalPage> {
   String? _editingSection;
   final ImagePicker _picker = ImagePicker();
 
@@ -68,7 +70,8 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
     }
   }
 
-  void _saveSingleField(VanigaTharavugal profile, String fieldName, String value) {
+  void _saveSingleField(
+      VanigaTharavugal profile, String fieldName, String value) {
     final updatedProfile = profile.copyWith();
     switch (fieldName) {
       case 'thallaippuVadivu':
@@ -138,7 +141,10 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
               TextButton(
                 onPressed: _cancelEdit,
                 style: TextButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                  foregroundColor: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7),
                 ),
                 child: Text('cancel'.tr(context, ref)),
               ),
@@ -165,13 +171,15 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
     }
   }
 
-  Widget _buildImageUploader({required String? imagePath, required Function(String?) onChange}) {
+  Widget _buildImageUploader(
+      {required String? imagePath, required Function(String?) onChange}) {
     final bool hasImage = imagePath != null && imagePath.isNotEmpty;
-    
+
     return Stack(
       children: [
         Material(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+          color:
+              Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(16),
           child: InkWell(
             onTap: () {
@@ -185,64 +193,74 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                image: hasImage ? DecorationImage(
-                  image: FileImage(File(imagePath)),
-                  fit: BoxFit.contain,
-                ) : null,
+                image: hasImage
+                    ? DecorationImage(
+                        image: FileImage(File(imagePath)),
+                        fit: BoxFit.contain,
+                      )
+                    : null,
               ),
-              child: hasImage ? null : Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      CupertinoIcons.cloud_upload,
-                      size: 32,
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'upload'.tr(context, ref),
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+              child: hasImage
+                  ? null
+                  : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            CupertinoIcons.cloud_upload,
+                            size: 32,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withValues(alpha: 0.4),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'upload'.tr(context, ref),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.5),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+            ),
+          ),
+        ),
+        if (hasImage)
+          Positioned(
+            top: 8,
+            right: 8,
+            child: GestureDetector(
+              onTap: () => onChange(null),
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
                   ],
+                ),
+                child: Icon(
+                  CupertinoIcons.delete_solid,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.error,
                 ),
               ),
             ),
           ),
-        ),
-          if (hasImage)
-            Positioned(
-              top: 8,
-              right: 8,
-              child: GestureDetector(
-                onTap: () => onChange(null),
-                child: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    CupertinoIcons.delete_solid,
-                    size: 16,
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                ),
-              ),
-            ),
-        ],
-      );
+      ],
+    );
   }
 
   @override
@@ -250,10 +268,14 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
     final profile = ref.watch(vanigaTharavugalProvider);
     final currentProfile = profile ?? VanigaTharavugal();
 
-    final headerStyle = currentProfile.thallaippuVadivu.isEmpty ? 'small' : currentProfile.thallaippuVadivu;
+    final headerStyle = currentProfile.thallaippuVadivu.isEmpty
+        ? 'small'
+        : currentProfile.thallaippuVadivu;
     final logoPath = currentProfile.ovuru.isEmpty ? null : currentProfile.ovuru;
-    final wideLogoPath = currentProfile.agalaOvuru.isEmpty ? null : currentProfile.agalaOvuru;
-    final signaturePath = currentProfile.kaiyoppam.isEmpty ? null : currentProfile.kaiyoppam;
+    final wideLogoPath =
+        currentProfile.agalaOvuru.isEmpty ? null : currentProfile.agalaOvuru;
+    final signaturePath =
+        currentProfile.kaiyoppam.isEmpty ? null : currentProfile.kaiyoppam;
     final signatoryName = currentProfile.oppamPeyar;
 
     return ElvanSubpageShell(
@@ -261,7 +283,8 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
       slivers: [
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 32),
+            padding:
+                const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 32),
             child: ElvanSettingsSection(
               children: [
                 // 1. Logo
@@ -274,11 +297,13 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                       imagePath: _tempImagePath,
                       onChange: (path) => setState(() => _tempImagePath = path),
                     ),
-                    onSave: () => _saveSingleField(currentProfile, 'ovuru', _tempImagePath ?? ''),
+                    onSave: () => _saveSingleField(
+                        currentProfile, 'ovuru', _tempImagePath ?? ''),
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'businessLogo'.tr(context, ref),
-                    primaryValue: logoPath != null ? '' : 'noLogo'.tr(context, ref),
+                    primaryValue:
+                        logoPath != null ? '' : 'noLogo'.tr(context, ref),
                     primaryWidget: logoPath != null
                         ? Image.file(
                             File(logoPath),
@@ -301,11 +326,14 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                       imagePath: _tempImagePath,
                       onChange: (path) => setState(() => _tempImagePath = path),
                     ),
-                    onSave: () => _saveSingleField(currentProfile, 'agalaOvuru', _tempImagePath ?? ''),
+                    onSave: () => _saveSingleField(
+                        currentProfile, 'agalaOvuru', _tempImagePath ?? ''),
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'wideLogoLabel'.tr(context, ref),
-                    primaryValue: wideLogoPath != null ? '' : 'noneLabel'.tr(context, ref),
+                    primaryValue: wideLogoPath != null
+                        ? ''
+                        : 'noneLabel'.tr(context, ref),
                     primaryWidget: wideLogoPath != null
                         ? Image.file(
                             File(wideLogoPath),
@@ -328,31 +356,45 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                       onTap: _showHeaderStyleActionSheet,
                       borderRadius: BorderRadius.circular(100),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 14),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(100),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              _tempHeaderStyle == 'wide' ? 'wideLogoOnly'.tr(context, ref) : 'smallLogoBusinessName'.tr(context, ref),
+                              _tempHeaderStyle == 'wide'
+                                  ? 'wideLogoOnly'.tr(context, ref)
+                                  : 'smallLogoBusinessName'.tr(context, ref),
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
-                            Icon(CupertinoIcons.chevron_down, size: 16, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
+                            Icon(CupertinoIcons.chevron_down,
+                                size: 16,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.6)),
                           ],
                         ),
                       ),
                     ),
-                    onSave: () => _saveSingleField(currentProfile, 'thallaippuVadivu', _tempHeaderStyle),
+                    onSave: () => _saveSingleField(
+                        currentProfile, 'thallaippuVadivu', _tempHeaderStyle),
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'billHeaderStyle'.tr(context, ref),
-                    primaryValue: headerStyle == 'wide' ? 'wideLogoOnly'.tr(context, ref) : 'smallLogoBusinessName'.tr(context, ref),
+                    primaryValue: headerStyle == 'wide'
+                        ? 'wideLogoOnly'.tr(context, ref)
+                        : 'smallLogoBusinessName'.tr(context, ref),
                     onEdit: () => _beginEditSingle('header_style', headerStyle),
                   ),
                 ),
@@ -368,25 +410,38 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                       children: [
                         _buildImageUploader(
                           imagePath: _tempImagePath,
-                          onChange: (path) => setState(() => _tempImagePath = path),
+                          onChange: (path) =>
+                              setState(() => _tempImagePath = path),
                         ),
                         const SizedBox(height: 16),
                         ElvanTextField(
                           textAlign: TextAlign.center,
-                          controller: TextEditingController(text: _tempSignatoryName),
+                          controller:
+                              TextEditingController(text: _tempSignatoryName),
                           decoration: InputDecoration(
-                            hintText: 'authorizedSignatoryName'.tr(context, ref),
+                            hintText:
+                                'authorizedSignatoryName'.tr(context, ref),
                             hintStyle: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.3),
                             ),
                             filled: true,
                             fillColor: WidgetStateColor.resolveWith((states) {
                               if (states.contains(WidgetState.focused)) {
-                                return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12);
+                                return Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.12);
                               }
-                              return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08);
+                              return Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.08);
                             }),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 14),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(100),
                               borderSide: BorderSide.none,
@@ -400,11 +455,14 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                         ),
                       ],
                     ),
-                    onSave: () => _saveSignatureField(currentProfile, _tempImagePath ?? '', _tempSignatoryName),
+                    onSave: () => _saveSignatureField(currentProfile,
+                        _tempImagePath ?? '', _tempSignatoryName),
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'signature'.tr(context, ref),
-                    primaryValue: signaturePath != null ? signatoryName : 'noSignature'.tr(context, ref),
+                    primaryValue: signaturePath != null
+                        ? signatoryName
+                        : 'noSignature'.tr(context, ref),
                     primaryWidget: signaturePath != null
                         ? Image.file(
                             File(signaturePath),
@@ -413,7 +471,8 @@ class _SilkVanigaAdaiyalangalPageState extends ConsumerState<SilkVanigaAdaiyalan
                             alignment: Alignment.centerLeft,
                           )
                         : null,
-                    onEdit: () => _beginEditSignature(signaturePath ?? '', signatoryName),
+                    onEdit: () =>
+                        _beginEditSignature(signaturePath ?? '', signatoryName),
                   ),
                 ),
               ],

@@ -13,7 +13,8 @@ Future<void> showElvanImagePickerSheet({
 
   return showElvanActionSheet<void>(
     context: context,
-    title: 'selectImageSource'.tr(context, ref), // We will fallback to english if translation missing
+    title: 'selectImageSource'
+        .tr(context, ref), // We will fallback to english if translation missing
     cancelText: 'cancel'.tr(context, ref),
     confirmText: '', // No confirm button, using customContent
     onConfirm: () {}, // Handled individually
@@ -27,7 +28,8 @@ Future<void> showElvanImagePickerSheet({
           label: 'gallery'.tr(context, ref),
           onTap: () async {
             Navigator.pop(context);
-            final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+            final XFile? image =
+                await picker.pickImage(source: ImageSource.gallery);
             if (image != null) {
               onImagePicked(image.path);
             }
@@ -39,7 +41,8 @@ Future<void> showElvanImagePickerSheet({
           label: 'camera'.tr(context, ref),
           onTap: () async {
             Navigator.pop(context);
-            final XFile? image = await picker.pickImage(source: ImageSource.camera);
+            final XFile? image =
+                await picker.pickImage(source: ImageSource.camera);
             if (image != null) {
               onImagePicked(image.path);
             }

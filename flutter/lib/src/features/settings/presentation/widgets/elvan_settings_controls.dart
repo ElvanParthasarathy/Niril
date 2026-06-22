@@ -26,8 +26,10 @@ class ElvanSettingsSwitch extends StatelessWidget {
       value: value,
       activeColor: Theme.of(context).colorScheme.surface,
       activeTrackColor: Theme.of(context).colorScheme.onSurface,
-      inactiveThumbColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-      inactiveTrackColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+      inactiveThumbColor:
+          Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+      inactiveTrackColor:
+          Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
       onChanged: onChanged,
     );
   }
@@ -63,7 +65,10 @@ class ElvanSettingsDropdown extends ConsumerWidget {
               fontSize: 12,
               fontWeight: FontWeight.w400,
               letterSpacing: 0.3,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.5),
             ),
           ),
         ),
@@ -80,7 +85,10 @@ class ElvanSettingsDropdown extends ConsumerWidget {
           borderRadius: BorderRadius.circular(100),
           child: Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(100),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
@@ -96,8 +104,11 @@ class ElvanSettingsDropdown extends ConsumerWidget {
                   ),
                 ),
                 Icon(
-                  Icons.keyboard_arrow_down_rounded, 
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                  Icons.keyboard_arrow_down_rounded,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.5),
                 ),
               ],
             ),
@@ -144,7 +155,10 @@ class ElvanSettingsAutocomplete extends StatelessWidget {
               fontSize: 12,
               fontWeight: FontWeight.w400,
               letterSpacing: 0.3,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.5),
             ),
           ),
         ),
@@ -160,7 +174,9 @@ class ElvanSettingsAutocomplete extends StatelessWidget {
               if (searchMatch != null) {
                 return searchMatch!(option, textEditingValue.text);
               }
-              return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
+              return option
+                  .toLowerCase()
+                  .contains(textEditingValue.text.toLowerCase());
             });
           },
           onSelected: (String selection) {
@@ -170,7 +186,8 @@ class ElvanSettingsAutocomplete extends StatelessWidget {
               onSelected!(selection);
             }
           },
-          fieldViewBuilder: (context, fieldController, focusNode, onEditingComplete) {
+          fieldViewBuilder:
+              (context, fieldController, focusNode, onEditingComplete) {
             return ElvanTextField(
               controller: fieldController,
               focusNode: focusNode,
@@ -179,31 +196,44 @@ class ElvanSettingsAutocomplete extends StatelessWidget {
               enabled: enabled,
               style: TextStyle(
                 fontSize: 16,
-                color: enabled 
-                    ? Theme.of(context).colorScheme.onSurface 
-                    : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                color: enabled
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.5),
               ),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: WidgetStateColor.resolveWith((states) {
                   if (states.contains(WidgetState.focused)) {
-                    return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12);
+                    return Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.12);
                   }
-                  return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08);
+                  return Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.08);
                 }),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide.none,
                 ),
-                suffixIcon: enabled 
+                suffixIcon: enabled
                     ? ValueListenableBuilder<TextEditingValue>(
                         valueListenable: fieldController,
                         builder: (context, value, child) {
                           if (value.text.isNotEmpty) {
                             return IconButton(
                               icon: const Icon(Icons.close, size: 20),
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.5),
                               onPressed: () {
                                 fieldController.clear();
                                 onChanged('');
@@ -213,10 +243,13 @@ class ElvanSettingsAutocomplete extends StatelessWidget {
                           }
                           return Icon(
                             Icons.arrow_drop_down,
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withValues(alpha: 0.5),
                           );
                         },
-                      ) 
+                      )
                     : null,
               ),
             );
@@ -230,12 +263,14 @@ class ElvanSettingsAutocomplete extends StatelessWidget {
               alignment: Alignment.topLeft,
               child: Material(
                 elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16)),
                 color: bgColor,
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
                     maxHeight: 200,
-                    maxWidth: MediaQuery.of(context).size.width - 64, // Estimate width
+                    maxWidth: MediaQuery.of(context).size.width -
+                        64, // Estimate width
                   ),
                   child: ListView.builder(
                     padding: const EdgeInsets.symmetric(vertical: 8),
@@ -246,7 +281,8 @@ class ElvanSettingsAutocomplete extends StatelessWidget {
                       return InkWell(
                         onTap: () => onSelected(option),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
                           child: Text(
                             option,
                             style: TextStyle(

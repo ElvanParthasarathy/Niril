@@ -10,7 +10,7 @@ class HtmlPdfRepository {
     // - printing / pdf (for native PDF generation if we decide to re-write layouts)
     // - flutter_html_to_pdf (for direct HTML conversion, if supported by the package)
     // - webview_flutter (for rendering off-screen and capturing as PDF)
-    
+
     // Stub implementation returning an empty Uint8List for now.
     return Uint8List(0);
   }

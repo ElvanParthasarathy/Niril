@@ -14,17 +14,19 @@ class CoolieUruvakkuAmaippuPage extends ConsumerStatefulWidget {
   const CoolieUruvakkuAmaippuPage({super.key});
 
   @override
-  ConsumerState<CoolieUruvakkuAmaippuPage> createState() => _CoolieUruvakkuAmaippuPageState();
+  ConsumerState<CoolieUruvakkuAmaippuPage> createState() =>
+      _CoolieUruvakkuAmaippuPageState();
 }
 
-class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaippuPage> {
+class _CoolieUruvakkuAmaippuPageState
+    extends ConsumerState<CoolieUruvakkuAmaippuPage> {
   bool _isEditingLanguages = false;
   String _tempPrimaryLanguage = 'Tamil';
 
   bool _isEditingTheme = false;
   String _themeColor = '#388e3c'; // Green
   String _tempThemeColor = '#388e3c';
-  
+
   String getThemeName(String val) {
     if (val == '#388e3c') return 'pachai'.tr(context, ref);
     if (val == '#6a1b9a') return 'uudha'.tr(context, ref);
@@ -55,28 +57,36 @@ class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaipp
                   });
                 },
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   foregroundColor: Theme.of(context).colorScheme.onSurface,
                   shape: const StadiumBorder(),
                 ),
-                child: Text('cancelBtn'.tr(context, ref), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                child: Text('cancelBtn'.tr(context, ref),
+                    style: const TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.w500)),
               ),
               const SizedBox(width: 8),
               FilledButton(
                 onPressed: () {
                   setState(() {
-                    ref.read(primaryLanguageProvider.notifier).state = _tempPrimaryLanguage;
+                    ref.read(primaryLanguageProvider.notifier).state =
+                        _tempPrimaryLanguage;
                     _isEditingLanguages = false;
                   });
-                  ElvanSnackbar.show(context, 'savedSuccessfully'.tr(context, ref));
+                  ElvanSnackbar.show(
+                      context, 'savedSuccessfully'.tr(context, ref));
                 },
                 style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
                   backgroundColor: Theme.of(context).colorScheme.onSurface,
                   foregroundColor: Theme.of(context).colorScheme.surface,
                   shape: const StadiumBorder(),
                 ),
-                child: Text('saveBtn'.tr(context, ref), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                child: Text('saveBtn'.tr(context, ref),
+                    style: const TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.w600)),
               ),
             ],
           ),
@@ -122,7 +132,7 @@ class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaipp
   Widget _buildThemeOptionSheet(String colorHex, String name) {
     final isSelected = _tempThemeColor == colorHex;
     final color = Color(int.parse(colorHex.replaceAll('#', '0xFF')));
-    
+
     return InkWell(
       onTap: () {
         setState(() {
@@ -177,7 +187,10 @@ class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaipp
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
                     letterSpacing: 0.3,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.5),
                   ),
                 ),
               ),
@@ -186,10 +199,14 @@ class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaipp
                 borderRadius: BorderRadius.circular(100),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(100),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -199,7 +216,8 @@ class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaipp
                             width: 16,
                             height: 16,
                             decoration: BoxDecoration(
-                              color: Color(int.parse(_tempThemeColor.replaceAll('#', '0xFF'))),
+                              color: Color(int.parse(
+                                  _tempThemeColor.replaceAll('#', '0xFF'))),
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -215,8 +233,11 @@ class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaipp
                         ],
                       ),
                       Icon(
-                        Icons.keyboard_arrow_down_rounded, 
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                        Icons.keyboard_arrow_down_rounded,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.5),
                       ),
                     ],
                   ),
@@ -235,11 +256,14 @@ class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaipp
                   });
                 },
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   foregroundColor: Theme.of(context).colorScheme.onSurface,
                   shape: const StadiumBorder(),
                 ),
-                child: Text('cancelBtn'.tr(context, ref), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                child: Text('cancelBtn'.tr(context, ref),
+                    style: const TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.w500)),
               ),
               const SizedBox(width: 8),
               FilledButton(
@@ -248,15 +272,19 @@ class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaipp
                     _themeColor = _tempThemeColor;
                     _isEditingTheme = false;
                   });
-                  ElvanSnackbar.show(context, 'savedSuccessfully'.tr(context, ref));
+                  ElvanSnackbar.show(
+                      context, 'savedSuccessfully'.tr(context, ref));
                 },
                 style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
                   backgroundColor: Theme.of(context).colorScheme.onSurface,
                   foregroundColor: Theme.of(context).colorScheme.surface,
                   shape: const StadiumBorder(),
                 ),
-                child: Text('saveBtn'.tr(context, ref), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                child: Text('saveBtn'.tr(context, ref),
+                    style: const TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.w600)),
               ),
             ],
           ),
@@ -271,7 +299,8 @@ class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaipp
 
     return ElvanSubpageShell(
       title: 'uruvakku'.tr(context, ref),
-      backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
+      backgroundColor:
+          isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
       slivers: [
         SliverPadding(
           padding: const EdgeInsets.only(
@@ -291,33 +320,43 @@ class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaipp
                     editChild: _buildEditState(),
                     displayChild: ElvanSimpleSettingsRow(
                       title: 'cooliePrintLanguage'.tr(context, ref),
-                      description: ref.watch(primaryLanguageProvider).toLowerCase().tr(context, ref),
+                      description: ref
+                          .watch(primaryLanguageProvider)
+                          .toLowerCase()
+                          .tr(context, ref),
                       trailing: IconButton(
                         onPressed: () {
                           setState(() {
-                            _tempPrimaryLanguage = ref.read(primaryLanguageProvider);
+                            _tempPrimaryLanguage =
+                                ref.read(primaryLanguageProvider);
                             _isEditingLanguages = true;
                           });
                         },
                         style: IconButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.05),
                           fixedSize: const Size(40, 40),
                         ),
                         icon: Icon(
                           Icons.edit_rounded,
                           size: 20,
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.6),
                         ),
                       ),
                     ),
                   ),
-
                   ElvanSettingsAnimatedExpand(
                     isEditing: _isEditingTheme,
                     keyPrefix: 'theme',
                     editChild: _buildThemeEditState(),
                     displayChild: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 12.0),
                       child: Row(
                         children: [
                           Expanded(
@@ -328,7 +367,8 @@ class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaipp
                                   'cooliePdfTheme'.tr(context, ref),
                                   style: TextStyle(
                                     fontSize: 16,
-                                    color: Theme.of(context).colorScheme.onSurface,
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -338,7 +378,8 @@ class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaipp
                                       width: 12,
                                       height: 12,
                                       decoration: BoxDecoration(
-                                        color: Color(int.parse(_themeColor.replaceAll('#', '0xFF'))),
+                                        color: Color(int.parse(_themeColor
+                                            .replaceAll('#', '0xFF'))),
                                         shape: BoxShape.circle,
                                       ),
                                     ),
@@ -347,7 +388,10 @@ class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaipp
                                       getThemeName(_themeColor),
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withValues(alpha: 0.6),
                                       ),
                                     ),
                                   ],
@@ -363,13 +407,19 @@ class _CoolieUruvakkuAmaippuPageState extends ConsumerState<CoolieUruvakkuAmaipp
                               });
                             },
                             style: IconButton.styleFrom(
-                              backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.05),
                               fixedSize: const Size(40, 40),
                             ),
                             icon: Icon(
                               Icons.edit_rounded,
                               size: 20,
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.6),
                             ),
                           ),
                         ],

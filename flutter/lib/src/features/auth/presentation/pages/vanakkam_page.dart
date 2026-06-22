@@ -29,10 +29,11 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
   bool get _needsCoolie => ref.read(missingProfilesProvider).contains('coolie');
 
   void _handleFinish() async {
-    if ((_needsSilk && _gstBusinessName.trim().isEmpty) || 
+    if ((_needsSilk && _gstBusinessName.trim().isEmpty) ||
         (_needsCoolie && _coolieBusinessName.trim().isEmpty)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter all required business names.')),
+        const SnackBar(
+            content: Text('Please enter all required business names.')),
       );
       return;
     }
@@ -48,29 +49,32 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
 
     // Insert initial profiles into the database
     final db = ref.read(appDatabaseProvider);
-    
+
     // Insert Silk profile if needed
     if (_needsSilk) {
       await db.into(db.vanigaTharavugalTable).insert(
-        VanigaTharavugalTableCompanion.insert(
-          seyaliVagai: 'silk',
-          niruvanathinPeyar: Value({widget.billingLanguage: _gstBusinessName}),
-          mudhanMozhi: Value(widget.billingLanguage),
-          thunaiMozhi: Value(widget.billingLanguage == 'English' ? 'Tamil' : 'English'),
-          iruMozhi: const Value(true), // default bilingual on for silk
-        ),
-      );
+            VanigaTharavugalTableCompanion.insert(
+              seyaliVagai: 'silk',
+              niruvanathinPeyar:
+                  Value({widget.billingLanguage: _gstBusinessName}),
+              mudhanMozhi: Value(widget.billingLanguage),
+              thunaiMozhi: Value(
+                  widget.billingLanguage == 'English' ? 'Tamil' : 'English'),
+              iruMozhi: const Value(true), // default bilingual on for silk
+            ),
+          );
     }
 
     // Insert Coolie profile if needed
     if (_needsCoolie) {
       await db.into(db.vanigaTharavugalTable).insert(
-        VanigaTharavugalTableCompanion.insert(
-          seyaliVagai: 'coolie',
-          niruvanathinPeyar: Value({widget.billingLanguage: _coolieBusinessName}),
-          mudhanMozhi: Value(widget.billingLanguage),
-        ),
-      );
+            VanigaTharavugalTableCompanion.insert(
+              seyaliVagai: 'coolie',
+              niruvanathinPeyar:
+                  Value({widget.billingLanguage: _coolieBusinessName}),
+              mudhanMozhi: Value(widget.billingLanguage),
+            ),
+          );
     }
 
     if (!mounted) return;
@@ -90,39 +94,37 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (widget.onBack != null)
-            AuthBackButton(onPressed: widget.onBack!),
+          if (widget.onBack != null) AuthBackButton(onPressed: widget.onBack!),
           AuthHeader(
             title: 'tharavugalaiUlliduga'.tr(context, ref),
             subtitle: '',
           ),
-          
           const SizedBox(height: 32),
-
           if (_needsSilk)
             AuthInput(
-              label: 'hc_businessName'.tr(context, ref).isNotEmpty ? 'hc_businessName'.tr(context, ref) : 'GST Business Name',
+              label: 'hc_businessName'.tr(context, ref).isNotEmpty
+                  ? 'hc_businessName'.tr(context, ref)
+                  : 'GST Business Name',
               placeholder: 'peyaraiUlliduga'.tr(context, ref),
               helperText: 'gstPattiyalukkuPayanpadum'.tr(context, ref),
               value: _gstBusinessName,
               onChange: (val) => setState(() => _gstBusinessName = val),
             ),
-
           if (_needsCoolie)
             AuthInput(
               label: 'coolieVanigaPeyar'.tr(context, ref),
               placeholder: 'peyaraiUlliduga'.tr(context, ref),
-              helperText: 'cooliePattiyalMatrumRaseethukkuPayanpadum'.tr(context, ref),
+              helperText:
+                  'cooliePattiyalMatrumRaseethukkuPayanpadum'.tr(context, ref),
               value: _coolieBusinessName,
               onChange: (val) => setState(() => _coolieBusinessName = val),
             ),
-
           const SizedBox(height: 32),
-
           AuthButton(
             text: 'continue'.tr(context, ref),
             loading: _saving,
-            disabled: (_needsSilk && _gstBusinessName.trim().isEmpty) || (_needsCoolie && _coolieBusinessName.trim().isEmpty),
+            disabled: (_needsSilk && _gstBusinessName.trim().isEmpty) ||
+                (_needsCoolie && _coolieBusinessName.trim().isEmpty),
             onPressed: _handleFinish,
           ),
         ],

@@ -17,7 +17,8 @@ class NalvaravuWelcomePage extends ConsumerStatefulWidget {
   const NalvaravuWelcomePage({super.key});
 
   @override
-  ConsumerState<NalvaravuWelcomePage> createState() => _NalvaravuWelcomePageState();
+  ConsumerState<NalvaravuWelcomePage> createState() =>
+      _NalvaravuWelcomePageState();
 }
 
 class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
@@ -90,12 +91,15 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
     final currentLang = locale?.languageCode ?? 'ta';
 
     final textColor = isDark ? Colors.white : const Color(0xFF1A1A1A);
-    final textSecondary = isDark ? Colors.white.withValues(alpha: 0.6) : const Color(0xFF666666);
+    final textSecondary =
+        isDark ? Colors.white.withValues(alpha: 0.6) : const Color(0xFF666666);
     final inputBg = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFFFFFFF);
-    final dividerColor = isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFE0E0E0);
+    final dividerColor =
+        isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFE0E0E0);
 
     return PopScope(
-      canPop: _phase == WelcomePhase.greeting || _phase == WelcomePhase.language,
+      canPop:
+          _phase == WelcomePhase.greeting || _phase == WelcomePhase.language,
       onPopInvoked: (didPop) {
         if (didPop) return;
         if (_phase == WelcomePhase.businessName) {
@@ -114,8 +118,8 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
             final delayedTranslateAnimation = CurvedAnimation(
               parent: animation,
               curve: const Interval(
-                100 / 900, 
-                1.0, 
+                100 / 900,
+                1.0,
                 curve: Curves.easeOutBack,
               ),
             );
@@ -123,12 +127,12 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
             final delayedOpacityAnimation = CurvedAnimation(
               parent: animation,
               curve: const Interval(
-                100 / 900, 
-                1.0, 
+                100 / 900,
+                1.0,
                 curve: Curves.easeOut,
               ),
             );
-            
+
             final dyAnimation = Tween<double>(
               begin: 20.0, // Fixed 20px translation
               end: 0.0,
@@ -197,7 +201,7 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
             ),
           ),
         );
-      
+
       case WelcomePhase.language:
         return KeyedSubtree(
           key: const ValueKey('language'),
@@ -212,7 +216,8 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
               const SizedBox(height: 24),
               AuthHeader(
                 title: 'muzhiyayTherthde'.trWithLang(currentLang),
-                subtitle: 'viruppamanaMozhiyayThervuSeiga'.trWithLang(currentLang),
+                subtitle:
+                    'viruppamanaMozhiyayThervuSeiga'.trWithLang(currentLang),
               ),
               const SizedBox(height: 32),
               AuthAnimatedElement(
@@ -230,16 +235,24 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
                         isSelected: currentLang == 'ta',
                         textColor: textColor,
                         onTap: () {
-                          ref.read(localeProvider.notifier).setLocale(const Locale('ta'));
+                          ref
+                              .read(localeProvider.notifier)
+                              .setLocale(const Locale('ta'));
                         },
                       ),
-                      Divider(height: 1, color: dividerColor, indent: 24, endIndent: 24),
+                      Divider(
+                          height: 1,
+                          color: dividerColor,
+                          indent: 24,
+                          endIndent: 24),
                       _buildLanguageTile(
                         title: 'English',
                         isSelected: currentLang == 'en',
                         textColor: textColor,
                         onTap: () {
-                          ref.read(localeProvider.notifier).setLocale(const Locale('en'));
+                          ref
+                              .read(localeProvider.notifier)
+                              .setLocale(const Locale('en'));
                         },
                       ),
                     ],
@@ -252,7 +265,9 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
                 onPressed: () {
                   // If they hit continue without picking, explicitly save the default Tamil
                   if (ref.read(localeProvider) == null) {
-                    ref.read(localeProvider.notifier).setLocale(const Locale('ta'));
+                    ref
+                        .read(localeProvider.notifier)
+                        .setLocale(const Locale('ta'));
                   }
                   setState(() {
                     _phase = WelcomePhase.billingLanguage;
@@ -285,7 +300,8 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
               const SizedBox(height: 24),
               AuthHeader(
                 title: 'pattiyalMuthanmozhi'.tr(context, ref),
-                subtitle: 'pattiyalilEmmozhiyayPayanpaduttaVendum'.tr(context, ref),
+                subtitle:
+                    'pattiyalilEmmozhiyayPayanpaduttaVendum'.tr(context, ref),
               ),
               const SizedBox(height: 32),
               AuthAnimatedElement(
@@ -308,7 +324,11 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
                           });
                         },
                       ),
-                      Divider(height: 1, color: dividerColor, indent: 24, endIndent: 24),
+                      Divider(
+                          height: 1,
+                          color: dividerColor,
+                          indent: 24,
+                          endIndent: 24),
                       _buildLanguageTile(
                         title: 'English',
                         isSelected: _billingLanguage == 'English',
@@ -328,8 +348,9 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
                 text: 'continue'.tr(context, ref),
                 onPressed: () async {
                   final prefs = ref.read(sharedPreferencesProvider);
-                  await prefs.setString('elvanniril_setup_billingLang', _billingLanguage);
-                  
+                  await prefs.setString(
+                      'elvanniril_setup_billingLang', _billingLanguage);
+
                   if (!context.mounted) return;
 
                   setState(() {

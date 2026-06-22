@@ -14,7 +14,8 @@ class PathugappuAmaippugalPage extends ConsumerWidget {
 
     return ElvanSubpageShell(
       title: 'pathugappu'.tr(context, ref),
-      backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
+      backgroundColor:
+          isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
       slivers: [
         SliverPadding(
           padding: const EdgeInsets.only(

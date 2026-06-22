@@ -2,7 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 
-/// A wrapper that adds native-feeling smooth scrolling to desktop apps 
+/// A wrapper that adds native-feeling smooth scrolling to desktop apps
 /// using an existing ScrollController, without breaking mobile touch/drag or trackpads.
 class ElvanSmoothScroll extends StatefulWidget {
   final ScrollController? controller;
@@ -31,7 +31,8 @@ class _ElvanSmoothScrollState extends State<ElvanSmoothScroll> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _activeController = widget.controller ?? PrimaryScrollController.maybeOf(context);
+    _activeController =
+        widget.controller ?? PrimaryScrollController.maybeOf(context);
   }
 
   @override
@@ -56,13 +57,16 @@ class _ElvanSmoothScrollState extends State<ElvanSmoothScroll> {
         final maxExtent = position.maxScrollExtent;
         final minExtent = position.minScrollExtent;
 
-        if ((_futurePosition - position.pixels).abs() > widget.scrollSpeed * 100) {
+        if ((_futurePosition - position.pixels).abs() >
+            widget.scrollSpeed * 100) {
           _futurePosition = position.pixels;
         }
 
         final dy = event.scrollDelta.dy * widget.scrollSpeed;
 
-        if (position.atEdge && (position.pixels == minExtent && dy < 0 || position.pixels == maxExtent && dy > 0)) {
+        if (position.atEdge &&
+            (position.pixels == minExtent && dy < 0 ||
+                position.pixels == maxExtent && dy > 0)) {
           return;
         }
 
@@ -120,9 +124,9 @@ class _SmoothScrollBehavior extends MaterialScrollBehavior {
 
   @override
   Set<PointerDeviceKind> get dragDevices => {
-    PointerDeviceKind.touch,
-    PointerDeviceKind.mouse,
-    PointerDeviceKind.trackpad,
-    PointerDeviceKind.stylus,
-  };
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        PointerDeviceKind.trackpad,
+        PointerDeviceKind.stylus,
+      };
 }

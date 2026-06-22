@@ -15,7 +15,7 @@ class VanigarPage extends ConsumerWidget {
     if (mode == AppMode.coolie) {
       return const CoolieMerchantsPage();
     }
-    
+
     // Default to GST mode
     return const SilkMerchantsPage();
   }

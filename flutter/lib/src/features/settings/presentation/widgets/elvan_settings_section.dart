@@ -23,7 +23,9 @@ class ElvanSettingsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? const Color(0xFF111111) : Colors.white;
-    final dividerColor = isDark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.04);
+    final dividerColor = isDark
+        ? Colors.white.withValues(alpha: 0.04)
+        : Colors.black.withValues(alpha: 0.04);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,7 +39,10 @@ class ElvanSettingsSection extends StatelessWidget {
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.5),
               ),
             ),
           ),
@@ -108,7 +113,10 @@ class ElvanSettingsRow extends StatelessWidget {
                 color: iconBgColor,
               ),
               child: Center(
-                child: iconWidget ?? Icon(icon, size: 20, color: Theme.of(context).colorScheme.onSurface),
+                child: iconWidget ??
+                    Icon(icon,
+                        size: 20,
+                        color: Theme.of(context).colorScheme.onSurface),
               ),
             ),
             const SizedBox(width: 16),
@@ -132,7 +140,10 @@ class ElvanSettingsRow extends StatelessWidget {
                         description!,
                         style: TextStyle(
                           fontSize: 12,
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.5),
                         ),
                       ),
                     ),
@@ -186,7 +197,8 @@ class ElvanRadioSettingsRow<T> extends StatelessWidget {
             ),
             if (isSelected)
               Icon(
-                Icons.check, // Using standard check to prevent missing glyphs on Windows
+                Icons
+                    .check, // Using standard check to prevent missing glyphs on Windows
                 color: Theme.of(context).colorScheme.onSurface,
                 size: 24, // M3 standard size
               )
@@ -244,7 +256,10 @@ class ElvanSimpleSettingsRow extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w400,
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.6),
                         ),
                       ),
                     ),

@@ -67,17 +67,17 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
     final int itemCount = widget.items.length;
     // The visual layout width. Increased spacing stretches the main white pill and makes room.
     final double layoutWidth = itemCount <= 4 ? 67.0 : 61.0;
-    
+
     // The width of the active grey background pill. Restored to its beautiful elongated shape!
     // Overlap remains a perfectly safe 4px.
     final double bgWidth = itemCount <= 4 ? 75.0 : 69.0;
-    
+
     const double horizontalPadding = 8.0;
     const double verticalPadding = 4.0;
 
     // Use hover index while dragging, otherwise the visually locked index, otherwise the parent's index
-    int activeVisualIndex = (_isInteracting && _hoverIndex != null) 
-        ? _hoverIndex! 
+    int activeVisualIndex = (_isInteracting && _hoverIndex != null)
+        ? _hoverIndex!
         : (_localLockedIndex ?? widget.currentIndex);
 
     // Calculate background pill left offset
@@ -92,12 +92,15 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
     }
 
     // Constrain the background so it doesn't leave the pill boundaries
-    double maxLeft = ((itemCount - 1) * layoutWidth) - ((bgWidth - layoutWidth) / 2);
+    double maxLeft =
+        ((itemCount - 1) * layoutWidth) - ((bgWidth - layoutWidth) / 2);
     double minLeft = -((bgWidth - layoutWidth) / 2);
     targetLeft = targetLeft.clamp(minLeft, maxLeft);
 
     return AnimatedScale(
-      scale: _isInteracting ? 1.02 : 1.0, // Zoom effect matching Kotlin maxScale logic
+      scale: _isInteracting
+          ? 1.02
+          : 1.0, // Zoom effect matching Kotlin maxScale logic
       duration: const Duration(milliseconds: 150),
       curve: Curves.easeOutCubic,
       child: Container(
@@ -125,7 +128,9 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTapUp: (details) {
-              int index = (details.localPosition.dx / layoutWidth).floor().clamp(0, itemCount - 1);
+              int index = (details.localPosition.dx / layoutWidth)
+                  .floor()
+                  .clamp(0, itemCount - 1);
               setState(() {
                 _localLockedIndex = index; // Visually snap the pill immediately
                 _isInteracting = false;
@@ -140,30 +145,38 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
             onHorizontalDragDown: (details) {
               setState(() {
                 _isInteracting = true;
-                _hoverIndex = (details.localPosition.dx / layoutWidth).floor().clamp(0, itemCount - 1);
-                
+                _hoverIndex = (details.localPosition.dx / layoutWidth)
+                    .floor()
+                    .clamp(0, itemCount - 1);
+
                 // Calculate the exact mathematical center of the slot they just touched
-                double slotCenter = (_hoverIndex! * layoutWidth) + (layoutWidth / 2);
-                
+                double slotCenter =
+                    (_hoverIndex! * layoutWidth) + (layoutWidth / 2);
+
                 // Record exactly how far off-center their thumb is, so we can anchor the pill
                 _touchOffsetFromCenter = details.localPosition.dx - slotCenter;
-                
-                _dragOffset = null; // Do NOT track raw pixel yet, prevents "wiggle" on touch
+
+                _dragOffset =
+                    null; // Do NOT track raw pixel yet, prevents "wiggle" on touch
               });
             },
             onHorizontalDragUpdate: (details) {
               setState(() {
                 // The pill moves 1:1 with the thumb, but pushed from its original anchor point!
-                double targetCenter = details.localPosition.dx - _touchOffsetFromCenter;
+                double targetCenter =
+                    details.localPosition.dx - _touchOffsetFromCenter;
                 _dragOffset = targetCenter;
-                _hoverIndex = (targetCenter / layoutWidth).floor().clamp(0, itemCount - 1);
+                _hoverIndex = (targetCenter / layoutWidth)
+                    .floor()
+                    .clamp(0, itemCount - 1);
               });
             },
             onHorizontalDragEnd: (details) {
               int? finalIndex = _hoverIndex;
               setState(() {
                 if (finalIndex != null) {
-                  _localLockedIndex = finalIndex; // Visually snap the pill immediately
+                  _localLockedIndex =
+                      finalIndex; // Visually snap the pill immediately
                 }
                 _isInteracting = false;
                 _dragOffset = null;
@@ -191,22 +204,28 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
                   // ── Master Background Pill (Detached & Draggable) ──
                   AnimatedPositioned(
                     duration: (_isInteracting && _dragOffset != null)
-                        ? Duration.zero // Track finger instantly with zero lag while sliding
-                        : const Duration(milliseconds: 150), // Fast snap to lock on release
+                        ? Duration
+                            .zero // Track finger instantly with zero lag while sliding
+                        : const Duration(
+                            milliseconds: 150), // Fast snap to lock on release
                     curve: (_isInteracting && _dragOffset != null)
                         ? Curves.linear
-                        : Curves.easeOutCubic, // Clean fast curve so it doesn't jerk
+                        : Curves
+                            .easeOutCubic, // Clean fast curve so it doesn't jerk
                     left: targetLeft,
                     top: 0,
                     bottom: 0,
                     width: bgWidth,
                     child: AnimatedScale(
-                      scale: _isInteracting ? 1.30 : 1.0, // Aggressive inner zoom breaking boundaries!
+                      scale: _isInteracting
+                          ? 1.30
+                          : 1.0, // Aggressive inner zoom breaking boundaries!
                       duration: const Duration(milliseconds: 150),
                       curve: Curves.easeOutCubic,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: const Color(0xFFE5E5E5).withValues(alpha: 0.95),
+                          color:
+                              const Color(0xFFE5E5E5).withValues(alpha: 0.95),
                           borderRadius: BorderRadius.circular(100),
                           boxShadow: [
                             BoxShadow(
@@ -262,9 +281,7 @@ class _TranslucentNavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final icon = isActive ? (item.activeIcon ?? item.icon) : item.icon;
-    final color = isActive
-        ? const Color(0xFF1A1A1A)
-        : const Color(0xFF7C7C80);
+    final color = isActive ? const Color(0xFF1A1A1A) : const Color(0xFF7C7C80);
 
     // Uniform Apple pattern: large icons, small labels
     const double iconSize = 23.0;

@@ -15,14 +15,16 @@ class AuthAnimatedElement extends StatefulWidget {
     super.key,
     required this.child,
     this.delayIndex = 1,
-    this.duration = const Duration(milliseconds: 800), // Match React's 0.8s duration
+    this.duration =
+        const Duration(milliseconds: 800), // Match React's 0.8s duration
   });
 
   @override
   State<AuthAnimatedElement> createState() => _AuthAnimatedElementState();
 }
 
-class _AuthAnimatedElementState extends State<AuthAnimatedElement> with SingleTickerProviderStateMixin {
+class _AuthAnimatedElementState extends State<AuthAnimatedElement>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _opacity;
   late Animation<Offset> _offset;
@@ -36,7 +38,8 @@ class _AuthAnimatedElementState extends State<AuthAnimatedElement> with SingleTi
       CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
 
-    _offset = Tween<Offset>(begin: const Offset(0, 20.0), end: Offset.zero).animate(
+    _offset =
+        Tween<Offset>(begin: const Offset(0, 20.0), end: Offset.zero).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
     );
 
@@ -99,13 +102,21 @@ class _AuthLayoutState extends State<AuthLayout> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     // Rotate 1: 60s linear infinite
-    _rotate1Controller = AnimationController(vsync: this, duration: const Duration(seconds: 60))..repeat();
+    _rotate1Controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 60))
+          ..repeat();
     // Rotate 2: 40s linear infinite reverse
-    _rotate2Controller = AnimationController(vsync: this, duration: const Duration(seconds: 40))..repeat(reverse: true); // Approximation of reverse rotation
+    _rotate2Controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 40))
+          ..repeat(reverse: true); // Approximation of reverse rotation
     // Float 1: 4s ease-in-out infinite alternate
-    _float1Controller = AnimationController(vsync: this, duration: const Duration(seconds: 4))..repeat(reverse: true);
+    _float1Controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 4))
+          ..repeat(reverse: true);
     // Float 2: 5s ease-in-out infinite alternate
-    _float2Controller = AnimationController(vsync: this, duration: const Duration(seconds: 5))..repeat(reverse: true);
+    _float2Controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 5))
+          ..repeat(reverse: true);
   }
 
   @override
@@ -122,7 +133,8 @@ class _AuthLayoutState extends State<AuthLayout> with TickerProviderStateMixin {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final shapeColor = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFEAEAEA);
+    final shapeColor =
+        isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFEAEAEA);
     final bgColor = isDark ? const Color(0xFF0A0A0A) : const Color(0xFFFAFAFA);
 
     return Scaffold(
@@ -157,7 +169,8 @@ class _AuthLayoutState extends State<AuthLayout> with TickerProviderStateMixin {
               animation: _float1Controller,
               builder: (context, child) {
                 // Float animation: translateY(0px to 30px)
-                final dy = Curves.easeInOut.transform(_float1Controller.value) * 30.0;
+                final dy =
+                    Curves.easeInOut.transform(_float1Controller.value) * 30.0;
                 return Transform.translate(
                   offset: Offset(0, dy),
                   child: child,
@@ -178,7 +191,8 @@ class _AuthLayoutState extends State<AuthLayout> with TickerProviderStateMixin {
             width: MediaQuery.of(context).size.width * 0.2,
             height: MediaQuery.of(context).size.width * 0.2,
             child: RotationTransition(
-              turns: Tween(begin: 1.0, end: 0.0).animate(_rotate2Controller), // Reverse rotation
+              turns: Tween(begin: 1.0, end: 0.0)
+                  .animate(_rotate2Controller), // Reverse rotation
               child: Container(
                 decoration: BoxDecoration(
                   color: shapeColor,
@@ -197,7 +211,9 @@ class _AuthLayoutState extends State<AuthLayout> with TickerProviderStateMixin {
               animation: _float2Controller,
               builder: (context, child) {
                 // Float animation reverse: translateY(30px to 0px) approx
-                final dy = (1.0 - Curves.easeInOut.transform(_float2Controller.value)) * 30.0;
+                final dy = (1.0 -
+                        Curves.easeInOut.transform(_float2Controller.value)) *
+                    30.0;
                 return Transform.translate(
                   offset: Offset(0, dy),
                   child: child,
@@ -220,7 +236,8 @@ class _AuthLayoutState extends State<AuthLayout> with TickerProviderStateMixin {
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 480),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0, vertical: 32.0),
                     child: widget.child,
                   ),
                 ),
@@ -266,7 +283,9 @@ class AuthHeader extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w400,
-                color: isDark ? Colors.white.withValues(alpha: 0.6) : const Color(0xFF666666),
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.6)
+                    : const Color(0xFF666666),
               ),
             ),
           ]
@@ -329,15 +348,24 @@ class _AuthInputState extends State<AuthInput> {
 
     final inputBg = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFFFFFFF);
     final textColor = isDark ? Colors.white : const Color(0xFF1A1A1A);
-    final labelColor = isDark ? Colors.white.withValues(alpha: 0.6) : const Color(0xFF666666);
-    
+    final labelColor =
+        isDark ? Colors.white.withValues(alpha: 0.6) : const Color(0xFF666666);
+
     // Simulate the CSS hover/focus shadows
-    final boxShadow = isDark ? null : [
-      if (_isFocused) 
-        BoxShadow(color: Colors.black.withValues(alpha: 0.16), blurRadius: 24, offset: const Offset(0, 8))
-      else 
-        BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 24, offset: const Offset(0, 8))
-    ];
+    final boxShadow = isDark
+        ? null
+        : [
+            if (_isFocused)
+              BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.16),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8))
+            else
+              BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8))
+          ];
 
     return AuthAnimatedElement(
       delayIndex: 2,
@@ -383,22 +411,28 @@ class _AuthInputState extends State<AuthInput> {
                     color: labelColor,
                     fontWeight: FontWeight.w400,
                   ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
-                  suffixIcon: widget.isPassword ? IconButton(
-                    icon: Icon(
-                      _obscureText ? Icons.visibility_off : Icons.visibility,
-                      color: isDark ? Colors.white : const Color(0xFF111111),
-                      size: 20,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscureText = !_obscureText;
-                      });
-                    },
-                  ) : null,
+                  suffixIcon: widget.isPassword
+                      ? IconButton(
+                          icon: Icon(
+                            _obscureText
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            color:
+                                isDark ? Colors.white : const Color(0xFF111111),
+                            size: 20,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscureText = !_obscureText;
+                            });
+                          },
+                        )
+                      : null,
                 ),
               ),
             ),
@@ -409,7 +443,9 @@ class _AuthInputState extends State<AuthInput> {
                   widget.errorText ?? widget.helperText!,
                   style: TextStyle(
                     fontSize: 10,
-                    color: widget.errorText != null ? theme.colorScheme.error : labelColor,
+                    color: widget.errorText != null
+                        ? theme.colorScheme.error
+                        : labelColor,
                   ),
                 ),
               ),
@@ -469,7 +505,8 @@ class AuthButton extends StatelessWidget {
                     height: 24,
                     child: CircularProgressIndicator(
                       strokeWidth: 3,
-                      valueColor: AlwaysStoppedAnimation<Color>(btnText.withValues(alpha: 0.5)),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                          btnText.withValues(alpha: 0.5)),
                     ),
                   )
                 : Text(
@@ -511,7 +548,8 @@ class AuthBackButton extends StatelessWidget {
             onTap: onPressed,
             child: const Center(
               child: Padding(
-                padding: EdgeInsets.only(right: 2.0), // Optical centering for chevron
+                padding: EdgeInsets.only(
+                    right: 2.0), // Optical centering for chevron
                 child: Icon(
                   CupertinoIcons.chevron_back,
                   size: 24,

@@ -29,12 +29,14 @@ class ElvanCustomAppBarDelegate extends SliverPersistentHeaderDelegate {
   double get minExtent => statusBarHeight + 100.0;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     // If the scroll view allows overscroll bouncing at the top, shrinkOffset can be negative.
     // If we want stretch: true behavior, we can handle negative shrinkOffset to expand the background.
     final double boundedShrinkOffset = math.max(0.0, shrinkOffset);
     final double maxShrink = maxExtent - minExtent;
-    final double shrinkProgress = (boundedShrinkOffset / maxShrink).clamp(0.0, 1.0);
+    final double shrinkProgress =
+        (boundedShrinkOffset / maxShrink).clamp(0.0, 1.0);
 
     final double screenWidth = MediaQuery.of(context).size.width;
 
@@ -44,48 +46,51 @@ class ElvanCustomAppBarDelegate extends SliverPersistentHeaderDelegate {
     // 1. Calculate positions
     final double expandedButtonsBottom = 8.0;
     final double ceiling = statusBarHeight + 20.0;
-    final double expandedTop = maxExtent - expandedButtonsBottom - kToolbarHeight;
-    
+    final double expandedTop =
+        maxExtent - expandedButtonsBottom - kToolbarHeight;
+
     // Instead of raw pixels, we map the 3-dots pill journey to the overall animation percentage (t).
     // This guarantees the pill always reaches exactly `ceiling` (Status Bar + 20) the millisecond the header finishes collapsing.
     final double currentTop = expandedTop - (expandedTop - ceiling) * t;
 
     // 2. Measure title for math
     final titleStyle = DefaultTextStyle.of(context).style.copyWith(
-      fontSize: 34,
-      fontWeight: leadingWidget != null ? FontWeight.w700 : FontWeight.bold,
-      letterSpacing: -0.5,
-      height: 1.15,
-    );
+          fontSize: 34,
+          fontWeight: leadingWidget != null ? FontWeight.w700 : FontWeight.bold,
+          letterSpacing: -0.5,
+          height: 1.15,
+        );
     final textPainter = TextPainter(
       text: TextSpan(text: title, style: titleStyle),
       textDirection: TextDirection.ltr,
       textScaler: MediaQuery.textScalerOf(context),
     )..layout();
-    
+
     final double textWidth = textPainter.width;
     final double centeredLeft = math.max(16.0, (screenWidth - textWidth) / 2);
-    final double targetLeft = (leadingWidget != null ? 78.0 : 24.0) + 1.5; // +xNudge
-    
+    final double targetLeft =
+        (leadingWidget != null ? 78.0 : 24.0) + 1.5; // +xNudge
+
     final double currentLeft = centeredLeft + (targetLeft - centeredLeft) * t;
     final double currentScale = 1.0 - (1.0 - (20.0 / 34.0)) * t;
-    
+
     // We position the title relative to the bottom so it shrinks naturally
     // At t=0, it's roughly expandedHeight - 128 from bottom.
     // At t=1, the boundary is 28px lower, so we need it at 40.5 from bottom to perfectly align with the 56px icons pill.
     final double currentBottom = 128.0 - (87.5 * t);
 
     // 3. Frosted Glass Background (Smooth Fade-in Collision Math)
-    const double contentPaddingTop = 12.0; 
+    const double contentPaddingTop = 12.0;
     final double pillAbsoluteBottom = ceiling + 56.0;
-    final double collisionOffset = maxExtent + contentPaddingTop - pillAbsoluteBottom;
+    final double collisionOffset =
+        maxExtent + contentPaddingTop - pillAbsoluteBottom;
     final double liftStartOffset = collisionOffset - 12.0;
-    
+
     double liftProgress = 0.0;
     if (shrinkOffset > liftStartOffset) {
       liftProgress = ((shrinkOffset - liftStartOffset) / 12.0).clamp(0.0, 1.0);
     }
-    
+
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
 
     return Container(
@@ -124,7 +129,8 @@ class ElvanCustomAppBarDelegate extends SliverPersistentHeaderDelegate {
             left: currentLeft,
             bottom: currentBottom,
             child: IgnorePointer(
-              ignoring: true, // Title shouldn't block touches to the cards below
+              ignoring:
+                  true, // Title shouldn't block touches to the cards below
               child: Transform.scale(
                 scale: currentScale,
                 alignment: Alignment.bottomLeft,
@@ -132,7 +138,8 @@ class ElvanCustomAppBarDelegate extends SliverPersistentHeaderDelegate {
                   opacity: 1.0 - liftProgress,
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
-                      maxWidth: math.max(0.0, (screenWidth - currentLeft - 16.0) / currentScale),
+                      maxWidth: math.max(0.0,
+                          (screenWidth - currentLeft - 16.0) / currentScale),
                     ),
                     child: Text(
                       title,
@@ -141,7 +148,8 @@ class ElvanCustomAppBarDelegate extends SliverPersistentHeaderDelegate {
                       overflow: TextOverflow.ellipsis,
                       style: titleStyle.copyWith(
                         color: Theme.of(context).brightness == Brightness.dark
-                            ? Color.lerp(Colors.white, Colors.white.withValues(alpha: 0.95), t)
+                            ? Color.lerp(Colors.white,
+                                Colors.white.withValues(alpha: 0.95), t)
                             : Colors.black87,
                       ),
                     ),
@@ -162,18 +170,24 @@ class ElvanCustomAppBarDelegate extends SliverPersistentHeaderDelegate {
                   duration: const Duration(milliseconds: 200),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(100),
-                    boxShadow: liftProgress > 0 ? [
-                      BoxShadow(
-                        blurRadius: 16 * liftProgress,
-                        offset: Offset(0, 4 * liftProgress),
-                        color: Colors.black.withValues(alpha: 0.05 * liftProgress),
-                      )
-                    ] : null,
+                    boxShadow: liftProgress > 0
+                        ? [
+                            BoxShadow(
+                              blurRadius: 16 * liftProgress,
+                              offset: Offset(0, 4 * liftProgress),
+                              color: Colors.black
+                                  .withValues(alpha: 0.05 * liftProgress),
+                            )
+                          ]
+                        : null,
                   ),
                   child: Material(
                     type: MaterialType.canvas,
-                    color: liftProgress > 0 
-                        ? (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : Colors.white).withValues(alpha: 0.88 * liftProgress)
+                    color: liftProgress > 0
+                        ? (Theme.of(context).brightness == Brightness.dark
+                                ? const Color(0xFF1E1E1E)
+                                : Colors.white)
+                            .withValues(alpha: 0.88 * liftProgress)
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(100),
                     clipBehavior: Clip.antiAlias,
@@ -192,11 +206,15 @@ class ElvanCustomAppBarDelegate extends SliverPersistentHeaderDelegate {
                 alignment: Alignment.centerRight,
                 child: AnimatedOpacity(
                   duration: const Duration(milliseconds: 200),
-                  opacity: isMenuOpen ? 0.0 : (1.0 - liftProgress), // FADES OUT AS PILL FADES IN
+                  opacity: isMenuOpen
+                      ? 0.0
+                      : (1.0 - liftProgress), // FADES OUT AS PILL FADES IN
                   child: IgnorePointer(
-                    ignoring: isMenuOpen || liftProgress > 0, // Disable touches once handed off
+                    ignoring: isMenuOpen ||
+                        liftProgress > 0, // Disable touches once handed off
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 4, vertical: 12),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: navActions,
@@ -220,5 +238,3 @@ class ElvanCustomAppBarDelegate extends SliverPersistentHeaderDelegate {
         isMenuOpen != oldDelegate.isMenuOpen;
   }
 }
-
-

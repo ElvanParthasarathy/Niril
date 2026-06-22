@@ -107,7 +107,10 @@ class ElvanSettingsTextField extends StatelessWidget {
               fontSize: 12,
               fontWeight: FontWeight.w400,
               letterSpacing: 0.3,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.5),
             ),
           ),
         ),
@@ -123,11 +126,18 @@ class ElvanSettingsTextField extends StatelessWidget {
             filled: true,
             fillColor: WidgetStateColor.resolveWith((states) {
               if (states.contains(WidgetState.focused)) {
-                return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12);
+                return Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.12);
               }
-              return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08);
+              return Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.08);
             }),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(maxLines > 1 ? 16 : 100),
               borderSide: BorderSide.none,
@@ -200,67 +210,82 @@ class ElvanSettingsDisplayRow extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                if (primaryWidget != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 6.0),
-                    child: primaryWidget!,
-                  ),
-                if (primaryWidget == null || primaryValue.isNotEmpty)
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
-                    primaryWidget != null && primaryValue.isEmpty ? '' : (primaryValue.isEmpty ? '-' : primaryValue),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    title,
+                    style: TextStyle(
                       fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.6),
                     ),
                   ),
-                if (secondaryValue != null && secondaryValue!.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2.0),
-                    child: Text(
-                      secondaryValue!,
+                  const SizedBox(height: 6),
+                  if (primaryWidget != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6.0),
+                      child: primaryWidget!,
+                    ),
+                  if (primaryWidget == null || primaryValue.isNotEmpty)
+                    Text(
+                      primaryWidget != null && primaryValue.isEmpty
+                          ? ''
+                          : (primaryValue.isEmpty ? '-' : primaryValue),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ),
-              ],
+                  if (secondaryValue != null && secondaryValue!.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2.0),
+                      child: Text(
+                        secondaryValue!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-          IconButton(
-            onPressed: onEdit,
-            style: IconButton.styleFrom(
-              backgroundColor: iconColor != null 
-                  ? iconColor!.withValues(alpha: 0.1) 
-                  : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
-              fixedSize: const Size(40, 40),
+            IconButton(
+              onPressed: onEdit,
+              style: IconButton.styleFrom(
+                backgroundColor: iconColor != null
+                    ? iconColor!.withValues(alpha: 0.1)
+                    : Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.05),
+                fixedSize: const Size(40, 40),
+              ),
+              icon: Icon(
+                icon,
+                size: 20,
+                color: iconColor ??
+                    Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.6),
+              ),
             ),
-            icon: Icon(
-              icon,
-              size: 20,
-              color: iconColor ?? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }

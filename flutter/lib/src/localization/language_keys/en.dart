@@ -143,7 +143,8 @@ const Map<String, String> en = {
   'duplicateCustomersTitle': 'Duplicate Merchants?',
   'duplicateCustomersMessage': 'Duplicate {count} selected merchant(s)?',
   'deleteMerchantsTitle': 'Delete Merchants?',
-  'deleteMerchantsMessage': 'Delete {count} merchant(s)? This cannot be undone.',
+  'deleteMerchantsMessage':
+      'Delete {count} merchant(s)? This cannot be undone.',
   'customersDuplicatedSuccess': 'Merchants duplicated successfully',
   'newItem': 'New Item',
   'noItems': 'No items yet',
@@ -188,18 +189,22 @@ const Map<String, String> en = {
   'modulesTitle': 'Modules',
   'modulesDesc': 'Turn off unused features. Your data remains safe.',
   'regionTitle': 'Region Preference',
-  'regionDesc': 'Choose how the app behaves. You can change this any time without losing data.',
+  'regionDesc':
+      'Choose how the app behaves. You can change this any time without losing data.',
   'companyDetailsTitle': 'Company Details',
   'paymentAccountsTitle': 'Payment Accounts',
-  'paymentAccountsDesc': 'Add bank or UPI accounts. The default (⭐) is preselected on new invoices.',
+  'paymentAccountsDesc':
+      'Add bank or UPI accounts. The default (⭐) is preselected on new invoices.',
   'invoiceNumberFormatTitle': 'Invoice Number Format',
   'brandingTitle': 'Branding',
   'businessLogo': 'Business Logo',
   'signature': 'Signature / Stamp',
   'cloudBackupTitle': 'Cloud Backup (Google Drive)',
-  'cloudBackupDesc': 'Auto-sync your invoices to Google Drive — no coding or API setup needed.',
+  'cloudBackupDesc':
+      'Auto-sync your invoices to Google Drive — no coding or API setup needed.',
   'exportImportTitle': 'Export & Import Data',
-  'exportImportDesc': 'Backup your data locally or restore from a previous backup file.',
+  'exportImportDesc':
+      'Backup your data locally or restore from a previous backup file.',
   'resetToDefault': 'Reset to default',
   'moduleGroup_sales': 'Sales & Invoicing',
   'moduleDesc_sales': 'Invoice creation, recurring invoices, payment receipts',
@@ -246,7 +251,8 @@ const Map<String, String> en = {
   'mobileLabel': 'Mobile',
   'orgNameEn': 'Organization Name (English)',
   'shortBusinessName': 'Short Business Name',
-  'shortBusinessNameHint': 'Used as the default prefix for your invoice numbers.',
+  'shortBusinessNameHint':
+      'Used as the default prefix for your invoice numbers.',
   'phoneNumbers': 'Phone Numbers',
   'address': 'Address',
   'contactBank': 'Contact & Bank',
@@ -269,10 +275,12 @@ const Map<String, String> en = {
   'businessName': 'Business Name',
   'gstinOptional': 'GSTIN (Optional)',
   'addressOptional': 'Address (Optional)',
-  'fillDetailsLater': 'You can fill in the rest of the details later from Settings.',
+  'fillDetailsLater':
+      'You can fill in the rest of the details later from Settings.',
   'creating': 'Creating...',
   'createBtn': 'Create',
-  'unsavedChangesContinue': 'You have unsaved changes. Continue without saving?',
+  'unsavedChangesContinue':
+      'You have unsaved changes. Continue without saving?',
   'continue': 'Continue',
   'profileDeleted': 'Profile deleted',
   'changesDiscarded': 'Changes discarded',
@@ -328,7 +336,8 @@ const Map<String, String> en = {
   'checkingUpdate': 'Checking...',
   'checkForUpdates': 'Check for Updates',
   'dataManagementTitle': 'Data Management',
-  'dataNoticeText': '<strong>Your data is stored locally on this device.</strong> It is never uploaded anywhere unless you manually sync to your personal Google Drive.',
+  'dataNoticeText':
+      '<strong>Your data is stored locally on this device.</strong> It is never uploaded anywhere unless you manually sync to your personal Google Drive.',
   'dataManagementDesc': 'Manage your backups and restorations.',
   'exportBackup': 'Export Backup...',
   'importBackup': 'Import Backup...',
@@ -366,7 +375,8 @@ const Map<String, String> en = {
   'languagesUsedForBilling': 'Languages used for billing and data entry',
   'enableBilingualBills': 'Enable Bilingual Bills',
   'showItemizedGstTable': 'Show GST splits in table',
-  'displayDetailedItemizedGst': 'Display detailed itemized GST breakdown columns on the invoice',
+  'displayDetailedItemizedGst':
+      'Display detailed itemized GST breakdown columns on the invoice',
   'overviewOfInvoices': 'Overview of your invoices',
   'totalInvoiced': 'Total Invoiced',
   'taxCollected': 'Tax Collected',
@@ -436,12 +446,16 @@ const Map<String, String> en = {
   'invoiceTypes_delivery_challan': 'Delivery Challan',
   'invoiceDesc_tax_invoice': 'Standard invoice for B2B/B2C sales with tax',
   'invoiceDesc_proforma': 'Estimated invoice or quote before actual sale',
-  'invoiceDesc_bill_of_supply': 'For selling tax-exempt items without charging tax',
-  'invoiceDesc_composition': 'For businesses under Composition scheme (flat tax)',
+  'invoiceDesc_bill_of_supply':
+      'For selling tax-exempt items without charging tax',
+  'invoiceDesc_composition':
+      'For businesses under Composition scheme (flat tax)',
   'invoiceDesc_credit_note': 'For sales returns or reducing the invoice amount',
-  'invoiceDesc_delivery_challan': 'For sending items on approval, job work, or branch transfer',
+  'invoiceDesc_delivery_challan':
+      'For sending items on approval, job work, or branch transfer',
   'duplicateProductsTitle': 'Duplicate Products?',
-  'duplicateProductsMessage': 'Are you sure you want to create copies of the selected product(s)?',
+  'duplicateProductsMessage':
+      'Are you sure you want to create copies of the selected product(s)?',
   'saveDuplicate': 'Save (Duplicate)',
   'productsDuplicatedSuccess': 'Products duplicated successfully',
   'errorDuplicating': 'Error duplicating',
@@ -459,10 +473,12 @@ const Map<String, String> en = {
   'hc_onYourDesktop': 'on your Desktop',
   'hc_2OrSearch': '2. Or search',
   'hc_inStartMenu': 'in Start Menu',
-  'hc_startingThisPageWillOpen': 'Starting... this page will open automatically.',
+  'hc_startingThisPageWillOpen':
+      'Starting... this page will open automatically.',
   'hc_typeACommandOrPage': 'Type a command or page name…',
   'hc_yourDataIsSafe': 'Your data is safe.',
-  'hc_updatesOnlyRefreshTheApp': 'Updates only refresh the app code and dependencies — your',
+  'hc_updatesOnlyRefreshTheApp':
+      'Updates only refresh the app code and dependencies — your',
   'hc_pdfArchiveAre': 'PDF archive are',
   'hc_neverTouched': 'never touched',
   'hc_githubReleases': 'GitHub Releases',
@@ -481,8 +497,10 @@ const Map<String, String> en = {
   'hc_enterCustomerName': 'Enter Customer Name',
   'hc_enterCountryName': 'Enter country name',
   'hc_active': 'Active',
-  'hc_yourExistingBankDetailsAre': 'Your existing bank details are still on this profile.',
-  'hc_clickBelowToImportThem': 'Click below to import them as the first Payment Account, then add more.',
+  'hc_yourExistingBankDetailsAre':
+      'Your existing bank details are still on this profile.',
+  'hc_clickBelowToImportThem':
+      'Click below to import them as the first Payment Account, then add more.',
   'hc_defaultAccount': 'Default account',
   'hc_inactive': 'Inactive',
   'hc_setAsDefault': 'Set as default',
@@ -506,7 +524,8 @@ const Map<String, String> en = {
   'hc_openGoogleCloudConsole': 'Open Google Cloud Console',
   'hc_driveFolderName': 'Drive Folder Name',
   'hc_status': 'Status',
-  'hc_yourDataWillNotBe': 'Your data will not be affected. Click below to update:',
+  'hc_yourDataWillNotBe':
+      'Your data will not be affected. Click below to update:',
   'hc_preferences': 'Preferences',
   'hc_uiLanguageDataLanguages': 'UI language, Data languages',
   'hc_accountsInvoiceFormatsTerms': 'Accounts, Invoice formats, Terms',
@@ -563,7 +582,8 @@ const Map<String, String> en = {
   'hc_noDocumentsIssued': 'No documents issued.',
   'hc_natureOfSupplies': 'Nature of Supplies',
   'hc_na': 'N/A',
-  'hc_table32IntermaanilamSuppliesTo': 'Table 3.2 — Inter-maanilam Supplies to Unregistered Persons',
+  'hc_table32IntermaanilamSuppliesTo':
+      'Table 3.2 — Inter-maanilam Supplies to Unregistered Persons',
   'hc_placeOfSupply': 'Place of Supply',
   'hc_details': 'Details',
   'hc_netItcAvailable': 'Net ITC Available',
@@ -575,7 +595,8 @@ const Map<String, String> en = {
   'hc_howToUse': 'How to use:',
   'hc_import2bJson': 'Import 2B JSON',
   'hc_purchaseBills': 'Purchase Bills',
-  'hc_importYourGstr2bJsonTo': 'Import your GSTR-2B JSON to reconcile against your purchase records.',
+  'hc_importYourGstr2bJsonTo':
+      'Import your GSTR-2B JSON to reconcile against your purchase records.',
   'hc_supplier': 'Supplier',
   'hc_invoiceNo1': 'Invoice No.',
   'hc_2bValue': '2B Value',
@@ -594,15 +615,19 @@ const Map<String, String> en = {
   'hc_totalTcsCollected': 'Total TCS collected',
   'hc_customizeTcs': 'Customize → TCS',
   'hc_steps': 'Steps:',
-  'hc_dueR1By11th3b': '| Due: R1 by 11th, 3B by 20th of next month | Late fee: ₹50/day',
+  'hc_dueR1By11th3b':
+      '| Due: R1 by 11th, 3B by 20th of next month | Late fee: ₹50/day',
   'hc_gstr1ProTips': 'GSTR-1 Pro Tips',
   'hc_fastestMethod': 'Fastest method:',
-  'hc_exportGstr1JsonFromThe': 'Export GSTR-1 JSON from the GSTR-1 tab above → Go to GST portal → GSTR-1 → Prepare Offline → Download Offline Tool → Import JSON → Upload. Saves 90% of time.',
+  'hc_exportGstr1JsonFromThe':
+      'Export GSTR-1 JSON from the GSTR-1 tab above → Go to GST portal → GSTR-1 → Prepare Offline → Download Offline Tool → Import JSON → Upload. Saves 90% of time.',
   'hc_gstr3bProTips': 'GSTR-3B Pro Tips',
   'hc_fromJuly2025': 'From July 2025:',
-  'hc_table3AutopopulatesFromGstr1': 'Table 3 auto-populates from GSTR-1 — just VERIFY, don\'t re-enter values.',
+  'hc_table3AutopopulatesFromGstr1':
+      'Table 3 auto-populates from GSTR-1 — just VERIFY, don\'t re-enter values.',
   'hc_itcMatching': 'ITC matching:',
-  'hc_alwaysCheckGstr2bStatementBefore': 'Always check GSTR-2B statement BEFORE claiming ITC. Go to Returns → GSTR-2B → Download. Only claim ITC that appears in GSTR-2B.',
+  'hc_alwaysCheckGstr2bStatementBefore':
+      'Always check GSTR-2B statement BEFORE claiming ITC. Go to Returns → GSTR-2B → Download. Only claim ITC that appears in GSTR-2B.',
   'hc_payment': 'Payment:',
   'hc_interestCalculation': 'Interest calculation:',
   'hc_reverseCharge': 'Reverse charge:',
@@ -615,29 +640,37 @@ const Map<String, String> en = {
   'hc_noTaxLiability': 'NO tax liability',
   'hc_noInwardSupplies': 'NO inward supplies',
   'hc_liableToReverseCharge': 'liable to reverse charge',
-  'hc_ifAnyOfTheAbove': 'If ANY of the above has a value, you MUST file a regular return — not NIL',
+  'hc_ifAnyOfTheAbove':
+      'If ANY of the above has a value, you MUST file a regular return — not NIL',
   'hc_nilGstr3bFileAfterNil': 'NIL GSTR-3B — File After NIL GSTR-1',
   'hc_nilReturnQuickSummary': 'NIL Return Quick Summary',
   'hc_nilGstr1AndNilGstr3b': 'NIL GSTR-1 and NIL GSTR-3B are',
   'hc_separateReturns': 'separate returns',
   'hc_fileBoth': '— file both',
-  'hc_nilFilingTakes23Minutes': 'NIL filing takes 2-3 minutes per return — just login, verify zeros, submit, file',
+  'hc_nilFilingTakes23Minutes':
+      'NIL filing takes 2-3 minutes per return — just login, verify zeros, submit, file',
   'hc_youCanFileNilReturns': 'You can file NIL returns via SMS: Send',
   'hc_nilSpaceGstinSpaceReturn': 'NIL space GSTIN space Return Period',
   'hc_to14409VerifyWithOtp': 'to 14409. Verify with OTP.',
-  'hc_qrmpUsersFilingQuarterlyNil': 'QRMP users filing quarterly: NIL return covers the entire quarter',
+  'hc_qrmpUsersFilingQuarterlyNil':
+      'QRMP users filing quarterly: NIL return covers the entire quarter',
   'hc_keyGstRulesToRemember': 'Key GST Rules to Remember',
-  'hc_itcForAnyInvoiceMust': 'ITC for any invoice must be claimed by the due date of September return of the following FY, or the date of filing annual return — whichever is earlier.',
+  'hc_itcForAnyInvoiceMust':
+      'ITC for any invoice must be claimed by the due date of September return of the following FY, or the date of filing annual return — whichever is earlier.',
   'hc_section34': 'Section 34:',
-  'hc_creditNotesMustBeIssued': 'Credit notes must be issued before September 30 following the end of FY of the original invoice or annual return filing — whichever is earlier.',
+  'hc_creditNotesMustBeIssued':
+      'Credit notes must be issued before September 30 following the end of FY of the original invoice or annual return filing — whichever is earlier.',
   'hc_section31': 'Section 31:',
-  'hc_taxInvoiceMustBeIssued': 'Tax invoice must be issued at or before the time of supply. For services, within 30 days of supply.',
+  'hc_taxInvoiceMustBeIssued':
+      'Tax invoice must be issued at or before the time of supply. For services, within 30 days of supply.',
   'hc_section49': 'Section 49:',
-  'hc_itcCanOnlyBeClaimed': 'ITC can only be claimed for invoices that appear in GSTR-2B. No provisional ITC beyond GSTR-2B.',
+  'hc_itcCanOnlyBeClaimed':
+      'ITC can only be claimed for invoices that appear in GSTR-2B. No provisional ITC beyond GSTR-2B.',
   'hc_section50': 'Section 50:',
   'hc_section7374': 'Section 73/74:',
   'hc_ewayBill': 'E-way Bill:',
-  'hc_cannotGenerateEwayBillsIf': 'Cannot generate e-way bills if GSTR-3B not filed for 2+ consecutive months.',
+  'hc_cannotGenerateEwayBillsIf':
+      'Cannot generate e-way bills if GSTR-3B not filed for 2+ consecutive months.',
   'hc_bulletList': 'Bullet list',
   'hc_numberedList': 'Numbered list',
   'hc_heading': 'Heading',
@@ -645,7 +678,8 @@ const Map<String, String> en = {
   'hc_insertLink': 'Insert link',
   'hc_clearFormatting': 'Clear formatting',
   'hc_allChangesSaved': 'All changes saved',
-  'hc_addAClientNameAnd': 'Add a client name and at least one item to start saving',
+  'hc_addAClientNameAnd':
+      'Add a client name and at least one item to start saving',
   'hc_sacCode': 'SAC code',
   'hc_invoiceTitle': 'Invoice Title',
   'hc_currency': 'Currency',
@@ -672,7 +706,8 @@ const Map<String, String> en = {
   'hc_saveChangesBeforeClosing': 'Save changes before closing?',
   'hc_forEstimationPurposesOnly': 'For estimation purposes only',
   'hc_against': 'Against:',
-  'hc_thisIsNotATax': 'This is not a tax invoice. For estimation purposes only.',
+  'hc_thisIsNotATax':
+      'This is not a tax invoice. For estimation purposes only.',
   'hc_againstInvoice': 'Against Invoice:',
   'hc_disc': 'Disc.',
   'hc_subtotal': 'Subtotal',
@@ -842,10 +877,10 @@ const Map<String, String> en = {
   'gstinCol': 'Gstin',
   'taxableCol': 'Taxable',
   'recurringInvoicesSubtitle': 'Automate invoices for regular clients',
-  'invoiceLimitDesc': 'Total number of invoices you can create across all clients',
+  'invoiceLimitDesc':
+      'Total number of invoices you can create across all clients',
   'signing_out': 'Signing out...',
   'signOutSuccess': 'Signed out successfully',
-
   'newTemplateBtn': 'New Template',
   'dueForGeneration': 'Due For Generation',
   'editTemplateTitle': 'Edit Template',
@@ -1009,7 +1044,8 @@ const Map<String, String> en = {
   'manage': 'Manage',
   'addNew': 'Add New',
   'shortBusinessNameLabel': 'Short Business Name (for Bill No)',
-  'shortBusinessNameHelper': 'Used as the default prefix for your invoice numbers.',
+  'shortBusinessNameHelper':
+      'Used as the default prefix for your invoice numbers.',
   'authorizedSignatoryName': 'Authorized Signatory Name',
   'profileSaved': 'Profile saved!',
   'unsavedChangesWarning': 'You have unsaved changes. Continue without saving?',
@@ -1029,11 +1065,13 @@ const Map<String, String> en = {
   'invoiceCount': 'Invoice Count',
   'selectYourOperatingMode': 'Select your operating mode',
   'languageSettingsSaved': 'Language settings saved!',
-  'usedAsTheDefaultPrefixForYourI': 'Used as the default prefix for your invoice numbers (e.g. SJS/2026-27/0001).',
+  'usedAsTheDefaultPrefixForYourI':
+      'Used as the default prefix for your invoice numbers (e.g. SJS/2026-27/0001).',
   'addAlternateMobile': 'Add Alternate Mobile',
   'changeTheLanguageOfTheApplicat': 'Change the language of the application.',
   'appUserName': 'App User Name',
-  'thisNameWillAppearOnTheAppHome': 'This name will appear on the app home screen profile pill.',
+  'thisNameWillAppearOnTheAppHome':
+      'This name will appear on the app home screen profile pill.',
   'userName': 'User Name',
   'allowDataEntryInTwoLanguages': 'Allow data entry in two languages',
   'bankDetailsShownOnYourInvoices': 'Bank details shown on your invoices.',
@@ -1077,10 +1115,13 @@ const Map<String, String> en = {
   'clearCacheTitle': 'Clear Cache',
   'clearCacheDesc': 'Fix issues by clearing cache.',
   'clearCacheBtn': 'Clear Cache',
-  'clearCacheConfirmDesc': 'This will reload the app. You may need to sign in again.',
+  'clearCacheConfirmDesc':
+      'This will reload the app. You may need to sign in again.',
   'signOutConfirmTitle': 'Sign Out?',
-  'signOutConfirmDesc': 'Are you sure you want to sign out? You will need your password to access your data again.',
-  'eraseConfirmDesc': 'Permanently deletes all cloud data. This cannot be undone.',
+  'signOutConfirmDesc':
+      'Are you sure you want to sign out? You will need your password to access your data again.',
+  'eraseConfirmDesc':
+      'Permanently deletes all cloud data. This cannot be undone.',
   'confirmEmailLabel': 'Confirm Email',
   'incorrectEmail': 'Email does not match.',
   'confirmPassword': 'Confirm',
@@ -1104,12 +1145,14 @@ const Map<String, String> en = {
   'muzhiyayTherthde': 'Select Language',
   'viruppamanaMozhiyayThervuSeiga': 'Choose your preferred language',
   'pattiyalMuthanmozhi': 'Select Primary Billing Language',
-  'pattiyalilEmmozhiyayPayanpaduttaVendum': 'Which language would you like to use for your bills?',
+  'pattiyalilEmmozhiyayPayanpaduttaVendum':
+      'Which language would you like to use for your bills?',
   'tharavugalaiUlliduga': 'Enter Business Details',
   'peyaraiUlliduga': 'Enter name',
   'gstPattiyalukkuPayanpadum': 'Used for regular GST invoices.',
   'coolieVanigaPeyar': 'Coolie Business Name',
-  'cooliePattiyalMatrumRaseethukkuPayanpadum': 'Used for Coolie bills and receipts.',
+  'cooliePattiyalMatrumRaseethukkuPayanpadum':
+      'Used for Coolie bills and receipts.',
   'editPrefix': 'Edit ',
   'vanigam': 'Business',
   'vaniga_amaippugal': 'Business Settings',
@@ -1118,7 +1161,6 @@ const Map<String, String> en = {
   'uruvakku_amaippugal': 'Creation Settings',
   'seyali_amaippugal': 'App Settings',
   'pathugappu_amaippugal': 'Security Settings',
-
   'thirai': 'Display',
   'pathugappu': 'Security',
   'menporul_vadivalar': 'Software Designer',

@@ -15,7 +15,7 @@ class MugappuPage extends ConsumerWidget {
     if (mode == AppMode.coolie) {
       return const CoolieHomePage();
     }
-    
+
     // Default to GST mode
     return const SilkHomePage();
   }

@@ -61,7 +61,7 @@ class _ElvanShellState extends State<ElvanShell>
   // ── Navbar hide / show animation ──────────────────────────────────────
   late final AnimationController _navbarController;
   late final Animation<double> _navbarOpacity;
-  
+
   // ── Scroll tracking for One UI Physics ────────────────────────────────
   late final ScrollController _scrollController;
 
@@ -113,18 +113,19 @@ class _ElvanShellState extends State<ElvanShell>
   bool _handleScrollNotification(ScrollNotification notification) {
     if (notification is ScrollUpdateNotification) {
       final delta = notification.scrollDelta ?? 0;
-      
+
       if (delta > 0) {
         // Scrolling DOWN (finger moving up)
-        
-        // Calculate if the gallery cards have physically collided with the icons 
+
+        // Calculate if the gallery cards have physically collided with the icons
         // to turn on the white background (the TRUE pill state!)
         final double statusBarHeight = MediaQuery.paddingOf(context).top;
         final double ceiling = statusBarHeight + 20.0;
-        
-        final double collisionOffset = (_kExpandedHeight + 32.0) - (ceiling + 50.0);
+
+        final double collisionOffset =
+            (_kExpandedHeight + 32.0) - (ceiling + 50.0);
         final double liftStartOffset = collisionOffset - 4.0;
-        
+
         final bool isTruePill = _scrollController.offset > liftStartOffset;
 
         // Hide ONLY if it's a momentum fling (finger off screen) AND it is a TRUE pill!
@@ -150,13 +151,15 @@ class _ElvanShellState extends State<ElvanShell>
       // ── Samsung One UI Physics: Snapping the Header ──
       // Calculate how far the header travels before collapsing
       final double statusBarHeight = MediaQuery.paddingOf(context).top;
-      final double snapThreshold = _kExpandedHeight - kToolbarHeight - statusBarHeight;
-      
+      final double snapThreshold =
+          _kExpandedHeight - kToolbarHeight - statusBarHeight;
+
       final currentOffset = _scrollController.offset;
       if (currentOffset > 0 && currentOffset < snapThreshold) {
         // We are caught in the middle! Snap to the closest stage.
-        final targetOffset = currentOffset > (snapThreshold / 2) ? snapThreshold : 0.0;
-        
+        final targetOffset =
+            currentOffset > (snapThreshold / 2) ? snapThreshold : 0.0;
+
         Future.microtask(() {
           _scrollController.animateTo(
             targetOffset,
@@ -173,8 +176,7 @@ class _ElvanShellState extends State<ElvanShell>
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor =
-        Theme.of(context).scaffoldBackgroundColor;
+    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
 
     return Scaffold(
       body: Stack(
@@ -322,21 +324,25 @@ class _ElvanHeaderDelegate extends SliverPersistentHeaderDelegate {
   // but Flutter passes constraints.maxHeight directly anyway for stretches if physics allows it!
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final double currentHeight = constraints.maxHeight;
         final double maxShrink = maxExtent - minExtent;
-        final double shrinkProgress = (shrinkOffset / maxShrink).clamp(0.0, 1.0);
-        final double titleOpacity = (1.0 - (shrinkProgress * 1.5)).clamp(0.0, 1.0);
+        final double shrinkProgress =
+            (shrinkOffset / maxShrink).clamp(0.0, 1.0);
+        final double titleOpacity =
+            (1.0 - (shrinkProgress * 1.5)).clamp(0.0, 1.0);
 
         final double expandedButtonsBottom = 8.0;
-        double currentTop = currentHeight - expandedButtonsBottom - kToolbarHeight;
+        double currentTop =
+            currentHeight - expandedButtonsBottom - kToolbarHeight;
         final double ceiling = statusBarHeight + 20.0;
-        
+
         bool isPinned = currentTop <= ceiling;
         if (isPinned) {
-           currentTop = ceiling;
+          currentTop = ceiling;
         }
 
         return Container(
@@ -349,7 +355,7 @@ class _ElvanHeaderDelegate extends SliverPersistentHeaderDelegate {
               Positioned(
                 left: 24,
                 right: 24,
-                bottom: 64 + expandedButtonsBottom + kToolbarHeight, 
+                bottom: 64 + expandedButtonsBottom + kToolbarHeight,
                 child: Opacity(
                   opacity: titleOpacity,
                   child: Text(
@@ -372,9 +378,12 @@ class _ElvanHeaderDelegate extends SliverPersistentHeaderDelegate {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Opacity(
-                    opacity: isPinned ? 0.0 : 1.0, // Hand off to Component B when pinned!
+                    opacity: isPinned
+                        ? 0.0
+                        : 1.0, // Hand off to Component B when pinned!
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 4, vertical: 5),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: navActions,

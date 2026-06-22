@@ -17,7 +17,8 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
 
     return ElvanSubpageShell(
       title: 'seyali_amaippugal'.tr(context, ref),
-      backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
+      backgroundColor:
+          isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
       slivers: [
         SliverPadding(
           padding: const EdgeInsets.only(
@@ -36,7 +37,8 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
                     value: AppMode.silk,
                     groupValue: currentAppMode ?? AppMode.silk,
                     onChanged: (val) {
-                      if (val != null) ref.read(appModeProvider.notifier).setMode(val);
+                      if (val != null)
+                        ref.read(appModeProvider.notifier).setMode(val);
                     },
                   ),
                   ElvanRadioSettingsRow<AppMode>(
@@ -44,7 +46,8 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
                     value: AppMode.coolie,
                     groupValue: currentAppMode ?? AppMode.silk,
                     onChanged: (val) {
-                      if (val != null) ref.read(appModeProvider.notifier).setMode(val);
+                      if (val != null)
+                        ref.read(appModeProvider.notifier).setMode(val);
                     },
                   ),
                 ],

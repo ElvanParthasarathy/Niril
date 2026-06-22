@@ -4,6 +4,7 @@ import '../models/app_mode.dart';
 import '../preferences_service.dart';
 import '../database/app_database.dart';
 import '../../features/settings/data/vaniga_tharavugal_provider.dart';
+
 class AppStateNotifier extends Notifier<AppMode?> {
   @override
   AppMode? build() {
@@ -21,7 +22,8 @@ final appModeProvider = NotifierProvider<AppStateNotifier, AppMode?>(() {
 });
 
 // Stream of all profiles in the database
-final _profilesStreamProvider = StreamProvider<List<VanigaTharavugalEntry>>((ref) {
+final _profilesStreamProvider =
+    StreamProvider<List<VanigaTharavugalEntry>>((ref) {
   final db = ref.watch(appDatabaseProvider);
   return db.select(db.vanigaTharavugalTable).watch();
 });
@@ -36,14 +38,15 @@ final profilesLoadingProvider = Provider<bool>((ref) {
 // Returns a list of AppMode strings (e.g. ['silk', 'coolie'], ['coolie'], or [])
 final missingProfilesProvider = Provider<List<String>>((ref) {
   final profiles = ref.watch(_profilesStreamProvider).value;
-  if (profiles == null) return []; // Assume none missing while loading to prevent flashes
-  
+  if (profiles == null)
+    return []; // Assume none missing while loading to prevent flashes
+
   final existingModes = profiles.map((p) => p.seyaliVagai).toList();
   final missing = <String>[];
-  
+
   if (!existingModes.contains('silk')) missing.add('silk');
   if (!existingModes.contains('coolie')) missing.add('coolie');
-  
+
   return missing;
 });
 
@@ -57,14 +60,13 @@ final hasBothProfilesProvider = Provider<bool>((ref) {
 final hasProfileForCurrentModeProvider = Provider<bool>((ref) {
   final mode = ref.watch(appModeProvider);
   if (mode == null) return false;
-  
+
   final profiles = ref.watch(_profilesStreamProvider).value;
   if (profiles == null) return true; // Assume true while loading
-  
+
   final modeKey = mode == AppMode.coolie ? 'coolie' : 'silk';
   return profiles.any((p) => p.seyaliVagai == modeKey);
 });
-
 
 // Tracks the selected segment inside the Uruvakku tab (0 = Invoices, 1 = Receipts)
 final silkUruvakkuSegmentProvider = StateProvider<int>((ref) => 0);
@@ -80,6 +82,7 @@ class UruvakkuSegmentNotifier extends Notifier<int> {
       return ref.watch(silkUruvakkuSegmentProvider);
     }
   }
+
   set state(int value) {
     final mode = ref.read(appModeProvider);
     if (mode == AppMode.coolie) {
@@ -90,7 +93,8 @@ class UruvakkuSegmentNotifier extends Notifier<int> {
   }
 }
 
-final uruvakkuSegmentProvider = NotifierProvider<UruvakkuSegmentNotifier, int>(() {
+final uruvakkuSegmentProvider =
+    NotifierProvider<UruvakkuSegmentNotifier, int>(() {
   return UruvakkuSegmentNotifier();
 });
 
@@ -133,6 +137,7 @@ class PrimaryLanguageNotifier extends Notifier<String> {
     final profile = ref.watch(vanigaTharavugalProvider);
     return profile?.mudhanMozhi ?? 'Tamil';
   }
+
   set state(String value) {
     final profile = ref.read(vanigaTharavugalProvider);
     if (profile != null) {
@@ -142,7 +147,8 @@ class PrimaryLanguageNotifier extends Notifier<String> {
   }
 }
 
-final primaryLanguageProvider = NotifierProvider<PrimaryLanguageNotifier, String>(() {
+final primaryLanguageProvider =
+    NotifierProvider<PrimaryLanguageNotifier, String>(() {
   return PrimaryLanguageNotifier();
 });
 
@@ -153,6 +159,7 @@ class SecondaryLanguageNotifier extends Notifier<String> {
     final profile = ref.watch(vanigaTharavugalProvider);
     return profile?.thunaiMozhi ?? 'English';
   }
+
   set state(String value) {
     final profile = ref.read(vanigaTharavugalProvider);
     if (profile != null) {
@@ -162,7 +169,8 @@ class SecondaryLanguageNotifier extends Notifier<String> {
   }
 }
 
-final secondaryLanguageProvider = NotifierProvider<SecondaryLanguageNotifier, String>(() {
+final secondaryLanguageProvider =
+    NotifierProvider<SecondaryLanguageNotifier, String>(() {
   return SecondaryLanguageNotifier();
 });
 

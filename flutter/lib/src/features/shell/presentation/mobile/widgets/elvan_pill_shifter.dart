@@ -38,14 +38,17 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     final int itemCount = widget.items.length;
-    final double layoutWidth = 140.0; // Wider to fit icon + long text like 'பற்றுச்சீட்டுகள்'
-    final double bgWidth = 148.0;     // Slightly larger than layoutWidth for overlap
-    
-    const double horizontalPadding = 10.0; // 4px inner overlap + 6px gap = 10px total padding
+    final double layoutWidth =
+        140.0; // Wider to fit icon + long text like 'பற்றுச்சீட்டுகள்'
+    final double bgWidth =
+        148.0; // Slightly larger than layoutWidth for overlap
+
+    const double horizontalPadding =
+        10.0; // 4px inner overlap + 6px gap = 10px total padding
     const double verticalPadding = 6.0; // Tweaked for 50px total height
 
-    int activeVisualIndex = (_isInteracting && _hoverIndex != null) 
-        ? _hoverIndex! 
+    int activeVisualIndex = (_isInteracting && _hoverIndex != null)
+        ? _hoverIndex!
         : (_localLockedIndex ?? widget.currentIndex);
 
     double targetLeft;
@@ -56,7 +59,8 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
       targetLeft = (activeVisualIndex * layoutWidth) - overlap;
     }
 
-    double maxLeft = ((itemCount - 1) * layoutWidth) - ((bgWidth - layoutWidth) / 2);
+    double maxLeft =
+        ((itemCount - 1) * layoutWidth) - ((bgWidth - layoutWidth) / 2);
     double minLeft = -((bgWidth - layoutWidth) / 2);
     targetLeft = targetLeft.clamp(minLeft, maxLeft);
 
@@ -67,20 +71,26 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
       child: Container(
         height: 52, // Match comfortable touch target size
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF121212).withValues(alpha: 0.88) : const Color(0xFFFFFFFF).withValues(alpha: 0.88),
+          color: isDark
+              ? const Color(0xFF121212).withValues(alpha: 0.88)
+              : const Color(0xFFFFFFFF).withValues(alpha: 0.88),
           borderRadius: BorderRadius.circular(100),
-          border: isDark ? null : Border.all(
-            color: const Color(0xFFFFFFFF).withValues(alpha: 0.6),
-            width: 0.5,
-          ),
-
+          border: isDark
+              ? null
+              : Border.all(
+                  color: const Color(0xFFFFFFFF).withValues(alpha: 0.6),
+                  width: 0.5,
+                ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
+          padding: const EdgeInsets.symmetric(
+              horizontal: horizontalPadding, vertical: verticalPadding),
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTapUp: (details) {
-              int index = (details.localPosition.dx / layoutWidth).floor().clamp(0, itemCount - 1);
+              int index = (details.localPosition.dx / layoutWidth)
+                  .floor()
+                  .clamp(0, itemCount - 1);
               setState(() {
                 _localLockedIndex = index;
                 _isInteracting = false;
@@ -94,17 +104,23 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
             onHorizontalDragDown: (details) {
               setState(() {
                 _isInteracting = true;
-                _hoverIndex = (details.localPosition.dx / layoutWidth).floor().clamp(0, itemCount - 1);
-                double slotCenter = (_hoverIndex! * layoutWidth) + (layoutWidth / 2);
+                _hoverIndex = (details.localPosition.dx / layoutWidth)
+                    .floor()
+                    .clamp(0, itemCount - 1);
+                double slotCenter =
+                    (_hoverIndex! * layoutWidth) + (layoutWidth / 2);
                 _touchOffsetFromCenter = details.localPosition.dx - slotCenter;
                 _dragOffset = null;
               });
             },
             onHorizontalDragUpdate: (details) {
               setState(() {
-                double targetCenter = details.localPosition.dx - _touchOffsetFromCenter;
+                double targetCenter =
+                    details.localPosition.dx - _touchOffsetFromCenter;
                 _dragOffset = targetCenter;
-                _hoverIndex = (targetCenter / layoutWidth).floor().clamp(0, itemCount - 1);
+                _hoverIndex = (targetCenter / layoutWidth)
+                    .floor()
+                    .clamp(0, itemCount - 1);
               });
             },
             onHorizontalDragEnd: (details) {
@@ -149,15 +165,19 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
                     width: _isInteracting ? bgWidth + 8.0 : bgWidth,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF212121).withValues(alpha: 0.95) : const Color(0xFFE5E5E5).withValues(alpha: 0.95),
+                        color: isDark
+                            ? const Color(0xFF212121).withValues(alpha: 0.95)
+                            : const Color(0xFFE5E5E5).withValues(alpha: 0.95),
                         borderRadius: BorderRadius.circular(100),
-                        boxShadow: isDark ? null : [
-                          BoxShadow(
-                            blurRadius: 4,
-                            offset: const Offset(0, 1),
-                            color: Colors.black.withValues(alpha: 0.04),
-                          ),
-                        ],
+                        boxShadow: isDark
+                            ? null
+                            : [
+                                BoxShadow(
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 1),
+                                  color: Colors.black.withValues(alpha: 0.04),
+                                ),
+                              ],
                       ),
                     ),
                   ),
@@ -169,7 +189,9 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
                       final isActive = index == activeVisualIndex;
                       final color = isActive
                           ? (isDark ? Colors.white : const Color(0xFF1A1A1A))
-                          : (isDark ? Colors.grey.shade500 : const Color(0xFF7C7C80));
+                          : (isDark
+                              ? Colors.grey.shade500
+                              : const Color(0xFF7C7C80));
 
                       final item = widget.items[index];
 
@@ -183,17 +205,23 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
                                 Padding(
                                   padding: const EdgeInsets.only(right: 6.0),
                                   child: SvgPicture.string(
-                                    isActive ? (item.activeSvgString ?? item.svgString!) : item.svgString!,
+                                    isActive
+                                        ? (item.activeSvgString ??
+                                            item.svgString!)
+                                        : item.svgString!,
                                     width: 16,
                                     height: 16,
-                                    colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                                    colorFilter: ColorFilter.mode(
+                                        color, BlendMode.srcIn),
                                   ),
                                 )
                               else if (item.icon != null)
                                 Padding(
                                   padding: const EdgeInsets.only(right: 6.0),
                                   child: Icon(
-                                    isActive ? (item.activeIcon ?? item.icon) : item.icon,
+                                    isActive
+                                        ? (item.activeIcon ?? item.icon)
+                                        : item.icon,
                                     size: 16,
                                     color: color,
                                   ),
@@ -204,7 +232,9 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontSize: 14,
-                                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+                                    fontWeight: isActive
+                                        ? FontWeight.w600
+                                        : FontWeight.w500,
                                     color: color,
                                   ),
                                 ),

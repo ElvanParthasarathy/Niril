@@ -109,11 +109,11 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
   bool _searchStep1HideIcons = false;
   bool _searchStep2ShowSearchContainer = false;
   bool _searchStep3ExpandSearch = false;
-  
+
   // Controls the fade and hit-testing of the entire Layer 3 bottom floating pill
   late final AnimationController _navbarController;
   late final Animation<double> _navbarOpacity;
-  
+
   // ── Scroll tracking for One UI Physics ────────────────────────────────
   late ScrollController _scrollController;
   bool _isScrollInitialized = false;
@@ -135,9 +135,12 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
 
   bool _isNavbarVisible = true;
   double _lastScrollDelta = 0.0;
-  final ValueNotifier<bool> _isHeaderExpandedNotifier = ValueNotifier<bool>(true);
-  final ValueNotifier<bool> _isSearchActiveNotifier = ValueNotifier<bool>(false);
-  final ValueNotifier<double> _dynamicPillHeightNotifier = ValueNotifier<double>(50.0);
+  final ValueNotifier<bool> _isHeaderExpandedNotifier =
+      ValueNotifier<bool>(true);
+  final ValueNotifier<bool> _isSearchActiveNotifier =
+      ValueNotifier<bool>(false);
+  final ValueNotifier<double> _dynamicPillHeightNotifier =
+      ValueNotifier<double>(50.0);
   final GlobalKey _pillKey = GlobalKey();
   final FocusNode _searchFocusNode = FocusNode();
 
@@ -164,30 +167,31 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
       _isSearchActiveNotifier.value = true;
       return;
     }
-    
+
     final double statusBarHeight = MediaQuery.paddingOf(context).top;
-    final double snapThreshold = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
-    
+    final double snapThreshold =
+        _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
+
     // Scroll slightly past the threshold to perfectly snap the header to its collapsed pill state
     final double targetOffset = snapThreshold + 20.0;
-    
+
     // Animate the scroll, but start the choreography immediately!
     _scrollController.animateTo(
       targetOffset,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOutCubic,
     );
-    
+
     // --- The Choreographed Container Transform Sequence ---
-    
+
     // Step 1: Smoothly fade out the Navbar icons (leaves empty glassy pill)
     setState(() => _searchStep1HideIcons = true);
-    
+
     Future.delayed(const Duration(milliseconds: 150), () {
       if (!mounted) return;
       // Step 2: Render the small Search container precisely on top of the empty Navbar
       setState(() => _searchStep2ShowSearchContainer = true);
-      
+
       // Step 3: Now stretch the Search container to full width and fade in its contents
       Future.delayed(const Duration(milliseconds: 50), () {
         if (!mounted) return;
@@ -202,18 +206,18 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
 
   void _closeSearchSequence() {
     _searchFocusNode.unfocus();
-    
+
     // Reverse Step 3: Shrink the Search container and fade out its contents
     setState(() {
       _searchStep3ExpandSearch = false;
       _isSearchActiveNotifier.value = false;
     });
-    
+
     Future.delayed(const Duration(milliseconds: 300), () {
       if (!mounted) return;
       // Reverse Step 2: Remove the small Search container to reveal the empty Navbar below
       setState(() => _searchStep2ShowSearchContainer = false);
-      
+
       Future.delayed(const Duration(milliseconds: 50), () {
         if (!mounted) return;
         // Reverse Step 1: Fade the Navbar icons back in
@@ -230,11 +234,13 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
       // If we are given an explicit startCollapsed directive, use that.
       // Otherwise, sync with the global hive mind.
       final bool isGlobalExpanded = ref.read(headerExpandedProvider);
-      final bool shouldStartExpanded = widget.startCollapsed ? false : isGlobalExpanded;
-      
+      final bool shouldStartExpanded =
+          widget.startCollapsed ? false : isGlobalExpanded;
+
       final double statusBarHeight = MediaQuery.paddingOf(context).top;
-      final double handOffOffset = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
-      
+      final double handOffOffset =
+          _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
+
       _scrollController = ScrollController(
         initialScrollOffset: shouldStartExpanded ? 0.0 : handOffOffset,
       );
@@ -246,20 +252,23 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
   @override
   void didUpdateWidget(ElvanShell oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     // Check if we are in a tabbed environment and this specific tab just became active!
     if (widget.assignedIndex != null &&
         oldWidget.currentIndex != widget.currentIndex &&
         widget.currentIndex == widget.assignedIndex) {
       if (_scrollController.hasClients) {
-        final isGlobalExpanded = widget.syncWithGlobalHeader ? ref.read(headerExpandedProvider) : true;
+        final isGlobalExpanded = widget.syncWithGlobalHeader
+            ? ref.read(headerExpandedProvider)
+            : true;
         if (isGlobalExpanded) {
           _isHeaderExpandedNotifier.value = true;
           _scrollController.jumpTo(0.0);
         } else {
           _isHeaderExpandedNotifier.value = false;
           final double statusBarHeight = MediaQuery.paddingOf(context).top;
-          final double handOffOffset = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
+          final double handOffOffset =
+              _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
           _scrollController.jumpTo(handOffOffset);
         }
       }
@@ -281,8 +290,9 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
 
   bool _handleScrollNotification(ScrollNotification notification) {
     final double statusBarHeight = MediaQuery.paddingOf(context).top;
-    final double snapThreshold = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
-    
+    final double snapThreshold =
+        _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
+
     // ── Update State Flags ──
     if (_scrollController.hasClients) {
       final double offset = _scrollController.offset;
@@ -293,12 +303,15 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
         }
       } else if (!_isHeaderExpandedNotifier.value) {
         // Detect explicit manual pull down against the brick wall!
-        if (notification is OverscrollNotification && notification.overscroll < 0) {
+        if (notification is OverscrollNotification &&
+            notification.overscroll < 0) {
           _isHeaderExpandedNotifier.value = true;
           if (widget.syncWithGlobalHeader) {
             ref.read(headerExpandedProvider.notifier).state = true;
           }
-        } else if (offset < snapThreshold && notification is ScrollUpdateNotification && notification.dragDetails != null) {
+        } else if (offset < snapThreshold &&
+            notification is ScrollUpdateNotification &&
+            notification.dragDetails != null) {
           // Fallback just in case physics allowed a slight sub-pixel crossing
           _isHeaderExpandedNotifier.value = true;
           if (widget.syncWithGlobalHeader) {
@@ -319,9 +332,10 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
       if (delta > 0) {
         // Scrolling DOWN (finger moving up)
         final double ceiling = statusBarHeight + 20.0;
-        final double collisionOffset = (_kExpandedHeight + 40.0) - (ceiling + 50.0);
+        final double collisionOffset =
+            (_kExpandedHeight + 40.0) - (ceiling + 50.0);
         final double liftStartOffset = collisionOffset - 4.0;
-        
+
         final bool isTruePill = _scrollController.offset > liftStartOffset;
 
         // Hide ONLY if it's a momentum fling (finger off screen) AND it is a TRUE pill!
@@ -349,8 +363,9 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
       // Fast swipe down → always collapse. Fast swipe up → always expand.
       // Gentle release (near-zero velocity) → snap to nearest.
       final double statusBarHeight = MediaQuery.paddingOf(context).top;
-      final double snapThreshold = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
-      
+      final double snapThreshold =
+          _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
+
       final currentOffset = _scrollController.offset;
       if (currentOffset > 0 && currentOffset < snapThreshold) {
         // Determine target based on velocity, not just position!
@@ -360,24 +375,26 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
           targetOffset = _lastScrollDelta > 0 ? snapThreshold : 0.0;
         } else {
           // Near-zero velocity (gentle release) → snap to nearest
-          targetOffset = currentOffset > (snapThreshold / 2) ? snapThreshold : 0.0;
+          targetOffset =
+              currentOffset > (snapThreshold / 2) ? snapThreshold : 0.0;
         }
-        
+
         final double distance = (currentOffset - targetOffset).abs();
         // Adaptive duration: longer minimum duration for a gentle settle, softer scaling
         final int durationMs = (250 + (distance * 0.5)).toInt().clamp(250, 450);
-        
+
         Future.microtask(() {
           if (!mounted) return;
           if (_scrollController.hasClients) {
             _scrollController.animateTo(
               targetOffset,
               duration: Duration(milliseconds: durationMs),
-              curve: Curves.decelerate, // Soft, natural deceleration like a weak magnet
+              curve: Curves
+                  .decelerate, // Soft, natural deceleration like a weak magnet
             );
           }
         });
-        
+
         // Reset velocity tracker
         _lastScrollDelta = 0.0;
       }
@@ -396,7 +413,8 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
         Future.delayed(const Duration(milliseconds: 150), () {
           if (!mounted || !_scrollController.hasClients) return;
           final double statusBarHeight = MediaQuery.paddingOf(context).top;
-          final double snapThreshold = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
+          final double snapThreshold =
+              _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
           final double targetOffset = snapThreshold + 20.0;
           if (_scrollController.offset < targetOffset) {
             _scrollController.animateTo(
@@ -412,12 +430,14 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
     // ── Global Header State Sync (For IndexedStack) ──
     ref.listen<bool>(headerExpandedProvider, (previous, isGlobalExpanded) {
       if (!widget.syncWithGlobalHeader) return;
-      
+
       if (!isGlobalExpanded && _isHeaderExpandedNotifier.value) {
         _isHeaderExpandedNotifier.value = false;
         final double statusBarHeight = MediaQuery.paddingOf(context).top;
-        final double handOffOffset = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
-        if (_scrollController.hasClients && _scrollController.offset < handOffOffset) {
+        final double handOffOffset =
+            _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
+        if (_scrollController.hasClients &&
+            _scrollController.offset < handOffOffset) {
           _scrollController.jumpTo(handOffOffset);
         }
       } else if (isGlobalExpanded && !_isHeaderExpandedNotifier.value) {
@@ -428,7 +448,8 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
       }
     });
 
-    final backgroundColor = widget.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
+    final backgroundColor =
+        widget.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
 
     return Scaffold(
       body: GestureDetector(
@@ -442,33 +463,62 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
         behavior: HitTestBehavior.translucent,
         child: Stack(
           children: [
-          // ─── Layer 1: Scrollable content ────────────
-          ElvanSmoothScroll(
-            controller: _scrollController,
-            child: NotificationListener<ScrollNotification>(
-              onNotification: _handleScrollNotification,
-              child: ElvanPageContent(
-                scrollController: _scrollController,
-                title: widget.title,
-                navActions: _buildEffectiveNavActions(),
-                slivers: widget.slivers,
-                expandedHeight: _kExpandedHeight,
-                isHeaderExpandedNotifier: _isHeaderExpandedNotifier, // Passed to content
-                isSearchActiveNotifier: _isSearchActiveNotifier,
-                dynamicPillHeightNotifier: _dynamicPillHeightNotifier, // Pass to sync text fade
-                leadingWidget: widget.leadingWidget,
-                showLeadingWidgetInExpandedBar: widget.showLeadingWidgetInExpandedBar,
+            // ─── Layer 1: Scrollable content ────────────
+            ElvanSmoothScroll(
+              controller: _scrollController,
+              child: NotificationListener<ScrollNotification>(
+                onNotification: _handleScrollNotification,
+                child: ElvanPageContent(
+                  scrollController: _scrollController,
+                  title: widget.title,
+                  navActions: _buildEffectiveNavActions(),
+                  slivers: widget.slivers,
+                  expandedHeight: _kExpandedHeight,
+                  isHeaderExpandedNotifier:
+                      _isHeaderExpandedNotifier, // Passed to content
+                  isSearchActiveNotifier: _isSearchActiveNotifier,
+                  dynamicPillHeightNotifier:
+                      _dynamicPillHeightNotifier, // Pass to sync text fade
+                  leadingWidget: widget.leadingWidget,
+                  showLeadingWidgetInExpandedBar:
+                      widget.showLeadingWidgetInExpandedBar,
+                ),
               ),
             ),
-          ),
 
-          // ─── Layer 2: Bottom boundary gradient fade mask ──────────────
-          if (widget.showNavbar)
+            // ─── Layer 2: Bottom boundary gradient fade mask ──────────────
+            if (widget.showNavbar)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height:
+                    _kFadeMaskHeight + _kNavbarHeight + _kNavbarBottomMargin,
+                child: IgnorePointer(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          backgroundColor.withAlpha(0),
+                          backgroundColor.withAlpha(40),
+                          backgroundColor.withAlpha(140),
+                          backgroundColor,
+                        ],
+                        stops: const [0.0, 0.3, 0.65, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+            // ─── Layer 2.5: Top boundary gradient fade mask ───────────────
             Positioned(
               left: 0,
               right: 0,
-              bottom: 0,
-              height: _kFadeMaskHeight + _kNavbarHeight + _kNavbarBottomMargin,
+              top: 0,
+              height: _kFadeMaskHeight, // 96 pixels of smooth top fade
               child: IgnorePointer(
                 child: DecoratedBox(
                   decoration: BoxDecoration(
@@ -476,174 +526,168 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        backgroundColor.withAlpha(0),
-                        backgroundColor.withAlpha(40),
+                        backgroundColor, // Solid at the very top edge
                         backgroundColor.withAlpha(140),
-                        backgroundColor,
+                        backgroundColor.withAlpha(40),
+                        backgroundColor.withAlpha(0), // Fully transparent below
                       ],
-                      stops: const [0.0, 0.3, 0.65, 1.0],
+                      stops: const [0.0, 0.35, 0.7, 1.0],
                     ),
                   ),
                 ),
               ),
             ),
-
-          // ─── Layer 2.5: Top boundary gradient fade mask ───────────────
-          Positioned(
-            left: 0,
-            right: 0,
-            top: 0,
-            height: _kFadeMaskHeight, // 96 pixels of smooth top fade
-            child: IgnorePointer(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      backgroundColor, // Solid at the very top edge
-                      backgroundColor.withAlpha(140),
-                      backgroundColor.withAlpha(40),
-                      backgroundColor.withAlpha(0), // Fully transparent below
-                    ],
-                    stops: const [0.0, 0.35, 0.7, 1.0],
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // ─── Layer 2: Main Desktop Sidebar (when in desktop split-view) ─for horizontal navigation) ───
-          Positioned(
-            left: 0,
-            top: 0,
-            bottom: 0,
-            width: 24, // Absorbs touches within 24 pixels of the left edge
-            child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onVerticalDragUpdate: (_) {}, // Swallows vertical scrolling but lets horizontal pass!
-            ),
-          ),
-          Positioned(
-            right: 0,
-            top: 0,
-            bottom: 0,
-            width: 24, // Absorbs touches within 24 pixels of the right edge
-            child: GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onVerticalDragUpdate: (_) {},
-            ),
-          ),
-
-          // ─── Layer 3: Floating pill navbar ────────────────────────────
-          if (widget.showNavbar)
+            // ─── Layer 2: Main Desktop Sidebar (when in desktop split-view) ─for horizontal navigation) ───
             Positioned(
               left: 0,
+              top: 0,
+              bottom: 0,
+              width: 24, // Absorbs touches within 24 pixels of the left edge
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onVerticalDragUpdate:
+                    (_) {}, // Swallows vertical scrolling but lets horizontal pass!
+              ),
+            ),
+            Positioned(
               right: 0,
-              bottom: _kNavbarBottomMargin,
-              child: Center(
-                child: FadeTransition(
-                  opacity: _navbarOpacity,
-                  child: AnimatedBuilder(
-                    animation: _navbarOpacity,
-                    builder: (context, child) {
-                      return IgnorePointer(
-                        ignoring: _navbarOpacity.value < 0.5,
-                        child: child,
-                      );
-                    },
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        // The base Navbar (icons fade out on command, but background stays!)
-                        AnimatedOpacity(
-                          duration: const Duration(milliseconds: 200),
-                          opacity: _searchStep3ExpandSearch ? 0.0 : 1.0,
-                          child: IgnorePointer(
-                            ignoring: _searchStep2ShowSearchContainer,
-                            child: ElvanNavbar(
-                              items: widget.navItems,
-                              currentIndex: widget.currentIndex,
-                              onTabSelected: (index) {
-                                if (index == widget.currentIndex) {
-                                  // Two-step scroll-to-top logic!
-                                  if (_scrollController.hasClients) {
-                                    final double statusBarHeight = MediaQuery.paddingOf(context).top;
-                                    final double snapThreshold = _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
-                                    
-                                    if (_scrollController.offset > snapThreshold + 5.0) {
-                                      // 1st Tap: Scroll to the top of the list (header remains collapsed)
-                                      _scrollController.animateTo(
-                                        snapThreshold,
-                                        duration: const Duration(milliseconds: 400),
-                                        curve: Curves.easeOutCubic,
-                                      );
-                                    } else if (_scrollController.offset > 0.5) {
-                                      // 2nd Tap: Expand the header!
-                                      // Set expanded BEFORE animating so physics layer lets it pass.
-                                      // animateTo() uses DrivenScrollActivity which the brick wall
-                                      // physics naturally ignores (it only blocks BallisticScrollActivity).
-                                      _isHeaderExpandedNotifier.value = true;
-                                      if (widget.syncWithGlobalHeader) {
-                                        ref.read(headerExpandedProvider.notifier).state = true;
+              top: 0,
+              bottom: 0,
+              width: 24, // Absorbs touches within 24 pixels of the right edge
+              child: GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onVerticalDragUpdate: (_) {},
+              ),
+            ),
+
+            // ─── Layer 3: Floating pill navbar ────────────────────────────
+            if (widget.showNavbar)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: _kNavbarBottomMargin,
+                child: Center(
+                  child: FadeTransition(
+                    opacity: _navbarOpacity,
+                    child: AnimatedBuilder(
+                      animation: _navbarOpacity,
+                      builder: (context, child) {
+                        return IgnorePointer(
+                          ignoring: _navbarOpacity.value < 0.5,
+                          child: child,
+                        );
+                      },
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // The base Navbar (icons fade out on command, but background stays!)
+                          AnimatedOpacity(
+                            duration: const Duration(milliseconds: 200),
+                            opacity: _searchStep3ExpandSearch ? 0.0 : 1.0,
+                            child: IgnorePointer(
+                              ignoring: _searchStep2ShowSearchContainer,
+                              child: ElvanNavbar(
+                                items: widget.navItems,
+                                currentIndex: widget.currentIndex,
+                                onTabSelected: (index) {
+                                  if (index == widget.currentIndex) {
+                                    // Two-step scroll-to-top logic!
+                                    if (_scrollController.hasClients) {
+                                      final double statusBarHeight =
+                                          MediaQuery.paddingOf(context).top;
+                                      final double snapThreshold =
+                                          _kExpandedHeight -
+                                              8.0 -
+                                              kToolbarHeight -
+                                              statusBarHeight -
+                                              20.0;
+
+                                      if (_scrollController.offset >
+                                          snapThreshold + 5.0) {
+                                        // 1st Tap: Scroll to the top of the list (header remains collapsed)
+                                        _scrollController.animateTo(
+                                          snapThreshold,
+                                          duration:
+                                              const Duration(milliseconds: 400),
+                                          curve: Curves.easeOutCubic,
+                                        );
+                                      } else if (_scrollController.offset >
+                                          0.5) {
+                                        // 2nd Tap: Expand the header!
+                                        // Set expanded BEFORE animating so physics layer lets it pass.
+                                        // animateTo() uses DrivenScrollActivity which the brick wall
+                                        // physics naturally ignores (it only blocks BallisticScrollActivity).
+                                        _isHeaderExpandedNotifier.value = true;
+                                        if (widget.syncWithGlobalHeader) {
+                                          ref
+                                              .read(headerExpandedProvider
+                                                  .notifier)
+                                              .state = true;
+                                        }
+
+                                        _scrollController.animateTo(
+                                          0.0,
+                                          duration:
+                                              const Duration(milliseconds: 400),
+                                          curve: Curves.easeOutCubic,
+                                        );
                                       }
-                                      
-                                      _scrollController.animateTo(
-                                        0.0,
-                                        duration: const Duration(milliseconds: 400),
-                                        curve: Curves.easeOutCubic,
-                                      );
+                                      // If already at 0.0, do nothing (prevents "hitting the brick wall" bounce)
                                     }
-                                    // If already at 0.0, do nothing (prevents "hitting the brick wall" bounce)
+                                  } else {
+                                    widget.onTabSelected?.call(index);
                                   }
-                                } else {
-                                  widget.onTabSelected?.call(index);
-                                }
-                              },
-                              hideContent: _searchStep1HideIcons,
+                                },
+                                hideContent: _searchStep1HideIcons,
+                              ),
                             ),
                           ),
-                        ),
-                        
-                        // The Search Overlay (appears exactly on top of Navbar, then stretches!)
-                        if (_searchStep2ShowSearchContainer)
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeOutCubic,
-                            // Exact mathematical width of the Navbar vs full screen
-                            width: _searchStep3ExpandSearch
-                                ? MediaQuery.of(context).size.width - 32
-                                : ((widget.navItems.length <= 4 ? 67.0 : 61.0) * widget.navItems.length + 16.0),
-                            child: ElvanSearchBar(
-                              focusNode: _searchFocusNode,
-                              onChanged: widget.onSearchChanged,
-                              onClose: () {
-                                _closeSearchSequence();
-                                widget.onSearchChanged?.call(''); // Clear query
-                              },
-                              isExpanded: _searchStep3ExpandSearch,
+
+                          // The Search Overlay (appears exactly on top of Navbar, then stretches!)
+                          if (_searchStep2ShowSearchContainer)
+                            AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeOutCubic,
+                              // Exact mathematical width of the Navbar vs full screen
+                              width: _searchStep3ExpandSearch
+                                  ? MediaQuery.of(context).size.width - 32
+                                  : ((widget.navItems.length <= 4
+                                              ? 67.0
+                                              : 61.0) *
+                                          widget.navItems.length +
+                                      16.0),
+                              child: ElvanSearchBar(
+                                focusNode: _searchFocusNode,
+                                onChanged: widget.onSearchChanged,
+                                onClose: () {
+                                  _closeSearchSequence();
+                                  widget.onSearchChanged
+                                      ?.call(''); // Clear query
+                                },
+                                isExpanded: _searchStep3ExpandSearch,
+                              ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
 
-          // ── Component B: Independent Top Bar (Pill) ──
-          ElvanCollapsedBar(
-            scrollController: _scrollController,
-            hideAnimation: _navbarOpacity,
-            navActions: _buildEffectiveNavActions(),
-            expandedHeight: _kExpandedHeight,
-            isHeaderExpandedNotifier: _isHeaderExpandedNotifier,
-            dynamicPillHeightNotifier: _dynamicPillHeightNotifier,
-            pillKey: _pillKey,
-            leadingWidget: widget.leadingWidget,
-            isSearchActiveNotifier: _isSearchActiveNotifier,
-          ),
-        ],
-      ),
+            // ── Component B: Independent Top Bar (Pill) ──
+            ElvanCollapsedBar(
+              scrollController: _scrollController,
+              hideAnimation: _navbarOpacity,
+              navActions: _buildEffectiveNavActions(),
+              expandedHeight: _kExpandedHeight,
+              isHeaderExpandedNotifier: _isHeaderExpandedNotifier,
+              dynamicPillHeightNotifier: _dynamicPillHeightNotifier,
+              pillKey: _pillKey,
+              leadingWidget: widget.leadingWidget,
+              isSearchActiveNotifier: _isSearchActiveNotifier,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -652,7 +696,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
     if (widget.navActions.isEmpty && !widget.showSearchIcon) return [];
 
     final actions = List<Widget>.from(widget.navActions);
-    
+
     // THE OPTIMIZATION: We NEVER unmount the search icon. It stays permanently in the widget tree.
     // By using a simple SizedBox that instantly toggles width, we completely remove the "sliding" animation
     // so it perfectly matches the instant snap of the page switch, while STILL preventing mount lag!
@@ -678,21 +722,21 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
         ),
       ),
     );
-    
+
     // The padding between the search icon and the next icon
     final searchPadding = SizedBox(
       width: widget.showSearchIcon ? 14.0 : 0.0,
     );
-    
+
     // Insert search icon and its padding before the popup menu (which is at the end)
     if (actions.length > 1) {
-      actions.insert(actions.length - 2, searchWidget); 
+      actions.insert(actions.length - 2, searchWidget);
       actions.insert(actions.length - 2, searchPadding);
     } else {
       actions.add(searchWidget);
       actions.add(searchPadding);
     }
-    
+
     return actions;
   }
 }

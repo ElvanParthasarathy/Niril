@@ -8,8 +8,11 @@ void showElvanLoadingOverlay({
   required String text,
 }) {
   final isDarkLoader = Theme.of(context).brightness == Brightness.dark;
-  final bgLoader = isDarkLoader ? const Color(0xFF151515).withValues(alpha: 0.75) : Colors.white.withValues(alpha: 0.75);
-  final isDesktop = !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
+  final bgLoader = isDarkLoader
+      ? const Color(0xFF151515).withValues(alpha: 0.75)
+      : Colors.white.withValues(alpha: 0.75);
+  final isDesktop =
+      !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
 
   Widget buildContent(BuildContext context) {
     return Column(
@@ -23,7 +26,8 @@ void showElvanLoadingOverlay({
         LinearProgressIndicator(
           minHeight: 6,
           borderRadius: const BorderRadius.all(Radius.circular(100)),
-          backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+          backgroundColor:
+              Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
           color: Theme.of(context).colorScheme.onSurface,
         ),
       ],
@@ -53,7 +57,8 @@ void showElvanLoadingOverlay({
                       borderRadius: BorderRadius.circular(32),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24.0, vertical: 32.0),
                       child: buildContent(context),
                     ),
                   ),
@@ -88,7 +93,8 @@ void showElvanLoadingOverlay({
                     borderRadius: BorderRadius.circular(32),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24.0, vertical: 32.0),
                     child: buildContent(context),
                   ),
                 ),

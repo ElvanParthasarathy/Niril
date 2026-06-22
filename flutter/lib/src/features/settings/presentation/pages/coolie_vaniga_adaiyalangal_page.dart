@@ -18,10 +18,12 @@ class CoolieVanigaAdaiyalangalPage extends ConsumerStatefulWidget {
   const CoolieVanigaAdaiyalangalPage({super.key});
 
   @override
-  ConsumerState<CoolieVanigaAdaiyalangalPage> createState() => _CoolieVanigaAdaiyalangalPageState();
+  ConsumerState<CoolieVanigaAdaiyalangalPage> createState() =>
+      _CoolieVanigaAdaiyalangalPageState();
 }
 
-class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiyalangalPage> {
+class _CoolieVanigaAdaiyalangalPageState
+    extends ConsumerState<CoolieVanigaAdaiyalangalPage> {
   String? _editingSection;
   final ImagePicker _picker = ImagePicker();
 
@@ -55,7 +57,8 @@ class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiy
     }
   }
 
-  void _saveSingleField(VanigaTharavugal profile, String fieldName, String value) {
+  void _saveSingleField(
+      VanigaTharavugal profile, String fieldName, String value) {
     final updatedProfile = profile.copyWith();
     switch (fieldName) {
       case 'ovuru':
@@ -102,7 +105,10 @@ class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiy
               TextButton(
                 onPressed: _cancelEdit,
                 style: TextButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                  foregroundColor: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7),
                 ),
                 child: Text('cancel'.tr(context, ref)),
               ),
@@ -129,13 +135,15 @@ class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiy
     }
   }
 
-  Widget _buildImageUploader({required String? imagePath, required Function(String?) onChange}) {
+  Widget _buildImageUploader(
+      {required String? imagePath, required Function(String?) onChange}) {
     final bool hasImage = imagePath != null && imagePath.isNotEmpty;
-    
+
     return Stack(
       children: [
         Material(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+          color:
+              Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(16),
           child: InkWell(
             onTap: () {
@@ -149,64 +157,74 @@ class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiy
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                image: hasImage ? DecorationImage(
-                  image: FileImage(File(imagePath)),
-                  fit: BoxFit.contain,
-                ) : null,
+                image: hasImage
+                    ? DecorationImage(
+                        image: FileImage(File(imagePath)),
+                        fit: BoxFit.contain,
+                      )
+                    : null,
               ),
-              child: hasImage ? null : Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      CupertinoIcons.cloud_upload,
-                      size: 32,
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'upload'.tr(context, ref),
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+              child: hasImage
+                  ? null
+                  : Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            CupertinoIcons.cloud_upload,
+                            size: 32,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withValues(alpha: 0.4),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'upload'.tr(context, ref),
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.5),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+            ),
+          ),
+        ),
+        if (hasImage)
+          Positioned(
+            top: 8,
+            right: 8,
+            child: GestureDetector(
+              onTap: () => onChange(null),
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
                   ],
+                ),
+                child: Icon(
+                  CupertinoIcons.delete_solid,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.error,
                 ),
               ),
             ),
           ),
-        ),
-          if (hasImage)
-            Positioned(
-              top: 8,
-              right: 8,
-              child: GestureDetector(
-                onTap: () => onChange(null),
-                child: Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    CupertinoIcons.delete_solid,
-                    size: 16,
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                ),
-              ),
-            ),
-        ],
-      );
+      ],
+    );
   }
 
   @override
@@ -215,7 +233,8 @@ class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiy
     final currentProfile = profile ?? VanigaTharavugal();
 
     final logoPath = currentProfile.ovuru.isEmpty ? null : currentProfile.ovuru;
-    final signaturePath = currentProfile.kaiyoppam.isEmpty ? null : currentProfile.kaiyoppam;
+    final signaturePath =
+        currentProfile.kaiyoppam.isEmpty ? null : currentProfile.kaiyoppam;
     final signatoryName = currentProfile.oppamPeyar;
 
     return ElvanSubpageShell(
@@ -223,7 +242,8 @@ class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiy
       slivers: [
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 32),
+            padding:
+                const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 32),
             child: ElvanSettingsSection(
               children: [
                 // 1. Logo
@@ -236,11 +256,13 @@ class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiy
                       imagePath: _tempImagePath,
                       onChange: (path) => setState(() => _tempImagePath = path),
                     ),
-                    onSave: () => _saveSingleField(currentProfile, 'ovuru', _tempImagePath ?? ''),
+                    onSave: () => _saveSingleField(
+                        currentProfile, 'ovuru', _tempImagePath ?? ''),
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'businessLogo'.tr(context, ref),
-                    primaryValue: logoPath != null ? '' : 'noLogo'.tr(context, ref),
+                    primaryValue:
+                        logoPath != null ? '' : 'noLogo'.tr(context, ref),
                     primaryWidget: logoPath != null
                         ? Image.file(
                             File(logoPath),
@@ -264,25 +286,38 @@ class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiy
                       children: [
                         _buildImageUploader(
                           imagePath: _tempImagePath,
-                          onChange: (path) => setState(() => _tempImagePath = path),
+                          onChange: (path) =>
+                              setState(() => _tempImagePath = path),
                         ),
                         const SizedBox(height: 16),
                         ElvanTextField(
                           textAlign: TextAlign.center,
-                          controller: TextEditingController(text: _tempSignatoryName),
+                          controller:
+                              TextEditingController(text: _tempSignatoryName),
                           decoration: InputDecoration(
-                            hintText: 'authorizedSignatoryName'.tr(context, ref),
+                            hintText:
+                                'authorizedSignatoryName'.tr(context, ref),
                             hintStyle: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.3),
                             ),
                             filled: true,
                             fillColor: WidgetStateColor.resolveWith((states) {
                               if (states.contains(WidgetState.focused)) {
-                                return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12);
+                                return Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.12);
                               }
-                              return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08);
+                              return Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.08);
                             }),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 14),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(100),
                               borderSide: BorderSide.none,
@@ -296,11 +331,14 @@ class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiy
                         ),
                       ],
                     ),
-                    onSave: () => _saveSignatureField(currentProfile, _tempImagePath ?? '', _tempSignatoryName),
+                    onSave: () => _saveSignatureField(currentProfile,
+                        _tempImagePath ?? '', _tempSignatoryName),
                   ),
                   displayChild: ElvanSettingsDisplayRow(
                     title: 'signature'.tr(context, ref),
-                    primaryValue: signaturePath != null ? signatoryName : 'noSignature'.tr(context, ref),
+                    primaryValue: signaturePath != null
+                        ? signatoryName
+                        : 'noSignature'.tr(context, ref),
                     primaryWidget: signaturePath != null
                         ? Image.file(
                             File(signaturePath),
@@ -309,7 +347,8 @@ class _CoolieVanigaAdaiyalangalPageState extends ConsumerState<CoolieVanigaAdaiy
                             alignment: Alignment.centerLeft,
                           )
                         : null,
-                    onEdit: () => _beginEditSignature(signaturePath ?? '', signatoryName),
+                    onEdit: () =>
+                        _beginEditSignature(signaturePath ?? '', signatoryName),
                   ),
                 ),
               ],

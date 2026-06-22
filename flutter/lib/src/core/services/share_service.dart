@@ -9,7 +9,8 @@ class ShareService {
   /// Shares a local file using the native OS share sheet (e.g. to WhatsApp, Email).
   /// [filePath] must be an absolute path to the file.
   /// [text] is an optional message to send alongside the file.
-  Future<void> shareFile(String filePath, {String? text, String? subject}) async {
+  Future<void> shareFile(String filePath,
+      {String? text, String? subject}) async {
     try {
       await Share.shareXFiles(
         [XFile(filePath)],

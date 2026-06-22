@@ -13,6 +13,8 @@ class ElvanDesktopShell extends ConsumerStatefulWidget {
   final int currentIndex;
   final ValueChanged<int> onTabSelected;
   final VoidCallback onSettingsPressed;
+  final VoidCallback onReportsPressed;
+  final VoidCallback onGstReturnsPressed;
   final List<CustomNavItem> navItems;
   final List<Widget> slivers; // The pages (SliverOffstage)
   final Widget? customContent;
@@ -24,6 +26,8 @@ class ElvanDesktopShell extends ConsumerStatefulWidget {
     required this.currentIndex,
     required this.onTabSelected,
     required this.onSettingsPressed,
+    required this.onReportsPressed,
+    required this.onGstReturnsPressed,
     required this.navItems,
     required this.slivers,
     this.customContent,
@@ -59,7 +63,8 @@ class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF111111) : const Color(0xFFFFFFFF),
+      backgroundColor:
+          isDark ? const Color(0xFF111111) : const Color(0xFFFFFFFF),
       body: Row(
         children: [
           // Sidebar
@@ -80,30 +85,36 @@ class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
               isCollapsed: isCollapsed,
               onToggleCollapse: () {
                 setState(() => isCollapsed = !isCollapsed);
-                ref.read(preferencesServiceProvider).setIsSidebarCollapsed(isCollapsed);
+                ref
+                    .read(preferencesServiceProvider)
+                    .setIsSidebarCollapsed(isCollapsed);
               },
-                currentIndex: widget.currentIndex,
-                onTabSelected: (index) {
-                  if (_scrollController.hasClients) {
-                    if (widget.currentIndex == index) {
-                      _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-                    } else {
-                      _scrollController.jumpTo(0);
-                    }
+              currentIndex: widget.currentIndex,
+              onTabSelected: (index) {
+                if (_scrollController.hasClients) {
+                  if (widget.currentIndex == index) {
+                    _scrollController.animateTo(0,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOut);
+                  } else {
+                    _scrollController.jumpTo(0);
                   }
-                  widget.onTabSelected(index);
-                },
-                onSettingsPressed: widget.onSettingsPressed,
-                navItems: widget.navItems,
-                appMode: mode ?? AppMode.silk,
-              ),
+                }
+                widget.onTabSelected(index);
+              },
+              onSettingsPressed: widget.onSettingsPressed,
+              onReportsPressed: widget.onReportsPressed,
+              onGstReturnsPressed: widget.onGstReturnsPressed,
+              navItems: widget.navItems,
+              appMode: mode ?? AppMode.silk,
             ),
-          
+          ),
+
           // Main Content Area
           Expanded(
             child: Container(
               color: Theme.of(context).scaffoldBackgroundColor,
-              child: widget.customContent != null 
+              child: widget.customContent != null
                   ? widget.customContent
                   : ElvanSmoothScroll(
                       controller: _scrollController,
@@ -113,26 +124,30 @@ class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
                           if (widget.title != null)
                             SliverToBoxAdapter(
                               child: Padding(
-                                padding: const EdgeInsets.only(top: 32, left: 60, bottom: 24),
+                                padding: const EdgeInsets.only(
+                                    top: 32, left: 60, bottom: 24),
                                 child: Text(
                                   widget.title!,
                                   style: TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.w700,
-                                    color: Theme.of(context).colorScheme.onSurface,
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
                               ),
                             ),
                           if (widget.toolbar != null)
                             SliverPadding(
-                              padding: const EdgeInsets.symmetric(horizontal: 24),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24),
                               sliver: SliverToBoxAdapter(
                                 child: widget.toolbar!,
                               ),
                             ),
                           ...widget.slivers.map((sliver) => SliverPadding(
-                                padding: const EdgeInsets.symmetric(horizontal: 24),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 24),
                                 sliver: sliver,
                               )),
                         ],

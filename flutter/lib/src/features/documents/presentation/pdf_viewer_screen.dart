@@ -74,9 +74,11 @@ class PdfViewerScreen extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(25),
                     clipBehavior: Clip.antiAlias,
                     child: IconButton(
-                      icon: const Icon(CupertinoIcons.share, color: Colors.black),
+                      icon:
+                          const Icon(CupertinoIcons.share, color: Colors.black),
                       onPressed: () {
-                        shareService.shareFile(pdfFile.path, text: 'Check out this document: $title');
+                        shareService.shareFile(pdfFile.path,
+                            text: 'Check out this document: $title');
                       },
                     ),
                   ),

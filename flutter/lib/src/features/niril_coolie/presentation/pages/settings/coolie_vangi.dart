@@ -55,7 +55,10 @@ class _CoolieVangiPageState extends ConsumerState<CoolieVangiPage> {
               TextButton(
                 onPressed: onCancel,
                 style: TextButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                  foregroundColor: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7),
                 ),
                 child: Text('cancelBtn'.tr(context, ref)),
               ),
@@ -131,7 +134,8 @@ class _CoolieVangiPageState extends ConsumerState<CoolieVangiPage> {
 
     return ElvanSubpageShell(
       title: 'vangi'.tr(context, ref),
-      backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
+      backgroundColor:
+          isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
       slivers: [
         SliverPadding(
           padding: const EdgeInsets.only(
@@ -153,26 +157,30 @@ class _CoolieVangiPageState extends ConsumerState<CoolieVangiPage> {
                       title: 'bankName'.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
-                          label: '${'bankName'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
+                          label:
+                              '${'bankName'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
                           initialValue: _tempPrimary,
                           onChanged: (v) => _tempPrimary = v,
                         ),
                         if (isBilingual) const SizedBox(height: 16),
                         if (isBilingual)
                           ElvanSettingsTextField(
-                            label: '${'bankName'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
+                            label:
+                                '${'bankName'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                             initialValue: _tempSecondary,
                             onChanged: (v) => _tempSecondary = v,
                           ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () => _saveBilingualField(currentProfile, 'vangiPeyar'),
+                      onSave: () =>
+                          _saveBilingualField(currentProfile, 'vangiPeyar'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'bankName'.tr(context, ref),
                       primaryValue: vangiPeyarPrimary,
                       secondaryValue: isBilingual ? vangiPeyarSecondary : null,
-                      onEdit: () => _beginEditPrimarySecondary('vangiPeyar', vangiPeyarPrimary, vangiPeyarSecondary),
+                      onEdit: () => _beginEditPrimarySecondary(
+                          'vangiPeyar', vangiPeyarPrimary, vangiPeyarSecondary),
                     ),
                   ),
                   // --- BRANCH NAME ---
@@ -183,26 +191,30 @@ class _CoolieVangiPageState extends ConsumerState<CoolieVangiPage> {
                       title: 'branchName'.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
-                          label: '${'branchName'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
+                          label:
+                              '${'branchName'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
                           initialValue: _tempPrimary,
                           onChanged: (v) => _tempPrimary = v,
                         ),
                         if (isBilingual) const SizedBox(height: 16),
                         if (isBilingual)
                           ElvanSettingsTextField(
-                            label: '${'branchName'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
+                            label:
+                                '${'branchName'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                             initialValue: _tempSecondary,
                             onChanged: (v) => _tempSecondary = v,
                           ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () => _saveBilingualField(currentProfile, 'vangiKilai'),
+                      onSave: () =>
+                          _saveBilingualField(currentProfile, 'vangiKilai'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'branchName'.tr(context, ref),
                       primaryValue: vangiKilaiPrimary,
                       secondaryValue: isBilingual ? vangiKilaiSecondary : null,
-                      onEdit: () => _beginEditPrimarySecondary('vangiKilai', vangiKilaiPrimary, vangiKilaiSecondary),
+                      onEdit: () => _beginEditPrimarySecondary(
+                          'vangiKilai', vangiKilaiPrimary, vangiKilaiSecondary),
                     ),
                   ),
                   // --- ACCOUNT NUMBER ---
@@ -219,12 +231,14 @@ class _CoolieVangiPageState extends ConsumerState<CoolieVangiPage> {
                         ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () => _saveSingleField(currentProfile, 'vangiKanakku'),
+                      onSave: () =>
+                          _saveSingleField(currentProfile, 'vangiKanakku'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'accountNumber'.tr(context, ref),
                       primaryValue: currentProfile.vangiKanakku,
-                      onEdit: () => _beginEditSingle('vangiKanakku', currentProfile.vangiKanakku),
+                      onEdit: () => _beginEditSingle(
+                          'vangiKanakku', currentProfile.vangiKanakku),
                     ),
                   ),
                   // --- IFSC CODE ---
@@ -246,7 +260,8 @@ class _CoolieVangiPageState extends ConsumerState<CoolieVangiPage> {
                     displayChild: ElvanSettingsDisplayRow(
                       title: 'ifscCode'.tr(context, ref),
                       primaryValue: currentProfile.ifsc,
-                      onEdit: () => _beginEditSingle('ifsc', currentProfile.ifsc),
+                      onEdit: () =>
+                          _beginEditSingle('ifsc', currentProfile.ifsc),
                     ),
                   ),
                 ],

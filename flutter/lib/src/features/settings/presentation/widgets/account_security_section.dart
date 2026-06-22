@@ -64,7 +64,8 @@ class AccountSecuritySection extends ConsumerWidget {
       confirmText: 'signOutBtn'.tr(context, ref),
       onConfirm: () {
         // Mock Sign Out
-        showElvanLoadingOverlay(context: context, text: 'signing_out'.tr(context, ref));
+        showElvanLoadingOverlay(
+            context: context, text: 'signing_out'.tr(context, ref));
         Future.delayed(const Duration(seconds: 1), () {
           if (context.mounted) {
             final successMsg = 'signOutSuccess'.tr(context, ref);
@@ -75,8 +76,9 @@ class AccountSecuritySection extends ConsumerWidget {
             // Pop all dialogs and screens back to the root route.
             // Because we set isLoggedIn to false, main.dart will automatically
             // render the WelcomePage at the root!
-            Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-            
+            Navigator.of(context, rootNavigator: true)
+                .popUntil((route) => route.isFirst);
+
             ElvanSnackbar.show(context, successMsg);
           }
         });
@@ -97,16 +99,24 @@ class AccountSecuritySection extends ConsumerWidget {
           hintText: 'confirmEmailLabel'.tr(context, ref),
           hintStyle: TextStyle(
             fontSize: 13,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+            color:
+                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
           ),
           filled: true,
           fillColor: WidgetStateColor.resolveWith((states) {
             if (states.contains(WidgetState.focused)) {
-              return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12);
+              return Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.12);
             }
-            return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08);
+            return Theme.of(context)
+                .colorScheme
+                .onSurface
+                .withValues(alpha: 0.08);
           }),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(100),
             borderSide: BorderSide.none,
@@ -139,16 +149,26 @@ class AccountSecuritySection extends ConsumerWidget {
               hintText: 'password'.tr(context, ref),
               hintStyle: TextStyle(
                 fontSize: 13,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.4),
               ),
               filled: true,
               fillColor: WidgetStateColor.resolveWith((states) {
                 if (states.contains(WidgetState.focused)) {
-                  return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12);
+                  return Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.12);
                 }
-                return Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08);
+                return Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.08);
               }),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(100),
                 borderSide: BorderSide.none,
@@ -169,27 +189,28 @@ class AccountSecuritySection extends ConsumerWidget {
           ),
           onConfirm: () async {
             // Step 3: Show Loading Animation
-            showElvanLoadingOverlay(context: context, text: 'erasing'.tr(context, ref));
+            showElvanLoadingOverlay(
+                context: context, text: 'erasing'.tr(context, ref));
 
             // Simulate erasing delay
             await Future.delayed(const Duration(seconds: 2));
-            
+
             if (context.mounted) {
-              // We do not manually pop dialogs here, as that triggers overlapping 
+              // We do not manually pop dialogs here, as that triggers overlapping
               // pop animations that crash the Navigator (!_debugLocked).
               // pushAndRemoveUntil below will cleanly destroy all dialogs instantly.
-              
+
               // Wipe local DB profiles
               final db = ref.read(appDatabaseProvider);
               await db.delete(db.vanigaTharavugalTable).go();
-              
+
               // Clear SharedPreferences
               final prefs = ref.read(sharedPreferencesProvider);
               await prefs.clear();
 
               if (context.mounted) {
                 final successMsg = 'dataErasedSuccess'.tr(context, ref);
-                
+
                 // Mock fresh install redirect by resetting mode and auth
                 ref.read(appModeProvider.notifier).setMode(null);
                 ref.read(isLoggedInProvider.notifier).setLoggedIn(false);
@@ -201,8 +222,9 @@ class AccountSecuritySection extends ConsumerWidget {
                 // Pop all dialogs and screens back to the root route.
                 // Because we set isLoggedIn to false, main.dart will automatically
                 // render the WelcomePage at the root!
-                Navigator.of(context, rootNavigator: true).popUntil((route) => route.isFirst);
-                
+                Navigator.of(context, rootNavigator: true)
+                    .popUntil((route) => route.isFirst);
+
                 ElvanSnackbar.show(context, successMsg);
               }
             }

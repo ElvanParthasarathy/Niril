@@ -98,7 +98,8 @@ class _NetflixProfileCardState extends State<_NetflixProfileCard> {
 
   @override
   Widget build(BuildContext context) {
-    final textColor = widget.isDark ? Colors.grey.shade400 : Colors.grey.shade600;
+    final textColor =
+        widget.isDark ? Colors.grey.shade400 : Colors.grey.shade600;
     final textHoverColor = widget.isDark ? Colors.white : Colors.black;
 
     return MouseRegion(
@@ -113,71 +114,78 @@ class _NetflixProfileCardState extends State<_NetflixProfileCard> {
           onTap: widget.onTap,
           behavior: HitTestBehavior.opaque,
           child: AnimatedScale(
-            scale: _isPressed ? 0.94 : 1.0, // Slightly deeper press for better mobile feedback
+            scale: _isPressed
+                ? 0.94
+                : 1.0, // Slightly deeper press for better mobile feedback
             duration: const Duration(milliseconds: 150),
             curve: Curves.easeOutCubic,
             child: Column(
-            children: [
-            // Netflix-style Square Avatar Box
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutCubic,
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: _isHovered ? textHoverColor : Colors.transparent,
-                  width: 2, // 2px transparent-to-solid transition like React
-                ),
-                boxShadow: _isHovered
-                    ? [
-                        BoxShadow(
-                          color: widget.isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.15),
-                          blurRadius: 40,
-                          offset: const Offset(0, 20),
-                        )
-                      ]
-                    : [
-                        BoxShadow(
-                          color: widget.isDark ? Colors.black.withValues(alpha: 0.2) : Colors.black.withValues(alpha: 0.08),
-                          blurRadius: 16,
-                          offset: const Offset(0, 8),
-                        )
-                      ],
-              ),
-              child: Material(
-                color: widget.boxColor,
-                shape: const CircleBorder(),
-                clipBehavior: Clip.antiAlias,
-                child: Center(
-                  child: AnimatedDefaultTextStyle(
-                    duration: const Duration(milliseconds: 300),
-                    style: TextStyle(
-                      color: widget.iconColor,
+              children: [
+                // Netflix-style Square Avatar Box
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOutCubic,
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: _isHovered ? textHoverColor : Colors.transparent,
+                      width:
+                          2, // 2px transparent-to-solid transition like React
                     ),
-                    child: widget.iconBuilder(widget.iconColor, 56),
+                    boxShadow: _isHovered
+                        ? [
+                            BoxShadow(
+                              color: widget.isDark
+                                  ? Colors.white.withValues(alpha: 0.1)
+                                  : Colors.black.withValues(alpha: 0.15),
+                              blurRadius: 40,
+                              offset: const Offset(0, 20),
+                            )
+                          ]
+                        : [
+                            BoxShadow(
+                              color: widget.isDark
+                                  ? Colors.black.withValues(alpha: 0.2)
+                                  : Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 16,
+                              offset: const Offset(0, 8),
+                            )
+                          ],
+                  ),
+                  child: Material(
+                    color: widget.boxColor,
+                    shape: const CircleBorder(),
+                    clipBehavior: Clip.antiAlias,
+                    child: Center(
+                      child: AnimatedDefaultTextStyle(
+                        duration: const Duration(milliseconds: 300),
+                        style: TextStyle(
+                          color: widget.iconColor,
+                        ),
+                        child: widget.iconBuilder(widget.iconColor, 56),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                const SizedBox(height: 16),
+                // Netflix-style title
+                AnimatedDefaultTextStyle(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOutCubic,
+                  style: TextStyle(
+                    fontFamily: 'ElvanSans',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: _isHovered ? textHoverColor : textColor,
+                  ),
+                  child: Text(widget.title),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            // Netflix-style title
-            AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutCubic,
-              style: TextStyle(
-                fontFamily: 'ElvanSans',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: _isHovered ? textHoverColor : textColor,
-              ),
-              child: Text(widget.title),
-            ),
-          ],
+          ),
         ),
-      ),
-      ),
       ),
     );
   }

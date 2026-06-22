@@ -36,7 +36,6 @@ class CustomNavItem {
 
   /// Optional override SVG string rendered when this tab **is** selected.
   final String? activeSvgString;
-
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -95,17 +94,17 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
     final int itemCount = widget.items.length;
     // The visual layout width. Increased spacing stretches the main white pill and makes room.
     final double layoutWidth = itemCount <= 4 ? 67.0 : 61.0;
-    
+
     // The width of the active grey background pill. Restored to its beautiful elongated shape!
     // Overlap remains a perfectly safe 4px.
     final double bgWidth = itemCount <= 4 ? 75.0 : 69.0;
-    
+
     const double horizontalPadding = 8.0;
     const double verticalPadding = 4.0;
 
     // Use hover index while dragging, otherwise the visually locked index, otherwise the parent's index
-    int activeVisualIndex = (_isInteracting && _hoverIndex != null) 
-        ? _hoverIndex! 
+    int activeVisualIndex = (_isInteracting && _hoverIndex != null)
+        ? _hoverIndex!
         : (_localLockedIndex ?? widget.currentIndex);
 
     // Calculate background pill left offset
@@ -120,22 +119,29 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
     }
 
     // Constrain the background so it doesn't leave the pill boundaries
-    double maxLeft = ((itemCount - 1) * layoutWidth) - ((bgWidth - layoutWidth) / 2);
+    double maxLeft =
+        ((itemCount - 1) * layoutWidth) - ((bgWidth - layoutWidth) / 2);
     double minLeft = -((bgWidth - layoutWidth) / 2);
     targetLeft = targetLeft.clamp(minLeft, maxLeft);
 
     return AnimatedScale(
-      scale: _isInteracting ? 1.02 : 1.0, // Zoom effect matching Kotlin maxScale logic
+      scale: _isInteracting
+          ? 1.02
+          : 1.0, // Zoom effect matching Kotlin maxScale logic
       duration: const Duration(milliseconds: 150),
       curve: Curves.easeOutCubic,
       child: Container(
         height: 60,
         decoration: BoxDecoration(
           // ── Translucent background — content is clearly visible beneath ──
-          color: isDark ? const Color(0xFF1E1E1E).withValues(alpha: 0.88) : const Color(0xFFFFFFFF).withValues(alpha: 0.88),
+          color: isDark
+              ? const Color(0xFF1E1E1E).withValues(alpha: 0.88)
+              : const Color(0xFFFFFFFF).withValues(alpha: 0.88),
           borderRadius: BorderRadius.circular(100),
           border: Border.all(
-            color: isDark ? const Color(0xFF333333).withValues(alpha: 0.15) : const Color(0xFFFFFFFF).withValues(alpha: 0.6),
+            color: isDark
+                ? const Color(0xFF333333).withValues(alpha: 0.15)
+                : const Color(0xFFFFFFFF).withValues(alpha: 0.6),
             width: 0.5,
           ),
           boxShadow: [
@@ -156,9 +162,12 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTapUp: (details) {
-                int index = (details.localPosition.dx / layoutWidth).floor().clamp(0, itemCount - 1);
+                int index = (details.localPosition.dx / layoutWidth)
+                    .floor()
+                    .clamp(0, itemCount - 1);
                 setState(() {
-                  _localLockedIndex = index; // Visually snap the pill immediately
+                  _localLockedIndex =
+                      index; // Visually snap the pill immediately
                   _isInteracting = false;
                   _dragOffset = null;
                   _hoverIndex = null;
@@ -169,103 +178,127 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
                 });
               },
               onHorizontalDragDown: (details) {
-              setState(() {
-                _isInteracting = true;
-                _hoverIndex = (details.localPosition.dx / layoutWidth).floor().clamp(0, itemCount - 1);
-                
-                // Calculate the exact mathematical center of the slot they just touched
-                double slotCenter = (_hoverIndex! * layoutWidth) + (layoutWidth / 2);
-                
-                // Record exactly how far off-center their thumb is, so we can anchor the pill
-                _touchOffsetFromCenter = details.localPosition.dx - slotCenter;
-                
-                _dragOffset = null; // Do NOT track raw pixel yet, prevents "wiggle" on touch
-              });
-            },
-            onHorizontalDragUpdate: (details) {
-              setState(() {
-                // The pill moves 1:1 with the thumb, but pushed from its original anchor point!
-                double targetCenter = details.localPosition.dx - _touchOffsetFromCenter;
-                _dragOffset = targetCenter;
-                _hoverIndex = (targetCenter / layoutWidth).floor().clamp(0, itemCount - 1);
-              });
-            },
-            onHorizontalDragEnd: (details) {
-              int? finalIndex = _hoverIndex;
-              setState(() {
-                if (finalIndex != null) {
-                  _localLockedIndex = finalIndex; // Visually snap the pill immediately
-                }
-                _isInteracting = false;
-                _dragOffset = null;
-                _hoverIndex = null;
-              });
-              if (finalIndex != null) {
-                // Give the pill exactly 150ms to finish its fast-snap before the layout spike hits!
-                Future.delayed(const Duration(milliseconds: 150), () {
-                  if (mounted) widget.onTabSelected(finalIndex);
+                setState(() {
+                  _isInteracting = true;
+                  _hoverIndex = (details.localPosition.dx / layoutWidth)
+                      .floor()
+                      .clamp(0, itemCount - 1);
+
+                  // Calculate the exact mathematical center of the slot they just touched
+                  double slotCenter =
+                      (_hoverIndex! * layoutWidth) + (layoutWidth / 2);
+
+                  // Record exactly how far off-center their thumb is, so we can anchor the pill
+                  _touchOffsetFromCenter =
+                      details.localPosition.dx - slotCenter;
+
+                  _dragOffset =
+                      null; // Do NOT track raw pixel yet, prevents "wiggle" on touch
                 });
-              }
-            },
-            onHorizontalDragCancel: () {
-              setState(() {
-                _isInteracting = false;
-                _dragOffset = null;
-                _hoverIndex = null;
-              });
-            },
-            child: SizedBox(
-              width: layoutWidth * itemCount,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  // ── Master Background Pill (Detached & Draggable) ──
-                  AnimatedPositioned(
-                    duration: _snapNextFrame || (_isInteracting && _dragOffset != null)
-                        ? Duration.zero // Track finger instantly with zero lag while sliding
-                        : const Duration(milliseconds: 150), // Fast snap to lock on release
-                    curve: _snapNextFrame || (_isInteracting && _dragOffset != null)
-                        ? Curves.linear
-                        : Curves.easeOutCubic, // Clean fast curve so it doesn't jerk
-                    left: targetLeft,
-                    top: 0,
-                    bottom: 0,
-                    width: bgWidth,
-                    child: AnimatedScale(
-                      scale: _isInteracting ? 1.30 : 1.0, // Aggressive inner zoom breaking boundaries!
-                      duration: const Duration(milliseconds: 150),
-                      curve: Curves.easeOutCubic,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF333333).withValues(alpha: 0.95) : const Color(0xFFE5E5E5).withValues(alpha: 0.95),
-                          borderRadius: BorderRadius.circular(100),
-                          boxShadow: isDark ? null : [
-                            BoxShadow(
-                              blurRadius: 4,
-                              offset: const Offset(0, 1),
-                              color: Colors.black.withValues(alpha: 0.04),
-                            ),
-                          ],
+              },
+              onHorizontalDragUpdate: (details) {
+                setState(() {
+                  // The pill moves 1:1 with the thumb, but pushed from its original anchor point!
+                  double targetCenter =
+                      details.localPosition.dx - _touchOffsetFromCenter;
+                  _dragOffset = targetCenter;
+                  _hoverIndex = (targetCenter / layoutWidth)
+                      .floor()
+                      .clamp(0, itemCount - 1);
+                });
+              },
+              onHorizontalDragEnd: (details) {
+                int? finalIndex = _hoverIndex;
+                setState(() {
+                  if (finalIndex != null) {
+                    _localLockedIndex =
+                        finalIndex; // Visually snap the pill immediately
+                  }
+                  _isInteracting = false;
+                  _dragOffset = null;
+                  _hoverIndex = null;
+                });
+                if (finalIndex != null) {
+                  // Give the pill exactly 150ms to finish its fast-snap before the layout spike hits!
+                  Future.delayed(const Duration(milliseconds: 150), () {
+                    if (mounted) widget.onTabSelected(finalIndex);
+                  });
+                }
+              },
+              onHorizontalDragCancel: () {
+                setState(() {
+                  _isInteracting = false;
+                  _dragOffset = null;
+                  _hoverIndex = null;
+                });
+              },
+              child: SizedBox(
+                width: layoutWidth * itemCount,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    // ── Master Background Pill (Detached & Draggable) ──
+                    AnimatedPositioned(
+                      duration: _snapNextFrame ||
+                              (_isInteracting && _dragOffset != null)
+                          ? Duration
+                              .zero // Track finger instantly with zero lag while sliding
+                          : const Duration(
+                              milliseconds:
+                                  150), // Fast snap to lock on release
+                      curve: _snapNextFrame ||
+                              (_isInteracting && _dragOffset != null)
+                          ? Curves.linear
+                          : Curves
+                              .easeOutCubic, // Clean fast curve so it doesn't jerk
+                      left: targetLeft,
+                      top: 0,
+                      bottom: 0,
+                      width: bgWidth,
+                      child: AnimatedScale(
+                        scale: _isInteracting
+                            ? 1.30
+                            : 1.0, // Aggressive inner zoom breaking boundaries!
+                        duration: const Duration(milliseconds: 150),
+                        curve: Curves.easeOutCubic,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? const Color(0xFF333333)
+                                    .withValues(alpha: 0.95)
+                                : const Color(0xFFE5E5E5)
+                                    .withValues(alpha: 0.95),
+                            borderRadius: BorderRadius.circular(100),
+                            boxShadow: isDark
+                                ? null
+                                : [
+                                    BoxShadow(
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 1),
+                                      color:
+                                          Colors.black.withValues(alpha: 0.04),
+                                    ),
+                                  ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
-                  // ── Foreground Content ──
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: List.generate(itemCount, (index) {
-                      final isActive = index == activeVisualIndex;
-                      return _TranslucentNavItem(
-                        item: widget.items[index],
-                        isActive: isActive,
-                        layoutWidth: layoutWidth,
-                      );
-                    }),
-                  ),
-                ],
+                    // ── Foreground Content ──
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: List.generate(itemCount, (index) {
+                        final isActive = index == activeVisualIndex;
+                        return _TranslucentNavItem(
+                          item: widget.items[index],
+                          isActive: isActive,
+                          layoutWidth: layoutWidth,
+                        );
+                      }),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -312,7 +345,9 @@ class _TranslucentNavItem extends StatelessWidget {
         children: [
           if (item.svgString != null)
             SvgPicture.string(
-              isActive ? (item.activeSvgString ?? item.svgString!) : item.svgString!,
+              isActive
+                  ? (item.activeSvgString ?? item.svgString!)
+                  : item.svgString!,
               width: iconSize,
               height: iconSize,
               colorFilter: ColorFilter.mode(color, BlendMode.srcIn),

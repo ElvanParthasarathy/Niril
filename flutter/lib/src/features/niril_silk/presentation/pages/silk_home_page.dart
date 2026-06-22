@@ -20,7 +20,9 @@ class SilkHomePage extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Center(
-              child: Text('Silk Home Page - Item $index', style: TextStyle(color: Colors.blue.withOpacity(0.8), fontSize: 16)),
+              child: Text('Silk Home Page - Item $index',
+                  style: TextStyle(
+                      color: Colors.blue.withOpacity(0.8), fontSize: 16)),
             ),
           );
         },
