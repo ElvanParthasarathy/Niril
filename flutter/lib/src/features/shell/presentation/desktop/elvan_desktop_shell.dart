@@ -15,6 +15,8 @@ class ElvanDesktopShell extends ConsumerStatefulWidget {
   final VoidCallback onSettingsPressed;
   final VoidCallback onReportsPressed;
   final VoidCallback onGstReturnsPressed;
+  final bool isReportsSelected;
+  final bool isGstReturnsSelected;
   final List<CustomNavItem> navItems;
   final List<Widget> slivers; // The pages (SliverOffstage)
   final Widget? customContent;
@@ -28,6 +30,8 @@ class ElvanDesktopShell extends ConsumerStatefulWidget {
     required this.onSettingsPressed,
     required this.onReportsPressed,
     required this.onGstReturnsPressed,
+    this.isReportsSelected = false,
+    this.isGstReturnsSelected = false,
     required this.navItems,
     required this.slivers,
     this.customContent,
@@ -117,6 +121,8 @@ class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
                 desktopNavigatorKey.currentState?.popUntil((route) => route.isFirst);
                 widget.onGstReturnsPressed();
               },
+              isReportsSelected: widget.isReportsSelected,
+              isGstReturnsSelected: widget.isGstReturnsSelected,
               navItems: widget.navItems,
               appMode: mode ?? AppMode.silk,
             ),

@@ -307,6 +307,8 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
       onSettingsPressed: () => nav.goTo(NirilDestination.settings),
       onReportsPressed: () => nav.goTo(NirilDestination.reports),
       onGstReturnsPressed: () => nav.goTo(NirilDestination.gstReturns),
+      isReportsSelected: dest == NirilDestination.reports,
+      isGstReturnsSelected: dest == NirilDestination.gstReturns,
       customContent: customContent,
       title: title,
       toolbar: desktopToolbar,
