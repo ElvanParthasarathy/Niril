@@ -61,68 +61,72 @@ class _ElvanDesktopSubpageShellState extends State<ElvanDesktopSubpageShell> {
       return true;
     });
 
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    final isWideDesktop = screenWidth >= 1100;
+    final isWideDesktop = MediaQuery.sizeOf(context).width >= 1100;
     final isSplitView = isInsideSettingsSplitView && isWideDesktop;
     final showBackButton = canPop && !isSplitView;
-
-    final double horizontalPadding = isSplitView
-        ? 0.0
-        : ((screenWidth > 680) ? (screenWidth - 680) / 2 : 0.0);
 
     return Material(
       color:
           widget.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor,
-      child: ElvanSmoothScroll(
-        controller: _scrollController,
-        child: CustomScrollView(
+      child: LayoutBuilder(builder: (context, constraints) {
+        final double availableWidth = constraints.maxWidth;
+        final double horizontalPadding = isSplitView
+            ? 0.0
+            : ((availableWidth > 680) ? (availableWidth - 680) / 2 : 0.0);
+
+        return ElvanSmoothScroll(
           controller: _scrollController,
-          slivers: [
-            if (!widget.hideHeaderOnDesktop)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      top: 56,
-                      left: (isSplitView ? 40 : 24) + horizontalPadding,
-                      right: horizontalPadding,
-                      bottom: 24),
-                  child: Row(
-                    children: [
-                      if (showBackButton) ...[
-                        IconButton(
-                          icon: const Icon(Icons.arrow_back),
-                          onPressed: () => Navigator.pop(context),
+          child: CustomScrollView(
+            controller: _scrollController,
+            slivers: [
+              if (!widget.hideHeaderOnDesktop)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        top: 56,
+                        left: (isSplitView ? 40 : 24) + horizontalPadding,
+                        right: horizontalPadding,
+                        bottom: 24),
+                    child: Row(
+                      children: [
+                        if (showBackButton) ...[
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          const SizedBox(width: 16),
+                        ] else if (isSplitView) ...[
+                          const SizedBox(width: 20),
+                        ],
+                        Text(
+                          widget.title,
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
                         ),
-                        const SizedBox(width: 16),
-                      ] else if (isSplitView) ...[
-                        const SizedBox(width: 20),
                       ],
-                      Text(
-                        widget.title,
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-              )
-            else
-              const SliverToBoxAdapter(child: SizedBox(height: 56)),
-            ...widget.slivers.map((sliver) => SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                  sliver: SliverPadding(
-                    padding: widget.contentPadding ??
-                        ElvanSubpagePadding.of(context) ??
-                        EdgeInsets.symmetric(horizontal: isSplitView ? 24 : 0),
-                    sliver: sliver,
-                  ),
-                )),
-          ],
-        ),
-      ),
+                )
+              else
+                const SliverToBoxAdapter(child: SizedBox(height: 56)),
+              ...widget.slivers.map((sliver) => SliverPadding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: horizontalPadding),
+                    sliver: SliverPadding(
+                      padding: widget.contentPadding ??
+                          ElvanSubpagePadding.of(context) ??
+                          EdgeInsets.symmetric(
+                              horizontal: isSplitView ? 24 : 0),
+                      sliver: sliver,
+                    ),
+                  )),
+            ],
+          ),
+        );
+      }),
     );
   }
 }
