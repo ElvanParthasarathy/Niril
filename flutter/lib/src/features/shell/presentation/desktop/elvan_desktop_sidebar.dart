@@ -93,7 +93,7 @@ class ElvanDesktopSidebar extends ConsumerWidget {
                     if (!isCollapsed)
                       Padding(
                         padding: const EdgeInsets.only(
-                            left: 24, right: 24, top: 8, bottom: 12),
+                            left: 32, right: 24, top: 8, bottom: 12),
                         child: Text('reports'.tr(context, ref),
                             style: TextStyle(
                                 fontSize: 12,
