@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../localization/locale_provider.dart';
-import '../widgets/auth_components.dart';
-import '../widgets/language_tile.dart';
+import '../../widgets/auth_components.dart';
+import '../../widgets/language_tile.dart';
 
 class AppLanguageStep extends ConsumerWidget {
   final VoidCallback onLanguageSelected;
