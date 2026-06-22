@@ -189,7 +189,7 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                                     horizontal: 16, vertical: 14),
                                 child: Row(
                                   children: [
-                                    Icon(CupertinoIcons.chart_bar,
+                                    Icon(CupertinoIcons.chart_pie,
                                         size: 22,
                                         color: Theme.of(context).brightness ==
                                                 Brightness.dark
@@ -218,7 +218,7 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                                     horizontal: 16, vertical: 14),
                                 child: Row(
                                   children: [
-                                    Icon(CupertinoIcons.doc_text,
+                                    Icon(CupertinoIcons.doc_checkmark,
                                         size: 22,
                                         color: Theme.of(context).brightness ==
                                                 Brightness.dark
