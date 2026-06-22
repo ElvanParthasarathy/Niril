@@ -66,84 +66,87 @@ class ElvanDesktopSidebar extends ConsumerWidget {
 
           // Nav Items List and Reports Section
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ...List.generate(navItems.length, (index) {
-                    final item = navItems[index];
-                    final isSelected = index == currentIndex;
+            child: ScrollConfiguration(
+              behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ...List.generate(navItems.length, (index) {
+                      final item = navItems[index];
+                      final isSelected = index == currentIndex;
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: isCollapsed ? 12 : 10),
-                        child: _DesktopNavItem(
-                          item: item,
-                          isSelected: isSelected,
-                          isDark: isDark,
-                          isCollapsed: isCollapsed,
-                          onTap: () => onTabSelected(index),
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: isCollapsed ? 12 : 10),
+                          child: _DesktopNavItem(
+                            item: item,
+                            isSelected: isSelected,
+                            isDark: isDark,
+                            isCollapsed: isCollapsed,
+                            onTap: () => onTabSelected(index),
+                          ),
                         ),
-                      ),
-                    );
-                  }),
-                  if (appMode == AppMode.silk) ...[
-                    if (!isCollapsed)
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 32, right: 24, top: 8, bottom: 12),
-                        child: Text('reports'.tr(context, ref),
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withValues(alpha: 0.5))),
-                      ),
-                    if (isCollapsed)
+                      );
+                    }),
+                    if (appMode == AppMode.silk) ...[
+                      if (!isCollapsed)
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              left: 32, right: 24, top: 8, bottom: 12),
+                          child: Text('reports'.tr(context, ref),
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.5))),
+                        ),
+                      if (isCollapsed)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: Divider(
+                              height: 24,
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.1)
+                                  : Colors.black.withValues(alpha: 0.05)),
+                        ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Divider(
-                            height: 24,
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.1)
-                                : Colors.black.withValues(alpha: 0.05)),
-                      ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: isCollapsed ? 12 : 10),
-                        child: _DesktopNavItem(
-                          item: CustomNavItem(
-                              icon: CupertinoIcons.chart_pie,
-                              label: 'reports'.tr(context, ref)),
-                          isSelected: false,
-                          isDark: isDark,
-                          isCollapsed: isCollapsed,
-                          onTap: onReportsPressed,
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: isCollapsed ? 12 : 10),
+                          child: _DesktopNavItem(
+                            item: CustomNavItem(
+                                icon: CupertinoIcons.chart_pie,
+                                label: 'reports'.tr(context, ref)),
+                            isSelected: false,
+                            isDark: isDark,
+                            isCollapsed: isCollapsed,
+                            onTap: onReportsPressed,
+                          ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Padding(
-                        padding: EdgeInsets.only(bottom: isCollapsed ? 12 : 10),
-                        child: _DesktopNavItem(
-                          item: CustomNavItem(
-                              icon: CupertinoIcons.percent,
-                              label: 'gstReturns'.tr(context, ref)),
-                          isSelected: false,
-                          isDark: isDark,
-                          isCollapsed: isCollapsed,
-                          onTap: onGstReturnsPressed,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Padding(
+                          padding: EdgeInsets.only(bottom: isCollapsed ? 12 : 10),
+                          child: _DesktopNavItem(
+                            item: CustomNavItem(
+                                icon: CupertinoIcons.percent,
+                                label: 'gstReturns'.tr(context, ref)),
+                            isSelected: false,
+                            isDark: isDark,
+                            isCollapsed: isCollapsed,
+                            onTap: onGstReturnsPressed,
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ),
