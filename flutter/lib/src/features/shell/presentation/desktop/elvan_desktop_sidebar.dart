@@ -94,14 +94,19 @@ class ElvanDesktopSidebar extends ConsumerWidget {
               crossFadeState: isCollapsed
                   ? CrossFadeState.showSecond
                   : CrossFadeState.showFirst,
-              firstChild: OverflowBox(
-                minWidth: 236, // 260 - 24 padding
-                maxWidth: 236,
-                alignment: Alignment.centerLeft,
-                child: _buildExpandedProfile(context, isDark, ref),
+              firstChild: SizedBox(
+                height: 52,
+                child: OverflowBox(
+                  minWidth: 236, // 260 - 24 padding
+                  maxWidth: 236,
+                  maxHeight: 52,
+                  alignment: Alignment.centerLeft,
+                  child: _buildExpandedProfile(context, isDark, ref),
+                ),
               ),
               secondChild: SizedBox(
                 width: 56,
+                height: 48,
                 child: _buildCollapsedProfile(context, isDark),
               ),
             ),
@@ -120,44 +125,49 @@ class ElvanDesktopSidebar extends ConsumerWidget {
       alignment: Alignment.centerLeft,
       crossFadeState:
           isCollapsed ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-      firstChild: OverflowBox(
-        minWidth: 260,
-        maxWidth: 260,
-        alignment: Alignment.centerLeft,
-        child: Container(
-          width: 260,
-          height: 80,
-          padding:
-              const EdgeInsets.only(top: 32, bottom: 8, left: 32, right: 24),
-          alignment: Alignment.topLeft,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'appName'.tr(context, ref),
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -0.4,
-                  color: Theme.of(context).colorScheme.onSurface,
-                  height: 1.0,
+      firstChild: SizedBox(
+        height: 80,
+        child: OverflowBox(
+          minWidth: 260,
+          maxWidth: 260,
+          maxHeight: 80,
+          alignment: Alignment.centerLeft,
+          child: Container(
+            width: 260,
+            height: 80,
+            padding:
+                const EdgeInsets.only(top: 32, bottom: 8, left: 32, right: 24),
+            alignment: Alignment.topLeft,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'appName'.tr(context, ref),
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.4,
+                    color: Theme.of(context).colorScheme.onSurface,
+                    height: 1.0,
+                  ),
                 ),
-              ),
-              IconButton(
-                icon: SvgPicture.string(
-                  _sidebarCollapseSvg,
-                  width: 20,
-                  height: 20,
-                  colorFilter: ColorFilter.mode(
-                      Theme.of(context).colorScheme.onSurface, BlendMode.srcIn),
+                IconButton(
+                  icon: SvgPicture.string(
+                    _sidebarCollapseSvg,
+                    width: 20,
+                    height: 20,
+                    colorFilter: ColorFilter.mode(
+                        Theme.of(context).colorScheme.onSurface,
+                        BlendMode.srcIn),
+                  ),
+                  onPressed: onToggleCollapse,
+                  splashRadius: 20,
+                  hoverColor: isDark
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.04),
                 ),
-                onPressed: onToggleCollapse,
-                splashRadius: 20,
-                hoverColor: isDark
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : Colors.black.withValues(alpha: 0.04),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
