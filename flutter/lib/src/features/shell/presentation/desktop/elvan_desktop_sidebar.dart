@@ -499,7 +499,7 @@ class _DesktopNavItemState extends State<_DesktopNavItem> {
                           left: -10,
                           width: 76,
                           child: Text(
-                            widget.item.label,
+                            widget.item.label.replaceAll(' ', '\n'),
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontFamily: 'ElvanSans',
