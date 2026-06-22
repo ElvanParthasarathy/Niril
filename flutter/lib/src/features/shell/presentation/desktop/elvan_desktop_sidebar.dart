@@ -612,6 +612,7 @@ class _DesktopExpandedProfileState
                   height: 52,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
+                    color: widget.isDark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.04),
                   ),
                   child: Row(
                     children: [
