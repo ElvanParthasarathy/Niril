@@ -670,14 +670,14 @@ class _DesktopExpandedProfileState
   bool _isSettingsPressed = false;
 
   void _openModeSelector() {
-    Navigator.of(context).push(
+    Navigator.of(context, rootNavigator: true).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
             ModeSelectorScreen(
           onModeSelected: (mode) {
             ref.read(appModeProvider.notifier).setMode(mode);
             widget.onModeSwitched?.call();
-            Navigator.of(context).pop();
+            Navigator.of(context, rootNavigator: true).pop();
           },
         ),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
