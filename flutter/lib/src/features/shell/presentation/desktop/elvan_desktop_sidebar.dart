@@ -513,8 +513,8 @@ class _DesktopCollapsedProfileState
                 ? Colors.white.withValues(alpha: 0.12)
                 : Colors.black.withValues(alpha: 0.12),
             child: SizedBox(
-              width: 48,
-              height: 48,
+              width: 40,
+              height: 40,
               child: Center(
                 child: SvgPicture.string(
                   _isSettingsHovered ? _settingsFilledSvg : _settingsOutlineSvg,
@@ -661,8 +661,8 @@ class _DesktopExpandedProfileState
               hoverColor: widget.isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.04),
               splashColor: widget.isDark ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.12),
               child: Container(
-                width: 52,
-                height: 52,
+                width: 40,
+                height: 40,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                 ),
