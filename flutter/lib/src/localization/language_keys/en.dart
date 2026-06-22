@@ -60,6 +60,8 @@ const Map<String, String> en = {
   'recurring': 'Recurring',
   'reports': 'Reports',
   'gstReturns': 'GST Returns',
+  'reportsSidebar': 'Report',
+  'gstReturnsSidebar': 'GST Return',
   'settings': 'Settings',
   'userGuide': 'User Guide',
   'notifications': 'Notifications',

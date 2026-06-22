@@ -121,7 +121,7 @@ class ElvanDesktopSidebar extends ConsumerWidget {
                           child: _DesktopNavItem(
                             item: CustomNavItem(
                                 icon: CupertinoIcons.chart_pie,
-                                label: 'reports'.tr(context, ref)),
+                                label: 'reportsSidebar'.tr(context, ref)),
                             isSelected: false,
                             isDark: isDark,
                             isCollapsed: isCollapsed,
@@ -136,7 +136,7 @@ class ElvanDesktopSidebar extends ConsumerWidget {
                           child: _DesktopNavItem(
                             item: CustomNavItem(
                                 icon: CupertinoIcons.percent,
-                                label: 'gstReturns'.tr(context, ref)),
+                                label: 'gstReturnsSidebar'.tr(context, ref)),
                             isSelected: false,
                             isDark: isDark,
                             isCollapsed: isCollapsed,
