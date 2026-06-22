@@ -599,7 +599,7 @@ class _DesktopExpandedProfileState
               onTap: _openModeSelector,
               behavior: HitTestBehavior.opaque,
               child: Container(
-                padding: const EdgeInsets.only(left: 6, right: 18),
+                padding: const EdgeInsets.only(left: 18, right: 12),
                 height: 52,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
@@ -608,8 +608,8 @@ class _DesktopExpandedProfileState
                 child: Row(
                   children: [
                     Container(
-                      width: 40,
-                      height: 40,
+                      width: 32,
+                      height: 32,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: widget.isDark
@@ -631,23 +631,26 @@ class _DesktopExpandedProfileState
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 10),
                     Expanded(
-                      child: AnimatedDefaultTextStyle(
-                        duration: const Duration(milliseconds: 200),
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: modeFgColor,
-                          fontFamily:
-                              DefaultTextStyle.of(context).style.fontFamily,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        child: Text(
-                          widget.appMode == AppMode.coolie
-                              ? 'nirilCoolie'.tr(context, ref)
-                              : 'nirilSilk'.tr(context, ref),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 1),
+                        child: AnimatedDefaultTextStyle(
+                          duration: const Duration(milliseconds: 200),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: modeFgColor,
+                            fontFamily:
+                                DefaultTextStyle.of(context).style.fontFamily,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          child: Text(
+                            widget.appMode == AppMode.coolie
+                                ? 'nirilCoolie'.tr(context, ref)
+                                : 'nirilSilk'.tr(context, ref),
+                          ),
                         ),
                       ),
                     ),
@@ -657,7 +660,7 @@ class _DesktopExpandedProfileState
             ),
           ),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 6),
         MouseRegion(
           onEnter: (_) => setState(() => _isSettingsHovered = true),
           onExit: (_) => setState(() => _isSettingsHovered = false),
@@ -676,16 +679,16 @@ class _DesktopExpandedProfileState
                   ? Colors.white.withValues(alpha: 0.12)
                   : Colors.black.withValues(alpha: 0.12),
               child: Container(
-                width: 40,
-                height: 40,
+                width: 34,
+                height: 34,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
                 child: SvgPicture.string(
                   _isSettingsPressed ? _settingsFilledSvg : _settingsOutlineSvg,
-                  width: 20,
-                  height: 20,
+                  width: 18,
+                  height: 18,
                   colorFilter: ColorFilter.mode(
                     _isSettingsHovered
                         ? (widget.isDark ? Colors.white : Colors.black)
@@ -699,6 +702,7 @@ class _DesktopExpandedProfileState
             ),
           ),
         ),
+        const SizedBox(width: 8),
       ],
     );
   }
