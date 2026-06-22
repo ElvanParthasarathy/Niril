@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/state/app_state.dart';
+import '../../../../core/preferences_service.dart';
 import '../widgets/auth_components.dart';
 
 // Import the split components
@@ -95,6 +96,7 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
 
       case WelcomePhase.billingLanguage:
         return BillingLanguageStep(
+          billingLanguage: _billingLanguage,
           onBack: () {
             setState(() {
               _phase = WelcomePhase.language;
@@ -103,6 +105,15 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
           onLanguageSelected: (lang) {
             setState(() {
               _billingLanguage = lang;
+            });
+          },
+          onContinue: () async {
+            final prefs = ref.read(sharedPreferencesProvider);
+            await prefs.setString('elvanniril_setup_billingLang', _billingLanguage);
+            
+            if (!context.mounted) return;
+            
+            setState(() {
               _phase = WelcomePhase.businessName;
             });
           },

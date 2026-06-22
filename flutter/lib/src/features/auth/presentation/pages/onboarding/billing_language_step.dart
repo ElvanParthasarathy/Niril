@@ -1,47 +1,102 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../localization/locale_provider.dart';
-import '../../widgets/auth_components.dart';
+import '../widgets/auth_components.dart';
+import '../widgets/language_tile.dart';
 
 class BillingLanguageStep extends ConsumerWidget {
+  final String billingLanguage;
+  final ValueChanged<String> onLanguageSelected;
+  final VoidCallback onContinue;
   final VoidCallback onBack;
-  final Function(String) onLanguageSelected;
 
   const BillingLanguageStep({
     super.key,
-    required this.onBack,
+    required this.billingLanguage,
     required this.onLanguageSelected,
+    required this.onContinue,
+    required this.onBack,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    final textColor = isDark ? Colors.white : Colors.black;
+    final inputBg = isDark ? const Color(0xFF1E1E1E) : Colors.grey[100]!;
+    final dividerColor = isDark ? Colors.white12 : Colors.black12;
+
+    final currentLocale = ref.watch(localeProvider);
+    final currentLang = currentLocale?.languageCode ?? 'ta';
+
     return KeyedSubtree(
-      key: const ValueKey('billing_language'),
+      key: const ValueKey('billingLanguage'),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          AuthBackButton(onPressed: onBack),
+          if (currentLang == 'ta' || currentLang == 'en')
+            AuthBackButton(
+              onPressed: onBack,
+            ),
+          Icon(
+            CupertinoIcons.doc_text_fill,
+            size: 80,
+            color: textColor,
+          ),
+          const SizedBox(height: 24),
           AuthHeader(
-            title: 'billingLanguageTitle'.tr(context, ref),
-            subtitle: 'billingLanguageSubtitle'.tr(context, ref),
+            title: 'pattiyalMuthanmozhi'.tr(context, ref),
+            subtitle: 'pattiyalilEmmozhiyayPayanpaduttaVendum'.tr(context, ref),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 32),
           AuthAnimatedElement(
-            delayIndex: 0,
-            child: AuthButton(
-              text: 'தமிழ்',
-              onPressed: () => onLanguageSelected('Tamil'),
+            delayIndex: 2,
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: inputBg,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  LanguageTile(
+                    title: 'தமிழ்',
+                    isSelected: billingLanguage == 'Tamil',
+                    textColor: textColor,
+                    onTap: () {
+                      // We handle state outside, but in the old design it just called setState.
+                      // Wait, we need to pass back the selection instantly.
+                      // I'll change the caller to handle the continuous updating if needed,
+                      // but old design just let user pick, then hit continue.
+                      // I need to change NalvaravuWelcomePage so it remembers the temp state.
+                      // But the easiest way is to pass it back via onLanguageSelected instantly and let caller store it.
+                      onLanguageSelected('Tamil');
+                    },
+                  ),
+                  Divider(
+                      height: 1,
+                      color: dividerColor,
+                      indent: 24,
+                      endIndent: 24),
+                  LanguageTile(
+                    title: 'English',
+                    isSelected: billingLanguage == 'English',
+                    textColor: textColor,
+                    onTap: () {
+                      onLanguageSelected('English');
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 16),
-          AuthAnimatedElement(
-            delayIndex: 1,
-            child: AuthButton(
-              text: 'English',
-              onPressed: () => onLanguageSelected('English'),
-            ),
+          const SizedBox(height: 24),
+          AuthButton(
+            text: 'continue'.tr(context, ref),
+            onPressed: onContinue,
           ),
         ],
       ),

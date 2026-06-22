@@ -67,8 +67,8 @@ class _GreetingStepState extends State<GreetingStep> {
         child: Text(
           _greetings[_greetingIndex],
           style: TextStyle(
-            fontSize: 42,
-            fontWeight: FontWeight.w600,
+            fontSize: 48,
+            fontWeight: FontWeight.w300,
             color: textColor,
             letterSpacing: -1,
           ),
