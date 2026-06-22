@@ -8,10 +8,12 @@ import '../../widgets/language_tile.dart';
 
 class AppLanguageStep extends ConsumerWidget {
   final VoidCallback onLanguageSelected;
+  final VoidCallback onBack;
 
   const AppLanguageStep({
     super.key,
     required this.onLanguageSelected,
+    required this.onBack,
   });
 
   @override
@@ -31,6 +33,9 @@ class AppLanguageStep extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          AuthBackButton(
+            onPressed: onBack,
+          ),
           Icon(
             CupertinoIcons.globe,
             size: 80,

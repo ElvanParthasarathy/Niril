@@ -87,6 +87,11 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
 
       case WelcomePhase.language:
         return AppLanguageStep(
+          onBack: () {
+            setState(() {
+              _phase = WelcomePhase.checkingBackup;
+            });
+          },
           onLanguageSelected: () {
             setState(() {
               _phase = WelcomePhase.billingLanguage;
@@ -139,12 +144,17 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
     final theme = Theme.of(context);
 
     return PopScope(
-      canPop:
-          _phase == WelcomePhase.greeting || _phase == WelcomePhase.language,
+      canPop: _phase == WelcomePhase.greeting || 
+              _phase == WelcomePhase.checkingBackup ||
+              _phase == WelcomePhase.restore,
       onPopInvoked: (didPop) {
         if (didPop) return;
 
-        if (_phase == WelcomePhase.billingLanguage) {
+        if (_phase == WelcomePhase.language) {
+          setState(() {
+            _phase = WelcomePhase.checkingBackup;
+          });
+        } else if (_phase == WelcomePhase.billingLanguage) {
           setState(() {
             _phase = WelcomePhase.language;
           });
