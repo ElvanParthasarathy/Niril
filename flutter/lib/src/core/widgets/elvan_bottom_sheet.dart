@@ -2,10 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/localization/locale_provider.dart';
 
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 Future<T?> showElvanBottomSheet<T>({
   required BuildContext context,
   required WidgetBuilder builder,
 }) {
+  final isDesktop = !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
+
+  if (isDesktop) {
+    return showDialog<T>(
+      context: context,
+      useRootNavigator: true,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          backgroundColor: Theme.of(context).brightness == Brightness.dark
+              ? const Color(0xFF111111)
+              : Colors.white,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: builder(context),
+          ),
+        );
+      },
+    );
+  }
+
   return showModalBottomSheet<T>(
     context: context,
     useRootNavigator: true,

@@ -16,6 +16,8 @@ class PreferencesService {
   static const _localeKey = 'app_locale';
   static const _isLoggedInKey = 'is_logged_in';
 
+  static const _isSidebarCollapsedKey = 'is_sidebar_collapsed';
+
   // --- Auth ---
   bool getIsLoggedIn() {
     return _prefs.getBool(_isLoggedInKey) ?? false;
@@ -23,6 +25,15 @@ class PreferencesService {
 
   Future<void> setIsLoggedIn(bool value) async {
     await _prefs.setBool(_isLoggedInKey, value);
+  }
+
+  // --- Sidebar ---
+  bool getIsSidebarCollapsed() {
+    return _prefs.getBool(_isSidebarCollapsedKey) ?? false;
+  }
+
+  Future<void> setIsSidebarCollapsed(bool value) async {
+    await _prefs.setBool(_isSidebarCollapsedKey, value);
   }
 
   // --- Theme ---

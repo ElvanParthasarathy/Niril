@@ -40,4 +40,12 @@ extension StringLocalization on String {
     // Fallback to english map if it exists, otherwise just return the key.
     return en[this] ?? this;
   }
+
+  /// Translates this string explicitly into the requested language code.
+  String trWithLang(String langCode) {
+    if (langCode == 'ta') {
+      return ta[this] ?? this;
+    }
+    return en[this] ?? this;
+  }
 }

@@ -211,8 +211,8 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
               ),
               const SizedBox(height: 24),
               AuthHeader(
-                title: 'muzhiyayTherthde'.tr(context, ref),
-                subtitle: 'viruppamanaMozhiyayThervuSeiga'.tr(context, ref),
+                title: 'muzhiyayTherthde'.trWithLang(currentLang),
+                subtitle: 'viruppamanaMozhiyayThervuSeiga'.trWithLang(currentLang),
               ),
               const SizedBox(height: 32),
               AuthAnimatedElement(
@@ -248,7 +248,7 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
               ),
               const SizedBox(height: 24),
               AuthButton(
-                text: 'continue'.tr(context, ref),
+                text: 'continue'.trWithLang(currentLang),
                 onPressed: () {
                   // If they hit continue without picking, explicitly save the default Tamil
                   if (ref.read(localeProvider) == null) {

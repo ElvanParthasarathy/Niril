@@ -1,4 +1,6 @@
+import 'dart:io' show Platform;
 import 'dart:ui';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 Future<T?> showElvanActionSheet<T>({
@@ -13,34 +15,13 @@ Future<T?> showElvanActionSheet<T>({
   final isDark = Theme.of(context).brightness == Brightness.dark;
   final bgColor = isDark ? const Color(0xFF151515).withValues(alpha: 0.75) : Colors.white.withValues(alpha: 0.75); // Transparent background
   final mainColor = confirmColor ?? Theme.of(context).colorScheme.onSurface;
+  final isDesktop = !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
 
-  return showModalBottomSheet<T>(
-    context: context,
-    backgroundColor: Colors.transparent, // Transparent to allow floating box
-    isScrollControlled: true,
-    elevation: 0,
-    builder: (BuildContext context) {
-      // Get the keyboard height to push the sheet up
-      final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-      
-      return SafeArea(
-        child: Padding(
-          padding: EdgeInsets.only(left: 16, right: 16, bottom: 24 + bottomInset),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(32),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: bgColor,
-                  borderRadius: BorderRadius.circular(32), // Fully rounded detached box
-                ),
-            child: Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, top: 24, bottom: 16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+  Widget buildContent(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
                   Text(
                     title,
                     style: TextStyle(
@@ -89,10 +70,66 @@ Future<T?> showElvanActionSheet<T>({
                       ),
                     ],
                   ),
-                ],
+      ],
+    );
+  }
+
+  if (isDesktop) {
+    return showDialog<T>(
+      context: context,
+      useRootNavigator: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(32),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: bgColor,
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 24, right: 24, top: 40, bottom: 24),
+                    child: buildContent(context),
+                  ),
+                ),
               ),
             ),
           ),
+        );
+      },
+    );
+  }
+
+  return showModalBottomSheet<T>(
+    context: context,
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    elevation: 0,
+    builder: (BuildContext context) {
+      final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+      return SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(left: 16, right: 16, bottom: 24 + bottomInset),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(32),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  borderRadius: BorderRadius.circular(32),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16, top: 24, bottom: 16),
+                  child: buildContent(context),
+                ),
+              ),
             ),
           ),
         ),

@@ -41,6 +41,7 @@ import 'src/core/state/search_state.dart';
 import 'src/features/niril_coolie/presentation/editors/coolie_merchant_editor.dart';
 import 'src/features/niril_coolie/presentation/editors/coolie_item_editor.dart';
 import 'src/features/shell/presentation/desktop/elvan_desktop_shell.dart';
+import 'src/features/shell/presentation/desktop/elvan_desktop_toolbar.dart';
 import 'src/features/shell/presentation/mobile/widgets/elvan_popup_menu.dart';
 import 'src/features/shell/presentation/mobile/widgets/elvan_top_bar_icon.dart';
 import 'src/features/shell/presentation/mobile/widgets/float_elvan_title.dart';
@@ -420,8 +421,47 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
               _masterNavItems[3], // Products
             ];
 
+            // Build the desktop toolbar for non-home pages
+            Widget? desktopToolbar;
+            if (!_isSettingsOpen && desktopIndex != 0) {
+              final mode = ref.read(appModeProvider);
+              String btnText = 'add'.tr(context, ref);
+              if (desktopIndex == 1) { // Invoices
+                btnText = mode == AppMode.coolie 
+                    ? 'newBill'.tr(context, ref) 
+                    : 'newInvoiceBtn'.tr(context, ref);
+              } else if (desktopIndex == 2) { // Receipts
+                btnText = 'newReceiptBtn'.tr(context, ref);
+              } else if (desktopIndex == 3) { // Merchants
+                btnText = 'addClient'.tr(context, ref);
+              } else if (desktopIndex == 4) { // Items
+                btnText = 'addProductBtn'.tr(context, ref);
+              }
+
+              desktopToolbar = ElvanDesktopToolbar(
+                searchPlaceholder: 'search'.tr(context, ref),
+                addButtonText: btnText,
+                onSearchChanged: (query) {
+                  if (desktopIndex == 1) { // Invoices
+                    if (mode == AppMode.coolie) ref.read(coolieInvoicesSearchQueryProvider.notifier).state = query;
+                    else ref.read(silkInvoicesSearchQueryProvider.notifier).state = query;
+                  } else if (desktopIndex == 2) { // Receipts
+                    if (mode == AppMode.coolie) ref.read(coolieReceiptsSearchQueryProvider.notifier).state = query;
+                    else ref.read(silkReceiptsSearchQueryProvider.notifier).state = query;
+                  } else if (desktopIndex == 3) { // Merchants
+                    if (mode == AppMode.coolie) ref.read(coolieMerchantsSearchQueryProvider.notifier).state = query;
+                    else ref.read(silkMerchantsSearchQueryProvider.notifier).state = query;
+                  } else if (desktopIndex == 4) { // Items
+                    if (mode == AppMode.coolie) ref.read(coolieItemsSearchQueryProvider.notifier).state = query;
+                    else ref.read(silkItemsSearchQueryProvider.notifier).state = query;
+                  }
+                },
+                onAdd: _onAddPressed,
+              );
+            }
+
             return ElvanDesktopShell(
-              currentIndex: desktopIndex,
+              currentIndex: _isSettingsOpen ? -1 : desktopIndex,
               onTabSelected: (index) {
                 if (index == 0) {
                   setState(() { _currentTab = 0; _isSettingsOpen = false; });
@@ -444,6 +484,7 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
               },
               customContent: _isSettingsOpen ? const SettingsScreen() : null,
               title: _isSettingsOpen ? 'settings'.tr(context, ref) : (desktopNavItems[desktopIndex].headerLabel ?? desktopNavItems[desktopIndex].label),
+              toolbar: desktopToolbar,
               navItems: desktopNavItems,
               slivers: [
                 SliverOffstage(

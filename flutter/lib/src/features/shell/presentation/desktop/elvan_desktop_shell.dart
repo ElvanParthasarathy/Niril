@@ -5,7 +5,9 @@ import '../../../../core/models/app_mode.dart';
 import '../../../../core/state/app_state.dart';
 import '../mobile/elvan_navbar.dart'; // For CustomNavItem
 import 'elvan_desktop_sidebar.dart';
+import 'elvan_desktop_toolbar.dart';
 import '../../../../core/widgets/elvan_smooth_scroll.dart';
+import '../../../../core/preferences_service.dart';
 
 class ElvanDesktopShell extends ConsumerStatefulWidget {
   final int currentIndex;
@@ -15,6 +17,7 @@ class ElvanDesktopShell extends ConsumerStatefulWidget {
   final List<Widget> slivers; // The pages (SliverOffstage)
   final Widget? customContent;
   final String? title;
+  final Widget? toolbar; // Desktop toolbar (search, edit, add)
 
   const ElvanDesktopShell({
     super.key,
@@ -25,6 +28,7 @@ class ElvanDesktopShell extends ConsumerStatefulWidget {
     required this.slivers,
     this.customContent,
     this.title,
+    this.toolbar,
   });
 
   @override
@@ -33,7 +37,15 @@ class ElvanDesktopShell extends ConsumerStatefulWidget {
 
 class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
   bool isCollapsed = false;
+  double _sidebarOpacity = 1.0;
+  bool _isAnimatingSidebar = false;
   final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    isCollapsed = ref.read(preferencesServiceProvider).getIsSidebarCollapsed();
+  }
 
   @override
   void dispose() {
@@ -52,8 +64,8 @@ class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
         children: [
           // Sidebar
           AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            curve: const Cubic(0.2, 0.0, 0.0, 1.0),
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOutCubicEmphasized,
             width: isCollapsed ? 80 : 260,
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF111111) : const Color(0xFFFFFFFF),
@@ -66,14 +78,26 @@ class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
             ),
             child: ElvanDesktopSidebar(
               isCollapsed: isCollapsed,
-              onToggleCollapse: () => setState(() => isCollapsed = !isCollapsed),
-              currentIndex: widget.currentIndex,
-              onTabSelected: widget.onTabSelected,
-              onSettingsPressed: widget.onSettingsPressed,
-              navItems: widget.navItems,
-              appMode: mode ?? AppMode.silk,
+              onToggleCollapse: () {
+                setState(() => isCollapsed = !isCollapsed);
+                ref.read(preferencesServiceProvider).setIsSidebarCollapsed(isCollapsed);
+              },
+                currentIndex: widget.currentIndex,
+                onTabSelected: (index) {
+                  if (_scrollController.hasClients) {
+                    if (widget.currentIndex == index) {
+                      _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+                    } else {
+                      _scrollController.jumpTo(0);
+                    }
+                  }
+                  widget.onTabSelected(index);
+                },
+                onSettingsPressed: widget.onSettingsPressed,
+                navItems: widget.navItems,
+                appMode: mode ?? AppMode.silk,
+              ),
             ),
-          ),
           
           // Main Content Area
           Expanded(
@@ -98,6 +122,13 @@ class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
                                     color: Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
+                              ),
+                            ),
+                          if (widget.toolbar != null)
+                            SliverPadding(
+                              padding: const EdgeInsets.symmetric(horizontal: 24),
+                              sliver: SliverToBoxAdapter(
+                                child: widget.toolbar!,
                               ),
                             ),
                           ...widget.slivers.map((sliver) => SliverPadding(
