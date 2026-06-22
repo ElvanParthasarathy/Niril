@@ -12,8 +12,8 @@ import '../mobile/elvan_navbar.dart'; // For CustomNavItem
 import '../../../../core/utils/app_svgs.dart';
 import '../../../auth/presentation/mode_selector_screen.dart';
 import '../../../settings/presentation/settings_screen.dart';
-import '../../../../niril_silk/presentation/pages/reports/silk_reports_page.dart';
-import '../../../../niril_silk/presentation/pages/reports/silk_gst_returns_page.dart';
+import 'package:elvan_niril/src/features/niril_silk/presentation/pages/reports/silk_reports_page.dart';
+import 'package:elvan_niril/src/features/niril_silk/presentation/pages/reports/silk_gst_returns_page.dart';
 
 const String _sidebarCollapseSvg = '''
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
