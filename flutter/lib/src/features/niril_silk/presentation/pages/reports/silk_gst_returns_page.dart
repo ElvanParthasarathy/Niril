@@ -9,12 +9,12 @@ class SilkGstReturnsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ElvanSubpageShell(
-      title: 'variArikkaigal'.tr(context, ref),
+      title: 'gstReturns'.tr(context, ref),
       slivers: [
         SliverFillRemaining(
           child: Center(
             child: Text(
-              'variArikkaigal'.tr(context, ref),
+              'gstReturns'.tr(context, ref),
               style: TextStyle(
                 color: Theme.of(context)
                     .colorScheme

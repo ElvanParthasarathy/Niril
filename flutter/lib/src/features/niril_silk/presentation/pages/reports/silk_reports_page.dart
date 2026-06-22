@@ -9,12 +9,12 @@ class SilkReportsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ElvanSubpageShell(
-      title: 'arikkaigal'.tr(context, ref),
+      title: 'reports'.tr(context, ref),
       slivers: [
         SliverFillRemaining(
           child: Center(
             child: Text(
-              'arikkaigal'.tr(context, ref),
+              'reports'.tr(context, ref),
               style: TextStyle(
                 color: Theme.of(context)
                     .colorScheme
