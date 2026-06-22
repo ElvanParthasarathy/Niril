@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../localization/locale_provider.dart';
 import '../../../../core/state/app_state.dart';
+import '../../../../navigation/navigation_provider.dart';
+import '../../../../navigation/navigation_destination.dart';
 import '../../../shell/presentation/mobile/widgets/elvan_pill_shifter.dart';
 import '../../../shell/presentation/mobile/elvan_navbar.dart';
 import 'silk_invoices_page.dart';
@@ -18,7 +20,7 @@ class SilkUruvakkuPage extends ConsumerStatefulWidget {
 class _SilkUruvakkuPageState extends ConsumerState<SilkUruvakkuPage> {
   @override
   Widget build(BuildContext context) {
-    final selectedIndex = ref.watch(uruvakkuSegmentProvider);
+    final selectedIndex = ref.watch(nirilNavigationProvider).uruvakkuSegment;
 
     return SliverMainAxisGroup(
       slivers: [
@@ -47,7 +49,11 @@ class _SilkUruvakkuPageState extends ConsumerState<SilkUruvakkuPage> {
                   ],
                   currentIndex: selectedIndex,
                   onValueChanged: (int value) {
-                    ref.read(uruvakkuSegmentProvider.notifier).state = value;
+                    ref.read(nirilNavigationProvider.notifier).goTo(
+                      value == 0
+                          ? NirilDestination.pattiyal
+                          : NirilDestination.raseethu,
+                    );
                   },
                 ),
               ],
