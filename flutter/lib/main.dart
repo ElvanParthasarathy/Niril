@@ -43,9 +43,8 @@ void main() async {
     await windowManager.ensureInitialized();
     const minSize = Size(800, 600);
     await windowManager.setMinimumSize(minSize);
-    // Set a comfortable default size on first launch
-    await windowManager.setSize(const Size(1280, 800));
-    await windowManager.center();
+    // Maximize the window by default on startup
+    await windowManager.maximize();
     await windowManager.show();
   }
 
