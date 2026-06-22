@@ -80,7 +80,7 @@ class ElvanDesktopSidebar extends ConsumerWidget {
                       return Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Padding(
-                          padding: EdgeInsets.only(bottom: isCollapsed ? 12 : 10),
+                          padding: EdgeInsets.only(bottom: isCollapsed ? 4 : 10),
                           child: _DesktopNavItem(
                             item: item,
                             isSelected: isSelected,
@@ -117,7 +117,7 @@ class ElvanDesktopSidebar extends ConsumerWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Padding(
-                          padding: EdgeInsets.only(bottom: isCollapsed ? 12 : 10),
+                          padding: EdgeInsets.only(bottom: isCollapsed ? 4 : 10),
                           child: _DesktopNavItem(
                             item: CustomNavItem(
                                 icon: CupertinoIcons.chart_pie,
@@ -132,7 +132,7 @@ class ElvanDesktopSidebar extends ConsumerWidget {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: Padding(
-                          padding: EdgeInsets.only(bottom: isCollapsed ? 12 : 10),
+                          padding: EdgeInsets.only(bottom: isCollapsed ? 4 : 10),
                           child: _DesktopNavItem(
                             item: CustomNavItem(
                                 icon: CupertinoIcons.percent,
@@ -349,7 +349,7 @@ class _DesktopNavItemState extends State<_DesktopNavItem> {
         duration: const Duration(milliseconds: 300),
         curve: const Cubic(0.2, 0.0, 0.0, 1.0),
         width: widget.isCollapsed ? 56 : 236,
-        height: widget.isCollapsed ? 82 : 40,
+        height: widget.isCollapsed ? 74 : 40,
         child: Stack(
           children: [
             // Expanded Pill Background
@@ -408,7 +408,7 @@ class _DesktopNavItemState extends State<_DesktopNavItem> {
                   duration: const Duration(milliseconds: 150),
                   opacity: widget.isCollapsed ? 1.0 : 0.0,
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 12),
+                    padding: const EdgeInsets.only(top: 8),
                     child: MouseRegion(
                       onEnter: (_) => setState(() => _isHovered = true),
                       onExit: (_) => setState(() => _isHovered = false),
@@ -535,7 +535,7 @@ class _DesktopNavItemState extends State<_DesktopNavItem> {
                 curve: const Cubic(0.2, 0.0, 0.0, 1.0),
                 padding: EdgeInsets.only(
                   left: widget.isCollapsed ? 0 : 18,
-                  top: widget.isCollapsed ? 16 : 0,
+                  top: widget.isCollapsed ? 12 : 0,
                 ),
                 child: IgnorePointer(
                   child: AnimatedScale(
