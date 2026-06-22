@@ -583,8 +583,10 @@ class _ShellDemoScreenState extends ConsumerState<ShellDemoScreen> {
                       ? 'reports'.tr(context, ref)
                       : _isGstReturnsOpen
                           ? 'gstReturns'.tr(context, ref)
-                          : (desktopNavItems[desktopIndex].headerLabel ??
-                              desktopNavItems[desktopIndex].label),
+                          : (desktopIndex == 0
+                              ? desktopNavItems[desktopIndex].label
+                              : (desktopNavItems[desktopIndex].headerLabel ??
+                                  desktopNavItems[desktopIndex].label)),
               toolbar: desktopToolbar,
               navItems: desktopNavItems,
               slivers: [
