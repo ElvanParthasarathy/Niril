@@ -507,20 +507,17 @@ class _DesktopCollapsedProfileState
           child: InkWell(
             customBorder: const CircleBorder(),
             onTap: widget.onSettingsPressed,
-            onHighlightChanged: (isPressed) => setState(() => _isSettingsPressed = isPressed),
+            onHighlightChanged: (isPressed) =>
+                setState(() => _isSettingsPressed = isPressed),
             hoverColor: widget.isDark
                 ? Colors.white.withValues(alpha: 0.08)
                 : Colors.black.withValues(alpha: 0.04),
             splashColor: widget.isDark
                 ? Colors.white.withValues(alpha: 0.12)
                 : Colors.black.withValues(alpha: 0.12),
-            child: Container(
+            child: SizedBox(
               width: 40,
               height: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: widget.isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05),
-              ),
               child: Center(
                 child: SvgPicture.string(
                   _isSettingsPressed ? _settingsFilledSvg : _settingsOutlineSvg,
@@ -561,75 +558,115 @@ class _DesktopExpandedProfile extends ConsumerStatefulWidget {
 
 class _DesktopExpandedProfileState
     extends ConsumerState<_DesktopExpandedProfile> {
-  bool _isModeHovered = false;
+  bool _isModePillHovered = false;
+  bool _isModeIconHovered = false;
   bool _isSettingsHovered = false;
   bool _isSettingsPressed = false;
 
+  void _openModeSelector() {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            ModeSelectorScreen(
+          onModeSelected: (mode) {
+            ref.read(appModeProvider.notifier).setMode(mode);
+            Navigator.of(context).pop();
+          },
+        ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        fullscreenDialog: true,
+        transitionDuration: const Duration(milliseconds: 300),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final modeFgColor = _isModeHovered
+    final modeFgColor = _isModePillHovered
         ? (widget.isDark ? Colors.white : Colors.black)
         : (widget.isDark ? const Color(0xFFAAAAAA) : const Color(0xFF666666));
+
+    final bool showPillBg = _isModePillHovered && !_isModeIconHovered;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Expanded(
-          child: MouseRegion(
-            onEnter: (_) => setState(() => _isModeHovered = true),
-            onExit: (_) => setState(() => _isModeHovered = false),
-            cursor: SystemMouseCursors.click,
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(16),
-                onTap: () {
-                  Navigator.of(context).push(
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          ModeSelectorScreen(
-                        onModeSelected: (mode) {
-                          ref.read(appModeProvider.notifier).setMode(mode);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      transitionsBuilder:
-                          (context, animation, secondaryAnimation, child) {
-                        return FadeTransition(opacity: animation, child: child);
-                      },
-                      fullscreenDialog: true,
-                      transitionDuration: const Duration(milliseconds: 300),
-                    ),
-                  );
-                },
-                hoverColor: widget.isDark
-                    ? Colors.white.withValues(alpha: 0.04)
-                    : Colors.black.withValues(alpha: 0.04),
-                splashColor: widget.isDark
-                    ? Colors.white.withValues(alpha: 0.12)
-                    : Colors.black.withValues(alpha: 0.12),
-                highlightColor: widget.isDark
-                    ? Colors.white.withValues(alpha: 0.04)
-                    : Colors.black.withValues(alpha: 0.04),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: _openModeSelector,
+              hoverColor: Colors.transparent,
+              splashColor: widget.isDark
+                  ? Colors.white.withValues(alpha: 0.12)
+                  : Colors.black.withValues(alpha: 0.12),
+              highlightColor: widget.isDark
+                  ? Colors.white.withValues(alpha: 0.04)
+                  : Colors.black.withValues(alpha: 0.04),
+              child: MouseRegion(
+                onEnter: (_) => setState(() => _isModePillHovered = true),
+                onExit: (_) => setState(() => _isModePillHovered = false),
+                cursor: SystemMouseCursors.click,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  padding: const EdgeInsets.only(left: 6, right: 18),
                   height: 52,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
-                    color: widget.isDark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.04),
+                    color: showPillBg
+                        ? (widget.isDark
+                            ? Colors.white.withValues(alpha: 0.04)
+                            : Colors.black.withValues(alpha: 0.04))
+                        : Colors.transparent,
                   ),
                   child: Row(
                     children: [
-                      SvgPicture.string(
-                        widget.appMode == AppMode.coolie
-                            ? AppSvgs.coolieMode
-                            : AppSvgs.silkMode,
-                        width: 16,
-                        height: 16,
-                        colorFilter:
-                            ColorFilter.mode(modeFgColor, BlendMode.srcIn),
+                      MouseRegion(
+                        onEnter: (_) =>
+                            setState(() => _isModeIconHovered = true),
+                        onExit: (_) =>
+                            setState(() => _isModeIconHovered = false),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            customBorder: const CircleBorder(),
+                            onTap: _openModeSelector,
+                            hoverColor: widget.isDark
+                                ? Colors.white.withValues(alpha: 0.08)
+                                : Colors.black.withValues(alpha: 0.04),
+                            splashColor: widget.isDark
+                                ? Colors.white.withValues(alpha: 0.12)
+                                : Colors.black.withValues(alpha: 0.12),
+                            child: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: _isModeIconHovered
+                                    ? (widget.isDark
+                                        ? Colors.white.withValues(alpha: 0.04)
+                                        : Colors.black.withValues(alpha: 0.04))
+                                    : Colors.transparent,
+                              ),
+                              child: Center(
+                                child: SvgPicture.string(
+                                  widget.appMode == AppMode.coolie
+                                      ? AppSvgs.coolieMode
+                                      : AppSvgs.silkMode,
+                                  width: 16,
+                                  height: 16,
+                                  colorFilter: ColorFilter.mode(
+                                      modeFgColor, BlendMode.srcIn),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 8),
                       Expanded(
                         child: AnimatedDefaultTextStyle(
                           duration: const Duration(milliseconds: 200),
@@ -666,15 +703,19 @@ class _DesktopExpandedProfileState
             child: InkWell(
               customBorder: const CircleBorder(),
               onTap: widget.onSettingsPressed,
-              onHighlightChanged: (isPressed) => setState(() => _isSettingsPressed = isPressed),
-              hoverColor: widget.isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.04),
-              splashColor: widget.isDark ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.12),
+              onHighlightChanged: (isPressed) =>
+                  setState(() => _isSettingsPressed = isPressed),
+              hoverColor: widget.isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.black.withValues(alpha: 0.04),
+              splashColor: widget.isDark
+                  ? Colors.white.withValues(alpha: 0.12)
+                  : Colors.black.withValues(alpha: 0.12),
               child: Container(
                 width: 40,
                 height: 40,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: widget.isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05),
                 ),
                 alignment: Alignment.center,
                 child: SvgPicture.string(
