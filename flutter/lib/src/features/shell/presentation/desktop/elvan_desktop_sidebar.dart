@@ -492,9 +492,9 @@ class _DesktopNavItemState extends State<_DesktopNavItem> {
                     padding: const EdgeInsets.only(bottom: 12),
                     child: Stack(
                       clipBehavior: Clip.none,
-                      alignment: Alignment.center,
+                      alignment: Alignment.topCenter,
                       children: [
-                        const SizedBox(height: 14, width: 56),
+                        const SizedBox(height: 26, width: 56),
                         Positioned(
                           left: -10,
                           width: 76,
@@ -511,8 +511,8 @@ class _DesktopNavItemState extends State<_DesktopNavItem> {
                               height: 1.2,
                               letterSpacing: 0.2,
                             ),
-                            maxLines: 1,
-                            softWrap: false,
+                            maxLines: 2,
+                            softWrap: true,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
