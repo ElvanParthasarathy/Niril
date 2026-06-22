@@ -364,6 +364,7 @@ class _CoolieVanigaAmaippuPageState
     required List<Widget> inputFields,
     required VoidCallback onCancel,
     required VoidCallback onSave,
+    Widget? extraAction,
   }) {
     return ElvanSettingsEditContainer(
       child: Column(
@@ -383,6 +384,10 @@ class _CoolieVanigaAmaippuPageState
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              if (extraAction != null) ...[
+                extraAction,
+                const Spacer(),
+              ],
               TextButton(
                 onPressed: onCancel,
                 style: TextButton.styleFrom(
@@ -604,11 +609,9 @@ class _CoolieVanigaAmaippuPageState
                             onChanged: (val) => _tempSecondary = val,
                             keyboardType: TextInputType.phone,
                           ),
-                        if (!_showExtraPhone) const SizedBox(height: 16),
-                        if (!_showExtraPhone)
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: TextButton.icon(
+                      ],
+                      extraAction: !_showExtraPhone
+                          ? TextButton.icon(
                               onPressed: () => setState(() => _showExtraPhone = true),
                               icon: const Icon(CupertinoIcons.add_circled),
                               label: Text('addAlternateMobile'.tr(context, ref)),
@@ -616,9 +619,8 @@ class _CoolieVanigaAmaippuPageState
                                 foregroundColor: Theme.of(context).colorScheme.primary,
                                 padding: EdgeInsets.zero,
                               ),
-                            ),
-                          ),
-                      ],
+                            )
+                          : null,
                       onCancel: () => setState(() {
                         _editingSection = null;
                         _showExtraPhone = false;
