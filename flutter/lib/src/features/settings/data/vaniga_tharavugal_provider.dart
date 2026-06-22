@@ -5,13 +5,17 @@ import 'package:flutter_riverpod/legacy.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/state/app_state.dart';
 import '../../../core/models/app_mode.dart';
+import '../../../core/services/niril_backup_service.dart';
 import 'vaniga_tharavugal.dart';
 
 /// Provider for the Drift database instance.
 /// Overridden in main.dart with the actual database.
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
-  throw UnimplementedError(
-      'appDatabaseProvider must be overridden in ProviderScope');
+  final db = AppDatabase(AppDatabase.openConnection());
+  ref.onDispose(() {
+    db.close();
+  });
+  return db;
 });
 
 /// Provider for the business profile (வணிக தரவுகள்).
@@ -19,14 +23,16 @@ final vanigaTharavugalProvider =
     StateNotifierProvider<VanigaTharavugalNotifier, VanigaTharavugal?>((ref) {
   final db = ref.watch(appDatabaseProvider);
   final mode = ref.watch(appModeProvider);
-  return VanigaTharavugalNotifier(db, mode);
+  final backupService = ref.watch(backupServiceProvider);
+  return VanigaTharavugalNotifier(db, mode, backupService);
 });
 
 class VanigaTharavugalNotifier extends StateNotifier<VanigaTharavugal?> {
   final AppDatabase _db;
   final AppMode? _mode;
+  final NirilBackupService _backupService;
 
-  VanigaTharavugalNotifier(this._db, this._mode) : super(null) {
+  VanigaTharavugalNotifier(this._db, this._mode, this._backupService) : super(null) {
     _loadProfile();
   }
 
@@ -76,6 +82,9 @@ class VanigaTharavugalNotifier extends StateNotifier<VanigaTharavugal?> {
             _modelToCompanion(profile, includeMode: true),
           );
     }
+
+    // Fire-and-forget auto-backup after every save
+    _backupService.createBackup();
   }
 
   /// Clears the profile data for the current mode.
@@ -172,6 +181,9 @@ class VanigaTharavugalNotifier extends StateNotifier<VanigaTharavugal?> {
     }
 
     await updateProfile(mockProfile);
+
+    // Fire-and-forget auto-backup after seeding
+    _backupService.createBackup();
   }
 
   // ── Conversion: Drift entry → domain model ──

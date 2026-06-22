@@ -50,10 +50,10 @@ final missingProfilesProvider = Provider<List<String>>((ref) {
   return missing;
 });
 
-// Derived provider: Do we have BOTH profiles setup?
-final hasBothProfilesProvider = Provider<bool>((ref) {
-  final missing = ref.watch(missingProfilesProvider);
-  return missing.isEmpty;
+// Derived provider: Do we have at least one profile setup?
+final isSetupCompleteProvider = Provider<bool>((ref) {
+  final profiles = ref.watch(_profilesStreamProvider).value;
+  return profiles != null && profiles.isNotEmpty;
 });
 
 // Derived provider: Do we have a profile for the currently selected mode?
@@ -190,3 +190,12 @@ class IsLoggedInNotifier extends Notifier<bool> {
 final isLoggedInProvider = NotifierProvider<IsLoggedInNotifier, bool>(() {
   return IsLoggedInNotifier();
 });
+
+/// Provider to track if the user clicked "Start Fresh" to skip the restore screen
+class SkipRestoreNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+  void setSkip(bool value) => state = value;
+}
+
+final skipRestoreProvider = NotifierProvider<SkipRestoreNotifier, bool>(SkipRestoreNotifier.new);

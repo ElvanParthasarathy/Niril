@@ -1181,6 +1181,15 @@ const Map<String, String> en = {
   'logout_desc': 'Logout from the application.',
   'erase_data': 'Erase App Data',
   'erase_data_desc': 'Permanently erase data.',
+  'backup_now': 'Backup Now',
+  'backup_now_desc': 'Manually update your backup file.',
+  'backup_now_title': 'Backup Database',
+  'backup_now_btn': 'Backup Now',
+  'backing_up': 'Backing up...',
+  'backup_success': 'Backup successfully saved to Documents.',
+  'checking_backups': 'Checking for backups...',
+  'backup_found': 'Backup found!',
+  'no_backup_found': 'No backup found, starting fresh.',
   'primary_language': 'Primary Language',
   'secondary_language': 'Secondary Language',
   'bilingual_entry': 'Bilingual Mode',
@@ -1190,4 +1199,12 @@ const Map<String, String> en = {
   'smallLogoBusinessName': 'Small Logo + Business Name',
   'wideLogoOnly': 'Wide Logo Only',
   'upload': 'Upload',
+
+  // ── Backup & Restore (தரவு பாதுகாப்பு) ──
+  'oldDataFound': 'Old data available',
+  'restoreOldDataSubtitle': 'Your previous data was found. Would you like to restore it?',
+  'restoreBtn': 'Restore Data',
+  'startFreshBtn': 'Start Fresh',
+  'restoring': 'Restoring data...',
+  'restoreSuccess': 'Data restored successfully!',
 };

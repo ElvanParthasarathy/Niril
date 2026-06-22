@@ -1204,6 +1204,15 @@ const Map<String, String> ta = {
   'logout_desc': 'செயலியிலிருந்து வெளியேறவும்.',
   'erase_data': 'செயலித் தரவை அழி',
   'erase_data_desc': 'தரவுகளை நிரந்தரமாக அழிக்கவும்.',
+  'backup_now': 'தரவு காப்பு செய்',
+  'backup_now_desc': 'உங்கள் தரவை சேமிக்கவும்.',
+  'backup_now_title': 'தரவு காப்பு',
+  'backup_now_btn': 'காப்பு செய்',
+  'backing_up': 'சேமிக்கப்படுகிறது...',
+  'backup_success': 'தரவு Documents-ல் சேமிக்கப்பட்டது.',
+  'checking_backups': 'காப்புத் தரவு தேடப்படுகிறது...',
+  'backup_found': 'காப்புத் தரவு கிடைத்தது!',
+  'no_backup_found': 'காப்புத் தரவு இல்லை, புதிதாக தொடங்குகிறது.',
   'primary_language': 'முதன்மை மொழி',
   'secondary_language': 'இரண்டாம் மொழி',
   'bilingual_entry': 'இருமொழி முறை',
@@ -1213,4 +1222,12 @@ const Map<String, String> ta = {
   'smallLogoBusinessName': 'சிறிய சின்னம் + பெயர்',
   'wideLogoOnly': 'அகலமான சின்னம் மட்டும்',
   'upload': 'பதிவேற்று',
+
+  // ── Backup & Restore (தரவு பாதுகாப்பு) ──
+  'oldDataFound': 'பழைய தரவு கிடைக்கிறது',
+  'restoreOldDataSubtitle': 'உங்கள் முந்தைய தரவு கிடைக்கிறது. மீட்டெடுக்க விரும்புகிறீர்களா?',
+  'restoreBtn': 'மீட்டெடு',
+  'startFreshBtn': 'புதியதாக தொடங்கு',
+  'restoring': 'தரவை மீட்டெடுக்கிறது...',
+  'restoreSuccess': 'தரவு வெற்றிகரமாக மீட்டெடுக்கப்பட்டது!',
 };

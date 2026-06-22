@@ -12,6 +12,7 @@ import '../../../../core/preferences_service.dart';
 import '../../../../core/state/app_state.dart';
 import '../../../../core/database/app_database.dart';
 import '../../../../core/theme_provider.dart';
+import '../../../../core/services/niril_backup_service.dart';
 import '../../data/vaniga_tharavugal_provider.dart';
 import '../../../auth/presentation/pages/login_page.dart';
 import '../../../auth/presentation/pages/welcome_page.dart';
@@ -26,6 +27,19 @@ class AccountSecuritySection extends ConsumerWidget {
 
     return ElvanSettingsSection(
       children: [
+        ElvanSettingsRow(
+          iconWidget: Icon(
+            CupertinoIcons.cloud_upload_fill,
+            color: theme.colorScheme.onSurface,
+            size: 20,
+          ),
+          iconBgColor: iconBgColor,
+          title: 'backup_now'.tr(context, ref),
+          description: 'backup_now_desc'.tr(context, ref),
+          onTap: () {
+            _showBackupFlow(context, ref);
+          },
+        ),
         ElvanSettingsRow(
           iconWidget: Icon(
             CupertinoIcons.square_arrow_right_fill,
@@ -53,6 +67,31 @@ class AccountSecuritySection extends ConsumerWidget {
           },
         ),
       ],
+    );
+  }
+
+  void _showBackupFlow(BuildContext context, WidgetRef ref) {
+    showElvanActionSheet(
+      context: context,
+      title: 'backup_now_title'.tr(context, ref),
+      cancelText: 'cancel'.tr(context, ref),
+      confirmText: 'backup_now_btn'.tr(context, ref),
+      onConfirm: () async {
+        showElvanLoadingOverlay(
+            context: context, text: 'backing_up'.tr(context, ref));
+            
+        // Wait a small amount of time for UX purposes so it doesn't flash instantly
+        await Future.delayed(const Duration(milliseconds: 800));
+        
+        final backupService = ref.read(backupServiceProvider);
+        await backupService.createBackup();
+
+        if (context.mounted) {
+          // Pop the loading dialog
+          Navigator.of(context, rootNavigator: true).pop();
+          ElvanSnackbar.show(context, 'backup_success'.tr(context, ref));
+        }
+      },
     );
   }
 
@@ -225,6 +264,7 @@ class AccountSecuritySection extends ConsumerWidget {
                 // Instantly wipe in-memory settings so UI snaps back to default
                 ref.invalidate(themeModeProvider);
                 ref.invalidate(localeProvider);
+                ref.invalidate(skipRestoreProvider);
 
                 // Pop all dialogs and screens back to the root route.
                 Navigator.of(context, rootNavigator: true)

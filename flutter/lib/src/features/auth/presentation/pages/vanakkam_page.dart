@@ -6,6 +6,7 @@ import '../../../../localization/locale_provider.dart';
 import '../../../../core/preferences_service.dart';
 import '../../../../core/state/app_state.dart';
 import '../../../../core/database/app_database.dart';
+import '../../../../core/services/niril_backup_service.dart';
 import '../../../settings/data/vaniga_tharavugal_provider.dart';
 import 'package:drift/drift.dart' hide Column;
 import '../mode_selector_screen.dart';
@@ -76,6 +77,10 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
             ),
           );
     }
+
+    // Trigger an immediate backup so the initial setup is saved safely
+    final backupService = ref.read(backupServiceProvider);
+    await backupService.createBackup();
 
     if (!mounted) return;
 

@@ -15,13 +15,18 @@ import 'src/features/auth/presentation/mode_selector_screen.dart';
 import 'src/features/auth/presentation/pages/welcome_page.dart';
 import 'src/features/auth/presentation/pages/nalvaravu_welcome_page.dart';
 import 'src/core/database/app_database.dart';
+import 'src/core/services/niril_backup_service.dart';
 import 'src/features/settings/data/vaniga_tharavugal_provider.dart';
+import 'src/features/auth/presentation/pages/restore_page.dart';
+import 'src/features/auth/presentation/pages/permission_guard_screen.dart';
 
 import 'src/features/shell/presentation/deferred_shell_loader.dart';
 import 'src/features/shell/presentation/niril_app_screen.dart';
 
 import 'dart:io';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
+import 'package:window_manager/window_manager.dart';
+
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
@@ -50,15 +55,15 @@ void main() async {
 
   final sharedPrefs = await SharedPreferences.getInstance();
 
-  // Initialize Drift (SQLite) database
-  final database = AppDatabase(AppDatabase.openConnection());
+  // Initialize backup service (தரவு பாதுகாப்பு)
+  final backupService = await NirilBackupService.initialize();
 
   runApp(
     // Wrap the entire app with ProviderScope for Riverpod state management
     ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sharedPrefs),
-        appDatabaseProvider.overrideWithValue(database),
+        backupServiceProvider.overrideWithValue(backupService),
       ],
       child: const ElvanNirilApp(),
     ),
@@ -136,59 +141,63 @@ class ElvanNirilApp extends ConsumerWidget {
           ),
         ),
       ),
-      home: Consumer(
-        builder: (context, ref, _) {
-          Widget child;
+      home: PermissionGuardScreen(
+        child: Consumer(
+          builder: (context, ref, _) {
+            Widget child;
 
-          // 1. Authentication Check
-          final isLoggedIn = ref.watch(isLoggedInProvider);
-          if (!isLoggedIn) {
-            child = const WelcomePage(key: ValueKey('welcome'));
-          } else {
-            // 1.5. Prevent UI flashing by waiting for database stream to initialize
-            final isLoadingProfiles = ref.watch(profilesLoadingProvider);
-            if (isLoadingProfiles) {
-              child = const Scaffold(
-                  key: ValueKey('loading'), backgroundColor: Colors.black);
+            // 1. Authentication Check
+            final isLoggedIn = ref.watch(isLoggedInProvider);
+            if (!isLoggedIn) {
+              child = const WelcomePage(key: ValueKey('welcome'));
             } else {
-              // 2. Smart Onboarding Check
-              final hasBothProfiles = ref.watch(hasBothProfilesProvider);
-              if (!hasBothProfiles) {
-                child = const NalvaravuWelcomePage(key: ValueKey('onboarding'));
+              // 1.5. Prevent UI flashing by waiting for database stream to initialize
+              final isLoadingProfiles = ref.watch(profilesLoadingProvider);
+              if (isLoadingProfiles) {
+                child = const Scaffold(
+                    key: ValueKey('loading'), backgroundColor: Colors.black);
               } else {
-                // 3. Mode Selection
-                final mode = ref.watch(appModeProvider);
-                if (mode == null) {
-                  child = ModeSelectorScreen(
-                    key: const ValueKey('mode_selector'),
-                    onModeSelected: (newMode) {
-                      ref.read(appModeProvider.notifier).setMode(newMode);
-                    },
-                  );
+                // 2. Smart Onboarding Check
+                final isSetupComplete = ref.watch(isSetupCompleteProvider);
+                if (!isSetupComplete) {
+                  // Always show NalvaravuWelcomePage. 
+                  // It handles the Vanakkam greeting and then internally checks the backup.
+                  child = const NalvaravuWelcomePage(key: ValueKey('setup'));
                 } else {
-                  // 4. Main App Dashboard (Deferred to guarantee smooth 60fps mode transition)
-                  child = const DeferredShellLoader(
-                    key: ValueKey('shell_demo'),
-                    child: NirilAppScreen(),
-                  );
+                  // 3. Mode Selection
+                  final mode = ref.watch(appModeProvider);
+                  if (mode == null) {
+                    child = ModeSelectorScreen(
+                      key: const ValueKey('mode_selector'),
+                      onModeSelected: (newMode) {
+                        ref.read(appModeProvider.notifier).setMode(newMode);
+                      },
+                    );
+                  } else {
+                    // 4. Main App Dashboard (Deferred to guarantee smooth 60fps mode transition)
+                    child = const DeferredShellLoader(
+                      key: ValueKey('shell_demo'),
+                      child: NirilAppScreen(),
+                    );
+                  }
                 }
               }
             }
-          }
 
-          return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 600),
-            switchInCurve: Curves.easeOutCubic,
-            switchOutCurve: Curves.easeInCubic,
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
-            child: child,
-          );
-        },
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 600),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+              child: child,
+            );
+          },
+        ),
       ),
     );
   }
