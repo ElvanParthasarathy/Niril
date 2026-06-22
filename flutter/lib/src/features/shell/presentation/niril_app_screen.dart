@@ -237,6 +237,16 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
     final desktopIndex = navState.desktopSidebarIndex;
     final desktopNavItems = _desktopNavItems(context);
 
+    // When switching from mobile to desktop, any routes pushed onto the
+    // root navigator (Settings, editors, etc.) are sitting ABOVE the desktop
+    // shell and block it. Pop them so the desktop state-driven layout takes over.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final myRoute = ModalRoute.of(context);
+      if (myRoute == null) return;
+      Navigator.of(context).popUntil((route) => route == myRoute);
+    });
+
     // Build desktop toolbar for non-home, non-custom-view pages
     Widget? desktopToolbar;
     if (!navState.isCustomView && desktopIndex != 0) {
