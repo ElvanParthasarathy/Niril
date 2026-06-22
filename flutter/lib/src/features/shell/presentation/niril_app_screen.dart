@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -213,7 +214,11 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
       },
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final isDesktop = constraints.maxWidth >= 800;
+          // On desktop OS, always use desktop layout.
+          // LayoutBuilder breakpoint only matters for tablets.
+          final isDesktopOS =
+              Platform.isWindows || Platform.isMacOS || Platform.isLinux;
+          final isDesktop = isDesktopOS || constraints.maxWidth >= 800;
 
           if (isDesktop) {
             return _buildDesktopLayout(context, navState, mode);
