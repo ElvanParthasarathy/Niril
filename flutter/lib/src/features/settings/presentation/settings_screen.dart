@@ -24,6 +24,7 @@ import 'package:elvan_niril/src/features/niril_common/presentation/widgets/elvan
 import 'pages/pathugappu_amaippugal_page.dart';
 
 import '../../shell/presentation/desktop/elvan_desktop_subpage_shell.dart';
+import '../../auth/presentation/mode_selector_screen.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -45,12 +46,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isWideDesktop = constraints.maxWidth >= 800; // Keep 800 for consistency with Flutter layout
-        
+        final isWideDesktop = constraints.maxWidth >=
+            800; // Keep 800 for consistency with Flutter layout
+
         if (isWideDesktop) {
           final isDark = Theme.of(context).brightness == Brightness.dark;
-          final bgColor = isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6);
-          
+          final bgColor =
+              isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6);
+
           return Scaffold(
             backgroundColor: bgColor,
             body: Row(
@@ -63,7 +66,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     child: SettingsHubScreen(onPageSelected: _onMenuSelected),
                   ),
                 ),
-                    
+
                 // Right Panel (Detail)
                 Expanded(
                   child: ElvanSubpagePadding(
@@ -71,12 +74,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     child: _selectedDetail ?? const VanigaAmaippugalPage(),
                   ),
                 ),
-                  ],
-                ),
+              ],
+            ),
           );
         }
         // Narrow Desktop layout: Use a nested Navigator to keep the global sidebar visible
-        final isDesktop = Platform.isWindows || Platform.isMacOS || Platform.isLinux;
+        final isDesktop =
+            Platform.isWindows || Platform.isMacOS || Platform.isLinux;
         if (isDesktop) {
           return Navigator(
             onGenerateRoute: (settings) {
@@ -104,7 +108,6 @@ class SettingsHubScreen extends ConsumerWidget {
       Navigator.push(context, ElvanPageRoute(builder: (_) => page));
     }
   }
-  
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -118,7 +121,8 @@ class SettingsHubScreen extends ConsumerWidget {
       title: 'settings'.tr(context, ref),
       startCollapsed: true,
       hideHeaderOnDesktop: true,
-      backgroundColor: isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
+      backgroundColor:
+          isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
       slivers: [
         SliverList.list(
           children: [
@@ -136,7 +140,8 @@ class SettingsHubScreen extends ConsumerWidget {
                           _navigateTo(context, const VanigaAmaippugalPage());
                         },
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 98, right: 32, top: 14, bottom: 14),
+                          padding: const EdgeInsets.only(
+                              left: 98, right: 32, top: 14, bottom: 14),
                           child: SizedBox(
                             width: double.infinity,
                             height: 64,
@@ -154,13 +159,16 @@ class SettingsHubScreen extends ConsumerWidget {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  ref.watch(appModeProvider) == AppMode.coolie 
-                                      ? 'nirilCoolie'.tr(context, ref) 
+                                  ref.watch(appModeProvider) == AppMode.coolie
+                                      ? 'nirilCoolie'.tr(context, ref)
                                       : 'nirilSilk'.tr(context, ref),
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.5),
                                   ),
                                 ),
                               ],
@@ -168,7 +176,7 @@ class SettingsHubScreen extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      
+
                       // The circular Mode Switcher on the left
                       Positioned(
                         left: 14,
@@ -179,9 +187,27 @@ class SettingsHubScreen extends ConsumerWidget {
                           clipBehavior: Clip.hardEdge,
                           child: InkWell(
                             onTap: () {
-                              final currentMode = ref.read(appModeProvider);
-                              ref.read(appModeProvider.notifier).setMode(
-                                currentMode == AppMode.coolie ? AppMode.silk : AppMode.coolie
+                              Navigator.of(context).push(
+                                PageRouteBuilder(
+                                  pageBuilder: (context, animation,
+                                          secondaryAnimation) =>
+                                      ModeSelectorScreen(
+                                    onModeSelected: (mode) {
+                                      ref
+                                          .read(appModeProvider.notifier)
+                                          .setMode(mode);
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) {
+                                    return FadeTransition(
+                                        opacity: animation, child: child);
+                                  },
+                                  fullscreenDialog: true,
+                                  transitionDuration:
+                                      const Duration(milliseconds: 300),
+                                ),
                               );
                             },
                             child: SizedBox(
@@ -189,7 +215,7 @@ class SettingsHubScreen extends ConsumerWidget {
                               height: 64,
                               child: Center(
                                 child: SvgPicture.string(
-                                  ref.watch(appModeProvider) == AppMode.coolie 
+                                  ref.watch(appModeProvider) == AppMode.coolie
                                       ? AppSvgs.coolieMode
                                       : AppSvgs.silkMode,
                                   width: 32,
@@ -216,14 +242,14 @@ class SettingsHubScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ElvanSettingsSection(
                 children: [
-
                   if (currentAppMode == AppMode.coolie)
                     ElvanSettingsRow(
                       icon: CupertinoIcons.briefcase_fill,
                       iconBgColor: iconBgColor,
                       title: 'adaiyalam'.tr(context, ref),
                       description: 'desc_coolie_identifiers'.tr(context, ref),
-                      onTap: () => _navigateTo(context, const CoolieVanigaAdaiyalangalPage()),
+                      onTap: () => _navigateTo(
+                          context, const CoolieVanigaAdaiyalangalPage()),
                     )
                   else
                     ElvanSettingsRow(
@@ -231,7 +257,8 @@ class SettingsHubScreen extends ConsumerWidget {
                       iconBgColor: iconBgColor,
                       title: 'adaiyalam'.tr(context, ref),
                       description: 'desc_silk_identifiers'.tr(context, ref),
-                      onTap: () => _navigateTo(context, const SilkVanigaAdaiyalangalPage()),
+                      onTap: () => _navigateTo(
+                          context, const SilkVanigaAdaiyalangalPage()),
                     ),
                   ElvanSettingsRow(
                     icon: CupertinoIcons.location_solid,
@@ -263,7 +290,8 @@ class SettingsHubScreen extends ConsumerWidget {
                     iconBgColor: iconBgColor,
                     title: 'uruvakku'.tr(context, ref),
                     description: 'desc_invoice'.tr(context, ref),
-                    onTap: () => _navigateTo(context, const UruvakkuAmaippugalPage()),
+                    onTap: () =>
+                        _navigateTo(context, const UruvakkuAmaippugalPage()),
                   ),
                 ],
               ),
@@ -282,14 +310,16 @@ class SettingsHubScreen extends ConsumerWidget {
                       iconBgColor: iconBgColor,
                       title: 'thirai'.tr(context, ref),
                       description: 'desc_display'.tr(context, ref),
-                      onTap: () => _navigateTo(context, const DisplaySettingsPage()),
+                      onTap: () =>
+                          _navigateTo(context, const DisplaySettingsPage()),
                     ),
                   ElvanSettingsRow(
                     icon: Icons.language,
                     iconBgColor: iconBgColor,
                     title: 'appLanguage'.tr(context, ref),
                     description: 'desc_language'.tr(context, ref),
-                    onTap: () => _navigateTo(context, const LanguageSettingsPage()),
+                    onTap: () =>
+                        _navigateTo(context, const LanguageSettingsPage()),
                   ),
                 ],
               ),
@@ -307,14 +337,16 @@ class SettingsHubScreen extends ConsumerWidget {
                     iconBgColor: iconBgColor,
                     title: 'pathugappu'.tr(context, ref),
                     description: 'desc_security'.tr(context, ref),
-                    onTap: () => _navigateTo(context, const PathugappuAmaippugalPage()),
+                    onTap: () =>
+                        _navigateTo(context, const PathugappuAmaippugalPage()),
                   ),
                   ElvanSettingsRow(
                     icon: CupertinoIcons.info_circle_fill,
                     iconBgColor: iconBgColor,
                     title: 'menporul_vadivalar'.tr(context, ref),
                     description: 'desc_about'.tr(context, ref),
-                    onTap: () => _navigateTo(context, const AboutDeveloperPage()),
+                    onTap: () =>
+                        _navigateTo(context, const AboutDeveloperPage()),
                   ),
                 ],
               ),
