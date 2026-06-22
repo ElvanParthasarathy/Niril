@@ -475,9 +475,13 @@ class _DesktopNavItemState extends State<_DesktopNavItem> {
 class _DesktopCollapsedProfile extends ConsumerStatefulWidget {
   final bool isDark;
   final VoidCallback onSettingsPressed;
+  final bool isSettingsActive;
 
-  const _DesktopCollapsedProfile(
-      {required this.isDark, required this.onSettingsPressed});
+  const _DesktopCollapsedProfile({
+    required this.isDark,
+    required this.onSettingsPressed,
+    this.isSettingsActive = false,
+  });
 
   @override
   ConsumerState<_DesktopCollapsedProfile> createState() =>
@@ -486,8 +490,7 @@ class _DesktopCollapsedProfile extends ConsumerStatefulWidget {
 
 class _DesktopCollapsedProfileState
     extends ConsumerState<_DesktopCollapsedProfile> {
-  bool _isHovered = false;
-  bool _isPressed = false;
+  bool _isSettingsHovered = false;
 
   @override
   Widget build(BuildContext context) {
@@ -499,39 +502,37 @@ class _DesktopCollapsedProfileState
       ),
       alignment: Alignment.center,
       child: MouseRegion(
-        onEnter: (_) => setState(() => _isHovered = true),
-        onExit: (_) => setState(() => _isHovered = false),
-        child: Listener(
-          onPointerDown: (_) => setState(() => _isPressed = true),
-          onPointerUp: (_) => setState(() => _isPressed = false),
-          onPointerCancel: (_) => setState(() => _isPressed = false),
-          child: AnimatedScale(
-            scale: _isPressed ? 0.85 : 1.0,
-            duration: const Duration(milliseconds: 150),
-            curve: const Cubic(0.4, 0.0, 0.2, 1.0),
-            child: IconButton(
-              icon: SvgPicture.string(
-                _isHovered ? _settingsFilledSvg : _settingsOutlineSvg,
-                width: 20,
-                height: 20,
-                colorFilter: ColorFilter.mode(
-                  _isHovered
-                      ? (widget.isDark ? Colors.white : Colors.black)
-                      : (widget.isDark
-                          ? const Color(0xFFAAAAAA)
-                          : const Color(0xFF666666)),
-                  BlendMode.srcIn,
+        onEnter: (_) => setState(() => _isSettingsHovered = true),
+        onExit: (_) => setState(() => _isSettingsHovered = false),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
+            onTap: widget.onSettingsPressed,
+            hoverColor: widget.isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : Colors.black.withValues(alpha: 0.04),
+            splashColor: widget.isDark
+                ? Colors.white.withValues(alpha: 0.12)
+                : Colors.black.withValues(alpha: 0.12),
+            child: SizedBox(
+              width: 48,
+              height: 48,
+              child: Center(
+                child: SvgPicture.string(
+                  _isSettingsHovered ? _settingsFilledSvg : _settingsOutlineSvg,
+                  width: 20,
+                  height: 20,
+                  colorFilter: ColorFilter.mode(
+                    _isSettingsHovered
+                        ? (widget.isDark ? Colors.white : Colors.black)
+                        : (widget.isDark
+                            ? const Color(0xFFAAAAAA)
+                            : const Color(0xFF666666)),
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
-              color: _isHovered
-                  ? (widget.isDark ? Colors.white : Colors.black)
-                  : (widget.isDark
-                      ? const Color(0xFFAAAAAA)
-                      : const Color(0xFF666666)),
-              onPressed: widget.onSettingsPressed,
-              hoverColor: widget.isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.black.withValues(alpha: 0.04),
             ),
           ),
         ),
@@ -557,123 +558,146 @@ class _DesktopExpandedProfile extends ConsumerStatefulWidget {
 
 class _DesktopExpandedProfileState
     extends ConsumerState<_DesktopExpandedProfile> {
-  bool _isHovered = false;
-  bool _isIconPressed = false;
+  bool _isModeHovered = false;
+  bool _isSettingsHovered = false;
 
   @override
   Widget build(BuildContext context) {
-    final fgColor = _isHovered
+    final modeFgColor = _isModeHovered
         ? (widget.isDark ? Colors.white : Colors.black)
         : (widget.isDark ? const Color(0xFFAAAAAA) : const Color(0xFF666666));
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      cursor: SystemMouseCursors.click,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: () {
-            Navigator.of(context).push(
-              PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) =>
-                    ModeSelectorScreen(
-                  onModeSelected: (mode) {
-                    ref.read(appModeProvider.notifier).setMode(mode);
-                    Navigator.of(context).pop();
-                  },
-                ),
-                transitionsBuilder:
-                    (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-                fullscreenDialog: true,
-                transitionDuration: const Duration(milliseconds: 300),
-              ),
-            );
-          },
-          hoverColor: widget.isDark
-              ? Colors.white.withOpacity(0.04)
-              : Colors.black.withOpacity(0.04),
-          splashColor: widget.isDark
-              ? Colors.white.withOpacity(0.12)
-              : Colors.black.withOpacity(0.12),
-          highlightColor: widget.isDark
-              ? Colors.white.withOpacity(0.04)
-              : Colors.black.withOpacity(0.04),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-            height: 52,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTapDown: (_) => setState(() => _isIconPressed = true),
-                  onTapUp: (_) => setState(() => _isIconPressed = false),
-                  onTapCancel: () => setState(() => _isIconPressed = false),
-                  onTap: widget.onSettingsPressed,
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: widget.isDark
-                          ? Colors.white.withValues(alpha: 0.1)
-                          : Colors.black.withValues(alpha: 0.05),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Expanded(
+          child: MouseRegion(
+            onEnter: (_) => setState(() => _isModeHovered = true),
+            onExit: (_) => setState(() => _isModeHovered = false),
+            cursor: SystemMouseCursors.click,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () {
+                  Navigator.of(context).push(
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          ModeSelectorScreen(
+                        onModeSelected: (mode) {
+                          ref.read(appModeProvider.notifier).setMode(mode);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      transitionsBuilder:
+                          (context, animation, secondaryAnimation, child) {
+                        return FadeTransition(opacity: animation, child: child);
+                      },
+                      fullscreenDialog: true,
+                      transitionDuration: const Duration(milliseconds: 300),
                     ),
-                    alignment: Alignment.center,
-                    child: AnimatedScale(
-                      scale: _isIconPressed ? 0.85 : 1.0,
-                      duration: const Duration(milliseconds: 150),
-                      curve: const Cubic(0.4, 0.0, 0.2, 1.0),
-                      child: SvgPicture.string(
+                  );
+                },
+                hoverColor: widget.isDark
+                    ? Colors.white.withValues(alpha: 0.04)
+                    : Colors.black.withValues(alpha: 0.04),
+                splashColor: widget.isDark
+                    ? Colors.white.withValues(alpha: 0.12)
+                    : Colors.black.withValues(alpha: 0.12),
+                highlightColor: widget.isDark
+                    ? Colors.white.withValues(alpha: 0.04)
+                    : Colors.black.withValues(alpha: 0.04),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 18),
+                  height: 52,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: widget.isDark
+                        ? Colors.white.withValues(alpha: 0.04)
+                        : Colors.black.withValues(alpha: 0.04),
+                  ),
+                  child: Row(
+                    children: [
+                      SvgPicture.string(
                         widget.appMode == AppMode.coolie
                             ? AppSvgs.coolieMode
                             : AppSvgs.silkMode,
                         width: 16,
                         height: 16,
-                        colorFilter: ColorFilter.mode(fgColor, BlendMode.srcIn),
+                        colorFilter:
+                            ColorFilter.mode(modeFgColor, BlendMode.srcIn),
                       ),
-                    ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: AnimatedDefaultTextStyle(
+                          duration: const Duration(milliseconds: 200),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: modeFgColor,
+                            fontFamily:
+                                DefaultTextStyle.of(context).style.fontFamily,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          child: Text(
+                            widget.appMode == AppMode.coolie
+                                ? 'nirilCoolie'.tr(context, ref)
+                                : 'nirilSilk'.tr(context, ref),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: AnimatedDefaultTextStyle(
-                    duration: const Duration(milliseconds: 200),
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: fgColor,
-                      fontFamily: DefaultTextStyle.of(context).style.fontFamily,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    child: Text(
-                      widget.appMode == AppMode.coolie
-                          ? 'nirilCoolie'.tr(context, ref)
-                          : 'nirilSilk'.tr(context, ref),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: const ElvanSettingsIcon(size: 18),
-                  color: widget.isDark
-                      ? const Color(0xFFAAAAAA)
-                      : const Color(0xFF666666),
-                  onPressed: widget.onSettingsPressed,
-                  hoverColor: widget.isDark
-                      ? Colors.white.withOpacity(0.15)
-                      : Colors.black.withOpacity(0.08),
-                ),
-              ],
+              ),
             ),
           ),
         ),
-      ),
+        const SizedBox(width: 8),
+        MouseRegion(
+          onEnter: (_) => setState(() => _isSettingsHovered = true),
+          onExit: (_) => setState(() => _isSettingsHovered = false),
+          cursor: SystemMouseCursors.click,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: widget.onSettingsPressed,
+              hoverColor: widget.isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.black.withValues(alpha: 0.04),
+              splashColor: widget.isDark
+                  ? Colors.white.withValues(alpha: 0.12)
+                  : Colors.black.withValues(alpha: 0.12),
+              child: Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: widget.isDark
+                      ? Colors.white.withValues(alpha: 0.1)
+                      : Colors.black.withValues(alpha: 0.05),
+                ),
+                alignment: Alignment.center,
+                child: SvgPicture.string(
+                  _isSettingsHovered ? _settingsFilledSvg : _settingsOutlineSvg,
+                  width: 20,
+                  height: 20,
+                  colorFilter: ColorFilter.mode(
+                    _isSettingsHovered
+                        ? (widget.isDark ? Colors.white : Colors.black)
+                        : (widget.isDark
+                            ? const Color(0xFFAAAAAA)
+                            : const Color(0xFF666666)),
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
