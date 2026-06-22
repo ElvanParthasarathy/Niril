@@ -330,7 +330,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
             children: [
               if (extraAction != null) ...[
                 extraAction,
-                const Spacer(),
+                const SizedBox(width: 8),
               ],
               TextButton(
                 onPressed: onCancel,
@@ -562,14 +562,12 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                           ),
                       ],
                       extraAction: !_showExtraPhone
-                          ? TextButton.icon(
+                          ? TextButton(
                               onPressed: () => setState(() => _showExtraPhone = true),
-                              icon: const Icon(CupertinoIcons.add_circled),
-                              label: Text('addAlternateMobile'.tr(context, ref)),
                               style: TextButton.styleFrom(
                                 foregroundColor: Theme.of(context).colorScheme.primary,
-                                padding: EdgeInsets.zero,
                               ),
+                              child: Text('add'.tr(context, ref)),
                             )
                           : null,
                       onCancel: () => setState(() {
