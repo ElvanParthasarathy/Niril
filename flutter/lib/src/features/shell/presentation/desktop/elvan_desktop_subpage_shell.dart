@@ -83,9 +83,9 @@ class _ElvanDesktopSubpageShellState extends State<ElvanDesktopSubpageShell> {
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: EdgeInsets.only(
-                        top: 56,
-                        left: (isSplitView ? 40 : 24) + horizontalPadding,
-                        right: horizontalPadding,
+                        top: isSplitView ? 56 : 32,
+                        left: isSplitView ? 40 : (showBackButton ? 12 : 60),
+                        right: isSplitView ? 0 : 24,
                         bottom: 24),
                     child: Row(
                       children: [
