@@ -12,6 +12,8 @@ import '../mobile/elvan_navbar.dart'; // For CustomNavItem
 import '../../../../core/utils/app_svgs.dart';
 import '../../../auth/presentation/mode_selector_screen.dart';
 import '../../../settings/presentation/settings_screen.dart';
+import '../../../../niril_silk/presentation/pages/reports/silk_reports_page.dart';
+import '../../../../niril_silk/presentation/pages/reports/silk_gst_returns_page.dart';
 
 const String _sidebarCollapseSvg = '''
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
@@ -81,7 +83,72 @@ class ElvanDesktopSidebar extends ConsumerWidget {
             ),
           ),
 
-          const SizedBox(height: 16),
+          if (appMode == AppMode.silk) ...[
+            if (!isCollapsed)
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 24, right: 24, top: 8, bottom: 12),
+                child: Text('reports'.tr(context, ref),
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.5))),
+              ),
+            if (isCollapsed)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Divider(
+                    height: 24,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : Colors.black.withValues(alpha: 0.05)),
+              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Padding(
+                padding: EdgeInsets.only(bottom: isCollapsed ? 12 : 10),
+                child: _DesktopNavItem(
+                  item: CustomNavItem(
+                      icon: CupertinoIcons.chart_bar,
+                      label: 'reports'.tr(context, ref)),
+                  isSelected: false,
+                  isDark: isDark,
+                  isCollapsed: isCollapsed,
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        ElvanPageRoute(
+                            builder: (context) => const SilkReportsPage()));
+                  },
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Padding(
+                padding: EdgeInsets.only(bottom: isCollapsed ? 12 : 10),
+                child: _DesktopNavItem(
+                  item: CustomNavItem(
+                      icon: CupertinoIcons.doc_text,
+                      label: 'gstReturns'.tr(context, ref)),
+                  isSelected: false,
+                  isDark: isDark,
+                  isCollapsed: isCollapsed,
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        ElvanPageRoute(
+                            builder: (context) => const SilkGstReturnsPage()));
+                  },
+                ),
+              ),
+            ),
+          ],
+
+          const SizedBox(height: 8),
 
           // Settings / Profile Zone
           Padding(
