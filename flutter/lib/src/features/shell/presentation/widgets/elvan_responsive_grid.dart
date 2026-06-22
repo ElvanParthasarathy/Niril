@@ -13,6 +13,7 @@ class ElvanResponsiveGrid extends StatelessWidget {
     this.crossAxisSpacing = 16.0,
     this.childAspectRatio = 1.0,
     this.breakpoint = 800.0,
+    this.mobileItemHeight = 160.0,
   });
 
   final int itemCount;
@@ -22,6 +23,7 @@ class ElvanResponsiveGrid extends StatelessWidget {
   final double crossAxisSpacing;
   final double childAspectRatio;
   final double breakpoint;
+  final double mobileItemHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +50,10 @@ class ElvanResponsiveGrid extends StatelessWidget {
               (context, index) {
                 return Padding(
                   padding: EdgeInsets.only(bottom: mainAxisSpacing),
-                  child: itemBuilder(context, index),
+                  child: SizedBox(
+                    height: mobileItemHeight,
+                    child: itemBuilder(context, index),
+                  ),
                 );
               },
               childCount: itemCount,
