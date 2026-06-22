@@ -330,7 +330,6 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
             children: [
               if (extraAction != null) ...[
                 extraAction,
-                const SizedBox(width: 8),
               ],
               TextButton(
                 onPressed: onCancel,
@@ -574,7 +573,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                           ? TextButton(
                               onPressed: () => setState(() => _showExtraPhone = true),
                               style: TextButton.styleFrom(
-                                foregroundColor: Theme.of(context).colorScheme.primary,
+                                foregroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                               ),
                               child: Text('add'.tr(context, ref)),
                             )
