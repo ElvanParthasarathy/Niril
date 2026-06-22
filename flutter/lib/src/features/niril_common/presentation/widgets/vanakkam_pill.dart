@@ -5,6 +5,7 @@ import '../../../../localization/locale_provider.dart';
 import '../../../auth/presentation/mode_selector_screen.dart';
 import '../../../../core/state/app_state.dart';
 import '../../../../core/utils/app_svgs.dart';
+import '../../../../core/models/app_mode.dart';
 
 class VanakkamPill extends ConsumerWidget {
   final String subtitleKey;
