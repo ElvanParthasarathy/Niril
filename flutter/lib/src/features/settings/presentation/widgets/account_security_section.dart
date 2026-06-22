@@ -69,17 +69,21 @@ class AccountSecuritySection extends ConsumerWidget {
         Future.delayed(const Duration(seconds: 1), () {
           if (context.mounted) {
             final successMsg = 'signOutSuccess'.tr(context, ref);
+            
+            // Show snackbar first before we unmount this context
+            ElvanSnackbar.show(context, successMsg);
+            
             // Update global state
             ref.read(appModeProvider.notifier).setMode(null);
             ref.read(isLoggedInProvider.notifier).setLoggedIn(false);
 
+            // Instantly wipe in-memory settings so UI snaps back to default
+            ref.invalidate(themeModeProvider);
+            ref.invalidate(localeProvider);
+
             // Pop all dialogs and screens back to the root route.
-            // Because we set isLoggedIn to false, main.dart will automatically
-            // render the WelcomePage at the root!
             Navigator.of(context, rootNavigator: true)
                 .popUntil((route) => route.isFirst);
-
-            ElvanSnackbar.show(context, successMsg);
           }
         });
       },
@@ -211,6 +215,9 @@ class AccountSecuritySection extends ConsumerWidget {
               if (context.mounted) {
                 final successMsg = 'dataErasedSuccess'.tr(context, ref);
 
+                // Show snackbar first before we unmount this context
+                ElvanSnackbar.show(context, successMsg);
+
                 // Mock fresh install redirect by resetting mode and auth
                 ref.read(appModeProvider.notifier).setMode(null);
                 ref.read(isLoggedInProvider.notifier).setLoggedIn(false);
@@ -220,12 +227,8 @@ class AccountSecuritySection extends ConsumerWidget {
                 ref.invalidate(localeProvider);
 
                 // Pop all dialogs and screens back to the root route.
-                // Because we set isLoggedIn to false, main.dart will automatically
-                // render the WelcomePage at the root!
                 Navigator.of(context, rootNavigator: true)
                     .popUntil((route) => route.isFirst);
-
-                ElvanSnackbar.show(context, successMsg);
               }
             }
           },
