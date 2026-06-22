@@ -114,7 +114,7 @@ class ElvanDesktopSidebar extends ConsumerWidget {
                         padding: EdgeInsets.only(bottom: isCollapsed ? 12 : 10),
                         child: _DesktopNavItem(
                           item: CustomNavItem(
-                              icon: CupertinoIcons.chart_bar,
+                              icon: CupertinoIcons.chart_pie,
                               label: 'reports'.tr(context, ref)),
                           isSelected: false,
                           isDark: isDark,
@@ -135,7 +135,7 @@ class ElvanDesktopSidebar extends ConsumerWidget {
                         padding: EdgeInsets.only(bottom: isCollapsed ? 12 : 10),
                         child: _DesktopNavItem(
                           item: CustomNavItem(
-                              icon: CupertinoIcons.doc_text,
+                              icon: CupertinoIcons.percent,
                               label: 'gstReturns'.tr(context, ref)),
                           isSelected: false,
                           isDark: isDark,
