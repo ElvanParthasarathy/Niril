@@ -36,6 +36,7 @@ class ElvanDesktopSidebar extends ConsumerWidget {
   final ValueChanged<int> onTabSelected;
   final VoidCallback onSettingsPressed;
   final VoidCallback onReportsPressed;
+  final VoidCallback onGstReturnsPressed;
   final bool isReportsSelected;
   final bool isGstReturnsSelected;
   final List<CustomNavItem> navItems;
@@ -47,6 +48,7 @@ class ElvanDesktopSidebar extends ConsumerWidget {
     required this.onToggleCollapse,
     required this.currentIndex,
     required this.onTabSelected,
+    required this.onSettingsPressed,
     required this.onReportsPressed,
     required this.onGstReturnsPressed,
     this.isReportsSelected = false,
