@@ -205,7 +205,11 @@ class ElvanDesktopSidebar extends ConsumerWidget {
   Widget _buildExpandedProfile(
       BuildContext context, bool isDark, WidgetRef ref) {
     return _DesktopExpandedProfile(
-        isDark: isDark, appMode: appMode, onSettingsPressed: onSettingsPressed);
+      isDark: isDark,
+      appMode: appMode,
+      onSettingsPressed: onSettingsPressed,
+      onModeSwitched: () => onTabSelected(0),
+    );
   }
 }
 
@@ -575,11 +579,14 @@ class _DesktopExpandedProfile extends ConsumerStatefulWidget {
   final bool isDark;
   final AppMode appMode;
   final VoidCallback onSettingsPressed;
+  final VoidCallback? onModeSwitched;
 
-  const _DesktopExpandedProfile(
-      {required this.isDark,
-      required this.appMode,
-      required this.onSettingsPressed});
+  const _DesktopExpandedProfile({
+    required this.isDark,
+    required this.appMode,
+    required this.onSettingsPressed,
+    this.onModeSwitched,
+  });
 
   @override
   ConsumerState<_DesktopExpandedProfile> createState() =>
@@ -599,6 +606,7 @@ class _DesktopExpandedProfileState
             ModeSelectorScreen(
           onModeSelected: (mode) {
             ref.read(appModeProvider.notifier).setMode(mode);
+            widget.onModeSwitched?.call();
             Navigator.of(context).pop();
           },
         ),
