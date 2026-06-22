@@ -176,7 +176,7 @@ class SettingsHubScreen extends ConsumerWidget {
                           clipBehavior: Clip.hardEdge,
                           child: InkWell(
                             onTap: () {
-                              Navigator.of(context).push(
+                              Navigator.of(context, rootNavigator: true).push(
                                 PageRouteBuilder(
                                   pageBuilder: (context, animation,
                                           secondaryAnimation) =>
@@ -185,7 +185,7 @@ class SettingsHubScreen extends ConsumerWidget {
                                       ref
                                           .read(appModeProvider.notifier)
                                           .setMode(mode);
-                                      Navigator.of(context).pop();
+                                      Navigator.of(context, rootNavigator: true).pop();
                                     },
                                   ),
                                   transitionsBuilder: (context, animation,

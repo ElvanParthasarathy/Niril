@@ -48,13 +48,13 @@ class VanakkamPill extends ConsumerWidget {
                     clipBehavior: Clip.hardEdge,
                     child: InkWell(
                       onTap: () {
-                        Navigator.of(context).push(
+                        Navigator.of(context, rootNavigator: true).push(
                           PageRouteBuilder(
                             pageBuilder: (context, animation, secondaryAnimation) =>
                                 ModeSelectorScreen(
                               onModeSelected: (selectedMode) {
                                 ref.read(appModeProvider.notifier).setMode(selectedMode);
-                                Navigator.of(context).pop();
+                                Navigator.of(context, rootNavigator: true).pop();
                               },
                             ),
                             transitionsBuilder: (context, animation, secondaryAnimation, child) {
