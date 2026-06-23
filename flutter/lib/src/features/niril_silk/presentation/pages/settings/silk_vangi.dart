@@ -97,7 +97,7 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
     final updatedProfile = profile.copyWith();
     updatedProfile.setBilingual(fieldName, profile.mudhanMozhi, _tempPrimary);
     updatedProfile.setBilingual(fieldName, profile.thunaiMozhi, _tempSecondary);
-    ref.read(vanigaTharavugalProvider.notifier).updateProfile(updatedProfile);
+    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }
@@ -112,7 +112,7 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
         updatedProfile.ifsc = _tempPrimary;
         break;
     }
-    ref.read(vanigaTharavugalProvider.notifier).updateProfile(updatedProfile);
+    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }

@@ -103,7 +103,7 @@ class _CoolieUruvakkuAmaippuPageState
       backgroundColor: Theme.of(context).brightness == Brightness.dark
           ? const Color(0xFF111111)
           : Colors.white,
-      builder: (context) {
+      builder: (sheetContext) {
         return SafeArea(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(24, 8, 24, 48),
@@ -112,15 +112,15 @@ class _CoolieUruvakkuAmaippuPageState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'cooliePdfTheme'.tr(context, ref),
+                  'cooliePdfTheme'.tr(sheetContext, ref),
                   style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 16),
-                _buildThemeOptionSheet('#388e3c', 'pachai'.tr(context, ref)),
-                _buildThemeOptionSheet('#6a1b9a', 'uudha'.tr(context, ref)),
+                _buildThemeOptionSheet(sheetContext, '#388e3c', 'pachai'.tr(sheetContext, ref)),
+                _buildThemeOptionSheet(sheetContext, '#6a1b9a', 'uudha'.tr(sheetContext, ref)),
               ],
             ),
           ),
@@ -129,7 +129,7 @@ class _CoolieUruvakkuAmaippuPageState
     );
   }
 
-  Widget _buildThemeOptionSheet(String colorHex, String name) {
+  Widget _buildThemeOptionSheet(BuildContext sheetContext, String colorHex, String name) {
     final isSelected = _tempThemeColor == colorHex;
     final color = Color(int.parse(colorHex.replaceAll('#', '0xFF')));
 
@@ -138,7 +138,7 @@ class _CoolieUruvakkuAmaippuPageState
         setState(() {
           _tempThemeColor = colorHex;
         });
-        Navigator.pop(context);
+        Navigator.pop(sheetContext);
       },
       borderRadius: BorderRadius.circular(12),
       child: Padding(

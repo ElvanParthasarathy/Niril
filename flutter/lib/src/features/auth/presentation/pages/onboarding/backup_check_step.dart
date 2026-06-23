@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../localization/locale_provider.dart';
 import '../../../../../core/services/niril_backup_service.dart';
 import '../../../../../core/state/app_state.dart';
-import '../../../../settings/data/vaniga_tharavugal_provider.dart';
+import '../../widgets/auth_components.dart';
 
 class BackupCheckStep extends ConsumerStatefulWidget {
   final VoidCallback onBackupFound;
@@ -33,6 +33,10 @@ class _BackupCheckStepState extends ConsumerState<BackupCheckStep> {
   }
 
   Future<void> _startCheckSequence() async {
+    setState(() {
+      _checkingStatusKey = 'checking_backups';
+      _isCheckingSpinnerVisible = true;
+    });
     // Artificial delay to let user read the checking message
     await Future.delayed(const Duration(milliseconds: 1500));
 
@@ -59,10 +63,7 @@ class _BackupCheckStepState extends ConsumerState<BackupCheckStep> {
         _checkingStatusKey = 'no_backup_found';
         _isCheckingSpinnerVisible = false;
       });
-      
-      await Future.delayed(const Duration(milliseconds: 1500));
-      if (!mounted) return;
-      widget.onNoBackupFound();
+      // Do not auto-forward. Wait for user input.
     }
   }
 
@@ -111,6 +112,31 @@ class _BackupCheckStepState extends ConsumerState<BackupCheckStep> {
               ),
             ),
           ),
+          if (_checkingStatusKey == 'no_backup_found') ...[
+            const SizedBox(height: 32),
+            AuthButton(
+              text: 'continue'.tr(context, ref),
+              onPressed: () {
+                widget.onNoBackupFound();
+              },
+            ),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: _startCheckSequence,
+              style: TextButton.styleFrom(
+                foregroundColor: textSecondary,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(CupertinoIcons.arrow_2_circlepath, size: 18, color: textSecondary),
+                  const SizedBox(width: 8),
+                  Text('scanAgain'.tr(context, ref)),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );

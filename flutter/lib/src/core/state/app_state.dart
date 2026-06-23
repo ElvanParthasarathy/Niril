@@ -120,7 +120,7 @@ class BilingualNotifier extends Notifier<bool> {
       final profile = ref.read(vanigaTharavugalProvider);
       if (profile != null) {
         final newProfile = profile.copyWith(iruMozhi: value);
-        ref.read(vanigaTharavugalProvider.notifier).updateProfile(newProfile);
+        ref.read(vanigaTharavugalListProvider.notifier).updateProfile(newProfile);
       }
     }
   }
@@ -142,7 +142,7 @@ class PrimaryLanguageNotifier extends Notifier<String> {
     final profile = ref.read(vanigaTharavugalProvider);
     if (profile != null) {
       final newProfile = profile.copyWith(mudhanMozhi: value);
-      ref.read(vanigaTharavugalProvider.notifier).updateProfile(newProfile);
+      ref.read(vanigaTharavugalListProvider.notifier).updateProfile(newProfile);
     }
   }
 }
@@ -164,7 +164,7 @@ class SecondaryLanguageNotifier extends Notifier<String> {
     final profile = ref.read(vanigaTharavugalProvider);
     if (profile != null) {
       final newProfile = profile.copyWith(thunaiMozhi: value);
-      ref.read(vanigaTharavugalProvider.notifier).updateProfile(newProfile);
+      ref.read(vanigaTharavugalListProvider.notifier).updateProfile(newProfile);
     }
   }
 }

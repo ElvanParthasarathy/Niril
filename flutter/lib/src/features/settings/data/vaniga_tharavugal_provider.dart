@@ -6,6 +6,7 @@ import '../../../core/database/app_database.dart';
 import '../../../core/state/app_state.dart';
 import '../../../core/models/app_mode.dart';
 import '../../../core/services/niril_backup_service.dart';
+import '../../../core/preferences_service.dart';
 import 'vaniga_tharavugal.dart';
 
 /// Provider for the Drift database instance.
@@ -18,83 +19,172 @@ final appDatabaseProvider = Provider<AppDatabase>((ref) {
   return db;
 });
 
-/// Provider for the business profile (வணிக தரவுகள்).
-final vanigaTharavugalProvider =
-    StateNotifierProvider<VanigaTharavugalNotifier, VanigaTharavugal?>((ref) {
+/// Maximum number of business profiles allowed per mode.
+const int maxProfiles = 5;
+
+/// Provider for the list of all business profiles for the current mode.
+final vanigaTharavugalListProvider =
+    StateNotifierProvider<VanigaTharavugalListNotifier, List<VanigaTharavugal>>((ref) {
   final db = ref.watch(appDatabaseProvider);
   final mode = ref.watch(appModeProvider);
   final backupService = ref.watch(backupServiceProvider);
-  return VanigaTharavugalNotifier(db, mode, backupService);
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return VanigaTharavugalListNotifier(db, mode, backupService, prefs);
 });
 
-class VanigaTharavugalNotifier extends StateNotifier<VanigaTharavugal?> {
+/// Provider for the currently active business profile.
+/// This watches the list provider and returns the active profile by ID.
+final vanigaTharavugalProvider = Provider<VanigaTharavugal?>((ref) {
+  final profiles = ref.watch(vanigaTharavugalListProvider);
+  final mode = ref.watch(appModeProvider);
+  final prefs = ref.watch(sharedPreferencesProvider);
+
+  if (profiles.isEmpty) return null;
+
+  final modeKey = mode == AppMode.coolie ? 'coolie' : 'silk';
+  final activeId = prefs.getInt('${modeKey}_active_profile_id');
+
+  if (activeId != null) {
+    final match = profiles.where((p) => p.id == activeId);
+    if (match.isNotEmpty) return match.first;
+  }
+
+  // Fallback: return first profile
+  return profiles.first;
+});
+
+class VanigaTharavugalListNotifier extends StateNotifier<List<VanigaTharavugal>> {
   final AppDatabase _db;
   final AppMode? _mode;
   final NirilBackupService _backupService;
+  final dynamic _prefs; // SharedPreferences
 
-  VanigaTharavugalNotifier(this._db, this._mode, this._backupService) : super(null) {
-    _loadProfile();
+  VanigaTharavugalListNotifier(this._db, this._mode, this._backupService, this._prefs) : super([]) {
+    _loadAllProfiles();
   }
 
   String get _modeKey => _mode == AppMode.coolie ? 'coolie' : 'silk';
 
-  Future<void> _loadProfile() async {
+  Future<void> _loadAllProfiles() async {
     if (_mode == null) {
-      state = null;
+      state = [];
       return;
     }
 
     try {
-      final entry = await (_db.select(_db.vanigaTharavugalTable)
+      final entries = await (_db.select(_db.vanigaTharavugalTable)
             ..where((t) => t.seyaliVagai.equals(_modeKey)))
-          .getSingleOrNull();
+          .get();
 
-      if (entry != null) {
-        state = _entryToModel(entry);
-      } else {
-        state = null;
-      }
+      state = entries.map(_entryToModel).toList();
     } catch (e) {
-      print('Error loading profile from Drift: $e');
-      state = null;
+      print('Error loading profiles from Drift: $e');
+      state = [];
     }
   }
 
-  /// Update the profile and persist to SQLite.
+  /// Create a new profile (enforces max limit).
+  /// Returns the new profile's id, or null if limit reached.
+  Future<int?> createProfile(VanigaTharavugal profile) async {
+    if (_mode == null) return null;
+    if (state.length >= maxProfiles) return null;
+
+    final id = await _db.into(_db.vanigaTharavugalTable).insert(
+          _modelToCompanion(profile, includeMode: true),
+        );
+
+    profile.id = id;
+    state = [...state, profile];
+
+    // Set as active
+    _prefs.setInt('${_modeKey}_active_profile_id', id);
+
+    // Fire-and-forget auto-backup
+    _backupService.createBackup();
+
+    return id;
+  }
+
+  /// Update the profile identified by its id and persist to SQLite.
   Future<void> updateProfile(VanigaTharavugal profile) async {
     if (_mode == null) return;
 
-    state = profile;
-
-    // Check if a row already exists for this mode
-    final existing = await (_db.select(_db.vanigaTharavugalTable)
-          ..where((t) => t.seyaliVagai.equals(_modeKey)))
-        .getSingleOrNull();
-
-    if (existing != null) {
-      // Update existing row
+    if (profile.id != null) {
+      // Update existing row by id
       await (_db.update(_db.vanigaTharavugalTable)
-            ..where((t) => t.seyaliVagai.equals(_modeKey)))
+            ..where((t) => t.id.equals(profile.id!)))
           .write(_modelToCompanion(profile));
+
+      state = [
+        for (final p in state)
+          if (p.id == profile.id) profile else p,
+      ];
     } else {
-      // Insert new row
-      await _db.into(_db.vanigaTharavugalTable).insert(
-            _modelToCompanion(profile, includeMode: true),
-          );
+      // Legacy path: check if a row exists for this mode, update it
+      final existing = await (_db.select(_db.vanigaTharavugalTable)
+            ..where((t) => t.seyaliVagai.equals(_modeKey)))
+          .getSingleOrNull();
+
+      if (existing != null) {
+        profile.id = existing.id;
+        await (_db.update(_db.vanigaTharavugalTable)
+              ..where((t) => t.id.equals(existing.id)))
+            .write(_modelToCompanion(profile));
+
+        state = [
+          for (final p in state)
+            if (p.id == profile.id) profile else p,
+        ];
+      } else {
+        // Insert as new
+        await createProfile(profile);
+        return;
+      }
     }
 
     // Fire-and-forget auto-backup after every save
     _backupService.createBackup();
   }
 
-  /// Clears the profile data for the current mode.
+  /// Set the active profile by id.
+  void setActiveProfile(int id) {
+    _prefs.setInt('${_modeKey}_active_profile_id', id);
+    // Force rebuild of dependents by re-emitting the same state
+    state = [...state];
+  }
+
+  /// Clears a specific profile by id.
+  Future<void> deleteProfile(int id) async {
+    if (_mode == null) return;
+
+    await (_db.delete(_db.vanigaTharavugalTable)
+          ..where((t) => t.id.equals(id)))
+        .go();
+
+    state = state.where((p) => p.id != id).toList();
+
+    // If active profile was deleted, fall back to first remaining
+    final activeId = _prefs.getInt('${_modeKey}_active_profile_id');
+    if (activeId == id) {
+      if (state.isNotEmpty) {
+        _prefs.setInt('${_modeKey}_active_profile_id', state.first.id!);
+      } else {
+        _prefs.remove('${_modeKey}_active_profile_id');
+      }
+    }
+
+    _backupService.createBackup();
+  }
+
+  /// Clears ALL profiles for the current mode (legacy compat).
   Future<void> clearProfile() async {
     if (_mode == null) return;
 
     await (_db.delete(_db.vanigaTharavugalTable)
           ..where((t) => t.seyaliVagai.equals(_modeKey)))
         .go();
-    state = null;
+    state = [];
+    _prefs.remove('${_modeKey}_active_profile_id');
   }
 
   /// DEV UTILITY: Seed mock data.
@@ -180,7 +270,7 @@ class VanigaTharavugalNotifier extends StateNotifier<VanigaTharavugal?> {
       );
     }
 
-    await updateProfile(mockProfile);
+    await createProfile(mockProfile);
 
     // Fire-and-forget auto-backup after seeding
     _backupService.createBackup();
@@ -189,6 +279,7 @@ class VanigaTharavugalNotifier extends StateNotifier<VanigaTharavugal?> {
   // ── Conversion: Drift entry → domain model ──
   VanigaTharavugal _entryToModel(VanigaTharavugalEntry entry) {
     return VanigaTharavugal(
+      id: entry.id,
       mudhanMozhi: entry.mudhanMozhi,
       thunaiMozhi: entry.thunaiMozhi,
       iruMozhi: entry.iruMozhi,

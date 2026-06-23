@@ -9,6 +9,9 @@
 /// the language name (e.g., 'Tamil', 'English'). This allows easy scaling to
 /// new languages without changing the model.
 class VanigaTharavugal {
+  // ── Database ID (for multi-profile support) ──
+  int? id; // Database row ID — null for unsaved profiles
+
   // ── Language Config (மொழி அமைப்பு) ──
   String mudhanMozhi; // முதன் மொழி — Primary data language
   String thunaiMozhi; // துணை மொழி — Secondary data language
@@ -49,9 +52,10 @@ class VanigaTharavugal {
   String thottranNiram; // தோற்ற நிறம் — Theme color (coolie only)
 
   VanigaTharavugal({
+    this.id,
     this.mudhanMozhi = 'Tamil',
     this.thunaiMozhi = 'English',
-    this.iruMozhi = false,
+    this.iruMozhi = true,
     Map<String, String>? niruvanathinPeyar,
     this.kurumPeyar = '',
     this.tholaipesi1 = '',
@@ -137,6 +141,7 @@ class VanigaTharavugal {
 
   /// Creates a deep copy.
   VanigaTharavugal copyWith({
+    int? id,
     String? mudhanMozhi,
     String? thunaiMozhi,
     bool? iruMozhi,
@@ -166,6 +171,7 @@ class VanigaTharavugal {
     String? thottranNiram,
   }) {
     return VanigaTharavugal(
+      id: id ?? this.id,
       mudhanMozhi: mudhanMozhi ?? this.mudhanMozhi,
       thunaiMozhi: thunaiMozhi ?? this.thunaiMozhi,
       iruMozhi: iruMozhi ?? this.iruMozhi,

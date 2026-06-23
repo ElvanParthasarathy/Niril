@@ -419,7 +419,7 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
                     heroTag: 'dev_seed',
                     onPressed: () {
                       ref
-                          .read(vanigaTharavugalProvider.notifier)
+                          .read(vanigaTharavugalListProvider.notifier)
                           .seedData();
                     },
                     label: const Text('Dev: Seed'),
@@ -431,7 +431,7 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
                     heroTag: 'dev_erase',
                     onPressed: () {
                       ref
-                          .read(vanigaTharavugalProvider.notifier)
+                          .read(vanigaTharavugalListProvider.notifier)
                           .clearProfile();
                       ref
                           .read(appModeProvider.notifier)

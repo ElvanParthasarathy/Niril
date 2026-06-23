@@ -34,7 +34,7 @@ class _CoolieVanigaAmaippuPageState
   void _savePhoneNumbers(VanigaTharavugal currentProfile) {
     currentProfile.tholaipesi1 = _tempPrimary;
     currentProfile.tholaipesi2 = _showExtraPhone ? _tempSecondary : '';
-    ref.read(vanigaTharavugalProvider.notifier).updateProfile(currentProfile);
+    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(currentProfile);
     setState(() {
       _editingSection = null;
       _showExtraPhone = false;
@@ -47,19 +47,31 @@ class _CoolieVanigaAmaippuPageState
   }
 
   void _showBusinessSelectorModal() {
-    final profile = ref.read(vanigaTharavugalProvider);
-    final primaryName = profile?.getPrimary('niruvanathinPeyar') ?? '';
-    final displayName =
-        primaryName.isEmpty ? 'activeProfile'.tr(context, ref) : primaryName;
+    final profiles = ref.read(vanigaTharavugalListProvider);
+    final activeProfile = ref.read(vanigaTharavugalProvider);
 
-    final List<String> businesses = [displayName];
+    final items = profiles.map((p) {
+      final name = p.getPrimary('niruvanathinPeyar');
+      return name.isEmpty ? 'activeProfile'.tr(context, ref) : name;
+    }).toList();
+
+    final activeName = activeProfile != null
+        ? (activeProfile.getPrimary('niruvanathinPeyar').isEmpty
+            ? 'activeProfile'.tr(context, ref)
+            : activeProfile.getPrimary('niruvanathinPeyar'))
+        : '';
 
     showElvanSelectionBottomSheet(
       context: context,
       title: 'activeProfile'.tr(context, ref),
-      items: businesses,
-      currentValue: displayName,
-      onSelected: (val) {},
+      items: items,
+      currentValue: activeName,
+      onSelected: (val) {
+        final idx = items.indexOf(val);
+        if (idx >= 0 && profiles[idx].id != null) {
+          ref.read(vanigaTharavugalListProvider.notifier).setActiveProfile(profiles[idx].id!);
+        }
+      },
     );
   }
 
@@ -75,20 +87,25 @@ class _CoolieVanigaAmaippuPageState
             return Dialog.fullscreen(
               child: Scaffold(
                 backgroundColor: Colors.transparent,
-                floatingActionButton: Padding(
-                  padding: const EdgeInsets.only(bottom: 48.0),
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      _showNewProfileModal();
-                    },
-                    backgroundColor: Theme.of(context).colorScheme.onSurface,
-                    foregroundColor: Theme.of(context).colorScheme.surface,
-                    child: const Icon(Icons.add),
-                  ),
-                ),
+                floatingActionButton: Consumer(builder: (context, ref, _) {
+                  final profiles = ref.watch(vanigaTharavugalListProvider);
+                  if (profiles.length >= maxProfiles) return const SizedBox.shrink();
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 48.0),
+                    child: FloatingActionButton(
+                      onPressed: () {
+                        _showNewProfileModal();
+                      },
+                      backgroundColor: Theme.of(context).colorScheme.onSurface,
+                      foregroundColor: Theme.of(context).colorScheme.surface,
+                      child: const Icon(Icons.add),
+                    ),
+                  );
+                }),
                 body: Consumer(builder: (context, ref, child) {
-                  final profile = ref.watch(vanigaTharavugalProvider);
-                  final hasProfile = profile != null;
+                  final profiles = ref.watch(vanigaTharavugalListProvider);
+                  final activeProfile = ref.watch(vanigaTharavugalProvider);
+                  final hasProfiles = profiles.isNotEmpty;
 
                   return ElvanFullscreenPopup(
                     title: 'vaniga_nirvagam'.tr(context, ref),
@@ -96,7 +113,7 @@ class _CoolieVanigaAmaippuPageState
                       SliverPadding(
                         padding: const EdgeInsets.all(16),
                         sliver: SliverToBoxAdapter(
-                          child: !hasProfile
+                          child: !hasProfiles
                               ? Center(
                                   child: Padding(
                                     padding: const EdgeInsets.all(32.0),
@@ -115,30 +132,38 @@ class _CoolieVanigaAmaippuPageState
                                   children: [
                                     ElvanSettingsSection(
                                       children: [
-                                        ElvanSettingsDisplayRow(
-                                          title:
-                                              'activeProfile'.tr(context, ref),
-                                          primaryValue: profile
-                                                  .getPrimary(
-                                                      'niruvanathinPeyar')
-                                                  .isEmpty
-                                              ? 'activeProfile'.tr(context, ref)
-                                              : profile.getPrimary(
-                                                  'niruvanathinPeyar'),
-                                          icon: CupertinoIcons.delete_solid,
-                                          onEdit: () =>
-                                              showElvanDeleteConfirmModal(
-                                                  context, ref, () {
-                                            ref
-                                                .read(vanigaTharavugalProvider
-                                                    .notifier)
-                                                .clearProfile();
-                                            ElvanSnackbar.show(
-                                                context,
-                                                'profileDeleted'
-                                                    .tr(context, ref));
-                                          }),
-                                        ),
+                                        for (final profile in profiles)
+                                          ElvanSettingsDisplayRow(
+                                            title: profile.id == activeProfile?.id
+                                                ? 'activeProfile'.tr(context, ref)
+                                                : '',
+                                            primaryValue: profile
+                                                    .getPrimary(
+                                                        'niruvanathinPeyar')
+                                                    .isEmpty
+                                                ? 'activeProfile'.tr(context, ref)
+                                                : profile.getPrimary(
+                                                    'niruvanathinPeyar'),
+                                            icon: CupertinoIcons.delete_solid,
+                                            onTap: profile.id != activeProfile?.id
+                                                ? () {
+                                                    ref.read(vanigaTharavugalListProvider.notifier)
+                                                        .setActiveProfile(profile.id!);
+                                                  }
+                                                : null,
+                                            onEdit: () =>
+                                                showElvanDeleteConfirmModal(
+                                                    context, ref, () {
+                                              ref
+                                                  .read(vanigaTharavugalListProvider
+                                                      .notifier)
+                                                  .deleteProfile(profile.id!);
+                                              ElvanSnackbar.show(
+                                                  context,
+                                                  'profileDeleted'
+                                                      .tr(context, ref));
+                                            }),
+                                          ),
                                       ],
                                     ),
                                   ],
@@ -275,11 +300,16 @@ class _CoolieVanigaAmaippuPageState
       ),
       onConfirm: () {
         if (newNamePrimary.trim().isNotEmpty) {
+          final profiles = ref.read(vanigaTharavugalListProvider);
+          if (profiles.length >= maxProfiles) {
+            ElvanSnackbar.show(context, 'maxProfilesReached'.tr(context, ref));
+            return;
+          }
           final newProfile = VanigaTharavugal();
           newProfile.setBilingual('niruvanathinPeyar', 'Tamil', newNamePrimary);
           newProfile.setBilingual(
               'niruvanathinPeyar', 'English', newNameSecondary);
-          ref.read(vanigaTharavugalProvider.notifier).updateProfile(newProfile);
+          ref.read(vanigaTharavugalListProvider.notifier).createProfile(newProfile);
           _showSuccessToast();
         }
       },
@@ -432,7 +462,7 @@ class _CoolieVanigaAmaippuPageState
     final updatedProfile = profile.copyWith();
     updatedProfile.setBilingual(fieldName, 'Tamil', _tempPrimary);
     updatedProfile.setBilingual(fieldName, 'English', _tempSecondary);
-    ref.read(vanigaTharavugalProvider.notifier).updateProfile(updatedProfile);
+    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }
@@ -453,7 +483,7 @@ class _CoolieVanigaAmaippuPageState
         updatedProfile.minnanchal = _tempPrimary;
         break;
     }
-    ref.read(vanigaTharavugalProvider.notifier).updateProfile(updatedProfile);
+    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }

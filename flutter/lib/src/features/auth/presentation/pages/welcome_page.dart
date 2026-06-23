@@ -28,10 +28,10 @@ class WelcomePage extends ConsumerWidget {
               onPressed: () async {
                 // Seed the app with test data in both modes
                 ref.read(appModeProvider.notifier).setMode(AppMode.silk);
-                await ref.read(vanigaTharavugalProvider.notifier).seedData();
+                await ref.read(vanigaTharavugalListProvider.notifier).seedData();
 
                 ref.read(appModeProvider.notifier).setMode(AppMode.coolie);
-                await ref.read(vanigaTharavugalProvider.notifier).seedData();
+                await ref.read(vanigaTharavugalListProvider.notifier).seedData();
 
                 if (context.mounted) {
                   ref.read(appModeProvider.notifier).setMode(AppMode.silk);
