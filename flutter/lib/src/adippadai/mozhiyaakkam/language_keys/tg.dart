@@ -69,7 +69,7 @@ const Map<String, String> tg = {
   'minnanjalaiUrudhiseiga': 'Minnanjalai Urudhiseiga',
   'minnanjalMugavari': 'Minnanjal Mugavari',
   'minnanjalaiUllidavum': 'Minnanjalai Ullidavum',
-  'mugavaritharavugal': 'Niruvana Mugavari Tharavugal',
+  'mugavaritharavugal': 'Vaniga Mugavari Tharavugal',
 
   // ========================================
   // Inventory & Items
@@ -136,7 +136,7 @@ const Map<String, String> tg = {
   'tamil': 'Thamizh',
   'english': 'Aangilam',
   'tamilLatin': 'Thamizh Latin',
-  'niruvanathinOavuru': 'Niruvanathin Oavuru',
+  'niruvanathinOavuru': 'Vanigathin Oavuru',
   'kaiyoppam': 'Kaiyoppam',
   'paesiEn': 'Paesi En',
   'maatruPaesiEn': 'Maatru Paesi En',

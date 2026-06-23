@@ -65,7 +65,7 @@ const Map<String, String> en = {
   'minnanjalaiUrudhiseiga': 'Confirm Email',
   'minnanjalMugavari': 'Email Address',
   'minnanjalaiUllidavum': 'Enter your email',
-  'mugavaritharavugal': 'Company address details',
+  'mugavaritharavugal': 'Business address details',
 
   // ========================================
   // Inventory & Items
@@ -125,7 +125,7 @@ const Map<String, String> en = {
   'tamil': 'Tamil',
   'english': 'English',
   'tamilLatin': 'Thamizh Latin',
-  'niruvanathinOavuru': 'Company Logo',
+  'niruvanathinOavuru': 'Business Logo',
   'kaiyoppam': 'Signature / Stamp',
   'paesiEn': 'Phone',
   'maatruPaesiEn': 'Mobile',
