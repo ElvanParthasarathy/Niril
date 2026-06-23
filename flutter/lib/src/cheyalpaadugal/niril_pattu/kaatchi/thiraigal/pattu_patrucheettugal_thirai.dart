@@ -9,10 +9,12 @@ import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/nilaimai/thaedal_nilaimai.dart';
 import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../koorugal/meladukkugal/elvan_cheyal_meladukku.dart';
-import '../../../chattagam/kaatchi/koorugal/elvan_uyir_valai.dart';
-import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
-import '../thiruthi/niril_pattu_pattiyal_thiruthi.dart';
+import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
+import '../../../niril_podhu/tharavuru/seluthi_vagai.dart';
+import '../thiruthi/niril_pattu_patrucheettu_thiruthi.dart';
 
+/// Silk Receipt List — real DB-backed view showing payment receipts.
+/// Mirror of coolie receipt list but navigates to SilkReceiptEditor.
 class SilkReceiptsPage extends ConsumerWidget {
   const SilkReceiptsPage({super.key});
 
@@ -23,29 +25,32 @@ class SilkReceiptsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final query = ref.watch(silkReceiptsSearchQueryProvider).toLowerCase();
-    final pattiyalgalAsync = ref.watch(pattiyalgalStreamProvider);
+    final patrugalAsync = ref.watch(patrugalStreamProvider);
     final profilesAsync = ref.watch(profilesStreamProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isSelecting = ref.watch(pattiyalSelectionModeProvider);
-    final selectedIds = ref.watch(selectedPattiyalIdsProvider);
+    final isSelecting = ref.watch(patruSelectionModeProvider);
+    final selectedIds = ref.watch(selectedPatruIdsProvider);
 
-    return pattiyalgalAsync.when(
+    return patrugalAsync.when(
       loading: () => const SliverFillRemaining(
         child: Center(child: CupertinoActivityIndicator()),
       ),
       error: (e, _) => SliverFillRemaining(
         child: Center(child: Text('Error: $e')),
       ),
-      data: (pattiyalgal) {
+      data: (patrugal) {
         final profiles = profilesAsync.value ?? [];
 
-        // Filter by search query on invoice number and customer name
+        // Filter by search query
         final filtered = query.isEmpty
-            ? pattiyalgal
-            : pattiyalgal.where((p) {
-                final en = p.patrucheettuEn.toLowerCase();
+            ? patrugal
+            : patrugal.where((p) {
+                final en = p.patruEn.toLowerCase();
                 final peyar = p.vanigarPeyar.toLowerCase();
-                return en.contains(query) || peyar.contains(query);
+                final vagai = p.seluthiVagai.toLowerCase();
+                return en.contains(query) ||
+                    peyar.contains(query) ||
+                    vagai.contains(query);
               }).toList();
 
         // Empty state
@@ -56,7 +61,7 @@ class SilkReceiptsPage extends ConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    CupertinoIcons.doc_text,
+                    CupertinoIcons.doc_plaintext,
                     size: 48,
                     color: isDark ? Colors.white24 : Colors.black26,
                   ),
@@ -83,13 +88,12 @@ class SilkReceiptsPage extends ConsumerWidget {
           );
         }
 
-        // Group invoices by niruvanamId
-        final grouped = <int?, List<PatrucheettuEntry>>{};
+        // Group by niruvanamId
+        final grouped = <int?, List<PatrugalEntry>>{};
         for (final p in filtered) {
           grouped.putIfAbsent(p.niruvanamId, () => []).add(p);
         }
 
-        // Build section slivers
         final slivers = <Widget>[];
 
         // Selection bar
@@ -100,17 +104,14 @@ class SilkReceiptsPage extends ConsumerWidget {
                 selectedCount: selectedIds.length,
                 isDark: isDark,
                 onSelectAll: () {
-                  ref.read(selectedPattiyalIdsProvider.notifier).state =
+                  ref.read(selectedPatruIdsProvider.notifier).state =
                       filtered.map((p) => p.id).toSet();
                 },
-                onDelete: () {
-                  _showBulkDeleteConfirm(
-                      context, ref, selectedIds.toList());
-                },
+                onDelete: () =>
+                    _showBulkDeleteConfirm(context, ref, selectedIds.toList()),
                 onCancel: () {
-                  ref.read(pattiyalSelectionModeProvider.notifier).state =
-                      false;
-                  ref.read(selectedPattiyalIdsProvider.notifier).state = {};
+                  ref.read(patruSelectionModeProvider.notifier).state = false;
+                  ref.read(selectedPatruIdsProvider.notifier).state = {};
                 },
               ),
             ),
@@ -122,18 +123,15 @@ class SilkReceiptsPage extends ConsumerWidget {
           final niruvanamId = entry.key;
           final items = entry.value;
 
-          // Resolve business name
           String sectionName;
           if (niruvanamId == null) {
             sectionName = 'General';
           } else {
-            final profile = profiles
-                .where((p) => p.id == niruvanamId)
-                .firstOrNull;
+            final profile =
+                profiles.where((p) => p.id == niruvanamId).firstOrNull;
             sectionName = profile?.kurumPeyar ?? 'General';
           }
 
-          // Show section header only if there's more than one group
           if (grouped.length > 1) {
             slivers.add(
               SliverToBoxAdapter(
@@ -155,50 +153,49 @@ class SilkReceiptsPage extends ConsumerWidget {
             );
           }
 
-          // Invoice cards for this group
+          // Receipt cards
           slivers.add(
-            ElvanResponsiveGrid(
-              itemCount: items.length,
-              desktopCrossAxisCount: 2,
-              childAspectRatio: 3.2,
-              mobileItemHeight: 88,
-              itemBuilder: (context, index) {
-                final pattiyal = items[index];
-                final isSelected = selectedIds.contains(pattiyal.id);
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final patru = items[index];
+                  final isSelected = selectedIds.contains(patru.id);
 
-                return _SilkPatrucheettuCard(
-                  pattiyal: pattiyal,
-                  isDark: isDark,
-                  isSelecting: isSelecting,
-                  isSelected: isSelected,
-                  dateFormat: _dateFormat,
-                  currencyFormat: _currencyFormat,
-                  onTap: () {
-                    if (isSelecting) {
-                      _toggleSelection(ref, pattiyal.id, selectedIds);
-                    } else {
-                      // Navigate to editor for editing
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => SilkInvoiceEditor(
-                            editingEntry: pattiyal,
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  onLongPress: () {
-                    if (!isSelecting) {
-                      ref
-                          .read(pattiyalSelectionModeProvider.notifier)
-                          .state = true;
-                      ref
-                          .read(selectedPattiyalIdsProvider.notifier)
-                          .state = {pattiyal.id};
-                    }
-                  },
-                );
-              },
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: _PatruCard(
+                      patru: patru,
+                      isDark: isDark,
+                      isSelecting: isSelecting,
+                      isSelected: isSelected,
+                      dateFormat: _dateFormat,
+                      currencyFormat: _currencyFormat,
+                      onTap: () {
+                        if (isSelecting) {
+                          _toggleSelection(ref, patru.id, selectedIds);
+                        } else {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  SilkReceiptEditor(editingEntry: patru),
+                            ),
+                          );
+                        }
+                      },
+                      onLongPress: () {
+                        if (!isSelecting) {
+                          ref.read(patruSelectionModeProvider.notifier).state =
+                              true;
+                          ref.read(selectedPatruIdsProvider.notifier).state = {
+                            patru.id
+                          };
+                        }
+                      },
+                    ),
+                  );
+                },
+                childCount: items.length,
+              ),
             ),
           );
         }
@@ -218,10 +215,10 @@ class SilkReceiptsPage extends ConsumerWidget {
     } else {
       updated.add(id);
     }
-    ref.read(selectedPattiyalIdsProvider.notifier).state = updated;
+    ref.read(selectedPatruIdsProvider.notifier).state = updated;
 
     if (updated.isEmpty) {
-      ref.read(pattiyalSelectionModeProvider.notifier).state = false;
+      ref.read(patruSelectionModeProvider.notifier).state = false;
     }
   }
 
@@ -236,15 +233,15 @@ class SilkReceiptsPage extends ConsumerWidget {
       confirmText: K.neekkuPtn.tr(context, ref),
       confirmColor: Colors.red,
       onConfirm: () {
-        ref.read(pattiyalKalanjiyamProvider).bulkDeletePattiyalgal(ids);
-        ref.read(pattiyalSelectionModeProvider.notifier).state = false;
-        ref.read(selectedPattiyalIdsProvider.notifier).state = {};
+        ref.read(patruKalanjiyamProvider).bulkDeletePatrugal(ids);
+        ref.read(patruSelectionModeProvider.notifier).state = false;
+        ref.read(selectedPatruIdsProvider.notifier).state = {};
       },
     );
   }
 }
 
-// ── Selection Bar Widget ────────────────────────────────────────────────────
+// ── Selection Bar ───────────────────────────────────────────────────────────
 
 class _SelectionBar extends ConsumerWidget {
   const _SelectionBar({
@@ -298,11 +295,11 @@ class _SelectionBar extends ConsumerWidget {
   }
 }
 
-// ── Silk Invoice Card ───────────────────────────────────────────────────────
+// ── Receipt Card ────────────────────────────────────────────────────────────
 
-class _SilkPatrucheettuCard extends StatelessWidget {
-  const _SilkPatrucheettuCard({
-    required this.pattiyal,
+class _PatruCard extends StatelessWidget {
+  const _PatruCard({
+    required this.patru,
     required this.isDark,
     required this.isSelecting,
     required this.isSelected,
@@ -312,7 +309,7 @@ class _SilkPatrucheettuCard extends StatelessWidget {
     required this.onLongPress,
   });
 
-  final PatrucheettuEntry pattiyal;
+  final PatrugalEntry patru;
   final bool isDark;
   final bool isSelecting;
   final bool isSelected;
@@ -323,6 +320,8 @@ class _SilkPatrucheettuCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mode = SeluthiVagaiX.fromStored(patru.seluthiVagai);
+
     return GestureDetector(
       onTap: onTap,
       onLongPress: onLongPress,
@@ -367,18 +366,25 @@ class _SilkPatrucheettuCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  // Row 1: Customer name + date
                   Row(
                     children: [
-                      Text(
-                        pattiyal.patrucheettuEn,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
+                      Expanded(
+                        child: Text(
+                          patru.vanigarPeyar.isNotEmpty
+                              ? patru.vanigarPeyar
+                              : patru.patruEn,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const Spacer(),
+                      const SizedBox(width: 8),
                       Text(
-                        dateFormat.format(pattiyal.pattiyalNaal),
+                        dateFormat.format(patru.patruNaal),
                         style: TextStyle(
                           fontSize: 12,
                           color: isDark ? Colors.white38 : Colors.black38,
@@ -386,31 +392,50 @@ class _SilkPatrucheettuCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  if (pattiyal.vanigarPeyar.isNotEmpty) ...[
-                    const SizedBox(height: 3),
-                    Text(
-                      pattiyal.vanigarPeyar,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: isDark ? Colors.white38 : Colors.black38,
+                  const SizedBox(height: 4),
+                  // Row 2: Receipt number + payment mode badge + amount
+                  Row(
+                    children: [
+                      Text(
+                        patru.patruEn,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark ? Colors.white38 : Colors.black45,
+                        ),
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                  const SizedBox(height: 3),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      currencyFormat.format(pattiyal.mothaThogai),
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: isDark
-                            ? Colors.blue.shade200
-                            : Colors.blue.shade700,
+                      if (mode != null) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: mode
+                                .badgeColor(isDark)
+                                .withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            mode.tamilLabel,
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: mode.badgeColor(isDark),
+                            ),
+                          ),
+                        ),
+                      ],
+                      const Spacer(),
+                      Text(
+                        currencyFormat.format(patru.thogai),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: isDark
+                              ? Colors.green.shade300
+                              : Colors.green.shade700,
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),

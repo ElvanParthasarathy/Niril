@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
-import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
+import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
+import '../../../niril_podhu/kaatchi/thiruthi/patru_thiruthi.dart';
 
+/// Coolie Receipt Editor — thin wrapper around the shared PatruThiruthi.
 class CoolieReceiptEditor extends ConsumerWidget {
-  const CoolieReceiptEditor({super.key});
+  final PatrugalEntry? editingEntry;
+
+  const CoolieReceiptEditor({super.key, this.editingEntry});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ElvanEditorShell(
-      title: K.pudhiyaKoolipPatrucheettu.tr(context, ref),
-      onSave: () {},
-      child: Center(
-        child: Text(K.koolipPatrucheettuThiruthi.tr(context, ref)),
-      ),
-    );
+    return PatruThiruthi(editingEntry: editingEntry);
   }
 }

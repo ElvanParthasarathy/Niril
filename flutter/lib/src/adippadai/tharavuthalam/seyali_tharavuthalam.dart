@@ -233,6 +233,7 @@ class PatrucheettuTable extends Table {
 // ── Receipt Table ──
 /// Stores payment receipts — simple flat records of "Client paid ₹X via Y".
 /// Completely separate from PatrucheettuTable (invoices).
+@DataClassName('PatrugalEntry')
 class PatrugalTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get seyaliVagai => text()(); // 'silk' | 'coolie'
@@ -279,6 +280,7 @@ class PatrugalTable extends Table {
 // ── Receipt ↔ Invoice Junction Table ──
 /// Links each receipt to one or more invoices with the exact amount applied.
 /// Enables partial payments and accurate balance tracking (like Tally/Zoho).
+@DataClassName('PatruPattiyalEntry')
 class PatruPattiyalTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get patruId => integer()(); // FK → PatrugalTable

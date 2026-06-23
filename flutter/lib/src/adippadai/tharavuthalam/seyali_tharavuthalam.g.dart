@@ -4112,6 +4112,1024 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
   }
 }
 
+class $PatrugalTableTable extends PatrugalTable
+    with TableInfo<$PatrugalTableTable, PatrugalEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PatrugalTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _seyaliVagaiMeta =
+      const VerificationMeta('seyaliVagai');
+  @override
+  late final GeneratedColumn<String> seyaliVagai = GeneratedColumn<String>(
+      'seyali_vagai', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _niruvanamIdMeta =
+      const VerificationMeta('niruvanamId');
+  @override
+  late final GeneratedColumn<int> niruvanamId = GeneratedColumn<int>(
+      'niruvanam_id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _patruEnMeta =
+      const VerificationMeta('patruEn');
+  @override
+  late final GeneratedColumn<String> patruEn = GeneratedColumn<String>(
+      'patru_en', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _vanakkamMeta =
+      const VerificationMeta('vanakkam');
+  @override
+  late final GeneratedColumn<int> vanakkam = GeneratedColumn<int>(
+      'vanakkam', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(1));
+  static const VerificationMeta _vanigarIdMeta =
+      const VerificationMeta('vanigarId');
+  @override
+  late final GeneratedColumn<int> vanigarId = GeneratedColumn<int>(
+      'vanigar_id', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
+  static const VerificationMeta _vanigarPeyarMeta =
+      const VerificationMeta('vanigarPeyar');
+  @override
+  late final GeneratedColumn<String> vanigarPeyar = GeneratedColumn<String>(
+      'vanigar_peyar', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _vanigarMunvariMeta =
+      const VerificationMeta('vanigarMunvari');
+  @override
+  late final GeneratedColumn<String> vanigarMunvari = GeneratedColumn<String>(
+      'vanigar_munvari', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _patruNaalMeta =
+      const VerificationMeta('patruNaal');
+  @override
+  late final GeneratedColumn<DateTime> patruNaal = GeneratedColumn<DateTime>(
+      'patru_naal', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  static const VerificationMeta _thogaiMeta = const VerificationMeta('thogai');
+  @override
+  late final GeneratedColumn<double> thogai = GeneratedColumn<double>(
+      'thogai', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0.0));
+  static const VerificationMeta _seluthiVagaiMeta =
+      const VerificationMeta('seluthiVagai');
+  @override
+  late final GeneratedColumn<String> seluthiVagai = GeneratedColumn<String>(
+      'seluthi_vagai', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _suttruEnMeta =
+      const VerificationMeta('suttruEn');
+  @override
+  late final GeneratedColumn<String> suttruEn = GeneratedColumn<String>(
+      'suttru_en', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _ullkurippuMeta =
+      const VerificationMeta('ullkurippu');
+  @override
+  late final GeneratedColumn<String> ullkurippu = GeneratedColumn<String>(
+      'ullkurippu', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
+  static const VerificationMeta _isDeletedMeta =
+      const VerificationMeta('isDeleted');
+  @override
+  late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>(
+      'is_deleted', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("is_deleted" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        seyaliVagai,
+        niruvanamId,
+        patruEn,
+        vanakkam,
+        vanigarId,
+        vanigarPeyar,
+        vanigarMunvari,
+        patruNaal,
+        thogai,
+        seluthiVagai,
+        suttruEn,
+        ullkurippu,
+        createdAt,
+        updatedAt,
+        isDeleted
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'patrugal_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<PatrugalEntry> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('seyali_vagai')) {
+      context.handle(
+          _seyaliVagaiMeta,
+          seyaliVagai.isAcceptableOrUnknown(
+              data['seyali_vagai']!, _seyaliVagaiMeta));
+    } else if (isInserting) {
+      context.missing(_seyaliVagaiMeta);
+    }
+    if (data.containsKey('niruvanam_id')) {
+      context.handle(
+          _niruvanamIdMeta,
+          niruvanamId.isAcceptableOrUnknown(
+              data['niruvanam_id']!, _niruvanamIdMeta));
+    }
+    if (data.containsKey('patru_en')) {
+      context.handle(_patruEnMeta,
+          patruEn.isAcceptableOrUnknown(data['patru_en']!, _patruEnMeta));
+    } else if (isInserting) {
+      context.missing(_patruEnMeta);
+    }
+    if (data.containsKey('vanakkam')) {
+      context.handle(_vanakkamMeta,
+          vanakkam.isAcceptableOrUnknown(data['vanakkam']!, _vanakkamMeta));
+    }
+    if (data.containsKey('vanigar_id')) {
+      context.handle(_vanigarIdMeta,
+          vanigarId.isAcceptableOrUnknown(data['vanigar_id']!, _vanigarIdMeta));
+    }
+    if (data.containsKey('vanigar_peyar')) {
+      context.handle(
+          _vanigarPeyarMeta,
+          vanigarPeyar.isAcceptableOrUnknown(
+              data['vanigar_peyar']!, _vanigarPeyarMeta));
+    } else if (isInserting) {
+      context.missing(_vanigarPeyarMeta);
+    }
+    if (data.containsKey('vanigar_munvari')) {
+      context.handle(
+          _vanigarMunvariMeta,
+          vanigarMunvari.isAcceptableOrUnknown(
+              data['vanigar_munvari']!, _vanigarMunvariMeta));
+    }
+    if (data.containsKey('patru_naal')) {
+      context.handle(_patruNaalMeta,
+          patruNaal.isAcceptableOrUnknown(data['patru_naal']!, _patruNaalMeta));
+    }
+    if (data.containsKey('thogai')) {
+      context.handle(_thogaiMeta,
+          thogai.isAcceptableOrUnknown(data['thogai']!, _thogaiMeta));
+    }
+    if (data.containsKey('seluthi_vagai')) {
+      context.handle(
+          _seluthiVagaiMeta,
+          seluthiVagai.isAcceptableOrUnknown(
+              data['seluthi_vagai']!, _seluthiVagaiMeta));
+    }
+    if (data.containsKey('suttru_en')) {
+      context.handle(_suttruEnMeta,
+          suttruEn.isAcceptableOrUnknown(data['suttru_en']!, _suttruEnMeta));
+    }
+    if (data.containsKey('ullkurippu')) {
+      context.handle(
+          _ullkurippuMeta,
+          ullkurippu.isAcceptableOrUnknown(
+              data['ullkurippu']!, _ullkurippuMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    }
+    if (data.containsKey('is_deleted')) {
+      context.handle(_isDeletedMeta,
+          isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PatrugalEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PatrugalEntry(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      seyaliVagai: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}seyali_vagai'])!,
+      niruvanamId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}niruvanam_id']),
+      patruEn: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}patru_en'])!,
+      vanakkam: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}vanakkam'])!,
+      vanigarId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}vanigar_id']),
+      vanigarPeyar: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}vanigar_peyar'])!,
+      vanigarMunvari: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}vanigar_munvari'])!,
+      patruNaal: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}patru_naal'])!,
+      thogai: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}thogai'])!,
+      seluthiVagai: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}seluthi_vagai'])!,
+      suttruEn: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}suttru_en'])!,
+      ullkurippu: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}ullkurippu'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+      isDeleted: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_deleted'])!,
+    );
+  }
+
+  @override
+  $PatrugalTableTable createAlias(String alias) {
+    return $PatrugalTableTable(attachedDatabase, alias);
+  }
+}
+
+class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
+  final int id;
+  final String seyaliVagai;
+  final int? niruvanamId;
+  final String patruEn;
+  final int vanakkam;
+  final int? vanigarId;
+  final String vanigarPeyar;
+  final String vanigarMunvari;
+  final DateTime patruNaal;
+  final double thogai;
+  final String seluthiVagai;
+  final String suttruEn;
+  final String ullkurippu;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final bool isDeleted;
+  const PatrugalEntry(
+      {required this.id,
+      required this.seyaliVagai,
+      this.niruvanamId,
+      required this.patruEn,
+      required this.vanakkam,
+      this.vanigarId,
+      required this.vanigarPeyar,
+      required this.vanigarMunvari,
+      required this.patruNaal,
+      required this.thogai,
+      required this.seluthiVagai,
+      required this.suttruEn,
+      required this.ullkurippu,
+      required this.createdAt,
+      required this.updatedAt,
+      required this.isDeleted});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['seyali_vagai'] = Variable<String>(seyaliVagai);
+    if (!nullToAbsent || niruvanamId != null) {
+      map['niruvanam_id'] = Variable<int>(niruvanamId);
+    }
+    map['patru_en'] = Variable<String>(patruEn);
+    map['vanakkam'] = Variable<int>(vanakkam);
+    if (!nullToAbsent || vanigarId != null) {
+      map['vanigar_id'] = Variable<int>(vanigarId);
+    }
+    map['vanigar_peyar'] = Variable<String>(vanigarPeyar);
+    map['vanigar_munvari'] = Variable<String>(vanigarMunvari);
+    map['patru_naal'] = Variable<DateTime>(patruNaal);
+    map['thogai'] = Variable<double>(thogai);
+    map['seluthi_vagai'] = Variable<String>(seluthiVagai);
+    map['suttru_en'] = Variable<String>(suttruEn);
+    map['ullkurippu'] = Variable<String>(ullkurippu);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    map['is_deleted'] = Variable<bool>(isDeleted);
+    return map;
+  }
+
+  PatrugalTableCompanion toCompanion(bool nullToAbsent) {
+    return PatrugalTableCompanion(
+      id: Value(id),
+      seyaliVagai: Value(seyaliVagai),
+      niruvanamId: niruvanamId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(niruvanamId),
+      patruEn: Value(patruEn),
+      vanakkam: Value(vanakkam),
+      vanigarId: vanigarId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(vanigarId),
+      vanigarPeyar: Value(vanigarPeyar),
+      vanigarMunvari: Value(vanigarMunvari),
+      patruNaal: Value(patruNaal),
+      thogai: Value(thogai),
+      seluthiVagai: Value(seluthiVagai),
+      suttruEn: Value(suttruEn),
+      ullkurippu: Value(ullkurippu),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      isDeleted: Value(isDeleted),
+    );
+  }
+
+  factory PatrugalEntry.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PatrugalEntry(
+      id: serializer.fromJson<int>(json['id']),
+      seyaliVagai: serializer.fromJson<String>(json['seyaliVagai']),
+      niruvanamId: serializer.fromJson<int?>(json['niruvanamId']),
+      patruEn: serializer.fromJson<String>(json['patruEn']),
+      vanakkam: serializer.fromJson<int>(json['vanakkam']),
+      vanigarId: serializer.fromJson<int?>(json['vanigarId']),
+      vanigarPeyar: serializer.fromJson<String>(json['vanigarPeyar']),
+      vanigarMunvari: serializer.fromJson<String>(json['vanigarMunvari']),
+      patruNaal: serializer.fromJson<DateTime>(json['patruNaal']),
+      thogai: serializer.fromJson<double>(json['thogai']),
+      seluthiVagai: serializer.fromJson<String>(json['seluthiVagai']),
+      suttruEn: serializer.fromJson<String>(json['suttruEn']),
+      ullkurippu: serializer.fromJson<String>(json['ullkurippu']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      isDeleted: serializer.fromJson<bool>(json['isDeleted']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'seyaliVagai': serializer.toJson<String>(seyaliVagai),
+      'niruvanamId': serializer.toJson<int?>(niruvanamId),
+      'patruEn': serializer.toJson<String>(patruEn),
+      'vanakkam': serializer.toJson<int>(vanakkam),
+      'vanigarId': serializer.toJson<int?>(vanigarId),
+      'vanigarPeyar': serializer.toJson<String>(vanigarPeyar),
+      'vanigarMunvari': serializer.toJson<String>(vanigarMunvari),
+      'patruNaal': serializer.toJson<DateTime>(patruNaal),
+      'thogai': serializer.toJson<double>(thogai),
+      'seluthiVagai': serializer.toJson<String>(seluthiVagai),
+      'suttruEn': serializer.toJson<String>(suttruEn),
+      'ullkurippu': serializer.toJson<String>(ullkurippu),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'isDeleted': serializer.toJson<bool>(isDeleted),
+    };
+  }
+
+  PatrugalEntry copyWith(
+          {int? id,
+          String? seyaliVagai,
+          Value<int?> niruvanamId = const Value.absent(),
+          String? patruEn,
+          int? vanakkam,
+          Value<int?> vanigarId = const Value.absent(),
+          String? vanigarPeyar,
+          String? vanigarMunvari,
+          DateTime? patruNaal,
+          double? thogai,
+          String? seluthiVagai,
+          String? suttruEn,
+          String? ullkurippu,
+          DateTime? createdAt,
+          DateTime? updatedAt,
+          bool? isDeleted}) =>
+      PatrugalEntry(
+        id: id ?? this.id,
+        seyaliVagai: seyaliVagai ?? this.seyaliVagai,
+        niruvanamId: niruvanamId.present ? niruvanamId.value : this.niruvanamId,
+        patruEn: patruEn ?? this.patruEn,
+        vanakkam: vanakkam ?? this.vanakkam,
+        vanigarId: vanigarId.present ? vanigarId.value : this.vanigarId,
+        vanigarPeyar: vanigarPeyar ?? this.vanigarPeyar,
+        vanigarMunvari: vanigarMunvari ?? this.vanigarMunvari,
+        patruNaal: patruNaal ?? this.patruNaal,
+        thogai: thogai ?? this.thogai,
+        seluthiVagai: seluthiVagai ?? this.seluthiVagai,
+        suttruEn: suttruEn ?? this.suttruEn,
+        ullkurippu: ullkurippu ?? this.ullkurippu,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+        isDeleted: isDeleted ?? this.isDeleted,
+      );
+  PatrugalEntry copyWithCompanion(PatrugalTableCompanion data) {
+    return PatrugalEntry(
+      id: data.id.present ? data.id.value : this.id,
+      seyaliVagai:
+          data.seyaliVagai.present ? data.seyaliVagai.value : this.seyaliVagai,
+      niruvanamId:
+          data.niruvanamId.present ? data.niruvanamId.value : this.niruvanamId,
+      patruEn: data.patruEn.present ? data.patruEn.value : this.patruEn,
+      vanakkam: data.vanakkam.present ? data.vanakkam.value : this.vanakkam,
+      vanigarId: data.vanigarId.present ? data.vanigarId.value : this.vanigarId,
+      vanigarPeyar: data.vanigarPeyar.present
+          ? data.vanigarPeyar.value
+          : this.vanigarPeyar,
+      vanigarMunvari: data.vanigarMunvari.present
+          ? data.vanigarMunvari.value
+          : this.vanigarMunvari,
+      patruNaal: data.patruNaal.present ? data.patruNaal.value : this.patruNaal,
+      thogai: data.thogai.present ? data.thogai.value : this.thogai,
+      seluthiVagai: data.seluthiVagai.present
+          ? data.seluthiVagai.value
+          : this.seluthiVagai,
+      suttruEn: data.suttruEn.present ? data.suttruEn.value : this.suttruEn,
+      ullkurippu:
+          data.ullkurippu.present ? data.ullkurippu.value : this.ullkurippu,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PatrugalEntry(')
+          ..write('id: $id, ')
+          ..write('seyaliVagai: $seyaliVagai, ')
+          ..write('niruvanamId: $niruvanamId, ')
+          ..write('patruEn: $patruEn, ')
+          ..write('vanakkam: $vanakkam, ')
+          ..write('vanigarId: $vanigarId, ')
+          ..write('vanigarPeyar: $vanigarPeyar, ')
+          ..write('vanigarMunvari: $vanigarMunvari, ')
+          ..write('patruNaal: $patruNaal, ')
+          ..write('thogai: $thogai, ')
+          ..write('seluthiVagai: $seluthiVagai, ')
+          ..write('suttruEn: $suttruEn, ')
+          ..write('ullkurippu: $ullkurippu, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('isDeleted: $isDeleted')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      seyaliVagai,
+      niruvanamId,
+      patruEn,
+      vanakkam,
+      vanigarId,
+      vanigarPeyar,
+      vanigarMunvari,
+      patruNaal,
+      thogai,
+      seluthiVagai,
+      suttruEn,
+      ullkurippu,
+      createdAt,
+      updatedAt,
+      isDeleted);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PatrugalEntry &&
+          other.id == this.id &&
+          other.seyaliVagai == this.seyaliVagai &&
+          other.niruvanamId == this.niruvanamId &&
+          other.patruEn == this.patruEn &&
+          other.vanakkam == this.vanakkam &&
+          other.vanigarId == this.vanigarId &&
+          other.vanigarPeyar == this.vanigarPeyar &&
+          other.vanigarMunvari == this.vanigarMunvari &&
+          other.patruNaal == this.patruNaal &&
+          other.thogai == this.thogai &&
+          other.seluthiVagai == this.seluthiVagai &&
+          other.suttruEn == this.suttruEn &&
+          other.ullkurippu == this.ullkurippu &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.isDeleted == this.isDeleted);
+}
+
+class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
+  final Value<int> id;
+  final Value<String> seyaliVagai;
+  final Value<int?> niruvanamId;
+  final Value<String> patruEn;
+  final Value<int> vanakkam;
+  final Value<int?> vanigarId;
+  final Value<String> vanigarPeyar;
+  final Value<String> vanigarMunvari;
+  final Value<DateTime> patruNaal;
+  final Value<double> thogai;
+  final Value<String> seluthiVagai;
+  final Value<String> suttruEn;
+  final Value<String> ullkurippu;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<bool> isDeleted;
+  const PatrugalTableCompanion({
+    this.id = const Value.absent(),
+    this.seyaliVagai = const Value.absent(),
+    this.niruvanamId = const Value.absent(),
+    this.patruEn = const Value.absent(),
+    this.vanakkam = const Value.absent(),
+    this.vanigarId = const Value.absent(),
+    this.vanigarPeyar = const Value.absent(),
+    this.vanigarMunvari = const Value.absent(),
+    this.patruNaal = const Value.absent(),
+    this.thogai = const Value.absent(),
+    this.seluthiVagai = const Value.absent(),
+    this.suttruEn = const Value.absent(),
+    this.ullkurippu = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.isDeleted = const Value.absent(),
+  });
+  PatrugalTableCompanion.insert({
+    this.id = const Value.absent(),
+    required String seyaliVagai,
+    this.niruvanamId = const Value.absent(),
+    required String patruEn,
+    this.vanakkam = const Value.absent(),
+    this.vanigarId = const Value.absent(),
+    required String vanigarPeyar,
+    this.vanigarMunvari = const Value.absent(),
+    this.patruNaal = const Value.absent(),
+    this.thogai = const Value.absent(),
+    this.seluthiVagai = const Value.absent(),
+    this.suttruEn = const Value.absent(),
+    this.ullkurippu = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.isDeleted = const Value.absent(),
+  })  : seyaliVagai = Value(seyaliVagai),
+        patruEn = Value(patruEn),
+        vanigarPeyar = Value(vanigarPeyar);
+  static Insertable<PatrugalEntry> custom({
+    Expression<int>? id,
+    Expression<String>? seyaliVagai,
+    Expression<int>? niruvanamId,
+    Expression<String>? patruEn,
+    Expression<int>? vanakkam,
+    Expression<int>? vanigarId,
+    Expression<String>? vanigarPeyar,
+    Expression<String>? vanigarMunvari,
+    Expression<DateTime>? patruNaal,
+    Expression<double>? thogai,
+    Expression<String>? seluthiVagai,
+    Expression<String>? suttruEn,
+    Expression<String>? ullkurippu,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<bool>? isDeleted,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (seyaliVagai != null) 'seyali_vagai': seyaliVagai,
+      if (niruvanamId != null) 'niruvanam_id': niruvanamId,
+      if (patruEn != null) 'patru_en': patruEn,
+      if (vanakkam != null) 'vanakkam': vanakkam,
+      if (vanigarId != null) 'vanigar_id': vanigarId,
+      if (vanigarPeyar != null) 'vanigar_peyar': vanigarPeyar,
+      if (vanigarMunvari != null) 'vanigar_munvari': vanigarMunvari,
+      if (patruNaal != null) 'patru_naal': patruNaal,
+      if (thogai != null) 'thogai': thogai,
+      if (seluthiVagai != null) 'seluthi_vagai': seluthiVagai,
+      if (suttruEn != null) 'suttru_en': suttruEn,
+      if (ullkurippu != null) 'ullkurippu': ullkurippu,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (isDeleted != null) 'is_deleted': isDeleted,
+    });
+  }
+
+  PatrugalTableCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? seyaliVagai,
+      Value<int?>? niruvanamId,
+      Value<String>? patruEn,
+      Value<int>? vanakkam,
+      Value<int?>? vanigarId,
+      Value<String>? vanigarPeyar,
+      Value<String>? vanigarMunvari,
+      Value<DateTime>? patruNaal,
+      Value<double>? thogai,
+      Value<String>? seluthiVagai,
+      Value<String>? suttruEn,
+      Value<String>? ullkurippu,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt,
+      Value<bool>? isDeleted}) {
+    return PatrugalTableCompanion(
+      id: id ?? this.id,
+      seyaliVagai: seyaliVagai ?? this.seyaliVagai,
+      niruvanamId: niruvanamId ?? this.niruvanamId,
+      patruEn: patruEn ?? this.patruEn,
+      vanakkam: vanakkam ?? this.vanakkam,
+      vanigarId: vanigarId ?? this.vanigarId,
+      vanigarPeyar: vanigarPeyar ?? this.vanigarPeyar,
+      vanigarMunvari: vanigarMunvari ?? this.vanigarMunvari,
+      patruNaal: patruNaal ?? this.patruNaal,
+      thogai: thogai ?? this.thogai,
+      seluthiVagai: seluthiVagai ?? this.seluthiVagai,
+      suttruEn: suttruEn ?? this.suttruEn,
+      ullkurippu: ullkurippu ?? this.ullkurippu,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      isDeleted: isDeleted ?? this.isDeleted,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (seyaliVagai.present) {
+      map['seyali_vagai'] = Variable<String>(seyaliVagai.value);
+    }
+    if (niruvanamId.present) {
+      map['niruvanam_id'] = Variable<int>(niruvanamId.value);
+    }
+    if (patruEn.present) {
+      map['patru_en'] = Variable<String>(patruEn.value);
+    }
+    if (vanakkam.present) {
+      map['vanakkam'] = Variable<int>(vanakkam.value);
+    }
+    if (vanigarId.present) {
+      map['vanigar_id'] = Variable<int>(vanigarId.value);
+    }
+    if (vanigarPeyar.present) {
+      map['vanigar_peyar'] = Variable<String>(vanigarPeyar.value);
+    }
+    if (vanigarMunvari.present) {
+      map['vanigar_munvari'] = Variable<String>(vanigarMunvari.value);
+    }
+    if (patruNaal.present) {
+      map['patru_naal'] = Variable<DateTime>(patruNaal.value);
+    }
+    if (thogai.present) {
+      map['thogai'] = Variable<double>(thogai.value);
+    }
+    if (seluthiVagai.present) {
+      map['seluthi_vagai'] = Variable<String>(seluthiVagai.value);
+    }
+    if (suttruEn.present) {
+      map['suttru_en'] = Variable<String>(suttruEn.value);
+    }
+    if (ullkurippu.present) {
+      map['ullkurippu'] = Variable<String>(ullkurippu.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (isDeleted.present) {
+      map['is_deleted'] = Variable<bool>(isDeleted.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PatrugalTableCompanion(')
+          ..write('id: $id, ')
+          ..write('seyaliVagai: $seyaliVagai, ')
+          ..write('niruvanamId: $niruvanamId, ')
+          ..write('patruEn: $patruEn, ')
+          ..write('vanakkam: $vanakkam, ')
+          ..write('vanigarId: $vanigarId, ')
+          ..write('vanigarPeyar: $vanigarPeyar, ')
+          ..write('vanigarMunvari: $vanigarMunvari, ')
+          ..write('patruNaal: $patruNaal, ')
+          ..write('thogai: $thogai, ')
+          ..write('seluthiVagai: $seluthiVagai, ')
+          ..write('suttruEn: $suttruEn, ')
+          ..write('ullkurippu: $ullkurippu, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('isDeleted: $isDeleted')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $PatruPattiyalTableTable extends PatruPattiyalTable
+    with TableInfo<$PatruPattiyalTableTable, PatruPattiyalEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PatruPattiyalTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+      'id', aliasedName, false,
+      hasAutoIncrement: true,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+  static const VerificationMeta _patruIdMeta =
+      const VerificationMeta('patruId');
+  @override
+  late final GeneratedColumn<int> patruId = GeneratedColumn<int>(
+      'patru_id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _pattiyalIdMeta =
+      const VerificationMeta('pattiyalId');
+  @override
+  late final GeneratedColumn<int> pattiyalId = GeneratedColumn<int>(
+      'pattiyal_id', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _poruthiyaThogaiMeta =
+      const VerificationMeta('poruthiyaThogai');
+  @override
+  late final GeneratedColumn<double> poruthiyaThogai = GeneratedColumn<double>(
+      'poruthiya_thogai', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0.0));
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, patruId, pattiyalId, poruthiyaThogai];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'patru_pattiyal_table';
+  @override
+  VerificationContext validateIntegrity(Insertable<PatruPattiyalEntry> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('patru_id')) {
+      context.handle(_patruIdMeta,
+          patruId.isAcceptableOrUnknown(data['patru_id']!, _patruIdMeta));
+    } else if (isInserting) {
+      context.missing(_patruIdMeta);
+    }
+    if (data.containsKey('pattiyal_id')) {
+      context.handle(
+          _pattiyalIdMeta,
+          pattiyalId.isAcceptableOrUnknown(
+              data['pattiyal_id']!, _pattiyalIdMeta));
+    } else if (isInserting) {
+      context.missing(_pattiyalIdMeta);
+    }
+    if (data.containsKey('poruthiya_thogai')) {
+      context.handle(
+          _poruthiyaThogaiMeta,
+          poruthiyaThogai.isAcceptableOrUnknown(
+              data['poruthiya_thogai']!, _poruthiyaThogaiMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PatruPattiyalEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PatruPattiyalEntry(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
+      patruId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}patru_id'])!,
+      pattiyalId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}pattiyal_id'])!,
+      poruthiyaThogai: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}poruthiya_thogai'])!,
+    );
+  }
+
+  @override
+  $PatruPattiyalTableTable createAlias(String alias) {
+    return $PatruPattiyalTableTable(attachedDatabase, alias);
+  }
+}
+
+class PatruPattiyalEntry extends DataClass
+    implements Insertable<PatruPattiyalEntry> {
+  final int id;
+  final int patruId;
+  final int pattiyalId;
+  final double poruthiyaThogai;
+  const PatruPattiyalEntry(
+      {required this.id,
+      required this.patruId,
+      required this.pattiyalId,
+      required this.poruthiyaThogai});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['patru_id'] = Variable<int>(patruId);
+    map['pattiyal_id'] = Variable<int>(pattiyalId);
+    map['poruthiya_thogai'] = Variable<double>(poruthiyaThogai);
+    return map;
+  }
+
+  PatruPattiyalTableCompanion toCompanion(bool nullToAbsent) {
+    return PatruPattiyalTableCompanion(
+      id: Value(id),
+      patruId: Value(patruId),
+      pattiyalId: Value(pattiyalId),
+      poruthiyaThogai: Value(poruthiyaThogai),
+    );
+  }
+
+  factory PatruPattiyalEntry.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PatruPattiyalEntry(
+      id: serializer.fromJson<int>(json['id']),
+      patruId: serializer.fromJson<int>(json['patruId']),
+      pattiyalId: serializer.fromJson<int>(json['pattiyalId']),
+      poruthiyaThogai: serializer.fromJson<double>(json['poruthiyaThogai']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'patruId': serializer.toJson<int>(patruId),
+      'pattiyalId': serializer.toJson<int>(pattiyalId),
+      'poruthiyaThogai': serializer.toJson<double>(poruthiyaThogai),
+    };
+  }
+
+  PatruPattiyalEntry copyWith(
+          {int? id, int? patruId, int? pattiyalId, double? poruthiyaThogai}) =>
+      PatruPattiyalEntry(
+        id: id ?? this.id,
+        patruId: patruId ?? this.patruId,
+        pattiyalId: pattiyalId ?? this.pattiyalId,
+        poruthiyaThogai: poruthiyaThogai ?? this.poruthiyaThogai,
+      );
+  PatruPattiyalEntry copyWithCompanion(PatruPattiyalTableCompanion data) {
+    return PatruPattiyalEntry(
+      id: data.id.present ? data.id.value : this.id,
+      patruId: data.patruId.present ? data.patruId.value : this.patruId,
+      pattiyalId:
+          data.pattiyalId.present ? data.pattiyalId.value : this.pattiyalId,
+      poruthiyaThogai: data.poruthiyaThogai.present
+          ? data.poruthiyaThogai.value
+          : this.poruthiyaThogai,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PatruPattiyalEntry(')
+          ..write('id: $id, ')
+          ..write('patruId: $patruId, ')
+          ..write('pattiyalId: $pattiyalId, ')
+          ..write('poruthiyaThogai: $poruthiyaThogai')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, patruId, pattiyalId, poruthiyaThogai);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PatruPattiyalEntry &&
+          other.id == this.id &&
+          other.patruId == this.patruId &&
+          other.pattiyalId == this.pattiyalId &&
+          other.poruthiyaThogai == this.poruthiyaThogai);
+}
+
+class PatruPattiyalTableCompanion extends UpdateCompanion<PatruPattiyalEntry> {
+  final Value<int> id;
+  final Value<int> patruId;
+  final Value<int> pattiyalId;
+  final Value<double> poruthiyaThogai;
+  const PatruPattiyalTableCompanion({
+    this.id = const Value.absent(),
+    this.patruId = const Value.absent(),
+    this.pattiyalId = const Value.absent(),
+    this.poruthiyaThogai = const Value.absent(),
+  });
+  PatruPattiyalTableCompanion.insert({
+    this.id = const Value.absent(),
+    required int patruId,
+    required int pattiyalId,
+    this.poruthiyaThogai = const Value.absent(),
+  })  : patruId = Value(patruId),
+        pattiyalId = Value(pattiyalId);
+  static Insertable<PatruPattiyalEntry> custom({
+    Expression<int>? id,
+    Expression<int>? patruId,
+    Expression<int>? pattiyalId,
+    Expression<double>? poruthiyaThogai,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (patruId != null) 'patru_id': patruId,
+      if (pattiyalId != null) 'pattiyal_id': pattiyalId,
+      if (poruthiyaThogai != null) 'poruthiya_thogai': poruthiyaThogai,
+    });
+  }
+
+  PatruPattiyalTableCompanion copyWith(
+      {Value<int>? id,
+      Value<int>? patruId,
+      Value<int>? pattiyalId,
+      Value<double>? poruthiyaThogai}) {
+    return PatruPattiyalTableCompanion(
+      id: id ?? this.id,
+      patruId: patruId ?? this.patruId,
+      pattiyalId: pattiyalId ?? this.pattiyalId,
+      poruthiyaThogai: poruthiyaThogai ?? this.poruthiyaThogai,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (patruId.present) {
+      map['patru_id'] = Variable<int>(patruId.value);
+    }
+    if (pattiyalId.present) {
+      map['pattiyal_id'] = Variable<int>(pattiyalId.value);
+    }
+    if (poruthiyaThogai.present) {
+      map['poruthiya_thogai'] = Variable<double>(poruthiyaThogai.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PatruPattiyalTableCompanion(')
+          ..write('id: $id, ')
+          ..write('patruId: $patruId, ')
+          ..write('pattiyalId: $pattiyalId, ')
+          ..write('poruthiyaThogai: $poruthiyaThogai')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4121,12 +5139,21 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $PorulTableTable porulTable = $PorulTableTable(this);
   late final $PatrucheettuTableTable patrucheettuTable =
       $PatrucheettuTableTable(this);
+  late final $PatrugalTableTable patrugalTable = $PatrugalTableTable(this);
+  late final $PatruPattiyalTableTable patruPattiyalTable =
+      $PatruPattiyalTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [vanigaTharavugalTable, vanigarTable, porulTable, patrucheettuTable];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+        vanigaTharavugalTable,
+        vanigarTable,
+        porulTable,
+        patrucheettuTable,
+        patrugalTable,
+        patruPattiyalTable
+      ];
 }
 
 typedef $$VanigaTharavugalTableTableCreateCompanionBuilder
@@ -5933,6 +6960,500 @@ typedef $$PatrucheettuTableTableProcessedTableManager = ProcessedTableManager<
     ),
     PatrucheettuEntry,
     PrefetchHooks Function()>;
+typedef $$PatrugalTableTableCreateCompanionBuilder = PatrugalTableCompanion
+    Function({
+  Value<int> id,
+  required String seyaliVagai,
+  Value<int?> niruvanamId,
+  required String patruEn,
+  Value<int> vanakkam,
+  Value<int?> vanigarId,
+  required String vanigarPeyar,
+  Value<String> vanigarMunvari,
+  Value<DateTime> patruNaal,
+  Value<double> thogai,
+  Value<String> seluthiVagai,
+  Value<String> suttruEn,
+  Value<String> ullkurippu,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<bool> isDeleted,
+});
+typedef $$PatrugalTableTableUpdateCompanionBuilder = PatrugalTableCompanion
+    Function({
+  Value<int> id,
+  Value<String> seyaliVagai,
+  Value<int?> niruvanamId,
+  Value<String> patruEn,
+  Value<int> vanakkam,
+  Value<int?> vanigarId,
+  Value<String> vanigarPeyar,
+  Value<String> vanigarMunvari,
+  Value<DateTime> patruNaal,
+  Value<double> thogai,
+  Value<String> seluthiVagai,
+  Value<String> suttruEn,
+  Value<String> ullkurippu,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<bool> isDeleted,
+});
+
+class $$PatrugalTableTableFilterComposer
+    extends Composer<_$AppDatabase, $PatrugalTableTable> {
+  $$PatrugalTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get seyaliVagai => $composableBuilder(
+      column: $table.seyaliVagai, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get niruvanamId => $composableBuilder(
+      column: $table.niruvanamId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get patruEn => $composableBuilder(
+      column: $table.patruEn, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get vanakkam => $composableBuilder(
+      column: $table.vanakkam, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get vanigarId => $composableBuilder(
+      column: $table.vanigarId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get vanigarPeyar => $composableBuilder(
+      column: $table.vanigarPeyar, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get vanigarMunvari => $composableBuilder(
+      column: $table.vanigarMunvari,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get patruNaal => $composableBuilder(
+      column: $table.patruNaal, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get thogai => $composableBuilder(
+      column: $table.thogai, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get seluthiVagai => $composableBuilder(
+      column: $table.seluthiVagai, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get suttruEn => $composableBuilder(
+      column: $table.suttruEn, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get ullkurippu => $composableBuilder(
+      column: $table.ullkurippu, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isDeleted => $composableBuilder(
+      column: $table.isDeleted, builder: (column) => ColumnFilters(column));
+}
+
+class $$PatrugalTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $PatrugalTableTable> {
+  $$PatrugalTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get seyaliVagai => $composableBuilder(
+      column: $table.seyaliVagai, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get niruvanamId => $composableBuilder(
+      column: $table.niruvanamId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get patruEn => $composableBuilder(
+      column: $table.patruEn, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get vanakkam => $composableBuilder(
+      column: $table.vanakkam, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get vanigarId => $composableBuilder(
+      column: $table.vanigarId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get vanigarPeyar => $composableBuilder(
+      column: $table.vanigarPeyar,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get vanigarMunvari => $composableBuilder(
+      column: $table.vanigarMunvari,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get patruNaal => $composableBuilder(
+      column: $table.patruNaal, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get thogai => $composableBuilder(
+      column: $table.thogai, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get seluthiVagai => $composableBuilder(
+      column: $table.seluthiVagai,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get suttruEn => $composableBuilder(
+      column: $table.suttruEn, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get ullkurippu => $composableBuilder(
+      column: $table.ullkurippu, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isDeleted => $composableBuilder(
+      column: $table.isDeleted, builder: (column) => ColumnOrderings(column));
+}
+
+class $$PatrugalTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PatrugalTableTable> {
+  $$PatrugalTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get seyaliVagai => $composableBuilder(
+      column: $table.seyaliVagai, builder: (column) => column);
+
+  GeneratedColumn<int> get niruvanamId => $composableBuilder(
+      column: $table.niruvanamId, builder: (column) => column);
+
+  GeneratedColumn<String> get patruEn =>
+      $composableBuilder(column: $table.patruEn, builder: (column) => column);
+
+  GeneratedColumn<int> get vanakkam =>
+      $composableBuilder(column: $table.vanakkam, builder: (column) => column);
+
+  GeneratedColumn<int> get vanigarId =>
+      $composableBuilder(column: $table.vanigarId, builder: (column) => column);
+
+  GeneratedColumn<String> get vanigarPeyar => $composableBuilder(
+      column: $table.vanigarPeyar, builder: (column) => column);
+
+  GeneratedColumn<String> get vanigarMunvari => $composableBuilder(
+      column: $table.vanigarMunvari, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get patruNaal =>
+      $composableBuilder(column: $table.patruNaal, builder: (column) => column);
+
+  GeneratedColumn<double> get thogai =>
+      $composableBuilder(column: $table.thogai, builder: (column) => column);
+
+  GeneratedColumn<String> get seluthiVagai => $composableBuilder(
+      column: $table.seluthiVagai, builder: (column) => column);
+
+  GeneratedColumn<String> get suttruEn =>
+      $composableBuilder(column: $table.suttruEn, builder: (column) => column);
+
+  GeneratedColumn<String> get ullkurippu => $composableBuilder(
+      column: $table.ullkurippu, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get isDeleted =>
+      $composableBuilder(column: $table.isDeleted, builder: (column) => column);
+}
+
+class $$PatrugalTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $PatrugalTableTable,
+    PatrugalEntry,
+    $$PatrugalTableTableFilterComposer,
+    $$PatrugalTableTableOrderingComposer,
+    $$PatrugalTableTableAnnotationComposer,
+    $$PatrugalTableTableCreateCompanionBuilder,
+    $$PatrugalTableTableUpdateCompanionBuilder,
+    (
+      PatrugalEntry,
+      BaseReferences<_$AppDatabase, $PatrugalTableTable, PatrugalEntry>
+    ),
+    PatrugalEntry,
+    PrefetchHooks Function()> {
+  $$PatrugalTableTableTableManager(_$AppDatabase db, $PatrugalTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PatrugalTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PatrugalTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PatrugalTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> seyaliVagai = const Value.absent(),
+            Value<int?> niruvanamId = const Value.absent(),
+            Value<String> patruEn = const Value.absent(),
+            Value<int> vanakkam = const Value.absent(),
+            Value<int?> vanigarId = const Value.absent(),
+            Value<String> vanigarPeyar = const Value.absent(),
+            Value<String> vanigarMunvari = const Value.absent(),
+            Value<DateTime> patruNaal = const Value.absent(),
+            Value<double> thogai = const Value.absent(),
+            Value<String> seluthiVagai = const Value.absent(),
+            Value<String> suttruEn = const Value.absent(),
+            Value<String> ullkurippu = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+            Value<bool> isDeleted = const Value.absent(),
+          }) =>
+              PatrugalTableCompanion(
+            id: id,
+            seyaliVagai: seyaliVagai,
+            niruvanamId: niruvanamId,
+            patruEn: patruEn,
+            vanakkam: vanakkam,
+            vanigarId: vanigarId,
+            vanigarPeyar: vanigarPeyar,
+            vanigarMunvari: vanigarMunvari,
+            patruNaal: patruNaal,
+            thogai: thogai,
+            seluthiVagai: seluthiVagai,
+            suttruEn: suttruEn,
+            ullkurippu: ullkurippu,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            isDeleted: isDeleted,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String seyaliVagai,
+            Value<int?> niruvanamId = const Value.absent(),
+            required String patruEn,
+            Value<int> vanakkam = const Value.absent(),
+            Value<int?> vanigarId = const Value.absent(),
+            required String vanigarPeyar,
+            Value<String> vanigarMunvari = const Value.absent(),
+            Value<DateTime> patruNaal = const Value.absent(),
+            Value<double> thogai = const Value.absent(),
+            Value<String> seluthiVagai = const Value.absent(),
+            Value<String> suttruEn = const Value.absent(),
+            Value<String> ullkurippu = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+            Value<bool> isDeleted = const Value.absent(),
+          }) =>
+              PatrugalTableCompanion.insert(
+            id: id,
+            seyaliVagai: seyaliVagai,
+            niruvanamId: niruvanamId,
+            patruEn: patruEn,
+            vanakkam: vanakkam,
+            vanigarId: vanigarId,
+            vanigarPeyar: vanigarPeyar,
+            vanigarMunvari: vanigarMunvari,
+            patruNaal: patruNaal,
+            thogai: thogai,
+            seluthiVagai: seluthiVagai,
+            suttruEn: suttruEn,
+            ullkurippu: ullkurippu,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            isDeleted: isDeleted,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$PatrugalTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $PatrugalTableTable,
+    PatrugalEntry,
+    $$PatrugalTableTableFilterComposer,
+    $$PatrugalTableTableOrderingComposer,
+    $$PatrugalTableTableAnnotationComposer,
+    $$PatrugalTableTableCreateCompanionBuilder,
+    $$PatrugalTableTableUpdateCompanionBuilder,
+    (
+      PatrugalEntry,
+      BaseReferences<_$AppDatabase, $PatrugalTableTable, PatrugalEntry>
+    ),
+    PatrugalEntry,
+    PrefetchHooks Function()>;
+typedef $$PatruPattiyalTableTableCreateCompanionBuilder
+    = PatruPattiyalTableCompanion Function({
+  Value<int> id,
+  required int patruId,
+  required int pattiyalId,
+  Value<double> poruthiyaThogai,
+});
+typedef $$PatruPattiyalTableTableUpdateCompanionBuilder
+    = PatruPattiyalTableCompanion Function({
+  Value<int> id,
+  Value<int> patruId,
+  Value<int> pattiyalId,
+  Value<double> poruthiyaThogai,
+});
+
+class $$PatruPattiyalTableTableFilterComposer
+    extends Composer<_$AppDatabase, $PatruPattiyalTableTable> {
+  $$PatruPattiyalTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get patruId => $composableBuilder(
+      column: $table.patruId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get pattiyalId => $composableBuilder(
+      column: $table.pattiyalId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get poruthiyaThogai => $composableBuilder(
+      column: $table.poruthiyaThogai,
+      builder: (column) => ColumnFilters(column));
+}
+
+class $$PatruPattiyalTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $PatruPattiyalTableTable> {
+  $$PatruPattiyalTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get patruId => $composableBuilder(
+      column: $table.patruId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get pattiyalId => $composableBuilder(
+      column: $table.pattiyalId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get poruthiyaThogai => $composableBuilder(
+      column: $table.poruthiyaThogai,
+      builder: (column) => ColumnOrderings(column));
+}
+
+class $$PatruPattiyalTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PatruPattiyalTableTable> {
+  $$PatruPattiyalTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get patruId =>
+      $composableBuilder(column: $table.patruId, builder: (column) => column);
+
+  GeneratedColumn<int> get pattiyalId => $composableBuilder(
+      column: $table.pattiyalId, builder: (column) => column);
+
+  GeneratedColumn<double> get poruthiyaThogai => $composableBuilder(
+      column: $table.poruthiyaThogai, builder: (column) => column);
+}
+
+class $$PatruPattiyalTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $PatruPattiyalTableTable,
+    PatruPattiyalEntry,
+    $$PatruPattiyalTableTableFilterComposer,
+    $$PatruPattiyalTableTableOrderingComposer,
+    $$PatruPattiyalTableTableAnnotationComposer,
+    $$PatruPattiyalTableTableCreateCompanionBuilder,
+    $$PatruPattiyalTableTableUpdateCompanionBuilder,
+    (
+      PatruPattiyalEntry,
+      BaseReferences<_$AppDatabase, $PatruPattiyalTableTable,
+          PatruPattiyalEntry>
+    ),
+    PatruPattiyalEntry,
+    PrefetchHooks Function()> {
+  $$PatruPattiyalTableTableTableManager(
+      _$AppDatabase db, $PatruPattiyalTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PatruPattiyalTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PatruPattiyalTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PatruPattiyalTableTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<int> patruId = const Value.absent(),
+            Value<int> pattiyalId = const Value.absent(),
+            Value<double> poruthiyaThogai = const Value.absent(),
+          }) =>
+              PatruPattiyalTableCompanion(
+            id: id,
+            patruId: patruId,
+            pattiyalId: pattiyalId,
+            poruthiyaThogai: poruthiyaThogai,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required int patruId,
+            required int pattiyalId,
+            Value<double> poruthiyaThogai = const Value.absent(),
+          }) =>
+              PatruPattiyalTableCompanion.insert(
+            id: id,
+            patruId: patruId,
+            pattiyalId: pattiyalId,
+            poruthiyaThogai: poruthiyaThogai,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$PatruPattiyalTableTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $PatruPattiyalTableTable,
+    PatruPattiyalEntry,
+    $$PatruPattiyalTableTableFilterComposer,
+    $$PatruPattiyalTableTableOrderingComposer,
+    $$PatruPattiyalTableTableAnnotationComposer,
+    $$PatruPattiyalTableTableCreateCompanionBuilder,
+    $$PatruPattiyalTableTableUpdateCompanionBuilder,
+    (
+      PatruPattiyalEntry,
+      BaseReferences<_$AppDatabase, $PatruPattiyalTableTable,
+          PatruPattiyalEntry>
+    ),
+    PatruPattiyalEntry,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -5945,4 +7466,8 @@ class $AppDatabaseManager {
       $$PorulTableTableTableManager(_db, _db.porulTable);
   $$PatrucheettuTableTableTableManager get patrucheettuTable =>
       $$PatrucheettuTableTableTableManager(_db, _db.patrucheettuTable);
+  $$PatrugalTableTableTableManager get patrugalTable =>
+      $$PatrugalTableTableTableManager(_db, _db.patrugalTable);
+  $$PatruPattiyalTableTableTableManager get patruPattiyalTable =>
+      $$PatruPattiyalTableTableTableManager(_db, _db.patruPattiyalTable);
 }
