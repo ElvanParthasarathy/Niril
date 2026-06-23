@@ -39,7 +39,7 @@ const Map<String, String> ta = {
   'kadavuchollaiUllidavum': 'கடவுச்சொல்லை உள்ளிடவும்',
   'kanakkuEnIfsc': 'கணக்கு எண் & IFSC',
   'thamizhAangilamThaaniyangu': 'தமிழ், ஆங்கிலம், தானியங்கு',
-  'thaekkagathaiazhi': 'தேக்ககத்தை அழி, கணக்கு பாதுகாப்பு',
+  'thaekkagathaiazhi': 'காப்பு நகல், வெளியேறு, தரவு அழி',
   'elvanPatriMaelumAriga': 'எல்வன் பற்றி மேலும் அறிக',
   'cheyaliyilirundhuVeliyaeravum': 'செயலியிலிருந்து வெளியேறவும்.',
   'tharavuKaappuChei': 'தரவு காப்பு செய்',

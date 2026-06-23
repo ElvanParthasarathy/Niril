@@ -40,7 +40,7 @@ const Map<String, String> tg = {
   'kadavuchollaiUllidavum': 'Kadavuchollai Ullidavum',
   'kanakkuEnIfsc': 'Kanakku En & IFSC',
   'thamizhAangilamThaaniyangu': 'Thamizh, Aangilam, Thaaniyangu',
-  'thaekkagathaiazhi': 'Thaekkagaththai Azhi, Kanakku Paadhugaappu',
+  'thaekkagathaiazhi': 'Kaappu Nagal, Veliyaeru, Tharavu Azhi',
   'elvanPatriMaelumAriga': 'Elvan Patri Maelum Ariga',
   'cheyaliyilirundhuVeliyaeravum': 'Cheyaliyilirundhu Veliyaeravum.',
   'tharavuKaappuChei': 'Tharavu Kaappu Chei',

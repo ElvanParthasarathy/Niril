@@ -39,7 +39,7 @@ const Map<String, String> en = {
   'kadavuchollaiUllidavum': 'Please enter your password',
   'kanakkuEnIfsc': 'Account number & IFSC',
   'thamizhAangilamThaaniyangu': 'Tamil, English, Auto',
-  'thaekkagathaiazhi': 'Clear cache, Account security',
+  'thaekkagathaiazhi': 'Backup, Logout, Clear Data',
   'elvanPatriMaelumAriga': 'Learn more about Elvan',
   'cheyaliyilirundhuVeliyaeravum': 'Logout from the application.',
   'tharavuKaappuChei': 'Backup Data',
