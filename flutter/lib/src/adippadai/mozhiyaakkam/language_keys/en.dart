@@ -243,4 +243,5 @@ const Map<String, String> en = {
   'nirandharaAzhippu': 'Delete Permanently',
   'nirandharaAzhippuUrudhi': 'Delete permanently? This cannot be undone.',
   'azhikkappattaPorulgal': 'Deleted Products',
+  'meetpagam30Naal': 'Items in the recycle bin will be automatically deleted after 30 days',
 };

@@ -247,4 +247,5 @@ const Map<String, String> tg = {
   'nirandharaAzhippu': 'Nirandharamaaga Azhi',
   'nirandharaAzhippuUrudhi': 'Nirandharamaaga Azhikkavaa? Meetka Iyalaadhu.',
   'azhikkappattaPorulgal': 'Azhikkappatta Porulgal',
+  'meetpagam30Naal': 'Meetpagatthil Ullavai 30 Naalgalukku Piragu Thaanaagavae Azhikkapppadum',
 };

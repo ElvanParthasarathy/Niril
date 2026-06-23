@@ -243,4 +243,5 @@ const Map<String, String> ta = {
   'nirandharaAzhippu': 'நிரந்தரமாக அழி',
   'nirandharaAzhippuUrudhi': 'நிரந்தரமாக அழிக்கவா? மீட்க இயலாது.',
   'azhikkappattaPorulgal': 'அழிக்கப்பட்ட பொருள்கள்',
+  'meetpagam30Naal': 'மீட்பகத்தில் உள்ளவை 30 நாள்களுக்குப் பிறகு தானாகவே அழிக்கப்படும்',
 };

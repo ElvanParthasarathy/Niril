@@ -132,4 +132,16 @@ class PorulKalanjiyam {
           ]))
         .watch();
   }
+
+  // ── Auto-Purge ─────────────────────────────────────────────────────────
+
+  /// Hard-delete all soft-deleted products older than [days] (default 30).
+  /// Returns the number of rows permanently removed.
+  Future<int> purgeExpiredPorulgal({int days = 30}) async {
+    final cutoff = DateTime.now().subtract(Duration(days: days));
+    return (_db.delete(_db.porulTable)
+          ..where((t) => t.isDeleted.equals(true))
+          ..where((t) => t.deletedAt.isSmallerOrEqualValue(cutoff)))
+        .go();
+  }
 }

@@ -16,11 +16,25 @@ import '../../kalanjiyam/porul_nilaimai.dart';
 // Currently supports: Products (Porul).
 // Future: Merchants (Vanigar), Invoices (Pattiyal), Receipts (Patrucheettu).
 
-class MeetpagamThirai extends ConsumerWidget {
+class MeetpagamThirai extends ConsumerStatefulWidget {
   const MeetpagamThirai({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MeetpagamThirai> createState() => _MeetpagamThiraiState();
+}
+
+class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
+  @override
+  void initState() {
+    super.initState();
+    // Auto-purge items older than 30 days on screen open
+    Future.microtask(() {
+      ref.read(porulKalanjiyamProvider).purgeExpiredPorulgal(days: 30);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final deletedPorulgalAsync = ref.watch(deletedPorulgalStreamProvider);
@@ -56,6 +70,10 @@ class MeetpagamThirai extends ConsumerWidget {
           return ListView(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             children: [
+              // ── 30-day auto-delete info ──
+              _AutoDeleteBanner(isDark: isDark),
+              const SizedBox(height: 12),
+
               // ── Section: Deleted Products ──
               _SectionHeader(
                 title: K.azhikkappattaPorulgal.tr(context, ref),
@@ -349,5 +367,48 @@ class _DeletedPorulCard extends StatelessWidget {
     if (diff.inHours < 24) return '${diff.inHours}h ago';
     if (diff.inDays < 7) return '${diff.inDays}d ago';
     return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
+  }
+}
+
+// ── 30-Day Auto-Delete Banner ───────────────────────────────────────────────
+
+class _AutoDeleteBanner extends ConsumerWidget {
+  const _AutoDeleteBanner({required this.isDark});
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.amber.withValues(alpha: 0.06)
+            : Colors.amber.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.amber.withValues(alpha: 0.15),
+          width: 0.5,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            CupertinoIcons.clock,
+            size: 16,
+            color: Colors.amber.shade700,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              K.meetpagam30Naal.tr(context, ref),
+              style: TextStyle(
+                fontSize: 12,
+                color: isDark ? Colors.amber.shade300 : Colors.amber.shade800,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

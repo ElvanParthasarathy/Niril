@@ -270,6 +270,7 @@ abstract final class K {
   static const nirandharaAzhippu = 'nirandharaAzhippu';
   static const nirandharaAzhippuUrudhi = 'nirandharaAzhippuUrudhi';
   static const azhikkappattaPorulgal = 'azhikkappattaPorulgal';
+  static const meetpagam30Naal = 'meetpagam30Naal';
 
   // ── Dev Tools ──
   static const uruvaakkunarTharavugalaiAzhi = 'uruvaakkunarTharavugalaiAzhi';
