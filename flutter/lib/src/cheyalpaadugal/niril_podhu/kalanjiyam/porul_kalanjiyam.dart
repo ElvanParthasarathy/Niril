@@ -144,4 +144,9 @@ class PorulKalanjiyam {
           ..where((t) => t.deletedAt.isSmallerOrEqualValue(cutoff)))
         .go();
   }
+
+  /// Permanently delete ALL products (hard wipe for erase data).
+  Future<void> deleteAllPorulgal() async {
+    await _db.delete(_db.porulTable).go();
+  }
 }

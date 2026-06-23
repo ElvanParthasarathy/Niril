@@ -160,4 +160,9 @@ class VanigarKalanjiyam {
           ..where((t) => t.deletedAt.isSmallerOrEqualValue(cutoff)))
         .go();
   }
+
+  /// Permanently delete ALL merchants (hard wipe for erase data).
+  Future<void> deleteAllVanigargal() async {
+    await _db.delete(_db.vanigarTable).go();
+  }
 }
