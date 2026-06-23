@@ -27,62 +27,64 @@ import 'dart:ui';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:window_manager/window_manager.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize global error logger
-  await ElvanPizhaipadhivu.initialize();
-
-  // Force 120Hz display mode on supported Android devices (Samsung, OnePlus, Xiaomi)
-  if (Platform.isAndroid) {
-    try {
-      await FlutterDisplayMode.setHighRefreshRate();
-    } catch (e) {
-      // Ignore if device doesn't support it
-    }
-  }
-
-  // Set minimum window size on desktop platforms.
-  // This prevents the window from shrinking below the desktop breakpoint (800px),
-  // so the app never switches to mobile layout on desktop.
-  if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
-    await windowManager.ensureInitialized();
-    const minSize = Size(800, 600);
-    await windowManager.setMinimumSize(minSize);
-    // Maximize the window by default on startup
-    await windowManager.maximize();
-    await windowManager.show();
-  }
-
-  final sharedPrefs = await SharedPreferences.getInstance();
-
-  // Initialize backup service (தரவு பாதுகாப்பு)
-  final backupService = await NirilBackupService.initialize();
-
+void main() {
   // ── Global Error Safety Net ──
-  // 1. Catch all Flutter framework errors (layout, rendering, gestures)
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.presentError(details); // Keep default red screen in debug
-    ElvanPizhaipadhivu.logError(
-      details.exception,
-      stackTrace: details.stack,
-      context: 'FlutterError: ${details.library}',
-    );
-  };
-
-  // 2. Catch platform channel errors (method channel failures, etc.)
-  PlatformDispatcher.instance.onError = (error, stack) {
-    ElvanPizhaipadhivu.logError(
-      error,
-      stackTrace: stack,
-      context: 'PlatformDispatcher',
-    );
-    return true; // Prevent the error from propagating
-  };
-
-  // 3. Catch all remaining async errors (Future.then failures, etc.)
+  // Everything runs inside runZonedGuarded so ensureInitialized() and runApp()
+  // share the same zone (prevents Flutter's "Zone mismatch" error).
   runZonedGuarded(
-    () {
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+
+      // Initialize global error logger
+      await ElvanPizhaipadhivu.initialize();
+
+      // 1. Catch all Flutter framework errors (layout, rendering, gestures)
+      FlutterError.onError = (FlutterErrorDetails details) {
+        FlutterError.presentError(details); // Keep default red screen in debug
+        ElvanPizhaipadhivu.logError(
+          details.exception,
+          stackTrace: details.stack,
+          context: 'FlutterError: ${details.library}',
+        );
+      };
+
+      // 2. Catch platform channel errors (method channel failures, etc.)
+      PlatformDispatcher.instance.onError = (error, stack) {
+        ElvanPizhaipadhivu.logError(
+          error,
+          stackTrace: stack,
+          context: 'PlatformDispatcher',
+        );
+        return true; // Prevent the error from propagating
+      };
+
+      // Force 120Hz display mode on supported Android devices (Samsung, OnePlus, Xiaomi)
+      if (Platform.isAndroid) {
+        try {
+          await FlutterDisplayMode.setHighRefreshRate();
+        } catch (e) {
+          // Ignore if device doesn't support it
+        }
+      }
+
+      // Set minimum window size on desktop platforms.
+      // This prevents the window from shrinking below the desktop breakpoint (800px),
+      // so the app never switches to mobile layout on desktop.
+      if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+        await windowManager.ensureInitialized();
+        const minSize = Size(800, 600);
+        await windowManager.setMinimumSize(minSize);
+        // Maximize the window by default on startup
+        await windowManager.maximize();
+        await windowManager.show();
+      }
+
+      final sharedPrefs = await SharedPreferences.getInstance();
+
+      // Initialize backup service (தரவு பாதுகாப்பு)
+      final backupService = await NirilBackupService.initialize();
+
+      // 3. Launch the app
       runApp(
         // Wrap the entire app with ProviderScope for Riverpod state management
         ProviderScope(
