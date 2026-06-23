@@ -1,0 +1,64 @@
+import 'package:flutter/material.dart';
+
+import 'elvan_chattagam.dart';
+import '../kanini/elvan_kanini_utpakkach_chattagam.dart';
+import 'koorugal/elvan_pin_pothan.dart';
+
+/// A wrapper around [ElvanShell] exclusively designed for subpages (e.g. Settings, PDF Viewer).
+/// It inherently injects the [ElvanBackButton] into the shell's physics engine
+/// and disables the bottom navigation bar.
+class ElvanSubpageShell extends StatefulWidget {
+  const ElvanSubpageShell({
+    super.key,
+    required this.title,
+    required this.slivers,
+    this.navActions = const [],
+    this.startCollapsed = true,
+    this.backgroundColor,
+    this.hideHeaderOnDesktop = false,
+    this.contentPadding,
+  });
+
+  final String title;
+  final List<Widget> slivers;
+  final List<Widget> navActions;
+  final bool startCollapsed;
+  final Color? backgroundColor;
+  final bool hideHeaderOnDesktop;
+  final EdgeInsetsGeometry? contentPadding;
+
+  @override
+  State<ElvanSubpageShell> createState() => _ElvanSubpageShellState();
+}
+
+class _ElvanSubpageShellState extends State<ElvanSubpageShell> {
+  @override
+  Widget build(BuildContext context) {
+    // Use width-based detection instead of Platform checks so that resizing
+    // the window on desktop correctly switches between mobile and desktop shells.
+    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+
+    if (isDesktop) {
+      return ElvanDesktopSubpageShell(
+        title: widget.title,
+        slivers: widget.slivers,
+        backgroundColor: widget.backgroundColor,
+        hideHeaderOnDesktop: widget.hideHeaderOnDesktop,
+        contentPadding: widget.contentPadding,
+      );
+    }
+
+    // Mobile view uses the full ElvanShell with draggable physics
+    return ElvanShell(
+      title: widget.title,
+      showNavbar: false,
+      startCollapsed: widget.startCollapsed,
+      navActions: widget.navActions,
+      leadingWidget: const ElvanBackButton(),
+      showLeadingWidgetInExpandedBar: true,
+      slivers: widget.slivers,
+      backgroundColor: widget.backgroundColor,
+      syncWithGlobalHeader: false,
+    );
+  }
+}

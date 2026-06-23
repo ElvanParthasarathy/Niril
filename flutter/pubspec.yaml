@@ -24,14 +24,14 @@ dependencies:
   flutter_displaymode: ^0.7.0
   cached_network_image: ^3.4.1
   dio: ^5.9.2
-  share_plus: any
-  syncfusion_flutter_pdfviewer: any
-  device_info_plus: any
+  share_plus: ^13.0.0
+  syncfusion_flutter_pdfviewer: ^33.0.0
+  device_info_plus: ^13.0.0
   image_picker: ^1.2.2
 
   # Local Database (Drift / SQLite)
   drift: ^2.28.0
-  sqlite3_flutter_libs: ^0.6.0+eol
+  sqlite3_flutter_libs: ^0.6.0
   path_provider: ^2.1.5
   path: ^1.9.1
   web_smooth_scroll: ^2.0.0

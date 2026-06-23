@@ -9,3 +9,58 @@
 4. **No Direct English Transliterations**: Do not transliterate English words directly into Tamil script (e.g., do not use "கவுண்டி" for County, or "செஸ்" for Cess). Translate them into meaningful native Tamil words (e.g., மண்டலம் for County, மேல்வரி for Cess). 
    - *Exception*: Standard global acronyms like "GST" or "PDF" can be used as-is in English letters.
 5. **Add Grammar Markers**: Always add the correct Tamil conjunction markers (e.g., 'ப்') when combining words, like நிறுவனப் பெயர் (not நிறுவன பெயர்), வங்கிப் பெயர், கிளைப் பெயர்.
+
+## Tanglish Variable Naming Policy for UI/Keys
+1. **Use Navil Vili Transliteration**: When creating new variable names or localization keys (e.g., in Flutter), transliterate the Pure Tamil translation into English letters.
+2. **Allophony / Voicing Rules**: Retain natural phonetic softening for Tamil Stop Consonants (e.g., க inside a word becomes g not k, த becomes dh, ப becomes b). Example: மாம்பழம் -> maambazham, காகம் -> kaagam.
+3. **Compound Word Exceptions**: In compound words (புணர்ச்சி), the second word's starting consonant should remain unvoiced (hard). E.g., கை + பேசி = kaipaesi (NOT kaibaesi). மண் + பானை = manpaanai (NOT manbaanai). Use overrides when generating these.
+4. **Vowel Preservation (Nedil)**: Always preserve extended vowels correctly: ஆ -> aa, ஈ -> ee, ஊ -> oo, ஓ -> oa. E.g. ஓவியம் -> oaviyam.
+5. **Shrink Long Keys**: Do not use massive sentences as keys. Shrink them to 2-3 essential words (e.g., pattiyalGstElidhu).
+6. **Button Suffix**: If the key represents a button, always append Ptn (Pothan) at the end, replacing any Btn.
+
+## Standardized Database & Core Entity Names (Rulebook)
+To ensure absolute consistency across databases, JSON payloads, and core models, **ALWAYS** use the following strict Tanglish spellings for these specific concepts. DO NOT generate alternative spellings (like minnanchal, ovuru, or tholaipesi):
+- **Email**: `minnanjal` (மின்னஞ்சல்) [NOT minnanchal]
+- **Phone**: `tholaipaesi` (தொலைபேசி) [NOT tholaipesi]
+- **Logo / Image**: `oavuru` (ஓவுரு) [NOT ovuru]
+- **Wide Logo**: `agalaOavuru` (அகல ஓவுரு)
+- **Zip / PIN Code**: `anjalKuriyeedu` (அஞ்சல்குறியீடு) [NOT anchalkuriyeedu]
+- **Theme / Appearance Color**: `thoatraNiram` (தோற்ற நிறம்) [NOT thottranNiram]
+- **Header Format**: `thalaippuVadivu` (தலைப்பு வடிவு) [NOT thallaippuVadivu]
+- **Data / Details**: `tharavugal` (தரவுகள்) [NOT vivarangal]
+- **Settings**: `amaippugal` (அமைப்புகள்)
+- **Password**: `kadavuchol` (கடவுச்சொல்)
+- **Receipt / Invoice**: `patrucheettu` (பற்றுச்சீட்டு) [NOT raseedhu]
+
+## Project Architecture & File Naming Policy (Pure Tanglish)
+This project STRICTLY follows a Pure Tanglish (Navil Vili) folder and file architecture. Any new AI agent or Developer working on this codebase MUST abide by these translations when creating new files or folders.
+
+### Top-Level Structure (`lib/src/`)
+1. **`adippadai/` (Core)**: Fundamentals, base logic, databases, theme.
+2. **`cheyalpaadugal/` (Features)**: Encapsulated business logic and feature modules.
+3. **`koorugal/` (Widgets/Components)**: Shared/global UI elements.
+
+### Internal Folder Mappings (Inside Features)
+- **Presentation / View Layer**: `kaatchi/`
+- **Pages / Screens**: `thiraigal/`
+- **Widgets / Components**: `koorugal/`
+- **Models**: `tharavuru/`
+- **State**: `nilaimai/`
+- **Repositories**: `kalanjiyam/`
+- **Data Source**: `tharavu_moolam/`
+- **Desktop**: `kanini/`
+- **Mobile**: `kaipaesi/`
+- **Reports**: `arikkaigal/`
+- **Onboarding**: `varavaerpu_padigal/`
+
+### File Naming Convention
+When creating new files, use the Tanglish suffix:
+- Do NOT use `_page.dart` or `_screen.dart`. USE `_thirai.dart`.
+- Do NOT use `_widget.dart` or `_component.dart`. USE `_kooru.dart` or just a descriptive Tanglish name like `elvan_pothan.dart` (Elvan Button).
+- Do NOT use `_model.dart`. USE `_tharavuru.dart`.
+- Do NOT use `_dialog.dart` or `_modal.dart` or `_bottom_sheet.dart`. USE `_meladukku.dart` (Overlay).
+
+Example valid paths:
+- `lib/src/cheyalpaadugal/ullnuzhaivu/kaatchi/thiraigal/ullnuzhaivu_thirai.dart` (Login Screen)
+- `lib/src/koorugal/meladukkugal/elvan_azhippu_urudhi_meladukku.dart` (Delete Confirm Modal)
+- `lib/src/adippadai/tharavuthalam/app_database.dart` (Database - App layer)

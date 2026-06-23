@@ -1,36 +1,37 @@
 import 'package:flutter/cupertino.dart';
+import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'src/core/widgets/elvan_scroll_behavior.dart';
+import 'src/koorugal/podhu_koorugal/elvan_nagarvu_panbu.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'src/core/preferences_service.dart';
-import 'src/core/theme_provider.dart';
-import 'src/core/state/app_state.dart';
-import 'src/core/models/app_mode.dart';
-import 'src/localization/locale_provider.dart';
-import 'src/features/auth/presentation/mode_selector_screen.dart';
-import 'src/features/auth/presentation/pages/welcome_page.dart';
-import 'src/features/auth/presentation/pages/nalvaravu_welcome_page.dart';
-import 'src/core/database/app_database.dart';
-import 'src/core/services/niril_backup_service.dart';
-import 'src/features/settings/data/vaniga_tharavugal_provider.dart';
-import 'src/features/auth/presentation/pages/restore_page.dart';
-import 'src/features/auth/presentation/pages/permission_guard_screen.dart';
+import 'src/adippadai/preferences_service.dart';
+import 'src/adippadai/theme_provider.dart';
+import 'src/adippadai/nilaimai/app_state.dart';
+import 'src/adippadai/mozhiyaakkam/locale_provider.dart';
+import 'src/cheyalpaadugal/ullnuzhaivu/kaatchi/muraimai_thaervu_thirai.dart';
+import 'src/cheyalpaadugal/ullnuzhaivu/kaatchi/thiraigal/nalvaravu_thirai.dart';
+import 'src/cheyalpaadugal/ullnuzhaivu/kaatchi/thiraigal/nalvaravu_thirai_amaippu.dart';
+import 'src/adippadai/panigal/niril_backup_service.dart';
+import 'src/adippadai/panigal/elvan_pizhaipadhivu.dart';
+import 'src/cheyalpaadugal/ullnuzhaivu/kaatchi/thiraigal/permission_guard_thirai.dart';
 
-import 'src/features/shell/presentation/deferred_shell_loader.dart';
-import 'src/features/shell/presentation/niril_app_screen.dart';
+import 'src/cheyalpaadugal/chattagam/kaatchi/deferred_shell_loader.dart';
+import 'src/cheyalpaadugal/chattagam/kaatchi/niril_seyali_thirai.dart';
+import 'src/cheyalpaadugal/uruvakkunar_karuvigal/kaatchi/elvan_uruvakkunar_menu.dart';
 
+import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
-import 'package:window_manager/window_manager.dart';
-
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize global error logger
+  await ElvanPizhaipadhivu.initialize();
 
   // Force 120Hz display mode on supported Android devices (Samsung, OnePlus, Xiaomi)
   if (Platform.isAndroid) {
@@ -58,15 +59,48 @@ void main() async {
   // Initialize backup service (தரவு பாதுகாப்பு)
   final backupService = await NirilBackupService.initialize();
 
-  runApp(
-    // Wrap the entire app with ProviderScope for Riverpod state management
-    ProviderScope(
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(sharedPrefs),
-        backupServiceProvider.overrideWithValue(backupService),
-      ],
-      child: const ElvanNirilApp(),
-    ),
+  // ── Global Error Safety Net ──
+  // 1. Catch all Flutter framework errors (layout, rendering, gestures)
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details); // Keep default red screen in debug
+    ElvanPizhaipadhivu.logError(
+      details.exception,
+      stackTrace: details.stack,
+      context: 'FlutterError: ${details.library}',
+    );
+  };
+
+  // 2. Catch platform channel errors (method channel failures, etc.)
+  PlatformDispatcher.instance.onError = (error, stack) {
+    ElvanPizhaipadhivu.logError(
+      error,
+      stackTrace: stack,
+      context: 'PlatformDispatcher',
+    );
+    return true; // Prevent the error from propagating
+  };
+
+  // 3. Catch all remaining async errors (Future.then failures, etc.)
+  runZonedGuarded(
+    () {
+      runApp(
+        // Wrap the entire app with ProviderScope for Riverpod state management
+        ProviderScope(
+          overrides: [
+            sharedPreferencesProvider.overrideWithValue(sharedPrefs),
+            backupServiceProvider.overrideWithValue(backupService),
+          ],
+          child: const ElvanNirilApp(),
+        ),
+      );
+    },
+    (error, stack) {
+      ElvanPizhaipadhivu.logError(
+        error,
+        stackTrace: stack,
+        context: 'runZonedGuarded (uncaught async error)',
+      );
+    },
   );
 }
 
@@ -79,7 +113,10 @@ class ElvanNirilApp extends ConsumerWidget {
     final locale = ref.watch(localeProvider);
 
     return MaterialApp(
-      title: 'Elvan Niril Next-Gen',
+      builder: (context, child) {
+        return ElvanUruvakkunarMenu(child: child!);
+      },
+      onGenerateTitle: (context) => K.elvanNiril.tr(context, ref),
       debugShowCheckedModeBanner: false,
       scrollBehavior: ElvanScrollBehavior(),
       themeMode: Platform.isWindows ? ThemeMode.dark : themeMode,
@@ -174,11 +211,18 @@ class ElvanNirilApp extends ConsumerWidget {
                       },
                     );
                   } else {
-                    // 4. Main App Dashboard (Deferred to guarantee smooth 60fps mode transition)
-                    child = const DeferredShellLoader(
-                      key: ValueKey('shell_demo'),
-                      child: NirilAppScreen(),
-                    );
+                    // 3.5. Ensure the chosen mode actually has a profile setup
+                    final hasProfileForMode = ref.watch(hasProfileForCurrentModeProvider);
+                    if (!hasProfileForMode) {
+                      // Routes directly to the single business creation page
+                      child = const NalvaravuWelcomePage(key: ValueKey('setup_missing'));
+                    } else {
+                      // 4. Main App Dashboard (Deferred to guarantee smooth 60fps mode transition)
+                      child = const DeferredShellLoader(
+                        key: ValueKey('shell_demo'),
+                        child: NirilAppScreen(),
+                      );
+                    }
                   }
                 }
               }
