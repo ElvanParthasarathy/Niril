@@ -26,7 +26,7 @@ class ElvanEditorShell extends StatelessWidget {
             child: CupertinoButton(
               padding: EdgeInsets.zero,
               onPressed: onSave,
-              child: const Text('Save',
+              child: Text('saveBtn'.tr(context, ref),
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ),

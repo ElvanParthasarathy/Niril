@@ -7,10 +7,10 @@ class CoolieInvoiceEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElvanEditorShell(
-      title: 'New Coolie Invoice',
+      title: 'newCoolieInvoiceTitle'.tr(context, ref),
       onSave: () {},
       child: const Center(
-        child: Text('Coolie Invoice Editor (Labor Mode)'),
+        child: Text('coolieInvoiceEditorLabel'.tr(context, ref)),
       ),
     );
   }

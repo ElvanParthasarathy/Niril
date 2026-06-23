@@ -14,7 +14,7 @@ class SeyaliPatriPage extends ConsumerWidget {
       slivers: const [
         SliverFillRemaining(
           child: Center(
-            child: Text('About App (Dummy)'),
+            child: Text('dummyAboutApp'.tr(context, ref)),
           ),
         ),
       ],

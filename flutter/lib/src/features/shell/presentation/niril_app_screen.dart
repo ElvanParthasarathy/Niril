@@ -422,7 +422,7 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
                           .read(vanigaTharavugalListProvider.notifier)
                           .seedData();
                     },
-                    label: const Text('Dev: Seed'),
+                    label: Text('devSeedData'.tr(context, ref)),
                     icon: const Icon(CupertinoIcons.rocket),
                     backgroundColor: Colors.green,
                   ),
@@ -439,7 +439,7 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
                       Navigator.popUntil(
                           context, (route) => route.isFirst);
                     },
-                    label: const Text('Dev: Erase'),
+                    label: Text('devEraseData'.tr(context, ref)),
                     icon: const Icon(CupertinoIcons.trash),
                     backgroundColor: Colors.red,
                   ),

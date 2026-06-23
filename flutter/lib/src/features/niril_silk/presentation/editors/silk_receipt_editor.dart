@@ -7,10 +7,10 @@ class SilkReceiptEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElvanEditorShell(
-      title: 'New Silk Receipt',
+      title: 'newSilkReceiptTitle'.tr(context, ref),
       onSave: () {},
       child: const Center(
-        child: Text('Silk Receipt Editor'),
+        child: Text('silkReceiptEditorLabel'.tr(context, ref)),
       ),
     );
   }

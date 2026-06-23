@@ -7,10 +7,10 @@ class CoolieItemEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElvanEditorShell(
-      title: 'New Coolie Item',
+      title: 'newCoolieItemTitle'.tr(context, ref),
       onSave: () {},
       child: const Center(
-        child: Text('Coolie Item Editor'),
+        child: Text('coolieItemEditorLabel'.tr(context, ref)),
       ),
     );
   }

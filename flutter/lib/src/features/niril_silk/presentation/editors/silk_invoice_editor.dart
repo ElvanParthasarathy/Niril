@@ -7,10 +7,10 @@ class SilkInvoiceEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElvanEditorShell(
-      title: 'New Silk Invoice',
+      title: 'newSilkInvoiceTitle'.tr(context, ref),
       onSave: () {},
       child: const Center(
-        child: Text('Silk Invoice Editor (GST Mode)'),
+        child: Text('silkInvoiceEditorLabel'.tr(context, ref)),
       ),
     );
   }

@@ -7,10 +7,10 @@ class SilkItemEditor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElvanEditorShell(
-      title: 'New Silk Item',
+      title: 'newSilkItemTitle'.tr(context, ref),
       onSave: () {},
       child: const Center(
-        child: Text('Silk Item Editor'),
+        child: Text('silkItemEditorLabel'.tr(context, ref)),
       ),
     );
   }

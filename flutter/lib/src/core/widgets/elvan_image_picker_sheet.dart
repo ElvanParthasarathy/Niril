@@ -13,7 +13,7 @@ Future<void> showElvanImagePickerSheet({
 
   return showElvanActionSheet<void>(
     context: context,
-    title: 'selectImageSource'
+    title: 'selectImageSource'.tr(context, ref)
         .tr(context, ref), // We will fallback to english if translation missing
     cancelText: 'cancel'.tr(context, ref),
     confirmText: '', // No confirm button, using customContent

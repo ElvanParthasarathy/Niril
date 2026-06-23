@@ -659,7 +659,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                     keyPrefix: 'gstin',
                     isEditing: _editingSection == 'gstin',
                     editChild: _buildEditContainer(
-                      title: 'GSTIN / Tax ID',
+                      title: 'gstinTaxId'.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
                           label: 'GSTIN / Tax ID',
@@ -671,7 +671,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                       onSave: () => _saveSingleField(currentProfile, 'gstin'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
-                      title: 'GSTIN / Tax ID',
+                      title: 'gstinTaxId'.tr(context, ref),
                       primaryValue: currentProfile.gstin,
                       onEdit: () =>
                           _beginEditSingle('gstin', currentProfile.gstin),

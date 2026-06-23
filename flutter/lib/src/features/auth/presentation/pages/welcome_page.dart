@@ -38,7 +38,7 @@ class WelcomePage extends ConsumerWidget {
                   ref.read(isLoggedInProvider.notifier).setLoggedIn(true);
                 }
               },
-              label: const Text('Seed App (Dev)'),
+              label: const Text('seedAppDev'.tr(context, ref)),
               icon: const Icon(Icons.bug_report),
             )
           : null,

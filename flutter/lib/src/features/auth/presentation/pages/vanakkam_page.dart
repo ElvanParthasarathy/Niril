@@ -34,7 +34,7 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
         (_needsCoolie && _coolieBusinessName.trim().isEmpty)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('Please enter all required business names.')),
+            content: Text('pleaseEnterRequiredBusinessNames'.tr(context, ref))),
       );
       return;
     }

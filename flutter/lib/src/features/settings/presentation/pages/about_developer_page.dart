@@ -14,7 +14,7 @@ class AboutDeveloperPage extends ConsumerWidget {
       slivers: const [
         SliverFillRemaining(
           child: Center(
-            child: Text('About Developer (Dummy)'),
+            child: Text('dummyAboutDeveloper'.tr(context, ref)),
           ),
         ),
       ],
