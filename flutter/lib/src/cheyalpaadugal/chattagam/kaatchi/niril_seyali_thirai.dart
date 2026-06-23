@@ -33,6 +33,7 @@ import '../../niril_kooli/kaatchi/thiruthi/niril_kooli_vanigar_thiruthi.dart';
 import '../../niril_kooli/kaatchi/thiruthi/niril_kooli_porul_thiruthi.dart';
 
 import '../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
+import '../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
 
 import '../../amaippugal/kaatchi/amaippugal_thirai.dart';
 import '../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
@@ -93,8 +94,14 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
   }
 
   void _onSelectTapped() {
-    ref.read(porulSelectionModeProvider.notifier).state = true;
-    ref.read(selectedPorulIdsProvider.notifier).state = {};
+    final dest = ref.read(nirilNavigationProvider).destination;
+    if (dest == NirilDestination.vanigar) {
+      ref.read(vanigarSelectionModeProvider.notifier).state = true;
+      ref.read(selectedVanigarIdsProvider.notifier).state = {};
+    } else {
+      ref.read(porulSelectionModeProvider.notifier).state = true;
+      ref.read(selectedPorulIdsProvider.notifier).state = {};
+    }
   }
 
   // ── Mobile nav items (4 tabs) ──────────────────────────────────────
