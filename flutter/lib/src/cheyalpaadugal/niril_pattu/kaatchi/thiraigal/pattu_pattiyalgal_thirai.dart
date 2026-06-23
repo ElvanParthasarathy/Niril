@@ -11,6 +11,7 @@ import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../koorugal/meladukkugal/elvan_cheyal_meladukku.dart';
 import '../../../chattagam/kaatchi/koorugal/elvan_uyir_valai.dart';
 import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
+import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 import '../thiruthi/niril_pattu_pattiyal_thiruthi.dart';
 
 /// Silk invoice list — real DB-backed view.
@@ -303,7 +304,7 @@ class _SelectionBar extends ConsumerWidget {
 
 // ── Silk Invoice Card ───────────────────────────────────────────────────────
 
-class _SilkPatrucheettuCard extends StatelessWidget {
+class _SilkPatrucheettuCard extends ConsumerWidget {
   const _SilkPatrucheettuCard({
     required this.pattiyal,
     required this.isDark,
@@ -325,7 +326,14 @@ class _SilkPatrucheettuCard extends StatelessWidget {
   final VoidCallback onLongPress;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Watch payment status reactively
+    final paidAsync = ref.watch(paidAmountProvider(pattiyal.id));
+    final paid = paidAsync.value ?? 0.0;
+    final total = pattiyal.mothaThogai;
+    final isPaid = paid >= total && total > 0;
+    final isPartial = paid > 0 && paid < total;
+
     return GestureDetector(
       onTap: onTap,
       onLongPress: onLongPress,
@@ -402,18 +410,63 @@ class _SilkPatrucheettuCard extends StatelessWidget {
                     ),
                   ],
                   const SizedBox(height: 3),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Text(
-                      currencyFormat.format(pattiyal.mothaThogai),
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: isDark
-                            ? Colors.blue.shade200
-                            : Colors.blue.shade700,
+                  Row(
+                    children: [
+                      // Payment status badge
+                      if (isPaid)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.green.withValues(alpha: 0.15)
+                                : Colors.green.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            'Paid ✓',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: isDark
+                                  ? Colors.green.shade300
+                                  : Colors.green.shade700,
+                            ),
+                          ),
+                        )
+                      else if (isPartial)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.orange.withValues(alpha: 0.15)
+                                : Colors.orange.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            'Partial',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: isDark
+                                  ? Colors.orange.shade300
+                                  : Colors.orange.shade700,
+                            ),
+                          ),
+                        ),
+                      const Spacer(),
+                      Text(
+                        currencyFormat.format(pattiyal.mothaThogai),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: isDark
+                              ? Colors.blue.shade200
+                              : Colors.blue.shade700,
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),

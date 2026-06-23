@@ -11,6 +11,7 @@ import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../koorugal/meladukkugal/elvan_cheyal_meladukku.dart';
 import '../../../chattagam/kaatchi/koorugal/elvan_uyir_valai.dart';
 import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
+import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 import '../thiruthi/niril_kooli_pattiyal_thiruthi.dart';
 
 /// Coolie invoice list — real DB-backed view.
@@ -303,7 +304,7 @@ class _SelectionBar extends ConsumerWidget {
 
 // ── Coolie Invoice Card ─────────────────────────────────────────────────────
 
-class _CooliePatrucheettuCard extends StatelessWidget {
+class _CooliePatrucheettuCard extends ConsumerWidget {
   const _CooliePatrucheettuCard({
     required this.pattiyal,
     required this.isDark,
@@ -325,7 +326,14 @@ class _CooliePatrucheettuCard extends StatelessWidget {
   final VoidCallback onLongPress;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Watch payment status reactively
+    final paidAsync = ref.watch(paidAmountProvider(pattiyal.id));
+    final paid = paidAsync.value ?? 0.0;
+    final total = pattiyal.mothaThogai;
+    final isPaid = paid >= total && total > 0;
+    final isPartial = paid > 0 && paid < total;
+
     return GestureDetector(
       onTap: onTap,
       onLongPress: onLongPress,
@@ -425,6 +433,52 @@ class _CooliePatrucheettuCard extends StatelessWidget {
                           ),
                         ),
                       ),
+                      // Payment status badge
+                      if (isPaid) ...[
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.green.withValues(alpha: 0.15)
+                                : Colors.green.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            'Paid ✓',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: isDark
+                                  ? Colors.green.shade300
+                                  : Colors.green.shade700,
+                            ),
+                          ),
+                        ),
+                      ] else if (isPartial) ...[
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.blue.withValues(alpha: 0.15)
+                                : Colors.blue.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            'Partial',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: isDark
+                                  ? Colors.blue.shade300
+                                  : Colors.blue.shade700,
+                            ),
+                          ),
+                        ),
+                      ],
                       const Spacer(),
                       Text(
                         currencyFormat.format(pattiyal.mothaThogai),

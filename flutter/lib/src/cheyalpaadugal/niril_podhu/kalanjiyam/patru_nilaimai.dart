@@ -47,3 +47,12 @@ final patruSelectionModeProvider = StateProvider<bool>((ref) => false);
 
 /// Set of currently selected receipt IDs.
 final selectedPatruIdsProvider = StateProvider<Set<int>>((ref) => {});
+
+// ── Invoice Payment Status ──────────────────────────────────────────────────
+
+/// Per-invoice paid amount (reactive stream).
+/// Used by invoice list cards to show payment status badges.
+final paidAmountProvider = StreamProvider.family<double, int>((ref, pattiyalId) {
+  final kalanjiyam = ref.watch(patruKalanjiyamProvider);
+  return kalanjiyam.watchPaidAmount(pattiyalId);
+});
