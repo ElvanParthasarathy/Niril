@@ -40,7 +40,7 @@ const Map<String, String> en = {
   'desc_security': 'Clear cache, Account security',
   'desc_about': 'Learn more about Elvan',
   'logout_desc': 'Logout from the application.',
-  'backup_now': 'Backup Now',
+  'backup_now': 'Backup Data',
   'backup_now_desc': 'Manually update your backup file.',
   'backup_now_title': 'Backup Database',
   'backup_now_btn': 'Backup Now',
@@ -51,7 +51,7 @@ const Map<String, String> en = {
   // ========================================
   // Merchants & Customers
   // ========================================
-  'merchants': 'Merchants',
+  'merchants': 'Merchant',
   'email': 'Email',
   'addClient': 'Add Merchant',
   'oor': 'City',
@@ -68,10 +68,10 @@ const Map<String, String> en = {
   // ========================================
   // Inventory & Items
   // ========================================
-  'inventory': 'Products',
+  'inventory': 'Product',
   'addProductBtn': 'Add Product',
   'showItemizedGstTable': 'Show GST splits in table',
-  'invoices': 'Invoices',
+  'invoices': 'Invoice',
   'newBill': 'New Bill',
   'receipt': 'Receipt',
   'savedSuccessfully': 'Saved successfully',
@@ -93,7 +93,7 @@ const Map<String, String> en = {
   'cancelBtn': 'Cancel',
   'deleteBtn': 'Delete',
   'saveBtn': 'Save',
-  'aakku': 'Create',
+  'aakku': 'Make',
   'noLogo': 'No Logo',
   'noSignature': 'No Signature',
   'createBtn': 'Create',
