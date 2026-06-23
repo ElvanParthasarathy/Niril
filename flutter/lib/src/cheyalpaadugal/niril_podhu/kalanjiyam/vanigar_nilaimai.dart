@@ -22,7 +22,7 @@ final vanigargalStreamProvider = StreamProvider<List<VanigarEntry>>((ref) {
   final kalanjiyam = ref.watch(vanigarKalanjiyamProvider);
   final mode = ref.watch(appModeProvider);
 
-  final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'gst';
+  final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
   return kalanjiyam.watchAllVanigargal(seyaliVagai);
 });
 
@@ -47,6 +47,6 @@ final deletedVanigargalStreamProvider =
   final kalanjiyam = ref.watch(vanigarKalanjiyamProvider);
   final mode = ref.watch(appModeProvider);
 
-  final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'gst';
+  final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
   return kalanjiyam.watchDeletedVanigargal(seyaliVagai);
 });

@@ -128,7 +128,7 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
 
     kalanjiyam.saveVanigar(
       id: _isEditing ? widget.vanigar!.id : null,
-      seyaliVagai: 'gst',
+      seyaliVagai: 'silk',
       peyar: _peyar,
       mugavari: _mugavari,
       oor: _oor,

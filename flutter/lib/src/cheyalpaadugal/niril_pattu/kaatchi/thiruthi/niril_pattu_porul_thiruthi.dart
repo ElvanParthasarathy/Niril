@@ -71,7 +71,7 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
 
     kalanjiyam.savePorul(
       id: _isEditing ? widget.product!.id : null,
-      seyaliVagai: 'gst',
+      seyaliVagai: 'silk',
       porulPeyar: _porulPeyar,
       hsnCode: _hsnController.text.trim(),
       vilai: double.tryParse(_vilaiController.text) ?? 0.0,

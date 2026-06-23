@@ -37,7 +37,7 @@ class VanigaTharavugalTable extends Table {
   // Primary key
   IntColumn get id => integer().autoIncrement()();
 
-  // App mode: 'gst' or 'coolie'
+  // App mode: 'silk' or 'coolie'
   TextColumn get seyaliVagai => text()();
 
   // ── மொழி அமைப்பு (Language Config) ──
@@ -100,7 +100,7 @@ class VanigaTharavugalTable extends Table {
 @DataClassName('VanigarEntry')
 class VanigarTable extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get seyaliVagai => text()(); // 'gst' or 'coolie'
+  TextColumn get seyaliVagai => text()(); // 'silk' or 'coolie'
 
   // ── Bilingual fields (stored as JSON map via MozhiMapConverter) ──
   TextColumn get peyar =>

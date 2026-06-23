@@ -22,7 +22,7 @@ final porulgalStreamProvider = StreamProvider<List<PorulEntry>>((ref) {
   final kalanjiyam = ref.watch(porulKalanjiyamProvider);
   final mode = ref.watch(appModeProvider);
 
-  final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'gst';
+  final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
   return kalanjiyam.watchAllPorulgal(seyaliVagai);
 });
 
@@ -46,6 +46,6 @@ final deletedPorulgalStreamProvider = StreamProvider<List<PorulEntry>>((ref) {
   final kalanjiyam = ref.watch(porulKalanjiyamProvider);
   final mode = ref.watch(appModeProvider);
 
-  final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'gst';
+  final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
   return kalanjiyam.watchDeletedPorulgal(seyaliVagai);
 });
