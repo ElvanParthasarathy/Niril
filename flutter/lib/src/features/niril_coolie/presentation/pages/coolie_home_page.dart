@@ -20,7 +20,7 @@ class CoolieHomePage extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Center(
-              child: Text('Coolie Home Page - Item $index',
+              child: Text('${'dummyCoolieHome'.tr(context, ref)} - Item $index',
                   style: TextStyle(
                       color: Colors.orange.withOpacity(0.8), fontSize: 16)),
             ),

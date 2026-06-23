@@ -662,7 +662,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                       title: 'gstinTaxId'.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
-                          label: 'GSTIN / Tax ID',
+                          label: 'gstinTaxId'.tr(context, ref),
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                         ),
