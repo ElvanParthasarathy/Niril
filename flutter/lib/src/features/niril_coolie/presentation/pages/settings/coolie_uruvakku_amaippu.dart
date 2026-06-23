@@ -9,6 +9,7 @@ import '../../../../shell/presentation/mobile/elvan_subpage_shell.dart';
 import '../../../../settings/presentation/widgets/elvan_settings_section.dart';
 import '../../../../settings/presentation/widgets/elvan_settings_edit_card.dart';
 import '../../../../settings/presentation/widgets/elvan_settings_controls.dart';
+import '../../../../settings/data/vaniga_tharavugal_provider.dart';
 
 class CoolieUruvakkuAmaippuPage extends ConsumerStatefulWidget {
   const CoolieUruvakkuAmaippuPage({super.key});
@@ -24,7 +25,6 @@ class _CoolieUruvakkuAmaippuPageState
   String _tempPrimaryLanguage = 'Tamil';
 
   bool _isEditingTheme = false;
-  String _themeColor = '#388e3c'; // Green
   String _tempThemeColor = '#388e3c';
 
   String getThemeName(String val) {
@@ -268,8 +268,13 @@ class _CoolieUruvakkuAmaippuPageState
               const SizedBox(width: 8),
               FilledButton(
                 onPressed: () {
+                  final profile = ref.read(vanigaTharavugalProvider);
+                  if (profile != null) {
+                    final updatedProfile = profile.copyWith();
+                    updatedProfile.thottranNiram = _tempThemeColor;
+                    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+                  }
                   setState(() {
-                    _themeColor = _tempThemeColor;
                     _isEditingTheme = false;
                   });
                   ElvanSnackbar.show(
@@ -296,6 +301,10 @@ class _CoolieUruvakkuAmaippuPageState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final profile = ref.watch(vanigaTharavugalProvider);
+    final themeColor = profile?.thottranNiram.isNotEmpty == true 
+        ? profile!.thottranNiram 
+        : '#388e3c';
 
     return ElvanSubpageShell(
       title: 'uruvakku'.tr(context, ref),
@@ -378,14 +387,14 @@ class _CoolieUruvakkuAmaippuPageState
                                       width: 12,
                                       height: 12,
                                       decoration: BoxDecoration(
-                                        color: Color(int.parse(_themeColor
+                                        color: Color(int.parse(themeColor
                                             .replaceAll('#', '0xFF'))),
                                         shape: BoxShape.circle,
                                       ),
                                     ),
                                     const SizedBox(width: 8),
                                     Text(
-                                      getThemeName(_themeColor),
+                                      getThemeName(themeColor),
                                       style: TextStyle(
                                         fontSize: 14,
                                         color: Theme.of(context)
@@ -402,7 +411,7 @@ class _CoolieUruvakkuAmaippuPageState
                           IconButton(
                             onPressed: () {
                               setState(() {
-                                _tempThemeColor = _themeColor;
+                                _tempThemeColor = themeColor;
                                 _isEditingTheme = true;
                               });
                             },
