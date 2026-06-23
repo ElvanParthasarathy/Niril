@@ -30,3 +30,11 @@ final porulgalStreamProvider = StreamProvider<List<PorulEntry>>((ref) {
 
 /// Holds the product currently being edited (null = creating new).
 final editingPorulProvider = StateProvider<PorulEntry?>((ref) => null);
+
+// ── Selection Mode ──────────────────────────────────────────────────────────
+
+/// Whether the product list is in selection mode.
+final porulSelectionModeProvider = StateProvider<bool>((ref) => false);
+
+/// Set of currently selected product IDs.
+final selectedPorulIdsProvider = StateProvider<Set<int>>((ref) => {});

@@ -8,6 +8,7 @@ import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/nilaimai/thaedal_nilaimai.dart';
 import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../adippadai/vazhikaattal/niril_nav.dart';
+import '../../../../koorugal/meladukkugal/elvan_cheyal_meladukku.dart';
 import '../../../chattagam/kaatchi/koorugal/elvan_uyir_valai.dart';
 import '../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 import '../thiruthi/niril_pattu_porul_thiruthi.dart';
@@ -22,6 +23,8 @@ class SilkItemsPage extends ConsumerWidget {
     final primaryLang = ref.watch(primaryLanguageProvider);
     final secondaryLang = ref.watch(secondaryLanguageProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isSelecting = ref.watch(porulSelectionModeProvider);
+    final selectedIds = ref.watch(selectedPorulIdsProvider);
 
     return porulgalAsync.when(
       loading: () => const SliverFillRemaining(
@@ -81,64 +84,203 @@ class SilkItemsPage extends ConsumerWidget {
 
         return SliverPadding(
           padding: const EdgeInsets.only(left: 16, right: 16, bottom: 120),
-          sliver: ElvanResponsiveGrid(
-            itemCount: filtered.length,
-            desktopCrossAxisCount: 2,
-            childAspectRatio: 2.8,
-            mobileItemHeight: 100,
-            itemBuilder: (context, index) {
-              final porul = filtered[index];
-              return _SilkPorulCard(
-                porul: porul,
-                primaryLang: primaryLang,
-                secondaryLang: secondaryLang,
-                isDark: isDark,
-                onTap: () {
-                  NirilNav.push(
-                    context,
-                    SilkItemEditor(product: porul),
+          sliver: SliverMainAxisGroup(
+            slivers: [
+              // ── Selection Bar ──
+              if (isSelecting)
+                SliverToBoxAdapter(
+                  child: _SelectionBar(
+                    selectedCount: selectedIds.length,
+                    isDark: isDark,
+                    onSelectAll: () {
+                      ref.read(selectedPorulIdsProvider.notifier).state =
+                          filtered.map((p) => p.id).toSet();
+                    },
+                    onDelete: () {
+                      _showBulkDeleteConfirm(
+                          context, ref, selectedIds.toList());
+                    },
+                    onCancel: () {
+                      ref.read(porulSelectionModeProvider.notifier).state =
+                          false;
+                      ref.read(selectedPorulIdsProvider.notifier).state = {};
+                    },
+                  ),
+                ),
+
+              // ── Product Grid ──
+              ElvanResponsiveGrid(
+                itemCount: filtered.length,
+                desktopCrossAxisCount: 2,
+                childAspectRatio: 2.8,
+                mobileItemHeight: 100,
+                itemBuilder: (context, index) {
+                  final porul = filtered[index];
+                  final isSelected = selectedIds.contains(porul.id);
+
+                  return _SilkPorulCard(
+                    porul: porul,
+                    primaryLang: primaryLang,
+                    secondaryLang: secondaryLang,
+                    isDark: isDark,
+                    isSelecting: isSelecting,
+                    isSelected: isSelected,
+                    onTap: () {
+                      if (isSelecting) {
+                        _toggleSelection(ref, porul.id, selectedIds);
+                      } else {
+                        NirilNav.push(
+                          context,
+                          SilkItemEditor(product: porul),
+                        );
+                      }
+                    },
+                    onLongPress: () {
+                      if (!isSelecting) {
+                        ref.read(porulSelectionModeProvider.notifier).state =
+                            true;
+                        ref.read(selectedPorulIdsProvider.notifier).state = {
+                          porul.id
+                        };
+                      }
+                    },
                   );
                 },
-                onLongPress: () {
-                  _showDeleteDialog(context, ref, porul);
-                },
-              );
-            },
+              ),
+            ],
           ),
         );
       },
     );
   }
 
-  void _showDeleteDialog(
-      BuildContext context, WidgetRef ref, PorulEntry porul) {
-    final primaryLang = ref.read(primaryLanguageProvider);
-    final name = porul.porulPeyar[primaryLang] ?? '';
+  void _toggleSelection(WidgetRef ref, int id, Set<int> current) {
+    final updated = Set<int>.from(current);
+    if (updated.contains(id)) {
+      updated.remove(id);
+    } else {
+      updated.add(id);
+    }
+    ref.read(selectedPorulIdsProvider.notifier).state = updated;
 
-    showCupertinoDialog(
+    if (updated.isEmpty) {
+      ref.read(porulSelectionModeProvider.notifier).state = false;
+    }
+  }
+
+  void _showBulkDeleteConfirm(
+      BuildContext context, WidgetRef ref, List<int> ids) {
+    if (ids.isEmpty) return;
+
+    showElvanActionSheet(
       context: context,
-      builder: (ctx) => CupertinoAlertDialog(
-        title: Text(K.porulAzhikkappattadhu.tr(context, ref)),
-        content: Text(name),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            child: Text(K.illai.tr(context, ref)),
-            onPressed: () => Navigator.of(ctx).pop(),
-          ),
-          CupertinoDialogAction(
-            isDestructiveAction: true,
-            child: Text(K.neekkuPtn.tr(context, ref)),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(porulKalanjiyamProvider).deletePorul(porul.id);
-            },
-          ),
-        ],
+      title: '${ids.length} ${K.porulAzhikkappattadhu.tr(context, ref)}',
+      cancelText: K.kaividuPtn.tr(context, ref),
+      confirmText: K.neekkuPtn.tr(context, ref),
+      confirmColor: Colors.red,
+      onConfirm: () {
+        ref.read(porulKalanjiyamProvider).bulkDeletePorulgal(ids);
+        ref.read(porulSelectionModeProvider.notifier).state = false;
+        ref.read(selectedPorulIdsProvider.notifier).state = {};
+      },
+    );
+  }
+}
+
+// ── Selection Bar Widget ────────────────────────────────────────────────────
+
+class _SelectionBar extends ConsumerWidget {
+  const _SelectionBar({
+    required this.selectedCount,
+    required this.isDark,
+    required this.onSelectAll,
+    required this.onDelete,
+    required this.onCancel,
+  });
+
+  final int selectedCount;
+  final bool isDark;
+  final VoidCallback onSelectAll;
+  final VoidCallback onDelete;
+  final VoidCallback onCancel;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.06)
+              : Colors.black.withValues(alpha: 0.04),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            GestureDetector(
+              onTap: onSelectAll,
+              child: Row(
+                children: [
+                  Icon(
+                    selectedCount > 0
+                        ? CupertinoIcons.checkmark_square_fill
+                        : CupertinoIcons.square,
+                    size: 22,
+                    color: selectedCount > 0
+                        ? Theme.of(context).colorScheme.primary
+                        : (isDark ? Colors.white38 : Colors.black38),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '$selectedCount ${K.thaerndhedu.tr(context, ref)}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.white70 : Colors.black54,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Spacer(),
+            GestureDetector(
+              onTap: onCancel,
+              child: Icon(
+                CupertinoIcons.xmark_circle_fill,
+                size: 24,
+                color: isDark ? Colors.white38 : Colors.black38,
+              ),
+            ),
+            const SizedBox(width: 12),
+            GestureDetector(
+              onTap: selectedCount > 0 ? onDelete : null,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: selectedCount > 0
+                      ? Colors.red.withValues(alpha: 0.12)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Icon(
+                  CupertinoIcons.trash,
+                  size: 20,
+                  color: selectedCount > 0
+                      ? Colors.red
+                      : (isDark ? Colors.white24 : Colors.black26),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
+// ── Product Card Widget ─────────────────────────────────────────────────────
 
 class _SilkPorulCard extends StatelessWidget {
   const _SilkPorulCard({
@@ -146,6 +288,8 @@ class _SilkPorulCard extends StatelessWidget {
     required this.primaryLang,
     required this.secondaryLang,
     required this.isDark,
+    required this.isSelecting,
+    required this.isSelected,
     required this.onTap,
     required this.onLongPress,
   });
@@ -154,6 +298,8 @@ class _SilkPorulCard extends StatelessWidget {
   final String primaryLang;
   final String secondaryLang;
   final bool isDark;
+  final bool isSelecting;
+  final bool isSelected;
   final VoidCallback onTap;
   final VoidCallback onLongPress;
 
@@ -172,100 +318,144 @@ class _SilkPorulCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.06)
-                : Colors.black.withValues(alpha: 0.04),
+            color: isSelected
+                ? Theme.of(context)
+                    .colorScheme
+                    .primary
+                    .withValues(alpha: 0.12)
+                : (isDark
+                    ? Colors.white.withValues(alpha: 0.06)
+                    : Colors.black.withValues(alpha: 0.04)),
             borderRadius: BorderRadius.circular(16),
+            border: isSelected
+                ? Border.all(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .primary
+                        .withValues(alpha: 0.3),
+                    width: 1.5,
+                  )
+                : null,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Row(
             children: [
-              // Row 1: Product name + measure pill
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      primary,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // Measure type pill
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: isWeight
-                          ? Colors.orange.withValues(alpha: 0.12)
-                          : Colors.blue.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: Text(
-                      isWeight ? 'kg' : 'Nos',
-                      style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: isWeight
-                            ? Colors.orange.shade700
-                            : Colors.blue.shade700,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              if (secondary.isNotEmpty) ...[
-                const SizedBox(height: 2),
-                Text(
-                  secondary,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: isDark ? Colors.white54 : Colors.black45,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+              // Checkbox (only in selection mode)
+              if (isSelecting) ...[
+                Icon(
+                  isSelected
+                      ? CupertinoIcons.checkmark_square_fill
+                      : CupertinoIcons.square,
+                  size: 22,
+                  color: isSelected
+                      ? Theme.of(context).colorScheme.primary
+                      : (isDark ? Colors.white38 : Colors.black38),
                 ),
+                const SizedBox(width: 12),
               ],
 
-              const SizedBox(height: 6),
+              // Product details
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Row 1: Product name + measure pill
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            primary,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: isWeight
+                                ? Colors.orange.withValues(alpha: 0.12)
+                                : Colors.blue.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Text(
+                            isWeight ? 'kg' : 'Nos',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: isWeight
+                                  ? Colors.orange.shade700
+                                  : Colors.blue.shade700,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
 
-              // Row 2: HSN + Tax % + Rate
-              Row(
-                children: [
-                  if (porul.hsnCode.isNotEmpty) ...[
-                    Text(
-                      'HSN: ${porul.hsnCode}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: isDark ? Colors.white38 : Colors.black38,
+                    if (secondary.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        secondary,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: isDark ? Colors.white54 : Colors.black45,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
+                    ],
+
+                    const SizedBox(height: 6),
+
+                    // Row 2: HSN + Tax % + Rate
+                    Row(
+                      children: [
+                        if (porul.hsnCode.isNotEmpty) ...[
+                          Text(
+                            'HSN: ${porul.hsnCode}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isDark ? Colors.white38 : Colors.black38,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                        ],
+                        Text(
+                          'GST: ${porul.variVeetham.toStringAsFixed(0)}%',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isDark ? Colors.white38 : Colors.black38,
+                          ),
+                        ),
+                        const Spacer(),
+                        if (porul.vilai > 0)
+                          Text(
+                            '₹${porul.vilai.toStringAsFixed(0)}',
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                      ],
                     ),
-                    const SizedBox(width: 12),
                   ],
-                  Text(
-                    'GST: ${porul.variVeetham.toStringAsFixed(0)}%',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isDark ? Colors.white38 : Colors.black38,
-                    ),
-                  ),
-                  const Spacer(),
-                  if (porul.vilai > 0)
-                    Text(
-                      '₹${porul.vilai.toStringAsFixed(0)}',
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                ],
+                ),
               ),
+
+              // Delete icon (only in selection mode when selected)
+              if (isSelecting && isSelected) ...[
+                const SizedBox(width: 8),
+                Icon(
+                  CupertinoIcons.trash,
+                  size: 18,
+                  color: Colors.red.withValues(alpha: 0.6),
+                ),
+              ],
             ],
           ),
         ),

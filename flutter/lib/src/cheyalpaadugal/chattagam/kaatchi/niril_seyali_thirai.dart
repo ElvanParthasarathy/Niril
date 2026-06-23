@@ -32,6 +32,8 @@ import '../../niril_kooli/kaatchi/thiruthi/niril_kooli_patrucheettu_thiruthi.dar
 import '../../niril_kooli/kaatchi/thiruthi/niril_kooli_vanigar_thiruthi.dart';
 import '../../niril_kooli/kaatchi/thiruthi/niril_kooli_porul_thiruthi.dart';
 
+import '../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
+
 import '../../amaippugal/kaatchi/amaippugal_thirai.dart';
 import '../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
 
@@ -88,6 +90,11 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
     if (editor != null) {
       NirilNav.push(context, editor);
     }
+  }
+
+  void _onSelectTapped() {
+    ref.read(porulSelectionModeProvider.notifier).state = true;
+    ref.read(selectedPorulIdsProvider.notifier).state = {};
   }
 
   // ── Mobile nav items (4 tabs) ──────────────────────────────────────
@@ -396,6 +403,9 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
                         isSilkHome:
                             ref.watch(appModeProvider) != AppMode.coolie &&
                                 i == 0,
+                        onSelectTapped: () {
+                          _onSelectTapped();
+                        },
                       ),
                       const SizedBox(width: 7),
                     ],

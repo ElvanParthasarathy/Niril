@@ -23,11 +23,13 @@ final popupMenuOpenProvider = StateProvider<bool>((ref) => false);
 class ElvanPopupMenu extends ConsumerStatefulWidget {
   final bool showSelectOption;
   final bool isSilkHome;
+  final VoidCallback? onSelectTapped;
 
   const ElvanPopupMenu({
     super.key,
     this.showSelectOption = false,
     this.isSilkHome = false,
+    this.onSelectTapped,
   });
 
   @override
@@ -243,7 +245,7 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                               splashColor: sharedSplashColor,
                               onTap: () {
                                 _closeMenu();
-                                // TODO: Add selection logic
+                                widget.onSelectTapped?.call();
                               },
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
