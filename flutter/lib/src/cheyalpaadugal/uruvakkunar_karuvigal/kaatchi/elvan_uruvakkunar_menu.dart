@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../main.dart'; // For Route Access if needed
+
 import '../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
@@ -77,10 +77,19 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
     }
   }
 
+  void _seedPorulVanigar() async {
+    await SodhanaiTharavuUruvakki.seedPorulAndVanigar(ref);
+    if (mounted) {
+      ElvanSnackbar.show(context, 'Porul & Vanigar Seeded ✓');
+    }
+  }
+
   void _eraseAllData() async {
     await SodhanaiTharavuUruvakki.eraseData(ref);
     ref.read(appModeProvider.notifier).setMode(null);
-    Navigator.popUntil(context, (route) => route.isFirst);
+    if (mounted) {
+      Navigator.popUntil(context, (route) => route.isFirst);
+    }
   }
 
   @override
@@ -129,9 +138,17 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
                     FloatingActionButton.extended(
                       heroTag: 'dev_seed',
                       onPressed: _seedAllData,
-                      label: const Text('Seed Data'),
+                      label: const Text('Seed Profile'),
                       icon: const Icon(CupertinoIcons.rocket),
                       backgroundColor: Colors.green,
+                    ),
+                    const SizedBox(height: 8),
+                    FloatingActionButton.extended(
+                      heroTag: 'dev_seed_items',
+                      onPressed: _seedPorulVanigar,
+                      label: const Text('Seed Items'),
+                      icon: const Icon(CupertinoIcons.cube_box),
+                      backgroundColor: Colors.teal,
                     ),
                     const SizedBox(height: 8),
                     FloatingActionButton.extended(
