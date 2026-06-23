@@ -223,7 +223,7 @@ class _SelectionBar extends ConsumerWidget {
       child: Row(
         children: [
           Text(
-            '$selectedCount ${K.therindhaedhu.tr(context, ref)}',
+            '$selectedCount ${K.thaerndhedu.tr(context, ref)}',
             style: const TextStyle(fontWeight: FontWeight.w600),
           ),
           const Spacer(),
@@ -349,7 +349,7 @@ class _SilkVanigarCard extends StatelessWidget {
                         Icon(
                           CupertinoIcons.location_solid,
                           size: 11,
-                          color: isDark ? Colors.white26 : Colors.black26,
+                          color: isDark ? Colors.white.withValues(alpha: 0.26) : Colors.black26,
                         ),
                         const SizedBox(width: 3),
                         Flexible(
@@ -357,7 +357,7 @@ class _SilkVanigarCard extends StatelessWidget {
                             primaryCity,
                             style: TextStyle(
                               fontSize: 12,
-                              color: isDark ? Colors.white30 : Colors.black30,
+                              color: isDark ? Colors.white30 : Colors.black.withValues(alpha: 0.30),
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -393,14 +393,14 @@ class _SilkVanigarCard extends StatelessWidget {
                         Icon(
                           CupertinoIcons.phone,
                           size: 11,
-                          color: isDark ? Colors.white26 : Colors.black26,
+                          color: isDark ? Colors.white.withValues(alpha: 0.26) : Colors.black26,
                         ),
                         const SizedBox(width: 3),
                         Text(
                           phone,
                           style: TextStyle(
                             fontSize: 11,
-                            color: isDark ? Colors.white26 : Colors.black26,
+                            color: isDark ? Colors.white.withValues(alpha: 0.26) : Colors.black26,
                           ),
                         ),
                       ],

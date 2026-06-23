@@ -258,4 +258,6 @@ const Map<String, String> en = {
   'velinaadMugavari': 'Full Address',
   'gstinTavaru': 'Invalid GSTIN format',
   'thanipPayanPtn': 'Custom',
+  'tholaipaesi': 'Phone',
+  'anaithaiyumTheriPtn': 'Select All',
 };

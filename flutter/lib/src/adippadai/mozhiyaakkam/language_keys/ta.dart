@@ -258,4 +258,6 @@ const Map<String, String> ta = {
   'velinaadMugavari': 'முழு முகவரி',
   'gstinTavaru': 'GSTIN வடிவம் தவறானது',
   'thanipPayanPtn': 'தனிப்பயன்',
+  'tholaipaesi': 'தொலைபேசி',
+  'anaithaiyumTheriPtn': 'அனைத்தையும் தேர்',
 };

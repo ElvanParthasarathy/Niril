@@ -262,4 +262,6 @@ const Map<String, String> tg = {
   'velinaadMugavari': 'Muzhu Mugavari',
   'gstinTavaru': 'GSTIN Vadivam Thavaraanedhu',
   'thanipPayanPtn': 'Thanippayan',
+  'tholaipaesi': 'Tholaipaesi',
+  'anaithaiyumTheriPtn': 'Anaithaiyum Theri',
 };

@@ -285,6 +285,8 @@ abstract final class K {
   static const velinaadMugavari = 'velinaadMugavari';
   static const gstinTavaru = 'gstinTavaru';
   static const thanipPayanPtn = 'thanipPayanPtn';
+  static const tholaipaesi = 'tholaipaesi';
+  static const anaithaiyumTheriPtn = 'anaithaiyumTheriPtn';
 
   // ── Dev Tools ──
   static const uruvaakkunarTharavugalaiAzhi = 'uruvaakkunarTharavugalaiAzhi';

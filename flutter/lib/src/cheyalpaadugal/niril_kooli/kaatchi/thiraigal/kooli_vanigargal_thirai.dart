@@ -219,7 +219,7 @@ class _SelectionBar extends ConsumerWidget {
       child: Row(
         children: [
           Text(
-            '$selectedCount ${K.therindhaedhu.tr(context, ref)}',
+            '$selectedCount ${K.thaerndhedu.tr(context, ref)}',
             style: const TextStyle(fontWeight: FontWeight.w600),
           ),
           const Spacer(),
@@ -343,7 +343,7 @@ class _CoolieVanigarCard extends StatelessWidget {
                           : primaryCity,
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark ? Colors.white26 : Colors.black26,
+                        color: isDark ? Colors.white.withValues(alpha: 0.26) : Colors.black26,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
