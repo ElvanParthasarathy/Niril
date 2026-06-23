@@ -37,7 +37,7 @@ const Map<String, String> en = {
   'pattiyalPatrucheettuMozhi': 'Invoice & Receipt Language',
   'kadavuchol': 'Password',
   'kadavuchollaiUllidavum': 'Please enter your password',
-  'kanakkuEnIfsc': 'Account number & IFSC',
+  'kanakkuEnIfsc': 'Bank details',
   'thamizhAangilamThaaniyangu': 'Tamil, English, Auto',
   'thaekkagathaiazhi': 'Backup, Logout, Clear Data',
   'elvanPatriMaelumAriga': 'Learn more about Elvan',
