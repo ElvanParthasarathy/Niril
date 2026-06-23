@@ -103,7 +103,7 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
           icon: CupertinoIcons.plus_app,
           activeIcon: CupertinoIcons.plus_app_fill,
           label: 'aakku'.tr(context, ref),
-          headerLabel: 'uruvakku'.tr(context, ref),
+          headerLabel: 'createBtn'.tr(context, ref),
         ),
         CustomNavItem(
           svgString:

@@ -202,7 +202,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
         textAlign: TextAlign.center,
         onChanged: (val) => newName = val,
         decoration: InputDecoration(
-          hintText: 'businessNameLabel'.tr(context, ref),
+          hintText: 'hc_businessName'.tr(context, ref),
           hintStyle: TextStyle(
             fontSize: 13,
             color:
@@ -475,11 +475,11 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                     keyPrefix: 'business_name',
                     isEditing: _editingSection == 'niruvanathinPeyar',
                     editChild: _buildEditContainer(
-                      title: 'businessNameLabel'.tr(context, ref),
+                      title: 'hc_businessName'.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
                           label:
-                              '${'businessNameLabel'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
+                              '${'hc_businessName'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                         ),
@@ -487,7 +487,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                         if (isBilingual)
                           ElvanSettingsTextField(
                             label:
-                                '${'businessNameLabel'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
+                                '${'hc_businessName'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                             initialValue: _tempSecondary,
                             onChanged: (val) => _tempSecondary = val,
                           ),
@@ -497,7 +497,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                           currentProfile, 'niruvanathinPeyar'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
-                      title: 'businessNameLabel'.tr(context, ref),
+                      title: 'hc_businessName'.tr(context, ref),
                       primaryValue: niruvanathinPeyarPrimary,
                       secondaryValue:
                           isBilingual ? niruvanathinPeyarSecondary : null,

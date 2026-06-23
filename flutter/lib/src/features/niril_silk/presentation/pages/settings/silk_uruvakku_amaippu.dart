@@ -118,7 +118,7 @@ class _SilkUruvakkuAmaippuPageState
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return ElvanSubpageShell(
-      title: 'uruvakku'.tr(context, ref),
+      title: 'createBtn'.tr(context, ref),
       backgroundColor:
           isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
       slivers: [

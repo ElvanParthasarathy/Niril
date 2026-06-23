@@ -146,7 +146,7 @@ class _SilkVanigaAdaiyalangalPageState
                       .onSurface
                       .withValues(alpha: 0.7),
                 ),
-                child: Text('cancel'.tr(context, ref)),
+                child: Text('cancelBtn'.tr(context, ref)),
               ),
               const SizedBox(width: 8),
               FilledButton(

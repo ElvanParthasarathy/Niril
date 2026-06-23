@@ -155,7 +155,7 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
 
   @override
   Widget build(BuildContext context) {
-    final title = 'settings_mugavari'.tr(context, ref);
+    final title = 'mugavari'.tr(context, ref);
     final isBilingual = ref.watch(bilingualProvider);
     final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
     final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();

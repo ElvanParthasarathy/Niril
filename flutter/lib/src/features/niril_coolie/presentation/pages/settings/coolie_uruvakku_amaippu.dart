@@ -307,7 +307,7 @@ class _CoolieUruvakkuAmaippuPageState
         : '#388e3c';
 
     return ElvanSubpageShell(
-      title: 'uruvakku'.tr(context, ref),
+      title: 'createBtn'.tr(context, ref),
       backgroundColor:
           isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
       slivers: [

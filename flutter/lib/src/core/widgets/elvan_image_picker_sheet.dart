@@ -15,7 +15,7 @@ Future<void> showElvanImagePickerSheet({
     context: context,
     title: 'selectImageSource'.tr(context, ref)
         .tr(context, ref), // We will fallback to english if translation missing
-    cancelText: 'cancel'.tr(context, ref),
+    cancelText: 'cancelBtn'.tr(context, ref),
     confirmText: '', // No confirm button, using customContent
     onConfirm: () {}, // Handled individually
     customContent: Column(

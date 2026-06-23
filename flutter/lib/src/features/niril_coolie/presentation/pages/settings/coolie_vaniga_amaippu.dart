@@ -208,7 +208,7 @@ class _CoolieVanigaAmaippuPageState
             onChanged: (val) => newNamePrimary = val,
             decoration: InputDecoration(
               hintText:
-                  '${'businessNameLabel'.tr(context, ref)} (${'tamil'.tr(context, ref)})',
+                  '${'hc_businessName'.tr(context, ref)} (${'tamil'.tr(context, ref)})',
               hintStyle: TextStyle(
                 fontSize: 13,
                 color: Theme.of(context)
@@ -255,7 +255,7 @@ class _CoolieVanigaAmaippuPageState
             onChanged: (val) => newNameSecondary = val,
             decoration: InputDecoration(
               hintText:
-                  '${'businessNameLabel'.tr(context, ref)} (${'english'.tr(context, ref)})',
+                  '${'hc_businessName'.tr(context, ref)} (${'english'.tr(context, ref)})',
               hintStyle: TextStyle(
                 fontSize: 13,
                 color: Theme.of(context)
@@ -523,11 +523,11 @@ class _CoolieVanigaAmaippuPageState
                     keyPrefix: 'business_name',
                     isEditing: _editingSection == 'niruvanathinPeyar',
                     editChild: _buildEditContainer(
-                      title: 'businessNameLabel'.tr(context, ref),
+                      title: 'hc_businessName'.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
                           label:
-                              '${'businessNameLabel'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
+                              '${'hc_businessName'.tr(context, ref)} (${primaryLang.tr(context, ref)})',
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                         ),
@@ -535,7 +535,7 @@ class _CoolieVanigaAmaippuPageState
                         if (isBilingual)
                           ElvanSettingsTextField(
                             label:
-                                '${'businessNameLabel'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
+                                '${'hc_businessName'.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                             initialValue: _tempSecondary,
                             onChanged: (val) => _tempSecondary = val,
                           ),
@@ -545,7 +545,7 @@ class _CoolieVanigaAmaippuPageState
                           currentProfile, 'niruvanathinPeyar'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
-                      title: 'businessNameLabel'.tr(context, ref),
+                      title: 'hc_businessName'.tr(context, ref),
                       primaryValue: niruvanathinPeyarPrimary,
                       secondaryValue:
                           isBilingual ? niruvanathinPeyarSecondary : null,

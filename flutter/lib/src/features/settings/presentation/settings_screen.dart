@@ -253,7 +253,7 @@ class SettingsHubScreen extends ConsumerWidget {
                   ElvanSettingsRow(
                     icon: CupertinoIcons.location_solid,
                     iconBgColor: iconBgColor,
-                    title: 'settings_mugavari'.tr(context, ref),
+                    title: 'mugavari'.tr(context, ref),
                     description: 'desc_address'.tr(context, ref),
                     onTap: () => _navigateTo(context, const MugavariPage()),
                   ),
@@ -278,7 +278,7 @@ class SettingsHubScreen extends ConsumerWidget {
                   ElvanSettingsRow(
                     icon: CupertinoIcons.doc_text_fill,
                     iconBgColor: iconBgColor,
-                    title: 'uruvakku'.tr(context, ref),
+                    title: 'createBtn'.tr(context, ref),
                     description: 'desc_invoice'.tr(context, ref),
                     onTap: () =>
                         _navigateTo(context, const UruvakkuAmaippugalPage()),

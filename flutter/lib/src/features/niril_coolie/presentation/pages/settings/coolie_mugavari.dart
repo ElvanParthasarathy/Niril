@@ -131,7 +131,7 @@ class _CoolieMugavariPageState extends ConsumerState<CoolieMugavariPage> {
     final maavattamSecondary = currentProfile.getSecondary('maavattam');
 
     return ElvanSubpageShell(
-      title: 'settings_mugavari'.tr(context, ref),
+      title: 'mugavari'.tr(context, ref),
       slivers: [
         SliverPadding(
           padding:

@@ -74,7 +74,7 @@ class AccountSecuritySection extends ConsumerWidget {
     showElvanActionSheet(
       context: context,
       title: 'backup_now_title'.tr(context, ref),
-      cancelText: 'cancel'.tr(context, ref),
+      cancelText: 'cancelBtn'.tr(context, ref),
       confirmText: 'backup_now_btn'.tr(context, ref),
       onConfirm: () async {
         showElvanLoadingOverlay(
@@ -99,7 +99,7 @@ class AccountSecuritySection extends ConsumerWidget {
     showElvanActionSheet(
       context: context,
       title: 'signOutConfirmTitle'.tr(context, ref),
-      cancelText: 'cancel'.tr(context, ref),
+      cancelText: 'cancelBtn'.tr(context, ref),
       confirmText: 'signOutBtn'.tr(context, ref),
       onConfirm: () {
         // Mock Sign Out
@@ -133,8 +133,8 @@ class AccountSecuritySection extends ConsumerWidget {
     // Step 1: Email Confirmation
     showElvanActionSheet(
       context: context,
-      title: 'eraseAppDataTitle'.tr(context, ref),
-      cancelText: 'cancel'.tr(context, ref),
+      title: 'erase_data'.tr(context, ref),
+      cancelText: 'cancelBtn'.tr(context, ref),
       confirmText: 'continue'.tr(context, ref),
       customContent: ElvanTextField(
         textAlign: TextAlign.center,
@@ -183,7 +183,7 @@ class AccountSecuritySection extends ConsumerWidget {
         showElvanActionSheet(
           context: context,
           title: 'enterPassword'.tr(context, ref),
-          cancelText: 'cancel'.tr(context, ref),
+          cancelText: 'cancelBtn'.tr(context, ref),
           confirmText: 'eraseDataBtn'.tr(context, ref),
           customContent: ElvanTextField(
             textAlign: TextAlign.center,

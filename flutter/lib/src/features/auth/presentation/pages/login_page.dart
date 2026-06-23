@@ -62,7 +62,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           ),
           const SizedBox(height: 16),
           AuthHeader(
-            title: 'nirilBrand'.tr(context, ref), // Brand name
+            title: 'appName'.tr(context, ref), // Brand name
             subtitle: 'loginSubtitle'.tr(context, ref),
           ),
           const SizedBox(height: 32),
