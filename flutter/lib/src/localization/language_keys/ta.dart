@@ -1187,7 +1187,7 @@ const Map<String, String> ta = {
   'pathugappu': 'பாதுகாப்பு',
   'menporul_vadivalar': 'மென்பொருள் வடிவாளர்',
   'seyali_patri': 'செயலி பற்றி',
-  'desc_seyali_patri': 'செயலியின் பதிப்பு மற்றும் விவரங்கள்',
+  'desc_seyali_patri': 'செயலியின் பதிப்பு மற்றும் தரவுகள்',
   'adaiyalam': 'அடையாளம்',
   'desc_coolie_identifiers': 'கூலி வணிக அடையாளங்கள்',
   'desc_silk_identifiers': 'பட்டு வணிக அடையாளங்கள்',

@@ -339,7 +339,7 @@ class SettingsHubScreen extends ConsumerWidget {
                         _navigateTo(context, const AboutDeveloperPage()),
                   ),
                   ElvanSettingsRow(
-                    icon: CupertinoIcons.device_phone_portrait,
+                    icon: Icons.smartphone_rounded,
                     iconBgColor: iconBgColor,
                     title: 'seyali_patri'.tr(context, ref),
                     description: 'desc_seyali_patri'.tr(context, ref),
