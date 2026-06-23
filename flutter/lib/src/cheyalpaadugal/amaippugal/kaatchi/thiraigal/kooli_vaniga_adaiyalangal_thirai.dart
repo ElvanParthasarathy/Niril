@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../adippadai/mozhiyaakkam/locale_provider.dart';
+import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../chattagam/kaatchi/kaipaesi/elvan_utpakkach_chattagam.dart';

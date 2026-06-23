@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
-import '../../../../adippadai/mozhiyaakkam/locale_provider.dart';
+import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../chattagam/kaatchi/koorugal/elvan_uyir_valai.dart';
 
 class SilkHomePage extends ConsumerWidget {

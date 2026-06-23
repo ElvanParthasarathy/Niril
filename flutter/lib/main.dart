@@ -6,18 +6,18 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'src/adippadai/preferences_service.dart';
-import 'src/adippadai/theme_provider.dart';
-import 'src/adippadai/nilaimai/app_state.dart';
-import 'src/adippadai/mozhiyaakkam/locale_provider.dart';
+import 'src/adippadai/viruppangal_paniyagam.dart';
+import 'src/adippadai/thoatra_vazhanguthi.dart';
+import 'src/adippadai/nilaimai/seyali_nilaimai.dart';
+import 'src/adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import 'src/cheyalpaadugal/ullnuzhaivu/kaatchi/muraimai_thaervu_thirai.dart';
 import 'src/cheyalpaadugal/ullnuzhaivu/kaatchi/thiraigal/nalvaravu_thirai.dart';
 import 'src/cheyalpaadugal/ullnuzhaivu/kaatchi/thiraigal/nalvaravu_thirai_amaippu.dart';
 import 'src/adippadai/panigal/niril_backup_service.dart';
 import 'src/adippadai/panigal/elvan_pizhaipadhivu.dart';
-import 'src/cheyalpaadugal/ullnuzhaivu/kaatchi/thiraigal/permission_guard_thirai.dart';
+import 'src/cheyalpaadugal/ullnuzhaivu/kaatchi/thiraigal/anumadhi_kaavalar_thirai.dart';
 
-import 'src/cheyalpaadugal/chattagam/kaatchi/deferred_shell_loader.dart';
+import 'src/cheyalpaadugal/chattagam/kaatchi/pinnaetrum_oadu.dart';
 import 'src/cheyalpaadugal/chattagam/kaatchi/niril_seyali_thirai.dart';
 import 'src/cheyalpaadugal/uruvakkunar_karuvigal/kaatchi/elvan_uruvakkunar_menu.dart';
 

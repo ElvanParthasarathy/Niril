@@ -3,7 +3,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../adippadai/mozhiyaakkam/locale_provider.dart';
+import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../chattagam/kaatchi/kaipaesi/elvan_utpakkach_chattagam.dart';
 
 /// The Universal Editor Shell that wraps all creator/editor forms.

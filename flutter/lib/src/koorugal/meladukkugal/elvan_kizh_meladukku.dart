@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:elvan_niril/src/adippadai/mozhiyaakkam/locale_provider.dart';
+import 'package:elvan_niril/src/adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;

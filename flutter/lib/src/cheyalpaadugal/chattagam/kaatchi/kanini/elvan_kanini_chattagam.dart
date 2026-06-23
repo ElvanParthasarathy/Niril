@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../adippadai/mozhiyaakkam/locale_provider.dart';
-import '../../../../adippadai/tharavuru/app_mode.dart';
-import '../../../../adippadai/nilaimai/app_state.dart';
+import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../adippadai/tharavuru/seyali_murai.dart';
+import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
 import '../kaipaesi/elvan_kizh_pattai.dart'; // For CustomNavItem
 import 'elvan_kanini_pakkapattai.dart';
 import 'elvan_kanini_karuvipattai.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_menmai_nagarvu.dart';
-import '../../../../adippadai/preferences_service.dart';
+import '../../../../adippadai/viruppangal_paniyagam.dart';
 import '../../../ullnuzhaivu/kaatchi/koorugal/ullnuzhaivu_koorugal.dart';
 
 class ElvanDesktopShell extends ConsumerStatefulWidget {

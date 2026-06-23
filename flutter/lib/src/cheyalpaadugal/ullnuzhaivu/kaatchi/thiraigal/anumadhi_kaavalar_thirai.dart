@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../koorugal/ullnuzhaivu_koorugal.dart';
-import '../../../../adippadai/mozhiyaakkam/locale_provider.dart';
+import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 /// Provider to track storage permission status.
 final storagePermissionProvider = FutureProvider<bool>((ref) async {

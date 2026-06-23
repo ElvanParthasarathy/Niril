@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../adippadai/mozhiyaakkam/locale_provider.dart';
+import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../koorugal/ullnuzhaivu_koorugal.dart';
 import '../../koorugal/mozhi_chathuram.dart';
 

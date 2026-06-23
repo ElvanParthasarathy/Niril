@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
-import '../../../../../adippadai/mozhiyaakkam/locale_provider.dart';
-import '../../../../../adippadai/nilaimai/app_state.dart';
+import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../chattagam/kaatchi/kaipaesi/elvan_utpakkach_chattagam.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_pagudhi.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dart';

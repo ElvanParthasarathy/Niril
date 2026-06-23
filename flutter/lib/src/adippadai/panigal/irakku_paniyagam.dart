@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'storage_service.dart';
+import 'semaippu_paniyagam.dart';
 
 final downloadServiceProvider = Provider<DownloadService>((ref) {
   return DownloadService(ref.read(storageServiceProvider));

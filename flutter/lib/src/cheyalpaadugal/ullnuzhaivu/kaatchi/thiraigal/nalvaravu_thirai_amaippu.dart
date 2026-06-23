@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../adippadai/nilaimai/app_state.dart';
-import '../../../../adippadai/preferences_service.dart';
+import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
+import '../../../../adippadai/viruppangal_paniyagam.dart';
 import '../koorugal/ullnuzhaivu_koorugal.dart';
 
 // Import the split components

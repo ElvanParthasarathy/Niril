@@ -3,10 +3,10 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../adippadai/mozhiyaakkam/locale_provider.dart';
-import '../../../../adippadai/preferences_service.dart';
-import '../../../../adippadai/nilaimai/app_state.dart';
-import '../../../../adippadai/tharavuthalam/app_database.dart';
+import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../adippadai/viruppangal_paniyagam.dart';
+import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
+import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../adippadai/panigal/niril_backup_service.dart';
 import '../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
 import 'package:drift/drift.dart' hide Column;

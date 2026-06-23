@@ -4,12 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
 
-import '../../../adippadai/mozhiyaakkam/locale_provider.dart';
+import '../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../adippadai/vazhikaattal/niril_nav.dart';
-import '../../../adippadai/panigal/app_svgs.dart';
+import '../../../adippadai/panigal/seyali_oaviyangal.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../adippadai/nilaimai/app_state.dart';
-import '../../../adippadai/tharavuru/app_mode.dart';
+import '../../../adippadai/nilaimai/seyali_nilaimai.dart';
+import '../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../chattagam/kaatchi/kaipaesi/elvan_utpakkach_chattagam.dart';
 import 'thiraigal/vaniga_amaippugal_thirai.dart';
 import 'thiraigal/mugavari_thirai.dart';
@@ -21,7 +21,7 @@ import 'thiraigal/uruvakku_amaippugal_thirai.dart';
 import 'thiraigal/kaatchi_amaippugal_thirai.dart';
 import 'thiraigal/mozhi_amaippugal_thirai.dart';
 import 'koorugal/elvan_amaippu_pagudhi.dart';
-import '../../niril_podhu/kaatchi/koorugal/elvan_settings_icon.dart';
+import '../../niril_podhu/kaatchi/koorugal/elvan_amaippu_chinnam.dart';
 import 'thiraigal/paadhugaappu_amaippugal_thirai.dart';
 import 'thiraigal/seyali_patri_thirai.dart';
 

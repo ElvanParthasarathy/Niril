@@ -4,17 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../../adippadai/mozhiyaakkam/locale_provider.dart';
+import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../kaipaesi/koorugal/elvan_thirai_vazhi.dart';
-import '../../../niril_podhu/kaatchi/koorugal/elvan_settings_icon.dart';
-import '../../../../adippadai/tharavuru/app_mode.dart';
-import '../../../../adippadai/nilaimai/app_state.dart';
+import '../../../niril_podhu/kaatchi/koorugal/elvan_amaippu_chinnam.dart';
+import '../../../../adippadai/tharavuru/seyali_murai.dart';
+import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../kaipaesi/elvan_kizh_pattai.dart'; // For CustomNavItem
-import '../../../../adippadai/panigal/app_svgs.dart';
+import '../../../../adippadai/panigal/seyali_oaviyangal.dart';
 import '../../../ullnuzhaivu/kaatchi/muraimai_thaervu_thirai.dart';
-import '../../../amaippugal/kaatchi/settings_thirai.dart';
-import '../../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_reports_thirai.dart';
-import '../../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_gst_returns_thirai.dart';
+import '../../../amaippugal/kaatchi/amaippugal_thirai.dart';
+import '../../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_arikkaigal_thirai.dart';
+import '../../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_gst_thaakkal_thirai.dart';
 
 const String _sidebarCollapseSvg = '''
 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">

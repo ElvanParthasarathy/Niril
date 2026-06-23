@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:elvan_niril/src/adippadai/tharavuthalam/app_database.dart';
+import 'package:elvan_niril/src/adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 
 /// Tests for MozhiMapConverter (bilingual JSON ↔ Map conversion).
 void main() {

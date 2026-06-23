@@ -3,13 +3,13 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import '../../../../../adippadai/mozhiyaakkam/locale_provider.dart';
-import '../../../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_gst_returns_thirai.dart';
-import '../../../../amaippugal/kaatchi/settings_thirai.dart';
+import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_gst_thaakkal_thirai.dart';
+import '../../../../amaippugal/kaatchi/amaippugal_thirai.dart';
 import 'elvan_mel_pattai_chinnam.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_reports_thirai.dart';
+import '../../../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_arikkaigal_thirai.dart';
 import '../../../../../adippadai/vazhikaattal/niril_nav.dart';
 
 const String _settingsOutlineSvg =

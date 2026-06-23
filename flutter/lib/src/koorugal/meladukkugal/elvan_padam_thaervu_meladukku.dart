@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:elvan_niril/src/adippadai/mozhiyaakkam/locale_provider.dart';
+import 'package:elvan_niril/src/adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import 'package:elvan_niril/src/koorugal/meladukkugal/elvan_cheyal_meladukku.dart';
 
 Future<void> showElvanImagePickerSheet({

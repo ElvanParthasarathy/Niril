@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'language_keys/ta.dart';
 import 'language_keys/en.dart';
 import 'language_keys/tg.dart';
-import '../preferences_service.dart';
+import '../viruppangal_paniyagam.dart';
 
 class LocaleNotifier extends Notifier<Locale?> {
   @override

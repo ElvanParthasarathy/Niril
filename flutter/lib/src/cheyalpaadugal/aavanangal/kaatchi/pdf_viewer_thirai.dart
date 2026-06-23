@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-import 'package:elvan_niril/src/adippadai/panigal/share_service.dart';
+import 'package:elvan_niril/src/adippadai/panigal/pagiru_paniyagam.dart';
 
 import 'package:elvan_niril/src/cheyalpaadugal/chattagam/kaatchi/kaipaesi/koorugal/elvan_pin_pothan.dart';
 

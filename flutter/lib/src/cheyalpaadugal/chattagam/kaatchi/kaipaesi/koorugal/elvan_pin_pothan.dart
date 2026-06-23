@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../adippadai/nilaimai/app_state.dart';
+import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 
 /// A circular back button designed to be passed into ElvanShell as a [leadingWidget].
 /// The shell's physics engine automatically handles its background, drop shadow, and scroll fading.

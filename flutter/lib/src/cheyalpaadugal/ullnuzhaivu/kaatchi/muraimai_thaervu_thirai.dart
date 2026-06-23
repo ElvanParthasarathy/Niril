@@ -3,10 +3,10 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../adippadai/tharavuru/app_mode.dart';
-import '../../../adippadai/mozhiyaakkam/locale_provider.dart';
+import '../../../adippadai/tharavuru/seyali_murai.dart';
+import '../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import 'koorugal/ullnuzhaivu_koorugal.dart';
-import '../../../adippadai/panigal/app_svgs.dart';
+import '../../../adippadai/panigal/seyali_oaviyangal.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ModeSelectorScreen extends ConsumerWidget {

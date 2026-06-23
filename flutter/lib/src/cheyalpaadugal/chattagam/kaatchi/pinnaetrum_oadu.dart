@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../adippadai/mozhiyaakkam/locale_provider.dart';
+import '../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../ullnuzhaivu/kaatchi/koorugal/ullnuzhaivu_koorugal.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────

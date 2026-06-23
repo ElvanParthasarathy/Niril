@@ -5,12 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'ullnuzhaivu_thirai.dart';
 import '../koorugal/ullnuzhaivu_koorugal.dart';
-import '../../../../adippadai/preferences_service.dart';
-import '../../../../adippadai/nilaimai/app_state.dart';
-import '../../../../adippadai/tharavuru/app_mode.dart';
+import '../../../../adippadai/viruppangal_paniyagam.dart';
+import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
+import '../../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
 import '../../../chattagam/kaatchi/kaipaesi/koorugal/elvan_thirai_vazhi.dart';
-import '../../../../adippadai/mozhiyaakkam/locale_provider.dart';
+import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 class WelcomePage extends ConsumerWidget {
   const WelcomePage({super.key});

@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'nalvaravu_thirai_amaippu.dart';
 import '../koorugal/ullnuzhaivu_koorugal.dart';
 import '../../../../../main.dart'; // To access ShellDemoScreen
-import '../../../../adippadai/nilaimai/app_state.dart';
+import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../muraimai_thaervu_thirai.dart';
-import '../../../../adippadai/mozhiyaakkam/locale_provider.dart';
+import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});

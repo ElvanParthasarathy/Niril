@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
-import '../../../../adippadai/mozhiyaakkam/locale_provider.dart';
-import '../../../niril_podhu/kaatchi/thiruthi/elvan_editor_shell.dart';
+import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 
 class SilkItemEditor extends ConsumerWidget {
   const SilkItemEditor({super.key});

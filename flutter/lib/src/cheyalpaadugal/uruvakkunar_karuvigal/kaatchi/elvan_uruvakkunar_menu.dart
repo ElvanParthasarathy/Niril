@@ -4,8 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../main.dart'; // For Route Access if needed
-import '../../../adippadai/nilaimai/app_state.dart';
-import '../../../adippadai/tharavuru/app_mode.dart';
+import '../../../adippadai/nilaimai/seyali_nilaimai.dart';
+import '../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../ullnuzhaivu/kaatchi/koorugal/ullnuzhaivu_koorugal.dart';
 import '../tharavu/sodhanai_tharavu_uruvakki.dart';

@@ -3,12 +3,12 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../adippadai/mozhiyaakkam/locale_provider.dart';
+import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/panigal/niril_backup_service.dart';
-import '../../../../adippadai/tharavuthalam/app_database.dart';
+import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../koorugal/meladukkugal/elvan_aetrum_meladukku.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
-import '../../../../adippadai/nilaimai/app_state.dart';
+import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
 import '../koorugal/ullnuzhaivu_koorugal.dart';
 

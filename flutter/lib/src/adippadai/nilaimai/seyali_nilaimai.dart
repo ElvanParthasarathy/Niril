@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../tharavuru/app_mode.dart';
-import '../preferences_service.dart';
-import '../tharavuthalam/app_database.dart';
+import '../tharavuru/seyali_murai.dart';
+import '../viruppangal_paniyagam.dart';
+import '../tharavuthalam/seyali_tharavuthalam.dart';
 import '../../cheyalpaadugal/amaippugal/tharavu/vaniga_tharavugal_provider.dart';
 
 class AppStateNotifier extends Notifier<AppMode?> {

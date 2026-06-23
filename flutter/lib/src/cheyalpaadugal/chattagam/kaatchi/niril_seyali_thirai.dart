@@ -4,10 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../adippadai/tharavuru/app_mode.dart';
-import '../../../adippadai/nilaimai/app_state.dart';
-import '../../../adippadai/nilaimai/search_state.dart';
-import '../../../adippadai/mozhiyaakkam/locale_provider.dart';
+import '../../../adippadai/tharavuru/seyali_murai.dart';
+import '../../../adippadai/nilaimai/seyali_nilaimai.dart';
+import '../../../adippadai/nilaimai/thaedal_nilaimai.dart';
+import '../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../adippadai/vazhikaattal/navigation_destination.dart';
 import '../../../adippadai/vazhikaattal/navigation_provider.dart';
 
@@ -22,8 +22,8 @@ import '../../niril_pattu/kaatchi/thiruthi/niril_pattu_pattiyal_thiruthi.dart';
 import '../../niril_pattu/kaatchi/thiruthi/niril_pattu_patrucheettu_thiruthi.dart';
 import '../../niril_pattu/kaatchi/thiruthi/niril_pattu_vanigar_thiruthi.dart';
 import '../../niril_pattu/kaatchi/thiruthi/niril_pattu_porul_thiruthi.dart';
-import '../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_reports_thirai.dart';
-import '../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_gst_returns_thirai.dart';
+import '../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_arikkaigal_thirai.dart';
+import '../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_gst_thaakkal_thirai.dart';
 
 import '../../niril_kooli/kaatchi/thiraigal/kooli_pattiyalgal_thirai.dart';
 import '../../niril_kooli/kaatchi/thiraigal/kooli_patrucheettugal_thirai.dart';
@@ -32,7 +32,7 @@ import '../../niril_kooli/kaatchi/thiruthi/niril_kooli_patrucheettu_thiruthi.dar
 import '../../niril_kooli/kaatchi/thiruthi/niril_kooli_vanigar_thiruthi.dart';
 import '../../niril_kooli/kaatchi/thiruthi/niril_kooli_porul_thiruthi.dart';
 
-import '../../amaippugal/kaatchi/settings_thirai.dart';
+import '../../amaippugal/kaatchi/amaippugal_thirai.dart';
 import '../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
 
 import 'kaipaesi/elvan_chattagam.dart';
