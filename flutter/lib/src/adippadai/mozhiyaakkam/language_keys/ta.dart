@@ -219,4 +219,19 @@ const Map<String, String> ta = {
   'vanigapeyaraiullidu': 'தேவையான அனைத்து வணிகப் பெயர்களையும் உள்ளிடவும்.',
   'gstinVariAdaiyaalaEn': 'GSTIN / வரி அடையாள எண்',
   'elvanParthasarathy': 'எல்வன் பார்த்தசாரதி',
+
+  // === Porul (Product) Keys ===
+  'porulTharavugal': 'பொருள் தரவுகள்',
+  'vilaiMatrumVari': 'விலை மற்றும் வரி',
+  'alavuVagai': 'அளவு வகை',
+  'alavu': 'அளவு',
+  'edai': 'எடை',
+  'hsnSacKuriyeedu': 'HSN/SAC குறியீடு',
+  'vilai': 'விற்பனை விலை',
+  'gstVeedham': 'GST வீதம் %',
+  'porulPeyarThaevai': 'பொருள் பெயர் தேவை',
+  'porulChaemikkappattadhu': 'பொருள் சேமிக்கப்பட்டது',
+  'porulAzhikkappattadhu': 'பொருள் அழிக்கப்பட்டது',
+  'porulgalIllai': 'பொருட்கள் இல்லை',
+  'porulaiChaerkkavum': 'முதல் பொருளைச் சேர்க்கவும்',
 };

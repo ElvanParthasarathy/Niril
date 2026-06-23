@@ -120,10 +120,17 @@ class PorulTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get seyaliVagai => text()();
   
-  TextColumn get porulPeyar => text()();
+  // Bilingual name: {"Tamil": "...", "English": "..."}
+  TextColumn get porulPeyar =>
+      text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
   TextColumn get hsnCode => text().withDefault(const Constant(''))();
   RealColumn get vilai => real().withDefault(const Constant(0.0))();
   RealColumn get variVeetham => real().withDefault(const Constant(0.0))(); // GST %
+
+  // Measure: 'quantity' | 'weight'
+  TextColumn get alavuVagai => text().withDefault(const Constant('quantity'))();
+  // Unit: 'Nos' | 'kg'
+  TextColumn get alagu => text().withDefault(const Constant('Nos'))();
 
   // Audit
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
@@ -171,7 +178,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -190,6 +197,11 @@ class AppDatabase extends _$AppDatabase {
             await m.createTable(vanigarTable);
             await m.createTable(porulTable);
             await m.createTable(patrucheettuTable);
+          }
+          if (from < 4) {
+            // v4: Add measureType + unit columns to PorulTable
+            await m.addColumn(porulTable, porulTable.alavuVagai);
+            await m.addColumn(porulTable, porulTable.alagu);
           }
         },
       );

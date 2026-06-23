@@ -1977,12 +1977,14 @@ class $PorulTableTable extends PorulTable
   late final GeneratedColumn<String> seyaliVagai = GeneratedColumn<String>(
       'seyali_vagai', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _porulPeyarMeta =
-      const VerificationMeta('porulPeyar');
   @override
-  late final GeneratedColumn<String> porulPeyar = GeneratedColumn<String>(
-      'porul_peyar', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+  late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
+      porulPeyar = GeneratedColumn<String>('porul_peyar', aliasedName, false,
+              type: DriftSqlType.string,
+              requiredDuringInsert: false,
+              defaultValue: const Constant('{}'))
+          .withConverter<Map<String, String>>(
+              $PorulTableTable.$converterporulPeyar);
   static const VerificationMeta _hsnCodeMeta =
       const VerificationMeta('hsnCode');
   @override
@@ -2006,6 +2008,21 @@ class $PorulTableTable extends PorulTable
       type: DriftSqlType.double,
       requiredDuringInsert: false,
       defaultValue: const Constant(0.0));
+  static const VerificationMeta _alavuVagaiMeta =
+      const VerificationMeta('alavuVagai');
+  @override
+  late final GeneratedColumn<String> alavuVagai = GeneratedColumn<String>(
+      'alavu_vagai', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('quantity'));
+  static const VerificationMeta _alaguMeta = const VerificationMeta('alagu');
+  @override
+  late final GeneratedColumn<String> alagu = GeneratedColumn<String>(
+      'alagu', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('Nos'));
   static const VerificationMeta _createdAtMeta =
       const VerificationMeta('createdAt');
   @override
@@ -2046,6 +2063,8 @@ class $PorulTableTable extends PorulTable
         hsnCode,
         vilai,
         variVeetham,
+        alavuVagai,
+        alagu,
         createdAt,
         updatedAt,
         isDeleted,
@@ -2072,14 +2091,6 @@ class $PorulTableTable extends PorulTable
     } else if (isInserting) {
       context.missing(_seyaliVagaiMeta);
     }
-    if (data.containsKey('porul_peyar')) {
-      context.handle(
-          _porulPeyarMeta,
-          porulPeyar.isAcceptableOrUnknown(
-              data['porul_peyar']!, _porulPeyarMeta));
-    } else if (isInserting) {
-      context.missing(_porulPeyarMeta);
-    }
     if (data.containsKey('hsn_code')) {
       context.handle(_hsnCodeMeta,
           hsnCode.isAcceptableOrUnknown(data['hsn_code']!, _hsnCodeMeta));
@@ -2093,6 +2104,16 @@ class $PorulTableTable extends PorulTable
           _variVeethamMeta,
           variVeetham.isAcceptableOrUnknown(
               data['vari_veetham']!, _variVeethamMeta));
+    }
+    if (data.containsKey('alavu_vagai')) {
+      context.handle(
+          _alavuVagaiMeta,
+          alavuVagai.isAcceptableOrUnknown(
+              data['alavu_vagai']!, _alavuVagaiMeta));
+    }
+    if (data.containsKey('alagu')) {
+      context.handle(
+          _alaguMeta, alagu.isAcceptableOrUnknown(data['alagu']!, _alaguMeta));
     }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
@@ -2123,14 +2144,19 @@ class $PorulTableTable extends PorulTable
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       seyaliVagai: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}seyali_vagai'])!,
-      porulPeyar: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}porul_peyar'])!,
+      porulPeyar: $PorulTableTable.$converterporulPeyar.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}porul_peyar'])!),
       hsnCode: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}hsn_code'])!,
       vilai: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}vilai'])!,
       variVeetham: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}vari_veetham'])!,
+      alavuVagai: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}alavu_vagai'])!,
+      alagu: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}alagu'])!,
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
@@ -2146,15 +2172,20 @@ class $PorulTableTable extends PorulTable
   $PorulTableTable createAlias(String alias) {
     return $PorulTableTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<Map<String, String>, String> $converterporulPeyar =
+      const MozhiMapConverter();
 }
 
 class PorulEntry extends DataClass implements Insertable<PorulEntry> {
   final int id;
   final String seyaliVagai;
-  final String porulPeyar;
+  final Map<String, String> porulPeyar;
   final String hsnCode;
   final double vilai;
   final double variVeetham;
+  final String alavuVagai;
+  final String alagu;
   final DateTime createdAt;
   final DateTime updatedAt;
   final bool isDeleted;
@@ -2166,6 +2197,8 @@ class PorulEntry extends DataClass implements Insertable<PorulEntry> {
       required this.hsnCode,
       required this.vilai,
       required this.variVeetham,
+      required this.alavuVagai,
+      required this.alagu,
       required this.createdAt,
       required this.updatedAt,
       required this.isDeleted,
@@ -2175,10 +2208,15 @@ class PorulEntry extends DataClass implements Insertable<PorulEntry> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['seyali_vagai'] = Variable<String>(seyaliVagai);
-    map['porul_peyar'] = Variable<String>(porulPeyar);
+    {
+      map['porul_peyar'] = Variable<String>(
+          $PorulTableTable.$converterporulPeyar.toSql(porulPeyar));
+    }
     map['hsn_code'] = Variable<String>(hsnCode);
     map['vilai'] = Variable<double>(vilai);
     map['vari_veetham'] = Variable<double>(variVeetham);
+    map['alavu_vagai'] = Variable<String>(alavuVagai);
+    map['alagu'] = Variable<String>(alagu);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     map['is_deleted'] = Variable<bool>(isDeleted);
@@ -2196,6 +2234,8 @@ class PorulEntry extends DataClass implements Insertable<PorulEntry> {
       hsnCode: Value(hsnCode),
       vilai: Value(vilai),
       variVeetham: Value(variVeetham),
+      alavuVagai: Value(alavuVagai),
+      alagu: Value(alagu),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
       isDeleted: Value(isDeleted),
@@ -2211,10 +2251,12 @@ class PorulEntry extends DataClass implements Insertable<PorulEntry> {
     return PorulEntry(
       id: serializer.fromJson<int>(json['id']),
       seyaliVagai: serializer.fromJson<String>(json['seyaliVagai']),
-      porulPeyar: serializer.fromJson<String>(json['porulPeyar']),
+      porulPeyar: serializer.fromJson<Map<String, String>>(json['porulPeyar']),
       hsnCode: serializer.fromJson<String>(json['hsnCode']),
       vilai: serializer.fromJson<double>(json['vilai']),
       variVeetham: serializer.fromJson<double>(json['variVeetham']),
+      alavuVagai: serializer.fromJson<String>(json['alavuVagai']),
+      alagu: serializer.fromJson<String>(json['alagu']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
@@ -2227,10 +2269,12 @@ class PorulEntry extends DataClass implements Insertable<PorulEntry> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'seyaliVagai': serializer.toJson<String>(seyaliVagai),
-      'porulPeyar': serializer.toJson<String>(porulPeyar),
+      'porulPeyar': serializer.toJson<Map<String, String>>(porulPeyar),
       'hsnCode': serializer.toJson<String>(hsnCode),
       'vilai': serializer.toJson<double>(vilai),
       'variVeetham': serializer.toJson<double>(variVeetham),
+      'alavuVagai': serializer.toJson<String>(alavuVagai),
+      'alagu': serializer.toJson<String>(alagu),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
@@ -2241,10 +2285,12 @@ class PorulEntry extends DataClass implements Insertable<PorulEntry> {
   PorulEntry copyWith(
           {int? id,
           String? seyaliVagai,
-          String? porulPeyar,
+          Map<String, String>? porulPeyar,
           String? hsnCode,
           double? vilai,
           double? variVeetham,
+          String? alavuVagai,
+          String? alagu,
           DateTime? createdAt,
           DateTime? updatedAt,
           bool? isDeleted,
@@ -2256,6 +2302,8 @@ class PorulEntry extends DataClass implements Insertable<PorulEntry> {
         hsnCode: hsnCode ?? this.hsnCode,
         vilai: vilai ?? this.vilai,
         variVeetham: variVeetham ?? this.variVeetham,
+        alavuVagai: alavuVagai ?? this.alavuVagai,
+        alagu: alagu ?? this.alagu,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
         isDeleted: isDeleted ?? this.isDeleted,
@@ -2272,6 +2320,9 @@ class PorulEntry extends DataClass implements Insertable<PorulEntry> {
       vilai: data.vilai.present ? data.vilai.value : this.vilai,
       variVeetham:
           data.variVeetham.present ? data.variVeetham.value : this.variVeetham,
+      alavuVagai:
+          data.alavuVagai.present ? data.alavuVagai.value : this.alavuVagai,
+      alagu: data.alagu.present ? data.alagu.value : this.alagu,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
@@ -2288,6 +2339,8 @@ class PorulEntry extends DataClass implements Insertable<PorulEntry> {
           ..write('hsnCode: $hsnCode, ')
           ..write('vilai: $vilai, ')
           ..write('variVeetham: $variVeetham, ')
+          ..write('alavuVagai: $alavuVagai, ')
+          ..write('alagu: $alagu, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
@@ -2297,8 +2350,19 @@ class PorulEntry extends DataClass implements Insertable<PorulEntry> {
   }
 
   @override
-  int get hashCode => Object.hash(id, seyaliVagai, porulPeyar, hsnCode, vilai,
-      variVeetham, createdAt, updatedAt, isDeleted, deletedAt);
+  int get hashCode => Object.hash(
+      id,
+      seyaliVagai,
+      porulPeyar,
+      hsnCode,
+      vilai,
+      variVeetham,
+      alavuVagai,
+      alagu,
+      createdAt,
+      updatedAt,
+      isDeleted,
+      deletedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2309,6 +2373,8 @@ class PorulEntry extends DataClass implements Insertable<PorulEntry> {
           other.hsnCode == this.hsnCode &&
           other.vilai == this.vilai &&
           other.variVeetham == this.variVeetham &&
+          other.alavuVagai == this.alavuVagai &&
+          other.alagu == this.alagu &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
@@ -2318,10 +2384,12 @@ class PorulEntry extends DataClass implements Insertable<PorulEntry> {
 class PorulTableCompanion extends UpdateCompanion<PorulEntry> {
   final Value<int> id;
   final Value<String> seyaliVagai;
-  final Value<String> porulPeyar;
+  final Value<Map<String, String>> porulPeyar;
   final Value<String> hsnCode;
   final Value<double> vilai;
   final Value<double> variVeetham;
+  final Value<String> alavuVagai;
+  final Value<String> alagu;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<bool> isDeleted;
@@ -2333,6 +2401,8 @@ class PorulTableCompanion extends UpdateCompanion<PorulEntry> {
     this.hsnCode = const Value.absent(),
     this.vilai = const Value.absent(),
     this.variVeetham = const Value.absent(),
+    this.alavuVagai = const Value.absent(),
+    this.alagu = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
@@ -2341,16 +2411,17 @@ class PorulTableCompanion extends UpdateCompanion<PorulEntry> {
   PorulTableCompanion.insert({
     this.id = const Value.absent(),
     required String seyaliVagai,
-    required String porulPeyar,
+    this.porulPeyar = const Value.absent(),
     this.hsnCode = const Value.absent(),
     this.vilai = const Value.absent(),
     this.variVeetham = const Value.absent(),
+    this.alavuVagai = const Value.absent(),
+    this.alagu = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.deletedAt = const Value.absent(),
-  })  : seyaliVagai = Value(seyaliVagai),
-        porulPeyar = Value(porulPeyar);
+  }) : seyaliVagai = Value(seyaliVagai);
   static Insertable<PorulEntry> custom({
     Expression<int>? id,
     Expression<String>? seyaliVagai,
@@ -2358,6 +2429,8 @@ class PorulTableCompanion extends UpdateCompanion<PorulEntry> {
     Expression<String>? hsnCode,
     Expression<double>? vilai,
     Expression<double>? variVeetham,
+    Expression<String>? alavuVagai,
+    Expression<String>? alagu,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<bool>? isDeleted,
@@ -2370,6 +2443,8 @@ class PorulTableCompanion extends UpdateCompanion<PorulEntry> {
       if (hsnCode != null) 'hsn_code': hsnCode,
       if (vilai != null) 'vilai': vilai,
       if (variVeetham != null) 'vari_veetham': variVeetham,
+      if (alavuVagai != null) 'alavu_vagai': alavuVagai,
+      if (alagu != null) 'alagu': alagu,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
@@ -2380,10 +2455,12 @@ class PorulTableCompanion extends UpdateCompanion<PorulEntry> {
   PorulTableCompanion copyWith(
       {Value<int>? id,
       Value<String>? seyaliVagai,
-      Value<String>? porulPeyar,
+      Value<Map<String, String>>? porulPeyar,
       Value<String>? hsnCode,
       Value<double>? vilai,
       Value<double>? variVeetham,
+      Value<String>? alavuVagai,
+      Value<String>? alagu,
       Value<DateTime>? createdAt,
       Value<DateTime>? updatedAt,
       Value<bool>? isDeleted,
@@ -2395,6 +2472,8 @@ class PorulTableCompanion extends UpdateCompanion<PorulEntry> {
       hsnCode: hsnCode ?? this.hsnCode,
       vilai: vilai ?? this.vilai,
       variVeetham: variVeetham ?? this.variVeetham,
+      alavuVagai: alavuVagai ?? this.alavuVagai,
+      alagu: alagu ?? this.alagu,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
@@ -2412,7 +2491,8 @@ class PorulTableCompanion extends UpdateCompanion<PorulEntry> {
       map['seyali_vagai'] = Variable<String>(seyaliVagai.value);
     }
     if (porulPeyar.present) {
-      map['porul_peyar'] = Variable<String>(porulPeyar.value);
+      map['porul_peyar'] = Variable<String>(
+          $PorulTableTable.$converterporulPeyar.toSql(porulPeyar.value));
     }
     if (hsnCode.present) {
       map['hsn_code'] = Variable<String>(hsnCode.value);
@@ -2422,6 +2502,12 @@ class PorulTableCompanion extends UpdateCompanion<PorulEntry> {
     }
     if (variVeetham.present) {
       map['vari_veetham'] = Variable<double>(variVeetham.value);
+    }
+    if (alavuVagai.present) {
+      map['alavu_vagai'] = Variable<String>(alavuVagai.value);
+    }
+    if (alagu.present) {
+      map['alagu'] = Variable<String>(alagu.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -2447,6 +2533,8 @@ class PorulTableCompanion extends UpdateCompanion<PorulEntry> {
           ..write('hsnCode: $hsnCode, ')
           ..write('vilai: $vilai, ')
           ..write('variVeetham: $variVeetham, ')
+          ..write('alavuVagai: $alavuVagai, ')
+          ..write('alagu: $alagu, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
@@ -3992,10 +4080,12 @@ typedef $$VanigarTableTableProcessedTableManager = ProcessedTableManager<
 typedef $$PorulTableTableCreateCompanionBuilder = PorulTableCompanion Function({
   Value<int> id,
   required String seyaliVagai,
-  required String porulPeyar,
+  Value<Map<String, String>> porulPeyar,
   Value<String> hsnCode,
   Value<double> vilai,
   Value<double> variVeetham,
+  Value<String> alavuVagai,
+  Value<String> alagu,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
   Value<bool> isDeleted,
@@ -4004,10 +4094,12 @@ typedef $$PorulTableTableCreateCompanionBuilder = PorulTableCompanion Function({
 typedef $$PorulTableTableUpdateCompanionBuilder = PorulTableCompanion Function({
   Value<int> id,
   Value<String> seyaliVagai,
-  Value<String> porulPeyar,
+  Value<Map<String, String>> porulPeyar,
   Value<String> hsnCode,
   Value<double> vilai,
   Value<double> variVeetham,
+  Value<String> alavuVagai,
+  Value<String> alagu,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
   Value<bool> isDeleted,
@@ -4029,8 +4121,11 @@ class $$PorulTableTableFilterComposer
   ColumnFilters<String> get seyaliVagai => $composableBuilder(
       column: $table.seyaliVagai, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get porulPeyar => $composableBuilder(
-      column: $table.porulPeyar, builder: (column) => ColumnFilters(column));
+  ColumnWithTypeConverterFilters<Map<String, String>, Map<String, String>,
+          String>
+      get porulPeyar => $composableBuilder(
+          column: $table.porulPeyar,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
 
   ColumnFilters<String> get hsnCode => $composableBuilder(
       column: $table.hsnCode, builder: (column) => ColumnFilters(column));
@@ -4040,6 +4135,12 @@ class $$PorulTableTableFilterComposer
 
   ColumnFilters<double> get variVeetham => $composableBuilder(
       column: $table.variVeetham, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get alavuVagai => $composableBuilder(
+      column: $table.alavuVagai, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get alagu => $composableBuilder(
+      column: $table.alagu, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnFilters(column));
@@ -4081,6 +4182,12 @@ class $$PorulTableTableOrderingComposer
   ColumnOrderings<double> get variVeetham => $composableBuilder(
       column: $table.variVeetham, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get alavuVagai => $composableBuilder(
+      column: $table.alavuVagai, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get alagu => $composableBuilder(
+      column: $table.alagu, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnOrderings(column));
 
@@ -4109,8 +4216,9 @@ class $$PorulTableTableAnnotationComposer
   GeneratedColumn<String> get seyaliVagai => $composableBuilder(
       column: $table.seyaliVagai, builder: (column) => column);
 
-  GeneratedColumn<String> get porulPeyar => $composableBuilder(
-      column: $table.porulPeyar, builder: (column) => column);
+  GeneratedColumnWithTypeConverter<Map<String, String>, String>
+      get porulPeyar => $composableBuilder(
+          column: $table.porulPeyar, builder: (column) => column);
 
   GeneratedColumn<String> get hsnCode =>
       $composableBuilder(column: $table.hsnCode, builder: (column) => column);
@@ -4120,6 +4228,12 @@ class $$PorulTableTableAnnotationComposer
 
   GeneratedColumn<double> get variVeetham => $composableBuilder(
       column: $table.variVeetham, builder: (column) => column);
+
+  GeneratedColumn<String> get alavuVagai => $composableBuilder(
+      column: $table.alavuVagai, builder: (column) => column);
+
+  GeneratedColumn<String> get alagu =>
+      $composableBuilder(column: $table.alagu, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -4159,10 +4273,12 @@ class $$PorulTableTableTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> seyaliVagai = const Value.absent(),
-            Value<String> porulPeyar = const Value.absent(),
+            Value<Map<String, String>> porulPeyar = const Value.absent(),
             Value<String> hsnCode = const Value.absent(),
             Value<double> vilai = const Value.absent(),
             Value<double> variVeetham = const Value.absent(),
+            Value<String> alavuVagai = const Value.absent(),
+            Value<String> alagu = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> updatedAt = const Value.absent(),
             Value<bool> isDeleted = const Value.absent(),
@@ -4175,6 +4291,8 @@ class $$PorulTableTableTableManager extends RootTableManager<
             hsnCode: hsnCode,
             vilai: vilai,
             variVeetham: variVeetham,
+            alavuVagai: alavuVagai,
+            alagu: alagu,
             createdAt: createdAt,
             updatedAt: updatedAt,
             isDeleted: isDeleted,
@@ -4183,10 +4301,12 @@ class $$PorulTableTableTableManager extends RootTableManager<
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required String seyaliVagai,
-            required String porulPeyar,
+            Value<Map<String, String>> porulPeyar = const Value.absent(),
             Value<String> hsnCode = const Value.absent(),
             Value<double> vilai = const Value.absent(),
             Value<double> variVeetham = const Value.absent(),
+            Value<String> alavuVagai = const Value.absent(),
+            Value<String> alagu = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> updatedAt = const Value.absent(),
             Value<bool> isDeleted = const Value.absent(),
@@ -4199,6 +4319,8 @@ class $$PorulTableTableTableManager extends RootTableManager<
             hsnCode: hsnCode,
             vilai: vilai,
             variVeetham: variVeetham,
+            alavuVagai: alavuVagai,
+            alagu: alagu,
             createdAt: createdAt,
             updatedAt: updatedAt,
             isDeleted: isDeleted,

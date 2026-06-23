@@ -223,4 +223,19 @@ const Map<String, String> tg = {
       'Thaevaiyaana Anaithu Vanigap Peyargalaiyum Ullidavum.',
   'gstinVariAdaiyaalaEn': 'GSTIN / Vari Adaiyaala En',
   'elvanParthasarathy': 'Elvan Parthasarathy',
+
+  // === Porul (Product) Keys ===
+  'porulTharavugal': 'Porul Tharavugal',
+  'vilaiMatrumVari': 'Vilai matrum Vari',
+  'alavuVagai': 'Alavu Vagai',
+  'alavu': 'Alavu',
+  'edai': 'Edai',
+  'hsnSacKuriyeedu': 'HSN/SAC Kuriyeedu',
+  'vilai': 'Vilai',
+  'gstVeedham': 'GST Veedham %',
+  'porulPeyarThaevai': 'Porul Peyar Thaevai',
+  'porulChaemikkappattadhu': 'Porul Chaemikkappattadhu',
+  'porulAzhikkappattadhu': 'Porul Azhikkappattadhu',
+  'porulgalIllai': 'Porulgal Illai',
+  'porulaiChaerkkavum': 'Mudhal Porulai Chaerkkavum',
 };

@@ -247,6 +247,21 @@ abstract final class K {
   static const pattupPatrucheettuThiruthi = 'pattupPatrucheettuThiruthi';
   static const pudhiyaPattupPatrucheettu = 'pudhiyaPattupPatrucheettu';
 
+  // ── Porul (Product) ──
+  static const porulTharavugal = 'porulTharavugal';
+  static const vilaiMatrumVari = 'vilaiMatrumVari';
+  static const alavuVagai = 'alavuVagai';
+  static const alavu = 'alavu';
+  static const edai = 'edai';
+  static const hsnSacKuriyeedu = 'hsnSacKuriyeedu';
+  static const vilai = 'vilai';
+  static const gstVeedham = 'gstVeedham';
+  static const porulPeyarThaevai = 'porulPeyarThaevai';
+  static const porulChaemikkappattadhu = 'porulChaemikkappattadhu';
+  static const porulAzhikkappattadhu = 'porulAzhikkappattadhu';
+  static const porulgalIllai = 'porulgalIllai';
+  static const porulaiChaerkkavum = 'porulaiChaerkkavum';
+
   // ── Dev Tools ──
   static const uruvaakkunarTharavugalaiAzhi = 'uruvaakkunarTharavugalaiAzhi';
   static const uruvaakkunarTharavugalaiUruvaakku = 'uruvaakkunarTharavugalaiUruvaakku';

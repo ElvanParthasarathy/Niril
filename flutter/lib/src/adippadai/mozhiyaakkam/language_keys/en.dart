@@ -219,4 +219,19 @@ const Map<String, String> en = {
   'elvanParthasarathy': 'Elvan Parthasarathy',
   'appPeyar': 'Elvan Niril',
   'elvanNiril': 'Elvan Niril',
+
+  // === Porul (Product) Keys ===
+  'porulTharavugal': 'Product Details',
+  'vilaiMatrumVari': 'Pricing & Tax',
+  'alavuVagai': 'Measure Type',
+  'alavu': 'Quantity',
+  'edai': 'Weight',
+  'hsnSacKuriyeedu': 'HSN/SAC Code',
+  'vilai': 'Selling Rate',
+  'gstVeedham': 'GST Rate %',
+  'porulPeyarThaevai': 'Product name is required',
+  'porulChaemikkappattadhu': 'Product saved successfully',
+  'porulAzhikkappattadhu': 'Product deleted',
+  'porulgalIllai': 'No products yet',
+  'porulaiChaerkkavum': 'Add your first product',
 };
