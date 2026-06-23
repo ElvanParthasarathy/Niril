@@ -82,7 +82,7 @@ const Map<String, String> ta = {
   'azhippuvetri': 'தரவு வெற்றிகரமாக அழிக்கப்பட்டது.',
   'chaemippuvetri': 'வெற்றிகரமாகச் சேமிக்கப்பட்டது',
   'pilVadivamaippuViruppangal': 'PDF வடிவமைப்பு விருப்பங்கள்',
-  'chinnathinVadivam': 'சின்னத்தின் வடிவம்',
+  'chinnathinVadivam': 'ஓவுருவின் வடிவம்',
   'meetteduppuvetri': 'தரவு வெற்றிகரமாக மீட்டெடுக்கப்பட்டது!',
 
   // ========================================

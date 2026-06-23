@@ -87,7 +87,7 @@ const Map<String, String> tg = {
   'azhippuvetri': 'Tharavu Vetrigaramaaga Azhikkappattadhu.',
   'chaemippuvetri': 'Vetrigaramaagach Chaemikkappattadhu',
   'pilVadivamaippuViruppangal': 'PDF Vadivamaippu Viruppangal',
-  'chinnathinVadivam': 'Chinnathin Vadivam',
+  'chinnathinVadivam': 'Oavuruvin Vadivam',
   'meetteduppuvetri': 'Tharavu Vetrigaramaaga Meettedukkappattadhu!',
 
   // ========================================
