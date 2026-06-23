@@ -22,6 +22,7 @@ import 'pages/language_settings_page.dart';
 import 'package:elvan_niril/src/features/settings/presentation/widgets/elvan_settings_section.dart';
 import 'package:elvan_niril/src/features/niril_common/presentation/widgets/elvan_settings_icon.dart';
 import 'pages/pathugappu_amaippugal_page.dart';
+import 'pages/seyali_patri_page.dart';
 
 import '../../shell/presentation/desktop/elvan_desktop_subpage_shell.dart';
 import '../../auth/presentation/mode_selector_screen.dart';
@@ -336,6 +337,14 @@ class SettingsHubScreen extends ConsumerWidget {
                     description: 'desc_about'.tr(context, ref),
                     onTap: () =>
                         _navigateTo(context, const AboutDeveloperPage()),
+                  ),
+                  ElvanSettingsRow(
+                    icon: CupertinoIcons.device_phone_portrait,
+                    iconBgColor: iconBgColor,
+                    title: 'seyali_patri'.tr(context, ref),
+                    description: 'desc_seyali_patri'.tr(context, ref),
+                    onTap: () =>
+                        _navigateTo(context, const SeyaliPatriPage()),
                   ),
                 ],
               ),
