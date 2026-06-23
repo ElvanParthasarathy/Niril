@@ -81,7 +81,7 @@ const Map<String, String> en = {
   'pudhiyaPatrucheettuPtn': 'New Receipt',
   'veliyaetramvetri': 'Signed out successfully',
   'azhippuvetri': 'App data erased.',
-  'pilVadivamaippuViruppangal': 'Invoice styling options',
+  'pilVadivamaippuViruppangal': 'PDF styling options',
   'chinnathinVadivam': 'Bill Header Style',
   'meetteduppuvetri': 'Data restored successfully!',
 
