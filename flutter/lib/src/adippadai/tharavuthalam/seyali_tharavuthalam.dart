@@ -161,29 +161,130 @@ class PorulTable extends Table {
 // ── Table: பற்றுச்சீட்டு (Invoice) ──
 @DataClassName('PatrucheettuEntry')
 class PatrucheettuTable extends Table {
+  // ── Identity ──
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get seyaliVagai => text()();
-  
-  // Financial Data
-  TextColumn get patrucheettuEn => text()(); // e.g. INV/2026-27/001
-  IntColumn get finYear => integer()(); // e.g. 2026
-  
-  // Customer Snapshot (In case customer is deleted/changed later)
-  IntColumn get vanigarId => integer().nullable()();
-  TextColumn get vanigarPeyar => text()();
-  TextColumn get vanigarTholaipaesi => text().withDefault(const Constant(''))();
-  
-  // Totals
-  RealColumn get mothaThogai => real().withDefault(const Constant(0.0))();
-  
-  // Items JSON Snapshot
-  TextColumn get tharavugal => text().withDefault(const Constant('[]'))();
+  TextColumn get seyaliVagai => text()(); // 'silk' or 'coolie'
+  IntColumn get niruvanamId => integer().nullable()(); // FK → VanigaTharavugalTable
 
-  // Audit
-  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
-  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
-  BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
+  // ── Invoice Header ──
+  TextColumn get patrucheettuEn => text()(); // Display: SJS/2026-27/001
+  IntColumn get finYear => integer()(); // e.g. 2026
+  IntColumn get vanakkam =>
+      integer().withDefault(const Constant(1))(); // Seq # within FY+company
+  TextColumn get pattiyalVagai =>
+      text().withDefault(const Constant('tax-invoice'))(); // Silk: tax-invoice / proforma
+
+  // ── Customer (FK — not snapshot) ──
+  IntColumn get vanigarId => integer().nullable()(); // FK → VanigarTable
+  TextColumn get vanigarPeyar => text()(); // Fallback name for deleted customers
+
+  // ── Date ──
+  DateTimeColumn get pattiyalNaal =>
+      dateTime().withDefault(currentDateAndTime)(); // Invoice date (not created date)
+
+  // ── Line Items (JSON array) ──
+  TextColumn get tharavugal =>
+      text().withDefault(const Constant('[]'))();
+
+  // ── Financial Results (stored at save, never re-calculated) ──
+  RealColumn get mothaThogai =>
+      real().withDefault(const Constant(0.0))(); // Grand total
+  RealColumn get thallupadi =>
+      real().withDefault(const Constant(0.0))(); // Total discount
+  RealColumn get variThogai =>
+      real().withDefault(const Constant(0.0))(); // Total tax
+  TextColumn get variTharavugal =>
+      text().withDefault(const Constant('{}'))(); // {cgst, sgst, igst}
+
+  // ── Coolie-specific ──
+  RealColumn get mothaEdai =>
+      real().withDefault(const Constant(0.0))(); // Total KG
+  RealColumn get setharamGrams =>
+      real().withDefault(const Constant(0.0))();
+  RealColumn get thapaalThogai =>
+      real().withDefault(const Constant(0.0))(); // Courier ₹
+  RealColumn get ahimsaPattuThogai =>
+      real().withDefault(const Constant(0.0))(); // Ahimsa silk ₹
+  TextColumn get piravariVugal =>
+      text().withDefault(const Constant('[]'))(); // [{peyar, thogai}]
+
+  // ── Silk-specific ──
+  TextColumn get sonthaViruppangal =>
+      text().withDefault(const Constant('{}'))(); // Invoice settings JSON
+  TextColumn get nibandhanaigal =>
+      text().withDefault(const Constant(''))(); // Custom terms
+  TextColumn get ullkurippu =>
+      text().withDefault(const Constant(''))(); // Internal note
+
+  // ── Bank Snapshot (coolie — from profile at save time) ──
+  TextColumn get vangiTharavugal =>
+      text().withDefault(const Constant('{}'))();
+
+  // ── Audit ──
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt =>
+      dateTime().withDefault(currentDateAndTime)();
+  BoolColumn get isDeleted =>
+      boolean().withDefault(const Constant(false))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
+}
+
+// ── Receipt Table ──
+/// Stores payment receipts — simple flat records of "Client paid ₹X via Y".
+/// Completely separate from PatrucheettuTable (invoices).
+class PatrugalTable extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get seyaliVagai => text()(); // 'silk' | 'coolie'
+  IntColumn get niruvanamId =>
+      integer().nullable()(); // FK → VanigaTharavugalTable
+
+  // ── Receipt Identity ──
+  TextColumn get patruEn => text()(); // Display: 'RCP/SJS/01'
+  IntColumn get vanakkam =>
+      integer().withDefault(const Constant(1))(); // Seq # for auto-numbering
+
+  // ── Customer (FK-first, fallback snapshot) ──
+  IntColumn get vanigarId =>
+      integer().nullable()(); // FK → VanigarTable
+  TextColumn get vanigarPeyar => text()(); // Snapshot name
+  TextColumn get vanigarMunvari =>
+      text().withDefault(const Constant(''))(); // Snapshot address
+
+  // ── Receipt Data ──
+  DateTimeColumn get patruNaal =>
+      dateTime().withDefault(currentDateAndTime)();
+  RealColumn get thogai =>
+      real().withDefault(const Constant(0.0))(); // Amount received
+
+  // ── Payment ──
+  TextColumn get seluthiVagai =>
+      text().withDefault(const Constant(''))(); // 'cash'|'upi'|'bank_transfer'|'cheque'|'card'
+  TextColumn get suttruEn =>
+      text().withDefault(const Constant(''))(); // Reference/Transaction ID
+
+  // ── Note ──
+  TextColumn get ullkurippu =>
+      text().withDefault(const Constant(''))();
+
+  // ── Audit ──
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get updatedAt =>
+      dateTime().withDefault(currentDateAndTime)();
+  BoolColumn get isDeleted =>
+      boolean().withDefault(const Constant(false))();
+}
+
+// ── Receipt ↔ Invoice Junction Table ──
+/// Links each receipt to one or more invoices with the exact amount applied.
+/// Enables partial payments and accurate balance tracking (like Tally/Zoho).
+class PatruPattiyalTable extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get patruId => integer()(); // FK → PatrugalTable
+  IntColumn get pattiyalId => integer()(); // FK → PatrucheettuTable
+  RealColumn get poruthiyaThogai =>
+      real().withDefault(const Constant(0.0))(); // Amount applied to this invoice
 }
 
 // ── Database ──
@@ -192,12 +293,14 @@ class PatrucheettuTable extends Table {
   VanigarTable,
   PorulTable,
   PatrucheettuTable,
+  PatrugalTable,
+  PatruPattiyalTable,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -247,6 +350,35 @@ class AppDatabase extends _$AppDatabase {
             await customStatement(
               "UPDATE vanigar_table SET mugavari = '{}' WHERE mugavari = ''",
             );
+          }
+          if (from < 6) {
+            // v6: Expand PatrucheettuTable for full invoice support
+            await m.addColumn(patrucheettuTable, patrucheettuTable.niruvanamId);
+            await m.addColumn(patrucheettuTable, patrucheettuTable.vanakkam);
+            await m.addColumn(patrucheettuTable, patrucheettuTable.pattiyalVagai);
+            await m.addColumn(patrucheettuTable, patrucheettuTable.pattiyalNaal);
+            await m.addColumn(patrucheettuTable, patrucheettuTable.thallupadi);
+            await m.addColumn(patrucheettuTable, patrucheettuTable.variThogai);
+            await m.addColumn(patrucheettuTable, patrucheettuTable.variTharavugal);
+            await m.addColumn(patrucheettuTable, patrucheettuTable.mothaEdai);
+            await m.addColumn(patrucheettuTable, patrucheettuTable.setharamGrams);
+            await m.addColumn(patrucheettuTable, patrucheettuTable.thapaalThogai);
+            await m.addColumn(patrucheettuTable, patrucheettuTable.ahimsaPattuThogai);
+            await m.addColumn(patrucheettuTable, patrucheettuTable.piravariVugal);
+            await m.addColumn(patrucheettuTable, patrucheettuTable.sonthaViruppangal);
+            await m.addColumn(patrucheettuTable, patrucheettuTable.nibandhanaigal);
+            await m.addColumn(patrucheettuTable, patrucheettuTable.ullkurippu);
+            await m.addColumn(patrucheettuTable, patrucheettuTable.vangiTharavugal);
+
+            // Drop deprecated column
+            await customStatement(
+              'ALTER TABLE patrucheettu_table DROP COLUMN IF EXISTS vanigar_tholaipaesi',
+            );
+          }
+          if (from < 7) {
+            // v7: Receipt system — new tables
+            await m.createTable(patrugalTable);
+            await m.createTable(patruPattiyalTable);
           }
         },
       );

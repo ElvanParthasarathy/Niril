@@ -1,210 +1,432 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+
+import '../../../../adippadai/mozhiyaakkam/k.dart';
+import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/nilaimai/thaedal_nilaimai.dart';
+import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
+import '../../../../koorugal/meladukkugal/elvan_cheyal_meladukku.dart';
 import '../../../chattagam/kaatchi/koorugal/elvan_uyir_valai.dart';
-// MOCK DATA MODEL
-// ─────────────────────────────────────────────────────────────────────────────
+import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
+import '../thiruthi/niril_pattu_pattiyal_thiruthi.dart';
 
-class _AlbumMock {
-  const _AlbumMock(this.name, this.count, this.color);
-
-  final String name;
-  final int count;
-  final Color color;
-}
-
-const List<_AlbumMock> _albums = [
-  _AlbumMock('Camera', 4350, Color(0xFFE8D5C4)),
-  _AlbumMock('GANTH', 106, Color(0xFFC5E1A5)),
-  _AlbumMock('Nive akka', 776, Color(0xFFB3E5FC)),
-  _AlbumMock('Quick Share', 116, Color(0xFFFFCDD2)),
-  _AlbumMock('Album 3', 2, Color(0xFFD1C4E9)),
-  _AlbumMock('Bell', 6, Color(0xFFFFE0B2)),
-  _AlbumMock('Collage', 26, Color(0xFFB2DFDB)),
-  _AlbumMock('Facebook', 17, Color(0xFFF8BBD0)),
-  _AlbumMock('Happy birthday', 178, Color(0xFFC8E6C9)),
-  _AlbumMock('Jai', 8, Color(0xFFBBDEFB)),
-  _AlbumMock('Messenger', 3, Color(0xFFFFECB3)),
-  _AlbumMock('Map Camera', 94, Color(0xFFD7CCC8)),
-  _AlbumMock('New folder', 6, Color(0xFFCFD8DC)),
-  _AlbumMock('Pa', 12, Color(0xFFE1BEE7)),
-  _AlbumMock('Pendrive', 17, Color(0xFFB2EBF2)),
-  _AlbumMock('Pictures', 233, Color(0xFFF0F4C3)),
-  _AlbumMock('Downloads', 89, Color(0xFFFFCCBC)),
-  _AlbumMock('Screenshots', 512, Color(0xFFE0E0E0)),
-  // Duplicated dummy data for long scroll testing
-  _AlbumMock('Test Folder 1', 10, Color(0xFFD1C4E9)),
-  _AlbumMock('Test Folder 2', 20, Color(0xFFFFE0B2)),
-  _AlbumMock('Test Folder 3', 30, Color(0xFFB2DFDB)),
-  _AlbumMock('Test Folder 4', 40, Color(0xFFF8BBD0)),
-  _AlbumMock('Test Folder 5', 50, Color(0xFFC8E6C9)),
-  _AlbumMock('Test Folder 6', 60, Color(0xFFBBDEFB)),
-  _AlbumMock('Test Folder 7', 70, Color(0xFFFFECB3)),
-  _AlbumMock('Test Folder 8', 80, Color(0xFFD7CCC8)),
-  _AlbumMock('Test Folder 9', 90, Color(0xFFCFD8DC)),
-  _AlbumMock('Test Folder 10', 100, Color(0xFFE1BEE7)),
-  _AlbumMock('Test Folder 11', 110, Color(0xFFB2EBF2)),
-  _AlbumMock('Test Folder 12', 120, Color(0xFFF0F4C3)),
-  _AlbumMock('Test Folder 13', 130, Color(0xFFFFCCBC)),
-  _AlbumMock('Test Folder 14', 140, Color(0xFFE0E0E0)),
-  _AlbumMock('Test Folder 15', 150, Color(0xFFC5E1A5)),
-  _AlbumMock('Test Folder 16', 160, Color(0xFFB3E5FC)),
-  _AlbumMock('Test Folder 17', 170, Color(0xFFFFCDD2)),
-  _AlbumMock('Test Folder 18', 180, Color(0xFFE8D5C4)),
-  _AlbumMock('Test Folder 19', 190, Color(0xFFD1C4E9)),
-  _AlbumMock('Test Folder 20', 200, Color(0xFFFFE0B2)),
-  _AlbumMock('Test Folder 21', 210, Color(0xFFB2DFDB)),
-  _AlbumMock('Test Folder 22', 220, Color(0xFFFFCCBC)),
-  _AlbumMock('Test Folder 23', 230, Color(0xFFD7CCC8)),
-  _AlbumMock('Test Folder 24', 240, Color(0xFFCFD8DC)),
-  _AlbumMock('Test Folder 25', 250, Color(0xFFF8BBD0)),
-  _AlbumMock('Test Folder 26', 260, Color(0xFFC5CAE9)),
-  _AlbumMock('Test Folder 27', 270, Color(0xFFB2EBF2)),
-  _AlbumMock('Test Folder 28', 280, Color(0xFFDCEDC8)),
-  _AlbumMock('Test Folder 29', 290, Color(0xFFFFF9C4)),
-  _AlbumMock('Test Folder 30', 300, Color(0xFFFFE082)),
-  _AlbumMock('Test Folder 31', 310, Color(0xFFFFCC80)),
-  _AlbumMock('Test Folder 32', 320, Color(0xFFBCAAA4)),
-  _AlbumMock('Test Folder 33', 330, Color(0xFFB0BEC5)),
-  _AlbumMock('Test Folder 34', 340, Color(0xFFF48FB1)),
-  _AlbumMock('Test Folder 35', 350, Color(0xFFCE93D8)),
-  _AlbumMock('Test Folder 36', 360, Color(0xFF9FA8DA)),
-  _AlbumMock('Test Folder 37', 370, Color(0xFF90CAF9)),
-  _AlbumMock('Test Folder 38', 380, Color(0xFF81D4FA)),
-  _AlbumMock('Test Folder 39', 390, Color(0xFF80DEEA)),
-  _AlbumMock('Test Folder 40', 400, Color(0xFF80CBC4)),
-  _AlbumMock('Test Folder 41', 410, Color(0xFFA5D6A7)),
-  _AlbumMock('Test Folder 42', 420, Color(0xFFC5E1A5)),
-  _AlbumMock('Test Folder 43', 430, Color(0xFFE6EE9C)),
-  _AlbumMock('Test Folder 44', 440, Color(0xFFFFF59D)),
-  _AlbumMock('Test Folder 45', 450, Color(0xFFFFE082)),
-  _AlbumMock('Test Folder 46', 460, Color(0xFFFFCC80)),
-  _AlbumMock('Test Folder 47', 470, Color(0xFFFFAB91)),
-  _AlbumMock('Test Folder 48', 480, Color(0xFFBCAAA4)),
-  _AlbumMock('Test Folder 49', 490, Color(0xFFEEEEEE)),
-  _AlbumMock('Test Folder 50', 500, Color(0xFFB0BEC5)),
-];
-
+/// Silk invoice list — real DB-backed view.
+/// Shows invoices grouped by business profile with search, selection, and
+/// tap-to-edit navigation.
 class SilkInvoicesPage extends ConsumerWidget {
   const SilkInvoicesPage({super.key});
+
+  static final _dateFormat = DateFormat('dd/MM/yyyy');
+  static final _currencyFormat =
+      NumberFormat.currency(locale: 'en_IN', symbol: '₹');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final query = ref.watch(silkInvoicesSearchQueryProvider).toLowerCase();
-    final filteredAlbums = query.isEmpty
-        ? _albums
-        : _albums.where((a) => a.name.toLowerCase().contains(query)).toList();
+    final pattiyalgalAsync = ref.watch(pattiyalgalStreamProvider);
+    final profilesAsync = ref.watch(profilesStreamProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isSelecting = ref.watch(pattiyalSelectionModeProvider);
+    final selectedIds = ref.watch(selectedPattiyalIdsProvider);
 
-    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
-
-    return SliverPadding(
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: isDesktop ? 0 : 32,
-        bottom: 120, // clearance for the floating pill
+    return pattiyalgalAsync.when(
+      loading: () => const SliverFillRemaining(
+        child: Center(child: CupertinoActivityIndicator()),
       ),
-      sliver: ElvanResponsiveGrid(
-        itemCount: filteredAlbums.length,
-        desktopCrossAxisCount: 3,
-        childAspectRatio: 0.82,
-        itemBuilder: (context, index) {
-          final album = filteredAlbums[index];
-          return _AlbumCard(album: album);
-        },
+      error: (e, _) => SliverFillRemaining(
+        child: Center(child: Text('Error: $e')),
       ),
-    );
-  }
-}
+      data: (pattiyalgal) {
+        final profiles = profilesAsync.value ?? [];
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ALBUM CARD — Sample grid tile mimicking the Samsung Gallery look
-// ─────────────────────────────────────────────────────────────────────────────
+        // Filter by search query
+        final filtered = query.isEmpty
+            ? pattiyalgal
+            : pattiyalgal.where((p) {
+                final en = p.patrucheettuEn.toLowerCase();
+                final peyar = p.vanigarPeyar.toLowerCase();
+                return en.contains(query) || peyar.contains(query);
+              }).toList();
 
-class _AlbumCard extends StatelessWidget {
-  const _AlbumCard({required this.album});
-
-  final _AlbumMock album;
-
-  @override
-  Widget build(BuildContext context) {
-    return RepaintBoundary(
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: album.color,
-        ),
-        clipBehavior: Clip.hardEdge,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            // ── Placeholder gradient fill ──
-            DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    album.color,
-                    Color.lerp(album.color, Colors.black, 0.15)!,
-                  ],
-                ),
-              ),
-            ),
-            // ── Cached Network Image ──
-            CachedNetworkImage(
-              imageUrl:
-                  'https://picsum.photos/id/${(album.count ~/ 10) % 1000}/300/300',
-              fit: BoxFit.cover,
-              // Keep the beautiful gradient while it loads
-              placeholder: (context, url) => const SizedBox.shrink(),
-              errorWidget: (context, url, error) =>
-                  const Icon(CupertinoIcons.photo, color: Colors.white54),
-            ),
-            // ── Bottom label overlay ──
-            Positioned(
-              left: 8,
-              right: 8,
-              bottom: 8,
+        // Empty state
+        if (filtered.isEmpty) {
+          return SliverFillRemaining(
+            child: Center(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    album.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      shadows: [
-                        Shadow(
-                          blurRadius: 4,
-                          color: Colors.black38,
-                        ),
-                      ],
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  Icon(
+                    CupertinoIcons.doc_text,
+                    size: 48,
+                    color: isDark ? Colors.white24 : Colors.black26,
                   ),
+                  const SizedBox(height: 12),
                   Text(
-                    '${album.count}',
+                    'பற்றுச்சீட்டுகள் இல்லை',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.8),
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400,
-                      shadows: const [
-                        Shadow(
-                          blurRadius: 4,
-                          color: Colors.black38,
-                        ),
-                      ],
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.white38 : Colors.black38,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'புதிய பற்றுச்சீட்டை உருவாக்கவும்',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark ? Colors.white24 : Colors.black26,
                     ),
                   ),
                 ],
               ),
             ),
+          );
+        }
+
+        // Group invoices by niruvanamId
+        final grouped = <int?, List<PatrucheettuEntry>>{};
+        for (final p in filtered) {
+          grouped.putIfAbsent(p.niruvanamId, () => []).add(p);
+        }
+
+        // Build section slivers
+        final slivers = <Widget>[];
+
+        // Selection bar
+        if (isSelecting) {
+          slivers.add(
+            SliverToBoxAdapter(
+              child: _SelectionBar(
+                selectedCount: selectedIds.length,
+                isDark: isDark,
+                onSelectAll: () {
+                  ref.read(selectedPattiyalIdsProvider.notifier).state =
+                      filtered.map((p) => p.id).toSet();
+                },
+                onDelete: () {
+                  _showBulkDeleteConfirm(
+                      context, ref, selectedIds.toList());
+                },
+                onCancel: () {
+                  ref.read(pattiyalSelectionModeProvider.notifier).state =
+                      false;
+                  ref.read(selectedPattiyalIdsProvider.notifier).state = {};
+                },
+              ),
+            ),
+          );
+        }
+
+        // Sections per business profile
+        for (final entry in grouped.entries) {
+          final niruvanamId = entry.key;
+          final items = entry.value;
+
+          // Resolve business name
+          String sectionName;
+          if (niruvanamId == null) {
+            sectionName = 'General';
+          } else {
+            final profile = profiles
+                .where((p) => p.id == niruvanamId)
+                .firstOrNull;
+            sectionName = profile?.kurumPeyar ?? 'General';
+          }
+
+          // Show section header only if there's more than one group
+          if (grouped.length > 1) {
+            slivers.add(
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16, bottom: 8),
+                  child: Text(
+                    sectionName,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.5)
+                          : Colors.black.withValues(alpha: 0.4),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+
+          // Invoice cards for this group
+          slivers.add(
+            ElvanResponsiveGrid(
+              itemCount: items.length,
+              desktopCrossAxisCount: 2,
+              childAspectRatio: 3.2,
+              mobileItemHeight: 88,
+              itemBuilder: (context, index) {
+                final pattiyal = items[index];
+                final isSelected = selectedIds.contains(pattiyal.id);
+
+                return _SilkPatrucheettuCard(
+                  pattiyal: pattiyal,
+                  isDark: isDark,
+                  isSelecting: isSelecting,
+                  isSelected: isSelected,
+                  dateFormat: _dateFormat,
+                  currencyFormat: _currencyFormat,
+                  onTap: () {
+                    if (isSelecting) {
+                      _toggleSelection(ref, pattiyal.id, selectedIds);
+                    } else {
+                      // Navigate to editor for editing
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => SilkInvoiceEditor(
+                            editingEntry: pattiyal,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  onLongPress: () {
+                    if (!isSelecting) {
+                      ref
+                          .read(pattiyalSelectionModeProvider.notifier)
+                          .state = true;
+                      ref
+                          .read(selectedPattiyalIdsProvider.notifier)
+                          .state = {pattiyal.id};
+                    }
+                  },
+                );
+              },
+            ),
+          );
+        }
+
+        return SliverPadding(
+          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 120),
+          sliver: SliverMainAxisGroup(slivers: slivers),
+        );
+      },
+    );
+  }
+
+  void _toggleSelection(WidgetRef ref, int id, Set<int> current) {
+    final updated = Set<int>.from(current);
+    if (updated.contains(id)) {
+      updated.remove(id);
+    } else {
+      updated.add(id);
+    }
+    ref.read(selectedPattiyalIdsProvider.notifier).state = updated;
+
+    if (updated.isEmpty) {
+      ref.read(pattiyalSelectionModeProvider.notifier).state = false;
+    }
+  }
+
+  void _showBulkDeleteConfirm(
+      BuildContext context, WidgetRef ref, List<int> ids) {
+    if (ids.isEmpty) return;
+
+    showElvanActionSheet(
+      context: context,
+      title: '${ids.length} ${K.neekkuPtn.tr(context, ref)}',
+      cancelText: K.kaividuPtn.tr(context, ref),
+      confirmText: K.neekkuPtn.tr(context, ref),
+      confirmColor: Colors.red,
+      onConfirm: () {
+        ref.read(pattiyalKalanjiyamProvider).bulkDeletePattiyalgal(ids);
+        ref.read(pattiyalSelectionModeProvider.notifier).state = false;
+        ref.read(selectedPattiyalIdsProvider.notifier).state = {};
+      },
+    );
+  }
+}
+
+// ── Selection Bar Widget ────────────────────────────────────────────────────
+
+class _SelectionBar extends ConsumerWidget {
+  const _SelectionBar({
+    required this.selectedCount,
+    required this.isDark,
+    required this.onSelectAll,
+    required this.onDelete,
+    required this.onCancel,
+  });
+
+  final int selectedCount;
+  final bool isDark;
+  final VoidCallback onSelectAll;
+  final VoidCallback onDelete;
+  final VoidCallback onCancel;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.08)
+            : Colors.black.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          Text(
+            '$selectedCount ${K.thaerndhedu.tr(context, ref)}',
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+          const Spacer(),
+          TextButton(
+            onPressed: onSelectAll,
+            child: Text(K.anaithaiyumTheriPtn.tr(context, ref)),
+          ),
+          IconButton(
+            icon: Icon(CupertinoIcons.delete,
+                color: Colors.red.withValues(alpha: 0.8), size: 20),
+            onPressed: onDelete,
+          ),
+          IconButton(
+            icon: const Icon(CupertinoIcons.xmark, size: 18),
+            onPressed: onCancel,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Silk Invoice Card ───────────────────────────────────────────────────────
+
+class _SilkPatrucheettuCard extends StatelessWidget {
+  const _SilkPatrucheettuCard({
+    required this.pattiyal,
+    required this.isDark,
+    required this.isSelecting,
+    required this.isSelected,
+    required this.dateFormat,
+    required this.currencyFormat,
+    required this.onTap,
+    required this.onLongPress,
+  });
+
+  final PatrucheettuEntry pattiyal;
+  final bool isDark;
+  final bool isSelecting;
+  final bool isSelected;
+  final DateFormat dateFormat;
+  final NumberFormat currencyFormat;
+  final VoidCallback onTap;
+  final VoidCallback onLongPress;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      onLongPress: onLongPress,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? Theme.of(context)
+                  .colorScheme
+                  .primary
+                  .withValues(alpha: 0.12)
+              : (isDark
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : Colors.black.withValues(alpha: 0.03)),
+          borderRadius: BorderRadius.circular(14),
+          border: isSelected
+              ? Border.all(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 1.5,
+                )
+              : null,
+        ),
+        child: Row(
+          children: [
+            // Selection checkbox
+            if (isSelecting) ...[
+              Icon(
+                isSelected
+                    ? CupertinoIcons.checkmark_circle_fill
+                    : CupertinoIcons.circle,
+                size: 22,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : (isDark ? Colors.white30 : Colors.black26),
+              ),
+              const SizedBox(width: 12),
+            ],
+            // Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        pattiyal.patrucheettuEn,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const Spacer(),
+                      Text(
+                        dateFormat.format(pattiyal.pattiyalNaal),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark ? Colors.white38 : Colors.black38,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (pattiyal.vanigarPeyar.isNotEmpty) ...[
+                    const SizedBox(height: 3),
+                    Text(
+                      pattiyal.vanigarPeyar,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: isDark ? Colors.white38 : Colors.black38,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                  const SizedBox(height: 3),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      currencyFormat.format(pattiyal.mothaThogai),
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: isDark
+                            ? Colors.blue.shade200
+                            : Colors.blue.shade700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Chevron
+            if (!isSelecting) ...[
+              const SizedBox(width: 8),
+              Icon(
+                CupertinoIcons.chevron_right,
+                size: 14,
+                color: isDark ? Colors.white24 : Colors.black26,
+              ),
+            ],
           ],
         ),
       ),
