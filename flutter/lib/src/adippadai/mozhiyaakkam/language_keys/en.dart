@@ -234,4 +234,13 @@ const Map<String, String> en = {
   'porulAzhikkappattadhu': 'Product deleted',
   'porulgalIllai': 'No products yet',
   'porulaiChaerkkavum': 'Add your first product',
+
+  // ── Meetpagam (Recycle Bin) ──
+  'meetpagam': 'Recycle Bin',
+  'meetpagamKaaliyanadhu': 'Recycle bin is empty',
+  'meeteduppuVetri': 'Restored successfully',
+  'meeteduppuCheiPtn': 'Restore',
+  'nirandharaAzhippu': 'Delete Permanently',
+  'nirandharaAzhippuUrudhi': 'Delete permanently? This cannot be undone.',
+  'azhikkappattaPorulgal': 'Deleted Products',
 };

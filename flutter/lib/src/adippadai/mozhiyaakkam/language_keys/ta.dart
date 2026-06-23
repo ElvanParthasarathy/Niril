@@ -234,4 +234,13 @@ const Map<String, String> ta = {
   'porulAzhikkappattadhu': 'பொருள் அழிக்கப்பட்டது',
   'porulgalIllai': 'பொருட்கள் இல்லை',
   'porulaiChaerkkavum': 'முதல் பொருளைச் சேர்க்கவும்',
+
+  // ── Meetpagam (Recycle Bin) ──
+  'meetpagam': 'மீட்பகம்',
+  'meetpagamKaaliyanadhu': 'மீட்பகம் காலியானது',
+  'meeteduppuVetri': 'வெற்றிகரமாக மீட்கப்பட்டது',
+  'meeteduppuCheiPtn': 'மீட்டெடு',
+  'nirandharaAzhippu': 'நிரந்தரமாக அழி',
+  'nirandharaAzhippuUrudhi': 'நிரந்தரமாக அழிக்கவா? மீட்க இயலாது.',
+  'azhikkappattaPorulgal': 'அழிக்கப்பட்ட பொருள்கள்',
 };

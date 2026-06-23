@@ -238,4 +238,13 @@ const Map<String, String> tg = {
   'porulAzhikkappattadhu': 'Porul Azhikkappattadhu',
   'porulgalIllai': 'Porulgal Illai',
   'porulaiChaerkkavum': 'Mudhal Porulai Chaerkkavum',
+
+  // ── Meetpagam (Recycle Bin) ──
+  'meetpagam': 'Meetpagam',
+  'meetpagamKaaliyanadhu': 'Meetpagam Kaaliyanadhu',
+  'meeteduppuVetri': 'Vetrikaramaaga Meetkappattadhu',
+  'meeteduppuCheiPtn': 'Meetteduppu Chei',
+  'nirandharaAzhippu': 'Nirandharamaaga Azhi',
+  'nirandharaAzhippuUrudhi': 'Nirandharamaaga Azhikkavaa? Meetka Iyalaadhu.',
+  'azhikkappattaPorulgal': 'Azhikkappatta Porulgal',
 };

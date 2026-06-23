@@ -96,4 +96,40 @@ class PorulKalanjiyam {
       ),
     );
   }
+
+  /// Restore a soft-deleted product.
+  Future<void> restorePorul(int id) async {
+    await (_db.update(_db.porulTable)..where((t) => t.id.equals(id))).write(
+      const PorulTableCompanion(
+        isDeleted: Value(false),
+        deletedAt: Value(null),
+      ),
+    );
+  }
+
+  /// Bulk restore soft-deleted products.
+  Future<void> bulkRestorePorulgal(List<int> ids) async {
+    await (_db.update(_db.porulTable)..where((t) => t.id.isIn(ids))).write(
+      const PorulTableCompanion(
+        isDeleted: Value(false),
+        deletedAt: Value(null),
+      ),
+    );
+  }
+
+  /// Permanently delete a product (hard delete).
+  Future<void> permanentDeletePorul(int id) async {
+    await (_db.delete(_db.porulTable)..where((t) => t.id.equals(id))).go();
+  }
+
+  /// Watch all soft-deleted products for the given mode (recycle bin).
+  Stream<List<PorulEntry>> watchDeletedPorulgal(String seyaliVagai) {
+    return (_db.select(_db.porulTable)
+          ..where((t) => t.seyaliVagai.equals(seyaliVagai))
+          ..where((t) => t.isDeleted.equals(true))
+          ..orderBy([
+            (t) => OrderingTerm.desc(t.deletedAt),
+          ]))
+        .watch();
+  }
 }

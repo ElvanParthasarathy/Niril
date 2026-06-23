@@ -262,6 +262,15 @@ abstract final class K {
   static const porulgalIllai = 'porulgalIllai';
   static const porulaiChaerkkavum = 'porulaiChaerkkavum';
 
+  // ── Meetpagam (Recycle Bin) ──
+  static const meetpagam = 'meetpagam';
+  static const meetpagamKaaliyanadhu = 'meetpagamKaaliyanadhu';
+  static const meeteduppuVetri = 'meeteduppuVetri';
+  static const meeteduppuCheiPtn = 'meeteduppuCheiPtn';
+  static const nirandharaAzhippu = 'nirandharaAzhippu';
+  static const nirandharaAzhippuUrudhi = 'nirandharaAzhippuUrudhi';
+  static const azhikkappattaPorulgal = 'azhikkappattaPorulgal';
+
   // ── Dev Tools ──
   static const uruvaakkunarTharavugalaiAzhi = 'uruvaakkunarTharavugalaiAzhi';
   static const uruvaakkunarTharavugalaiUruvaakku = 'uruvaakkunarTharavugalaiUruvaakku';

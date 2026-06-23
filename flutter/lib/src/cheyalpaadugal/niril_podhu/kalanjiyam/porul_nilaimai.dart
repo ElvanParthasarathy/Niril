@@ -38,3 +38,14 @@ final porulSelectionModeProvider = StateProvider<bool>((ref) => false);
 
 /// Set of currently selected product IDs.
 final selectedPorulIdsProvider = StateProvider<Set<int>>((ref) => {});
+
+// ── Recycle Bin (Meetpagam) ──────────────────────────────────────────────────
+
+/// Watches all soft-deleted products for the current app mode.
+final deletedPorulgalStreamProvider = StreamProvider<List<PorulEntry>>((ref) {
+  final kalanjiyam = ref.watch(porulKalanjiyamProvider);
+  final mode = ref.watch(appModeProvider);
+
+  final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'gst';
+  return kalanjiyam.watchDeletedPorulgal(seyaliVagai);
+});

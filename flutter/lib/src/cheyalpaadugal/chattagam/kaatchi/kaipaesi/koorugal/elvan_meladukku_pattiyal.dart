@@ -10,6 +10,7 @@ import 'elvan_mel_pattai_chinnam.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_arikkaigal_thirai.dart';
+import '../../../../niril_podhu/kaatchi/thiraigal/meetpagam_thirai.dart';
 import '../../../../../adippadai/vazhikaattal/niril_nav.dart';
 
 const String _settingsOutlineSvg =
@@ -112,10 +113,7 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                             ? const Color(0xFF1E1E1E)
                             : Colors.white)
                         .withValues(alpha: 0.88),
-                    borderRadius: BorderRadius.circular(
-                        (widget.showSelectOption || widget.isSilkHome)
-                            ? 24
-                            : 100), // Dynamic corner radius!
+                    borderRadius: BorderRadius.circular(24),
                     border: Border.all(
                       color: Theme.of(context).brightness == Brightness.dark
                           ? const Color(0xFF333333).withValues(alpha: 0.15)
@@ -140,10 +138,8 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                         children: [
                           InkWell(
                             borderRadius:
-                                (widget.showSelectOption || widget.isSilkHome)
-                                    ? const BorderRadius.vertical(
-                                        top: Radius.circular(24))
-                                    : BorderRadius.circular(100),
+                                const BorderRadius.vertical(
+                                    top: Radius.circular(24)),
                             highlightColor: sharedHighlightColor,
                             splashColor: sharedSplashColor,
                             onTap: () {
@@ -171,6 +167,40 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                                   ),
                                   const SizedBox(width: 12),
                                   Text(K.amaippugal.tr(context, ref),
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500)),
+                                ],
+                              ),
+                            ),
+                          ),
+                          // ── Meetpagam (Recycle Bin) — Always shown ──
+                          InkWell(
+                            borderRadius: (widget.showSelectOption || widget.isSilkHome)
+                                ? BorderRadius.zero
+                                : const BorderRadius.vertical(
+                                    bottom: Radius.circular(24)),
+                            highlightColor: sharedHighlightColor,
+                            splashColor: sharedSplashColor,
+                            onTap: () {
+                              _closeMenu();
+                              NirilNav.push(context, const MeetpagamThirai());
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 14),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    CupertinoIcons.trash,
+                                    size: 22,
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(K.meetpagam.tr(context, ref),
                                       style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500)),
