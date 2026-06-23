@@ -2,7 +2,17 @@ plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    // Firebase Crashlytics (uncomment when Firebase is configured)
+    // id("com.google.gms.google-services")
+    // id("com.google.firebase.crashlytics")
 }
+
+// ── Release Signing (uncomment when key.properties exists) ──
+// val keystoreProperties = java.util.Properties()
+// val keystorePropertiesFile = rootProject.file("key.properties")
+// if (keystorePropertiesFile.exists()) {
+//     keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile))
+// }
 
 android {
     namespace = "com.elvan.niril"
@@ -23,6 +33,10 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        ndk {
+            // Target architectures for Play Store
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86_64")
+        }
     }
 
     buildTypes {
@@ -30,6 +44,14 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+
+            // ── ProGuard (enabled for release builds) ──
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 }

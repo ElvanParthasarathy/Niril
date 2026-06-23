@@ -1,0 +1,6 @@
+# ⚠️ TEMPLATE — Copy to key.properties and fill in real values
+# DO NOT commit key.properties to git!
+storePassword=YOUR_STORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=elvan-niril-release
+storeFile=YOUR_KEYSTORE_PATH
