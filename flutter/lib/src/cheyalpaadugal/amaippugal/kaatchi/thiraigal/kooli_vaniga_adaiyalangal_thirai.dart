@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_oavuru_kaatchi.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -265,11 +266,9 @@ class _CoolieVanigaAdaiyalangalPageState
                     primaryValue:
                         logoPath != null ? '' : K.oavuruIllai.tr(context, ref),
                     primaryWidget: logoPath != null
-                        ? Image.file(
-                            File(logoPath),
+                        ? ElvanOavuruKaatchi(
+                            value: logoPath,
                             height: 36,
-                            fit: BoxFit.contain,
-                            alignment: Alignment.centerLeft,
                           )
                         : null,
                     onEdit: () => _beginEditImage('logo', logoPath),
@@ -341,11 +340,9 @@ class _CoolieVanigaAdaiyalangalPageState
                         ? signatoryName
                         : K.kaiyoppamIllai.tr(context, ref),
                     primaryWidget: signaturePath != null
-                        ? Image.file(
-                            File(signaturePath),
+                        ? ElvanOavuruKaatchi(
+                            value: signaturePath,
                             height: 48,
-                            fit: BoxFit.contain,
-                            alignment: Alignment.centerLeft,
                           )
                         : null,
                     onEdit: () =>
