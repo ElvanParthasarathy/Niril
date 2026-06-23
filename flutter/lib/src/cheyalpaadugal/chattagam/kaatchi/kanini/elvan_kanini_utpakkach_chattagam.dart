@@ -77,7 +77,6 @@ class _ElvanDesktopSubpageShellState extends State<ElvanDesktopSubpageShell> {
         return ElvanSmoothScroll(
           controller: _scrollController,
           child: CustomScrollView(
-            key: PageStorageKey<String>('elvan_desktop_scroll_${widget.title}'),
             controller: _scrollController,
             slivers: [
               if (!widget.hideHeaderOnDesktop)

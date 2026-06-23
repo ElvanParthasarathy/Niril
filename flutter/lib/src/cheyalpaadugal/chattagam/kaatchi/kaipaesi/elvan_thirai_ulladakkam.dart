@@ -46,7 +46,6 @@ class ElvanPageContent extends ConsumerWidget {
     return Stack(
       children: [
         CustomScrollView(
-          key: PageStorageKey<String>('elvan_scroll_$title'),
           controller: scrollController,
           cacheExtent:
               1500, // Pre-builds items off-screen to prevent frame drops during slow scrolling!
