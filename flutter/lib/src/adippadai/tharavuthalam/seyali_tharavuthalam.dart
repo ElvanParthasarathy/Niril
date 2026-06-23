@@ -100,12 +100,31 @@ class VanigaTharavugalTable extends Table {
 @DataClassName('VanigarEntry')
 class VanigarTable extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get seyaliVagai => text()();
-  
-  TextColumn get peyar => text()();
-  TextColumn get tholaipaesi => text().withDefault(const Constant(''))();
-  TextColumn get mugavari => text().withDefault(const Constant(''))();
+  TextColumn get seyaliVagai => text()(); // 'gst' or 'coolie'
+
+  // ── Bilingual fields (stored as JSON map via MozhiMapConverter) ──
+  TextColumn get peyar =>
+      text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
+  TextColumn get mugavari =>
+      text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
+  TextColumn get oor =>
+      text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
+  TextColumn get maavattam =>
+      text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
+  TextColumn get maanilam =>
+      text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
+  TextColumn get naadu =>
+      text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
+
+  // ── Non-India: single multiline bilingual address ──
+  TextColumn get velinaadMugavari =>
+      text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
+
+  // ── Single-value fields ──
+  TextColumn get anjalKuriyeedu => text().withDefault(const Constant(''))();
   TextColumn get gstin => text().withDefault(const Constant(''))();
+  TextColumn get minnanjal => text().withDefault(const Constant(''))();
+  TextColumn get tholaipaesi => text().withDefault(const Constant(''))();
 
   // Audit
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
@@ -178,7 +197,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -202,6 +221,32 @@ class AppDatabase extends _$AppDatabase {
             // v4: Add measureType + unit columns to PorulTable
             await m.addColumn(porulTable, porulTable.alavuVagai);
             await m.addColumn(porulTable, porulTable.alagu);
+          }
+          if (from < 5) {
+            // v5: Expand VanigarTable — bilingual fields + new columns
+            // peyar was plain text, now MozhiMap — migration: wrap old value
+            // New columns with defaults:
+            await m.addColumn(vanigarTable, vanigarTable.oor);
+            await m.addColumn(vanigarTable, vanigarTable.maavattam);
+            await m.addColumn(vanigarTable, vanigarTable.maanilam);
+            await m.addColumn(vanigarTable, vanigarTable.naadu);
+            await m.addColumn(vanigarTable, vanigarTable.velinaadMugavari);
+            await m.addColumn(vanigarTable, vanigarTable.anjalKuriyeedu);
+            await m.addColumn(vanigarTable, vanigarTable.minnanjal);
+
+            // Migrate old plain-text peyar & mugavari to JSON map format
+            await customStatement(
+              "UPDATE vanigar_table SET peyar = '{\"en\":' || '\"' || peyar || '\"' || '}' "
+              "WHERE peyar NOT LIKE '{%}'",
+            );
+            await customStatement(
+              "UPDATE vanigar_table SET mugavari = '{\"en\":' || '\"' || mugavari || '\"' || '}' "
+              "WHERE mugavari NOT LIKE '{%}' AND mugavari != ''",
+            );
+            // Set empty mugavari to default JSON
+            await customStatement(
+              "UPDATE vanigar_table SET mugavari = '{}' WHERE mugavari = ''",
+            );
           }
         },
       );

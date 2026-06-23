@@ -1481,24 +1481,67 @@ class $VanigarTableTable extends VanigarTable
   late final GeneratedColumn<String> seyaliVagai = GeneratedColumn<String>(
       'seyali_vagai', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _peyarMeta = const VerificationMeta('peyar');
   @override
-  late final GeneratedColumn<String> peyar = GeneratedColumn<String>(
-      'peyar', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _tholaipaesiMeta =
-      const VerificationMeta('tholaipaesi');
+  late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
+      peyar = GeneratedColumn<String>('peyar', aliasedName, false,
+              type: DriftSqlType.string,
+              requiredDuringInsert: false,
+              defaultValue: const Constant('{}'))
+          .withConverter<Map<String, String>>(
+              $VanigarTableTable.$converterpeyar);
   @override
-  late final GeneratedColumn<String> tholaipaesi = GeneratedColumn<String>(
-      'tholaipaesi', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(''));
-  static const VerificationMeta _mugavariMeta =
-      const VerificationMeta('mugavari');
+  late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
+      mugavari = GeneratedColumn<String>('mugavari', aliasedName, false,
+              type: DriftSqlType.string,
+              requiredDuringInsert: false,
+              defaultValue: const Constant('{}'))
+          .withConverter<Map<String, String>>(
+              $VanigarTableTable.$convertermugavari);
   @override
-  late final GeneratedColumn<String> mugavari = GeneratedColumn<String>(
-      'mugavari', aliasedName, false,
+  late final GeneratedColumnWithTypeConverter<Map<String, String>, String> oor =
+      GeneratedColumn<String>('oor', aliasedName, false,
+              type: DriftSqlType.string,
+              requiredDuringInsert: false,
+              defaultValue: const Constant('{}'))
+          .withConverter<Map<String, String>>($VanigarTableTable.$converteroor);
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
+      maavattam = GeneratedColumn<String>('maavattam', aliasedName, false,
+              type: DriftSqlType.string,
+              requiredDuringInsert: false,
+              defaultValue: const Constant('{}'))
+          .withConverter<Map<String, String>>(
+              $VanigarTableTable.$convertermaavattam);
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
+      maanilam = GeneratedColumn<String>('maanilam', aliasedName, false,
+              type: DriftSqlType.string,
+              requiredDuringInsert: false,
+              defaultValue: const Constant('{}'))
+          .withConverter<Map<String, String>>(
+              $VanigarTableTable.$convertermaanilam);
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
+      naadu = GeneratedColumn<String>('naadu', aliasedName, false,
+              type: DriftSqlType.string,
+              requiredDuringInsert: false,
+              defaultValue: const Constant('{}'))
+          .withConverter<Map<String, String>>(
+              $VanigarTableTable.$converternaadu);
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
+      velinaadMugavari = GeneratedColumn<String>(
+              'velinaad_mugavari', aliasedName, false,
+              type: DriftSqlType.string,
+              requiredDuringInsert: false,
+              defaultValue: const Constant('{}'))
+          .withConverter<Map<String, String>>(
+              $VanigarTableTable.$convertervelinaadMugavari);
+  static const VerificationMeta _anjalKuriyeeduMeta =
+      const VerificationMeta('anjalKuriyeedu');
+  @override
+  late final GeneratedColumn<String> anjalKuriyeedu = GeneratedColumn<String>(
+      'anjal_kuriyeedu', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultValue: const Constant(''));
@@ -1506,6 +1549,22 @@ class $VanigarTableTable extends VanigarTable
   @override
   late final GeneratedColumn<String> gstin = GeneratedColumn<String>(
       'gstin', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _minnanjalMeta =
+      const VerificationMeta('minnanjal');
+  @override
+  late final GeneratedColumn<String> minnanjal = GeneratedColumn<String>(
+      'minnanjal', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
+  static const VerificationMeta _tholaipaesiMeta =
+      const VerificationMeta('tholaipaesi');
+  @override
+  late final GeneratedColumn<String> tholaipaesi = GeneratedColumn<String>(
+      'tholaipaesi', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultValue: const Constant(''));
@@ -1546,9 +1605,16 @@ class $VanigarTableTable extends VanigarTable
         id,
         seyaliVagai,
         peyar,
-        tholaipaesi,
         mugavari,
+        oor,
+        maavattam,
+        maanilam,
+        naadu,
+        velinaadMugavari,
+        anjalKuriyeedu,
         gstin,
+        minnanjal,
+        tholaipaesi,
         createdAt,
         updatedAt,
         isDeleted,
@@ -1575,25 +1641,25 @@ class $VanigarTableTable extends VanigarTable
     } else if (isInserting) {
       context.missing(_seyaliVagaiMeta);
     }
-    if (data.containsKey('peyar')) {
+    if (data.containsKey('anjal_kuriyeedu')) {
       context.handle(
-          _peyarMeta, peyar.isAcceptableOrUnknown(data['peyar']!, _peyarMeta));
-    } else if (isInserting) {
-      context.missing(_peyarMeta);
+          _anjalKuriyeeduMeta,
+          anjalKuriyeedu.isAcceptableOrUnknown(
+              data['anjal_kuriyeedu']!, _anjalKuriyeeduMeta));
+    }
+    if (data.containsKey('gstin')) {
+      context.handle(
+          _gstinMeta, gstin.isAcceptableOrUnknown(data['gstin']!, _gstinMeta));
+    }
+    if (data.containsKey('minnanjal')) {
+      context.handle(_minnanjalMeta,
+          minnanjal.isAcceptableOrUnknown(data['minnanjal']!, _minnanjalMeta));
     }
     if (data.containsKey('tholaipaesi')) {
       context.handle(
           _tholaipaesiMeta,
           tholaipaesi.isAcceptableOrUnknown(
               data['tholaipaesi']!, _tholaipaesiMeta));
-    }
-    if (data.containsKey('mugavari')) {
-      context.handle(_mugavariMeta,
-          mugavari.isAcceptableOrUnknown(data['mugavari']!, _mugavariMeta));
-    }
-    if (data.containsKey('gstin')) {
-      context.handle(
-          _gstinMeta, gstin.isAcceptableOrUnknown(data['gstin']!, _gstinMeta));
     }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
@@ -1624,14 +1690,34 @@ class $VanigarTableTable extends VanigarTable
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       seyaliVagai: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}seyali_vagai'])!,
-      peyar: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}peyar'])!,
-      tholaipaesi: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}tholaipaesi'])!,
-      mugavari: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}mugavari'])!,
+      peyar: $VanigarTableTable.$converterpeyar.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}peyar'])!),
+      mugavari: $VanigarTableTable.$convertermugavari.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}mugavari'])!),
+      oor: $VanigarTableTable.$converteroor.fromSql(attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}oor'])!),
+      maavattam: $VanigarTableTable.$convertermaavattam.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}maavattam'])!),
+      maanilam: $VanigarTableTable.$convertermaanilam.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}maanilam'])!),
+      naadu: $VanigarTableTable.$converternaadu.fromSql(attachedDatabase
+          .typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}naadu'])!),
+      velinaadMugavari: $VanigarTableTable.$convertervelinaadMugavari.fromSql(
+          attachedDatabase.typeMapping.read(DriftSqlType.string,
+              data['${effectivePrefix}velinaad_mugavari'])!),
+      anjalKuriyeedu: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}anjal_kuriyeedu'])!,
       gstin: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}gstin'])!,
+      minnanjal: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}minnanjal'])!,
+      tholaipaesi: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}tholaipaesi'])!,
       createdAt: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping
@@ -1647,15 +1733,37 @@ class $VanigarTableTable extends VanigarTable
   $VanigarTableTable createAlias(String alias) {
     return $VanigarTableTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<Map<String, String>, String> $converterpeyar =
+      const MozhiMapConverter();
+  static TypeConverter<Map<String, String>, String> $convertermugavari =
+      const MozhiMapConverter();
+  static TypeConverter<Map<String, String>, String> $converteroor =
+      const MozhiMapConverter();
+  static TypeConverter<Map<String, String>, String> $convertermaavattam =
+      const MozhiMapConverter();
+  static TypeConverter<Map<String, String>, String> $convertermaanilam =
+      const MozhiMapConverter();
+  static TypeConverter<Map<String, String>, String> $converternaadu =
+      const MozhiMapConverter();
+  static TypeConverter<Map<String, String>, String> $convertervelinaadMugavari =
+      const MozhiMapConverter();
 }
 
 class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
   final int id;
   final String seyaliVagai;
-  final String peyar;
-  final String tholaipaesi;
-  final String mugavari;
+  final Map<String, String> peyar;
+  final Map<String, String> mugavari;
+  final Map<String, String> oor;
+  final Map<String, String> maavattam;
+  final Map<String, String> maanilam;
+  final Map<String, String> naadu;
+  final Map<String, String> velinaadMugavari;
+  final String anjalKuriyeedu;
   final String gstin;
+  final String minnanjal;
+  final String tholaipaesi;
   final DateTime createdAt;
   final DateTime updatedAt;
   final bool isDeleted;
@@ -1664,9 +1772,16 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
       {required this.id,
       required this.seyaliVagai,
       required this.peyar,
-      required this.tholaipaesi,
       required this.mugavari,
+      required this.oor,
+      required this.maavattam,
+      required this.maanilam,
+      required this.naadu,
+      required this.velinaadMugavari,
+      required this.anjalKuriyeedu,
       required this.gstin,
+      required this.minnanjal,
+      required this.tholaipaesi,
       required this.createdAt,
       required this.updatedAt,
       required this.isDeleted,
@@ -1676,10 +1791,39 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['seyali_vagai'] = Variable<String>(seyaliVagai);
-    map['peyar'] = Variable<String>(peyar);
-    map['tholaipaesi'] = Variable<String>(tholaipaesi);
-    map['mugavari'] = Variable<String>(mugavari);
+    {
+      map['peyar'] =
+          Variable<String>($VanigarTableTable.$converterpeyar.toSql(peyar));
+    }
+    {
+      map['mugavari'] = Variable<String>(
+          $VanigarTableTable.$convertermugavari.toSql(mugavari));
+    }
+    {
+      map['oor'] =
+          Variable<String>($VanigarTableTable.$converteroor.toSql(oor));
+    }
+    {
+      map['maavattam'] = Variable<String>(
+          $VanigarTableTable.$convertermaavattam.toSql(maavattam));
+    }
+    {
+      map['maanilam'] = Variable<String>(
+          $VanigarTableTable.$convertermaanilam.toSql(maanilam));
+    }
+    {
+      map['naadu'] =
+          Variable<String>($VanigarTableTable.$converternaadu.toSql(naadu));
+    }
+    {
+      map['velinaad_mugavari'] = Variable<String>($VanigarTableTable
+          .$convertervelinaadMugavari
+          .toSql(velinaadMugavari));
+    }
+    map['anjal_kuriyeedu'] = Variable<String>(anjalKuriyeedu);
     map['gstin'] = Variable<String>(gstin);
+    map['minnanjal'] = Variable<String>(minnanjal);
+    map['tholaipaesi'] = Variable<String>(tholaipaesi);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     map['is_deleted'] = Variable<bool>(isDeleted);
@@ -1694,9 +1838,16 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
       id: Value(id),
       seyaliVagai: Value(seyaliVagai),
       peyar: Value(peyar),
-      tholaipaesi: Value(tholaipaesi),
       mugavari: Value(mugavari),
+      oor: Value(oor),
+      maavattam: Value(maavattam),
+      maanilam: Value(maanilam),
+      naadu: Value(naadu),
+      velinaadMugavari: Value(velinaadMugavari),
+      anjalKuriyeedu: Value(anjalKuriyeedu),
       gstin: Value(gstin),
+      minnanjal: Value(minnanjal),
+      tholaipaesi: Value(tholaipaesi),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
       isDeleted: Value(isDeleted),
@@ -1712,10 +1863,18 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
     return VanigarEntry(
       id: serializer.fromJson<int>(json['id']),
       seyaliVagai: serializer.fromJson<String>(json['seyaliVagai']),
-      peyar: serializer.fromJson<String>(json['peyar']),
-      tholaipaesi: serializer.fromJson<String>(json['tholaipaesi']),
-      mugavari: serializer.fromJson<String>(json['mugavari']),
+      peyar: serializer.fromJson<Map<String, String>>(json['peyar']),
+      mugavari: serializer.fromJson<Map<String, String>>(json['mugavari']),
+      oor: serializer.fromJson<Map<String, String>>(json['oor']),
+      maavattam: serializer.fromJson<Map<String, String>>(json['maavattam']),
+      maanilam: serializer.fromJson<Map<String, String>>(json['maanilam']),
+      naadu: serializer.fromJson<Map<String, String>>(json['naadu']),
+      velinaadMugavari:
+          serializer.fromJson<Map<String, String>>(json['velinaadMugavari']),
+      anjalKuriyeedu: serializer.fromJson<String>(json['anjalKuriyeedu']),
       gstin: serializer.fromJson<String>(json['gstin']),
+      minnanjal: serializer.fromJson<String>(json['minnanjal']),
+      tholaipaesi: serializer.fromJson<String>(json['tholaipaesi']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
@@ -1728,10 +1887,18 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'seyaliVagai': serializer.toJson<String>(seyaliVagai),
-      'peyar': serializer.toJson<String>(peyar),
-      'tholaipaesi': serializer.toJson<String>(tholaipaesi),
-      'mugavari': serializer.toJson<String>(mugavari),
+      'peyar': serializer.toJson<Map<String, String>>(peyar),
+      'mugavari': serializer.toJson<Map<String, String>>(mugavari),
+      'oor': serializer.toJson<Map<String, String>>(oor),
+      'maavattam': serializer.toJson<Map<String, String>>(maavattam),
+      'maanilam': serializer.toJson<Map<String, String>>(maanilam),
+      'naadu': serializer.toJson<Map<String, String>>(naadu),
+      'velinaadMugavari':
+          serializer.toJson<Map<String, String>>(velinaadMugavari),
+      'anjalKuriyeedu': serializer.toJson<String>(anjalKuriyeedu),
       'gstin': serializer.toJson<String>(gstin),
+      'minnanjal': serializer.toJson<String>(minnanjal),
+      'tholaipaesi': serializer.toJson<String>(tholaipaesi),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
@@ -1742,10 +1909,17 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
   VanigarEntry copyWith(
           {int? id,
           String? seyaliVagai,
-          String? peyar,
-          String? tholaipaesi,
-          String? mugavari,
+          Map<String, String>? peyar,
+          Map<String, String>? mugavari,
+          Map<String, String>? oor,
+          Map<String, String>? maavattam,
+          Map<String, String>? maanilam,
+          Map<String, String>? naadu,
+          Map<String, String>? velinaadMugavari,
+          String? anjalKuriyeedu,
           String? gstin,
+          String? minnanjal,
+          String? tholaipaesi,
           DateTime? createdAt,
           DateTime? updatedAt,
           bool? isDeleted,
@@ -1754,9 +1928,16 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
         id: id ?? this.id,
         seyaliVagai: seyaliVagai ?? this.seyaliVagai,
         peyar: peyar ?? this.peyar,
-        tholaipaesi: tholaipaesi ?? this.tholaipaesi,
         mugavari: mugavari ?? this.mugavari,
+        oor: oor ?? this.oor,
+        maavattam: maavattam ?? this.maavattam,
+        maanilam: maanilam ?? this.maanilam,
+        naadu: naadu ?? this.naadu,
+        velinaadMugavari: velinaadMugavari ?? this.velinaadMugavari,
+        anjalKuriyeedu: anjalKuriyeedu ?? this.anjalKuriyeedu,
         gstin: gstin ?? this.gstin,
+        minnanjal: minnanjal ?? this.minnanjal,
+        tholaipaesi: tholaipaesi ?? this.tholaipaesi,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
         isDeleted: isDeleted ?? this.isDeleted,
@@ -1768,10 +1949,21 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
       seyaliVagai:
           data.seyaliVagai.present ? data.seyaliVagai.value : this.seyaliVagai,
       peyar: data.peyar.present ? data.peyar.value : this.peyar,
+      mugavari: data.mugavari.present ? data.mugavari.value : this.mugavari,
+      oor: data.oor.present ? data.oor.value : this.oor,
+      maavattam: data.maavattam.present ? data.maavattam.value : this.maavattam,
+      maanilam: data.maanilam.present ? data.maanilam.value : this.maanilam,
+      naadu: data.naadu.present ? data.naadu.value : this.naadu,
+      velinaadMugavari: data.velinaadMugavari.present
+          ? data.velinaadMugavari.value
+          : this.velinaadMugavari,
+      anjalKuriyeedu: data.anjalKuriyeedu.present
+          ? data.anjalKuriyeedu.value
+          : this.anjalKuriyeedu,
+      gstin: data.gstin.present ? data.gstin.value : this.gstin,
+      minnanjal: data.minnanjal.present ? data.minnanjal.value : this.minnanjal,
       tholaipaesi:
           data.tholaipaesi.present ? data.tholaipaesi.value : this.tholaipaesi,
-      mugavari: data.mugavari.present ? data.mugavari.value : this.mugavari,
-      gstin: data.gstin.present ? data.gstin.value : this.gstin,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
@@ -1785,9 +1977,16 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
           ..write('id: $id, ')
           ..write('seyaliVagai: $seyaliVagai, ')
           ..write('peyar: $peyar, ')
-          ..write('tholaipaesi: $tholaipaesi, ')
           ..write('mugavari: $mugavari, ')
+          ..write('oor: $oor, ')
+          ..write('maavattam: $maavattam, ')
+          ..write('maanilam: $maanilam, ')
+          ..write('naadu: $naadu, ')
+          ..write('velinaadMugavari: $velinaadMugavari, ')
+          ..write('anjalKuriyeedu: $anjalKuriyeedu, ')
           ..write('gstin: $gstin, ')
+          ..write('minnanjal: $minnanjal, ')
+          ..write('tholaipaesi: $tholaipaesi, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
@@ -1797,8 +1996,24 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
   }
 
   @override
-  int get hashCode => Object.hash(id, seyaliVagai, peyar, tholaipaesi, mugavari,
-      gstin, createdAt, updatedAt, isDeleted, deletedAt);
+  int get hashCode => Object.hash(
+      id,
+      seyaliVagai,
+      peyar,
+      mugavari,
+      oor,
+      maavattam,
+      maanilam,
+      naadu,
+      velinaadMugavari,
+      anjalKuriyeedu,
+      gstin,
+      minnanjal,
+      tholaipaesi,
+      createdAt,
+      updatedAt,
+      isDeleted,
+      deletedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1806,9 +2021,16 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
           other.id == this.id &&
           other.seyaliVagai == this.seyaliVagai &&
           other.peyar == this.peyar &&
-          other.tholaipaesi == this.tholaipaesi &&
           other.mugavari == this.mugavari &&
+          other.oor == this.oor &&
+          other.maavattam == this.maavattam &&
+          other.maanilam == this.maanilam &&
+          other.naadu == this.naadu &&
+          other.velinaadMugavari == this.velinaadMugavari &&
+          other.anjalKuriyeedu == this.anjalKuriyeedu &&
           other.gstin == this.gstin &&
+          other.minnanjal == this.minnanjal &&
+          other.tholaipaesi == this.tholaipaesi &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
           other.isDeleted == this.isDeleted &&
@@ -1818,10 +2040,17 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
 class VanigarTableCompanion extends UpdateCompanion<VanigarEntry> {
   final Value<int> id;
   final Value<String> seyaliVagai;
-  final Value<String> peyar;
-  final Value<String> tholaipaesi;
-  final Value<String> mugavari;
+  final Value<Map<String, String>> peyar;
+  final Value<Map<String, String>> mugavari;
+  final Value<Map<String, String>> oor;
+  final Value<Map<String, String>> maavattam;
+  final Value<Map<String, String>> maanilam;
+  final Value<Map<String, String>> naadu;
+  final Value<Map<String, String>> velinaadMugavari;
+  final Value<String> anjalKuriyeedu;
   final Value<String> gstin;
+  final Value<String> minnanjal;
+  final Value<String> tholaipaesi;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<bool> isDeleted;
@@ -1830,9 +2059,16 @@ class VanigarTableCompanion extends UpdateCompanion<VanigarEntry> {
     this.id = const Value.absent(),
     this.seyaliVagai = const Value.absent(),
     this.peyar = const Value.absent(),
-    this.tholaipaesi = const Value.absent(),
     this.mugavari = const Value.absent(),
+    this.oor = const Value.absent(),
+    this.maavattam = const Value.absent(),
+    this.maanilam = const Value.absent(),
+    this.naadu = const Value.absent(),
+    this.velinaadMugavari = const Value.absent(),
+    this.anjalKuriyeedu = const Value.absent(),
     this.gstin = const Value.absent(),
+    this.minnanjal = const Value.absent(),
+    this.tholaipaesi = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
@@ -1841,23 +2077,36 @@ class VanigarTableCompanion extends UpdateCompanion<VanigarEntry> {
   VanigarTableCompanion.insert({
     this.id = const Value.absent(),
     required String seyaliVagai,
-    required String peyar,
-    this.tholaipaesi = const Value.absent(),
+    this.peyar = const Value.absent(),
     this.mugavari = const Value.absent(),
+    this.oor = const Value.absent(),
+    this.maavattam = const Value.absent(),
+    this.maanilam = const Value.absent(),
+    this.naadu = const Value.absent(),
+    this.velinaadMugavari = const Value.absent(),
+    this.anjalKuriyeedu = const Value.absent(),
     this.gstin = const Value.absent(),
+    this.minnanjal = const Value.absent(),
+    this.tholaipaesi = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
     this.deletedAt = const Value.absent(),
-  })  : seyaliVagai = Value(seyaliVagai),
-        peyar = Value(peyar);
+  }) : seyaliVagai = Value(seyaliVagai);
   static Insertable<VanigarEntry> custom({
     Expression<int>? id,
     Expression<String>? seyaliVagai,
     Expression<String>? peyar,
-    Expression<String>? tholaipaesi,
     Expression<String>? mugavari,
+    Expression<String>? oor,
+    Expression<String>? maavattam,
+    Expression<String>? maanilam,
+    Expression<String>? naadu,
+    Expression<String>? velinaadMugavari,
+    Expression<String>? anjalKuriyeedu,
     Expression<String>? gstin,
+    Expression<String>? minnanjal,
+    Expression<String>? tholaipaesi,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<bool>? isDeleted,
@@ -1867,9 +2116,16 @@ class VanigarTableCompanion extends UpdateCompanion<VanigarEntry> {
       if (id != null) 'id': id,
       if (seyaliVagai != null) 'seyali_vagai': seyaliVagai,
       if (peyar != null) 'peyar': peyar,
-      if (tholaipaesi != null) 'tholaipaesi': tholaipaesi,
       if (mugavari != null) 'mugavari': mugavari,
+      if (oor != null) 'oor': oor,
+      if (maavattam != null) 'maavattam': maavattam,
+      if (maanilam != null) 'maanilam': maanilam,
+      if (naadu != null) 'naadu': naadu,
+      if (velinaadMugavari != null) 'velinaad_mugavari': velinaadMugavari,
+      if (anjalKuriyeedu != null) 'anjal_kuriyeedu': anjalKuriyeedu,
       if (gstin != null) 'gstin': gstin,
+      if (minnanjal != null) 'minnanjal': minnanjal,
+      if (tholaipaesi != null) 'tholaipaesi': tholaipaesi,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
@@ -1880,10 +2136,17 @@ class VanigarTableCompanion extends UpdateCompanion<VanigarEntry> {
   VanigarTableCompanion copyWith(
       {Value<int>? id,
       Value<String>? seyaliVagai,
-      Value<String>? peyar,
-      Value<String>? tholaipaesi,
-      Value<String>? mugavari,
+      Value<Map<String, String>>? peyar,
+      Value<Map<String, String>>? mugavari,
+      Value<Map<String, String>>? oor,
+      Value<Map<String, String>>? maavattam,
+      Value<Map<String, String>>? maanilam,
+      Value<Map<String, String>>? naadu,
+      Value<Map<String, String>>? velinaadMugavari,
+      Value<String>? anjalKuriyeedu,
       Value<String>? gstin,
+      Value<String>? minnanjal,
+      Value<String>? tholaipaesi,
       Value<DateTime>? createdAt,
       Value<DateTime>? updatedAt,
       Value<bool>? isDeleted,
@@ -1892,9 +2155,16 @@ class VanigarTableCompanion extends UpdateCompanion<VanigarEntry> {
       id: id ?? this.id,
       seyaliVagai: seyaliVagai ?? this.seyaliVagai,
       peyar: peyar ?? this.peyar,
-      tholaipaesi: tholaipaesi ?? this.tholaipaesi,
       mugavari: mugavari ?? this.mugavari,
+      oor: oor ?? this.oor,
+      maavattam: maavattam ?? this.maavattam,
+      maanilam: maanilam ?? this.maanilam,
+      naadu: naadu ?? this.naadu,
+      velinaadMugavari: velinaadMugavari ?? this.velinaadMugavari,
+      anjalKuriyeedu: anjalKuriyeedu ?? this.anjalKuriyeedu,
       gstin: gstin ?? this.gstin,
+      minnanjal: minnanjal ?? this.minnanjal,
+      tholaipaesi: tholaipaesi ?? this.tholaipaesi,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
@@ -1912,16 +2182,45 @@ class VanigarTableCompanion extends UpdateCompanion<VanigarEntry> {
       map['seyali_vagai'] = Variable<String>(seyaliVagai.value);
     }
     if (peyar.present) {
-      map['peyar'] = Variable<String>(peyar.value);
-    }
-    if (tholaipaesi.present) {
-      map['tholaipaesi'] = Variable<String>(tholaipaesi.value);
+      map['peyar'] = Variable<String>(
+          $VanigarTableTable.$converterpeyar.toSql(peyar.value));
     }
     if (mugavari.present) {
-      map['mugavari'] = Variable<String>(mugavari.value);
+      map['mugavari'] = Variable<String>(
+          $VanigarTableTable.$convertermugavari.toSql(mugavari.value));
+    }
+    if (oor.present) {
+      map['oor'] =
+          Variable<String>($VanigarTableTable.$converteroor.toSql(oor.value));
+    }
+    if (maavattam.present) {
+      map['maavattam'] = Variable<String>(
+          $VanigarTableTable.$convertermaavattam.toSql(maavattam.value));
+    }
+    if (maanilam.present) {
+      map['maanilam'] = Variable<String>(
+          $VanigarTableTable.$convertermaanilam.toSql(maanilam.value));
+    }
+    if (naadu.present) {
+      map['naadu'] = Variable<String>(
+          $VanigarTableTable.$converternaadu.toSql(naadu.value));
+    }
+    if (velinaadMugavari.present) {
+      map['velinaad_mugavari'] = Variable<String>($VanigarTableTable
+          .$convertervelinaadMugavari
+          .toSql(velinaadMugavari.value));
+    }
+    if (anjalKuriyeedu.present) {
+      map['anjal_kuriyeedu'] = Variable<String>(anjalKuriyeedu.value);
     }
     if (gstin.present) {
       map['gstin'] = Variable<String>(gstin.value);
+    }
+    if (minnanjal.present) {
+      map['minnanjal'] = Variable<String>(minnanjal.value);
+    }
+    if (tholaipaesi.present) {
+      map['tholaipaesi'] = Variable<String>(tholaipaesi.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -1944,9 +2243,16 @@ class VanigarTableCompanion extends UpdateCompanion<VanigarEntry> {
           ..write('id: $id, ')
           ..write('seyaliVagai: $seyaliVagai, ')
           ..write('peyar: $peyar, ')
-          ..write('tholaipaesi: $tholaipaesi, ')
           ..write('mugavari: $mugavari, ')
+          ..write('oor: $oor, ')
+          ..write('maavattam: $maavattam, ')
+          ..write('maanilam: $maanilam, ')
+          ..write('naadu: $naadu, ')
+          ..write('velinaadMugavari: $velinaadMugavari, ')
+          ..write('anjalKuriyeedu: $anjalKuriyeedu, ')
           ..write('gstin: $gstin, ')
+          ..write('minnanjal: $minnanjal, ')
+          ..write('tholaipaesi: $tholaipaesi, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('isDeleted: $isDeleted, ')
@@ -3839,10 +4145,17 @@ typedef $$VanigarTableTableCreateCompanionBuilder = VanigarTableCompanion
     Function({
   Value<int> id,
   required String seyaliVagai,
-  required String peyar,
-  Value<String> tholaipaesi,
-  Value<String> mugavari,
+  Value<Map<String, String>> peyar,
+  Value<Map<String, String>> mugavari,
+  Value<Map<String, String>> oor,
+  Value<Map<String, String>> maavattam,
+  Value<Map<String, String>> maanilam,
+  Value<Map<String, String>> naadu,
+  Value<Map<String, String>> velinaadMugavari,
+  Value<String> anjalKuriyeedu,
   Value<String> gstin,
+  Value<String> minnanjal,
+  Value<String> tholaipaesi,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
   Value<bool> isDeleted,
@@ -3852,10 +4165,17 @@ typedef $$VanigarTableTableUpdateCompanionBuilder = VanigarTableCompanion
     Function({
   Value<int> id,
   Value<String> seyaliVagai,
-  Value<String> peyar,
-  Value<String> tholaipaesi,
-  Value<String> mugavari,
+  Value<Map<String, String>> peyar,
+  Value<Map<String, String>> mugavari,
+  Value<Map<String, String>> oor,
+  Value<Map<String, String>> maavattam,
+  Value<Map<String, String>> maanilam,
+  Value<Map<String, String>> naadu,
+  Value<Map<String, String>> velinaadMugavari,
+  Value<String> anjalKuriyeedu,
   Value<String> gstin,
+  Value<String> minnanjal,
+  Value<String> tholaipaesi,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
   Value<bool> isDeleted,
@@ -3877,17 +4197,60 @@ class $$VanigarTableTableFilterComposer
   ColumnFilters<String> get seyaliVagai => $composableBuilder(
       column: $table.seyaliVagai, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get peyar => $composableBuilder(
-      column: $table.peyar, builder: (column) => ColumnFilters(column));
+  ColumnWithTypeConverterFilters<Map<String, String>, Map<String, String>,
+          String>
+      get peyar => $composableBuilder(
+          column: $table.peyar,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
 
-  ColumnFilters<String> get tholaipaesi => $composableBuilder(
-      column: $table.tholaipaesi, builder: (column) => ColumnFilters(column));
+  ColumnWithTypeConverterFilters<Map<String, String>, Map<String, String>,
+          String>
+      get mugavari => $composableBuilder(
+          column: $table.mugavari,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
 
-  ColumnFilters<String> get mugavari => $composableBuilder(
-      column: $table.mugavari, builder: (column) => ColumnFilters(column));
+  ColumnWithTypeConverterFilters<Map<String, String>, Map<String, String>,
+          String>
+      get oor => $composableBuilder(
+          column: $table.oor,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  ColumnWithTypeConverterFilters<Map<String, String>, Map<String, String>,
+          String>
+      get maavattam => $composableBuilder(
+          column: $table.maavattam,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  ColumnWithTypeConverterFilters<Map<String, String>, Map<String, String>,
+          String>
+      get maanilam => $composableBuilder(
+          column: $table.maanilam,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  ColumnWithTypeConverterFilters<Map<String, String>, Map<String, String>,
+          String>
+      get naadu => $composableBuilder(
+          column: $table.naadu,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  ColumnWithTypeConverterFilters<Map<String, String>, Map<String, String>,
+          String>
+      get velinaadMugavari => $composableBuilder(
+          column: $table.velinaadMugavari,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
+
+  ColumnFilters<String> get anjalKuriyeedu => $composableBuilder(
+      column: $table.anjalKuriyeedu,
+      builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get gstin => $composableBuilder(
       column: $table.gstin, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get minnanjal => $composableBuilder(
+      column: $table.minnanjal, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get tholaipaesi => $composableBuilder(
+      column: $table.tholaipaesi, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnFilters(column));
@@ -3920,14 +4283,37 @@ class $$VanigarTableTableOrderingComposer
   ColumnOrderings<String> get peyar => $composableBuilder(
       column: $table.peyar, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get tholaipaesi => $composableBuilder(
-      column: $table.tholaipaesi, builder: (column) => ColumnOrderings(column));
-
   ColumnOrderings<String> get mugavari => $composableBuilder(
       column: $table.mugavari, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get oor => $composableBuilder(
+      column: $table.oor, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get maavattam => $composableBuilder(
+      column: $table.maavattam, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get maanilam => $composableBuilder(
+      column: $table.maanilam, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get naadu => $composableBuilder(
+      column: $table.naadu, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get velinaadMugavari => $composableBuilder(
+      column: $table.velinaadMugavari,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get anjalKuriyeedu => $composableBuilder(
+      column: $table.anjalKuriyeedu,
+      builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get gstin => $composableBuilder(
       column: $table.gstin, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get minnanjal => $composableBuilder(
+      column: $table.minnanjal, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get tholaipaesi => $composableBuilder(
+      column: $table.tholaipaesi, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
       column: $table.createdAt, builder: (column) => ColumnOrderings(column));
@@ -3957,17 +4343,39 @@ class $$VanigarTableTableAnnotationComposer
   GeneratedColumn<String> get seyaliVagai => $composableBuilder(
       column: $table.seyaliVagai, builder: (column) => column);
 
-  GeneratedColumn<String> get peyar =>
+  GeneratedColumnWithTypeConverter<Map<String, String>, String> get peyar =>
       $composableBuilder(column: $table.peyar, builder: (column) => column);
 
-  GeneratedColumn<String> get tholaipaesi => $composableBuilder(
-      column: $table.tholaipaesi, builder: (column) => column);
-
-  GeneratedColumn<String> get mugavari =>
+  GeneratedColumnWithTypeConverter<Map<String, String>, String> get mugavari =>
       $composableBuilder(column: $table.mugavari, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<Map<String, String>, String> get oor =>
+      $composableBuilder(column: $table.oor, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<Map<String, String>, String> get maavattam =>
+      $composableBuilder(column: $table.maavattam, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<Map<String, String>, String> get maanilam =>
+      $composableBuilder(column: $table.maanilam, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<Map<String, String>, String> get naadu =>
+      $composableBuilder(column: $table.naadu, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<Map<String, String>, String>
+      get velinaadMugavari => $composableBuilder(
+          column: $table.velinaadMugavari, builder: (column) => column);
+
+  GeneratedColumn<String> get anjalKuriyeedu => $composableBuilder(
+      column: $table.anjalKuriyeedu, builder: (column) => column);
 
   GeneratedColumn<String> get gstin =>
       $composableBuilder(column: $table.gstin, builder: (column) => column);
+
+  GeneratedColumn<String> get minnanjal =>
+      $composableBuilder(column: $table.minnanjal, builder: (column) => column);
+
+  GeneratedColumn<String> get tholaipaesi => $composableBuilder(
+      column: $table.tholaipaesi, builder: (column) => column);
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -4010,10 +4418,17 @@ class $$VanigarTableTableTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> seyaliVagai = const Value.absent(),
-            Value<String> peyar = const Value.absent(),
-            Value<String> tholaipaesi = const Value.absent(),
-            Value<String> mugavari = const Value.absent(),
+            Value<Map<String, String>> peyar = const Value.absent(),
+            Value<Map<String, String>> mugavari = const Value.absent(),
+            Value<Map<String, String>> oor = const Value.absent(),
+            Value<Map<String, String>> maavattam = const Value.absent(),
+            Value<Map<String, String>> maanilam = const Value.absent(),
+            Value<Map<String, String>> naadu = const Value.absent(),
+            Value<Map<String, String>> velinaadMugavari = const Value.absent(),
+            Value<String> anjalKuriyeedu = const Value.absent(),
             Value<String> gstin = const Value.absent(),
+            Value<String> minnanjal = const Value.absent(),
+            Value<String> tholaipaesi = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> updatedAt = const Value.absent(),
             Value<bool> isDeleted = const Value.absent(),
@@ -4023,9 +4438,16 @@ class $$VanigarTableTableTableManager extends RootTableManager<
             id: id,
             seyaliVagai: seyaliVagai,
             peyar: peyar,
-            tholaipaesi: tholaipaesi,
             mugavari: mugavari,
+            oor: oor,
+            maavattam: maavattam,
+            maanilam: maanilam,
+            naadu: naadu,
+            velinaadMugavari: velinaadMugavari,
+            anjalKuriyeedu: anjalKuriyeedu,
             gstin: gstin,
+            minnanjal: minnanjal,
+            tholaipaesi: tholaipaesi,
             createdAt: createdAt,
             updatedAt: updatedAt,
             isDeleted: isDeleted,
@@ -4034,10 +4456,17 @@ class $$VanigarTableTableTableManager extends RootTableManager<
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             required String seyaliVagai,
-            required String peyar,
-            Value<String> tholaipaesi = const Value.absent(),
-            Value<String> mugavari = const Value.absent(),
+            Value<Map<String, String>> peyar = const Value.absent(),
+            Value<Map<String, String>> mugavari = const Value.absent(),
+            Value<Map<String, String>> oor = const Value.absent(),
+            Value<Map<String, String>> maavattam = const Value.absent(),
+            Value<Map<String, String>> maanilam = const Value.absent(),
+            Value<Map<String, String>> naadu = const Value.absent(),
+            Value<Map<String, String>> velinaadMugavari = const Value.absent(),
+            Value<String> anjalKuriyeedu = const Value.absent(),
             Value<String> gstin = const Value.absent(),
+            Value<String> minnanjal = const Value.absent(),
+            Value<String> tholaipaesi = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> updatedAt = const Value.absent(),
             Value<bool> isDeleted = const Value.absent(),
@@ -4047,9 +4476,16 @@ class $$VanigarTableTableTableManager extends RootTableManager<
             id: id,
             seyaliVagai: seyaliVagai,
             peyar: peyar,
-            tholaipaesi: tholaipaesi,
             mugavari: mugavari,
+            oor: oor,
+            maavattam: maavattam,
+            maanilam: maanilam,
+            naadu: naadu,
+            velinaadMugavari: velinaadMugavari,
+            anjalKuriyeedu: anjalKuriyeedu,
             gstin: gstin,
+            minnanjal: minnanjal,
+            tholaipaesi: tholaipaesi,
             createdAt: createdAt,
             updatedAt: updatedAt,
             isDeleted: isDeleted,

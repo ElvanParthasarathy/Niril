@@ -272,6 +272,20 @@ abstract final class K {
   static const azhikkappattaPorulgal = 'azhikkappattaPorulgal';
   static const meetpagam30Naal = 'meetpagam30Naal';
 
+  // ── Vanigar (Merchant) CRUD ──
+  static const vanigarTharavugal = 'vanigarTharavugal';
+  static const vanigarPeyar = 'vanigarPeyar';
+  static const vanigarPeyarThaevai = 'vanigarPeyarThaevai';
+  static const vanigarChaemikkappattadhu = 'vanigarChaemikkappattadhu';
+  static const vanigarAzhikkappattadhu = 'vanigarAzhikkappattadhu';
+  static const vanigargalIllai = 'vanigargalIllai';
+  static const vanigaraiChaerkkavum = 'vanigaraiChaerkkavum';
+  static const azhikkappattaVanigargal = 'azhikkappattaVanigargal';
+  static const thodarpuVari = 'thodarpuVari';
+  static const velinaadMugavari = 'velinaadMugavari';
+  static const gstinTavaru = 'gstinTavaru';
+  static const thanipPayanPtn = 'thanipPayanPtn';
+
   // ── Dev Tools ──
   static const uruvaakkunarTharavugalaiAzhi = 'uruvaakkunarTharavugalaiAzhi';
   static const uruvaakkunarTharavugalaiUruvaakku = 'uruvaakkunarTharavugalaiUruvaakku';

@@ -244,4 +244,18 @@ const Map<String, String> ta = {
   'nirandharaAzhippuUrudhi': 'நிரந்தரமாக அழிக்கவா? மீட்க இயலாது.',
   'azhikkappattaPorulgal': 'அழிக்கப்பட்ட பொருள்கள்',
   'meetpagam30Naal': 'மீட்பகத்தில் உள்ளவை 30 நாள்களுக்குப் பிறகு தானாகவே அழிக்கப்படும்',
+
+  // === Vanigar (Merchant) CRUD Keys ===
+  'vanigarTharavugal': 'வணிகத் தரவுகள்',
+  'vanigarPeyar': 'வணிகர் பெயர்',
+  'vanigarPeyarThaevai': 'வணிகர் பெயர் தேவை',
+  'vanigarChaemikkappattadhu': 'வணிகர் சேமிக்கப்பட்டது',
+  'vanigarAzhikkappattadhu': 'வணிகர் அழிக்கப்பட்டது',
+  'vanigargalIllai': 'வணிகர்கள் இல்லை',
+  'vanigaraiChaerkkavum': 'முதல் வணிகரைச் சேர்க்கவும்',
+  'azhikkappattaVanigargal': 'அழிக்கப்பட்ட வணிகர்கள்',
+  'thodarpuVari': 'தொடர்பு & வரி',
+  'velinaadMugavari': 'முழு முகவரி',
+  'gstinTavaru': 'GSTIN வடிவம் தவறானது',
+  'thanipPayanPtn': 'தனிப்பயன்',
 };

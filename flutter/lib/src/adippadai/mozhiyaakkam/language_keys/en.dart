@@ -244,4 +244,18 @@ const Map<String, String> en = {
   'nirandharaAzhippuUrudhi': 'Delete permanently? This cannot be undone.',
   'azhikkappattaPorulgal': 'Deleted Products',
   'meetpagam30Naal': 'Items in the recycle bin will be automatically deleted after 30 days',
+
+  // === Vanigar (Merchant) CRUD Keys ===
+  'vanigarTharavugal': 'Business Details',
+  'vanigarPeyar': 'Merchant Name',
+  'vanigarPeyarThaevai': 'Merchant name is required',
+  'vanigarChaemikkappattadhu': 'Merchant saved successfully',
+  'vanigarAzhikkappattadhu': 'Merchant deleted',
+  'vanigargalIllai': 'No merchants yet',
+  'vanigaraiChaerkkavum': 'Add your first merchant to get started',
+  'azhikkappattaVanigargal': 'Deleted Merchants',
+  'thodarpuVari': 'Contact & Tax',
+  'velinaadMugavari': 'Full Address',
+  'gstinTavaru': 'Invalid GSTIN format',
+  'thanipPayanPtn': 'Custom',
 };

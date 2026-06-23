@@ -248,4 +248,18 @@ const Map<String, String> tg = {
   'nirandharaAzhippuUrudhi': 'Nirandharamaaga Azhikkavaa? Meetka Iyalaadhu.',
   'azhikkappattaPorulgal': 'Azhikkappatta Porulgal',
   'meetpagam30Naal': 'Meetpagatthil Ullavai 30 Naalgalukku Piragu Thaanaagavae Azhikkapppadum',
+
+  // === Vanigar (Merchant) CRUD Keys ===
+  'vanigarTharavugal': 'Vanigath Tharavugal',
+  'vanigarPeyar': 'Vanigar Peyar',
+  'vanigarPeyarThaevai': 'Vanigar Peyar Thaevai',
+  'vanigarChaemikkappattadhu': 'Vanigar Chaemikkappattadhu',
+  'vanigarAzhikkappattadhu': 'Vanigar Azhikkappattadhu',
+  'vanigargalIllai': 'Vanigargal Illai',
+  'vanigaraiChaerkkavum': 'Mudhal Vanigaraich Chaerkkavum',
+  'azhikkappattaVanigargal': 'Azhikkappatta Vanigargal',
+  'thodarpuVari': 'Thodarpu & Vari',
+  'velinaadMugavari': 'Muzhu Mugavari',
+  'gstinTavaru': 'GSTIN Vadivam Thavaraanedhu',
+  'thanipPayanPtn': 'Thanippayan',
 };
