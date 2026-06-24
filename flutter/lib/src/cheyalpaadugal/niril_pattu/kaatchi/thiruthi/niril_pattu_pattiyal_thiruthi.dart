@@ -63,6 +63,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   String _placeOfSupply = '';
   String _placeOfSupplyTa = ''; // Tamil bilingual for Place of Supply
   String _invoiceNumberOverride = ''; // Manual override for inv number
+  String _previewInvoiceNumber = ''; // Preview of next auto-generated number
   bool _isInvNumberEditing = false;
 
   // ── Line Items ──
@@ -120,6 +121,30 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
         _selectedNiruvanamId = profiles.first.id;
       });
     }
+    // Compute preview invoice number for new invoices
+    if (!_isEditing) {
+      _computePreviewInvoiceNumber();
+    }
+  }
+
+  /// Fetches next vanakkam from DB and formats a preview invoice number.
+  Future<void> _computePreviewInvoiceNumber() async {
+    if (_isEditing) return;
+    try {
+      final kalanjiyam = ref.read(pattiyalKalanjiyamProvider);
+      final finYear = PattiyalKalanjiyam.getCurrentFinYear();
+      final prefix = _selectedProfile?.kurumPeyar.isNotEmpty == true
+          ? _selectedProfile!.kurumPeyar
+          : 'INV';
+      final vanakkam = await kalanjiyam.getNextVanakkam(
+        'silk', _selectedNiruvanamId, finYear,
+      );
+      if (mounted) {
+        setState(() {
+          _previewInvoiceNumber = kalanjiyam.formatPattiyalEn(prefix, vanakkam);
+        });
+      }
+    } catch (_) {}
   }
 
   void _loadEditingData() {
@@ -708,14 +733,16 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                     child: Text(
                       _invoiceNumberOverride.isNotEmpty
                           ? _invoiceNumberOverride
-                          : 'Auto-generated on save',
+                          : _previewInvoiceNumber.isNotEmpty
+                              ? _previewInvoiceNumber
+                              : 'Auto-generated on save',
                       style: tt.bodyLarge?.copyWith(
                         color: _invoiceNumberOverride.isNotEmpty
                             ? cs.onSurface
                             : cs.onSurfaceVariant,
                         fontWeight: _invoiceNumberOverride.isNotEmpty
                             ? FontWeight.w600
-                            : FontWeight.w400,
+                            : FontWeight.w500,
                       ),
                     ),
                   ),
@@ -1359,6 +1386,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
             _selectedProfile = match;
           });
           _recalculate();
+          _computePreviewInvoiceNumber();
         },
       ),
     );
