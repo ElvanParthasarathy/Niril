@@ -125,9 +125,9 @@ class PattuVanigargalKooru extends ConsumerWidget {
       final leftColumn = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          profileDropdown,
           customerSearch,
           savedDetailsCard,
-          profileDropdown,
         ],
       );
 

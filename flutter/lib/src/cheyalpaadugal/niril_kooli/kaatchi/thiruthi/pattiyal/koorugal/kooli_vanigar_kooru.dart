@@ -159,19 +159,19 @@ class KooliVanigarKooru extends ConsumerWidget {
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(flex: 5, child: customerColumn),
             if (showCompanySelector) ...[
-              const SizedBox(width: 24),
               Expanded(flex: 7, child: companyColumn),
+              const SizedBox(width: 24),
             ],
+            Expanded(flex: 5, child: customerColumn),
           ],
         );
       }
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          customerColumn,
           if (showCompanySelector) companyColumn,
+          customerColumn,
         ],
       );
     });
