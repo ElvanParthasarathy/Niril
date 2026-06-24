@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -92,7 +93,7 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.sizeOf(context).width >= 800;
 
-    return PopScope(
+    final shell = PopScope(
       canPop: !widget.hasUnsavedChanges,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop && widget.hasUnsavedChanges) {
@@ -186,6 +187,50 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
           ),
         ],
       ),
+    );
+
+    // ── Dev-only language switcher FAB ──
+    if (!kDebugMode) return shell;
+
+    final currentLocale = ref.watch(localeProvider);
+    final langCode = currentLocale?.languageCode ?? 'ta';
+    final label = langCode == 'ta'
+        ? 'த'
+        : langCode == 'tg'
+            ? 'Tg'
+            : 'En';
+
+    return Stack(
+      children: [
+        shell,
+        Positioned(
+          left: 16,
+          bottom: 24,
+          child: FloatingActionButton.small(
+            heroTag: 'devLangSwitcher',
+            tooltip: 'Dev: Cycle Language',
+            backgroundColor:
+                Theme.of(context).colorScheme.tertiaryContainer,
+            foregroundColor:
+                Theme.of(context).colorScheme.onTertiaryContainer,
+            onPressed: () {
+              final notifier = ref.read(localeProvider.notifier);
+              if (langCode == 'ta') {
+                notifier.setLocale(const Locale('en'));
+              } else if (langCode == 'en') {
+                notifier.setLocale(const Locale('tg'));
+              } else {
+                notifier.setLocale(const Locale('ta'));
+              }
+            },
+            child: Text(label,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 14,
+                )),
+          ),
+        ),
+      ],
     );
   }
 }
