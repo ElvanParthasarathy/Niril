@@ -1107,14 +1107,14 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Header: "Item #N" + trash icon ──
+          // ── Header: "பொருள் #N" + trash icon ──
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 4, bottom: 6),
                 child: Text(
-                  'Item #${index + 1}',
+                  '${K.porul.tr(context, ref)} #${index + 1}',
                   style: tt.labelLarge?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: cs.onSurfaceVariant,
@@ -1242,18 +1242,14 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                 ],
               );
 
-              // Bilingual info line (English name · Unit · HSN · GST%)
+              // Bilingual info line (English name · GST%)
               final infoLine = (item.porulPeyarEn.isNotEmpty ||
-                      item.hsnKuriyeedu.isNotEmpty ||
-                      item.alagu.isNotEmpty)
+                      item.variVizhukkaadu > 0)
                   ? Padding(
                       padding: const EdgeInsets.only(left: 4, top: 4),
                       child: Text(
                         [
                           if (item.porulPeyarEn.isNotEmpty) item.porulPeyarEn,
-                          if (item.alagu.isNotEmpty) item.alagu,
-                          if (item.hsnKuriyeedu.isNotEmpty)
-                            'HSN: ${item.hsnKuriyeedu}',
                           if (item.variVizhukkaadu > 0)
                             'GST ${item.variVizhukkaadu.toStringAsFixed(item.variVizhukkaadu.truncateToDouble() == item.variVizhukkaadu ? 0 : 1)}%',
                         ].join(' · '),
@@ -1267,7 +1263,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                   : const SizedBox.shrink();
 
               if (isWide) {
-                // Desktop: clean 3-column layout
+                // Desktop: 3-column top row, 2-column bottom row
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1279,17 +1275,21 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                         Expanded(child: qtyField),
                         gap,
                         Expanded(child: rateField),
-                        gap,
-                        Expanded(child: discField),
                       ],
                     ),
                     vGap,
-                    totalDisplay,
+                    Row(
+                      children: [
+                        Expanded(child: discField),
+                        gap,
+                        Expanded(child: totalDisplay),
+                      ],
+                    ),
                   ],
                 );
               }
 
-              // Mobile: stacked
+              // Mobile: matches React layout
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -1302,9 +1302,11 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                     Expanded(child: rateField),
                   ]),
                   vGap,
-                  discField,
-                  vGap,
-                  totalDisplay,
+                  Row(children: [
+                    Expanded(child: discField),
+                    gap,
+                    Expanded(child: totalDisplay),
+                  ]),
                 ],
               );
             }),
