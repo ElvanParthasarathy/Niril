@@ -38,10 +38,14 @@ class PorulThaeduKooru extends ConsumerStatefulWidget {
   /// The app mode identifier ('silk' or 'coolie').
   final String seyaliVagai;
 
+  /// Called when the user clears the selected product (X button).
+  final VoidCallback? onCleared;
+
   const PorulThaeduKooru({
     super.key,
     required this.onSelected,
     this.onRequestAddNew,
+    this.onCleared,
     this.initialText,
     required this.seyaliVagai,
   });
@@ -153,6 +157,7 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
                         onPressed: () {
                           fieldController.clear();
                           _textController.clear();
+                          widget.onCleared?.call();
                         },
                       )
                     : null,

@@ -1170,6 +1170,12 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                     ),
                   );
                 },
+                onCleared: () {
+                  setState(() {
+                    _items = List.from(_items)..[index] = const PattuUrupadi();
+                  });
+                  _recalculate();
+                },
               );
 
               // Build field widgets
