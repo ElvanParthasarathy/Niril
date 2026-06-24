@@ -6,7 +6,7 @@ import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_pagudhi.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dart';
@@ -87,13 +87,13 @@ class _SilkUruvakkuAmaippuPageState
               const SizedBox(width: 8),
               FilledButton(
                 onPressed: () {
-                  final profile = ref.read(vanigaTharavugalProvider);
+                  final profile = ref.read(NiruvanaTharavugalProvider);
                   if (profile != null) {
                     final newProfile = profile.copyWith(
                       mudhanMozhi: _tempPrimaryLanguage,
                       thunaiMozhi: _tempSecondaryLanguage,
                     );
-                    ref.read(vanigaTharavugalListProvider.notifier)
+                    ref.read(NiruvanaTharavugalListProvider.notifier)
                         .updateProfile(newProfile);
                   }
                   setState(() {

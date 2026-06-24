@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
+import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../kaippaesi/elvan_kizh_pattai.dart'; // For CustomNavItem
 import 'elvan_kanini_pakkapattai.dart';
 import 'elvan_kanini_karuvipattai.dart';

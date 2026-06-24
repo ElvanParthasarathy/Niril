@@ -14,8 +14,8 @@ import '../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
 import 'thiraigal/niruvana_amaippugal_thirai.dart';
 import 'thiraigal/mugavari_thirai.dart';
 import 'thiraigal/vangi_thirai.dart';
-import 'thiraigal/kooli_vaniga_adaiyalangal_thirai.dart';
-import 'thiraigal/pattu_vaniga_adaiyalangal_thirai.dart';
+import 'thiraigal/kooli_niruvana_adaiyalangal_thirai.dart';
+import 'thiraigal/pattu_niruvana_adaiyalangal_thirai.dart';
 import 'thiraigal/uruvaakki_patri_thirai.dart';
 import 'thiraigal/uruvakku_amaippugal_thirai.dart';
 import 'thiraigal/kaatchi_amaippugal_thirai.dart';
@@ -241,7 +241,7 @@ class SettingsHubScreen extends ConsumerWidget {
                       title: K.adaiyaalam.tr(context, ref),
                       description: K.kooliNiruvanaAdaiyaalangal.tr(context, ref),
                       onTap: () => _navigateTo(
-                          context, const CoolieVanigaAdaiyalangalPage()),
+                          context, const CoolieNiruvanaAdaiyalangalPage()),
                     )
                   else
                     ElvanSettingsRow(
@@ -250,7 +250,7 @@ class SettingsHubScreen extends ConsumerWidget {
                       title: K.adaiyaalam.tr(context, ref),
                       description: K.pattuNiruvanaAdaiyaalangal.tr(context, ref),
                       onTap: () => _navigateTo(
-                          context, const SilkVanigaAdaiyalangalPage()),
+                          context, const SilkNiruvanaAdaiyalangalPage()),
                     ),
                   ElvanSettingsRow(
                     icon: CupertinoIcons.location_solid,

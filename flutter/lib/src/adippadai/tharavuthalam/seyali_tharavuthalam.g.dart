@@ -3,12 +3,12 @@
 part of 'seyali_tharavuthalam.dart';
 
 // ignore_for_file: type=lint
-class $VanigaTharavugalTableTable extends VanigaTharavugalTable
-    with TableInfo<$VanigaTharavugalTableTable, VanigaTharavugalEntry> {
+class $NiruvanaTharavugalTableTable extends NiruvanaTharavugalTable
+    with TableInfo<$NiruvanaTharavugalTableTable, NiruvanaTharavugalEntry> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $VanigaTharavugalTableTable(this.attachedDatabase, [this._alias]);
+  $NiruvanaTharavugalTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -58,7 +58,7 @@ class $VanigaTharavugalTableTable extends VanigaTharavugalTable
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $VanigaTharavugalTableTable.$converterniruvanathinPeyar);
+              $NiruvanaTharavugalTableTable.$converterniruvanathinPeyar);
   static const VerificationMeta _kurumPeyarMeta =
       const VerificationMeta('kurumPeyar');
   @override
@@ -105,7 +105,7 @@ class $VanigaTharavugalTableTable extends VanigaTharavugalTable
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $VanigaTharavugalTableTable.$convertermugavari);
+              $NiruvanaTharavugalTableTable.$convertermugavari);
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String> oor =
       GeneratedColumn<String>('oor', aliasedName, false,
@@ -113,7 +113,7 @@ class $VanigaTharavugalTableTable extends VanigaTharavugalTable
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $VanigaTharavugalTableTable.$converteroor);
+              $NiruvanaTharavugalTableTable.$converteroor);
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
       maavattam = GeneratedColumn<String>('maavattam', aliasedName, false,
@@ -121,7 +121,7 @@ class $VanigaTharavugalTableTable extends VanigaTharavugalTable
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $VanigaTharavugalTableTable.$convertermaavattam);
+              $NiruvanaTharavugalTableTable.$convertermaavattam);
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
       maanilam = GeneratedColumn<String>('maanilam', aliasedName, false,
@@ -129,7 +129,7 @@ class $VanigaTharavugalTableTable extends VanigaTharavugalTable
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $VanigaTharavugalTableTable.$convertermaanilam);
+              $NiruvanaTharavugalTableTable.$convertermaanilam);
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
       naadu = GeneratedColumn<String>('naadu', aliasedName, false,
@@ -137,7 +137,7 @@ class $VanigaTharavugalTableTable extends VanigaTharavugalTable
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $VanigaTharavugalTableTable.$converternaadu);
+              $NiruvanaTharavugalTableTable.$converternaadu);
   static const VerificationMeta _anjalKuriyeeduMeta =
       const VerificationMeta('anjalKuriyeedu');
   @override
@@ -153,7 +153,7 @@ class $VanigaTharavugalTableTable extends VanigaTharavugalTable
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $VanigaTharavugalTableTable.$convertervangiPeyar);
+              $NiruvanaTharavugalTableTable.$convertervangiPeyar);
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
       kilai = GeneratedColumn<String>('kilai', aliasedName, false,
@@ -161,7 +161,7 @@ class $VanigaTharavugalTableTable extends VanigaTharavugalTable
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $VanigaTharavugalTableTable.$converterkilai);
+              $NiruvanaTharavugalTableTable.$converterkilai);
   static const VerificationMeta _vangiKanakkuMeta =
       const VerificationMeta('vangiKanakku');
   @override
@@ -223,7 +223,7 @@ class $VanigaTharavugalTableTable extends VanigaTharavugalTable
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $VanigaTharavugalTableTable.$converteradaimozhi);
+              $NiruvanaTharavugalTableTable.$converteradaimozhi);
   static const VerificationMeta _upiIdMeta = const VerificationMeta('upiId');
   @override
   late final GeneratedColumn<String> upiId = GeneratedColumn<String>(
@@ -311,10 +311,10 @@ class $VanigaTharavugalTableTable extends VanigaTharavugalTable
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'vaniga_tharavugal_table';
+  static const String $name = 'niruvana_tharavugal_table';
   @override
   VerificationContext validateIntegrity(
-      Insertable<VanigaTharavugalEntry> instance,
+      Insertable<NiruvanaTharavugalEntry> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -445,9 +445,10 @@ class $VanigaTharavugalTableTable extends VanigaTharavugalTable
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  VanigaTharavugalEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+  NiruvanaTharavugalEntry map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return VanigaTharavugalEntry(
+    return NiruvanaTharavugalEntry(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       seyaliVagai: attachedDatabase.typeMapping
@@ -458,7 +459,8 @@ class $VanigaTharavugalTableTable extends VanigaTharavugalTable
           .read(DriftSqlType.string, data['${effectivePrefix}thunai_mozhi'])!,
       iruMozhi: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}iru_mozhi'])!,
-      niruvanathinPeyar: $VanigaTharavugalTableTable.$converterniruvanathinPeyar
+      niruvanathinPeyar: $NiruvanaTharavugalTableTable
+          .$converterniruvanathinPeyar
           .fromSql(attachedDatabase.typeMapping.read(DriftSqlType.string,
               data['${effectivePrefix}niruvanathin_peyar'])!),
       kurumPeyar: attachedDatabase.typeMapping
@@ -471,27 +473,27 @@ class $VanigaTharavugalTableTable extends VanigaTharavugalTable
           .read(DriftSqlType.string, data['${effectivePrefix}minnanjal'])!,
       gstin: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}gstin'])!,
-      mugavari: $VanigaTharavugalTableTable.$convertermugavari.fromSql(
+      mugavari: $NiruvanaTharavugalTableTable.$convertermugavari.fromSql(
           attachedDatabase.typeMapping
               .read(DriftSqlType.string, data['${effectivePrefix}mugavari'])!),
-      oor: $VanigaTharavugalTableTable.$converteroor.fromSql(attachedDatabase
+      oor: $NiruvanaTharavugalTableTable.$converteroor.fromSql(attachedDatabase
           .typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}oor'])!),
-      maavattam: $VanigaTharavugalTableTable.$convertermaavattam.fromSql(
+      maavattam: $NiruvanaTharavugalTableTable.$convertermaavattam.fromSql(
           attachedDatabase.typeMapping
               .read(DriftSqlType.string, data['${effectivePrefix}maavattam'])!),
-      maanilam: $VanigaTharavugalTableTable.$convertermaanilam.fromSql(
+      maanilam: $NiruvanaTharavugalTableTable.$convertermaanilam.fromSql(
           attachedDatabase.typeMapping
               .read(DriftSqlType.string, data['${effectivePrefix}maanilam'])!),
-      naadu: $VanigaTharavugalTableTable.$converternaadu.fromSql(
+      naadu: $NiruvanaTharavugalTableTable.$converternaadu.fromSql(
           attachedDatabase.typeMapping
               .read(DriftSqlType.string, data['${effectivePrefix}naadu'])!),
       anjalKuriyeedu: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}anjal_kuriyeedu'])!,
-      vangiPeyar: $VanigaTharavugalTableTable.$convertervangiPeyar.fromSql(
+      vangiPeyar: $NiruvanaTharavugalTableTable.$convertervangiPeyar.fromSql(
           attachedDatabase.typeMapping.read(
               DriftSqlType.string, data['${effectivePrefix}vangi_peyar'])!),
-      kilai: $VanigaTharavugalTableTable.$converterkilai.fromSql(
+      kilai: $NiruvanaTharavugalTableTable.$converterkilai.fromSql(
           attachedDatabase.typeMapping
               .read(DriftSqlType.string, data['${effectivePrefix}kilai'])!),
       vangiKanakku: attachedDatabase.typeMapping
@@ -508,7 +510,7 @@ class $VanigaTharavugalTableTable extends VanigaTharavugalTable
           .read(DriftSqlType.string, data['${effectivePrefix}kaiyoppam'])!,
       oppamPeyar: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}oppam_peyar'])!,
-      adaimozhi: $VanigaTharavugalTableTable.$converteradaimozhi.fromSql(
+      adaimozhi: $NiruvanaTharavugalTableTable.$converteradaimozhi.fromSql(
           attachedDatabase.typeMapping
               .read(DriftSqlType.string, data['${effectivePrefix}adaimozhi'])!),
       upiId: attachedDatabase.typeMapping
@@ -527,8 +529,8 @@ class $VanigaTharavugalTableTable extends VanigaTharavugalTable
   }
 
   @override
-  $VanigaTharavugalTableTable createAlias(String alias) {
-    return $VanigaTharavugalTableTable(attachedDatabase, alias);
+  $NiruvanaTharavugalTableTable createAlias(String alias) {
+    return $NiruvanaTharavugalTableTable(attachedDatabase, alias);
   }
 
   static TypeConverter<Map<String, String>, String>
@@ -551,8 +553,8 @@ class $VanigaTharavugalTableTable extends VanigaTharavugalTable
       const MozhiMapConverter();
 }
 
-class VanigaTharavugalEntry extends DataClass
-    implements Insertable<VanigaTharavugalEntry> {
+class NiruvanaTharavugalEntry extends DataClass
+    implements Insertable<NiruvanaTharavugalEntry> {
   final int id;
   final String seyaliVagai;
   final String mudhanMozhi;
@@ -586,7 +588,7 @@ class VanigaTharavugalEntry extends DataClass
   final DateTime updatedAt;
   final bool isDeleted;
   final DateTime? deletedAt;
-  const VanigaTharavugalEntry(
+  const NiruvanaTharavugalEntry(
       {required this.id,
       required this.seyaliVagai,
       required this.mudhanMozhi,
@@ -629,7 +631,7 @@ class VanigaTharavugalEntry extends DataClass
     map['thunai_mozhi'] = Variable<String>(thunaiMozhi);
     map['iru_mozhi'] = Variable<bool>(iruMozhi);
     {
-      map['niruvanathin_peyar'] = Variable<String>($VanigaTharavugalTableTable
+      map['niruvanathin_peyar'] = Variable<String>($NiruvanaTharavugalTableTable
           .$converterniruvanathinPeyar
           .toSql(niruvanathinPeyar));
     }
@@ -640,32 +642,32 @@ class VanigaTharavugalEntry extends DataClass
     map['gstin'] = Variable<String>(gstin);
     {
       map['mugavari'] = Variable<String>(
-          $VanigaTharavugalTableTable.$convertermugavari.toSql(mugavari));
+          $NiruvanaTharavugalTableTable.$convertermugavari.toSql(mugavari));
     }
     {
       map['oor'] = Variable<String>(
-          $VanigaTharavugalTableTable.$converteroor.toSql(oor));
+          $NiruvanaTharavugalTableTable.$converteroor.toSql(oor));
     }
     {
       map['maavattam'] = Variable<String>(
-          $VanigaTharavugalTableTable.$convertermaavattam.toSql(maavattam));
+          $NiruvanaTharavugalTableTable.$convertermaavattam.toSql(maavattam));
     }
     {
       map['maanilam'] = Variable<String>(
-          $VanigaTharavugalTableTable.$convertermaanilam.toSql(maanilam));
+          $NiruvanaTharavugalTableTable.$convertermaanilam.toSql(maanilam));
     }
     {
       map['naadu'] = Variable<String>(
-          $VanigaTharavugalTableTable.$converternaadu.toSql(naadu));
+          $NiruvanaTharavugalTableTable.$converternaadu.toSql(naadu));
     }
     map['anjal_kuriyeedu'] = Variable<String>(anjalKuriyeedu);
     {
       map['vangi_peyar'] = Variable<String>(
-          $VanigaTharavugalTableTable.$convertervangiPeyar.toSql(vangiPeyar));
+          $NiruvanaTharavugalTableTable.$convertervangiPeyar.toSql(vangiPeyar));
     }
     {
       map['kilai'] = Variable<String>(
-          $VanigaTharavugalTableTable.$converterkilai.toSql(kilai));
+          $NiruvanaTharavugalTableTable.$converterkilai.toSql(kilai));
     }
     map['vangi_kanakku'] = Variable<String>(vangiKanakku);
     map['ifsc'] = Variable<String>(ifsc);
@@ -676,7 +678,7 @@ class VanigaTharavugalEntry extends DataClass
     map['oppam_peyar'] = Variable<String>(oppamPeyar);
     {
       map['adaimozhi'] = Variable<String>(
-          $VanigaTharavugalTableTable.$converteradaimozhi.toSql(adaimozhi));
+          $NiruvanaTharavugalTableTable.$converteradaimozhi.toSql(adaimozhi));
     }
     map['upi_id'] = Variable<String>(upiId);
     map['thoatra_niram'] = Variable<String>(thoatraNiram);
@@ -689,8 +691,8 @@ class VanigaTharavugalEntry extends DataClass
     return map;
   }
 
-  VanigaTharavugalTableCompanion toCompanion(bool nullToAbsent) {
-    return VanigaTharavugalTableCompanion(
+  NiruvanaTharavugalTableCompanion toCompanion(bool nullToAbsent) {
+    return NiruvanaTharavugalTableCompanion(
       id: Value(id),
       seyaliVagai: Value(seyaliVagai),
       mudhanMozhi: Value(mudhanMozhi),
@@ -729,10 +731,10 @@ class VanigaTharavugalEntry extends DataClass
     );
   }
 
-  factory VanigaTharavugalEntry.fromJson(Map<String, dynamic> json,
+  factory NiruvanaTharavugalEntry.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return VanigaTharavugalEntry(
+    return NiruvanaTharavugalEntry(
       id: serializer.fromJson<int>(json['id']),
       seyaliVagai: serializer.fromJson<String>(json['seyaliVagai']),
       mudhanMozhi: serializer.fromJson<String>(json['mudhanMozhi']),
@@ -810,7 +812,7 @@ class VanigaTharavugalEntry extends DataClass
     };
   }
 
-  VanigaTharavugalEntry copyWith(
+  NiruvanaTharavugalEntry copyWith(
           {int? id,
           String? seyaliVagai,
           String? mudhanMozhi,
@@ -844,7 +846,7 @@ class VanigaTharavugalEntry extends DataClass
           DateTime? updatedAt,
           bool? isDeleted,
           Value<DateTime?> deletedAt = const Value.absent()}) =>
-      VanigaTharavugalEntry(
+      NiruvanaTharavugalEntry(
         id: id ?? this.id,
         seyaliVagai: seyaliVagai ?? this.seyaliVagai,
         mudhanMozhi: mudhanMozhi ?? this.mudhanMozhi,
@@ -879,8 +881,9 @@ class VanigaTharavugalEntry extends DataClass
         isDeleted: isDeleted ?? this.isDeleted,
         deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
       );
-  VanigaTharavugalEntry copyWithCompanion(VanigaTharavugalTableCompanion data) {
-    return VanigaTharavugalEntry(
+  NiruvanaTharavugalEntry copyWithCompanion(
+      NiruvanaTharavugalTableCompanion data) {
+    return NiruvanaTharavugalEntry(
       id: data.id.present ? data.id.value : this.id,
       seyaliVagai:
           data.seyaliVagai.present ? data.seyaliVagai.value : this.seyaliVagai,
@@ -940,7 +943,7 @@ class VanigaTharavugalEntry extends DataClass
 
   @override
   String toString() {
-    return (StringBuffer('VanigaTharavugalEntry(')
+    return (StringBuffer('NiruvanaTharavugalEntry(')
           ..write('id: $id, ')
           ..write('seyaliVagai: $seyaliVagai, ')
           ..write('mudhanMozhi: $mudhanMozhi, ')
@@ -1017,7 +1020,7 @@ class VanigaTharavugalEntry extends DataClass
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is VanigaTharavugalEntry &&
+      (other is NiruvanaTharavugalEntry &&
           other.id == this.id &&
           other.seyaliVagai == this.seyaliVagai &&
           other.mudhanMozhi == this.mudhanMozhi &&
@@ -1053,8 +1056,8 @@ class VanigaTharavugalEntry extends DataClass
           other.deletedAt == this.deletedAt);
 }
 
-class VanigaTharavugalTableCompanion
-    extends UpdateCompanion<VanigaTharavugalEntry> {
+class NiruvanaTharavugalTableCompanion
+    extends UpdateCompanion<NiruvanaTharavugalEntry> {
   final Value<int> id;
   final Value<String> seyaliVagai;
   final Value<String> mudhanMozhi;
@@ -1088,7 +1091,7 @@ class VanigaTharavugalTableCompanion
   final Value<DateTime> updatedAt;
   final Value<bool> isDeleted;
   final Value<DateTime?> deletedAt;
-  const VanigaTharavugalTableCompanion({
+  const NiruvanaTharavugalTableCompanion({
     this.id = const Value.absent(),
     this.seyaliVagai = const Value.absent(),
     this.mudhanMozhi = const Value.absent(),
@@ -1123,7 +1126,7 @@ class VanigaTharavugalTableCompanion
     this.isDeleted = const Value.absent(),
     this.deletedAt = const Value.absent(),
   });
-  VanigaTharavugalTableCompanion.insert({
+  NiruvanaTharavugalTableCompanion.insert({
     this.id = const Value.absent(),
     required String seyaliVagai,
     this.mudhanMozhi = const Value.absent(),
@@ -1158,7 +1161,7 @@ class VanigaTharavugalTableCompanion
     this.isDeleted = const Value.absent(),
     this.deletedAt = const Value.absent(),
   }) : seyaliVagai = Value(seyaliVagai);
-  static Insertable<VanigaTharavugalEntry> custom({
+  static Insertable<NiruvanaTharavugalEntry> custom({
     Expression<int>? id,
     Expression<String>? seyaliVagai,
     Expression<String>? mudhanMozhi,
@@ -1230,7 +1233,7 @@ class VanigaTharavugalTableCompanion
     });
   }
 
-  VanigaTharavugalTableCompanion copyWith(
+  NiruvanaTharavugalTableCompanion copyWith(
       {Value<int>? id,
       Value<String>? seyaliVagai,
       Value<String>? mudhanMozhi,
@@ -1264,7 +1267,7 @@ class VanigaTharavugalTableCompanion
       Value<DateTime>? updatedAt,
       Value<bool>? isDeleted,
       Value<DateTime?>? deletedAt}) {
-    return VanigaTharavugalTableCompanion(
+    return NiruvanaTharavugalTableCompanion(
       id: id ?? this.id,
       seyaliVagai: seyaliVagai ?? this.seyaliVagai,
       mudhanMozhi: mudhanMozhi ?? this.mudhanMozhi,
@@ -1320,7 +1323,7 @@ class VanigaTharavugalTableCompanion
       map['iru_mozhi'] = Variable<bool>(iruMozhi.value);
     }
     if (niruvanathinPeyar.present) {
-      map['niruvanathin_peyar'] = Variable<String>($VanigaTharavugalTableTable
+      map['niruvanathin_peyar'] = Variable<String>($NiruvanaTharavugalTableTable
           .$converterniruvanathinPeyar
           .toSql(niruvanathinPeyar.value));
     }
@@ -1340,37 +1343,39 @@ class VanigaTharavugalTableCompanion
       map['gstin'] = Variable<String>(gstin.value);
     }
     if (mugavari.present) {
-      map['mugavari'] = Variable<String>(
-          $VanigaTharavugalTableTable.$convertermugavari.toSql(mugavari.value));
+      map['mugavari'] = Variable<String>($NiruvanaTharavugalTableTable
+          .$convertermugavari
+          .toSql(mugavari.value));
     }
     if (oor.present) {
       map['oor'] = Variable<String>(
-          $VanigaTharavugalTableTable.$converteroor.toSql(oor.value));
+          $NiruvanaTharavugalTableTable.$converteroor.toSql(oor.value));
     }
     if (maavattam.present) {
-      map['maavattam'] = Variable<String>($VanigaTharavugalTableTable
+      map['maavattam'] = Variable<String>($NiruvanaTharavugalTableTable
           .$convertermaavattam
           .toSql(maavattam.value));
     }
     if (maanilam.present) {
-      map['maanilam'] = Variable<String>(
-          $VanigaTharavugalTableTable.$convertermaanilam.toSql(maanilam.value));
+      map['maanilam'] = Variable<String>($NiruvanaTharavugalTableTable
+          .$convertermaanilam
+          .toSql(maanilam.value));
     }
     if (naadu.present) {
       map['naadu'] = Variable<String>(
-          $VanigaTharavugalTableTable.$converternaadu.toSql(naadu.value));
+          $NiruvanaTharavugalTableTable.$converternaadu.toSql(naadu.value));
     }
     if (anjalKuriyeedu.present) {
       map['anjal_kuriyeedu'] = Variable<String>(anjalKuriyeedu.value);
     }
     if (vangiPeyar.present) {
-      map['vangi_peyar'] = Variable<String>($VanigaTharavugalTableTable
+      map['vangi_peyar'] = Variable<String>($NiruvanaTharavugalTableTable
           .$convertervangiPeyar
           .toSql(vangiPeyar.value));
     }
     if (kilai.present) {
       map['kilai'] = Variable<String>(
-          $VanigaTharavugalTableTable.$converterkilai.toSql(kilai.value));
+          $NiruvanaTharavugalTableTable.$converterkilai.toSql(kilai.value));
     }
     if (vangiKanakku.present) {
       map['vangi_kanakku'] = Variable<String>(vangiKanakku.value);
@@ -1394,7 +1399,7 @@ class VanigaTharavugalTableCompanion
       map['oppam_peyar'] = Variable<String>(oppamPeyar.value);
     }
     if (adaimozhi.present) {
-      map['adaimozhi'] = Variable<String>($VanigaTharavugalTableTable
+      map['adaimozhi'] = Variable<String>($NiruvanaTharavugalTableTable
           .$converteradaimozhi
           .toSql(adaimozhi.value));
     }
@@ -1421,7 +1426,7 @@ class VanigaTharavugalTableCompanion
 
   @override
   String toString() {
-    return (StringBuffer('VanigaTharavugalTableCompanion(')
+    return (StringBuffer('NiruvanaTharavugalTableCompanion(')
           ..write('id: $id, ')
           ..write('seyaliVagai: $seyaliVagai, ')
           ..write('mudhanMozhi: $mudhanMozhi, ')
@@ -5133,8 +5138,8 @@ class PatruPattiyalTableCompanion extends UpdateCompanion<PatruPattiyalEntry> {
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
-  late final $VanigaTharavugalTableTable vanigaTharavugalTable =
-      $VanigaTharavugalTableTable(this);
+  late final $NiruvanaTharavugalTableTable niruvanaTharavugalTable =
+      $NiruvanaTharavugalTableTable(this);
   late final $VanigarTableTable vanigarTable = $VanigarTableTable(this);
   late final $PorulTableTable porulTable = $PorulTableTable(this);
   late final $PatrucheettuTableTable patrucheettuTable =
@@ -5147,7 +5152,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
-        vanigaTharavugalTable,
+        niruvanaTharavugalTable,
         vanigarTable,
         porulTable,
         patrucheettuTable,
@@ -5156,8 +5161,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       ];
 }
 
-typedef $$VanigaTharavugalTableTableCreateCompanionBuilder
-    = VanigaTharavugalTableCompanion Function({
+typedef $$NiruvanaTharavugalTableTableCreateCompanionBuilder
+    = NiruvanaTharavugalTableCompanion Function({
   Value<int> id,
   required String seyaliVagai,
   Value<String> mudhanMozhi,
@@ -5192,8 +5197,8 @@ typedef $$VanigaTharavugalTableTableCreateCompanionBuilder
   Value<bool> isDeleted,
   Value<DateTime?> deletedAt,
 });
-typedef $$VanigaTharavugalTableTableUpdateCompanionBuilder
-    = VanigaTharavugalTableCompanion Function({
+typedef $$NiruvanaTharavugalTableTableUpdateCompanionBuilder
+    = NiruvanaTharavugalTableCompanion Function({
   Value<int> id,
   Value<String> seyaliVagai,
   Value<String> mudhanMozhi,
@@ -5229,9 +5234,9 @@ typedef $$VanigaTharavugalTableTableUpdateCompanionBuilder
   Value<DateTime?> deletedAt,
 });
 
-class $$VanigaTharavugalTableTableFilterComposer
-    extends Composer<_$AppDatabase, $VanigaTharavugalTableTable> {
-  $$VanigaTharavugalTableTableFilterComposer({
+class $$NiruvanaTharavugalTableTableFilterComposer
+    extends Composer<_$AppDatabase, $NiruvanaTharavugalTableTable> {
+  $$NiruvanaTharavugalTableTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -5367,9 +5372,9 @@ class $$VanigaTharavugalTableTableFilterComposer
       column: $table.deletedAt, builder: (column) => ColumnFilters(column));
 }
 
-class $$VanigaTharavugalTableTableOrderingComposer
-    extends Composer<_$AppDatabase, $VanigaTharavugalTableTable> {
-  $$VanigaTharavugalTableTableOrderingComposer({
+class $$NiruvanaTharavugalTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $NiruvanaTharavugalTableTable> {
+  $$NiruvanaTharavugalTableTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -5483,9 +5488,9 @@ class $$VanigaTharavugalTableTableOrderingComposer
       column: $table.deletedAt, builder: (column) => ColumnOrderings(column));
 }
 
-class $$VanigaTharavugalTableTableAnnotationComposer
-    extends Composer<_$AppDatabase, $VanigaTharavugalTableTable> {
-  $$VanigaTharavugalTableTableAnnotationComposer({
+class $$NiruvanaTharavugalTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $NiruvanaTharavugalTableTable> {
+  $$NiruvanaTharavugalTableTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -5594,35 +5599,35 @@ class $$VanigaTharavugalTableTableAnnotationComposer
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
 }
 
-class $$VanigaTharavugalTableTableTableManager extends RootTableManager<
+class $$NiruvanaTharavugalTableTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $VanigaTharavugalTableTable,
-    VanigaTharavugalEntry,
-    $$VanigaTharavugalTableTableFilterComposer,
-    $$VanigaTharavugalTableTableOrderingComposer,
-    $$VanigaTharavugalTableTableAnnotationComposer,
-    $$VanigaTharavugalTableTableCreateCompanionBuilder,
-    $$VanigaTharavugalTableTableUpdateCompanionBuilder,
+    $NiruvanaTharavugalTableTable,
+    NiruvanaTharavugalEntry,
+    $$NiruvanaTharavugalTableTableFilterComposer,
+    $$NiruvanaTharavugalTableTableOrderingComposer,
+    $$NiruvanaTharavugalTableTableAnnotationComposer,
+    $$NiruvanaTharavugalTableTableCreateCompanionBuilder,
+    $$NiruvanaTharavugalTableTableUpdateCompanionBuilder,
     (
-      VanigaTharavugalEntry,
-      BaseReferences<_$AppDatabase, $VanigaTharavugalTableTable,
-          VanigaTharavugalEntry>
+      NiruvanaTharavugalEntry,
+      BaseReferences<_$AppDatabase, $NiruvanaTharavugalTableTable,
+          NiruvanaTharavugalEntry>
     ),
-    VanigaTharavugalEntry,
+    NiruvanaTharavugalEntry,
     PrefetchHooks Function()> {
-  $$VanigaTharavugalTableTableTableManager(
-      _$AppDatabase db, $VanigaTharavugalTableTable table)
+  $$NiruvanaTharavugalTableTableTableManager(
+      _$AppDatabase db, $NiruvanaTharavugalTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$VanigaTharavugalTableTableFilterComposer(
+              $$NiruvanaTharavugalTableTableFilterComposer(
                   $db: db, $table: table),
           createOrderingComposer: () =>
-              $$VanigaTharavugalTableTableOrderingComposer(
+              $$NiruvanaTharavugalTableTableOrderingComposer(
                   $db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$VanigaTharavugalTableTableAnnotationComposer(
+              $$NiruvanaTharavugalTableTableAnnotationComposer(
                   $db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
@@ -5659,7 +5664,7 @@ class $$VanigaTharavugalTableTableTableManager extends RootTableManager<
             Value<bool> isDeleted = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
           }) =>
-              VanigaTharavugalTableCompanion(
+              NiruvanaTharavugalTableCompanion(
             id: id,
             seyaliVagai: seyaliVagai,
             mudhanMozhi: mudhanMozhi,
@@ -5729,7 +5734,7 @@ class $$VanigaTharavugalTableTableTableManager extends RootTableManager<
             Value<bool> isDeleted = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
           }) =>
-              VanigaTharavugalTableCompanion.insert(
+              NiruvanaTharavugalTableCompanion.insert(
             id: id,
             seyaliVagai: seyaliVagai,
             mudhanMozhi: mudhanMozhi,
@@ -5771,22 +5776,22 @@ class $$VanigaTharavugalTableTableTableManager extends RootTableManager<
         ));
 }
 
-typedef $$VanigaTharavugalTableTableProcessedTableManager
+typedef $$NiruvanaTharavugalTableTableProcessedTableManager
     = ProcessedTableManager<
         _$AppDatabase,
-        $VanigaTharavugalTableTable,
-        VanigaTharavugalEntry,
-        $$VanigaTharavugalTableTableFilterComposer,
-        $$VanigaTharavugalTableTableOrderingComposer,
-        $$VanigaTharavugalTableTableAnnotationComposer,
-        $$VanigaTharavugalTableTableCreateCompanionBuilder,
-        $$VanigaTharavugalTableTableUpdateCompanionBuilder,
+        $NiruvanaTharavugalTableTable,
+        NiruvanaTharavugalEntry,
+        $$NiruvanaTharavugalTableTableFilterComposer,
+        $$NiruvanaTharavugalTableTableOrderingComposer,
+        $$NiruvanaTharavugalTableTableAnnotationComposer,
+        $$NiruvanaTharavugalTableTableCreateCompanionBuilder,
+        $$NiruvanaTharavugalTableTableUpdateCompanionBuilder,
         (
-          VanigaTharavugalEntry,
-          BaseReferences<_$AppDatabase, $VanigaTharavugalTableTable,
-              VanigaTharavugalEntry>
+          NiruvanaTharavugalEntry,
+          BaseReferences<_$AppDatabase, $NiruvanaTharavugalTableTable,
+              NiruvanaTharavugalEntry>
         ),
-        VanigaTharavugalEntry,
+        NiruvanaTharavugalEntry,
         PrefetchHooks Function()>;
 typedef $$VanigarTableTableCreateCompanionBuilder = VanigarTableCompanion
     Function({
@@ -7458,8 +7463,9 @@ typedef $$PatruPattiyalTableTableProcessedTableManager = ProcessedTableManager<
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
-  $$VanigaTharavugalTableTableTableManager get vanigaTharavugalTable =>
-      $$VanigaTharavugalTableTableTableManager(_db, _db.vanigaTharavugalTable);
+  $$NiruvanaTharavugalTableTableTableManager get niruvanaTharavugalTable =>
+      $$NiruvanaTharavugalTableTableTableManager(
+          _db, _db.niruvanaTharavugalTable);
   $$VanigarTableTableTableManager get vanigarTable =>
       $$VanigarTableTableTableManager(_db, _db.vanigarTable);
   $$PorulTableTableTableManager get porulTable =>

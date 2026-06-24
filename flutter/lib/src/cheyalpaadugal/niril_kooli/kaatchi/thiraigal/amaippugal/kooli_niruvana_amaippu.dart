@@ -9,8 +9,8 @@ import '../../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_pagudhi.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dart';
 import '../../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import 'koorugal/kooli_thannuru_maeladukkugal.dart';
 
 class CoolieNiruvanaAmaippuPage extends ConsumerStatefulWidget {
@@ -29,10 +29,10 @@ class _CoolieNiruvanaAmaippuPageState
   String _tempSecondary = '';
   bool _showExtraPhone = false;
 
-  void _savePhoneNumbers(VanigaTharavugal currentProfile) {
+  void _savePhoneNumbers(NiruvanaTharavugal currentProfile) {
     currentProfile.tholaipaesi1 = _tempPrimary;
     currentProfile.tholaipaesi2 = _showExtraPhone ? _tempSecondary : '';
-    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(currentProfile);
+    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(currentProfile);
     setState(() {
       _editingSection = null;
       _showExtraPhone = false;
@@ -45,8 +45,8 @@ class _CoolieNiruvanaAmaippuPageState
   }
 
   void _showBusinessSelectorModal() {
-    final profiles = ref.read(vanigaTharavugalListProvider);
-    final activeProfile = ref.read(vanigaTharavugalProvider);
+    final profiles = ref.read(NiruvanaTharavugalListProvider);
+    final activeProfile = ref.read(NiruvanaTharavugalProvider);
 
     final items = profiles.map((p) {
       final name = p.getPrimary('niruvanathinPeyar');
@@ -67,7 +67,7 @@ class _CoolieNiruvanaAmaippuPageState
       onSelected: (val) {
         final idx = items.indexOf(val);
         if (idx >= 0 && profiles[idx].id != null) {
-          ref.read(vanigaTharavugalListProvider.notifier).setActiveProfile(profiles[idx].id!);
+          ref.read(NiruvanaTharavugalListProvider.notifier).setActiveProfile(profiles[idx].id!);
         }
       },
     );
@@ -92,7 +92,7 @@ class _CoolieNiruvanaAmaippuPageState
   Widget _buildProfileSwitcher() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? const Color(0xFF111111) : Colors.white;
-    final profile = ref.watch(vanigaTharavugalProvider);
+    final profile = ref.watch(NiruvanaTharavugalProvider);
     final primaryName = profile?.niruvanathinPeyar['Tamil'] ?? '';
     final displayName =
         primaryName.isEmpty ? K.tharpoadhaiyaNiruvanam.tr(context, ref) : primaryName;
@@ -232,16 +232,16 @@ class _CoolieNiruvanaAmaippuPageState
     });
   }
 
-  void _saveBilingualField(VanigaTharavugal profile, String fieldName) {
+  void _saveBilingualField(NiruvanaTharavugal profile, String fieldName) {
     final updatedProfile = profile.copyWith();
     updatedProfile.setBilingual(fieldName, 'Tamil', _tempPrimary);
     updatedProfile.setBilingual(fieldName, 'English', _tempSecondary);
-    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }
 
-  void _saveSingleField(VanigaTharavugal profile, String fieldName) {
+  void _saveSingleField(NiruvanaTharavugal profile, String fieldName) {
     final updatedProfile = profile.copyWith();
     switch (fieldName) {
       case 'kurumPeyar':
@@ -257,7 +257,7 @@ class _CoolieNiruvanaAmaippuPageState
         updatedProfile.minnanjal = _tempPrimary;
         break;
     }
-    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }
@@ -269,8 +269,8 @@ class _CoolieNiruvanaAmaippuPageState
     final primaryLang = 'thamizh';
     final secondaryLang = 'aangilam';
 
-    final profile = ref.watch(vanigaTharavugalProvider);
-    final currentProfile = profile ?? VanigaTharavugal();
+    final profile = ref.watch(NiruvanaTharavugalProvider);
+    final currentProfile = profile ?? NiruvanaTharavugal();
 
     final niruvanathinPeyarPrimary =
         currentProfile.niruvanathinPeyar['Tamil'] ?? '';

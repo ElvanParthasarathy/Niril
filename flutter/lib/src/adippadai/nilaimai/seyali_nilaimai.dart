@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../tharavuru/seyali_murai.dart';
 import '../viruppangal_paniyagam.dart';
 import '../tharavuthalam/seyali_tharavuthalam.dart';
-import '../../cheyalpaadugal/amaippugal/tharavu/vaniga_tharavugal_provider.dart';
+import '../../cheyalpaadugal/amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 
 class AppStateNotifier extends Notifier<AppMode?> {
   @override
@@ -22,9 +22,9 @@ final appModeProvider = NotifierProvider<AppStateNotifier, AppMode?>(() {
 
 // Stream of all profiles in the database
 final profilesStreamProvider =
-    StreamProvider<List<VanigaTharavugalEntry>>((ref) {
+    StreamProvider<List<NiruvanaTharavugalEntry>>((ref) {
   final db = ref.watch(appDatabaseProvider);
-  return db.select(db.vanigaTharavugalTable).watch();
+  return db.select(db.niruvanaTharavugalTable).watch();
 });
 
 // Exposes the loading state of the profiles stream
@@ -72,16 +72,16 @@ final hasProfileForCurrentModeProvider = Provider<bool>((ref) {
 // Use this in invoice/receipt/merchant lists to prevent cross-mode leaks.
 // The unfiltered `profilesStreamProvider` above is kept for onboarding checks.
 final currentModeProfilesStreamProvider =
-    StreamProvider<List<VanigaTharavugalEntry>>((ref) {
+    StreamProvider<List<NiruvanaTharavugalEntry>>((ref) {
   final db = ref.watch(appDatabaseProvider);
   final mode = ref.watch(appModeProvider);
 
   if (mode == null) {
-    return Stream.value(<VanigaTharavugalEntry>[]);
+    return Stream.value(<NiruvanaTharavugalEntry>[]);
   }
 
   final modeKey = mode == AppMode.coolie ? 'coolie' : 'silk';
-  return (db.select(db.vanigaTharavugalTable)
+  return (db.select(db.niruvanaTharavugalTable)
         ..where((t) => t.seyaliVagai.equals(modeKey)))
       .watch();
 });
@@ -134,7 +134,7 @@ class BilingualNotifier extends Notifier<bool> {
       // Coolie mode always collects both languages in settings
       return true;
     } else {
-      final profile = ref.watch(vanigaTharavugalProvider);
+      final profile = ref.watch(NiruvanaTharavugalProvider);
       return profile?.iruMozhi ?? false;
     }
   }
@@ -144,10 +144,10 @@ class BilingualNotifier extends Notifier<bool> {
     if (mode == AppMode.coolie) {
       // Ignore: Coolie settings are strictly always bilingual for data entry
     } else {
-      final profile = ref.read(vanigaTharavugalProvider);
+      final profile = ref.read(NiruvanaTharavugalProvider);
       if (profile != null) {
         final newProfile = profile.copyWith(iruMozhi: value);
-        ref.read(vanigaTharavugalListProvider.notifier).updateProfile(newProfile);
+        ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(newProfile);
       }
     }
   }
@@ -161,15 +161,15 @@ final bilingualProvider = NotifierProvider<BilingualNotifier, bool>(() {
 class PrimaryLanguageNotifier extends Notifier<String> {
   @override
   String build() {
-    final profile = ref.watch(vanigaTharavugalProvider);
+    final profile = ref.watch(NiruvanaTharavugalProvider);
     return profile?.mudhanMozhi ?? 'Tamil';
   }
 
   set state(String value) {
-    final profile = ref.read(vanigaTharavugalProvider);
+    final profile = ref.read(NiruvanaTharavugalProvider);
     if (profile != null) {
       final newProfile = profile.copyWith(mudhanMozhi: value);
-      ref.read(vanigaTharavugalListProvider.notifier).updateProfile(newProfile);
+      ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(newProfile);
     }
   }
 }
@@ -183,15 +183,15 @@ final primaryLanguageProvider =
 class SecondaryLanguageNotifier extends Notifier<String> {
   @override
   String build() {
-    final profile = ref.watch(vanigaTharavugalProvider);
+    final profile = ref.watch(NiruvanaTharavugalProvider);
     return profile?.thunaiMozhi ?? 'English';
   }
 
   set state(String value) {
-    final profile = ref.read(vanigaTharavugalProvider);
+    final profile = ref.read(NiruvanaTharavugalProvider);
     if (profile != null) {
       final newProfile = profile.copyWith(thunaiMozhi: value);
-      ref.read(vanigaTharavugalListProvider.notifier).updateProfile(newProfile);
+      ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(newProfile);
     }
   }
 }

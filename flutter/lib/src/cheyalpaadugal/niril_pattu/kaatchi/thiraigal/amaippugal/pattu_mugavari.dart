@@ -10,8 +10,8 @@ import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_pagudhi.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_kattupadugal.dart';
 import 'pattu_mugavari_tharavu.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 
 class SilkMugavariPage extends ConsumerStatefulWidget {
   const SilkMugavariPage({super.key});
@@ -133,23 +133,23 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
     }
   }
 
-  void _saveBilingualField(VanigaTharavugal profile, String fieldName) {
+  void _saveBilingualField(NiruvanaTharavugal profile, String fieldName) {
     final updatedProfile = profile.copyWith();
     updatedProfile.setBilingual(fieldName, profile.mudhanMozhi, _tempPrimary);
     updatedProfile.setBilingual(fieldName, profile.thunaiMozhi, _tempSecondary);
-    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }
 
-  void _saveSingleField(VanigaTharavugal profile, String fieldName) {
+  void _saveSingleField(NiruvanaTharavugal profile, String fieldName) {
     final updatedProfile = profile.copyWith();
     switch (fieldName) {
       case 'anjalKuriyeedu':
         updatedProfile.anjalKuriyeedu = _tempPrimary;
         break;
     }
-    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }
@@ -164,8 +164,8 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
     final primaryKey = primaryLang == 'aangilam' ? 'en' : 'ta';
     final secondaryKey = secondaryLang == 'aangilam' ? 'en' : 'ta';
 
-    final profile = ref.watch(vanigaTharavugalProvider);
-    final currentProfile = profile ?? VanigaTharavugal();
+    final profile = ref.watch(NiruvanaTharavugalProvider);
+    final currentProfile = profile ?? NiruvanaTharavugal();
 
     final mugavariPrimary = currentProfile.getPrimary('mugavari');
     final mugavariSecondary = currentProfile.getSecondary('mugavari');

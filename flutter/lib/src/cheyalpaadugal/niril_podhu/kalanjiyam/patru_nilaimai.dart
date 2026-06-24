@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import '../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
-import '../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
+import '../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import 'patru_kalanjiyam.dart';
 
 // ── Repository Provider ─────────────────────────────────────────────────────

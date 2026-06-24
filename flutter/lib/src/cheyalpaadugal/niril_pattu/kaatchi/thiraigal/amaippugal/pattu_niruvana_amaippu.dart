@@ -13,8 +13,8 @@ import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dar
 import '../../../../amaippugal/kaatchi/koorugal/elvan_azhippu_urudhi_maeladukku.dart';
 import '../../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku.dart';
 import '../../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 
 class SilkNiruvanaAmaippuPage extends ConsumerStatefulWidget {
   const SilkNiruvanaAmaippuPage({super.key});
@@ -31,10 +31,10 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
   String _tempSecondary = '';
   bool _showExtraPhone = false;
 
-  void _savePhoneNumbers(VanigaTharavugal currentProfile) {
+  void _savePhoneNumbers(NiruvanaTharavugal currentProfile) {
     currentProfile.tholaipaesi1 = _tempPrimary;
     currentProfile.tholaipaesi2 = _showExtraPhone ? _tempSecondary : '';
-    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(currentProfile);
+    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(currentProfile);
     setState(() {
       _editingSection = null;
       _showExtraPhone = false;
@@ -47,8 +47,8 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
   }
 
   void _showBusinessSelectorModal() {
-    final profiles = ref.read(vanigaTharavugalListProvider);
-    final activeProfile = ref.read(vanigaTharavugalProvider);
+    final profiles = ref.read(NiruvanaTharavugalListProvider);
+    final activeProfile = ref.read(NiruvanaTharavugalProvider);
 
     final items = profiles.map((p) {
       final name = p.getPrimary('niruvanathinPeyar');
@@ -69,7 +69,7 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
       onSelected: (val) {
         final idx = items.indexOf(val);
         if (idx >= 0 && profiles[idx].id != null) {
-          ref.read(vanigaTharavugalListProvider.notifier).setActiveProfile(profiles[idx].id!);
+          ref.read(NiruvanaTharavugalListProvider.notifier).setActiveProfile(profiles[idx].id!);
         }
       },
     );
@@ -88,7 +88,7 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
               child: Scaffold(
                 backgroundColor: Colors.transparent,
                 floatingActionButton: Consumer(builder: (context, ref, _) {
-                  final profiles = ref.watch(vanigaTharavugalListProvider);
+                  final profiles = ref.watch(NiruvanaTharavugalListProvider);
                   if (profiles.length >= maxProfiles) return const SizedBox.shrink();
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 48.0),
@@ -103,8 +103,8 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
                   );
                 }),
                 body: Consumer(builder: (context, ref, child) {
-                  final profiles = ref.watch(vanigaTharavugalListProvider);
-                  final activeProfile = ref.watch(vanigaTharavugalProvider);
+                  final profiles = ref.watch(NiruvanaTharavugalListProvider);
+                  final activeProfile = ref.watch(NiruvanaTharavugalProvider);
                   final hasProfiles = profiles.isNotEmpty;
 
                   return ElvanFullscreenPopup(
@@ -147,7 +147,7 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
                                             icon: CupertinoIcons.delete_solid,
                                             onTap: profile.id != activeProfile?.id
                                                 ? () {
-                                                    ref.read(vanigaTharavugalListProvider.notifier)
+                                                    ref.read(NiruvanaTharavugalListProvider.notifier)
                                                         .setActiveProfile(profile.id!);
                                                   }
                                                 : null,
@@ -155,7 +155,7 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
                                                 showElvanDeleteConfirmModal(
                                                     context, ref, () {
                                               ref
-                                                  .read(vanigaTharavugalListProvider
+                                                  .read(NiruvanaTharavugalListProvider
                                                       .notifier)
                                                   .deleteProfile(profile.id!);
                                               ElvanSnackbar.show(
@@ -244,17 +244,17 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
       ),
       onConfirm: () {
         if (newName.trim().isNotEmpty) {
-          final profiles = ref.read(vanigaTharavugalListProvider);
+          final profiles = ref.read(NiruvanaTharavugalListProvider);
           if (profiles.length >= maxProfiles) {
             ElvanSnackbar.show(context, K.perumalavu5thannuru.tr(context, ref));
             return;
           }
 
-          final newProfile = VanigaTharavugal();
+          final newProfile = NiruvanaTharavugal();
           newProfile.iruMozhi = true;
           newProfile.setBilingual(
               'niruvanathinPeyar', newProfile.mudhanMozhi, newName);
-          ref.read(vanigaTharavugalListProvider.notifier).createProfile(newProfile);
+          ref.read(NiruvanaTharavugalListProvider.notifier).createProfile(newProfile);
           _showSuccessToast();
         }
       },
@@ -264,7 +264,7 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
   Widget _buildProfileSwitcher() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? const Color(0xFF111111) : Colors.white;
-    final profile = ref.watch(vanigaTharavugalProvider);
+    final profile = ref.watch(NiruvanaTharavugalProvider);
     final primaryName = profile?.getPrimary('niruvanathinPeyar') ?? '';
     final displayName =
         primaryName.isEmpty ? K.tharpoadhaiyaNiruvanam.tr(context, ref) : primaryName;
@@ -406,16 +406,16 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
     });
   }
 
-  void _saveBilingualField(VanigaTharavugal profile, String fieldName) {
+  void _saveBilingualField(NiruvanaTharavugal profile, String fieldName) {
     final updatedProfile = profile.copyWith();
     updatedProfile.setBilingual(fieldName, profile.mudhanMozhi, _tempPrimary);
     updatedProfile.setBilingual(fieldName, profile.thunaiMozhi, _tempSecondary);
-    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }
 
-  void _saveSingleField(VanigaTharavugal profile, String fieldName) {
+  void _saveSingleField(NiruvanaTharavugal profile, String fieldName) {
     final updatedProfile = profile.copyWith();
     switch (fieldName) {
       case 'kurumPeyar':
@@ -434,7 +434,7 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
         updatedProfile.gstin = _tempPrimary;
         break;
     }
-    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }
@@ -446,8 +446,8 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
     final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
     final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
 
-    final profile = ref.watch(vanigaTharavugalProvider);
-    final currentProfile = profile ?? VanigaTharavugal();
+    final profile = ref.watch(NiruvanaTharavugalProvider);
+    final currentProfile = profile ?? NiruvanaTharavugal();
 
     final niruvanathinPeyarPrimary =
         currentProfile.getPrimary('niruvanathinPeyar');

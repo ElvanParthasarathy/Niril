@@ -36,7 +36,7 @@ import '../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 import '../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
 
 import '../../amaippugal/kaatchi/amaippugal_thirai.dart';
-import '../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
+import '../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 
 import 'kaippaesi/elvan_chattagam.dart';
 import 'kaippaesi/elvan_kizh_pattai.dart';

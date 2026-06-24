@@ -36,7 +36,7 @@ class PatruThiruthi extends ConsumerStatefulWidget {
 class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   // ── Company Profile ──
   int? _selectedNiruvanamId;
-  VanigaTharavugalEntry? _selectedProfile;
+  NiruvanaTharavugalEntry? _selectedProfile;
 
   // ── Customer ──
   int? _selectedVanigarId;
@@ -133,7 +133,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   }
 
   // ── Auto-assign profile ──
-  void _autoAssignProfile(List<VanigaTharavugalEntry> profiles) {
+  void _autoAssignProfile(List<NiruvanaTharavugalEntry> profiles) {
     if (_selectedProfile != null) return;
     if (profiles.isEmpty) return;
 
@@ -338,7 +338,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   }
 
   // ── Profile Switcher ──
-  Widget _buildProfileSwitcher(List<VanigaTharavugalEntry> profiles, bool isDark) {
+  Widget _buildProfileSwitcher(List<NiruvanaTharavugalEntry> profiles, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: SingleChildScrollView(

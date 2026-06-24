@@ -18,8 +18,8 @@ import '../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_kanakku.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_kalanjiyam.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import 'koorugal/koorugal.dart';
 
 /// Coolie Invoice Editor — weight-based billing with setharam, courier,
@@ -36,7 +36,7 @@ class CoolieInvoiceEditor extends ConsumerStatefulWidget {
 class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   // ── Company Profile ──
   int? _selectedNiruvanamId;
-  VanigaTharavugal? _selectedProfile;
+  NiruvanaTharavugal? _selectedProfile;
 
   // ── Customer ──
   int? _selectedVanigarId;
@@ -77,7 +77,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     // Auto-select first profile
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_isEditing) {
-        final profiles = ref.read(vanigaTharavugalListProvider);
+        final profiles = ref.read(NiruvanaTharavugalListProvider);
         if (profiles.isNotEmpty) {
           setState(() {
             _selectedProfile = profiles.first;
@@ -111,7 +111,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
 
     // Load profile match
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final profiles = ref.read(vanigaTharavugalListProvider);
+      final profiles = ref.read(NiruvanaTharavugalListProvider);
       if (_selectedNiruvanamId != null) {
         final match = profiles.where((p) => p.id == _selectedNiruvanamId).firstOrNull;
         if (match != null) setState(() => _selectedProfile = match);
@@ -238,7 +238,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
-    final profiles = ref.watch(vanigaTharavugalListProvider);
+    final profiles = ref.watch(NiruvanaTharavugalListProvider);
     final formatter = NumberFormat('#,##0', 'en_IN');
 
     return ElvanEditorShell(

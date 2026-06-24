@@ -8,7 +8,7 @@ import '../../../../adippadai/viruppangal_paniyagam.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../adippadai/panigal/niril_backup_service.dart';
-import '../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
+import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import 'package:drift/drift.dart' hide Column;
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../muraimai_thaervu_thirai.dart';
@@ -50,8 +50,8 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
       // Insert Silk profile if needed
       if (needsSilk) {
         debugPrint('STEP 2: Inserting silk...');
-        await db.into(db.vanigaTharavugalTable).insert(
-              VanigaTharavugalTableCompanion.insert(
+        await db.into(db.niruvanaTharavugalTable).insert(
+              NiruvanaTharavugalTableCompanion.insert(
                 seyaliVagai: 'silk',
                 niruvanathinPeyar:
                     Value({widget.billingLanguage: _gstBusinessName}),
@@ -67,8 +67,8 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
       // Insert Coolie profile if needed
       if (needsCoolie) {
         debugPrint('STEP 3: Inserting coolie...');
-        await db.into(db.vanigaTharavugalTable).insert(
-              VanigaTharavugalTableCompanion.insert(
+        await db.into(db.niruvanaTharavugalTable).insert(
+              NiruvanaTharavugalTableCompanion.insert(
                 seyaliVagai: 'coolie',
                 niruvanathinPeyar:
                     Value({widget.billingLanguage: _coolieBusinessName}),
@@ -85,7 +85,7 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
       debugPrint('STEP 4: Backup done');
 
       // Direct verification: is the data actually in the DB?
-      final allProfiles = await db.select(db.vanigaTharavugalTable).get();
+      final allProfiles = await db.select(db.niruvanaTharavugalTable).get();
       debugPrint('STEP 4a: Direct DB query found ${allProfiles.length} profiles');
       for (final p in allProfiles) {
         debugPrint('  - id=${p.id}, seyaliVagai=${p.seyaliVagai}, peyar=${p.niruvanathinPeyar}');

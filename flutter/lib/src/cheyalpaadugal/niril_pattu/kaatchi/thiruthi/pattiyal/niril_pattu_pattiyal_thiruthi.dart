@@ -16,8 +16,8 @@ import '../../../../niril_podhu/kalanjiyam/pattiyal_kanakku.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_kalanjiyam.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 import '../../../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../vanigar/niril_pattu_vanigar_thiruthi.dart';
 import '../porul/niril_pattu_porul_thiruthi.dart';
 import 'koorugal/koorugal.dart';
@@ -38,7 +38,7 @@ class SilkInvoiceEditor extends ConsumerStatefulWidget {
 class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   // ── Company Profile ──
   int? _selectedNiruvanamId;
-  VanigaTharavugal? _selectedProfile;
+  NiruvanaTharavugal? _selectedProfile;
 
   // ── Customer ──
   int? _selectedVanigarId;
@@ -128,7 +128,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   }
 
   void _autoSelectProfile() {
-    final profiles = ref.read(vanigaTharavugalListProvider);
+    final profiles = ref.read(NiruvanaTharavugalListProvider);
     if (profiles.isNotEmpty && _selectedNiruvanamId == null) {
       setState(() {
         _selectedProfile = profiles.first;
@@ -140,7 +140,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
 
   /// Resolves _selectedProfile and _customerState from provider data.
   void _resolveCustomerState() {
-    final profiles = ref.read(vanigaTharavugalListProvider);
+    final profiles = ref.read(NiruvanaTharavugalListProvider);
     if (_selectedNiruvanamId != null) {
       final match =
           profiles.where((p) => p.id == _selectedNiruvanamId).firstOrNull;

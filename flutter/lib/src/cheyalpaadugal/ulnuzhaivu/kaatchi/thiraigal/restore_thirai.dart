@@ -9,7 +9,7 @@ import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../koorugal/maeladukkugal/elvan_aetrum_maeladukku.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
+import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../koorugal/ullnuzhaivu_koorugal.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────

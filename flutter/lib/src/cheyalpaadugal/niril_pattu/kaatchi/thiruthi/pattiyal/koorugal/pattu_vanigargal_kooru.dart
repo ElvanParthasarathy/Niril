@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../niril_podhu/kaatchi/koorugal/vanigar_thaedu_kooru.dart';
-import '../../../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
-import '../../../../../amaippugal/tharavu/vaniga_tharavugal.dart';
+import '../../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
+import '../../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import 'maanila_thervu_maeladukku.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -42,7 +42,7 @@ class PattuVanigargalCallbacks {
   final void Function(VanigarEntry entry) onCustomerSelected;
   final VoidCallback onCustomerCleared;
   final VoidCallback onRequestAddNewCustomer;
-  final void Function(int? id, VanigaTharavugal? profile) onProfileChanged;
+  final void Function(int? id, NiruvanaTharavugal? profile) onProfileChanged;
   final void Function(String en, String ta) onPlaceOfSupplyChanged;
   final VoidCallback onPlaceOfSupplyCleared;
 }
@@ -208,7 +208,7 @@ class PattuVanigargalKooru extends ConsumerWidget {
 
   // ── Profile Dropdown ──
   Widget _buildProfileDropdown(WidgetRef ref) {
-    final profiles = ref.watch(vanigaTharavugalListProvider);
+    final profiles = ref.watch(NiruvanaTharavugalListProvider);
     if (profiles.length <= 1) return const SizedBox.shrink();
 
     return Padding(

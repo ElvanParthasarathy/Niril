@@ -11,8 +11,8 @@ import '../../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_pagudhi.dart';
 import '../../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dart';
 import '../../../../../amaippugal/kaatchi/koorugal/elvan_azhippu_urudhi_maeladukku.dart';
 import '../../../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
-import '../../../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
-import '../../../../../amaippugal/tharavu/vaniga_tharavugal.dart';
+import '../../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
+import '../../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 
 /// Maximum number of business profiles allowed.
 const int maxProfiles = 5;
@@ -36,7 +36,7 @@ void showManageProfilesModal({
             child: Scaffold(
               backgroundColor: Colors.transparent,
               floatingActionButton: Consumer(builder: (context, ref, _) {
-                final profiles = ref.watch(vanigaTharavugalListProvider);
+                final profiles = ref.watch(NiruvanaTharavugalListProvider);
                 if (profiles.length >= maxProfiles) return const SizedBox.shrink();
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 48.0),
@@ -49,8 +49,8 @@ void showManageProfilesModal({
                 );
               }),
               body: Consumer(builder: (context, ref, child) {
-                final profiles = ref.watch(vanigaTharavugalListProvider);
-                final activeProfile = ref.watch(vanigaTharavugalProvider);
+                final profiles = ref.watch(NiruvanaTharavugalListProvider);
+                final activeProfile = ref.watch(NiruvanaTharavugalProvider);
                 final hasProfiles = profiles.isNotEmpty;
 
                 return ElvanFullscreenPopup(
@@ -93,7 +93,7 @@ void showManageProfilesModal({
                                           icon: CupertinoIcons.delete_solid,
                                           onTap: profile.id != activeProfile?.id
                                               ? () {
-                                                  ref.read(vanigaTharavugalListProvider.notifier)
+                                                  ref.read(NiruvanaTharavugalListProvider.notifier)
                                                       .setActiveProfile(profile.id!);
                                                 }
                                               : null,
@@ -101,7 +101,7 @@ void showManageProfilesModal({
                                               showElvanDeleteConfirmModal(
                                                   context, ref, () {
                                             ref
-                                                .read(vanigaTharavugalListProvider
+                                                .read(NiruvanaTharavugalListProvider
                                                     .notifier)
                                                 .deleteProfile(profile.id!);
                                             ElvanSnackbar.show(
@@ -251,17 +251,17 @@ void showNewProfileModal({
     ),
     onConfirm: () {
       if (newNamePrimary.trim().isNotEmpty) {
-        final profiles = ref.read(vanigaTharavugalListProvider);
+        final profiles = ref.read(NiruvanaTharavugalListProvider);
         if (profiles.length >= maxProfiles) {
           ElvanSnackbar.show(context, K.perumalavu5thannuru.tr(context, ref));
           return;
         }
 
-        final newProfile = VanigaTharavugal();
+        final newProfile = NiruvanaTharavugal();
         newProfile.setBilingual('niruvanathinPeyar', 'Tamil', newNamePrimary);
         newProfile.setBilingual(
             'niruvanathinPeyar', 'English', newNameSecondary);
-        ref.read(vanigaTharavugalListProvider.notifier).createProfile(newProfile);
+        ref.read(NiruvanaTharavugalListProvider.notifier).createProfile(newProfile);
         onSuccess();
       }
     },

@@ -8,42 +8,29 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
 import '../koorugal/elvan_amaippu_pagudhi.dart';
 import '../koorugal/elvan_amaippu_thirutha_attai.dart';
-import '../../tharavu/vaniga_tharavugal_provider.dart';
-import '../../tharavu/vaniga_tharavugal.dart';
+import '../../tharavu/niruvana_tharavugal_provider.dart';
+import '../../tharavu/niruvana_tharavugal.dart';
 
-class SilkVanigaAdaiyalangalPage extends ConsumerStatefulWidget {
-  const SilkVanigaAdaiyalangalPage({super.key});
+class CoolieNiruvanaAdaiyalangalPage extends ConsumerStatefulWidget {
+  const CoolieNiruvanaAdaiyalangalPage({super.key});
 
   @override
-  ConsumerState<SilkVanigaAdaiyalangalPage> createState() =>
-      _SilkVanigaAdaiyalangalPageState();
+  ConsumerState<CoolieNiruvanaAdaiyalangalPage> createState() =>
+      _CoolieNiruvanaAdaiyalangalPageState();
 }
 
-class _SilkVanigaAdaiyalangalPageState
-    extends ConsumerState<SilkVanigaAdaiyalangalPage> {
+class _CoolieNiruvanaAdaiyalangalPageState
+    extends ConsumerState<CoolieNiruvanaAdaiyalangalPage> {
   String? _editingSection;
   final ImagePicker _picker = ImagePicker();
 
-  String _tempHeaderStyle = '';
   String _tempSignatoryName = '';
   String? _tempImagePath;
-
-  void _beginEditSingle(String sectionId, String val) {
-    setState(() {
-      _editingSection = sectionId;
-      if (sectionId == 'header_style') {
-        _tempHeaderStyle = val;
-      } else if (sectionId == 'kaiyoppam') {
-        _tempSignatoryName = val;
-      }
-    });
-  }
 
   void _beginEditImage(String sectionId, String? currentPath) {
     setState(() {
@@ -73,48 +60,25 @@ class _SilkVanigaAdaiyalangalPageState
   }
 
   void _saveSingleField(
-      VanigaTharavugal profile, String fieldName, String value) {
+      NiruvanaTharavugal profile, String fieldName, String value) {
     final updatedProfile = profile.copyWith();
     switch (fieldName) {
-      case 'thalaippuVadivu':
-        updatedProfile.thalaippuVadivu = value;
-        break;
       case 'oavuru':
         updatedProfile.oavuru = value;
         break;
-      case 'agalaOavuru':
-        updatedProfile.agalaOavuru = value;
-        break;
     }
-    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }
 
-  void _saveSignatureField(VanigaTharavugal profile, String path, String name) {
+  void _saveSignatureField(NiruvanaTharavugal profile, String path, String name) {
     final updatedProfile = profile.copyWith();
     updatedProfile.kaiyoppam = path;
     updatedProfile.oppamPeyar = name;
-    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
-  }
-
-  void _showHeaderStyleActionSheet() {
-    final smallLabel = K.chiriyaOavuruPeyar.tr(context, ref);
-    final wideLabel = K.agalamaanaOavuruMattum.tr(context, ref);
-
-    showElvanSelectionBottomSheet(
-      context: context,
-      title: K.chinnathinVadivam.tr(context, ref),
-      items: [smallLabel, wideLabel],
-      currentValue: _tempHeaderStyle == 'wide' ? wideLabel : smallLabel,
-      onSelected: (val) {
-        setState(() {
-          _tempHeaderStyle = val == wideLabel ? 'wide' : 'small';
-        });
-      },
-    );
   }
 
   Widget _buildEditContainer({
@@ -267,15 +231,10 @@ class _SilkVanigaAdaiyalangalPageState
 
   @override
   Widget build(BuildContext context) {
-    final profile = ref.watch(vanigaTharavugalProvider);
-    final currentProfile = profile ?? VanigaTharavugal();
+    final profile = ref.watch(NiruvanaTharavugalProvider);
+    final currentProfile = profile ?? NiruvanaTharavugal();
 
-    final headerStyle = currentProfile.thalaippuVadivu.isEmpty
-        ? 'small'
-        : currentProfile.thalaippuVadivu;
     final logoPath = currentProfile.oavuru.isEmpty ? null : currentProfile.oavuru;
-    final wideLogoPath =
-        currentProfile.agalaOavuru.isEmpty ? null : currentProfile.agalaOavuru;
     final signaturePath =
         currentProfile.kaiyoppam.isEmpty ? null : currentProfile.kaiyoppam;
     final signatoryName = currentProfile.oppamPeyar;
@@ -316,88 +275,7 @@ class _SilkVanigaAdaiyalangalPageState
                   ),
                 ),
 
-                // 2. Wide Logo
-                ElvanSettingsAnimatedExpand(
-                  keyPrefix: 'wide_logo',
-                  isEditing: _editingSection == 'wide_logo',
-                  editChild: _buildEditContainer(
-                    title: K.agalamaanaoavuru.tr(context, ref),
-                    customContent: _buildImageUploader(
-                      imagePath: _tempImagePath,
-                      onChange: (path) => setState(() => _tempImagePath = path),
-                    ),
-                    onSave: () => _saveSingleField(
-                        currentProfile, 'agalaOavuru', _tempImagePath ?? ''),
-                  ),
-                  displayChild: ElvanSettingsDisplayRow(
-                    title: K.agalamaanaoavuru.tr(context, ref),
-                    primaryValue: wideLogoPath != null
-                        ? ''
-                        : K.illai.tr(context, ref),
-                    primaryWidget: wideLogoPath != null
-                        ? ElvanOavuruKaatchi(
-                            value: wideLogoPath,
-                            height: 36,
-                          )
-                        : null,
-                    onEdit: () => _beginEditImage('wide_logo', wideLogoPath),
-                  ),
-                ),
-
-                // 3. Header Style
-                ElvanSettingsAnimatedExpand(
-                  keyPrefix: 'header_style',
-                  isEditing: _editingSection == 'header_style',
-                  editChild: _buildEditContainer(
-                    title: K.chinnathinVadivam.tr(context, ref),
-                    customContent: InkWell(
-                      onTap: _showHeaderStyleActionSheet,
-                      borderRadius: BorderRadius.circular(100),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 14),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              _tempHeaderStyle == 'wide'
-                                  ? K.agalamaanaOavuruMattum.tr(context, ref)
-                                  : K.chiriyaOavuruPeyar.tr(context, ref),
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Theme.of(context).colorScheme.onSurface,
-                              ),
-                            ),
-                            Icon(CupertinoIcons.chevron_down,
-                                size: 16,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withValues(alpha: 0.6)),
-                          ],
-                        ),
-                      ),
-                    ),
-                    onSave: () => _saveSingleField(
-                        currentProfile, 'thalaippuVadivu', _tempHeaderStyle),
-                  ),
-                  displayChild: ElvanSettingsDisplayRow(
-                    title: K.chinnathinVadivam.tr(context, ref),
-                    primaryValue: headerStyle == 'wide'
-                        ? K.agalamaanaOavuruMattum.tr(context, ref)
-                        : K.chiriyaOavuruPeyar.tr(context, ref),
-                    onEdit: () => _beginEditSingle('header_style', headerStyle),
-                  ),
-                ),
-
-                // 4. Signature
+                // 2. Signature
                 ElvanSettingsAnimatedExpand(
                   keyPrefix: 'kaiyoppam',
                   isEditing: _editingSection == 'kaiyoppam',

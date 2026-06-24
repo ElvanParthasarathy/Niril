@@ -8,8 +8,8 @@ import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_pagudhi.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 
 class SilkVangiPage extends ConsumerStatefulWidget {
   const SilkVangiPage({super.key});
@@ -94,16 +94,16 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
     });
   }
 
-  void _saveBilingualField(VanigaTharavugal profile, String fieldName) {
+  void _saveBilingualField(NiruvanaTharavugal profile, String fieldName) {
     final updatedProfile = profile.copyWith();
     updatedProfile.setBilingual(fieldName, profile.mudhanMozhi, _tempPrimary);
     updatedProfile.setBilingual(fieldName, profile.thunaiMozhi, _tempSecondary);
-    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }
 
-  void _saveSingleField(VanigaTharavugal profile, String fieldName) {
+  void _saveSingleField(NiruvanaTharavugal profile, String fieldName) {
     final updatedProfile = profile.copyWith();
     switch (fieldName) {
       case 'vangiKanakku':
@@ -113,7 +113,7 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
         updatedProfile.ifsc = _tempPrimary;
         break;
     }
-    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }
@@ -125,8 +125,8 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
     final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
     final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
 
-    final profile = ref.watch(vanigaTharavugalProvider);
-    final currentProfile = profile ?? VanigaTharavugal();
+    final profile = ref.watch(NiruvanaTharavugalProvider);
+    final currentProfile = profile ?? NiruvanaTharavugal();
 
     final vangiPeyarPrimary = currentProfile.getPrimary('vangiPeyar');
     final vangiPeyarSecondary = currentProfile.getSecondary('vangiPeyar');

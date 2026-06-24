@@ -9,8 +9,8 @@ import '../../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_pagudhi.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_kattupadugal.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 
 class CoolieMugavariPage extends ConsumerStatefulWidget {
   const CoolieMugavariPage({super.key});
@@ -94,23 +94,23 @@ class _CoolieMugavariPageState extends ConsumerState<CoolieMugavariPage> {
     });
   }
 
-  void _saveBilingualField(VanigaTharavugal profile, String fieldName) {
+  void _saveBilingualField(NiruvanaTharavugal profile, String fieldName) {
     final updatedProfile = profile.copyWith();
     updatedProfile.setBilingual(fieldName, profile.mudhanMozhi, _tempPrimary);
     updatedProfile.setBilingual(fieldName, profile.thunaiMozhi, _tempSecondary);
-    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }
 
-  void _saveSingleField(VanigaTharavugal profile, String fieldName) {
+  void _saveSingleField(NiruvanaTharavugal profile, String fieldName) {
     final updatedProfile = profile.copyWith();
     switch (fieldName) {
       case 'anjalKuriyeedu':
         updatedProfile.anjalKuriyeedu = _tempPrimary;
         break;
     }
-    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }
@@ -121,8 +121,8 @@ class _CoolieMugavariPageState extends ConsumerState<CoolieMugavariPage> {
     final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
     final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
 
-    final profile = ref.watch(vanigaTharavugalProvider);
-    final currentProfile = profile ?? VanigaTharavugal();
+    final profile = ref.watch(NiruvanaTharavugalProvider);
+    final currentProfile = profile ?? NiruvanaTharavugal();
 
     final mugavariPrimary = currentProfile.getPrimary('mugavari');
     final mugavariSecondary = currentProfile.getSecondary('mugavari');

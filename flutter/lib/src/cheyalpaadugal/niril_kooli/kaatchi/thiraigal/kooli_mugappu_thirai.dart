@@ -98,7 +98,7 @@ class CoolieHomePage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     List<PatrucheettuEntry> pattiyalgal,
-    List<VanigaTharavugalEntry> profiles,
+    List<NiruvanaTharavugalEntry> profiles,
     bool isDark,
     bool isLoading,
   ) {

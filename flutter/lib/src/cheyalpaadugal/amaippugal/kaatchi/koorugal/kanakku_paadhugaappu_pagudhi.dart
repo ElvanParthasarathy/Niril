@@ -15,7 +15,7 @@ import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../adippadai/thoatra_vazhanguthi.dart';
 import '../../../../adippadai/vazhikaattal/navigation_provider.dart';
 import '../../../../adippadai/panigal/niril_backup_service.dart';
-import '../../tharavu/vaniga_tharavugal_provider.dart';
+import '../../tharavu/niruvana_tharavugal_provider.dart';
 import '../../../ulnuzhaivu/kaatchi/thiraigal/ullnuzhaivu_thirai.dart';
 import '../../../ulnuzhaivu/kaatchi/thiraigal/nalvaravu_thirai.dart';
 
@@ -248,7 +248,7 @@ class AccountSecuritySection extends ConsumerWidget {
 
               // Wipe local DB profiles
               final db = ref.read(appDatabaseProvider);
-              await db.delete(db.vanigaTharavugalTable).go();
+              await db.delete(db.niruvanaTharavugalTable).go();
 
               // Clear SharedPreferences
               final prefs = ref.read(sharedPreferencesProvider);

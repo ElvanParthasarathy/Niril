@@ -31,9 +31,9 @@ class MozhiMapConverter extends TypeConverter<Map<String, String>, String> {
   }
 }
 
-// ── Table: வணிக தரவுகள் (Business Data) ──
-@DataClassName('VanigaTharavugalEntry')
-class VanigaTharavugalTable extends Table {
+// ── Table: நிறுவனத் தரவுகள் (Business Data) ──
+@DataClassName('NiruvanaTharavugalEntry')
+class NiruvanaTharavugalTable extends Table {
   // Primary key
   IntColumn get id => integer().autoIncrement()();
 
@@ -45,7 +45,7 @@ class VanigaTharavugalTable extends Table {
   TextColumn get thunaiMozhi => text().withDefault(const Constant('English'))();
   BoolColumn get iruMozhi => boolean().withDefault(const Constant(false))();
 
-  // ── வணிகத் தரவு (Business Details) ──
+  // ── நிறுவனத் தரவு (Business Details) ──
   TextColumn get niruvanathinPeyar =>
       text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
   TextColumn get kurumPeyar => text().withDefault(const Constant(''))();
@@ -164,7 +164,7 @@ class PatrucheettuTable extends Table {
   // ── Identity ──
   IntColumn get id => integer().autoIncrement()();
   TextColumn get seyaliVagai => text()(); // 'silk' or 'coolie'
-  IntColumn get niruvanamId => integer().nullable()(); // FK → VanigaTharavugalTable
+  IntColumn get niruvanamId => integer().nullable()(); // FK → NiruvanaTharavugalTable
 
   // ── Invoice Header ──
   TextColumn get patrucheettuEn => text()(); // Display: SJS/2026-27/001
@@ -238,7 +238,7 @@ class PatrugalTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get seyaliVagai => text()(); // 'silk' | 'coolie'
   IntColumn get niruvanamId =>
-      integer().nullable()(); // FK → VanigaTharavugalTable
+      integer().nullable()(); // FK → NiruvanaTharavugalTable
 
   // ── Receipt Identity ──
   TextColumn get patruEn => text()(); // Display: 'RCP/SJS/01'
@@ -291,7 +291,7 @@ class PatruPattiyalTable extends Table {
 
 // ── Database ──
 @DriftDatabase(tables: [
-  VanigaTharavugalTable,
+  NiruvanaTharavugalTable,
   VanigarTable,
   PorulTable,
   PatrucheettuTable,
@@ -302,7 +302,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -311,11 +311,11 @@ class AppDatabase extends _$AppDatabase {
         },
         onUpgrade: (Migrator m, int from, int to) async {
           if (from < 3) {
-            // Add new audit columns to existing VanigaTharavugalTable
-            await m.addColumn(vanigaTharavugalTable, vanigaTharavugalTable.createdAt);
-            await m.addColumn(vanigaTharavugalTable, vanigaTharavugalTable.updatedAt);
-            await m.addColumn(vanigaTharavugalTable, vanigaTharavugalTable.isDeleted);
-            await m.addColumn(vanigaTharavugalTable, vanigaTharavugalTable.deletedAt);
+            // Add new audit columns to existing business table
+            await m.addColumn(niruvanaTharavugalTable, niruvanaTharavugalTable.createdAt);
+            await m.addColumn(niruvanaTharavugalTable, niruvanaTharavugalTable.updatedAt);
+            await m.addColumn(niruvanaTharavugalTable, niruvanaTharavugalTable.isDeleted);
+            await m.addColumn(niruvanaTharavugalTable, niruvanaTharavugalTable.deletedAt);
             
             // Create new tables added in version 3
             await m.createTable(vanigarTable);
@@ -381,6 +381,12 @@ class AppDatabase extends _$AppDatabase {
             // v7: Receipt system — new tables
             await m.createTable(patrugalTable);
             await m.createTable(patruPattiyalTable);
+          }
+          if (from < 8) {
+            // v8: Rename vaniga_tharavugal_table → niruvana_tharavugal_table
+            await customStatement(
+              'ALTER TABLE vaniga_tharavugal_table RENAME TO niruvana_tharavugal_table',
+            );
           }
         },
       );

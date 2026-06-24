@@ -10,7 +10,7 @@ import '../../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_pagudhi.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_kattupadugal.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 
 class CoolieUruvakkuAmaippuPage extends ConsumerStatefulWidget {
   const CoolieUruvakkuAmaippuPage({super.key});
@@ -68,12 +68,12 @@ class _CoolieUruvakkuAmaippuPageState
               const SizedBox(width: 8),
               FilledButton(
                 onPressed: () {
-                  final profile = ref.read(vanigaTharavugalProvider);
+                  final profile = ref.read(NiruvanaTharavugalProvider);
                   if (profile != null) {
                     final newProfile = profile.copyWith(
                       mudhanMozhi: _tempPrimaryLanguage,
                     );
-                    ref.read(vanigaTharavugalListProvider.notifier)
+                    ref.read(NiruvanaTharavugalListProvider.notifier)
                         .updateProfile(newProfile);
                   }
                   setState(() {
@@ -309,11 +309,11 @@ class _CoolieUruvakkuAmaippuPageState
               const SizedBox(width: 8),
               FilledButton(
                 onPressed: () {
-                  final profile = ref.read(vanigaTharavugalProvider);
+                  final profile = ref.read(NiruvanaTharavugalProvider);
                   if (profile != null) {
                     final updatedProfile = profile.copyWith();
                     updatedProfile.thoatraNiram = _tempThemeColor;
-                    ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+                    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
                   }
                   setState(() {
                     _isEditingTheme = false;
@@ -340,7 +340,7 @@ class _CoolieUruvakkuAmaippuPageState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final profile = ref.watch(vanigaTharavugalProvider);
+    final profile = ref.watch(NiruvanaTharavugalProvider);
     final themeColor = profile?.thoatraNiram.isNotEmpty == true 
         ? profile!.thoatraNiram 
         : '#388e3c';
