@@ -8,3 +8,5 @@ export 'pattu_vanigargal_kooru.dart';
 export 'pattu_pattiyal_tharavugal_kooru.dart';
 export 'pattu_pattiyal_udhavi.dart';
 export 'maanila_thervu_maeladukku.dart';
+export 'pattu_kazhivu_kooru.dart';
+export 'pattu_pattiyal_vagai_kooru.dart';

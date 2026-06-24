@@ -8,7 +8,6 @@ import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_pagudhi_thalaipu_kooru.dart';
-import '../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 
 import '../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
@@ -540,40 +539,17 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           // ───────────────────────────────────────────────────────────────
           // Section 3.5: Global Discount
           // ───────────────────────────────────────────────────────────────
-          ElvanThiruthiAttai(
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _globalDiscountController,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
-                    decoration: const InputDecoration(
-                      labelText: 'Global Discount',
-                      border: InputBorder.none,
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                    ),
-                    onChanged: (v) {
-                      _globalDiscountValue = double.tryParse(v) ?? 0;
-                      _recalculate();
-                    },
-                  ),
-                ),
-                const SizedBox(width: 8),
-                SegmentedButton<String>(
-                  segments: const [
-                    ButtonSegment(value: 'percentage', label: Text('%')),
-                    ButtonSegment(value: 'amount', label: Text('₹')),
-                  ],
-                  selected: {_globalDiscountType},
-                  onSelectionChanged: (s) {
-                    setState(() => _globalDiscountType = s.first);
-                    _recalculate();
-                  },
-                ),
-              ],
-            ),
+          PattuKazhivuKooru(
+            controller: _globalDiscountController,
+            discountType: _globalDiscountType,
+            onValueChanged: (v) {
+              _globalDiscountValue = double.tryParse(v) ?? 0;
+              _recalculate();
+            },
+            onTypeChanged: (type) {
+              setState(() => _globalDiscountType = type);
+              _recalculate();
+            },
           ),
 
           const SizedBox(height: 24),
@@ -589,29 +565,14 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           // Section 5: ⑤ Invoice Type
           // ───────────────────────────────────────────────────────────────
           const ElvanPagudhiThalaipu(en: 5, thalaipu: 'Invoice Type'),
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 400),
-            child: DropdownButtonFormField<String>(
-              initialValue: _pattiyalVagai,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24)),
-                contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 20, vertical: 14),
-              ),
-              items: const [
-                DropdownMenuItem(
-                    value: 'tax-invoice', child: Text('Tax Invoice')),
-                DropdownMenuItem(
-                    value: 'proforma', child: Text('Proforma')),
-              ],
-              onChanged: (v) async {
-                final newType = v ?? 'tax-invoice';
-                setState(() => _pattiyalVagai = newType);
-                _hasUnsavedChanges = true;
-                _scheduleDraftSave();
-              },
-            ),
+          PattuPattiyalVagaiKooru(
+            pattiyalVagai: _pattiyalVagai,
+            onChanged: (v) {
+              final newType = v ?? 'tax-invoice';
+              setState(() => _pattiyalVagai = newType);
+              _hasUnsavedChanges = true;
+              _scheduleDraftSave();
+            },
           ),
 
           const SizedBox(height: 24),
