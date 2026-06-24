@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../koorugal/maeladukkugal/elvan_kizh_meladukku.dart';
+import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';

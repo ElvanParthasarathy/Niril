@@ -3,7 +3,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import 'package:elvan_niril/src/koorugal/maeladukkugal/elvan_cheyal_meladukku.dart';
+import 'package:elvan_niril/src/koorugal/maeladukkugal/elvan_cheyal_maeladukku.dart';
 
 Future<void> showElvanImagePickerSheet({
   required BuildContext context,

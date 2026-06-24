@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../koorugal/maeladukkugal/elvan_kizh_meladukku.dart';
+import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';

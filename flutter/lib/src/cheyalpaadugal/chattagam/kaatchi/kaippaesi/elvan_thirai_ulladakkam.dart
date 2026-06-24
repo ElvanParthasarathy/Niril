@@ -4,7 +4,7 @@ import 'package:flutter/physics.dart';
 import 'elvan_virindha_pattai.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'koorugal/elvan_meladukku_pattiyal.dart';
+import 'koorugal/elvan_maeladukku_pattiyal.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PAGE CONTENT (Scroll View & Slivers)

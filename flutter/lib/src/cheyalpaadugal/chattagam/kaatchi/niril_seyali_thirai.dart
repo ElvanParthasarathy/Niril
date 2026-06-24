@@ -41,7 +41,7 @@ import '../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
 import 'kaippaesi/elvan_chattagam.dart';
 import 'kaippaesi/elvan_kizh_pattai.dart';
 import '../../ulnuzhaivu/kaatchi/koorugal/ullnuzhaivu_koorugal.dart';
-import 'kaippaesi/koorugal/elvan_meladukku_pattiyal.dart';
+import 'kaippaesi/koorugal/elvan_maeladukku_pattiyal.dart';
 import 'kaippaesi/koorugal/elvan_mel_pattai_chinnam.dart';
 import 'kanini/elvan_kanini_chattagam.dart';
 import 'kanini/elvan_kanini_karuvipattai.dart';

@@ -5,7 +5,7 @@ import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dar
 import '../../../../../niril_podhu/kaatchi/koorugal/vanigar_thaedu_kooru.dart';
 import '../../../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
 import '../../../../../amaippugal/tharavu/vaniga_tharavugal.dart';
-import 'maanila_thervu_meladukku.dart';
+import 'maanila_thervu_maeladukku.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // பட்டு வணிகர்கள் கூறு — Customer Section (search + address + profile + PoS)
