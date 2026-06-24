@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:drift/drift.dart' show Value;
 
 import '../../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
@@ -46,6 +48,8 @@ class KooliThiruththiNilaimai {
 ///   • Saving (create + update) via PattiyalKalanjiyam
 class KooliPattiyalUthavi {
   KooliPattiyalUthavi._();
+
+  static const _draftKey = 'niril_draft_coolie_invoice';
 
   // ── Load from entry (edit) ────────────────────────────────────────────────
 
@@ -146,5 +150,104 @@ class KooliPattiyalUthavi {
         ),
       );
     }
+  }
+
+  // ── Draft persistence ───────────────────────────────────────────────────
+
+  /// Serialises current state to SharedPreferences.
+  static Future<void> saveDraft(KooliThiruththiNilaimai state) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final draft = jsonEncode({
+        'vanigarId': state.selectedVanigarId,
+        'vanigarPeyar': state.selectedVanigarPeyar,
+        'niruvanamId': state.selectedNiruvanamId,
+        'pattiyalNaal': state.pattiyalNaal.toIso8601String(),
+        'items': PattiyalUthavigal.kooliListToJson(state.items),
+        'setharamGrams': state.setharamGrams,
+        'thapaalThogai': state.thapaalThogai,
+        'ahimsaPattuThogai': state.ahimsaPattuThogai,
+        'piraVarivugal':
+            PattiyalUthavigal.piraVarivuListToJson(state.piraVarivugal),
+        'showBankDetails': state.showBankDetails,
+      });
+      await prefs.setString(_draftKey, draft);
+    } catch (_) {}
+  }
+
+  /// Attempts to restore a draft. Returns null if no valid draft exists
+  /// or if the user declines. Shows a dialog for confirmation.
+  static Future<KooliThiruththiNilaimai?> tryRestoreDraft(
+      BuildContext context) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final draftJson = prefs.getString(_draftKey);
+      if (draftJson == null || draftJson.isEmpty) return null;
+
+      final draft = jsonDecode(draftJson) as Map<String, dynamic>;
+      final items = draft['items'] as String? ?? '[]';
+      final name = draft['vanigarPeyar'] as String? ?? '';
+      if (items == '[]' && name.isEmpty) {
+        await prefs.remove(_draftKey);
+        return null;
+      }
+
+      if (!context.mounted) return null;
+
+      final restore = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('வரைவு மீட்கவா?'),
+          content: const Text('சேமிக்காத வரைவு உள்ளது. மீட்டமைக்கவா?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('நிராகரி'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('மீட்கவும்'),
+            ),
+          ],
+        ),
+      );
+
+      if (restore == true) {
+        final parsedItems = PattiyalUthavigal.kooliListFromJson(items);
+        final piraVarivugal = PattiyalUthavigal.piraVarivuListFromJson(
+            draft['piraVarivugal'] as String? ?? '[]');
+        return KooliThiruththiNilaimai(
+          selectedVanigarId: draft['vanigarId'] as int?,
+          selectedVanigarPeyar: draft['vanigarPeyar'] as String? ?? '',
+          selectedNiruvanamId: draft['niruvanamId'] as int?,
+          pattiyalNaal: DateTime.tryParse(
+                  draft['pattiyalNaal'] as String? ?? '') ??
+              DateTime.now(),
+          items:
+              parsedItems.isEmpty ? [const KooliUrupadi()] : parsedItems,
+          setharamGrams:
+              (draft['setharamGrams'] as num?)?.toDouble() ?? 0,
+          thapaalThogai:
+              (draft['thapaalThogai'] as num?)?.toDouble() ?? 0,
+          ahimsaPattuThogai:
+              (draft['ahimsaPattuThogai'] as num?)?.toDouble() ?? 0,
+          piraVarivugal: piraVarivugal,
+          showBankDetails: draft['showBankDetails'] as bool? ?? true,
+        );
+      } else {
+        await prefs.remove(_draftKey);
+        return null;
+      }
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Removes the saved draft.
+  static Future<void> clearDraft() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_draftKey);
+    } catch (_) {}
   }
 }

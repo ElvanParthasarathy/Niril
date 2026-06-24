@@ -7,11 +7,13 @@ import '../../../../../niril_podhu/kaatchi/koorugal/pattiyal_naal_kooru.dart';
 class KooliPattiyalTharavugalKooru extends StatelessWidget {
   final DateTime pattiyalNaal;
   final ValueChanged<DateTime> onDateChanged;
+  final String previewBillNumber;
 
   const KooliPattiyalTharavugalKooru({
     super.key,
     required this.pattiyalNaal,
     required this.onDateChanged,
+    this.previewBillNumber = '',
   });
 
   @override
@@ -22,7 +24,9 @@ class KooliPattiyalTharavugalKooru extends StatelessWidget {
         readOnly: true,
         decoration: InputDecoration(
           labelText: 'Bill No.',
-          hintText: 'Auto-generated',
+          hintText: previewBillNumber.isNotEmpty
+              ? previewBillNumber
+              : 'Auto-generated',
           border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12)),
           contentPadding: const EdgeInsets.symmetric(

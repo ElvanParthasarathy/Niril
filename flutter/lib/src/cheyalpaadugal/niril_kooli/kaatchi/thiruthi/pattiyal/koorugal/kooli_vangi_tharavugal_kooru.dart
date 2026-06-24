@@ -9,12 +9,16 @@ class KooliVangiTharavugalKooru extends StatelessWidget {
   final NiruvanaTharavugal profile;
   final bool showBankDetails;
   final ValueChanged<bool> onToggled;
+  final bool showIfsc;
+  final ValueChanged<bool> onIfscToggled;
 
   const KooliVangiTharavugalKooru({
     super.key,
     required this.profile,
     required this.showBankDetails,
     required this.onToggled,
+    required this.showIfsc,
+    required this.onIfscToggled,
   });
 
   @override
@@ -29,11 +33,18 @@ class KooliVangiTharavugalKooru extends StatelessWidget {
             contentPadding: EdgeInsets.zero,
           ),
           if (showBankDetails) ...[
+            SwitchListTile(
+              title: const Text('Show IFSC'),
+              value: showIfsc,
+              onChanged: onIfscToggled,
+              contentPadding: EdgeInsets.zero,
+              dense: true,
+            ),
             const Divider(),
             kooliBankRow(context, 'Bank', profile.vangiPeyar),
             kooliBankRow(context, 'Branch', profile.kilai),
             kooliBankRow(context, 'A/C No', profile.vangiKanakku),
-            kooliBankRow(context, 'IFSC', profile.ifsc),
+            if (showIfsc) kooliBankRow(context, 'IFSC', profile.ifsc),
             if (profile.upiId.isNotEmpty)
               kooliBankRow(context, 'UPI', profile.upiId),
           ],

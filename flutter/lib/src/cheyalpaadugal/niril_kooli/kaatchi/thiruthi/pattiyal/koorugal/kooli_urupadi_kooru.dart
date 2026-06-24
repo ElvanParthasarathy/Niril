@@ -13,6 +13,7 @@ class KooliUrupadiKooru extends StatelessWidget {
   final NumberFormat formatter;
   final ValueChanged<KooliUrupadi> onUpdated;
   final VoidCallback onDeleted;
+  final VoidCallback? onRequestAddNewProduct;
 
   const KooliUrupadiKooru({
     super.key,
@@ -22,6 +23,7 @@ class KooliUrupadiKooru extends StatelessWidget {
     required this.formatter,
     required this.onUpdated,
     required this.onDeleted,
+    this.onRequestAddNewProduct,
   });
 
   @override
@@ -71,6 +73,7 @@ class KooliUrupadiKooru extends StatelessWidget {
                         vilai: p.vilai,
                       ));
                     },
+                    onRequestAddNew: onRequestAddNewProduct,
                   ),
                 ),
                 // Weight

@@ -13,6 +13,8 @@ class KooliVanigarKooru extends StatelessWidget {
   final List<NiruvanaTharavugal> profiles;
   final ValueChanged<VanigarEntry> onVanigarSelected;
   final ValueChanged<int?> onNiruvanamChanged;
+  final VoidCallback? onRequestAddNewVanigar;
+  final VanigarEntry? selectedVanigar;
 
   const KooliVanigarKooru({
     super.key,
@@ -22,6 +24,8 @@ class KooliVanigarKooru extends StatelessWidget {
     required this.profiles,
     required this.onVanigarSelected,
     required this.onNiruvanamChanged,
+    this.onRequestAddNewVanigar,
+    this.selectedVanigar,
   });
 
   @override
@@ -46,6 +50,7 @@ class KooliVanigarKooru extends StatelessWidget {
             seyaliVagai: 'coolie',
             selectedId: selectedVanigarId,
             onSelected: onVanigarSelected,
+            onRequestAddNew: onRequestAddNewVanigar,
           ),
           if (selectedVanigarPeyar.isNotEmpty) ...[
             const SizedBox(height: 12),
@@ -65,6 +70,33 @@ class KooliVanigarKooru extends StatelessWidget {
                       style: tt.titleSmall?.copyWith(
                         fontWeight: FontWeight.w600,
                       )),
+                  if (selectedVanigar != null) ...[
+                    if ((selectedVanigar!.mugavari['Tamil'] ?? '').isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(selectedVanigar!.mugavari['Tamil']!,
+                          style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
+                    ],
+                    if ((selectedVanigar!.oor['Tamil'] ?? '').isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(selectedVanigar!.oor['Tamil']!,
+                          style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
+                    ],
+                    if ((selectedVanigar!.maavattam['Tamil'] ?? '').isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(selectedVanigar!.maavattam['Tamil']!,
+                          style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
+                    ],
+                    if (selectedVanigar!.anjalKuriyeedu.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(selectedVanigar!.anjalKuriyeedu,
+                          style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
+                    ],
+                    if ((selectedVanigar!.maanilam['Tamil'] ?? '').isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(selectedVanigar!.maanilam['Tamil']!,
+                          style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
+                    ],
+                  ],
                 ],
               ),
             ),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -11,9 +13,13 @@ import '../../../../../koorugal/podhu_koorugal/elvan_pagudhi_thalaipu_kooru.dart
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_kanakku.dart';
+import '../../../../niril_podhu/kalanjiyam/pattiyal_kalanjiyam.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
+import '../../../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
+import '../vanigar/niril_kooli_vanigar_thiruthi.dart';
+import '../porul/niril_kooli_porul_thiruthi.dart';
 import 'koorugal/koorugal.dart';
 
 /// Coolie Invoice Editor — weight-based billing with setharam, courier,
@@ -50,6 +56,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
 
   // ── Bank Details ──
   bool _showBankDetails = true;
+  bool _showIfsc = true;
 
   // ── Totals ──
   KooliMothangal _totals = const KooliMothangal();
@@ -60,6 +67,13 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   final _ahimsaCtrl = TextEditingController();
   bool _saving = false;
 
+  // ── Unsaved Changes & Draft ──
+  bool _hasUnsavedChanges = false;
+  Timer? _draftDebounce;
+
+  // ── Bill Number Preview ──
+  String _previewBillNumber = '';
+
   bool get _isEditing => widget.editingEntry != null;
 
   @override
@@ -67,6 +81,8 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     super.initState();
     if (_isEditing) {
       _loadEditingData();
+    } else {
+      _tryRestoreDraft();
     }
     // Auto-select first profile
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -77,6 +93,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
             _selectedProfile = profiles.first;
             _selectedNiruvanamId = profiles.first.id;
           });
+          _computePreviewBillNumber();
         }
       }
     });
@@ -115,6 +132,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     _setharamCtrl.dispose();
     _thapaalCtrl.dispose();
     _ahimsaCtrl.dispose();
+    _draftDebounce?.cancel();
     super.dispose();
   }
 
@@ -128,6 +146,80 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
         piraVarivugal: _piraVarivugal,
       );
     });
+    _scheduleDraftSave();
+  }
+
+  // ── Draft (delegates to helper) ──
+  void _scheduleDraftSave() {
+    _draftDebounce?.cancel();
+    _draftDebounce = Timer(const Duration(seconds: 2), () {
+      if (_isEditing) return;
+      KooliPattiyalUthavi.saveDraft(_currentSnapshot());
+    });
+  }
+
+  Future<void> _tryRestoreDraft() async {
+    final snapshot = await KooliPattiyalUthavi.tryRestoreDraft(context);
+    if (snapshot != null && mounted) {
+      setState(() {
+        _selectedVanigarId = snapshot.selectedVanigarId;
+        _selectedVanigarPeyar = snapshot.selectedVanigarPeyar;
+        _selectedNiruvanamId = snapshot.selectedNiruvanamId;
+        _pattiyalNaal = snapshot.pattiyalNaal;
+        _items = snapshot.items.isNotEmpty
+            ? snapshot.items
+            : [const KooliUrupadi()];
+        _setharamGrams = snapshot.setharamGrams;
+        _thapaalThogai = snapshot.thapaalThogai;
+        _ahimsaPattuThogai = snapshot.ahimsaPattuThogai;
+        _piraVarivugal = snapshot.piraVarivugal;
+        _showBankDetails = snapshot.showBankDetails;
+
+        _setharamCtrl.text =
+            _setharamGrams > 0 ? _setharamGrams.toString() : '';
+        _thapaalCtrl.text =
+            _thapaalThogai > 0 ? _thapaalThogai.toString() : '';
+        _ahimsaCtrl.text =
+            _ahimsaPattuThogai > 0 ? _ahimsaPattuThogai.toString() : '';
+      });
+      _recalculate();
+    }
+  }
+
+  /// Builds a snapshot from current state (for draft / save).
+  KooliThiruththiNilaimai _currentSnapshot() => KooliThiruththiNilaimai(
+        selectedNiruvanamId: _selectedNiruvanamId,
+        selectedProfile: _selectedProfile,
+        selectedVanigarId: _selectedVanigarId,
+        selectedVanigarPeyar: _selectedVanigarPeyar,
+        pattiyalNaal: _pattiyalNaal,
+        items: _items,
+        setharamGrams: _setharamGrams,
+        thapaalThogai: _thapaalThogai,
+        ahimsaPattuThogai: _ahimsaPattuThogai,
+        piraVarivugal: _piraVarivugal,
+        showBankDetails: _showBankDetails,
+      );
+
+  // ── Bill Number Preview ──
+  Future<void> _computePreviewBillNumber() async {
+    if (_isEditing) return;
+    try {
+      final kalanjiyam = ref.read(pattiyalKalanjiyamProvider);
+      final finYear = PattiyalKalanjiyam.getCurrentFinYear();
+      final prefix = _selectedProfile?.kurumPeyar.isNotEmpty == true
+          ? _selectedProfile!.kurumPeyar
+          : 'CB';
+      final vanakkam = await kalanjiyam.getNextVanakkam(
+        'coolie', _selectedNiruvanamId, finYear,
+      );
+      if (mounted) {
+        setState(() {
+          _previewBillNumber =
+              kalanjiyam.formatPattiyalEn(prefix, vanakkam);
+        });
+      }
+    } catch (_) {}
   }
 
   Future<void> _handleSave() async {
@@ -174,6 +266,8 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
         editingEntry: widget.editingEntry,
       );
 
+      await KooliPattiyalUthavi.clearDraft();
+      _hasUnsavedChanges = false;
       if (mounted) {
         ref.invalidate(pattiyalgalProvider);
         ElvanSnackbar.show(context, K.porulChaemikkappattadhu.tr(context, ref));
@@ -196,12 +290,23 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   Widget build(BuildContext context) {
     final profiles = ref.watch(NiruvanaTharavugalListProvider);
     final formatter = NumberFormat('#,##0', 'en_IN');
+    final vanigargalAsync = ref.watch(vanigargalProvider);
+    final VanigarEntry? selectedVanigar = vanigargalAsync.whenOrNull(
+      data: (list) => _selectedVanigarId != null
+          ? list.cast<VanigarEntry?>().firstWhere(
+                (v) => v!.id == _selectedVanigarId, orElse: () => null)
+          : null,
+    );
 
     return ElvanEditorShell(
       title: _isEditing
           ? K.koolipattiyalthiruthi.tr(context, ref)
           : K.pudhiyaKoolipPattiyal.tr(context, ref),
       onSave: _saving ? null : _handleSave,
+      hasUnsavedChanges: _hasUnsavedChanges,
+      onDiscard: () async {
+        await KooliPattiyalUthavi.clearDraft();
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -212,11 +317,13 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
             selectedVanigarPeyar: _selectedVanigarPeyar,
             selectedNiruvanamId: _selectedNiruvanamId,
             profiles: profiles,
+            selectedVanigar: selectedVanigar,
             onVanigarSelected: (entry) {
               setState(() {
                 _selectedVanigarId = entry.id;
                 _selectedVanigarPeyar =
                     entry.peyar['Tamil'] ?? entry.peyar['English'] ?? '';
+                _hasUnsavedChanges = true;
               });
             },
             onNiruvanamChanged: (v) {
@@ -224,7 +331,14 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
               setState(() {
                 _selectedNiruvanamId = v;
                 _selectedProfile = match;
+                _hasUnsavedChanges = true;
               });
+              _computePreviewBillNumber();
+            },
+            onRequestAddNewVanigar: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const CoolieMerchantEditor()),
+              );
             },
           ),
 
@@ -242,7 +356,11 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                   const ElvanPagudhiThalaipu(en: 2, thalaipu: 'Invoice Details'),
                   KooliPattiyalTharavugalKooru(
                     pattiyalNaal: _pattiyalNaal,
-                    onDateChanged: (d) => setState(() => _pattiyalNaal = d),
+                    previewBillNumber: _previewBillNumber,
+                    onDateChanged: (d) => setState(() {
+                      _pattiyalNaal = d;
+                      _hasUnsavedChanges = true;
+                    }),
                   ),
 
                   const SizedBox(height: 24),
@@ -255,12 +373,23 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                     itemCount: _items.length,
                     formatter: formatter,
                     onUpdated: (updated) {
-                      setState(() => _items = List.from(_items)..[i] = updated);
+                      setState(() {
+                        _items = List.from(_items)..[i] = updated;
+                        _hasUnsavedChanges = true;
+                      });
                       _recalculate();
                     },
                     onDeleted: () {
-                      setState(() => _items = List.from(_items)..removeAt(i));
+                      setState(() {
+                        _items = List.from(_items)..removeAt(i);
+                        _hasUnsavedChanges = true;
+                      });
                       _recalculate();
+                    },
+                    onRequestAddNewProduct: () async {
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const CoolieItemEditor()),
+                      );
                     },
                   )),
 
@@ -269,10 +398,16 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                     index: i,
                     charge: _piraVarivugal[i],
                     onUpdated: (updated) {
-                      setState(() => _piraVarivugal = List.from(_piraVarivugal)..[i] = updated);
+                      setState(() {
+                        _piraVarivugal = List.from(_piraVarivugal)..[i] = updated;
+                        _hasUnsavedChanges = true;
+                      });
                     },
                     onDeleted: () {
-                      setState(() => _piraVarivugal = List.from(_piraVarivugal)..removeAt(i));
+                      setState(() {
+                        _piraVarivugal = List.from(_piraVarivugal)..removeAt(i);
+                        _hasUnsavedChanges = true;
+                      });
                       _recalculate();
                     },
                     onRecalculate: _recalculate,
@@ -288,17 +423,22 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                       kooliPillButton(context,
                         icon: Icons.add_rounded,
                         label: 'Add Item',
-                        onPressed: () => setState(
-                            () => _items = [..._items, const KooliUrupadi()]),
+                        onPressed: () => setState(() {
+                          _items = [..._items, const KooliUrupadi()];
+                          _hasUnsavedChanges = true;
+                        }),
                       ),
-                      if (_piraVarivugal.isEmpty)
-                        kooliPillButton(context,
+                      // Always show the Add Other Charges button (not just when empty)
+                      kooliPillButton(context,
                           icon: Icons.add_rounded,
                           label: 'Add Other Charges',
-                          onPressed: () => setState(() => _piraVarivugal = [
-                                ..._piraVarivugal,
-                                const PiraVarivu()
-                              ]),
+                          onPressed: () => setState(() {
+                            _piraVarivugal = [
+                              ..._piraVarivugal,
+                              const PiraVarivu(),
+                            ];
+                            _hasUnsavedChanges = true;
+                          }),
                         ),
                     ],
                   ),
@@ -312,14 +452,17 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                     thapaalCtrl: _thapaalCtrl,
                     onSetharamChanged: (v) {
                       _setharamGrams = double.tryParse(v) ?? 0;
+                      _hasUnsavedChanges = true;
                       _recalculate();
                     },
                     onAhimsaChanged: (v) {
                       _ahimsaPattuThogai = double.tryParse(v) ?? 0;
+                      _hasUnsavedChanges = true;
                       _recalculate();
                     },
                     onThapaalChanged: (v) {
                       _thapaalThogai = double.tryParse(v) ?? 0;
+                      _hasUnsavedChanges = true;
                       _recalculate();
                     },
                   ),
@@ -331,7 +474,12 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                     KooliVangiTharavugalKooru(
                       profile: _selectedProfile!,
                       showBankDetails: _showBankDetails,
-                      onToggled: (v) => setState(() => _showBankDetails = v),
+                      onToggled: (v) => setState(() {
+                        _showBankDetails = v;
+                        _hasUnsavedChanges = true;
+                      }),
+                      showIfsc: _showIfsc,
+                      onIfscToggled: (v) => setState(() => _showIfsc = v),
                     ),
 
                   const SizedBox(height: 24),
