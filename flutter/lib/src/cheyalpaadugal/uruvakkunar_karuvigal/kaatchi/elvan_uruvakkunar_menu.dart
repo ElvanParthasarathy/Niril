@@ -8,7 +8,10 @@ import '../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../ulnuzhaivu/kaatchi/koorugal/ullnuzhaivu_koorugal.dart';
+import '../../amaippugal/tharavu/niruvana_tharavugal.dart';
+import '../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../tharavu/sodhanai_tharavu_uruvakki.dart';
+import '../tharavu/sodhanai_tharavugal.dart';
 
 /// A global floating developer menu that only appears in Debug mode.
 class ElvanUruvakkunarMenu extends ConsumerStatefulWidget {
@@ -92,6 +95,79 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
     }
   }
 
+  void _addExtraSilkProfile() async {
+    // Temporarily switch to silk mode to seed the extra profile
+    final currentMode = ref.read(appModeProvider);
+    ref.read(appModeProvider.notifier).setMode(AppMode.silk);
+    final notifier = ref.read(NiruvanaTharavugalListProvider.notifier);
+    final secondProfile = mockSilkProfiles.length > 1 ? mockSilkProfiles[1] : null;
+    if (secondProfile != null) {
+      final profile = NiruvanaTharavugal(
+        mudhanMozhi: secondProfile['mudhanMozhi'] ?? 'Tamil',
+        thunaiMozhi: secondProfile['thunaiMozhi'] ?? 'English',
+        iruMozhi: secondProfile['iruMozhi'] ?? true,
+        niruvanathinPeyar: {
+          'Tamil': secondProfile['niruvanathinPeyar_Tamil'] ?? '',
+          'English': secondProfile['niruvanathinPeyar_English'] ?? '',
+        },
+        kurumPeyar: secondProfile['kurumPeyar'] ?? '',
+        tholaipaesi1: secondProfile['tholaipesi_1'] ?? '',
+        tholaipaesi2: secondProfile['tholaipesi_2'] ?? '',
+        minnanjal: secondProfile['minnanjal'] ?? '',
+        gstin: secondProfile['gstin'] ?? '',
+        mugavari: {
+          'Tamil': secondProfile['mugavari_Tamil'] ?? '',
+          'English': secondProfile['mugavari_English'] ?? '',
+        },
+        oor: {
+          'Tamil': secondProfile['oor_Tamil'] ?? '',
+          'English': secondProfile['oor_English'] ?? '',
+        },
+        maavattam: {
+          'Tamil': secondProfile['maavattam_Tamil'] ?? '',
+          'English': secondProfile['maavattam_English'] ?? '',
+        },
+        maanilam: {
+          'Tamil': secondProfile['maanilam_Tamil'] ?? '',
+          'English': secondProfile['maanilam_English'] ?? '',
+        },
+        naadu: {
+          'Tamil': secondProfile['naadu_Tamil'] ?? '',
+          'English': secondProfile['naadu_English'] ?? '',
+        },
+        anjalKuriyeedu: secondProfile['anjalKuriyeedu'] ?? '',
+        vangiPeyar: {
+          'Tamil': secondProfile['vangiPeyar_Tamil'] ?? '',
+          'English': secondProfile['vangiPeyar_English'] ?? '',
+        },
+        kilai: {
+          'Tamil': secondProfile['kilai_Tamil'] ?? '',
+          'English': secondProfile['kilai_English'] ?? '',
+        },
+        vangiKanakku: secondProfile['vangiKanakku'] ?? '',
+        ifsc: secondProfile['ifsc'] ?? '',
+        oavuru: secondProfile['oavuru'] ?? '',
+        agalaOavuru: secondProfile['agalaOavuru'] ?? '',
+        thalaippuVadivu: secondProfile['thalaippuVadivu'] ?? 'small',
+        kaiyoppam: secondProfile['kaiyoppam'] ?? '',
+        oppamPeyar: secondProfile['oppamPeyar'] ?? '',
+        adaimozhi: {
+          'Tamil': secondProfile['adaimozhi_Tamil'] ?? '',
+          'English': secondProfile['adaimozhi_English'] ?? '',
+        },
+        upiId: secondProfile['upiId'] ?? '',
+        thoatraNiram: secondProfile['thoatraNiram'] ?? '',
+      );
+      await notifier.createProfile(profile);
+    }
+    if (currentMode != null) {
+      ref.read(appModeProvider.notifier).setMode(currentMode);
+    }
+    if (mounted) {
+      ElvanSnackbar.show(context, 'Extra Silk Profile (EPS) Added ✓');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // If not in debug mode, simply return the app
@@ -149,6 +225,14 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
                       label: const Text('Erase Data'),
                       icon: const Icon(CupertinoIcons.trash),
                       backgroundColor: Colors.red,
+                    ),
+                    const SizedBox(height: 8),
+                    FloatingActionButton.extended(
+                      heroTag: 'dev_extra_silk',
+                      onPressed: _addExtraSilkProfile,
+                      label: const Text('Extra Silk Biz'),
+                      icon: const Icon(CupertinoIcons.add_circled),
+                      backgroundColor: Colors.deepPurple,
                     ),
                   ],
                 ],
