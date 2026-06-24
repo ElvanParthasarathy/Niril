@@ -101,6 +101,9 @@ class KooliUrupadiKooru extends ConsumerWidget {
                           ));
                         },
                         onRequestAddNew: onRequestAddNewProduct,
+                        onCleared: () {
+                          onUpdated(const KooliUrupadi());
+                        },
                       ),
                     ),
                     // Weight (kg) — blur-based, 3 decimals
