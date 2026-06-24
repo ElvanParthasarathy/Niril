@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' show Value;
-import 'package:intl/intl.dart';
+
 
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/tharavuru/seyali_murai.dart';
@@ -19,6 +19,7 @@ import '../../../niril_podhu/kalanjiyam/patru_kalanjiyam.dart';
 import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 import '../../../niril_podhu/tharavuru/seluthi_vagai.dart';
+import 'koorugal/patru_pattiyal_theervu_maeladukku.dart';
 
 
 /// Shared Receipt Editor — used by both Coolie and Silk modes.
@@ -587,203 +588,18 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   // ── Invoice Picker Dialog ──
   void _showInvoicePickerDialog(
       AsyncValue<List<PatrucheettuEntry>> invoicesAsync) {
-    final invoices = invoicesAsync.value ?? [];
-    final searchCtrl = TextEditingController();
-    var searchQuery = '';
-    final selectedIds =
-        Set<int>.from(_selectedInvoices.map((i) => i.id));
-
-    showModalBottomSheet(
+    PatruPattiyalTheervuMaeladukku.show(
       context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) {
-        return StatefulBuilder(
-          builder: (ctx, setDialogState) {
-            final filtered = searchQuery.isEmpty
-                ? invoices
-                : invoices.where((inv) {
-                    final q = searchQuery.toLowerCase();
-                    return inv.patrucheettuEn.toLowerCase().contains(q) ||
-                        inv.vanigarPeyar.toLowerCase().contains(q);
-                  }).toList();
-
-            return DraggableScrollableSheet(
-              initialChildSize: 0.7,
-              maxChildSize: 0.95,
-              minChildSize: 0.4,
-              expand: false,
-              builder: (_, scrollController) {
-                return Column(
-                  children: [
-                    // Handle bar
-                    Container(
-                      margin: const EdgeInsets.only(top: 12),
-                      width: 36,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade400,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                    // Header
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          const Text(
-                            'பட்டியல்களைத் தேர்ந்தெடு',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w600),
-                          ),
-                          const Spacer(),
-                          TextButton(
-                            onPressed: () {
-                              // Apply selection
-                              final selected = invoices
-                                  .where((i) => selectedIds.contains(i.id))
-                                  .toList();
-                              setState(() {
-                                _selectedInvoices = selected;
-                                _recalculateAmount();
-                                _autoFillFromInvoices();
-                              });
-                              _loadPaidAmounts();
-                              Navigator.of(ctx).pop();
-                            },
-                            child: const Text('முடிந்தது',
-                                style: TextStyle(fontWeight: FontWeight.w600)),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Search
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: TextField(
-                        controller: searchCtrl,
-                        decoration: InputDecoration(
-                          hintText: 'பட்டியல் எண் / வாடிக்கையாளர்...',
-                          prefixIcon:
-                              const Icon(CupertinoIcons.search, size: 18),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 16),
-                          isDense: true,
-                        ),
-                        onChanged: (val) {
-                          setDialogState(() => searchQuery = val);
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Divider(height: 1),
-                    // Invoice list
-                    Expanded(
-                      child: filtered.isEmpty
-                          ? const Center(
-                              child: Text('பட்டியல்கள் இல்லை',
-                                  style: TextStyle(color: Colors.grey)))
-                          : ListView.separated(
-                              controller: scrollController,
-                              itemCount: filtered.length,
-                              separatorBuilder: (_, __) =>
-                                  const Divider(height: 1, indent: 56),
-                              itemBuilder: (_, index) {
-                                final inv = filtered[index];
-                                final isSelected =
-                                    selectedIds.contains(inv.id);
-                                final paid =
-                                    _invoicePaidAmounts[inv.id] ?? 0.0;
-                                final balance = (inv.mothaThogai - paid)
-                                    .clamp(0.0, double.infinity);
-                                final currFmt = NumberFormat.currency(
-                                    locale: 'en_IN', symbol: '₹');
-                                final dateFmt = DateFormat('dd/MM/yyyy');
-
-                                return ListTile(
-                                  leading: Checkbox(
-                                    value: isSelected,
-                                    onChanged: (val) {
-                                      setDialogState(() {
-                                        if (val == true) {
-                                          selectedIds.add(inv.id);
-                                        } else {
-                                          selectedIds.remove(inv.id);
-                                        }
-                                      });
-                                    },
-                                  ),
-                                  title: Row(
-                                    children: [
-                                      Text(
-                                        inv.patrucheettuEn,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        dateFmt.format(inv.pattiyalNaal),
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey.shade500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  subtitle: inv.vanigarPeyar.isNotEmpty
-                                      ? Text(inv.vanigarPeyar,
-                                          style: const TextStyle(fontSize: 13),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis)
-                                      : null,
-                                  trailing: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        currFmt.format(inv.mothaThogai),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 13),
-                                      ),
-                                      if (paid > 0)
-                                        Text(
-                                          'மீதி: ${currFmt.format(balance)}',
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: balance > 0
-                                                ? Colors.orange.shade700
-                                                : Colors.green.shade700,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    setDialogState(() {
-                                      if (isSelected) {
-                                        selectedIds.remove(inv.id);
-                                      } else {
-                                        selectedIds.add(inv.id);
-                                      }
-                                    });
-                                  },
-                                );
-                              },
-                            ),
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-        );
+      invoices: invoicesAsync.value ?? [],
+      initialSelectedIds: Set<int>.from(_selectedInvoices.map((i) => i.id)),
+      paidAmounts: _invoicePaidAmounts,
+      onConfirmed: (selected) {
+        setState(() {
+          _selectedInvoices = selected;
+          _recalculateAmount();
+          _autoFillFromInvoices();
+        });
+        _loadPaidAmounts();
       },
     );
   }
