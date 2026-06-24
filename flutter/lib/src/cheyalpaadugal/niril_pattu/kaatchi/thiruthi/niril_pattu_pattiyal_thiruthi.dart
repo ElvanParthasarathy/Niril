@@ -1326,13 +1326,17 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   Widget _itemField(
       String label, double value, ValueChanged<String> onChanged,
       {bool isWeight = false}) {
-    // Clean display: no trailing .0 for non-weight, raw value for weight.
-    // Weight text is preserved as-is from user input (.1=1g, .10=10g, .100=100g).
+    // Weight: always 3 decimals matching weighing machine (24.100 = 24kg 100g).
+    // Non-weight: clean integers (6 not 6.0).
     String displayText = '';
     if (value != 0) {
-      displayText = value == value.truncateToDouble()
-          ? value.toInt().toString()
-          : value.toString();
+      if (isWeight) {
+        displayText = value.toStringAsFixed(3);
+      } else {
+        displayText = value == value.truncateToDouble()
+            ? value.toInt().toString()
+            : value.toString();
+      }
     }
     return _ItemFieldWidget(
       label: label,
@@ -1672,9 +1676,17 @@ class _ItemFieldWidgetState extends State<_ItemFieldWidget> {
 
   void _onFocusChange() {
     if (!_focusNode.hasFocus) {
-      // Blur: commit value to parent — preserve text as-is (no reformatting)
+      // Blur: commit value to parent
       final text = _controller.text.trim();
       widget.onValueCommitted(text);
+
+      // Weight: format to 3 decimals on blur (weighing machine standard)
+      if (widget.isWeight && text.isNotEmpty) {
+        final v = double.tryParse(text) ?? 0;
+        if (v > 0) {
+          _controller.text = v.toStringAsFixed(3);
+        }
+      }
     }
   }
 
