@@ -8,9 +8,10 @@ import 'package:intl/intl.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../niril_podhu/kaatchi/koorugal/porul_thaedu_kooru.dart';
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
+import '../../../../../niril_pattu/kaatchi/thiruthi/pattiyal/koorugal/pattu_urupadi_attai.dart';
 
 /// Builds a single coolie line-item row: header label + delete + ElvanUrupadiAttai.
-class KooliUrupadiKooru extends ConsumerStatefulWidget {
+class KooliUrupadiKooru extends ConsumerWidget {
   final int index;
   final KooliUrupadi item;
   final int itemCount;
@@ -31,57 +32,23 @@ class KooliUrupadiKooru extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<KooliUrupadiKooru> createState() => _KooliUrupadiKooruState();
-}
-
-class _KooliUrupadiKooruState extends ConsumerState<KooliUrupadiKooru> {
-  late final TextEditingController _edaiCtrl;
-  late final TextEditingController _vilaiCtrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _edaiCtrl = TextEditingController(
-      text: widget.item.edai > 0 ? widget.item.edai.toString() : '',
-    );
-    _vilaiCtrl = TextEditingController(
-      text: widget.item.vilai > 0 ? widget.item.vilai.toString() : '',
-    );
-  }
-
-  @override
-  void didUpdateWidget(covariant KooliUrupadiKooru oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Sync controllers when parent pushes new values (e.g. product selected
-    // sets a default rate), but NOT while the user is actively editing.
-    if (oldWidget.item.edai != widget.item.edai) {
-      final current = double.tryParse(_edaiCtrl.text) ?? 0;
-      if (current != widget.item.edai) {
-        _edaiCtrl.text =
-            widget.item.edai > 0 ? widget.item.edai.toString() : '';
-      }
-    }
-    if (oldWidget.item.vilai != widget.item.vilai) {
-      final current = double.tryParse(_vilaiCtrl.text) ?? 0;
-      if (current != widget.item.vilai) {
-        _vilaiCtrl.text =
-            widget.item.vilai > 0 ? widget.item.vilai.toString() : '';
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    _edaiCtrl.dispose();
-    _vilaiCtrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
-    final item = widget.item;
+
+    // Weight display: 3 decimals (weighing machine standard) e.g. 24.100
+    // Rate display: clean integer (6 not 6.0)
+    String weightText = '';
+    if (item.edai != 0) {
+      weightText = item.edai.toStringAsFixed(3);
+    }
+
+    String rateText = '';
+    if (item.vilai != 0) {
+      rateText = item.vilai == item.vilai.truncateToDouble()
+          ? item.vilai.toInt().toString()
+          : item.vilai.toString();
+    }
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -90,16 +57,16 @@ class _KooliUrupadiKooruState extends ConsumerState<KooliUrupadiKooru> {
           // Item #N header + trash
           Row(
             children: [
-              Text('${K.porul.tr(context, ref)} #${widget.index + 1}',
+              Text('${K.porul.tr(context, ref)} #${index + 1}',
                   style: tt.titleSmall?.copyWith(
                     color: cs.onSurfaceVariant,
                   )),
               const Spacer(),
-              if (widget.itemCount > 1)
+              if (itemCount > 1)
                 IconButton(
                   icon: Icon(Icons.delete_outline,
                       color: cs.error, size: 20),
-                  onPressed: widget.onDeleted,
+                  onPressed: onDeleted,
                 ),
             ],
           ),
@@ -122,7 +89,7 @@ class _KooliUrupadiKooruState extends ConsumerState<KooliUrupadiKooru> {
                         onSelected: (p) {
                           final tamilName = p.porulPeyar['Tamil'] ?? '';
                           final englishName = p.porulPeyar['English'] ?? '';
-                          widget.onUpdated(item.copyWith(
+                          onUpdated(item.copyWith(
                             porulId: p.id.toString(),
                             porulPeyar: tamilName.isNotEmpty
                                 ? tamilName
@@ -133,46 +100,31 @@ class _KooliUrupadiKooruState extends ConsumerState<KooliUrupadiKooru> {
                             vilai: p.vilai,
                           ));
                         },
-                        onRequestAddNew: widget.onRequestAddNewProduct,
+                        onRequestAddNew: onRequestAddNewProduct,
                       ),
                     ),
-                    // Weight (kg)
+                    // Weight (kg) — blur-based, 3 decimals
                     SizedBox(
                       width: 120,
-                      child: TextFormField(
-                        controller: _edaiCtrl,
-                        keyboardType:
-                            const TextInputType.numberWithOptions(decimal: true),
-                        decoration: InputDecoration(
-                          labelText: K.kiKi.tr(context, ref),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 12),
-                          isDense: true,
-                        ),
-                        onChanged: (v) {
-                          widget.onUpdated(
+                      child: ItemFieldWidget(
+                        label: K.kiKi.tr(context, ref),
+                        initialText: weightText,
+                        isWeight: true,
+                        onValueCommitted: (v) {
+                          onUpdated(
                             item.copyWith(edai: double.tryParse(v) ?? 0),
                           );
                         },
                       ),
                     ),
-                    // Rate (per kg)
+                    // Rate (per kg) — blur-based, clean integer
                     SizedBox(
                       width: 120,
-                      child: TextFormField(
-                        controller: _vilaiCtrl,
-                        keyboardType:
-                            const TextInputType.numberWithOptions(decimal: true),
-                        decoration: InputDecoration(
-                          labelText: K.vilaiKiKi.tr(context, ref),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 12),
-                          isDense: true,
-                        ),
-                        onChanged: (v) {
-                          widget.onUpdated(
+                      child: ItemFieldWidget(
+                        label: K.vilaiKiKi.tr(context, ref),
+                        initialText: rateText,
+                        onValueCommitted: (v) {
+                          onUpdated(
                             item.copyWith(vilai: double.tryParse(v) ?? 0),
                           );
                         },
@@ -190,7 +142,7 @@ class _KooliUrupadiKooruState extends ConsumerState<KooliUrupadiKooru> {
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                            '₹${widget.formatter.format(item.varisaiThogai)}',
+                            '₹${formatter.format(item.varisaiThogai)}',
                             style: TextStyle(
                               fontWeight: FontWeight.w700,
                               color: cs.primary,
