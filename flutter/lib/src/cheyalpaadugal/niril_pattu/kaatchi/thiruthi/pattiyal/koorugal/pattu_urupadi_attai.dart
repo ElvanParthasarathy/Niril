@@ -248,7 +248,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
     );
   }
 
-  /// Borderless numeric field — updates model on blur only.
+  /// Borderless numeric field — instant math + blur formatting.
   Widget _buildItemField(
       String label, double value, ValueChanged<String> onChanged,
       {bool isWeight = false}) {
@@ -269,6 +269,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
       initialText: displayText,
       isWeight: isWeight,
       onValueCommitted: onChanged,
+      onChanged: onChanged,
       onDirty: onDirty,
     );
   }
