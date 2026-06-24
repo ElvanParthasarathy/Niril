@@ -587,6 +587,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                         _placeOfSupplyTa = (entry.maanilam['Tamil'] ?? '').trim();
                       }
                     });
+                    _hasUnsavedChanges = true;
                     _recalculate();
                   },
                   onCleared: () {
@@ -597,6 +598,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                       _placeOfSupply = '';
                       _placeOfSupplyTa = '';
                     });
+                    _hasUnsavedChanges = true;
                     _recalculate();
                   },
                   onRequestAddNew: () async {
@@ -811,7 +813,10 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                 const SizedBox(height: 6),
                 PattiyalNaalKooru(
                   selectedDate: _pattiyalNaal,
-                  onDateChanged: (d) => setState(() => _pattiyalNaal = d),
+                  onDateChanged: (d) => setState(() {
+                    _pattiyalNaal = d;
+                    _hasUnsavedChanges = true;
+                  }),
                 ),
               ],
             );
@@ -1125,8 +1130,10 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                   icon: Icon(Icons.delete_outline,
                       size: 20, color: cs.error),
                   onPressed: () {
-                    setState(
-                        () => _items = List.from(_items)..removeAt(index));
+                    setState(() {
+                      _items = List.from(_items)..removeAt(index);
+                      _hasUnsavedChanges = true;
+                    });
                     _recalculate();
                   },
                   visualDensity: VisualDensity.compact,
@@ -1159,6 +1166,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                   );
                   setState(() {
                     _items = List.from(_items)..[index] = updated;
+                    _hasUnsavedChanges = true;
                   });
                   _recalculate();
                 },
@@ -1172,6 +1180,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                 onCleared: () {
                   setState(() {
                     _items = List.from(_items)..[index] = const PattuUrupadi();
+                    _hasUnsavedChanges = true;
                   });
                   _recalculate();
                 },
@@ -1343,6 +1352,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
       initialText: displayText,
       isWeight: isWeight,
       onValueCommitted: onChanged,
+      onDirty: () => _hasUnsavedChanges = true,
     );
   }
 
@@ -1634,12 +1644,15 @@ class _ItemFieldWidget extends StatefulWidget {
     required this.initialText,
     required this.onValueCommitted,
     this.isWeight = false,
+    this.onDirty,
   });
 
   final String label;
   final String initialText;
   final ValueChanged<String> onValueCommitted;
   final bool isWeight;
+  /// Called on first keystroke to mark form as dirty (before blur).
+  final VoidCallback? onDirty;
 
   @override
   State<_ItemFieldWidget> createState() => _ItemFieldWidgetState();
@@ -1648,6 +1661,7 @@ class _ItemFieldWidget extends StatefulWidget {
 class _ItemFieldWidgetState extends State<_ItemFieldWidget> {
   late TextEditingController _controller;
   late FocusNode _focusNode;
+  bool _isDirty = false;
 
   @override
   void initState() {
@@ -1696,6 +1710,12 @@ class _ItemFieldWidgetState extends State<_ItemFieldWidget> {
       controller: _controller,
       focusNode: _focusNode,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      onChanged: (_) {
+        if (!_isDirty) {
+          _isDirty = true;
+          widget.onDirty?.call();
+        }
+      },
       decoration: InputDecoration(
         labelText: widget.label,
         suffixText: widget.isWeight ? 'kg' : null,
