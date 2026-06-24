@@ -11,12 +11,22 @@
 5. **Add Grammar Markers**: Always add the correct Tamil conjunction markers (e.g., 'ப்') when combining words, like நிறுவனப் பெயர் (not நிறுவன பெயர்), வங்கிப் பெயர், கிளைப் பெயர்.
 
 ## Tanglish Variable Naming Policy for UI/Keys
-1. **Use Navil Vili Transliteration**: When creating new variable names or localization keys (e.g., in Flutter), transliterate the Pure Tamil translation into English letters.
-2. **Allophony / Voicing Rules**: Retain natural phonetic softening for Tamil Stop Consonants (e.g., க inside a word becomes g not k, த becomes dh, ப becomes b). Example: மாம்பழம் -> maambazham, காகம் -> kaagam.
-3. **Compound Word Exceptions**: In compound words (புணர்ச்சி), the second word's starting consonant should remain unvoiced (hard). E.g., கை + பேசி = kaippaesi (NOT kaibaesi). மண் + பானை = manpaanai (NOT manbaanai). Use overrides when generating these.
-4. **Vowel Preservation (Nedil)**: Always preserve extended vowels correctly: ஆ -> aa, ஈ -> ee, ஊ -> oo, ஓ -> oa. E.g. ஓவியம் -> oaviyam.
-5. **Shrink Long Keys**: Do not use massive sentences as keys. Shrink them to 2-3 essential words (e.g., pattiyalGstElidhu).
-6. **Button Suffix**: If the key represents a button, always append Ptn (Pothan) at the end, replacing any Btn.
+1. **Use Navil Engine (extended++ mode)**: When creating ANY new folder name, file name, variable name, or localization key:
+   - **Step 1**: Write the name in **Pure Tamil** first (with correct புணர்ச்சி compound doubling).
+   - **Step 2**: Run it through the Navil transliteration engine in `extended++` mode (located at `uruvakkunar_karuvigal/navil/transliterate.ts`).
+   - **Step 3**: Use the engine output as the final Tanglish name. Do NOT manually guess transliterations.
+2. **Geminate Doubling Rules** (from Navil engine `extended++` mode):
+   - க்க → `kk` (explicit doubling)
+   - ப்ப → `pp` (explicit doubling)
+   - ச்ச → `ch` (NOT `cch` — implicit, already long enough)
+   - த்த → `th` (NOT `tth` — implicit, already long enough)
+   - ட்ட → `tt` (explicit doubling)
+   - ற்ற → `tr` (special)
+3. **Allophony / Voicing Rules**: Retain natural phonetic softening for Tamil Stop Consonants (e.g., க inside a word becomes g not k, த becomes dh, ப becomes b). Example: மாம்பழம் -> maambazham, காகம் -> kaagam.
+4. **Compound Word Exceptions**: In compound words (புணர்ச்சி), the second word's starting consonant should remain unvoiced (hard). E.g., கை + பேசி = kaippaesi (NOT kaibaesi). மண் + பானை = manpaanai (NOT manbaanai). Use overrides when generating these.
+5. **Vowel Preservation (Nedil)**: Always preserve extended vowels correctly: ஆ -> aa, ஈ -> ee, ஊ -> oo, ஓ -> oa, ஏ -> ae. E.g. ஓவியம் -> oaviyam, மேல் -> mael.
+6. **Shrink Long Keys**: Do not use massive sentences as keys. Shrink them to 2-3 essential words (e.g., pattiyalGstElidhu).
+7. **Button Suffix**: If the key represents a button, always append Ptn (Pothan) at the end, replacing any Btn.
 
 ## Standardized Database & Core Entity Names (Rulebook)
 To ensure absolute consistency across databases, JSON payloads, and core models, **ALWAYS** use the following strict Tanglish spellings for these specific concepts. DO NOT generate alternative spellings (like minnanchal, ovuru, or tholaipesi):
