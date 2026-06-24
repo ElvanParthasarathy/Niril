@@ -92,7 +92,7 @@ class _ElvanDesktopSubpageShellState extends State<ElvanDesktopSubpageShell> {
                         if (showBackButton) ...[
                           IconButton(
                             icon: const Icon(Icons.arrow_back),
-                            onPressed: () => Navigator.pop(context),
+                            onPressed: () => Navigator.maybePop(context),
                           ),
                           const SizedBox(width: 16),
                         ] else if (isSplitView) ...[

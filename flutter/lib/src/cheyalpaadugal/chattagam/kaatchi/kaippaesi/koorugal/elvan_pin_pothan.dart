@@ -17,7 +17,7 @@ class ElvanBackButton extends ConsumerWidget {
       child: InkResponse(
         onTap: () {
           if (Navigator.canPop(context)) {
-            Navigator.pop(context);
+            Navigator.maybePop(context);
           } else {
             // If we are at the root route (e.g. forced onboarding screen),
             // hitting back should take us back to the mode selector.

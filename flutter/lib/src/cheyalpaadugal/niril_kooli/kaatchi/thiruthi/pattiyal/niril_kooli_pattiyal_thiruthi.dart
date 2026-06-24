@@ -399,13 +399,13 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                       });
                     },
                     onInvNumberChanged: (v) {
-                      _hasUnsavedChanges = true;
+                      setState(() => _hasUnsavedChanges = true);
                     },
                     onDateChanged: (d) => setState(() {
                       _pattiyalNaal = d;
                       _hasUnsavedChanges = true;
                     }),
-                    onDirty: () => _hasUnsavedChanges = true,
+                    onDirty: () => setState(() => _hasUnsavedChanges = true),
                   ),
 
                   const SizedBox(height: 24),

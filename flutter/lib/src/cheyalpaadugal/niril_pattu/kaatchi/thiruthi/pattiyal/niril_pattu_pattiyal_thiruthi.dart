@@ -358,7 +358,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                   _placeOfSupply = '';
                   _placeOfSupplyTa = '';
                 });
-                _hasUnsavedChanges = true;
+                setState(() => _hasUnsavedChanges = true);
                 _recalculate();
               },
               onRequestAddNewCustomer: () async {
@@ -445,7 +445,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
               _pattiyalNaal = d;
               _hasUnsavedChanges = true;
             }),
-            onDirty: () => _hasUnsavedChanges = true,
+            onDirty: () => setState(() => _hasUnsavedChanges = true),
           ),
 
           const SizedBox(height: 16),
@@ -502,7 +502,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
               });
               _recalculate();
             },
-            onDirty: () => _hasUnsavedChanges = true,
+            onDirty: () => setState(() => _hasUnsavedChanges = true),
             onRequestAddNewProduct: () async {
               await Navigator.of(context).push(
                 MaterialPageRoute(
@@ -567,7 +567,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
             onChanged: (v) {
               final newType = v ?? 'tax-invoice';
               setState(() => _pattiyalVagai = newType);
-              _hasUnsavedChanges = true;
+              setState(() => _hasUnsavedChanges = true);
               _scheduleDraftSave();
             },
           ),
