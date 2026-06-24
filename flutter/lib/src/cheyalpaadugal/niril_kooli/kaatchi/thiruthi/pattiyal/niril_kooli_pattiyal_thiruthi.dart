@@ -71,8 +71,12 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   bool _hasUnsavedChanges = false;
   Timer? _draftDebounce;
 
-  // ── Bill Number Preview ──
+  // ── Bill Number ──
   String _previewBillNumber = '';
+  String _invoiceNumberOverride = '';
+  bool _isInvNumberEditing = false;
+  final _invNumberController = TextEditingController();
+  String _profilePrefix = 'CB';
 
   bool get _isEditing => widget.editingEntry != null;
 
@@ -111,19 +115,26 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     _ahimsaPattuThogai = snapshot.ahimsaPattuThogai;
     _piraVarivugal = snapshot.piraVarivugal;
 
-    // Load existing bill number for display
+    // Load existing bill number for display + override
     _previewBillNumber = widget.editingEntry!.patrucheettuEn;
+    _invoiceNumberOverride = widget.editingEntry!.patrucheettuEn;
+    _invNumberController.text = _invoiceNumberOverride;
 
     _setharamCtrl.text = _setharamGrams > 0 ? _setharamGrams.toString() : '';
     _thapaalCtrl.text = _thapaalThogai > 0 ? _thapaalThogai.toString() : '';
     _ahimsaCtrl.text = _ahimsaPattuThogai > 0 ? _ahimsaPattuThogai.toString() : '';
 
-    // Load profile match
+    // Load profile match + derive prefix
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final profiles = ref.read(NiruvanaTharavugalListProvider);
       if (_selectedNiruvanamId != null) {
         final match = profiles.where((p) => p.id == _selectedNiruvanamId).firstOrNull;
-        if (match != null) setState(() => _selectedProfile = match);
+        if (match != null) {
+          setState(() {
+            _selectedProfile = match;
+            _profilePrefix = match.kurumPeyar.isNotEmpty ? match.kurumPeyar : 'CB';
+          });
+        }
       }
     });
 
@@ -135,6 +146,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     _setharamCtrl.dispose();
     _thapaalCtrl.dispose();
     _ahimsaCtrl.dispose();
+    _invNumberController.dispose();
     _draftDebounce?.cancel();
     super.dispose();
   }
@@ -213,6 +225,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
       final prefix = _selectedProfile?.kurumPeyar.isNotEmpty == true
           ? _selectedProfile!.kurumPeyar
           : 'CB';
+      _profilePrefix = prefix;
       final vanakkam = await kalanjiyam.getNextVanakkam(
         'coolie', _selectedNiruvanamId, finYear,
       );
@@ -262,6 +275,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
           ahimsaPattuThogai: _ahimsaPattuThogai,
           piraVarivugal: _piraVarivugal,
           showBankDetails: _showBankDetails,
+          invoiceNumberOverride: _invoiceNumberOverride,
         ),
         totals: _totals,
         profilePrefix: prefix,
@@ -334,6 +348,9 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
               setState(() {
                 _selectedNiruvanamId = v;
                 _selectedProfile = match;
+                _profilePrefix = match?.kurumPeyar.isNotEmpty == true
+                    ? match!.kurumPeyar
+                    : 'CB';
                 _hasUnsavedChanges = true;
               });
               _computePreviewBillNumber();
@@ -358,13 +375,45 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                   // ── Section 2: ② Invoice Details ──
                   ElvanPagudhiThalaipu(en: 2, thalaipu: K.pattiyalTharavugal.tr(context, ref)),
                   KooliPattiyalTharavugalKooru(
-                    pattiyalNaal: _pattiyalNaal,
-                    previewBillNumber: _previewBillNumber,
                     isEditing: _isEditing,
+                    invoiceNumberOverride: _invoiceNumberOverride,
+                    previewBillNumber: _previewBillNumber,
+                    isInvNumberEditing: _isInvNumberEditing,
+                    invNumberController: _invNumberController,
+                    profilePrefix: _profilePrefix,
+                    pattiyalNaal: _pattiyalNaal,
+                    onToggleEditInvNumber: () {
+                      setState(() {
+                        if (_isInvNumberEditing) {
+                          // Finishing edit → build full override string
+                          final numPart = _invNumberController.text.trim();
+                          if (numPart.isNotEmpty) {
+                            final prefix = _profilePrefix.isNotEmpty
+                                ? _profilePrefix
+                                : 'CB';
+                            _invoiceNumberOverride = '$prefix-$numPart';
+                          }
+                        } else {
+                          // Starting edit → extract number part
+                          final current = _invoiceNumberOverride.isNotEmpty
+                              ? _invoiceNumberOverride
+                              : _previewBillNumber;
+                          final parts = current.split('-');
+                          _invNumberController.text =
+                              parts.length > 1 ? parts.last : current;
+                        }
+                        _isInvNumberEditing = !_isInvNumberEditing;
+                        _hasUnsavedChanges = true;
+                      });
+                    },
+                    onInvNumberChanged: (v) {
+                      _hasUnsavedChanges = true;
+                    },
                     onDateChanged: (d) => setState(() {
                       _pattiyalNaal = d;
                       _hasUnsavedChanges = true;
                     }),
+                    onDirty: () => _hasUnsavedChanges = true,
                   ),
 
                   const SizedBox(height: 24),

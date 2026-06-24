@@ -28,6 +28,7 @@ class KooliThiruththiNilaimai {
     this.ahimsaPattuThogai = 0,
     this.piraVarivugal = const [],
     this.showBankDetails = true,
+    this.invoiceNumberOverride = '',
   });
 
   final int? selectedNiruvanamId;
@@ -41,6 +42,10 @@ class KooliThiruththiNilaimai {
   final double ahimsaPattuThogai;
   final List<PiraVarivu> piraVarivugal;
   final bool showBankDetails;
+
+  /// Manual override for the bill number (e.g. "CB-42").
+  /// Empty string means auto-generate.
+  final String invoiceNumberOverride;
 }
 
 /// Pure data helper — no widget dependency. Handles:
@@ -100,11 +105,38 @@ class KooliPattiyalUthavi {
       'upiId': profile.upiId,
     });
 
+    // Determine final bill number and vanakkam
+    late final String finalBillNumber;
+    late final int vanakkam;
+
+    if (state.invoiceNumberOverride.isNotEmpty) {
+      // Manual override — user typed a custom number
+      finalBillNumber = state.invoiceNumberOverride;
+      final parts = state.invoiceNumberOverride.split('-');
+      vanakkam = int.tryParse(parts.last) ?? 1;
+    } else if (editingEntry != null) {
+      // Editing without override — keep existing number
+      finalBillNumber = editingEntry.patrucheettuEn;
+      vanakkam = editingEntry.vanakkam;
+    } else {
+      // New invoice — auto-generate
+      vanakkam = await kalanjiyam.getNextVanakkam(
+          'coolie', state.selectedNiruvanamId, finYear);
+      finalBillNumber =
+          kalanjiyam.formatPattiyalEn(profilePrefix, vanakkam);
+    }
+
     if (editingEntry != null) {
       // ── Update ──
       await kalanjiyam.updatePattiyal(
         editingEntry.id,
         PatrucheettuTableCompanion(
+          patrucheettuEn: state.invoiceNumberOverride.isNotEmpty
+              ? Value(finalBillNumber)
+              : const Value.absent(),
+          vanakkam: state.invoiceNumberOverride.isNotEmpty
+              ? Value(vanakkam)
+              : const Value.absent(),
           vanigarId: Value(state.selectedVanigarId),
           vanigarPeyar: Value(state.selectedVanigarPeyar),
           niruvanamId: Value(state.selectedNiruvanamId),
@@ -123,15 +155,10 @@ class KooliPattiyalUthavi {
       );
     } else {
       // ── Create ──
-      final vanakkam = await kalanjiyam.getNextVanakkam(
-          'coolie', state.selectedNiruvanamId, finYear);
-      final billNumber =
-          kalanjiyam.formatPattiyalEn(profilePrefix, vanakkam);
-
       await kalanjiyam.createPattiyal(
         PatrucheettuTableCompanion.insert(
           seyaliVagai: 'coolie',
-          patrucheettuEn: billNumber,
+          patrucheettuEn: finalBillNumber,
           finYear: finYear,
           vanakkam: Value(vanakkam),
           niruvanamId: Value(state.selectedNiruvanamId),
