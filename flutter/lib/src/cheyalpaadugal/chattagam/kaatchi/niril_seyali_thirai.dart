@@ -18,10 +18,10 @@ import '../../thiraigal/vanigar_thirai.dart';
 
 import '../../niril_pattu/kaatchi/thiraigal/pattu_pattiyalgal_thirai.dart';
 import '../../niril_pattu/kaatchi/thiraigal/pattu_patrucheettugal_thirai.dart';
-import '../../niril_pattu/kaatchi/thiruthi/niril_pattu_pattiyal_thiruthi.dart';
-import '../../niril_pattu/kaatchi/thiruthi/niril_pattu_patrucheettu_thiruthi.dart';
-import '../../niril_pattu/kaatchi/thiruthi/niril_pattu_vanigar_thiruthi.dart';
-import '../../niril_pattu/kaatchi/thiruthi/niril_pattu_porul_thiruthi.dart';
+import '../../niril_pattu/kaatchi/thiruthi/pattiyal/niril_pattu_pattiyal_thiruthi.dart';
+import '../../niril_pattu/kaatchi/thiruthi/patrucheettu/niril_pattu_patrucheettu_thiruthi.dart';
+import '../../niril_pattu/kaatchi/thiruthi/vanigar/niril_pattu_vanigar_thiruthi.dart';
+import '../../niril_pattu/kaatchi/thiruthi/porul/niril_pattu_porul_thiruthi.dart';
 import '../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_arikkaigal_thirai.dart';
 import '../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_gst_thaakkal_thirai.dart';
 

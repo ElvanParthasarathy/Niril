@@ -11,7 +11,7 @@ import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../koorugal/meladukkugal/elvan_cheyal_meladukku.dart';
 import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 import '../../../niril_podhu/tharavuru/seluthi_vagai.dart';
-import '../thiruthi/niril_pattu_patrucheettu_thiruthi.dart';
+import '../thiruthi/patrucheettu/niril_pattu_patrucheettu_thiruthi.dart';
 
 /// Silk Receipt List — real DB-backed view showing payment receipts.
 /// Mirror of coolie receipt list but navigates to SilkReceiptEditor.

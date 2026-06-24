@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:drift/drift.dart' show Value;
 
-import '../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
-import '../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
-import '../../../../niril_podhu/kalanjiyam/pattiyal_kalanjiyam.dart';
-import '../../thiraigal/amaippugal/pattu_mugavari_tharavu.dart';
+import '../../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
+import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
+import '../../../../../niril_podhu/kalanjiyam/pattiyal_kalanjiyam.dart';
+import '../../../thiraigal/amaippugal/pattu_mugavari_tharavu.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // பட்டு பட்டியல் உதவி — Helper for load / save / draft logic

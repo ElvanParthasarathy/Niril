@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
-import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
-import '../../../../niril_podhu/kaatchi/koorugal/porul_thaedu_kooru.dart';
-import '../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
+import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
+import '../../../../../niril_podhu/kaatchi/koorugal/porul_thaedu_kooru.dart';
+import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // பட்டு உருபடி அட்டை — Single Line Item Card for Silk Invoice

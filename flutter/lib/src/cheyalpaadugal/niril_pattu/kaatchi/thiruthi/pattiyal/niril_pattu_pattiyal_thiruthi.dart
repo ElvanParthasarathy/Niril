@@ -4,22 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
-import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
-import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
-import '../../../../koorugal/podhu_koorugal/elvan_pagudhi_thalaipu_kooru.dart';
-import '../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
-import '../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
+import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
+import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
+import '../../../../../koorugal/podhu_koorugal/elvan_pagudhi_thalaipu_kooru.dart';
+import '../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
+import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 
-import '../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
-import '../../../niril_podhu/kalanjiyam/pattiyal_kanakku.dart';
-import '../../../niril_podhu/kalanjiyam/pattiyal_kalanjiyam.dart';
-import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
-import '../../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
-import '../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
-import '../../../amaippugal/tharavu/vaniga_tharavugal.dart';
-import 'niril_pattu_vanigar_thiruthi.dart';
-import 'niril_pattu_porul_thiruthi.dart';
+import '../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
+import '../../../../niril_podhu/kalanjiyam/pattiyal_kanakku.dart';
+import '../../../../niril_podhu/kalanjiyam/pattiyal_kalanjiyam.dart';
+import '../../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
+import '../../../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
+import '../../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
+import '../../../../amaippugal/tharavu/vaniga_tharavugal.dart';
+import '../vanigar/niril_pattu_vanigar_thiruthi.dart';
+import '../porul/niril_pattu_porul_thiruthi.dart';
 import 'koorugal/koorugal.dart';
 
 

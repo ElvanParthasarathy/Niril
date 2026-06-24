@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
-import '../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
+import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
+import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 
 /// Displays invoice totals — subtotal, discount, taxes, round off, and grand total.
 class PattuMothangalKooru extends StatelessWidget {

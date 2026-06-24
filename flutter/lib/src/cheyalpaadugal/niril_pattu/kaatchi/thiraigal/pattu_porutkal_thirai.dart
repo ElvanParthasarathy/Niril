@@ -11,7 +11,7 @@ import '../../../../adippadai/vazhikaattal/niril_nav.dart';
 import '../../../../koorugal/meladukkugal/elvan_cheyal_meladukku.dart';
 import '../../../chattagam/kaatchi/koorugal/elvan_uyir_valai.dart';
 import '../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
-import '../thiruthi/niril_pattu_porul_thiruthi.dart';
+import '../thiruthi/porul/niril_pattu_porul_thiruthi.dart';
 
 class SilkItemsPage extends ConsumerWidget {
   const SilkItemsPage({super.key});

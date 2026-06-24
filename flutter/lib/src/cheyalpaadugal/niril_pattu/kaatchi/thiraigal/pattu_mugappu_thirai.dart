@@ -11,7 +11,7 @@ import '../../../../adippadai/vazhikaattal/navigation_destination.dart';
 import '../../../../adippadai/vazhikaattal/niril_nav.dart';
 import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 import '../../../niril_podhu/kaatchi/koorugal/mugappu_tharavugal_kooru.dart';
-import '../thiruthi/niril_pattu_pattiyal_thiruthi.dart';
+import '../thiruthi/pattiyal/niril_pattu_pattiyal_thiruthi.dart';
 
 /// Silk Home Page — pixel-perfect port of React Mugappu (GST mode).
 /// Shows: 3 stats cards (bento grid) + 6 recent invoice cards.

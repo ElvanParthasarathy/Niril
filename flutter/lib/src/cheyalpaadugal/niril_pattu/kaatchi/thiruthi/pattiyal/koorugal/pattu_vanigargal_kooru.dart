@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
-import '../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
-import '../../../../niril_podhu/kaatchi/koorugal/vanigar_thaedu_kooru.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
-import '../../../../amaippugal/tharavu/vaniga_tharavugal.dart';
+import '../../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
+import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
+import '../../../../../niril_podhu/kaatchi/koorugal/vanigar_thaedu_kooru.dart';
+import '../../../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
+import '../../../../../amaippugal/tharavu/vaniga_tharavugal.dart';
 import 'maanila_thervu_meladukku.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────

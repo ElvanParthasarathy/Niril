@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
-import '../../../../niril_podhu/kaatchi/koorugal/pattiyal_naal_kooru.dart';
+import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
+import '../../../../../niril_podhu/kaatchi/koorugal/pattiyal_naal_kooru.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // பட்டியல் தரவுகள் கூறு — Invoice Details Section (Number + Date)
