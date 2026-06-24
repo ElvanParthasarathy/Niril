@@ -67,7 +67,7 @@ class KooliVanigarKooru extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(K.saemiththaTharavugal.tr(context, ref).toUpperCase(),
+                  Text(K.chaemiththaTharavugal.tr(context, ref).toUpperCase(),
                       style: tt.labelSmall?.copyWith(
                         color: cs.onSurfaceVariant,
                         letterSpacing: 1.2,

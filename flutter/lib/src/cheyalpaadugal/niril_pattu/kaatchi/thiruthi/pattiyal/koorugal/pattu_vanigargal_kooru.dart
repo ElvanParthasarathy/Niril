@@ -99,7 +99,7 @@ class PattuVanigargalKooru extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      K.saemiththaTharavugal.tr(context, ref),
+                      K.chaemiththaTharavugal.tr(context, ref),
                       style: tt.labelSmall?.copyWith(
                         color: cs.onSurfaceVariant,
                         fontWeight: FontWeight.w600,

@@ -326,7 +326,7 @@ abstract final class K {
   static const urupadigal = 'urupadigal';
   static const mothangal = 'mothangal';
   static const vanigarPeyarThaedu = 'vanigarPeyarThaedu';
-  static const saemiththaTharavugal = 'saemiththaTharavugal';
+  static const chaemiththaTharavugal = 'chaemiththaTharavugal';
   static const niruvanaThannuru = 'niruvanaThannuru';
   static const maanilamThaerodhu = 'maanilamThaerodhu';
   static const vazhangalIdam = 'vazhangalIdam';
@@ -344,14 +344,14 @@ abstract final class K {
   static const vilaiKiKi = 'vilaiKiKi';
   static const pattiyalKuriyeedu = 'pattiyalKuriyeedu';
   static const ulmotham = 'ulmotham';
-  static const suttruOppu = 'suttruOppu';
+  static const chuttruOppu = 'chuttruOppu';
   static const perumMotham = 'perumMotham';
   static const ahimsaiPattu = 'ahimsaiPattu';
   static const thapaal = 'thapaal';
   static const pira = 'pira';
   static const mothaEdai = 'mothaEdai';
-  static const saetharam = 'saetharam';
-  static const saetharamGiraam = 'saetharamGiraam';
+  static const chaetharam = 'chaetharam';
+  static const chaetharamGiraam = 'chaetharamGiraam';
   static const ahimsaiPattuThogai = 'ahimsaiPattuThogai';
   static const thapaalThogai = 'thapaalThogai';
   static const varipPattiyal = 'varipPattiyal';
@@ -369,7 +369,7 @@ abstract final class K {
   static const kanakkuKuriyeedu = 'kanakkuKuriyeedu';
   static const varaivu = 'varaivu';
   static const varaivuMeetka = 'varaivuMeetka';
-  static const saemikkaadhaVaraivu = 'saemikkaadhaVaraivu';
+  static const chaemikkaadhaVaraivu = 'chaemikkaadhaVaraivu';
   static const niraagari = 'niraagari';
   static const meetkavum = 'meetkavum';
 }

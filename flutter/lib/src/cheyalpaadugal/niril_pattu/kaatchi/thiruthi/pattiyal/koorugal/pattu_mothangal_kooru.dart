@@ -88,7 +88,7 @@ class PattuMothangalKooru extends ConsumerWidget {
                 ],
                 if (totals.suttruOff != 0) ...[
                   const SizedBox(height: 6),
-                  _totalsRow(K.suttruOppu.tr(context, ref), totals.suttruOff, cs, tt),
+                  _totalsRow(K.chuttruOppu.tr(context, ref), totals.suttruOff, cs, tt),
                 ],
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),

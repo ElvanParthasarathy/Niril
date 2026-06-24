@@ -41,7 +41,7 @@ class KooliMelthogaiKooru extends ConsumerWidget {
             SizedBox(
                 width: colWidth,
                 child: kooliChargeField(
-                    K.saetharamGiraam.tr(context, ref), setharamCtrl, onSetharamChanged)),
+                    K.chaetharamGiraam.tr(context, ref), setharamCtrl, onSetharamChanged)),
             SizedBox(
                 width: colWidth,
                 child: kooliChargeField(
@@ -61,7 +61,7 @@ class KooliMelthogaiKooru extends ConsumerWidget {
           SizedBox(
               width: constraints.maxWidth,
               child: kooliChargeField(
-                  K.saetharamGiraam.tr(context, ref), setharamCtrl, onSetharamChanged)),
+                  K.chaetharamGiraam.tr(context, ref), setharamCtrl, onSetharamChanged)),
           SizedBox(
               width: halfWidth,
               child: kooliChargeField(
