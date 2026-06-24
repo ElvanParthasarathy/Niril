@@ -175,8 +175,11 @@ class KooliUrupadi {
   /// பொருள் அடையாளம் — Product ID reference (nullable for new/unsaved rows)
   final String? porulId;
 
-  /// பொருள் பெயர் — Product name (bilingual JSON string)
+  /// பொருள் பெயர் — Product name (primary language, usually Tamil)
   final String porulPeyar;
+
+  /// பொருள் பெயர் (English) — Product name in English for subtitle display
+  final String porulPeyarEn;
 
   /// எடை — Weight in kilograms
   final double edai;
@@ -187,6 +190,7 @@ class KooliUrupadi {
   const KooliUrupadi({
     this.porulId,
     this.porulPeyar = '',
+    this.porulPeyarEn = '',
     this.edai = 0,
     this.vilai = 0,
   });
@@ -200,12 +204,14 @@ class KooliUrupadi {
   KooliUrupadi copyWith({
     String? porulId,
     String? porulPeyar,
+    String? porulPeyarEn,
     double? edai,
     double? vilai,
   }) {
     return KooliUrupadi(
       porulId: porulId ?? this.porulId,
       porulPeyar: porulPeyar ?? this.porulPeyar,
+      porulPeyarEn: porulPeyarEn ?? this.porulPeyarEn,
       edai: edai ?? this.edai,
       vilai: vilai ?? this.vilai,
     );
@@ -216,6 +222,7 @@ class KooliUrupadi {
     return {
       'porulId': porulId,
       'porulPeyar': porulPeyar,
+      'porulPeyarEn': porulPeyarEn,
       'edai': edai,
       'vilai': vilai,
     };
@@ -226,6 +233,7 @@ class KooliUrupadi {
     return KooliUrupadi(
       porulId: json['porulId'] as String?,
       porulPeyar: (json['porulPeyar'] as String?) ?? '',
+      porulPeyarEn: (json['porulPeyarEn'] as String?) ?? '',
       edai: (json['edai'] as num?)?.toDouble() ?? 0,
       vilai: (json['vilai'] as num?)?.toDouble() ?? 0,
     );

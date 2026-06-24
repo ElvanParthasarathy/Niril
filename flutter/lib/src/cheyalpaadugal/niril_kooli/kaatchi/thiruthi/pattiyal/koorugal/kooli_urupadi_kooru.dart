@@ -58,62 +58,84 @@ class KooliUrupadiKooru extends ConsumerWidget {
           const SizedBox(height: 4),
           ElvanUrupadiAttai(
             padding: const EdgeInsets.all(16),
-            child: Wrap(
-              spacing: 12,
-              runSpacing: 12,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Product search — wider
-                SizedBox(
-                  width: 280,
-                  child: PorulThaeduKooru(
-                    seyaliVagai: 'coolie',
-                    initialText: item.porulPeyar,
-                    onSelected: (p) {
-                      onUpdated(item.copyWith(
-                        porulId: p.id.toString(),
-                        porulPeyar: p.porulPeyar['Tamil'] ??
-                            p.porulPeyar['English'] ??
-                            '',
-                        vilai: p.vilai,
-                      ));
-                    },
-                    onRequestAddNew: onRequestAddNewProduct,
-                  ),
-                ),
-                // Weight
-                SizedBox(
-                  width: 120,
-                  child: _numField(K.kiKi.tr(context, ref), item.edai, (v) {
-                    onUpdated(
-                        item.copyWith(edai: double.tryParse(v) ?? 0));
-                  }),
-                ),
-                // Rate
-                SizedBox(
-                  width: 120,
-                  child: _numField(K.vilaiKiKi.tr(context, ref), item.vilai, (v) {
-                    onUpdated(
-                        item.copyWith(vilai: double.tryParse(v) ?? 0));
-                  }),
-                ),
-                // Row total (read-only)
-                SizedBox(
-                  width: 120,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: cs.primaryContainer.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(12),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: [
+                    // Product search — wider
+                    SizedBox(
+                      width: 280,
+                      child: PorulThaeduKooru(
+                        seyaliVagai: 'coolie',
+                        initialText: item.porulPeyar,
+                        onSelected: (p) {
+                          final tamilName = p.porulPeyar['Tamil'] ?? '';
+                          final englishName = p.porulPeyar['English'] ?? '';
+                          onUpdated(item.copyWith(
+                            porulId: p.id.toString(),
+                            porulPeyar: tamilName.isNotEmpty
+                                ? tamilName
+                                : englishName,
+                            porulPeyarEn: tamilName.isNotEmpty
+                                ? englishName
+                                : '',
+                            vilai: p.vilai,
+                          ));
+                        },
+                        onRequestAddNew: onRequestAddNewProduct,
+                      ),
                     ),
-                    alignment: Alignment.center,
-                    child: Text('₹${formatter.format(item.varisaiThogai)}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: cs.primary,
-                        )),
-                  ),
+                    // Weight
+                    SizedBox(
+                      width: 120,
+                      child: _numField(K.kiKi.tr(context, ref), item.edai, (v) {
+                        onUpdated(
+                            item.copyWith(edai: double.tryParse(v) ?? 0));
+                      }),
+                    ),
+                    // Rate
+                    SizedBox(
+                      width: 120,
+                      child: _numField(K.vilaiKiKi.tr(context, ref), item.vilai, (v) {
+                        onUpdated(
+                            item.copyWith(vilai: double.tryParse(v) ?? 0));
+                      }),
+                    ),
+                    // Row total (read-only)
+                    SizedBox(
+                      width: 120,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: cs.primaryContainer.withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text('₹${formatter.format(item.varisaiThogai)}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: cs.primary,
+                            )),
+                      ),
+                    ),
+                  ],
                 ),
+                // English subtitle
+                if (item.porulPeyarEn.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      item.porulPeyarEn,
+                      style: tt.bodySmall?.copyWith(
+                        color: cs.onSurfaceVariant,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -126,6 +148,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
   Widget _numField(
       String label, double value, ValueChanged<String> onChanged) {
     return TextFormField(
+      key: ValueKey('$label-$value'),
       initialValue: value > 0 ? value.toString() : '',
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       decoration: InputDecoration(

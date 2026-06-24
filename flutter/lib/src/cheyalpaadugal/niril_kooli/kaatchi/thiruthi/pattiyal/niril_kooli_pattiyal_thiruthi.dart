@@ -189,6 +189,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
         _ahimsaPattuThogai = snapshot.ahimsaPattuThogai;
         _piraVarivugal = snapshot.piraVarivugal;
         _showBankDetails = snapshot.showBankDetails;
+        _invoiceNumberOverride = snapshot.invoiceNumberOverride;
 
         _setharamCtrl.text =
             _setharamGrams > 0 ? _setharamGrams.toString() : '';
@@ -214,6 +215,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
         ahimsaPattuThogai: _ahimsaPattuThogai,
         piraVarivugal: _piraVarivugal,
         showBankDetails: _showBankDetails,
+        invoiceNumberOverride: _invoiceNumberOverride,
       );
 
   // ── Bill Number Preview ──
@@ -351,6 +353,9 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                 _profilePrefix = match?.kurumPeyar.isNotEmpty == true
                     ? match!.kurumPeyar
                     : 'CB';
+                // Reset override when business changes (prefix changed)
+                _invoiceNumberOverride = '';
+                _isInvNumberEditing = false;
                 _hasUnsavedChanges = true;
               });
               _computePreviewBillNumber();

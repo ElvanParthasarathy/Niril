@@ -197,6 +197,7 @@ class KooliPattiyalUthavi {
         'piraVarivugal':
             PattiyalUthavigal.piraVarivuListToJson(state.piraVarivugal),
         'showBankDetails': state.showBankDetails,
+        'invoiceNumberOverride': state.invoiceNumberOverride,
       });
       await prefs.setString(_draftKey, draft);
     } catch (_) {}
@@ -260,6 +261,8 @@ class KooliPattiyalUthavi {
               (draft['ahimsaPattuThogai'] as num?)?.toDouble() ?? 0,
           piraVarivugal: piraVarivugal,
           showBankDetails: draft['showBankDetails'] as bool? ?? true,
+          invoiceNumberOverride:
+              draft['invoiceNumberOverride'] as String? ?? '',
         );
       } else {
         await prefs.remove(_draftKey);
