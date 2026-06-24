@@ -350,8 +350,8 @@ abstract final class K {
   static const thabaal = 'thabaal';
   static const pira = 'pira';
   static const mothaEdai = 'mothaEdai';
-  static const chaetharam = 'chaetharam';
-  static const chaetharamGiraam = 'chaetharamGiraam';
+  static const chaedhaaram = 'chaedhaaram';
+  static const chaedhaaramGiraam = 'chaedhaaramGiraam';
   static const ahimsaiPattuThogai = 'ahimsaiPattuThogai';
   static const thabaalThogai = 'thabaalThogai';
   static const varipPattiyal = 'varipPattiyal';

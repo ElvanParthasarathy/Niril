@@ -73,7 +73,7 @@ class KooliMothangalKooru extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             if (setharamGrams > 0) ...[
-              kooliTotalsRow('+ ${K.chaetharam.tr(context, ref)}',
+              kooliTotalsRow('+ ${K.chaedhaaram.tr(context, ref)}',
                   '${setharamGrams == setharamGrams.truncateToDouble() ? setharamGrams.toInt() : setharamGrams} g'),
               const SizedBox(height: 12),
             ],
