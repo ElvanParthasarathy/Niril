@@ -11,10 +11,10 @@ import '../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../adippadai/vazhikaattal/navigation_destination.dart';
 import '../../../adippadai/vazhikaattal/navigation_provider.dart';
 
-import '../../thiraigal/mugappu_thirai.dart';
-import '../../thiraigal/uruvakku_thirai.dart';
-import '../../thiraigal/porul_thirai.dart';
-import '../../thiraigal/vanigar_thirai.dart';
+import 'mugappu_thirai.dart';
+import 'uruvakku_thirai.dart';
+import 'porul_thirai.dart';
+import 'vanigar_thirai.dart';
 
 import '../../niril_pattu/kaatchi/thiraigal/pattu_pattiyalgal_thirai.dart';
 import '../../niril_pattu/kaatchi/thiraigal/pattu_patrucheettugal_thirai.dart';
