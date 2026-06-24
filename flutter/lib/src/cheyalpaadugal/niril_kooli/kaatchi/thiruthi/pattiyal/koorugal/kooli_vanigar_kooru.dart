@@ -56,7 +56,7 @@ class KooliVanigarKooru extends ConsumerWidget {
             onSelected: onVanigarSelected,
             onRequestAddNew: onRequestAddNewVanigar,
           ),
-          if (selectedVanigarPeyar.isNotEmpty) ...[
+          if (selectedVanigar != null) ...[
             const SizedBox(height: 12),
             ElvanThiruthiAttai(
               borderRadius: 16,
@@ -70,36 +70,30 @@ class KooliVanigarKooru extends ConsumerWidget {
                         letterSpacing: 1.2,
                       )),
                   const SizedBox(height: 8),
-                  Text(selectedVanigarPeyar,
-                      style: tt.titleSmall?.copyWith(
+                  // English name (bold)
+                  Text(
+                    selectedVanigar!.peyar['English'] ??
+                        selectedVanigar!.peyar['Tamil'] ??
+                        selectedVanigarPeyar,
+                    style: tt.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  // Tamil address
+                  ..._buildAddressLines(selectedVanigar!, 'Tamil', tt, cs),
+                  // English address (subtitle)
+                  ..._buildAddressLines(selectedVanigar!, 'English', tt, cs,
+                      isSubtitle: true),
+                  // GSTIN
+                  if (selectedVanigar!.gstin.trim().isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      'GSTIN: ${selectedVanigar!.gstin.trim()}',
+                      style: tt.bodySmall?.copyWith(
+                        color: cs.primary,
                         fontWeight: FontWeight.w600,
-                      )),
-                  if (selectedVanigar != null) ...[
-                    if ((selectedVanigar!.mugavari['Tamil'] ?? '').isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(selectedVanigar!.mugavari['Tamil']!,
-                          style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
-                    ],
-                    if ((selectedVanigar!.oor['Tamil'] ?? '').isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(selectedVanigar!.oor['Tamil']!,
-                          style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
-                    ],
-                    if ((selectedVanigar!.maavattam['Tamil'] ?? '').isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(selectedVanigar!.maavattam['Tamil']!,
-                          style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
-                    ],
-                    if (selectedVanigar!.anjalKuriyeedu.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(selectedVanigar!.anjalKuriyeedu,
-                          style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
-                    ],
-                    if ((selectedVanigar!.maanilam['Tamil'] ?? '').isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(selectedVanigar!.maanilam['Tamil']!,
-                          style: tt.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
-                    ],
+                      ),
+                    ),
                   ],
                 ],
               ),
@@ -175,5 +169,57 @@ class KooliVanigarKooru extends ConsumerWidget {
         ],
       );
     });
+  }
+
+  /// Builds combined address lines for a given language key.
+  /// Tamil: normal color. English (isSubtitle): lighter, italic.
+  List<Widget> _buildAddressLines(
+    VanigarEntry v,
+    String key,
+    TextTheme tt,
+    ColorScheme cs, {
+    bool isSubtitle = false,
+  }) {
+    final parts = <String>[];
+    final oor = (v.oor[key] ?? '').trim();
+    final maavattam = (v.maavattam[key] ?? '').trim();
+    final combined = [
+      if (oor.isNotEmpty) oor,
+      if (maavattam.isNotEmpty) maavattam,
+    ].join(', ');
+    if (combined.isNotEmpty) parts.add(combined);
+
+    final maanilam = (v.maanilam[key] ?? '').trim();
+    if (maanilam.isNotEmpty) parts.add(maanilam);
+
+    if (parts.isEmpty) return [];
+
+    // Skip English if identical to Tamil
+    if (isSubtitle) {
+      final tamilParts = <String>[];
+      final tOor = (v.oor['Tamil'] ?? '').trim();
+      final tMaav = (v.maavattam['Tamil'] ?? '').trim();
+      final tCombined = [if (tOor.isNotEmpty) tOor, if (tMaav.isNotEmpty) tMaav].join(', ');
+      if (tCombined.isNotEmpty) tamilParts.add(tCombined);
+      final tMaan = (v.maanilam['Tamil'] ?? '').trim();
+      if (tMaan.isNotEmpty) tamilParts.add(tMaan);
+      if (parts.join() == tamilParts.join()) return [];
+    }
+
+    final style = isSubtitle
+        ? tt.bodySmall?.copyWith(
+            color: cs.onSurfaceVariant.withValues(alpha: 0.7),
+            height: 1.5,
+            fontStyle: FontStyle.italic,
+          )
+        : tt.bodySmall?.copyWith(
+            color: cs.onSurfaceVariant,
+            height: 1.5,
+          );
+
+    return [
+      const SizedBox(height: 6),
+      ...parts.map((line) => Text(line, style: style)),
+    ];
   }
 }
