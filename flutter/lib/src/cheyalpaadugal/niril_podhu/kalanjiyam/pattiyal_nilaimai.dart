@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
@@ -21,7 +23,12 @@ final pattiyalKalanjiyamProvider = Provider<PattiyalKalanjiyam>((ref) {
 final pattiyalgalProvider =
     FutureProvider<List<PatrucheettuEntry>>((ref) {
   final kalanjiyam = ref.watch(pattiyalKalanjiyamProvider);
-  final mode = ref.watch(appModeProvider);
+
+  // Defer mode-change invalidation to avoid setState-during-build
+  ref.listen(appModeProvider, (_, __) {
+    Future.microtask(() => ref.invalidateSelf());
+  });
+  final mode = ref.read(appModeProvider);
 
   final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
   return kalanjiyam.getPattiyalgal(seyaliVagai);
@@ -48,7 +55,11 @@ final selectedPattiyalIdsProvider = StateProvider<Set<int>>((ref) => {});
 final deletedPattiyalgalProvider =
     FutureProvider<List<PatrucheettuEntry>>((ref) {
   final kalanjiyam = ref.watch(pattiyalKalanjiyamProvider);
-  final mode = ref.watch(appModeProvider);
+
+  ref.listen(appModeProvider, (_, __) {
+    Future.microtask(() => ref.invalidateSelf());
+  });
+  final mode = ref.read(appModeProvider);
 
   final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
   return kalanjiyam.getDeletedPattiyalgal(seyaliVagai);

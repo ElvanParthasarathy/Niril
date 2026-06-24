@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
@@ -20,7 +22,12 @@ final porulKalanjiyamProvider = Provider<PorulKalanjiyam>((ref) {
 /// Call `ref.invalidate(porulgalProvider)` after any CRUD to refresh.
 final porulgalProvider = FutureProvider<List<PorulEntry>>((ref) {
   final kalanjiyam = ref.watch(porulKalanjiyamProvider);
-  final mode = ref.watch(appModeProvider);
+
+  // Defer mode-change invalidation to avoid setState-during-build
+  ref.listen(appModeProvider, (_, __) {
+    Future.microtask(() => ref.invalidateSelf());
+  });
+  final mode = ref.read(appModeProvider);
 
   final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
   return kalanjiyam.getAllPorulgal(seyaliVagai);
@@ -45,7 +52,11 @@ final selectedPorulIdsProvider = StateProvider<Set<int>>((ref) => {});
 /// Call `ref.invalidate(deletedPorulgalProvider)` after restore/purge.
 final deletedPorulgalProvider = FutureProvider<List<PorulEntry>>((ref) {
   final kalanjiyam = ref.watch(porulKalanjiyamProvider);
-  final mode = ref.watch(appModeProvider);
+
+  ref.listen(appModeProvider, (_, __) {
+    Future.microtask(() => ref.invalidateSelf());
+  });
+  final mode = ref.read(appModeProvider);
 
   final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
   return kalanjiyam.watchDeletedPorulgal(seyaliVagai).first;
