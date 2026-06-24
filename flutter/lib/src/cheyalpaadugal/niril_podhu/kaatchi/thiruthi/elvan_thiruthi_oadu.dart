@@ -41,30 +41,39 @@ class ElvanEditorShell extends ConsumerStatefulWidget {
 
 class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
   // ── Unsaved-changes confirmation dialog ──
-  Future<void> _showDiscardDialog() async {
-    final confirmed = await showDialog<bool>(
+  Future<void> _showUnsavedChangesDialog() async {
+    final cs = Theme.of(context).colorScheme;
+    final result = await showDialog<String>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('மாற்றங்கள் சேமிக்கப்படவில்லை'),
-        content: const Text('சேமிக்காத மாற்றங்கள் உள்ளன. நிராகரிக்கவா?'),
+        content: const Text('சேமிக்காத மாற்றங்கள் உள்ளன.'),
         actions: [
+          // Cancel — stay on editor
           TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
+            onPressed: () => Navigator.of(dialogContext).pop('cancel'),
             child: const Text('தொடர்'),
           ),
-          FilledButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              foregroundColor: Theme.of(context).colorScheme.onError,
-            ),
+          // Discard — lose changes
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop('discard'),
+            style: TextButton.styleFrom(foregroundColor: cs.error),
             child: const Text('நிராகரி'),
+          ),
+          // Save — real save
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop('save'),
+            child: const Text('சேமி'),
           ),
         ],
       ),
     );
 
-    if (confirmed == true && mounted) {
+    if (!mounted || result == null || result == 'cancel') return;
+
+    if (result == 'save') {
+      widget.onSave?.call();
+    } else if (result == 'discard') {
       widget.onDiscard?.call();
       Navigator.of(context).pop();
     }
@@ -73,7 +82,7 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
   /// Handles Cancel button / back-nav: if unsaved → dialog, else pop.
   void _handleCancel() {
     if (widget.hasUnsavedChanges) {
-      _showDiscardDialog();
+      _showUnsavedChangesDialog();
     } else {
       Navigator.of(context).pop();
     }
@@ -87,7 +96,7 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
       canPop: !widget.hasUnsavedChanges,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop && widget.hasUnsavedChanges) {
-          _showDiscardDialog();
+          _showUnsavedChangesDialog();
         }
       },
       child: ElvanSubpageShell(

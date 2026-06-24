@@ -301,7 +301,6 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
         customerState: effectiveCustomerState,
         country: country,
       );
-      _hasUnsavedChanges = true;
     });
     _scheduleDraftSave();
   }
@@ -1345,6 +1344,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   void _updateItem(int index, PattuUrupadi updated) {
     setState(() {
       _items = List.from(_items)..[index] = updated;
+      _hasUnsavedChanges = true;
     });
     _recalculate();
   }
