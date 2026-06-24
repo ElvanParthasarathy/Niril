@@ -120,23 +120,35 @@ class KooliVanigarKooru extends ConsumerWidget {
                   fontSize: 12,
                 )),
           ),
-          DropdownButtonFormField<int>(
-            initialValue: selectedNiruvanamId,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(50)),
-              filled: true,
-              fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.4),
-              contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 20, vertical: 14),
-            ),
-            items: profiles.map((p) {
-              final name = p.niruvanathinPeyar['Tamil'] ??
-                  p.niruvanathinPeyar['English'] ??
-                  'Company';
-              return DropdownMenuItem(value: p.id, child: Text(name));
-            }).toList(),
-            onChanged: onNiruvanamChanged,
+          Row(
+            children: [
+              Expanded(
+                child: DropdownButtonFormField<int>(
+                  initialValue: selectedNiruvanamId,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50)),
+                    filled: true,
+                    fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.4),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 14),
+                  ),
+                  items: profiles.map((p) {
+                    final name = p.niruvanathinPeyar['Tamil'] ??
+                        p.niruvanathinPeyar['English'] ??
+                        'Company';
+                    return DropdownMenuItem(value: p.id, child: Text(name));
+                  }).toList(),
+                  onChanged: onNiruvanamChanged,
+                ),
+              ),
+              if (selectedNiruvanamId != null)
+                IconButton(
+                  icon: Icon(Icons.close, color: cs.error, size: 20),
+                  tooltip: 'Clear',
+                  onPressed: () => onNiruvanamChanged(null),
+                ),
+            ],
           ),
         ],
       );

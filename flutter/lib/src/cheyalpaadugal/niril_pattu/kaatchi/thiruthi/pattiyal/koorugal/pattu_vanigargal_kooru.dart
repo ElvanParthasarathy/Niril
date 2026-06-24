@@ -211,28 +211,40 @@ class PattuVanigargalKooru extends ConsumerWidget {
   // ── Profile Dropdown ──
   Widget _buildProfileDropdown(BuildContext context, WidgetRef ref) {
     final profiles = ref.watch(NiruvanaTharavugalListProvider);
-    if (profiles.length <= 1) return const SizedBox.shrink();
+    final cs = Theme.of(context).colorScheme;
 
     return Padding(
       padding: const EdgeInsets.only(top: 16),
-      child: DropdownButtonFormField<int>(
-        initialValue: data.selectedNiruvanamId,
-        decoration: InputDecoration(
-          labelText: K.niruvanaThannuru.tr(context, ref),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-        ),
-        items: profiles.map((p) {
-          final name = p.niruvanathinPeyar['Tamil'] ??
-              p.niruvanathinPeyar['English'] ??
-               K.niruvanam.tr(context, ref);
-          return DropdownMenuItem(value: p.id, child: Text(name));
-        }).toList(),
-        onChanged: (v) {
-          final match = profiles.where((p) => p.id == v).firstOrNull;
-          callbacks.onProfileChanged(v, match);
-        },
+      child: Row(
+        children: [
+          Expanded(
+            child: DropdownButtonFormField<int>(
+              initialValue: data.selectedNiruvanamId,
+              decoration: InputDecoration(
+                labelText: K.niruvanaThannuru.tr(context, ref),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+              ),
+              items: profiles.map((p) {
+                final name = p.niruvanathinPeyar['Tamil'] ??
+                    p.niruvanathinPeyar['English'] ??
+                     K.niruvanam.tr(context, ref);
+                return DropdownMenuItem(value: p.id, child: Text(name));
+              }).toList(),
+              onChanged: (v) {
+                final match = profiles.where((p) => p.id == v).firstOrNull;
+                callbacks.onProfileChanged(v, match);
+              },
+            ),
+          ),
+          if (data.selectedNiruvanamId != null)
+            IconButton(
+              icon: Icon(Icons.close, color: cs.error, size: 20),
+              tooltip: 'Clear',
+              onPressed: () => callbacks.onProfileChanged(null, null),
+            ),
+        ],
       ),
     );
   }
