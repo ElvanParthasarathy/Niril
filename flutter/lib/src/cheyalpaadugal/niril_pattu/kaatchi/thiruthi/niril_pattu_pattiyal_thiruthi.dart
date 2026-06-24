@@ -1098,7 +1098,9 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
     final item = _items[index];
-    final rowTotal = item.adippadaiThogai - item.thallupadiThogai;
+    final taxableAmount = item.adippadaiThogai - item.thallupadiThogai;
+    final rowTax = taxableAmount * (item.variVizhukkaadu / 100);
+    final rowTotal = taxableAmount + rowTax;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
