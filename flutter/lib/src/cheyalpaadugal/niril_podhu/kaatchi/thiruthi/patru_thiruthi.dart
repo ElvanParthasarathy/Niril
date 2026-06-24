@@ -20,6 +20,7 @@ import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 import '../../../niril_podhu/tharavuru/seluthi_vagai.dart';
 import 'koorugal/patru_pattiyal_theervu_maeladukku.dart';
+import 'koorugal/patru_thiruthi_paguthigal.dart';
 
 
 /// Shared Receipt Editor — used by both Coolie and Silk modes.
@@ -339,249 +340,73 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
   // ── Profile Switcher ──
   Widget _buildProfileSwitcher(List<NiruvanaTharavugalEntry> profiles, bool isDark) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: profiles.map((p) {
-            final isActive = p.id == _selectedNiruvanamId;
-            return Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: ChoiceChip(
-                label: Text(p.kurumPeyar.isNotEmpty ? p.kurumPeyar : (p.niruvanathinPeyar.values.firstOrNull ?? '')),
-                selected: isActive,
-                onSelected: (_) {
-                  setState(() {
-                    _selectedNiruvanamId = p.id;
-                    _selectedProfile = p;
-                  });
-                  _generatePatruEn();
-                },
-              ),
-            );
-          }).toList(),
-        ),
-      ),
+    return PatruThannuruMaatrigan(
+      profiles: profiles,
+      selectedNiruvanamId: _selectedNiruvanamId,
+      isDark: isDark,
+      onSelected: (p) {
+        setState(() {
+          _selectedNiruvanamId = p.id;
+          _selectedProfile = p;
+        });
+        _generatePatruEn();
+      },
     );
   }
 
   // ── Section 1: Invoice Picker ──
   Widget _buildInvoicePickerSection(
       AsyncValue<List<PatrucheettuEntry>> invoicesAsync, bool isDark) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // "Select Invoices" button
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: () => _showInvoicePickerDialog(invoicesAsync),
-            icon: const Icon(CupertinoIcons.doc_text, size: 18),
-            label: Text(
-              _selectedInvoices.isEmpty
-                  ? 'பட்டியலைத் தேர்ந்தெடு'
-                  : '${_selectedInvoices.length} பட்டியல்கள்',
-            ),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50),
-              ),
-              backgroundColor: isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.black.withValues(alpha: 0.05),
-              foregroundColor: isDark ? Colors.white : Colors.black87,
-              elevation: 0,
-            ),
-          ),
-        ),
-
-        // Selected invoice chips
-        if (_selectedInvoices.isNotEmpty) ...[
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: _selectedInvoices.map((inv) {
-              return Chip(
-                label: Text(inv.patrucheettuEn,
-                    style: const TextStyle(fontWeight: FontWeight.w600)),
-                deleteIcon: const Icon(CupertinoIcons.xmark, size: 14),
-                onDeleted: () {
-                  setState(() {
-                    _selectedInvoices.remove(inv);
-                    _recalculateAmount();
-                  });
-                },
-              );
-            }).toList(),
-          ),
-        ],
-      ],
+    return PatruPattiyalTheervuPagudhi(
+      selectedInvoices: _selectedInvoices,
+      isDark: isDark,
+      onPickInvoices: () => _showInvoicePickerDialog(invoicesAsync),
+      onRemoveInvoice: (inv) {
+        setState(() {
+          _selectedInvoices.remove(inv);
+          _recalculateAmount();
+        });
+      },
     );
   }
 
   // ── Section 2: Receipt Data ──
   Widget _buildReceiptDataSection(String seyaliVagai, bool isDark) {
-    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
-
-    return Wrap(
-      spacing: 16,
-      runSpacing: 16,
-      children: [
-        // Date picker
-        SizedBox(
-          width: isDesktop ? 280 : double.infinity,
-          child: PattiyalNaalKooru(
-            selectedDate: _patruNaal,
-            onDateChanged: (date) => setState(() => _patruNaal = date),
-          ),
-        ),
-        // Customer picker
-        SizedBox(
-          width: isDesktop ? 380 : double.infinity,
-          child: VanigarThaeduKooru(
-            seyaliVagai: seyaliVagai,
-            selectedId: _selectedVanigarId,
-            onSelected: (vanigar) {
-              setState(() {
-                _selectedVanigarId = vanigar.id;
-                final peyarMap = vanigar.peyar;
-                _vanigarPeyar =
-                    peyarMap['Tamil'] ?? peyarMap['English'] ?? peyarMap.values.firstOrNull ?? '';
-                final mugavariMap = vanigar.mugavari;
-                _vanigarMunvari = [
-                  mugavariMap['Tamil'] ?? mugavariMap['English'] ?? '',
-                  vanigar.oor['Tamil'] ?? vanigar.oor['English'] ?? '',
-                ].where((s) => s.isNotEmpty).join(', ');
-              });
-            },
-          ),
-        ),
-        // Receipt number (read-only display)
-        if (_patruEn.isNotEmpty)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.05)
-                  : Colors.black.withValues(alpha: 0.03),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(CupertinoIcons.number, size: 16,
-                    color: isDark ? Colors.white38 : Colors.black38),
-                const SizedBox(width: 8),
-                Text(
-                  _patruEn,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white70 : Colors.black87,
-                  ),
-                ),
-              ],
-            ),
-          ),
-      ],
+    return PatruTharavuPagudhi(
+      patruNaal: _patruNaal,
+      seyaliVagai: seyaliVagai,
+      selectedVanigarId: _selectedVanigarId,
+      patruEn: _patruEn,
+      isDark: isDark,
+      onDateChanged: (date) => setState(() => _patruNaal = date),
+      onVanigarSelected: (vanigar) {
+        setState(() {
+          _selectedVanigarId = vanigar.id;
+          final peyarMap = vanigar.peyar;
+          _vanigarPeyar =
+              peyarMap['Tamil'] ?? peyarMap['English'] ?? peyarMap.values.firstOrNull ?? '';
+          final mugavariMap = vanigar.mugavari;
+          _vanigarMunvari = [
+            mugavariMap['Tamil'] ?? mugavariMap['English'] ?? '',
+            vanigar.oor['Tamil'] ?? vanigar.oor['English'] ?? '',
+          ].where((s) => s.isNotEmpty).join(', ');
+        });
+      },
     );
   }
 
   // ── Section 3: Payment Details ──
   Widget _buildPaymentSection(bool isDark) {
-    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Wrap(
-          spacing: 16,
-          runSpacing: 16,
-          children: [
-            // Amount field
-            SizedBox(
-              width: isDesktop ? 280 : double.infinity,
-              child: TextField(
-                controller: _thogaiCtrl,
-                decoration: InputDecoration(
-                  labelText: 'தொகை *',
-                  prefixText: '₹ ',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                onChanged: (val) {
-                  _thogai = double.tryParse(val) ?? 0.0;
-                },
-              ),
-            ),
-            // Payment mode dropdown
-            SizedBox(
-              width: isDesktop ? 280 : double.infinity,
-              child: DropdownButtonFormField<SeluthiVagai>(
-                initialValue: _seluthiVagai,
-                decoration: InputDecoration(
-                  labelText: 'செலுத்தி வகை *',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                items: SeluthiVagai.values.map((mode) {
-                  return DropdownMenuItem(
-                    value: mode,
-                    child: Row(
-                      children: [
-                        Icon(mode.icon, size: 18,
-                            color: mode.badgeColor(isDark)),
-                        const SizedBox(width: 10),
-                        Text(mode.tamilLabel),
-                      ],
-                    ),
-                  );
-                }).toList(),
-                onChanged: (val) => setState(() => _seluthiVagai = val),
-              ),
-            ),
-          ],
-        ),
-
-        // Reference number (shown only when not Cash)
-        if (_seluthiVagai != null && _seluthiVagai!.needsReference) ...[
-          const SizedBox(height: 16),
-          SizedBox(
-            width: isDesktop ? 380 : double.infinity,
-            child: TextField(
-              controller: _suttruEnCtrl,
-              decoration: InputDecoration(
-                labelText: 'குறிப்பு எண் / Transaction ID',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onChanged: (val) => _suttruEn = val,
-            ),
-          ),
-        ],
-
-        // Note
-        const SizedBox(height: 16),
-        TextField(
-          controller: _ullkurippuCtrl,
-          decoration: InputDecoration(
-            labelText: 'குறிப்பு',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          maxLines: 3,
-          onChanged: (val) => _ullkurippu = val,
-        ),
-      ],
+    return PatruSeluthiPagudhi(
+      thogaiCtrl: _thogaiCtrl,
+      suttruEnCtrl: _suttruEnCtrl,
+      ullkurippuCtrl: _ullkurippuCtrl,
+      seluthiVagai: _seluthiVagai,
+      isDark: isDark,
+      onThogaiChanged: (val) => _thogai = double.tryParse(val) ?? 0.0,
+      onSeluthiVagaiChanged: (val) => setState(() => _seluthiVagai = val),
+      onSuttruEnChanged: (val) => _suttruEn = val,
+      onUllkurippuChanged: (val) => _ullkurippu = val,
     );
   }
 
