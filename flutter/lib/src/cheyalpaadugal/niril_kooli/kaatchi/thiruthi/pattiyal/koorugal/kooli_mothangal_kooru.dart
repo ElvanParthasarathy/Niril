@@ -14,7 +14,7 @@ class KooliMothangalKooru extends ConsumerWidget {
   final KooliMothangal totals;
   final double setharamGrams;
   final double ahimsaPattuThogai;
-  final double thapaalThogai;
+  final double thabaalThogai;
   final List<PiraVarivu> piraVarivugal;
   final NumberFormat formatter;
 
@@ -23,7 +23,7 @@ class KooliMothangalKooru extends ConsumerWidget {
     required this.totals,
     required this.setharamGrams,
     required this.ahimsaPattuThogai,
-    required this.thapaalThogai,
+    required this.thabaalThogai,
     required this.piraVarivugal,
     required this.formatter,
   });
@@ -52,9 +52,9 @@ class KooliMothangalKooru extends ConsumerWidget {
                   '₹${formatter.format(ahimsaPattuThogai)}'),
               const SizedBox(height: 12),
             ],
-            if (thapaalThogai > 0) ...[
+            if (thabaalThogai > 0) ...[
               kooliTotalsRow(
-                  K.thapaal.tr(context, ref), '₹${formatter.format(thapaalThogai)}'),
+                  K.thabaal.tr(context, ref), '₹${formatter.format(thabaalThogai)}'),
               const SizedBox(height: 12),
             ],
             for (final charge in piraVarivugal)

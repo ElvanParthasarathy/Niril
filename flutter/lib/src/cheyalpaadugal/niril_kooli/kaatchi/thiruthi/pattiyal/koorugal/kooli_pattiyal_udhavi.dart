@@ -24,7 +24,7 @@ class KooliThiruththiNilaimai {
     required this.pattiyalNaal,
     this.items = const [],
     this.setharamGrams = 0,
-    this.thapaalThogai = 0,
+    this.thabaalThogai = 0,
     this.ahimsaPattuThogai = 0,
     this.piraVarivugal = const [],
     this.showBankDetails = true,
@@ -38,7 +38,7 @@ class KooliThiruththiNilaimai {
   final DateTime pattiyalNaal;
   final List<KooliUrupadi> items;
   final double setharamGrams;
-  final double thapaalThogai;
+  final double thabaalThogai;
   final double ahimsaPattuThogai;
   final List<PiraVarivu> piraVarivugal;
   final bool showBankDetails;
@@ -75,7 +75,7 @@ class KooliPattiyalUthavi {
       pattiyalNaal: entry.pattiyalNaal,
       items: items,
       setharamGrams: entry.setharamGrams,
-      thapaalThogai: entry.thapaalThogai,
+      thabaalThogai: entry.thabaalThogai,
       ahimsaPattuThogai: entry.ahimsaPattuThogai,
       piraVarivugal: piraVarivugal,
     );
@@ -145,7 +145,7 @@ class KooliPattiyalUthavi {
           mothaThogai: Value(totals.perumMothangal),
           mothaEdai: Value(totals.mothaEdai),
           setharamGrams: Value(state.setharamGrams),
-          thapaalThogai: Value(state.thapaalThogai),
+          thabaalThogai: Value(state.thabaalThogai),
           ahimsaPattuThogai: Value(state.ahimsaPattuThogai),
           piravariVugal: Value(
               PattiyalUthavigal.piraVarivuListToJson(state.piraVarivugal)),
@@ -169,7 +169,7 @@ class KooliPattiyalUthavi {
           mothaThogai: Value(totals.perumMothangal),
           mothaEdai: Value(totals.mothaEdai),
           setharamGrams: Value(state.setharamGrams),
-          thapaalThogai: Value(state.thapaalThogai),
+          thabaalThogai: Value(state.thabaalThogai),
           ahimsaPattuThogai: Value(state.ahimsaPattuThogai),
           piravariVugal: Value(
               PattiyalUthavigal.piraVarivuListToJson(state.piraVarivugal)),
@@ -192,7 +192,7 @@ class KooliPattiyalUthavi {
         'pattiyalNaal': state.pattiyalNaal.toIso8601String(),
         'items': PattiyalUthavigal.kooliListToJson(state.items),
         'setharamGrams': state.setharamGrams,
-        'thapaalThogai': state.thapaalThogai,
+        'thabaalThogai': state.thabaalThogai,
         'ahimsaPattuThogai': state.ahimsaPattuThogai,
         'piraVarivugal':
             PattiyalUthavigal.piraVarivuListToJson(state.piraVarivugal),
@@ -255,8 +255,8 @@ class KooliPattiyalUthavi {
               parsedItems.isEmpty ? [const KooliUrupadi()] : parsedItems,
           setharamGrams:
               (draft['setharamGrams'] as num?)?.toDouble() ?? 0,
-          thapaalThogai:
-              (draft['thapaalThogai'] as num?)?.toDouble() ?? 0,
+          thabaalThogai:
+              (draft['thabaalThogai'] as num?)?.toDouble() ?? 0,
           ahimsaPattuThogai:
               (draft['ahimsaPattuThogai'] as num?)?.toDouble() ?? 0,
           piraVarivugal: piraVarivugal,

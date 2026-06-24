@@ -50,7 +50,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
 
   // ── Additional Charges ──
   double _setharamGrams = 0;
-  double _thapaalThogai = 0;
+  double _thabaalThogai = 0;
   double _ahimsaPattuThogai = 0;
   List<PiraVarivu> _piraVarivugal = [];
 
@@ -59,7 +59,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
 
   // ── Controllers ──
   final _setharamCtrl = TextEditingController();
-  final _thapaalCtrl = TextEditingController();
+  final _thabaalCtrl = TextEditingController();
   final _ahimsaCtrl = TextEditingController();
   bool _saving = false;
 
@@ -110,7 +110,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     _pattiyalNaal = snapshot.pattiyalNaal;
     _items = snapshot.items.isNotEmpty ? snapshot.items : [const KooliUrupadi()];
     _setharamGrams = snapshot.setharamGrams;
-    _thapaalThogai = snapshot.thapaalThogai;
+    _thabaalThogai = snapshot.thabaalThogai;
     _ahimsaPattuThogai = snapshot.ahimsaPattuThogai;
     _piraVarivugal = snapshot.piraVarivugal;
 
@@ -120,7 +120,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     _invNumberController.text = _invoiceNumberOverride;
 
     _setharamCtrl.text = _setharamGrams > 0 ? _cleanNum(_setharamGrams) : '';
-    _thapaalCtrl.text = _thapaalThogai > 0 ? _cleanNum(_thapaalThogai) : '';
+    _thabaalCtrl.text = _thabaalThogai > 0 ? _cleanNum(_thabaalThogai) : '';
     _ahimsaCtrl.text = _ahimsaPattuThogai > 0 ? _cleanNum(_ahimsaPattuThogai) : '';
 
     // Load profile match + derive prefix
@@ -143,7 +143,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   @override
   void dispose() {
     _setharamCtrl.dispose();
-    _thapaalCtrl.dispose();
+    _thabaalCtrl.dispose();
     _ahimsaCtrl.dispose();
     _invNumberController.dispose();
     _draftDebounce?.cancel();
@@ -159,7 +159,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
       _totals = KooliKanakku.calculate(
         items: _items,
         setharamGrams: _setharamGrams,
-        thapaalThogai: _thapaalThogai,
+        thabaalThogai: _thabaalThogai,
         ahimsaPattuThogai: _ahimsaPattuThogai,
         piraVarivugal: _piraVarivugal,
       );
@@ -188,15 +188,15 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
             ? snapshot.items
             : [const KooliUrupadi()];
         _setharamGrams = snapshot.setharamGrams;
-        _thapaalThogai = snapshot.thapaalThogai;
+        _thabaalThogai = snapshot.thabaalThogai;
         _ahimsaPattuThogai = snapshot.ahimsaPattuThogai;
         _piraVarivugal = snapshot.piraVarivugal;
         _invoiceNumberOverride = snapshot.invoiceNumberOverride;
 
         _setharamCtrl.text =
             _setharamGrams > 0 ? _cleanNum(_setharamGrams) : '';
-        _thapaalCtrl.text =
-            _thapaalThogai > 0 ? _cleanNum(_thapaalThogai) : '';
+        _thabaalCtrl.text =
+            _thabaalThogai > 0 ? _cleanNum(_thabaalThogai) : '';
         _ahimsaCtrl.text =
             _ahimsaPattuThogai > 0 ? _cleanNum(_ahimsaPattuThogai) : '';
       });
@@ -213,7 +213,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
         pattiyalNaal: _pattiyalNaal,
         items: _items,
         setharamGrams: _setharamGrams,
-        thapaalThogai: _thapaalThogai,
+        thabaalThogai: _thabaalThogai,
         ahimsaPattuThogai: _ahimsaPattuThogai,
         piraVarivugal: _piraVarivugal,
         invoiceNumberOverride: _invoiceNumberOverride,
@@ -280,7 +280,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
           pattiyalNaal: _pattiyalNaal,
           items: validItems,
           setharamGrams: _setharamGrams,
-          thapaalThogai: _thapaalThogai,
+          thabaalThogai: _thabaalThogai,
           ahimsaPattuThogai: _ahimsaPattuThogai,
           piraVarivugal: _piraVarivugal,
           invoiceNumberOverride: _invoiceNumberOverride,
@@ -520,7 +520,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                   KooliMelthogaiKooru(
                     setharamCtrl: _setharamCtrl,
                     ahimsaCtrl: _ahimsaCtrl,
-                    thapaalCtrl: _thapaalCtrl,
+                    thabaalCtrl: _thabaalCtrl,
                     onSetharamChanged: (v) {
                       _setharamGrams = double.tryParse(v) ?? 0;
                       _hasUnsavedChanges = true;
@@ -531,8 +531,8 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                       _hasUnsavedChanges = true;
                       _recalculate();
                     },
-                    onThapaalChanged: (v) {
-                      _thapaalThogai = double.tryParse(v) ?? 0;
+                    onThabaalChanged: (v) {
+                      _thabaalThogai = double.tryParse(v) ?? 0;
                       _hasUnsavedChanges = true;
                       _recalculate();
                     },
@@ -546,7 +546,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                     totals: _totals,
                     setharamGrams: _setharamGrams,
                     ahimsaPattuThogai: _ahimsaPattuThogai,
-                    thapaalThogai: _thapaalThogai,
+                    thabaalThogai: _thabaalThogai,
                     piraVarivugal: _piraVarivugal,
                     formatter: formatter,
                   ),

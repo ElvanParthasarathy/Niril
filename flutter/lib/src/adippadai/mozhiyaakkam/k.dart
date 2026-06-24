@@ -347,13 +347,13 @@ abstract final class K {
   static const chuttruOppu = 'chuttruOppu';
   static const perumMotham = 'perumMotham';
   static const ahimsaiPattu = 'ahimsaiPattu';
-  static const thapaal = 'thapaal';
+  static const thabaal = 'thabaal';
   static const pira = 'pira';
   static const mothaEdai = 'mothaEdai';
   static const chaetharam = 'chaetharam';
   static const chaetharamGiraam = 'chaetharamGiraam';
   static const ahimsaiPattuThogai = 'ahimsaiPattuThogai';
-  static const thapaalThogai = 'thapaalThogai';
+  static const thabaalThogai = 'thabaalThogai';
   static const varipPattiyal = 'varipPattiyal';
   static const munvaraivu = 'munvaraivu';
   static const urupadiChaer = 'urupadiChaer';

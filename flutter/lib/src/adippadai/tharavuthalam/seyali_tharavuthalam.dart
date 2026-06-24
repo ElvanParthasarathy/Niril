@@ -201,8 +201,8 @@ class PatrucheettuTable extends Table {
       real().withDefault(const Constant(0.0))(); // Total KG
   RealColumn get setharamGrams =>
       real().withDefault(const Constant(0.0))();
-  RealColumn get thapaalThogai =>
-      real().withDefault(const Constant(0.0))(); // Courier ₹
+  RealColumn get thabaalThogai =>
+      real().named('thabaal_thogai').withDefault(const Constant(0.0))(); // Courier ₹
   RealColumn get ahimsaPattuThogai =>
       real().withDefault(const Constant(0.0))(); // Ahimsa silk ₹
   TextColumn get piravariVugal =>
@@ -364,7 +364,7 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(patrucheettuTable, patrucheettuTable.variTharavugal);
             await m.addColumn(patrucheettuTable, patrucheettuTable.mothaEdai);
             await m.addColumn(patrucheettuTable, patrucheettuTable.setharamGrams);
-            await m.addColumn(patrucheettuTable, patrucheettuTable.thapaalThogai);
+            await m.addColumn(patrucheettuTable, patrucheettuTable.thabaalThogai);
             await m.addColumn(patrucheettuTable, patrucheettuTable.ahimsaPattuThogai);
             await m.addColumn(patrucheettuTable, patrucheettuTable.piravariVugal);
             await m.addColumn(patrucheettuTable, patrucheettuTable.sonthaViruppangal);

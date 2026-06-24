@@ -2986,11 +2986,11 @@ class $PatrucheettuTableTable extends PatrucheettuTable
       type: DriftSqlType.double,
       requiredDuringInsert: false,
       defaultValue: const Constant(0.0));
-  static const VerificationMeta _thapaalThogaiMeta =
-      const VerificationMeta('thapaalThogai');
+  static const VerificationMeta _thabaalThogaiMeta =
+      const VerificationMeta('thabaalThogai');
   @override
-  late final GeneratedColumn<double> thapaalThogai = GeneratedColumn<double>(
-      'thapaal_thogai', aliasedName, false,
+  late final GeneratedColumn<double> thabaalThogai = GeneratedColumn<double>(
+      'thabaal_thogai', aliasedName, false,
       type: DriftSqlType.double,
       requiredDuringInsert: false,
       defaultValue: const Constant(0.0));
@@ -3093,7 +3093,7 @@ class $PatrucheettuTableTable extends PatrucheettuTable
         variTharavugal,
         mothaEdai,
         setharamGrams,
-        thapaalThogai,
+        thabaalThogai,
         ahimsaPattuThogai,
         piravariVugal,
         sonthaViruppangal,
@@ -3214,11 +3214,11 @@ class $PatrucheettuTableTable extends PatrucheettuTable
           setharamGrams.isAcceptableOrUnknown(
               data['setharam_grams']!, _setharamGramsMeta));
     }
-    if (data.containsKey('thapaal_thogai')) {
+    if (data.containsKey('thabaal_thogai')) {
       context.handle(
-          _thapaalThogaiMeta,
-          thapaalThogai.isAcceptableOrUnknown(
-              data['thapaal_thogai']!, _thapaalThogaiMeta));
+          _thabaalThogaiMeta,
+          thabaalThogai.isAcceptableOrUnknown(
+              data['thabaal_thogai']!, _thabaalThogaiMeta));
     }
     if (data.containsKey('ahimsa_pattu_thogai')) {
       context.handle(
@@ -3315,8 +3315,8 @@ class $PatrucheettuTableTable extends PatrucheettuTable
           .read(DriftSqlType.double, data['${effectivePrefix}motha_edai'])!,
       setharamGrams: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}setharam_grams'])!,
-      thapaalThogai: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}thapaal_thogai'])!,
+      thabaalThogai: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}thabaal_thogai'])!,
       ahimsaPattuThogai: attachedDatabase.typeMapping.read(
           DriftSqlType.double, data['${effectivePrefix}ahimsa_pattu_thogai'])!,
       piravariVugal: attachedDatabase.typeMapping
@@ -3365,7 +3365,7 @@ class PatrucheettuEntry extends DataClass
   final String variTharavugal;
   final double mothaEdai;
   final double setharamGrams;
-  final double thapaalThogai;
+  final double thabaalThogai;
   final double ahimsaPattuThogai;
   final String piravariVugal;
   final String sonthaViruppangal;
@@ -3394,7 +3394,7 @@ class PatrucheettuEntry extends DataClass
       required this.variTharavugal,
       required this.mothaEdai,
       required this.setharamGrams,
-      required this.thapaalThogai,
+      required this.thabaalThogai,
       required this.ahimsaPattuThogai,
       required this.piravariVugal,
       required this.sonthaViruppangal,
@@ -3429,7 +3429,7 @@ class PatrucheettuEntry extends DataClass
     map['vari_tharavugal'] = Variable<String>(variTharavugal);
     map['motha_edai'] = Variable<double>(mothaEdai);
     map['setharam_grams'] = Variable<double>(setharamGrams);
-    map['thapaal_thogai'] = Variable<double>(thapaalThogai);
+    map['thabaal_thogai'] = Variable<double>(thabaalThogai);
     map['ahimsa_pattu_thogai'] = Variable<double>(ahimsaPattuThogai);
     map['piravari_vugal'] = Variable<String>(piravariVugal);
     map['sontha_viruppangal'] = Variable<String>(sonthaViruppangal);
@@ -3468,7 +3468,7 @@ class PatrucheettuEntry extends DataClass
       variTharavugal: Value(variTharavugal),
       mothaEdai: Value(mothaEdai),
       setharamGrams: Value(setharamGrams),
-      thapaalThogai: Value(thapaalThogai),
+      thabaalThogai: Value(thabaalThogai),
       ahimsaPattuThogai: Value(ahimsaPattuThogai),
       piravariVugal: Value(piravariVugal),
       sonthaViruppangal: Value(sonthaViruppangal),
@@ -3505,7 +3505,7 @@ class PatrucheettuEntry extends DataClass
       variTharavugal: serializer.fromJson<String>(json['variTharavugal']),
       mothaEdai: serializer.fromJson<double>(json['mothaEdai']),
       setharamGrams: serializer.fromJson<double>(json['setharamGrams']),
-      thapaalThogai: serializer.fromJson<double>(json['thapaalThogai']),
+      thabaalThogai: serializer.fromJson<double>(json['thabaalThogai']),
       ahimsaPattuThogai: serializer.fromJson<double>(json['ahimsaPattuThogai']),
       piravariVugal: serializer.fromJson<String>(json['piravariVugal']),
       sonthaViruppangal: serializer.fromJson<String>(json['sonthaViruppangal']),
@@ -3539,7 +3539,7 @@ class PatrucheettuEntry extends DataClass
       'variTharavugal': serializer.toJson<String>(variTharavugal),
       'mothaEdai': serializer.toJson<double>(mothaEdai),
       'setharamGrams': serializer.toJson<double>(setharamGrams),
-      'thapaalThogai': serializer.toJson<double>(thapaalThogai),
+      'thabaalThogai': serializer.toJson<double>(thabaalThogai),
       'ahimsaPattuThogai': serializer.toJson<double>(ahimsaPattuThogai),
       'piravariVugal': serializer.toJson<String>(piravariVugal),
       'sonthaViruppangal': serializer.toJson<String>(sonthaViruppangal),
@@ -3571,7 +3571,7 @@ class PatrucheettuEntry extends DataClass
           String? variTharavugal,
           double? mothaEdai,
           double? setharamGrams,
-          double? thapaalThogai,
+          double? thabaalThogai,
           double? ahimsaPattuThogai,
           String? piravariVugal,
           String? sonthaViruppangal,
@@ -3600,7 +3600,7 @@ class PatrucheettuEntry extends DataClass
         variTharavugal: variTharavugal ?? this.variTharavugal,
         mothaEdai: mothaEdai ?? this.mothaEdai,
         setharamGrams: setharamGrams ?? this.setharamGrams,
-        thapaalThogai: thapaalThogai ?? this.thapaalThogai,
+        thabaalThogai: thabaalThogai ?? this.thabaalThogai,
         ahimsaPattuThogai: ahimsaPattuThogai ?? this.ahimsaPattuThogai,
         piravariVugal: piravariVugal ?? this.piravariVugal,
         sonthaViruppangal: sonthaViruppangal ?? this.sonthaViruppangal,
@@ -3649,9 +3649,9 @@ class PatrucheettuEntry extends DataClass
       setharamGrams: data.setharamGrams.present
           ? data.setharamGrams.value
           : this.setharamGrams,
-      thapaalThogai: data.thapaalThogai.present
-          ? data.thapaalThogai.value
-          : this.thapaalThogai,
+      thabaalThogai: data.thabaalThogai.present
+          ? data.thabaalThogai.value
+          : this.thabaalThogai,
       ahimsaPattuThogai: data.ahimsaPattuThogai.present
           ? data.ahimsaPattuThogai.value
           : this.ahimsaPattuThogai,
@@ -3696,7 +3696,7 @@ class PatrucheettuEntry extends DataClass
           ..write('variTharavugal: $variTharavugal, ')
           ..write('mothaEdai: $mothaEdai, ')
           ..write('setharamGrams: $setharamGrams, ')
-          ..write('thapaalThogai: $thapaalThogai, ')
+          ..write('thabaalThogai: $thabaalThogai, ')
           ..write('ahimsaPattuThogai: $ahimsaPattuThogai, ')
           ..write('piravariVugal: $piravariVugal, ')
           ..write('sonthaViruppangal: $sonthaViruppangal, ')
@@ -3730,7 +3730,7 @@ class PatrucheettuEntry extends DataClass
         variTharavugal,
         mothaEdai,
         setharamGrams,
-        thapaalThogai,
+        thabaalThogai,
         ahimsaPattuThogai,
         piravariVugal,
         sonthaViruppangal,
@@ -3763,7 +3763,7 @@ class PatrucheettuEntry extends DataClass
           other.variTharavugal == this.variTharavugal &&
           other.mothaEdai == this.mothaEdai &&
           other.setharamGrams == this.setharamGrams &&
-          other.thapaalThogai == this.thapaalThogai &&
+          other.thabaalThogai == this.thabaalThogai &&
           other.ahimsaPattuThogai == this.ahimsaPattuThogai &&
           other.piravariVugal == this.piravariVugal &&
           other.sonthaViruppangal == this.sonthaViruppangal &&
@@ -3794,7 +3794,7 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
   final Value<String> variTharavugal;
   final Value<double> mothaEdai;
   final Value<double> setharamGrams;
-  final Value<double> thapaalThogai;
+  final Value<double> thabaalThogai;
   final Value<double> ahimsaPattuThogai;
   final Value<String> piravariVugal;
   final Value<String> sonthaViruppangal;
@@ -3823,7 +3823,7 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
     this.variTharavugal = const Value.absent(),
     this.mothaEdai = const Value.absent(),
     this.setharamGrams = const Value.absent(),
-    this.thapaalThogai = const Value.absent(),
+    this.thabaalThogai = const Value.absent(),
     this.ahimsaPattuThogai = const Value.absent(),
     this.piravariVugal = const Value.absent(),
     this.sonthaViruppangal = const Value.absent(),
@@ -3853,7 +3853,7 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
     this.variTharavugal = const Value.absent(),
     this.mothaEdai = const Value.absent(),
     this.setharamGrams = const Value.absent(),
-    this.thapaalThogai = const Value.absent(),
+    this.thabaalThogai = const Value.absent(),
     this.ahimsaPattuThogai = const Value.absent(),
     this.piravariVugal = const Value.absent(),
     this.sonthaViruppangal = const Value.absent(),
@@ -3886,7 +3886,7 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
     Expression<String>? variTharavugal,
     Expression<double>? mothaEdai,
     Expression<double>? setharamGrams,
-    Expression<double>? thapaalThogai,
+    Expression<double>? thabaalThogai,
     Expression<double>? ahimsaPattuThogai,
     Expression<String>? piravariVugal,
     Expression<String>? sonthaViruppangal,
@@ -3916,7 +3916,7 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
       if (variTharavugal != null) 'vari_tharavugal': variTharavugal,
       if (mothaEdai != null) 'motha_edai': mothaEdai,
       if (setharamGrams != null) 'setharam_grams': setharamGrams,
-      if (thapaalThogai != null) 'thapaal_thogai': thapaalThogai,
+      if (thabaalThogai != null) 'thabaal_thogai': thabaalThogai,
       if (ahimsaPattuThogai != null) 'ahimsa_pattu_thogai': ahimsaPattuThogai,
       if (piravariVugal != null) 'piravari_vugal': piravariVugal,
       if (sonthaViruppangal != null) 'sontha_viruppangal': sonthaViruppangal,
@@ -3948,7 +3948,7 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
       Value<String>? variTharavugal,
       Value<double>? mothaEdai,
       Value<double>? setharamGrams,
-      Value<double>? thapaalThogai,
+      Value<double>? thabaalThogai,
       Value<double>? ahimsaPattuThogai,
       Value<String>? piravariVugal,
       Value<String>? sonthaViruppangal,
@@ -3977,7 +3977,7 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
       variTharavugal: variTharavugal ?? this.variTharavugal,
       mothaEdai: mothaEdai ?? this.mothaEdai,
       setharamGrams: setharamGrams ?? this.setharamGrams,
-      thapaalThogai: thapaalThogai ?? this.thapaalThogai,
+      thabaalThogai: thabaalThogai ?? this.thabaalThogai,
       ahimsaPattuThogai: ahimsaPattuThogai ?? this.ahimsaPattuThogai,
       piravariVugal: piravariVugal ?? this.piravariVugal,
       sonthaViruppangal: sonthaViruppangal ?? this.sonthaViruppangal,
@@ -4045,8 +4045,8 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
     if (setharamGrams.present) {
       map['setharam_grams'] = Variable<double>(setharamGrams.value);
     }
-    if (thapaalThogai.present) {
-      map['thapaal_thogai'] = Variable<double>(thapaalThogai.value);
+    if (thabaalThogai.present) {
+      map['thabaal_thogai'] = Variable<double>(thabaalThogai.value);
     }
     if (ahimsaPattuThogai.present) {
       map['ahimsa_pattu_thogai'] = Variable<double>(ahimsaPattuThogai.value);
@@ -4101,7 +4101,7 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
           ..write('variTharavugal: $variTharavugal, ')
           ..write('mothaEdai: $mothaEdai, ')
           ..write('setharamGrams: $setharamGrams, ')
-          ..write('thapaalThogai: $thapaalThogai, ')
+          ..write('thabaalThogai: $thabaalThogai, ')
           ..write('ahimsaPattuThogai: $ahimsaPattuThogai, ')
           ..write('piravariVugal: $piravariVugal, ')
           ..write('sonthaViruppangal: $sonthaViruppangal, ')
@@ -6452,7 +6452,7 @@ typedef $$PatrucheettuTableTableCreateCompanionBuilder
   Value<String> variTharavugal,
   Value<double> mothaEdai,
   Value<double> setharamGrams,
-  Value<double> thapaalThogai,
+  Value<double> thabaalThogai,
   Value<double> ahimsaPattuThogai,
   Value<String> piravariVugal,
   Value<String> sonthaViruppangal,
@@ -6483,7 +6483,7 @@ typedef $$PatrucheettuTableTableUpdateCompanionBuilder
   Value<String> variTharavugal,
   Value<double> mothaEdai,
   Value<double> setharamGrams,
-  Value<double> thapaalThogai,
+  Value<double> thabaalThogai,
   Value<double> ahimsaPattuThogai,
   Value<String> piravariVugal,
   Value<String> sonthaViruppangal,
@@ -6558,8 +6558,8 @@ class $$PatrucheettuTableTableFilterComposer
   ColumnFilters<double> get setharamGrams => $composableBuilder(
       column: $table.setharamGrams, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get thapaalThogai => $composableBuilder(
-      column: $table.thapaalThogai, builder: (column) => ColumnFilters(column));
+  ColumnFilters<double> get thabaalThogai => $composableBuilder(
+      column: $table.thabaalThogai, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<double> get ahimsaPattuThogai => $composableBuilder(
       column: $table.ahimsaPattuThogai,
@@ -6662,8 +6662,8 @@ class $$PatrucheettuTableTableOrderingComposer
       column: $table.setharamGrams,
       builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get thapaalThogai => $composableBuilder(
-      column: $table.thapaalThogai,
+  ColumnOrderings<double> get thabaalThogai => $composableBuilder(
+      column: $table.thabaalThogai,
       builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<double> get ahimsaPattuThogai => $composableBuilder(
@@ -6762,8 +6762,8 @@ class $$PatrucheettuTableTableAnnotationComposer
   GeneratedColumn<double> get setharamGrams => $composableBuilder(
       column: $table.setharamGrams, builder: (column) => column);
 
-  GeneratedColumn<double> get thapaalThogai => $composableBuilder(
-      column: $table.thapaalThogai, builder: (column) => column);
+  GeneratedColumn<double> get thabaalThogai => $composableBuilder(
+      column: $table.thabaalThogai, builder: (column) => column);
 
   GeneratedColumn<double> get ahimsaPattuThogai => $composableBuilder(
       column: $table.ahimsaPattuThogai, builder: (column) => column);
@@ -6841,7 +6841,7 @@ class $$PatrucheettuTableTableTableManager extends RootTableManager<
             Value<String> variTharavugal = const Value.absent(),
             Value<double> mothaEdai = const Value.absent(),
             Value<double> setharamGrams = const Value.absent(),
-            Value<double> thapaalThogai = const Value.absent(),
+            Value<double> thabaalThogai = const Value.absent(),
             Value<double> ahimsaPattuThogai = const Value.absent(),
             Value<String> piravariVugal = const Value.absent(),
             Value<String> sonthaViruppangal = const Value.absent(),
@@ -6871,7 +6871,7 @@ class $$PatrucheettuTableTableTableManager extends RootTableManager<
             variTharavugal: variTharavugal,
             mothaEdai: mothaEdai,
             setharamGrams: setharamGrams,
-            thapaalThogai: thapaalThogai,
+            thabaalThogai: thabaalThogai,
             ahimsaPattuThogai: ahimsaPattuThogai,
             piravariVugal: piravariVugal,
             sonthaViruppangal: sonthaViruppangal,
@@ -6901,7 +6901,7 @@ class $$PatrucheettuTableTableTableManager extends RootTableManager<
             Value<String> variTharavugal = const Value.absent(),
             Value<double> mothaEdai = const Value.absent(),
             Value<double> setharamGrams = const Value.absent(),
-            Value<double> thapaalThogai = const Value.absent(),
+            Value<double> thabaalThogai = const Value.absent(),
             Value<double> ahimsaPattuThogai = const Value.absent(),
             Value<String> piravariVugal = const Value.absent(),
             Value<String> sonthaViruppangal = const Value.absent(),
@@ -6931,7 +6931,7 @@ class $$PatrucheettuTableTableTableManager extends RootTableManager<
             variTharavugal: variTharavugal,
             mothaEdai: mothaEdai,
             setharamGrams: setharamGrams,
-            thapaalThogai: thapaalThogai,
+            thabaalThogai: thabaalThogai,
             ahimsaPattuThogai: ahimsaPattuThogai,
             piravariVugal: piravariVugal,
             sonthaViruppangal: sonthaViruppangal,

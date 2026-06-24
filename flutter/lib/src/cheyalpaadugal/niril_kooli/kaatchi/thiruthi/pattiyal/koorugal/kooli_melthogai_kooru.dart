@@ -11,19 +11,19 @@ import 'kooli_thiruthi_udhavigal.dart';
 class KooliMelthogaiKooru extends ConsumerWidget {
   final TextEditingController setharamCtrl;
   final TextEditingController ahimsaCtrl;
-  final TextEditingController thapaalCtrl;
+  final TextEditingController thabaalCtrl;
   final ValueChanged<String> onSetharamChanged;
   final ValueChanged<String> onAhimsaChanged;
-  final ValueChanged<String> onThapaalChanged;
+  final ValueChanged<String> onThabaalChanged;
 
   const KooliMelthogaiKooru({
     super.key,
     required this.setharamCtrl,
     required this.ahimsaCtrl,
-    required this.thapaalCtrl,
+    required this.thabaalCtrl,
     required this.onSetharamChanged,
     required this.onAhimsaChanged,
-    required this.onThapaalChanged,
+    required this.onThabaalChanged,
   });
 
   @override
@@ -49,7 +49,7 @@ class KooliMelthogaiKooru extends ConsumerWidget {
             SizedBox(
                 width: colWidth,
                 child: kooliChargeField(
-                    K.thapaalThogai.tr(context, ref), thapaalCtrl, onThapaalChanged)),
+                    K.thabaalThogai.tr(context, ref), thabaalCtrl, onThabaalChanged)),
           ],
         );
       }
@@ -69,7 +69,7 @@ class KooliMelthogaiKooru extends ConsumerWidget {
           SizedBox(
               width: halfWidth,
               child: kooliChargeField(
-                  K.thapaalThogai.tr(context, ref), thapaalCtrl, onThapaalChanged)),
+                  K.thabaalThogai.tr(context, ref), thabaalCtrl, onThabaalChanged)),
         ],
       );
     });

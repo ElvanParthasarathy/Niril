@@ -143,7 +143,7 @@ class KooliKanakku {
   static KooliMothangal calculate({
     required List<KooliUrupadi> items,
     double setharamGrams = 0,
-    double thapaalThogai = 0,
+    double thabaalThogai = 0,
     double ahimsaPattuThogai = 0,
     List<PiraVarivu> piraVarivugal = const [],
   }) {
@@ -172,7 +172,7 @@ class KooliKanakku {
     // ── Grand total ──────────────────────────────────────────────
 
     final double grandTotal =
-        subtotal + thapaalThogai + ahimsaPattuThogai + piraVarivuMoththam;
+        subtotal + thabaalThogai + ahimsaPattuThogai + piraVarivuMoththam;
 
     return KooliMothangal(
       adippadaiMothangal: subtotal,
