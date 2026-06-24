@@ -65,7 +65,7 @@ const Map<String, String> ta = {
   'minnanjalaiUrudhiseiga': 'மின்னஞ்சலை உறுதிசெய்க',
   'minnanjalMugavari': 'மின்னஞ்சல் முகவரி',
   'minnanjalaiUllidavum': 'மின்னஞ்சலை உள்ளிடவும்',
-  'mugavaritharavugal': 'வணிக முகவரி தரவுகள்',
+  'mugavaritharavugal': 'நிறுவன முகவரித் தரவுகள்',
 
   // ========================================
   // Inventory & Items

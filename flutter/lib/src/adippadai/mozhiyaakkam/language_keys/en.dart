@@ -65,7 +65,7 @@ const Map<String, String> en = {
   'minnanjalaiUrudhiseiga': 'Confirm Email',
   'minnanjalMugavari': 'Email Address',
   'minnanjalaiUllidavum': 'Enter your email',
-  'mugavaritharavugal': 'Business address details',
+  'mugavaritharavugal': 'Company address details',
 
   // ========================================
   // Inventory & Items

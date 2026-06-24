@@ -69,7 +69,7 @@ const Map<String, String> tg = {
   'minnanjalaiUrudhiseiga': 'Minnanjalai Urudhiseiga',
   'minnanjalMugavari': 'Minnanjal Mugavari',
   'minnanjalaiUllidavum': 'Minnanjalai Ullidavum',
-  'mugavaritharavugal': 'Vaniga Mugavari Tharavugal',
+  'mugavaritharavugal': 'Niruvana Mugavarith Tharavugal',
 
   // ========================================
   // Inventory & Items
