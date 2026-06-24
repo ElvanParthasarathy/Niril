@@ -54,10 +54,6 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   double _ahimsaPattuThogai = 0;
   List<PiraVarivu> _piraVarivugal = [];
 
-  // ── Bank Details ──
-  bool _showBankDetails = true;
-  bool _showIfsc = true;
-
   // ── Totals ──
   KooliMothangal _totals = const KooliMothangal();
 
@@ -191,7 +187,6 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
         _thapaalThogai = snapshot.thapaalThogai;
         _ahimsaPattuThogai = snapshot.ahimsaPattuThogai;
         _piraVarivugal = snapshot.piraVarivugal;
-        _showBankDetails = snapshot.showBankDetails;
         _invoiceNumberOverride = snapshot.invoiceNumberOverride;
 
         _setharamCtrl.text =
@@ -217,7 +212,6 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
         thapaalThogai: _thapaalThogai,
         ahimsaPattuThogai: _ahimsaPattuThogai,
         piraVarivugal: _piraVarivugal,
-        showBankDetails: _showBankDetails,
         invoiceNumberOverride: _invoiceNumberOverride,
       );
 
@@ -285,7 +279,6 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
           thapaalThogai: _thapaalThogai,
           ahimsaPattuThogai: _ahimsaPattuThogai,
           piraVarivugal: _piraVarivugal,
-          showBankDetails: _showBankDetails,
           invoiceNumberOverride: _invoiceNumberOverride,
         ),
         totals: _totals,
@@ -541,20 +534,6 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                     },
                   ),
 
-                  const SizedBox(height: 24),
-
-                  // ── Bank Details ──
-                  if (_selectedProfile != null)
-                    KooliVangiTharavugalKooru(
-                      profile: _selectedProfile!,
-                      showBankDetails: _showBankDetails,
-                      onToggled: (v) => setState(() {
-                        _showBankDetails = v;
-                        _hasUnsavedChanges = true;
-                      }),
-                      showIfsc: _showIfsc,
-                      onIfscToggled: (v) => setState(() => _showIfsc = v),
-                    ),
 
                   const SizedBox(height: 24),
 
