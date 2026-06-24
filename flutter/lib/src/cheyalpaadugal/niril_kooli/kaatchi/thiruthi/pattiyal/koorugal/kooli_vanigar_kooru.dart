@@ -16,6 +16,7 @@ class KooliVanigarKooru extends ConsumerWidget {
   final int? selectedNiruvanamId;
   final List<NiruvanaTharavugal> profiles;
   final ValueChanged<VanigarEntry> onVanigarSelected;
+  final VoidCallback? onVanigarCleared;
   final ValueChanged<int?> onNiruvanamChanged;
   final VoidCallback? onRequestAddNewVanigar;
   final VanigarEntry? selectedVanigar;
@@ -27,6 +28,7 @@ class KooliVanigarKooru extends ConsumerWidget {
     required this.selectedNiruvanamId,
     required this.profiles,
     required this.onVanigarSelected,
+    this.onVanigarCleared,
     required this.onNiruvanamChanged,
     this.onRequestAddNewVanigar,
     this.selectedVanigar,
@@ -54,6 +56,7 @@ class KooliVanigarKooru extends ConsumerWidget {
             seyaliVagai: 'coolie',
             selectedId: selectedVanigarId,
             onSelected: onVanigarSelected,
+            onCleared: onVanigarCleared,
             onRequestAddNew: onRequestAddNewVanigar,
           ),
           if (selectedVanigar != null) ...[

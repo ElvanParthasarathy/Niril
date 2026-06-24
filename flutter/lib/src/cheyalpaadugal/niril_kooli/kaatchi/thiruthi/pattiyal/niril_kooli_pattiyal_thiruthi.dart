@@ -348,6 +348,13 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                 _hasUnsavedChanges = true;
               });
             },
+            onVanigarCleared: () {
+              setState(() {
+                _selectedVanigarId = null;
+                _selectedVanigarPeyar = '';
+                _hasUnsavedChanges = true;
+              });
+            },
             onNiruvanamChanged: (v) {
               final match = profiles.where((p) => p.id == v).firstOrNull;
               setState(() {
