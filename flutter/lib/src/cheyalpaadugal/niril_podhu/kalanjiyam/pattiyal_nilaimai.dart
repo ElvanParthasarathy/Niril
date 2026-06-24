@@ -14,17 +14,17 @@ final pattiyalKalanjiyamProvider = Provider<PattiyalKalanjiyam>((ref) {
   return PattiyalKalanjiyam(db);
 });
 
-// ── Mode-Aware Invoice Stream ───────────────────────────────────────────────
+// ── Mode-Aware Invoice List (one-shot, pull-to-refresh) ─────────────────────
 
-/// Watches all invoices for the current app mode.
-/// Coolie invoices and Silk invoices are completely isolated.
-final pattiyalgalStreamProvider =
-    StreamProvider<List<PatrucheettuEntry>>((ref) {
+/// Fetches all invoices once for the current app mode.
+/// Call `ref.invalidate(pattiyalgalProvider)` after any CRUD to refresh.
+final pattiyalgalProvider =
+    FutureProvider<List<PatrucheettuEntry>>((ref) {
   final kalanjiyam = ref.watch(pattiyalKalanjiyamProvider);
   final mode = ref.watch(appModeProvider);
 
   final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
-  return kalanjiyam.watchPattiyalgal(seyaliVagai);
+  return kalanjiyam.getPattiyalgal(seyaliVagai);
 });
 
 // ── Editing State ───────────────────────────────────────────────────────────
@@ -43,12 +43,13 @@ final selectedPattiyalIdsProvider = StateProvider<Set<int>>((ref) => {});
 
 // ── Recycle Bin (Meetpagam) ──────────────────────────────────────────────────
 
-/// Watches all soft-deleted invoices for the current app mode.
-final deletedPattiyalgalStreamProvider =
-    StreamProvider<List<PatrucheettuEntry>>((ref) {
+/// Fetches all soft-deleted invoices once for the current app mode.
+/// Call `ref.invalidate(deletedPattiyalgalProvider)` after restore/purge.
+final deletedPattiyalgalProvider =
+    FutureProvider<List<PatrucheettuEntry>>((ref) {
   final kalanjiyam = ref.watch(pattiyalKalanjiyamProvider);
   final mode = ref.watch(appModeProvider);
 
   final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
-  return kalanjiyam.watchDeletedPattiyalgal(seyaliVagai);
+  return kalanjiyam.getDeletedPattiyalgal(seyaliVagai);
 });

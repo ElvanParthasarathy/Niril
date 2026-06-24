@@ -14,23 +14,24 @@ final patruKalanjiyamProvider = Provider<PatruKalanjiyam>((ref) {
   return PatruKalanjiyam(db);
 });
 
-// ── Mode-Aware Receipt Stream ───────────────────────────────────────────────
+// ── Mode-Aware Receipt List (one-shot, pull-to-refresh) ─────────────────────
 
-/// Watches all receipts for the current app mode.
-/// Coolie receipts and Silk receipts are completely isolated.
-final patrugalStreamProvider =
-    StreamProvider<List<PatrugalEntry>>((ref) {
+/// Fetches all receipts once for the current app mode.
+/// Call `ref.invalidate(patrugalProvider)` after any CRUD to refresh.
+final patrugalProvider =
+    FutureProvider<List<PatrugalEntry>>((ref) {
   final kalanjiyam = ref.watch(patruKalanjiyamProvider);
   final mode = ref.watch(appModeProvider);
 
   final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
-  return kalanjiyam.watchPatrugal(seyaliVagai);
+  return kalanjiyam.getPatrugal(seyaliVagai);
 });
 
 // ── Unpaid Invoices (for receipt editor picker) ─────────────────────────────
 
 /// Watches all invoices for the current mode (the editor filters further
 /// by checking paid amounts to identify unpaid/partially-paid invoices).
+/// NOTE: kept as StreamProvider — used in editor, not scrolling list.
 final unpaidPattiyalgalProvider =
     StreamProvider<List<PatrucheettuEntry>>((ref) {
   final kalanjiyam = ref.watch(patruKalanjiyamProvider);
@@ -52,6 +53,7 @@ final selectedPatruIdsProvider = StateProvider<Set<int>>((ref) => {});
 
 /// Per-invoice paid amount (reactive stream).
 /// Used by invoice list cards to show payment status badges.
+/// NOTE: kept as StreamProvider — used per-invoice, not in scrolling list.
 final paidAmountProvider = StreamProvider.family<double, int>((ref, pattiyalId) {
   final kalanjiyam = ref.watch(patruKalanjiyamProvider);
   return kalanjiyam.watchPaidAmount(pattiyalId);

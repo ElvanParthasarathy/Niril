@@ -40,8 +40,8 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final deletedPorulgalAsync = ref.watch(deletedPorulgalStreamProvider);
-    final deletedVanigargalAsync = ref.watch(deletedVanigargalStreamProvider);
+    final deletedPorulgalAsync = ref.watch(deletedPorulgalProvider);
+    final deletedVanigargalAsync = ref.watch(deletedVanigargalProvider);
     final primaryLang = ref.watch(primaryLanguageProvider);
     final secondaryLang = ref.watch(secondaryLanguageProvider);
 
@@ -139,6 +139,8 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
   void _restorePorul(
       BuildContext context, WidgetRef ref, PorulEntry porul) {
     ref.read(porulKalanjiyamProvider).restorePorul(porul.id);
+    ref.invalidate(porulgalProvider);
+    ref.invalidate(deletedPorulgalProvider);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(K.meeteduppuVetri.tr(context, ref)),
@@ -158,6 +160,7 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
       confirmColor: Colors.red,
       onConfirm: () {
         ref.read(porulKalanjiyamProvider).permanentDeletePorul(porul.id);
+        ref.invalidate(deletedPorulgalProvider);
       },
     );
   }
@@ -165,6 +168,8 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
   void _restoreVanigar(
       BuildContext context, WidgetRef ref, VanigarEntry vanigar) {
     ref.read(vanigarKalanjiyamProvider).restoreVanigar(vanigar.id);
+    ref.invalidate(vanigargalProvider);
+    ref.invalidate(deletedVanigargalProvider);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(K.meeteduppuVetri.tr(context, ref)),
@@ -184,6 +189,7 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
       confirmColor: Colors.red,
       onConfirm: () {
         ref.read(vanigarKalanjiyamProvider).permanentDeleteVanigar(vanigar.id);
+        ref.invalidate(deletedVanigargalProvider);
       },
     );
   }

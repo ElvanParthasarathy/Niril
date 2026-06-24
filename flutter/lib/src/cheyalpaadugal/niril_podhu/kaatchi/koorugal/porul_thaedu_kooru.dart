@@ -23,7 +23,7 @@ final _inrFormat = NumberFormat.currency(
 
 /// Autocomplete search widget for selecting a [PorulEntry].
 ///
-/// Watches [porulgalStreamProvider] and filters the list by matching the
+/// Watches [porulgalProvider] and filters the list by matching the
 /// query against both Tamil and English name fields from the `porulPeyar` map.
 class PorulThaeduKooru extends ConsumerStatefulWidget {
   /// Callback fired when the user picks a product from the list.
@@ -106,7 +106,7 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final porulgalAsync = ref.watch(porulgalStreamProvider);
+    final porulgalAsync = ref.watch(porulgalProvider);
 
     return porulgalAsync.when(
       loading: () => _buildTextField(

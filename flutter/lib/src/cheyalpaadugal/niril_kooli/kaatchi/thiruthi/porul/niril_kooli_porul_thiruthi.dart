@@ -57,6 +57,7 @@ class _CoolieItemEditorState extends ConsumerState<CoolieItemEditor> {
       porulPeyar: _porulPeyar,
     ).then((_) {
       if (mounted) {
+        ref.invalidate(porulgalProvider);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(K.porulChaemikkappattadhu.tr(context, ref)),

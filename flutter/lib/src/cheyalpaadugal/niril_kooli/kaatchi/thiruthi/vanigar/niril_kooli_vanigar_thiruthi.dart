@@ -63,6 +63,7 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
       mugavari: _mugavari,
     ).then((_) {
       if (mounted) {
+        ref.invalidate(vanigargalProvider);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(K.vanigarChaemikkappattadhu.tr(context, ref)),

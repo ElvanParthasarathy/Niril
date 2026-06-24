@@ -19,7 +19,7 @@ class SilkMerchantsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final query = ref.watch(silkMerchantsSearchQueryProvider).toLowerCase();
-    final vanigargalAsync = ref.watch(vanigargalStreamProvider);
+    final vanigargalAsync = ref.watch(vanigargalProvider);
     final primaryLang = ref.watch(primaryLanguageProvider);
     final secondaryLang = ref.watch(secondaryLanguageProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -186,6 +186,7 @@ class SilkMerchantsPage extends ConsumerWidget {
       confirmColor: Colors.red,
       onConfirm: () {
         ref.read(vanigarKalanjiyamProvider).bulkDeleteVanigargal(ids);
+        ref.invalidate(vanigargalProvider);
         ref.read(vanigarSelectionModeProvider.notifier).state = false;
         ref.read(selectedVanigarIdsProvider.notifier).state = {};
       },

@@ -218,6 +218,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
       }
 
       if (mounted) {
+        ref.invalidate(pattiyalgalProvider);
         ElvanSnackbar.show(context, K.porulChaemikkappattadhu.tr(context, ref));
         Navigator.of(context).pop();
       }

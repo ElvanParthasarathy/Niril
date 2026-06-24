@@ -14,7 +14,7 @@ import '../../kalanjiyam/vanigar_nilaimai.dart';
 
 /// Autocomplete search widget for selecting a [VanigarEntry].
 ///
-/// Watches [vanigargalStreamProvider] and filters the list by matching the
+/// Watches [vanigargalProvider] and filters the list by matching the
 /// query against both Tamil and English name fields from the `peyar` map.
 class VanigarThaeduKooru extends ConsumerStatefulWidget {
   /// Callback fired when the user picks a customer from the list.
@@ -100,7 +100,7 @@ class _VanigarThaeduKooruState extends ConsumerState<VanigarThaeduKooru> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final vanigargalAsync = ref.watch(vanigargalStreamProvider);
+    final vanigargalAsync = ref.watch(vanigargalProvider);
 
     return vanigargalAsync.when(
       loading: () => _buildTextField(

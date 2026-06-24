@@ -22,6 +22,17 @@ class VanigarKalanjiyam {
         .watch();
   }
 
+  /// Get all non-deleted merchants for the given mode (one-shot).
+  Future<List<VanigarEntry>> getAllVanigargal(String seyaliVagai) {
+    return (_db.select(_db.vanigarTable)
+          ..where((t) => t.seyaliVagai.equals(seyaliVagai))
+          ..where((t) => t.isDeleted.equals(false))
+          ..orderBy([
+            (t) => OrderingTerm.desc(t.updatedAt),
+          ]))
+        .get();
+  }
+
   /// Get a single merchant by ID.
   Future<VanigarEntry?> getVanigarById(int id) {
     return (_db.select(_db.vanigarTable)

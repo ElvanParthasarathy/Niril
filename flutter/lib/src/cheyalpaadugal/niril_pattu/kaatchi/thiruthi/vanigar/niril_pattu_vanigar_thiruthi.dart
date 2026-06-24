@@ -141,6 +141,7 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
       tholaipaesi: _tholaipaesiController.text.trim(),
     ).then((_) {
       if (mounted) {
+        ref.invalidate(vanigargalProvider);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(K.vanigarChaemikkappattadhu.tr(context, ref)),

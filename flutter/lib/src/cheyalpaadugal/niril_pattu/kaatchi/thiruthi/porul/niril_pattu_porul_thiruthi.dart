@@ -80,6 +80,7 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
       alagu: alagu,
     ).then((_) {
       if (mounted) {
+        ref.invalidate(porulgalProvider);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(K.porulChaemikkappattadhu.tr(context, ref)),

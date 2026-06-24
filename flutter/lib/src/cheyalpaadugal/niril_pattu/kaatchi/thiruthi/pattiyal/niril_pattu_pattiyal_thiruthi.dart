@@ -147,7 +147,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
       if (match != null) setState(() => _selectedProfile = match);
     }
     if (_selectedVanigarId != null) {
-      final vanigargalData = ref.read(vanigargalStreamProvider);
+      final vanigargalData = ref.read(vanigargalProvider);
       final vanigargal =
           vanigargalData.whenOrNull(data: (list) => list) ?? [];
       final vanigar =
@@ -286,6 +286,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
       await PattuPattiyalUthavi.clearDraft();
       _hasUnsavedChanges = false;
       if (mounted) {
+        ref.invalidate(pattiyalgalProvider);
         ElvanSnackbar.show(context, K.porulChaemikkappattadhu.tr(context, ref));
         Navigator.of(context).pop();
       }
@@ -305,7 +306,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
     final cs = Theme.of(context).colorScheme;
 
     // Resolve selected customer from stream for "Saved Details" card
-    final vanigargalAsync = ref.watch(vanigargalStreamProvider);
+    final vanigargalAsync = ref.watch(vanigargalProvider);
     final VanigarEntry? selectedVanigar = vanigargalAsync.whenOrNull(
       data: (list) => _selectedVanigarId != null
           ? list.cast<VanigarEntry?>().firstWhere(

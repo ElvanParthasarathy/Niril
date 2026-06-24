@@ -32,6 +32,8 @@ import '../../niril_kooli/kaatchi/thiruthi/patrucheettu/niril_kooli_patrucheettu
 import '../../niril_kooli/kaatchi/thiruthi/vanigar/niril_kooli_vanigar_thiruthi.dart';
 import '../../niril_kooli/kaatchi/thiruthi/porul/niril_kooli_porul_thiruthi.dart';
 
+import '../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
+import '../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 import '../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 import '../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
 
@@ -417,6 +419,19 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
                       const SizedBox(width: 7),
                     ],
                     navItems: navItems,
+                    onRefresh: () async {
+                      // Invalidate the provider for this tab's data
+                      if (i == 0) {
+                        ref.invalidate(pattiyalgalProvider);
+                      } else if (i == 1) {
+                        ref.invalidate(pattiyalgalProvider);
+                        ref.invalidate(patrugalProvider);
+                      } else if (i == 2) {
+                        ref.invalidate(porulgalProvider);
+                      } else if (i == 3) {
+                        ref.invalidate(vanigargalProvider);
+                      }
+                    },
                     slivers: [
                       if (i == 0) const MugappuPage(),
                       if (i == 1) const UruvakkuPage(),

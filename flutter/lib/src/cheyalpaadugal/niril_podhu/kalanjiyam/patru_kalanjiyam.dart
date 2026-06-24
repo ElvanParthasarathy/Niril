@@ -34,6 +34,18 @@ class PatruKalanjiyam {
         .watch();
   }
 
+  /// Get all non-deleted receipts for the given mode (one-shot).
+  Future<List<PatrugalEntry>> getPatrugal(String seyaliVagai) {
+    return (_db.select(_db.patrugalTable)
+          ..where((t) => t.seyaliVagai.equals(seyaliVagai))
+          ..where((t) => t.isDeleted.equals(false))
+          ..orderBy([
+            (t) => OrderingTerm.desc(t.patruNaal),
+            (t) => OrderingTerm.desc(t.vanakkam),
+          ]))
+        .get();
+  }
+
   /// Get a single receipt by ID.
   Future<PatrugalEntry?> getById(int id) {
     return (_db.select(_db.patrugalTable)

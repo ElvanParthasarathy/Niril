@@ -14,16 +14,16 @@ final porulKalanjiyamProvider = Provider<PorulKalanjiyam>((ref) {
   return PorulKalanjiyam(db);
 });
 
-// ── Mode-Aware Product Stream ───────────────────────────────────────────────
+// ── Mode-Aware Product List (one-shot, pull-to-refresh) ─────────────────────
 
-/// Watches all products for the current app mode.
-/// Coolie products and Silk products are completely isolated.
-final porulgalStreamProvider = StreamProvider<List<PorulEntry>>((ref) {
+/// Fetches all products once for the current app mode.
+/// Call `ref.invalidate(porulgalProvider)` after any CRUD to refresh.
+final porulgalProvider = FutureProvider<List<PorulEntry>>((ref) {
   final kalanjiyam = ref.watch(porulKalanjiyamProvider);
   final mode = ref.watch(appModeProvider);
 
   final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
-  return kalanjiyam.watchAllPorulgal(seyaliVagai);
+  return kalanjiyam.getAllPorulgal(seyaliVagai);
 });
 
 // ── Editing State ───────────────────────────────────────────────────────────
@@ -41,11 +41,12 @@ final selectedPorulIdsProvider = StateProvider<Set<int>>((ref) => {});
 
 // ── Recycle Bin (Meetpagam) ──────────────────────────────────────────────────
 
-/// Watches all soft-deleted products for the current app mode.
-final deletedPorulgalStreamProvider = StreamProvider<List<PorulEntry>>((ref) {
+/// Fetches all soft-deleted products once for the current app mode.
+/// Call `ref.invalidate(deletedPorulgalProvider)` after restore/purge.
+final deletedPorulgalProvider = FutureProvider<List<PorulEntry>>((ref) {
   final kalanjiyam = ref.watch(porulKalanjiyamProvider);
   final mode = ref.watch(appModeProvider);
 
   final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
-  return kalanjiyam.watchDeletedPorulgal(seyaliVagai);
+  return kalanjiyam.watchDeletedPorulgal(seyaliVagai).first;
 });

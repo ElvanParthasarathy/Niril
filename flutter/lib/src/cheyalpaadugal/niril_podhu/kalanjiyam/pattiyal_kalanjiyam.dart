@@ -23,6 +23,18 @@ class PattiyalKalanjiyam {
         .watch();
   }
 
+  /// Get all non-deleted invoices for the given mode (one-shot).
+  Future<List<PatrucheettuEntry>> getPattiyalgal(String seyaliVagai) {
+    return (_db.select(_db.patrucheettuTable)
+          ..where((t) => t.seyaliVagai.equals(seyaliVagai))
+          ..where((t) => t.isDeleted.equals(false))
+          ..orderBy([
+            (t) => OrderingTerm.desc(t.pattiyalNaal),
+            (t) => OrderingTerm.desc(t.vanakkam),
+          ]))
+        .get();
+  }
+
   /// Get a single invoice by ID.
   Future<PatrucheettuEntry?> getById(int id) {
     return (_db.select(_db.patrucheettuTable)
@@ -98,6 +110,18 @@ class PattiyalKalanjiyam {
             (t) => OrderingTerm.desc(t.deletedAt),
           ]))
         .watch();
+  }
+
+  /// Get all soft-deleted invoices (one-shot, for recycle bin).
+  Future<List<PatrucheettuEntry>> getDeletedPattiyalgal(
+      String seyaliVagai) {
+    return (_db.select(_db.patrucheettuTable)
+          ..where((t) => t.seyaliVagai.equals(seyaliVagai))
+          ..where((t) => t.isDeleted.equals(true))
+          ..orderBy([
+            (t) => OrderingTerm.desc(t.deletedAt),
+          ]))
+        .get();
   }
 
   // ── Auto-Numbering ────────────────────────────────────────────────────

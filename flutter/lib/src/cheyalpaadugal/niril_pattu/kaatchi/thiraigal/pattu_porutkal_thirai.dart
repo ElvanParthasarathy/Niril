@@ -19,7 +19,7 @@ class SilkItemsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final query = ref.watch(silkItemsSearchQueryProvider).toLowerCase();
-    final porulgalAsync = ref.watch(porulgalStreamProvider);
+    final porulgalAsync = ref.watch(porulgalProvider);
     final primaryLang = ref.watch(primaryLanguageProvider);
     final secondaryLang = ref.watch(secondaryLanguageProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -181,6 +181,7 @@ class SilkItemsPage extends ConsumerWidget {
       confirmColor: Colors.red,
       onConfirm: () {
         ref.read(porulKalanjiyamProvider).bulkDeletePorulgal(ids);
+        ref.invalidate(porulgalProvider);
         ref.read(porulSelectionModeProvider.notifier).state = false;
         ref.read(selectedPorulIdsProvider.notifier).state = {};
       },

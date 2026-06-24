@@ -14,16 +14,16 @@ final vanigarKalanjiyamProvider = Provider<VanigarKalanjiyam>((ref) {
   return VanigarKalanjiyam(db);
 });
 
-// ── Mode-Aware Merchant Stream ──────────────────────────────────────────────
+// ── Mode-Aware Merchant List (one-shot, pull-to-refresh) ────────────────────
 
-/// Watches all merchants for the current app mode.
-/// Coolie merchants and Silk merchants are completely isolated.
-final vanigargalStreamProvider = StreamProvider<List<VanigarEntry>>((ref) {
+/// Fetches all merchants once for the current app mode.
+/// Call `ref.invalidate(vanigargalProvider)` after any CRUD to refresh.
+final vanigargalProvider = FutureProvider<List<VanigarEntry>>((ref) {
   final kalanjiyam = ref.watch(vanigarKalanjiyamProvider);
   final mode = ref.watch(appModeProvider);
 
   final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
-  return kalanjiyam.watchAllVanigargal(seyaliVagai);
+  return kalanjiyam.getAllVanigargal(seyaliVagai);
 });
 
 // ── Editing State ───────────────────────────────────────────────────────────
@@ -41,12 +41,13 @@ final selectedVanigarIdsProvider = StateProvider<Set<int>>((ref) => {});
 
 // ── Recycle Bin (Meetpagam) ──────────────────────────────────────────────────
 
-/// Watches all soft-deleted merchants for the current app mode.
-final deletedVanigargalStreamProvider =
-    StreamProvider<List<VanigarEntry>>((ref) {
+/// Fetches all soft-deleted merchants once for the current app mode.
+/// Call `ref.invalidate(deletedVanigargalProvider)` after restore/purge.
+final deletedVanigargalProvider =
+    FutureProvider<List<VanigarEntry>>((ref) {
   final kalanjiyam = ref.watch(vanigarKalanjiyamProvider);
   final mode = ref.watch(appModeProvider);
 
   final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
-  return kalanjiyam.watchDeletedVanigargal(seyaliVagai);
+  return kalanjiyam.watchDeletedVanigargal(seyaliVagai).first;
 });

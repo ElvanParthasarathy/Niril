@@ -22,7 +22,7 @@ class SilkHomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final pattiyalgalAsync = ref.watch(pattiyalgalStreamProvider);
+    final pattiyalgalAsync = ref.watch(pattiyalgalProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return pattiyalgalAsync.when(

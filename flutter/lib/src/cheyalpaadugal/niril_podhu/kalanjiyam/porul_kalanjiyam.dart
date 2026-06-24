@@ -22,6 +22,17 @@ class PorulKalanjiyam {
         .watch();
   }
 
+  /// Get all non-deleted products for the given mode (one-shot).
+  Future<List<PorulEntry>> getAllPorulgal(String seyaliVagai) {
+    return (_db.select(_db.porulTable)
+          ..where((t) => t.seyaliVagai.equals(seyaliVagai))
+          ..where((t) => t.isDeleted.equals(false))
+          ..orderBy([
+            (t) => OrderingTerm.desc(t.updatedAt),
+          ]))
+        .get();
+  }
+
   /// Get a single product by ID.
   Future<PorulEntry?> getPorulById(int id) {
     return (_db.select(_db.porulTable)

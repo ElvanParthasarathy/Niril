@@ -264,6 +264,8 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       }
 
       if (mounted) {
+        ref.invalidate(patrugalProvider);
+        ref.invalidate(pattiyalgalProvider);
         ElvanSnackbar.show(context, 'பற்றுச்சீட்டு சேமிக்கப்பட்டது');
         Navigator.of(context).pop();
       }
@@ -279,7 +281,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   @override
   Widget build(BuildContext context) {
     final profilesAsync = ref.watch(currentModeProfilesStreamProvider);
-    final invoicesAsync = ref.watch(pattiyalgalStreamProvider);
+    final invoicesAsync = ref.watch(pattiyalgalProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final mode = ref.watch(appModeProvider);
     final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
@@ -462,7 +464,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
   Future<void> _loadPaidAmounts() async {
     final kalanjiyam = ref.read(patruKalanjiyamProvider);
-    final invoicesAsync = ref.read(pattiyalgalStreamProvider);
+    final invoicesAsync = ref.read(pattiyalgalProvider);
     final invoices = invoicesAsync.value ?? [];
     if (invoices.isEmpty) return;
 

@@ -25,7 +25,7 @@ class CoolieReceiptsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final query = ref.watch(coolieReceiptsSearchQueryProvider).toLowerCase();
-    final patrugalAsync = ref.watch(patrugalStreamProvider);
+    final patrugalAsync = ref.watch(patrugalProvider);
     final profilesAsync = ref.watch(currentModeProfilesStreamProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelecting = ref.watch(patruSelectionModeProvider);
@@ -234,6 +234,7 @@ class CoolieReceiptsPage extends ConsumerWidget {
       confirmColor: Colors.red,
       onConfirm: () {
         ref.read(patruKalanjiyamProvider).bulkDeletePatrugal(ids);
+        ref.invalidate(patrugalProvider);
         ref.read(patruSelectionModeProvider.notifier).state = false;
         ref.read(selectedPatruIdsProvider.notifier).state = {};
       },

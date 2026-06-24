@@ -27,7 +27,7 @@ class SilkInvoicesPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final query = ref.watch(silkInvoicesSearchQueryProvider).toLowerCase();
-    final pattiyalgalAsync = ref.watch(pattiyalgalStreamProvider);
+    final pattiyalgalAsync = ref.watch(pattiyalgalProvider);
     final profilesAsync = ref.watch(currentModeProfilesStreamProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelecting = ref.watch(pattiyalSelectionModeProvider);
@@ -253,6 +253,7 @@ class SilkInvoicesPage extends ConsumerWidget {
       confirmColor: Colors.red,
       onConfirm: () {
         ref.read(pattiyalKalanjiyamProvider).bulkDeletePattiyalgal(ids);
+        ref.invalidate(pattiyalgalProvider);
         ref.read(pattiyalSelectionModeProvider.notifier).state = false;
         ref.read(selectedPattiyalIdsProvider.notifier).state = {};
       },
