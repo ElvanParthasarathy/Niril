@@ -16,16 +16,15 @@ import '../../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
 import '../../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
 import '../../../../amaippugal/tharavu/vaniga_tharavugal.dart';
 
-class CoolieVanigaAmaippuPage extends ConsumerStatefulWidget {
-  const CoolieVanigaAmaippuPage({super.key});
+class SilkNiruvanaAmaippuPage extends ConsumerStatefulWidget {
+  const SilkNiruvanaAmaippuPage({super.key});
 
   @override
-  ConsumerState<CoolieVanigaAmaippuPage> createState() =>
-      _CoolieVanigaAmaippuPageState();
+  ConsumerState<SilkNiruvanaAmaippuPage> createState() =>
+      _SilkNiruvanaAmaippuPageState();
 }
 
-class _CoolieVanigaAmaippuPageState
-    extends ConsumerState<CoolieVanigaAmaippuPage> {
+class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPage> {
   String? _editingSection;
 
   String _tempPrimary = '';
@@ -194,113 +193,57 @@ class _CoolieVanigaAmaippuPageState
   }
 
   void _showNewProfileModal() {
-    String newNamePrimary = '';
-    String newNameSecondary = '';
+    String newName = '';
     showElvanActionSheet(
       context: context,
-      title: K.pudhiyaThannuruvaiUruvaakku.tr(context, ref),
+      title: K.pudhiyaThannuruChaer.tr(context, ref),
       cancelText: K.kaividuPtn.tr(context, ref),
       confirmText: K.uruvaakkuPtn.tr(context, ref),
-      customContent: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ElvanTextField(
-            textAlign: TextAlign.center,
-            onChanged: (val) => newNamePrimary = val,
-            decoration: InputDecoration(
-              hintText:
-                  '${K.niruvanathinPeyar.tr(context, ref)} (${K.thamizh.tr(context, ref)})',
-              hintStyle: TextStyle(
-                fontSize: 13,
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.4),
-              ),
-              filled: true,
-              fillColor: WidgetStateColor.resolveWith((states) {
-                if (states.contains(WidgetState.focused)) {
-                  return Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.12);
-                }
-                return Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.08);
-              }),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            style: TextStyle(
-              fontSize: 14,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
+      customContent: ElvanTextField(
+        textAlign: TextAlign.center,
+        onChanged: (val) => newName = val,
+        decoration: InputDecoration(
+          hintText: K.niruvanathinPeyar.tr(context, ref),
+          hintStyle: TextStyle(
+            fontSize: 13,
+            color:
+                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
           ),
-          const SizedBox(height: 12),
-          ElvanTextField(
-            textAlign: TextAlign.center,
-            onChanged: (val) => newNameSecondary = val,
-            decoration: InputDecoration(
-              hintText:
-                  '${K.niruvanathinPeyar.tr(context, ref)} (${K.aangilam.tr(context, ref)})',
-              hintStyle: TextStyle(
-                fontSize: 13,
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.4),
-              ),
-              filled: true,
-              fillColor: WidgetStateColor.resolveWith((states) {
-                if (states.contains(WidgetState.focused)) {
-                  return Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.12);
-                }
-                return Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.08);
-              }),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            style: TextStyle(
-              fontSize: 14,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
+          filled: true,
+          fillColor: WidgetStateColor.resolveWith((states) {
+            if (states.contains(WidgetState.focused)) {
+              return Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.12);
+            }
+            return Theme.of(context)
+                .colorScheme
+                .onSurface
+                .withValues(alpha: 0.08);
+          }),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(100),
+            borderSide: BorderSide.none,
           ),
-        ],
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(100),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(100),
+            borderSide: BorderSide.none,
+          ),
+        ),
+        style: TextStyle(
+          fontSize: 14,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
       ),
       onConfirm: () {
-        if (newNamePrimary.trim().isNotEmpty) {
+        if (newName.trim().isNotEmpty) {
           final profiles = ref.read(vanigaTharavugalListProvider);
           if (profiles.length >= maxProfiles) {
             ElvanSnackbar.show(context, K.perumalavu5thannuru.tr(context, ref));
@@ -308,9 +251,9 @@ class _CoolieVanigaAmaippuPageState
           }
 
           final newProfile = VanigaTharavugal();
-          newProfile.setBilingual('niruvanathinPeyar', 'Tamil', newNamePrimary);
+          newProfile.iruMozhi = true;
           newProfile.setBilingual(
-              'niruvanathinPeyar', 'English', newNameSecondary);
+              'niruvanathinPeyar', newProfile.mudhanMozhi, newName);
           ref.read(vanigaTharavugalListProvider.notifier).createProfile(newProfile);
           _showSuccessToast();
         }
@@ -322,7 +265,7 @@ class _CoolieVanigaAmaippuPageState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? const Color(0xFF111111) : Colors.white;
     final profile = ref.watch(vanigaTharavugalProvider);
-    final primaryName = profile?.niruvanathinPeyar['Tamil'] ?? '';
+    final primaryName = profile?.getPrimary('niruvanathinPeyar') ?? '';
     final displayName =
         primaryName.isEmpty ? K.tharpoadhaiyaNiruvanam.tr(context, ref) : primaryName;
 
@@ -372,7 +315,9 @@ class _CoolieVanigaAmaippuPageState
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w600),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -463,8 +408,8 @@ class _CoolieVanigaAmaippuPageState
 
   void _saveBilingualField(VanigaTharavugal profile, String fieldName) {
     final updatedProfile = profile.copyWith();
-    updatedProfile.setBilingual(fieldName, 'Tamil', _tempPrimary);
-    updatedProfile.setBilingual(fieldName, 'English', _tempSecondary);
+    updatedProfile.setBilingual(fieldName, profile.mudhanMozhi, _tempPrimary);
+    updatedProfile.setBilingual(fieldName, profile.thunaiMozhi, _tempSecondary);
     ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
@@ -485,6 +430,9 @@ class _CoolieVanigaAmaippuPageState
       case 'minnanjal':
         updatedProfile.minnanjal = _tempPrimary;
         break;
+      case 'gstin':
+        updatedProfile.gstin = _tempPrimary;
+        break;
     }
     ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
@@ -495,33 +443,37 @@ class _CoolieVanigaAmaippuPageState
   Widget build(BuildContext context) {
     final title = K.niruvanam.tr(context, ref);
     final isBilingual = ref.watch(bilingualProvider);
-    final primaryLang = 'thamizh';
-    final secondaryLang = 'aangilam';
+    final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
+    final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
 
     final profile = ref.watch(vanigaTharavugalProvider);
     final currentProfile = profile ?? VanigaTharavugal();
 
     final niruvanathinPeyarPrimary =
-        currentProfile.niruvanathinPeyar['Tamil'] ?? '';
+        currentProfile.getPrimary('niruvanathinPeyar');
     final niruvanathinPeyarSecondary =
-        currentProfile.niruvanathinPeyar['English'] ?? '';
+        currentProfile.getSecondary('niruvanathinPeyar');
 
-    final adaimozhiPrimary = currentProfile.adaimozhi['Tamil'] ?? '';
-    final adaimozhiSecondary = currentProfile.adaimozhi['English'] ?? '';
+    final adaimozhiPrimary = currentProfile.getPrimary('adaimozhi');
+    final adaimozhiSecondary = currentProfile.getSecondary('adaimozhi');
 
     return ElvanSubpageShell(
       title: title,
       slivers: [
         SliverPadding(
-          padding:
-              const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 32),
+          padding: const EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 0,
+            bottom: 32,
+          ),
           sliver: SliverList.list(
             children: [
               _buildProfileSwitcher(),
               ElvanSettingsSection(
                 dividerIndent: 16.0,
                 children: [
-                  // 1. Business Name
+                  // 1. Business Name (Niruvanathin Peyar)
                   ElvanSettingsAnimatedExpand(
                     keyPrefix: 'business_name',
                     isEditing: _editingSection == 'niruvanathinPeyar',
@@ -702,6 +654,30 @@ class _CoolieVanigaAmaippuPageState
                       primaryValue: currentProfile.minnanjal,
                       onEdit: () => _beginEditSingle(
                           'minnanjal', currentProfile.minnanjal),
+                    ),
+                  ),
+
+                  // 6. GSTIN
+                  ElvanSettingsAnimatedExpand(
+                    keyPrefix: 'gstin',
+                    isEditing: _editingSection == 'gstin',
+                    editChild: _buildEditContainer(
+                      title: K.gstinVariAdaiyaalaEn.tr(context, ref),
+                      inputFields: [
+                        ElvanSettingsTextField(
+                          label: K.gstinVariAdaiyaalaEn.tr(context, ref),
+                          initialValue: _tempPrimary,
+                          onChanged: (val) => _tempPrimary = val,
+                        ),
+                      ],
+                      onCancel: () => setState(() => _editingSection = null),
+                      onSave: () => _saveSingleField(currentProfile, 'gstin'),
+                    ),
+                    displayChild: ElvanSettingsDisplayRow(
+                      title: K.gstinVariAdaiyaalaEn.tr(context, ref),
+                      primaryValue: currentProfile.gstin,
+                      onEdit: () =>
+                          _beginEditSingle('gstin', currentProfile.gstin),
                     ),
                   ),
                 ],

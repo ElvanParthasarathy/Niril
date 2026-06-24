@@ -11,7 +11,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
-import 'thiraigal/vaniga_amaippugal_thirai.dart';
+import 'thiraigal/niruvana_amaippugal_thirai.dart';
 import 'thiraigal/mugavari_thirai.dart';
 import 'thiraigal/vangi_thirai.dart';
 import 'thiraigal/kooli_vaniga_adaiyalangal_thirai.dart';
@@ -74,7 +74,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 Expanded(
                   child: ElvanSubpagePadding(
                     padding: const EdgeInsets.only(left: 24, right: 24),
-                    child: _selectedDetail ?? const VanigaAmaippugalPage(),
+                    child: _selectedDetail ?? const NiruvanaAmaippugalPage(),
                   ),
                 ),
               ],
@@ -129,7 +129,7 @@ class SettingsHubScreen extends ConsumerWidget {
                       // The main pill body (Navigates to Merchant Settings)
                       InkWell(
                         onTap: () {
-                          _navigateTo(context, const VanigaAmaippugalPage());
+                          _navigateTo(context, const NiruvanaAmaippugalPage());
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(

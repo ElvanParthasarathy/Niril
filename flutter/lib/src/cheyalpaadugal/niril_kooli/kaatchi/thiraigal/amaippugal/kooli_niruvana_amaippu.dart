@@ -6,25 +6,23 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
-import '../../../../../koorugal/podhu_koorugal/elvan_muzhuthirai_maeladukku.dart';
-import '../../../../../koorugal/maeladukkugal/elvan_cheyal_maeladukku.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_pagudhi.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dart';
-import '../../../../amaippugal/kaatchi/koorugal/elvan_azhippu_urudhi_maeladukku.dart';
 import '../../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku.dart';
-import '../../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
 import '../../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
 import '../../../../amaippugal/tharavu/vaniga_tharavugal.dart';
+import 'koorugal/kooli_thannuru_maeladukkugal.dart';
 
-class SilkVanigaAmaippuPage extends ConsumerStatefulWidget {
-  const SilkVanigaAmaippuPage({super.key});
+class CoolieNiruvanaAmaippuPage extends ConsumerStatefulWidget {
+  const CoolieNiruvanaAmaippuPage({super.key});
 
   @override
-  ConsumerState<SilkVanigaAmaippuPage> createState() =>
-      _SilkVanigaAmaippuPageState();
+  ConsumerState<CoolieNiruvanaAmaippuPage> createState() =>
+      _CoolieNiruvanaAmaippuPageState();
 }
 
-class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
+class _CoolieNiruvanaAmaippuPageState
+    extends ConsumerState<CoolieNiruvanaAmaippuPage> {
   String? _editingSection;
 
   String _tempPrimary = '';
@@ -76,188 +74,18 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
   }
 
   void _showManageProfilesModal() {
-    showGeneralDialog(
+    showManageProfilesModal(
       context: context,
-      barrierDismissible: true,
-      barrierLabel: 'Manage Profiles',
-      transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (context, animation, secondaryAnimation) {
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            return Dialog.fullscreen(
-              child: Scaffold(
-                backgroundColor: Colors.transparent,
-                floatingActionButton: Consumer(builder: (context, ref, _) {
-                  final profiles = ref.watch(vanigaTharavugalListProvider);
-                  if (profiles.length >= maxProfiles) return const SizedBox.shrink();
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 48.0),
-                    child: FloatingActionButton(
-                      onPressed: () {
-                        _showNewProfileModal();
-                      },
-                      backgroundColor: Theme.of(context).colorScheme.onSurface,
-                      foregroundColor: Theme.of(context).colorScheme.surface,
-                      child: const Icon(Icons.add),
-                    ),
-                  );
-                }),
-                body: Consumer(builder: (context, ref, child) {
-                  final profiles = ref.watch(vanigaTharavugalListProvider);
-                  final activeProfile = ref.watch(vanigaTharavugalProvider);
-                  final hasProfiles = profiles.isNotEmpty;
-
-                  return ElvanFullscreenPopup(
-                    title: K.neriyuga.tr(context, ref),
-                    slivers: [
-                      SliverPadding(
-                        padding: const EdgeInsets.all(16),
-                        sliver: SliverToBoxAdapter(
-                          child: !hasProfiles
-                              ? Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(32.0),
-                                    child: Text(
-                                      K.thannurukkalIllai.tr(context, ref),
-                                      style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSurface
-                                            .withValues(alpha: 0.5),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              : Column(
-                                  children: [
-                                    ElvanSettingsSection(
-                                      children: [
-                                        for (final profile in profiles)
-                                          ElvanSettingsDisplayRow(
-                                            title: profile.id == activeProfile?.id
-                                                ? K.tharpoadhaiyaNiruvanam.tr(context, ref)
-                                                : '',
-                                            primaryValue: profile
-                                                    .getPrimary(
-                                                        'niruvanathinPeyar')
-                                                    .isEmpty
-                                                ? K.tharpoadhaiyaNiruvanam.tr(context, ref)
-                                                : profile.getPrimary(
-                                                    'niruvanathinPeyar'),
-                                            icon: CupertinoIcons.delete_solid,
-                                            onTap: profile.id != activeProfile?.id
-                                                ? () {
-                                                    ref.read(vanigaTharavugalListProvider.notifier)
-                                                        .setActiveProfile(profile.id!);
-                                                  }
-                                                : null,
-                                            onEdit: () =>
-                                                showElvanDeleteConfirmModal(
-                                                    context, ref, () {
-                                              ref
-                                                  .read(vanigaTharavugalListProvider
-                                                      .notifier)
-                                                  .deleteProfile(profile.id!);
-                                              ElvanSnackbar.show(
-                                                  context,
-                                                  K.thannuruNeekkappattadhu
-                                                      .tr(context, ref));
-                                            }),
-                                          ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                        ),
-                      ),
-                    ],
-                  );
-                }),
-              ),
-            );
-          },
-        );
-      },
-      transitionBuilder: (context, animation, secondaryAnimation, child) {
-        const begin = Offset(0.0, 1.0);
-        const end = Offset.zero;
-        const curve = Curves.easeOutCubic;
-        final tween =
-            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-        return SlideTransition(
-          position: animation.drive(tween),
-          child: child,
-        );
-      },
+      ref: ref,
+      onNewProfile: () => _showNewProfileModal(),
     );
   }
 
   void _showNewProfileModal() {
-    String newName = '';
-    showElvanActionSheet(
+    showNewProfileModal(
       context: context,
-      title: K.pudhiyaThannuruChaer.tr(context, ref),
-      cancelText: K.kaividuPtn.tr(context, ref),
-      confirmText: K.uruvaakkuPtn.tr(context, ref),
-      customContent: ElvanTextField(
-        textAlign: TextAlign.center,
-        onChanged: (val) => newName = val,
-        decoration: InputDecoration(
-          hintText: K.niruvanathinPeyar.tr(context, ref),
-          hintStyle: TextStyle(
-            fontSize: 13,
-            color:
-                Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-          ),
-          filled: true,
-          fillColor: WidgetStateColor.resolveWith((states) {
-            if (states.contains(WidgetState.focused)) {
-              return Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.12);
-            }
-            return Theme.of(context)
-                .colorScheme
-                .onSurface
-                .withValues(alpha: 0.08);
-          }),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(100),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(100),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(100),
-            borderSide: BorderSide.none,
-          ),
-        ),
-        style: TextStyle(
-          fontSize: 14,
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-      ),
-      onConfirm: () {
-        if (newName.trim().isNotEmpty) {
-          final profiles = ref.read(vanigaTharavugalListProvider);
-          if (profiles.length >= maxProfiles) {
-            ElvanSnackbar.show(context, K.perumalavu5thannuru.tr(context, ref));
-            return;
-          }
-
-          final newProfile = VanigaTharavugal();
-          newProfile.iruMozhi = true;
-          newProfile.setBilingual(
-              'niruvanathinPeyar', newProfile.mudhanMozhi, newName);
-          ref.read(vanigaTharavugalListProvider.notifier).createProfile(newProfile);
-          _showSuccessToast();
-        }
-      },
+      ref: ref,
+      onSuccess: _showSuccessToast,
     );
   }
 
@@ -265,7 +93,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? const Color(0xFF111111) : Colors.white;
     final profile = ref.watch(vanigaTharavugalProvider);
-    final primaryName = profile?.getPrimary('niruvanathinPeyar') ?? '';
+    final primaryName = profile?.niruvanathinPeyar['Tamil'] ?? '';
     final displayName =
         primaryName.isEmpty ? K.tharpoadhaiyaNiruvanam.tr(context, ref) : primaryName;
 
@@ -315,9 +143,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
+                          fontSize: 15, fontWeight: FontWeight.w600),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -408,8 +234,8 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
 
   void _saveBilingualField(VanigaTharavugal profile, String fieldName) {
     final updatedProfile = profile.copyWith();
-    updatedProfile.setBilingual(fieldName, profile.mudhanMozhi, _tempPrimary);
-    updatedProfile.setBilingual(fieldName, profile.thunaiMozhi, _tempSecondary);
+    updatedProfile.setBilingual(fieldName, 'Tamil', _tempPrimary);
+    updatedProfile.setBilingual(fieldName, 'English', _tempSecondary);
     ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
@@ -430,9 +256,6 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
       case 'minnanjal':
         updatedProfile.minnanjal = _tempPrimary;
         break;
-      case 'gstin':
-        updatedProfile.gstin = _tempPrimary;
-        break;
     }
     ref.read(vanigaTharavugalListProvider.notifier).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
@@ -443,37 +266,33 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
   Widget build(BuildContext context) {
     final title = K.niruvanam.tr(context, ref);
     final isBilingual = ref.watch(bilingualProvider);
-    final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
-    final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
+    final primaryLang = 'thamizh';
+    final secondaryLang = 'aangilam';
 
     final profile = ref.watch(vanigaTharavugalProvider);
     final currentProfile = profile ?? VanigaTharavugal();
 
     final niruvanathinPeyarPrimary =
-        currentProfile.getPrimary('niruvanathinPeyar');
+        currentProfile.niruvanathinPeyar['Tamil'] ?? '';
     final niruvanathinPeyarSecondary =
-        currentProfile.getSecondary('niruvanathinPeyar');
+        currentProfile.niruvanathinPeyar['English'] ?? '';
 
-    final adaimozhiPrimary = currentProfile.getPrimary('adaimozhi');
-    final adaimozhiSecondary = currentProfile.getSecondary('adaimozhi');
+    final adaimozhiPrimary = currentProfile.adaimozhi['Tamil'] ?? '';
+    final adaimozhiSecondary = currentProfile.adaimozhi['English'] ?? '';
 
     return ElvanSubpageShell(
       title: title,
       slivers: [
         SliverPadding(
-          padding: const EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: 0,
-            bottom: 32,
-          ),
+          padding:
+              const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 32),
           sliver: SliverList.list(
             children: [
               _buildProfileSwitcher(),
               ElvanSettingsSection(
                 dividerIndent: 16.0,
                 children: [
-                  // 1. Business Name (Niruvanathin Peyar)
+                  // 1. Business Name
                   ElvanSettingsAnimatedExpand(
                     keyPrefix: 'business_name',
                     isEditing: _editingSection == 'niruvanathinPeyar',
@@ -654,30 +473,6 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                       primaryValue: currentProfile.minnanjal,
                       onEdit: () => _beginEditSingle(
                           'minnanjal', currentProfile.minnanjal),
-                    ),
-                  ),
-
-                  // 6. GSTIN
-                  ElvanSettingsAnimatedExpand(
-                    keyPrefix: 'gstin',
-                    isEditing: _editingSection == 'gstin',
-                    editChild: _buildEditContainer(
-                      title: K.gstinVariAdaiyaalaEn.tr(context, ref),
-                      inputFields: [
-                        ElvanSettingsTextField(
-                          label: K.gstinVariAdaiyaalaEn.tr(context, ref),
-                          initialValue: _tempPrimary,
-                          onChanged: (val) => _tempPrimary = val,
-                        ),
-                      ],
-                      onCancel: () => setState(() => _editingSection = null),
-                      onSave: () => _saveSingleField(currentProfile, 'gstin'),
-                    ),
-                    displayChild: ElvanSettingsDisplayRow(
-                      title: K.gstinVariAdaiyaalaEn.tr(context, ref),
-                      primaryValue: currentProfile.gstin,
-                      onEdit: () =>
-                          _beginEditSingle('gstin', currentProfile.gstin),
                     ),
                   ),
                 ],
