@@ -280,7 +280,7 @@ const Map<String, String> ta = {
   'payanarVilakkam': 'இப்பெயர் முகப்புத்திரையில் தோன்றும்.',
 
   // ── ஒருங்கிணைப்பு ──
-  'orunginaiSeyaliPtn': 'செயலியை ஒருங்கிணை',
+  'orunginaiCheyaliPtn': 'செயலியை ஒருங்கிணை',
   'orunginaikkiRadhu': 'ஒருங்கிணைக்கிறது...',
   'orunginaikkappattadhu': 'ஒருங்கிணைக்கப்பட்டது!',
 };

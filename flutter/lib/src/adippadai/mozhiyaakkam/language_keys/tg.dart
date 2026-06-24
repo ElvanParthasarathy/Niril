@@ -284,7 +284,7 @@ const Map<String, String> tg = {
   'payanarVilakkam': 'Ippeyar Mugappu Thiraiyil Thoandrum.',
 
   // ── Orunginai ──
-  'orunginaiSeyaliPtn': 'Seyaliyai Orunginai',
+  'orunginaiCheyaliPtn': 'Cheyaliyai Orunginai',
   'orunginaikkiRadhu': 'Orunginaikkiradhu...',
   'orunginaikkappattadhu': 'Orunginaikkappattadhu!',
 };

@@ -280,7 +280,7 @@ const Map<String, String> en = {
   'payanarVilakkam': 'This name will appear on the home screen greeting.',
 
   // ── Sync ──
-  'orunginaiSeyaliPtn': 'Sync App',
+  'orunginaiCheyaliPtn': 'Sync App',
   'orunginaikkiRadhu': 'Syncing...',
   'orunginaikkappattadhu': 'Synced!',
 };

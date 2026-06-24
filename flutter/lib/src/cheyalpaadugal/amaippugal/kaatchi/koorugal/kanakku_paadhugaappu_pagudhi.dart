@@ -53,7 +53,7 @@ class AccountSecuritySection extends ConsumerWidget {
             size: 20,
           ),
           iconBgColor: iconBgColor,
-          title: K.orunginaiSeyaliPtn.tr(context, ref),
+          title: K.orunginaiCheyaliPtn.tr(context, ref),
           onTap: () {
             _showSyncFlow(context, ref);
           },
