@@ -96,7 +96,6 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
       _tryRestoreDraft();
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_isEditing) _autoSelectProfile();
       _resolveCustomerState();
       _recalculate();
     });
@@ -126,16 +125,6 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
         _globalDiscountValue > 0 ? _globalDiscountValue.toString() : '';
   }
 
-  void _autoSelectProfile() {
-    final profiles = ref.read(NiruvanaTharavugalListProvider);
-    if (profiles.isNotEmpty && _selectedNiruvanamId == null) {
-      setState(() {
-        _selectedProfile = profiles.first;
-        _selectedNiruvanamId = profiles.first.id;
-      });
-    }
-    if (!_isEditing) _computePreviewInvoiceNumber();
-  }
 
   /// Resolves _selectedProfile and _customerState from provider data.
   void _resolveCustomerState() {
@@ -407,6 +396,14 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
 
           const SizedBox(height: 24),
 
+          // ── Disabled wrapper when no company selected ──
+          Opacity(
+            opacity: _selectedNiruvanamId == null ? 0.4 : 1.0,
+            child: IgnorePointer(
+              ignoring: _selectedNiruvanamId == null,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
           // ───────────────────────────────────────────────────────────────
           // Section 2: ② Invoice Details
           // ───────────────────────────────────────────────────────────────
@@ -576,6 +573,10 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           ),
 
           const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
