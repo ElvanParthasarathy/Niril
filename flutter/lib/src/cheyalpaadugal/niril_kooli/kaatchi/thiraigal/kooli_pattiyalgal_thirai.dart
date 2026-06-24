@@ -12,7 +12,7 @@ import '../../../../koorugal/meladukkugal/elvan_cheyal_meladukku.dart';
 import '../../../chattagam/kaatchi/koorugal/elvan_uyir_valai.dart';
 import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 
-import '../thiruthi/niril_kooli_pattiyal_thiruthi.dart';
+import '../thiruthi/pattiyal/niril_kooli_pattiyal_thiruthi.dart';
 
 /// Coolie invoice list — real DB-backed view.
 /// Shows invoices grouped by business profile with search, selection, and

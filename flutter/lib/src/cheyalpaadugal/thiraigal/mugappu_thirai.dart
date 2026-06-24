@@ -10,7 +10,7 @@ import '../niril_kooli/kaatchi/thiraigal/kooli_mugappu_thirai.dart';
 import '../niril_podhu/kaatchi/koorugal/vanakkam_pill.dart';
 import '../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../niril_pattu/kaatchi/thiruthi/pattiyal/niril_pattu_pattiyal_thiruthi.dart';
-import '../niril_kooli/kaatchi/thiruthi/niril_kooli_pattiyal_thiruthi.dart';
+import '../niril_kooli/kaatchi/thiruthi/pattiyal/niril_kooli_pattiyal_thiruthi.dart';
 
 class MugappuPage extends ConsumerWidget {
   const MugappuPage({super.key});

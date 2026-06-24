@@ -11,7 +11,7 @@ import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../koorugal/meladukkugal/elvan_cheyal_meladukku.dart';
 import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 import '../../../niril_podhu/tharavuru/seluthi_vagai.dart';
-import '../thiruthi/niril_kooli_patrucheettu_thiruthi.dart';
+import '../thiruthi/patrucheettu/niril_kooli_patrucheettu_thiruthi.dart';
 
 /// Coolie Receipt List — real DB-backed view showing payment receipts.
 /// Completely separate from invoice list.
