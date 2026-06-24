@@ -153,19 +153,26 @@ class KooliVanigarKooru extends ConsumerWidget {
         ],
       );
 
+      final showCompanySelector = profiles.length > 1;
+
       if (isDesktop) {
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(flex: 5, child: customerColumn),
-            const SizedBox(width: 24),
-            Expanded(flex: 7, child: companyColumn),
+            if (showCompanySelector) ...[
+              const SizedBox(width: 24),
+              Expanded(flex: 7, child: companyColumn),
+            ],
           ],
         );
       }
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [customerColumn, companyColumn],
+        children: [
+          customerColumn,
+          if (showCompanySelector) companyColumn,
+        ],
       );
     });
   }

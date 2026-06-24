@@ -211,6 +211,7 @@ class PattuVanigargalKooru extends ConsumerWidget {
   // ── Profile Dropdown ──
   Widget _buildProfileDropdown(BuildContext context, WidgetRef ref) {
     final profiles = ref.watch(NiruvanaTharavugalListProvider);
+    if (profiles.length <= 1) return const SizedBox.shrink();
     final cs = Theme.of(context).colorScheme;
 
     return Padding(

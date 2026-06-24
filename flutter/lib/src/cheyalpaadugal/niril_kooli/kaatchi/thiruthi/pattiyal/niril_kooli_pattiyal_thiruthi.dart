@@ -88,6 +88,22 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     } else {
       _tryRestoreDraft();
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Auto-select if exactly 1 profile (no dropdown needed)
+      if (!_isEditing && _selectedNiruvanamId == null) {
+        final profiles = ref.read(NiruvanaTharavugalListProvider);
+        if (profiles.length == 1) {
+          setState(() {
+            _selectedProfile = profiles.first;
+            _selectedNiruvanamId = profiles.first.id;
+            _profilePrefix = profiles.first.kurumPeyar.isNotEmpty
+                ? profiles.first.kurumPeyar
+                : 'CB';
+          });
+          _computePreviewBillNumber();
+        }
+      }
+    });
   }
 
   void _loadEditingData() {
