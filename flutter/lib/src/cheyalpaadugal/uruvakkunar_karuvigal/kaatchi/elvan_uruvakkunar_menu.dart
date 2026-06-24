@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
-import '../../ullnuzhaivu/kaatchi/koorugal/ullnuzhaivu_koorugal.dart';
+import '../../ulnuzhaivu/kaatchi/koorugal/ullnuzhaivu_koorugal.dart';
 import '../tharavu/sodhanai_tharavu_uruvakki.dart';
 
 /// A global floating developer menu that only appears in Debug mode.

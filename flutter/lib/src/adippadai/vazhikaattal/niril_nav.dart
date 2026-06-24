@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../cheyalpaadugal/chattagam/kaatchi/kanini/elvan_kanini_chattagam.dart';
-import '../../cheyalpaadugal/chattagam/kaatchi/kaipaesi/koorugal/elvan_thirai_vazhi.dart';
+import '../../cheyalpaadugal/chattagam/kaatchi/kaippaesi/koorugal/elvan_thirai_vazhi.dart';
 
 /// Industry-standard navigation helper that automatically routes page pushes
 /// through the correct navigator based on the current layout.

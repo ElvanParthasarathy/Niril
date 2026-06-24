@@ -6,8 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import 'elvan_amaippu_pagudhi.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
-import '../../../../koorugal/meladukkugal/elvan_cheyal_meladukku.dart';
-import '../../../../koorugal/meladukkugal/elvan_aetrum_meladukku.dart';
+import '../../../../koorugal/maeladukkugal/elvan_cheyal_meladukku.dart';
+import '../../../../koorugal/maeladukkugal/elvan_aetrum_meladukku.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../../adippadai/viruppangal_paniyagam.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
@@ -16,8 +16,8 @@ import '../../../../adippadai/thoatra_vazhanguthi.dart';
 import '../../../../adippadai/vazhikaattal/navigation_provider.dart';
 import '../../../../adippadai/panigal/niril_backup_service.dart';
 import '../../tharavu/vaniga_tharavugal_provider.dart';
-import '../../../ullnuzhaivu/kaatchi/thiraigal/ullnuzhaivu_thirai.dart';
-import '../../../ullnuzhaivu/kaatchi/thiraigal/nalvaravu_thirai.dart';
+import '../../../ulnuzhaivu/kaatchi/thiraigal/ullnuzhaivu_thirai.dart';
+import '../../../ulnuzhaivu/kaatchi/thiraigal/nalvaravu_thirai.dart';
 
 class AccountSecuritySection extends ConsumerWidget {
   const AccountSecuritySection({super.key});

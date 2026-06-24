@@ -8,7 +8,7 @@ import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/nilaimai/thaedal_nilaimai.dart';
 import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
-import '../../../../koorugal/meladukkugal/elvan_cheyal_meladukku.dart';
+import '../../../../koorugal/maeladukkugal/elvan_cheyal_meladukku.dart';
 import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 import '../../../niril_podhu/tharavuru/seluthi_vagai.dart';
 import '../thiruthi/patrucheettu/niril_pattu_patrucheettu_thiruthi.dart';

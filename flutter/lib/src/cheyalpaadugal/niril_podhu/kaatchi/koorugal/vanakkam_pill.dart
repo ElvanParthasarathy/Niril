@@ -3,7 +3,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../ullnuzhaivu/kaatchi/muraimai_thaervu_thirai.dart';
+import '../../../ulnuzhaivu/kaatchi/muraimai_thaervu_thirai.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/panigal/seyali_oaviyangal.dart';
 import '../../../../adippadai/tharavuru/seyali_murai.dart';

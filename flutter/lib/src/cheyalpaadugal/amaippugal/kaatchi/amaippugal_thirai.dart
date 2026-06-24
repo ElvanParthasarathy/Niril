@@ -10,7 +10,7 @@ import '../../../adippadai/panigal/seyali_oaviyangal.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../adippadai/tharavuru/seyali_murai.dart';
-import '../../chattagam/kaatchi/kaipaesi/elvan_utpakkach_chattagam.dart';
+import '../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
 import 'thiraigal/vaniga_amaippugal_thirai.dart';
 import 'thiraigal/mugavari_thirai.dart';
 import 'thiraigal/vangi_thirai.dart';
@@ -27,7 +27,7 @@ import 'thiraigal/seyali_patri_thirai.dart';
 import 'thiraigal/payanar_amaippugal_thirai.dart';
 
 import '../../chattagam/kaatchi/kanini/elvan_kanini_utpakkach_chattagam.dart';
-import '../../ullnuzhaivu/kaatchi/muraimai_thaervu_thirai.dart';
+import '../../ulnuzhaivu/kaatchi/muraimai_thaervu_thirai.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});

@@ -10,12 +10,12 @@ import 'src/adippadai/viruppangal_paniyagam.dart';
 import 'src/adippadai/thoatra_vazhanguthi.dart';
 import 'src/adippadai/nilaimai/seyali_nilaimai.dart';
 import 'src/adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import 'src/cheyalpaadugal/ullnuzhaivu/kaatchi/muraimai_thaervu_thirai.dart';
-import 'src/cheyalpaadugal/ullnuzhaivu/kaatchi/thiraigal/nalvaravu_thirai.dart';
-import 'src/cheyalpaadugal/ullnuzhaivu/kaatchi/thiraigal/nalvaravu_thirai_amaippu.dart';
+import 'src/cheyalpaadugal/ulnuzhaivu/kaatchi/muraimai_thaervu_thirai.dart';
+import 'src/cheyalpaadugal/ulnuzhaivu/kaatchi/thiraigal/nalvaravu_thirai.dart';
+import 'src/cheyalpaadugal/ulnuzhaivu/kaatchi/thiraigal/nalvaravu_thirai_amaippu.dart';
 import 'src/adippadai/panigal/niril_backup_service.dart';
 import 'src/adippadai/panigal/elvan_pizhaipadhivu.dart';
-import 'src/cheyalpaadugal/ullnuzhaivu/kaatchi/thiraigal/anumadhi_kaavalar_thirai.dart';
+import 'src/cheyalpaadugal/ulnuzhaivu/kaatchi/thiraigal/anumadhi_kaavalar_thirai.dart';
 
 import 'src/cheyalpaadugal/chattagam/kaatchi/pinnaetrum_oadu.dart';
 import 'src/cheyalpaadugal/chattagam/kaatchi/niril_seyali_thirai.dart';

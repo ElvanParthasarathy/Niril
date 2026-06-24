@@ -38,11 +38,11 @@ import '../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
 import '../../amaippugal/kaatchi/amaippugal_thirai.dart';
 import '../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
 
-import 'kaipaesi/elvan_chattagam.dart';
-import 'kaipaesi/elvan_kizh_pattai.dart';
-import '../../ullnuzhaivu/kaatchi/koorugal/ullnuzhaivu_koorugal.dart';
-import 'kaipaesi/koorugal/elvan_meladukku_pattiyal.dart';
-import 'kaipaesi/koorugal/elvan_mel_pattai_chinnam.dart';
+import 'kaippaesi/elvan_chattagam.dart';
+import 'kaippaesi/elvan_kizh_pattai.dart';
+import '../../ulnuzhaivu/kaatchi/koorugal/ullnuzhaivu_koorugal.dart';
+import 'kaippaesi/koorugal/elvan_meladukku_pattiyal.dart';
+import 'kaippaesi/koorugal/elvan_mel_pattai_chinnam.dart';
 import 'kanini/elvan_kanini_chattagam.dart';
 import 'kanini/elvan_kanini_karuvipattai.dart';
 import '../../../adippadai/vazhikaattal/niril_nav.dart';

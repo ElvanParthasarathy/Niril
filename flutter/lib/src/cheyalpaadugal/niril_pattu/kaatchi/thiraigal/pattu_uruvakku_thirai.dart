@@ -6,8 +6,8 @@ import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/vazhikaattal/navigation_provider.dart';
 import '../../../../adippadai/vazhikaattal/navigation_destination.dart';
-import '../../../chattagam/kaatchi/kaipaesi/koorugal/elvan_maatri.dart';
-import '../../../chattagam/kaatchi/kaipaesi/elvan_kizh_pattai.dart';
+import '../../../chattagam/kaatchi/kaippaesi/koorugal/elvan_maatri.dart';
+import '../../../chattagam/kaatchi/kaippaesi/elvan_kizh_pattai.dart';
 import 'pattu_pattiyalgal_thirai.dart';
 import 'pattu_patrucheettugal_thirai.dart';
 

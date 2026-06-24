@@ -6,7 +6,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
-import '../../../../koorugal/meladukkugal/elvan_cheyal_meladukku.dart';
+import '../../../../koorugal/maeladukkugal/elvan_cheyal_meladukku.dart';
 import '../../kalanjiyam/porul_nilaimai.dart';
 import '../../kalanjiyam/vanigar_nilaimai.dart';
 

@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/panigal/niril_backup_service.dart';
 import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
-import '../../../../koorugal/meladukkugal/elvan_aetrum_meladukku.dart';
+import '../../../../koorugal/maeladukkugal/elvan_aetrum_meladukku.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';

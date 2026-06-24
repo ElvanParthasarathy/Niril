@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:elvan_niril/src/cheyalpaadugal/chattagam/kaatchi/kaipaesi/elvan_chattagam.dart';
-import '../../cheyalpaadugal/chattagam/kaatchi/kaipaesi/koorugal/elvan_moodu_pothan.dart';
+import 'package:elvan_niril/src/cheyalpaadugal/chattagam/kaatchi/kaippaesi/elvan_chattagam.dart';
+import '../../cheyalpaadugal/chattagam/kaatchi/kaippaesi/koorugal/elvan_moodu_pothan.dart';
 
 /// A wrapper around [ElvanShell] exclusively designed for fullscreen popups (modals).
 /// It inherently injects the [ElvanCloseButton] into the shell's physics engine

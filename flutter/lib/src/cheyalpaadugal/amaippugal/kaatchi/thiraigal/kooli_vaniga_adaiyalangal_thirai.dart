@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
-import '../../../chattagam/kaatchi/kaipaesi/elvan_utpakkach_chattagam.dart';
+import '../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
 import '../koorugal/elvan_amaippu_pagudhi.dart';
 import '../koorugal/elvan_amaippu_thirutha_attai.dart';
 import '../../tharavu/vaniga_tharavugal_provider.dart';

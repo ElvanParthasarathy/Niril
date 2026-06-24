@@ -3,7 +3,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
-import '../../../../koorugal/meladukkugal/elvan_cheyal_meladukku.dart';
+import '../../../../koorugal/maeladukkugal/elvan_cheyal_meladukku.dart';
 
 void showElvanDeleteConfirmModal(
     BuildContext context, WidgetRef ref, VoidCallback onDelete) {

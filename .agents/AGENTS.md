@@ -13,7 +13,7 @@
 ## Tanglish Variable Naming Policy for UI/Keys
 1. **Use Navil Vili Transliteration**: When creating new variable names or localization keys (e.g., in Flutter), transliterate the Pure Tamil translation into English letters.
 2. **Allophony / Voicing Rules**: Retain natural phonetic softening for Tamil Stop Consonants (e.g., க inside a word becomes g not k, த becomes dh, ப becomes b). Example: மாம்பழம் -> maambazham, காகம் -> kaagam.
-3. **Compound Word Exceptions**: In compound words (புணர்ச்சி), the second word's starting consonant should remain unvoiced (hard). E.g., கை + பேசி = kaipaesi (NOT kaibaesi). மண் + பானை = manpaanai (NOT manbaanai). Use overrides when generating these.
+3. **Compound Word Exceptions**: In compound words (புணர்ச்சி), the second word's starting consonant should remain unvoiced (hard). E.g., கை + பேசி = kaippaesi (NOT kaibaesi). மண் + பானை = manpaanai (NOT manbaanai). Use overrides when generating these.
 4. **Vowel Preservation (Nedil)**: Always preserve extended vowels correctly: ஆ -> aa, ஈ -> ee, ஊ -> oo, ஓ -> oa. E.g. ஓவியம் -> oaviyam.
 5. **Shrink Long Keys**: Do not use massive sentences as keys. Shrink them to 2-3 essential words (e.g., pattiyalGstElidhu).
 6. **Button Suffix**: If the key represents a button, always append Ptn (Pothan) at the end, replacing any Btn.
@@ -21,7 +21,7 @@
 ## Standardized Database & Core Entity Names (Rulebook)
 To ensure absolute consistency across databases, JSON payloads, and core models, **ALWAYS** use the following strict Tanglish spellings for these specific concepts. DO NOT generate alternative spellings (like minnanchal, ovuru, or tholaipesi):
 - **Email**: `minnanjal` (மின்னஞ்சல்) [NOT minnanchal]
-- **Phone**: `tholaipaesi` (தொலைபேசி) [NOT tholaipesi]
+- **Phone**: `tholaippaesi` (தொலைப்பேசி) [NOT tholaipesi, tholaipaesi]
 - **Logo / Image**: `oavuru` (ஓவுரு) [NOT ovuru]
 - **Wide Logo**: `agalaOavuru` (அகல ஓவுரு)
 - **Zip / PIN Code**: `anjalKuriyeedu` (அஞ்சல்குறியீடு) [NOT anchalkuriyeedu]
@@ -49,7 +49,7 @@ This project STRICTLY follows a Pure Tanglish (Navil Vili) folder and file archi
 - **Repositories**: `kalanjiyam/`
 - **Data Source**: `tharavu_moolam/`
 - **Desktop**: `kanini/`
-- **Mobile**: `kaipaesi/`
+- **Mobile**: `kaippaesi/`
 - **Reports**: `arikkaigal/`
 - **Onboarding**: `varavaerpu_padigal/`
 
@@ -58,11 +58,11 @@ When creating new files, use the Tanglish suffix:
 - Do NOT use `_page.dart` or `_screen.dart`. USE `_thirai.dart`.
 - Do NOT use `_widget.dart` or `_component.dart`. USE `_kooru.dart` or just a descriptive Tanglish name like `elvan_pothan.dart` (Elvan Button).
 - Do NOT use `_model.dart`. USE `_tharavuru.dart`.
-- Do NOT use `_dialog.dart` or `_modal.dart` or `_bottom_sheet.dart`. USE `_meladukku.dart` (Overlay).
+- Do NOT use `_dialog.dart` or `_modal.dart` or `_bottom_sheet.dart`. USE `_maeladukku.dart` (Overlay).
 
 Example valid paths:
-- `lib/src/cheyalpaadugal/ullnuzhaivu/kaatchi/thiraigal/ullnuzhaivu_thirai.dart` (Login Screen)
-- `lib/src/koorugal/meladukkugal/elvan_azhippu_urudhi_meladukku.dart` (Delete Confirm Modal)
+- `lib/src/cheyalpaadugal/ulnuzhaivu/kaatchi/thiraigal/ulnuzhaivu_thirai.dart` (Login Screen)
+- `lib/src/koorugal/maeladukkugal/elvan_azhippu_urudhi_meladukku.dart` (Delete Confirm Modal)
 - `lib/src/adippadai/tharavuthalam/app_database.dart` (Database - App layer)
 
 ### Editor Folder Structure (thiruthi/)
@@ -96,4 +96,4 @@ kaatchi/
 - **Target**: 200–400 lines per file.
 - **Acceptable**: Up to 600 lines for complex stateful editors.
 - **Action required**: If a file exceeds 600 lines, extract sub-components into a `koorugal/` subfolder.
-- **Extract candidates**: Build sections, row builders, modals, and data load/save logic (into a `_uthavi.dart` helper).
+- **Extract candidates**: Build sections, row builders, modals, and data load/save logic (into a `_udhavi.dart` helper).

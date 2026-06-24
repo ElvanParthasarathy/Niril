@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../../../chattagam/kaatchi/kaipaesi/elvan_utpakkach_chattagam.dart';
+import '../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
 import '../koorugal/elvan_amaippu_pagudhi.dart';
 
 class SeyaliAmaippugalPage extends ConsumerWidget {
