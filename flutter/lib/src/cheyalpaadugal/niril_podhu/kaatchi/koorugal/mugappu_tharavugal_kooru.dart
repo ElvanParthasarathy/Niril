@@ -1,0 +1,470 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+
+import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
+import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
+
+// ── Stats Card (Bento Grid Item) ────────────────────────────────────────────
+
+/// A flat, monochrome stats card matching React's MugappuLayout design.
+/// Used in the bento grid on the home screen.
+class ElvanStatsCard extends StatelessWidget {
+  const ElvanStatsCard({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.value,
+    this.isLoading = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+  final bool isLoading;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      padding: const EdgeInsets.all(20),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isNarrow = constraints.maxWidth < 160;
+
+          final iconBox = Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : const Color(0xFFF5F5F5),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, size: 24,
+                color: isDark ? Colors.white : Colors.black),
+          );
+
+          final textContent = Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white54 : Colors.black54,
+                ),
+              ),
+              const SizedBox(height: 4),
+              if (isLoading)
+                Container(
+                  width: 100,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.black.withValues(alpha: 0.06),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                )
+              else
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: _adaptiveFontSize(value),
+                    fontWeight: FontWeight.w800,
+                    color: isDark ? Colors.white : Colors.black,
+                    height: 1.2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  maxLines: 2,
+                ),
+            ],
+          );
+
+          // Column layout on narrow mobile, Row on wider screens
+          if (isNarrow) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                iconBox,
+                const SizedBox(height: 12),
+                textContent,
+              ],
+            );
+          }
+
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              iconBox,
+              const SizedBox(width: 16),
+              Expanded(child: textContent),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  /// Adaptive font size based on value length (matches React logic)
+  double _adaptiveFontSize(String val) {
+    if (val.length > 14) return 15;
+    if (val.length > 11) return 18;
+    return 24;
+  }
+}
+
+// ── Recent Activity Header ──────────────────────────────────────────────────
+
+class RecentActivityHeader extends StatelessWidget {
+  const RecentActivityHeader({
+    super.key,
+    required this.onSeeAll,
+  });
+
+  final VoidCallback onSeeAll;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 6, right: 6, top: 8, bottom: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Consumer(
+            builder: (context, ref, _) => Text(
+              K.arugilSeyalgal.tr(context, ref),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+            ),
+          ),
+          Consumer(
+            builder: (context, ref, _) => GestureDetector(
+              onTap: onSeeAll,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    K.anaiththaiyumPaarPtn.tr(context, ref),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white54 : Colors.black54,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    CupertinoIcons.chevron_right,
+                    size: 16,
+                    color: isDark ? Colors.white54 : Colors.black54,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Recent Invoice Card ─────────────────────────────────────────────────────
+
+/// Pixel-perfect port of React's ElvanCard + renderRecentItem.
+/// Shows: index circle + customer name + invoice # + date + amount.
+class ElvanRecentCard extends StatefulWidget {
+  const ElvanRecentCard({
+    super.key,
+    required this.index,
+    required this.pattiyal,
+    required this.onTap,
+  });
+
+  final int index;
+  final PatrucheettuEntry pattiyal;
+  final VoidCallback onTap;
+
+  @override
+  State<ElvanRecentCard> createState() => _ElvanRecentCardState();
+}
+
+class _ElvanRecentCardState extends State<ElvanRecentCard> {
+  bool _isPressed = false;
+  static final _dateFormat = DateFormat('dd/MM/yyyy');
+  static final _currencyFormat =
+      NumberFormat.currency(locale: 'en_IN', symbol: '₹');
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final p = widget.pattiyal;
+    final amountStr = _currencyFormat.format(p.mothaThogai);
+
+    return GestureDetector(
+      onTap: widget.onTap,
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) => setState(() => _isPressed = false),
+      onTapCancel: () => setState(() => _isPressed = false),
+      child: AnimatedScale(
+        scale: _isPressed ? 0.985 : 1.0,
+        duration: _isPressed
+            ? const Duration(milliseconds: 100)
+            : const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.03)
+                : Colors.white,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Index circle
+              Container(
+                width: 28,
+                height: 28,
+                margin: const EdgeInsets.only(top: 1),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.12)
+                      : Colors.black.withValues(alpha: 0.08),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    (widget.index + 1).toString().padLeft(2, '0'),
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? Colors.white : Colors.black,
+                      height: 1,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Customer name + chevron
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            p.vanigarPeyar.isNotEmpty
+                                ? p.vanigarPeyar
+                                : '-',
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Icon(
+                          CupertinoIcons.chevron_right,
+                          size: 18,
+                          color: isDark
+                              ? const Color(0xFF555555)
+                              : const Color(0xFFAAAAAA),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    // Invoice # + Date
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(text: p.patrucheettuEn),
+                          TextSpan(
+                            text: '  •  ',
+                            style: TextStyle(
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withValues(alpha: 0.4),
+                            ),
+                          ),
+                          TextSpan(
+                              text: _dateFormat.format(p.pattiyalNaal)),
+                        ],
+                      ),
+                      style: TextStyle(
+                        fontSize: 13.5,
+                        color: isDark ? Colors.white54 : Colors.black54,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 2),
+                    // Amount row
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        const Spacer(),
+                        Text(
+                          amountStr,
+                          style: TextStyle(
+                            fontSize: amountStr.length > 11 ? 12.5 : 15,
+                            fontWeight: FontWeight.w800,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Empty State ─────────────────────────────────────────────────────────────
+
+class MugappuEmptyState extends StatelessWidget {
+  const MugappuEmptyState({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 80),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              CupertinoIcons.doc_text,
+              size: 48,
+              color: isDark
+                  ? const Color(0xFF475569)
+                  : const Color(0xFFCBD5E1),
+            ),
+            const SizedBox(height: 16),
+            Consumer(
+              builder: (context, ref, _) => Text(
+                K.pattiyalgalIllai.tr(context, ref),
+                style: TextStyle(
+                  fontSize: 15,
+                  color: isDark ? Colors.white38 : Colors.black38,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Loading Skeleton ────────────────────────────────────────────────────────
+
+class MugappuLoadingSkeleton extends StatelessWidget {
+  const MugappuLoadingSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Column(
+      children: List.generate(4, (i) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.03)
+                  : Colors.white,
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Row(
+              children: [
+                // Circle skeleton
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.black.withValues(alpha: 0.06),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Text skeleton
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 180,
+                        height: 16,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.08)
+                              : Colors.black.withValues(alpha: 0.06),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        width: 100,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.black.withValues(alpha: 0.04),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Amount skeleton
+                Container(
+                  width: 60,
+                  height: 18,
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.black.withValues(alpha: 0.06),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }),
+    );
+  }
+}
