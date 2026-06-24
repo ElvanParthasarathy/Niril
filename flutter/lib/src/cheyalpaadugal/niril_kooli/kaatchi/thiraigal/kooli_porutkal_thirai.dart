@@ -331,76 +331,77 @@ class _CooliePorulCard extends StatelessWidget {
                     : Colors.white),
             borderRadius: BorderRadius.circular(24),
           ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Index circle or selection checkbox
-            if (isSelecting)
-              Icon(
-                isSelected
-                    ? CupertinoIcons.checkmark_square_fill
-                    : CupertinoIcons.square,
-                size: 24,
-                color: isSelected
-                    ? Theme.of(context).colorScheme.primary
-                    : (isDark ? Colors.white38 : Colors.black38),
-              )
-            else
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.12)
-                      : Colors.black.withValues(alpha: 0.08),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  (index + 1).toString().padLeft(2, '0'),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 11.2,
-                    color: isDark ? Colors.white : Colors.black,
-                    height: 1,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Index circle or selection checkbox
+              if (isSelecting)
+                Icon(
+                  isSelected
+                      ? CupertinoIcons.checkmark_square_fill
+                      : CupertinoIcons.square,
+                  size: 24,
+                  color: isSelected
+                      ? Theme.of(context).colorScheme.primary
+                      : (isDark ? Colors.white38 : Colors.black38),
+                )
+              else
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.12)
+                        : Colors.black.withValues(alpha: 0.08),
                   ),
-                ),
-              ),
-
-            const SizedBox(width: 12),
-
-            // Product name
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    primary,
-                    style: const TextStyle(
-                      fontSize: 15.2,
-                      fontWeight: FontWeight.w700,
+                  alignment: Alignment.center,
+                  child: Text(
+                    (index + 1).toString().padLeft(2, '0'),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 11.2,
+                      color: isDark ? Colors.white : Colors.black,
+                      height: 1,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  if (secondary.isNotEmpty) ...[
-                    const SizedBox(height: 2),
+                ),
+
+              const SizedBox(width: 12),
+
+              // Product name
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                     Text(
-                      secondary,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: isDark ? Colors.white54 : Colors.black54,
+                      primary,
+                      style: const TextStyle(
+                        fontSize: 15.2,
+                        fontWeight: FontWeight.w700,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
+                    if (secondary.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        secondary,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: isDark ? Colors.white54 : Colors.black54,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

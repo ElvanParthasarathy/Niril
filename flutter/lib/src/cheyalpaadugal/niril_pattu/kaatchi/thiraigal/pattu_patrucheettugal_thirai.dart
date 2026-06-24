@@ -347,7 +347,7 @@ class _PatruCard extends StatelessWidget {
                   )
                 : null,
           ),
-        child: Row(
+          child: Row(
           children: [
             // Selection checkbox
             if (isSelecting) ...[
@@ -453,7 +453,7 @@ class _PatruCard extends StatelessWidget {
             ],
           ],
         ),
-      ),
+        ),
       ),
     );
   }

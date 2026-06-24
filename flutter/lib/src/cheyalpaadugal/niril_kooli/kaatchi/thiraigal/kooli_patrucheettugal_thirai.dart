@@ -347,111 +347,112 @@ class _PatruCard extends StatelessWidget {
                   )
                 : null,
           ),
-        child: Row(
-          children: [
-            // Selection checkbox
-            if (isSelecting) ...[
-              Icon(
-                isSelected
-                    ? CupertinoIcons.checkmark_circle_fill
-                    : CupertinoIcons.circle,
-                size: 22,
-                color: isSelected
-                    ? Theme.of(context).colorScheme.primary
-                    : (isDark ? Colors.white30 : Colors.black26),
-              ),
-              const SizedBox(width: 12),
-            ],
-            // Content
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Row 1: Customer name + date
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          patru.vanigarPeyar.isNotEmpty
-                              ? patru.vanigarPeyar
-                              : patru.patruEn,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        dateFormat.format(patru.patruNaal),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: isDark ? Colors.white38 : Colors.black38,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  // Row 2: Receipt number + payment mode badge + amount
-                  Row(
-                    children: [
-                      Text(
-                        patru.patruEn,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: isDark ? Colors.white38 : Colors.black45,
-                        ),
-                      ),
-                      if (mode != null) ...[
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: mode
-                                .badgeColor(isDark)
-                                .withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
+          child: Row(
+            children: [
+              // Selection checkbox
+              if (isSelecting) ...[
+                Icon(
+                  isSelected
+                      ? CupertinoIcons.checkmark_circle_fill
+                      : CupertinoIcons.circle,
+                  size: 22,
+                  color: isSelected
+                      ? Theme.of(context).colorScheme.primary
+                      : (isDark ? Colors.white30 : Colors.black26),
+                ),
+                const SizedBox(width: 12),
+              ],
+              // Content
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Row 1: Customer name + date
+                    Row(
+                      children: [
+                        Expanded(
                           child: Text(
-                            mode.tamilLabel,
-                            style: TextStyle(
-                              fontSize: 10,
+                            patru.vanigarPeyar.isNotEmpty
+                                ? patru.vanigarPeyar
+                                : patru.patruEn,
+                            style: const TextStyle(
+                              fontSize: 15,
                               fontWeight: FontWeight.w600,
-                              color: mode.badgeColor(isDark),
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          dateFormat.format(patru.patruNaal),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isDark ? Colors.white38 : Colors.black38,
                           ),
                         ),
                       ],
-                      const Spacer(),
-                      Text(
-                        currencyFormat.format(patru.thogai),
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: isDark
-                              ? Colors.green.shade300
-                              : Colors.green.shade700,
+                    ),
+                    const SizedBox(height: 4),
+                    // Row 2: Receipt number + payment mode badge + amount
+                    Row(
+                      children: [
+                        Text(
+                          patru.patruEn,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isDark ? Colors.white38 : Colors.black45,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        if (mode != null) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: mode
+                                  .badgeColor(isDark)
+                                  .withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              mode.tamilLabel,
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: mode.badgeColor(isDark),
+                              ),
+                            ),
+                          ),
+                        ],
+                        const Spacer(),
+                        Text(
+                          currencyFormat.format(patru.thogai),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: isDark
+                                ? Colors.green.shade300
+                                : Colors.green.shade700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            // Chevron
-            if (!isSelecting) ...[
-              const SizedBox(width: 8),
-              Icon(
-                CupertinoIcons.chevron_right,
-                size: 14,
-                color: isDark ? Colors.white24 : Colors.black26,
-              ),
+              // Chevron
+              if (!isSelecting) ...[
+                const SizedBox(width: 8),
+                Icon(
+                  CupertinoIcons.chevron_right,
+                  size: 14,
+                  color: isDark ? Colors.white24 : Colors.black26,
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

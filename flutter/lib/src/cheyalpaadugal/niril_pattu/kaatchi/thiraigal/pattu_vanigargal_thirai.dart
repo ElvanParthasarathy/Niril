@@ -299,7 +299,7 @@ class _SilkVanigarCard extends StatelessWidget {
                     : Colors.white),
             borderRadius: BorderRadius.circular(24),
           ),
-        child: Row(
+          child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Index circle or selection checkbox
@@ -407,7 +407,7 @@ class _SilkVanigarCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
+        ),
       ),
     );
   }
