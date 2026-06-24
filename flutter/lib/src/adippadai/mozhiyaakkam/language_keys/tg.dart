@@ -279,7 +279,7 @@ const Map<String, String> tg = {
   'payanarAmaippugal': 'Payanar Amaippugal',
   'mudhalPeyar': 'Mudhal Peyar',
   'irudhiPeyar': 'Irudhi Peyar',
-  'pirandhaThaedhi': 'Pirandha Thaedhi',
+  'pirandhaThaedhi': 'Pirandha Naal',
   'payanarTharavugalaiMaetriduPtn': 'Chaemi',
   'payanarVilakkam': 'Ippeyar Mugappu Thiraiyil Thoandrum.',
 
@@ -296,7 +296,7 @@ const Map<String, String> tg = {
   'urupadigal': 'Urupadigal',
   'mothangal': 'Mothangal',
   'vanigarPeyarThaedu': 'Vanigar Peyar',
-  'saemiththaTharavugal': 'Saemiththa Tharavugal',
+  'saemiththaTharavugal': 'Chaemitha Tharavugal',
   'niruvanaThannuru': 'Niruvana Thannuru',
   'maanilamThaerodhu': 'Maanilam Thaer',
   'vazhangalIdam': 'Vazhangal Idam',
