@@ -692,12 +692,30 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                       const SizedBox(width: 8),
                       InkWell(
                         borderRadius: BorderRadius.circular(12),
-                        onTap: () => setState(() {
-                          _isInvNumberEditing = !_isInvNumberEditing;
-                          if (!_isInvNumberEditing) {
-                            _invoiceNumberOverride = _invNumberController.text.trim();
-                          }
-                        }),
+                        onTap: () {
+                          setState(() {
+                            _isInvNumberEditing = !_isInvNumberEditing;
+                            if (_isInvNumberEditing) {
+                              // Extract just the number part for editing
+                              final current = _invoiceNumberOverride.isNotEmpty
+                                  ? _invoiceNumberOverride
+                                  : _previewInvoiceNumber;
+                              final parts = current.split('-');
+                              _invNumberController.text =
+                                  parts.length > 1 ? parts.sublist(1).join('-') : parts.last;
+                            } else {
+                              // Reconstruct full invoice number
+                              final numPart = _invNumberController.text.trim();
+                              if (numPart.isNotEmpty) {
+                                final prefix = _selectedProfile?.kurumPeyar.isNotEmpty == true
+                                    ? _selectedProfile!.kurumPeyar
+                                    : 'INV';
+                                _invoiceNumberOverride = '$prefix-$numPart';
+                              }
+                              _hasUnsavedChanges = true;
+                            }
+                          });
+                        },
                         child: Padding(
                           padding: const EdgeInsets.all(4),
                           child: Icon(
@@ -712,21 +730,53 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                 ),
                 const SizedBox(height: 6),
                 if (_isInvNumberEditing)
-                  TextField(
-                    controller: _invNumberController,
-                    decoration: InputDecoration(
-                      hintText: 'SJPS-01',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  Row(
+                    children: [
+                      // Locked prefix pill
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 14),
+                        decoration: BoxDecoration(
+                          color: cs.surfaceContainerHighest,
+                          borderRadius: const BorderRadius.horizontal(
+                              left: Radius.circular(12)),
+                          border: Border.all(
+                            color: cs.outline.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Text(
+                          '${_selectedProfile?.kurumPeyar.isNotEmpty == true ? _selectedProfile!.kurumPeyar : "INV"}-',
+                          style: tt.bodyLarge?.copyWith(
+                            color: cs.onSurfaceVariant,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
-                      isDense: true,
-                    ),
-                    onChanged: (v) {
-                      _invoiceNumberOverride = v.trim();
-                      _hasUnsavedChanges = true;
-                    },
+                      // Editable number part
+                      Expanded(
+                        child: TextField(
+                          controller: _invNumberController,
+                          keyboardType: TextInputType.number,
+                          autofocus: true,
+                          decoration: InputDecoration(
+                            hintText: '01',
+                            border: OutlineInputBorder(
+                              borderRadius: const BorderRadius.horizontal(
+                                  right: Radius.circular(12)),
+                              borderSide: BorderSide(
+                                color: cs.outline.withValues(alpha: 0.3),
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 14),
+                            isDense: true,
+                          ),
+                          onChanged: (v) {
+                            _hasUnsavedChanges = true;
+                          },
+                        ),
+                      ),
+                    ],
                   )
                 else
                   ElvanThiruthiAttai(
