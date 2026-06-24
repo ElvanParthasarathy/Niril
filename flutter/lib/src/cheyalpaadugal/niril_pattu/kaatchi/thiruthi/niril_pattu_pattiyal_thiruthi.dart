@@ -1327,9 +1327,14 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   Widget _itemField(
       String label, double value, ValueChanged<String> onChanged,
       {bool isWeight = false}) {
-    final controller = TextEditingController(
-      text: value == 0 ? '' : value.toString(),
-    );
+    // Show clean number: 6 not 6.0, but keep 6.5 as-is
+    String displayText = '';
+    if (value != 0) {
+      displayText = value == value.truncateToDouble()
+          ? value.toInt().toString()
+          : value.toString();
+    }
+    final controller = TextEditingController(text: displayText);
     return TextFormField(
       controller: controller,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
