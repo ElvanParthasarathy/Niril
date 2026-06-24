@@ -1323,7 +1323,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   }
 
   /// Borderless numeric field used inside item cards.
-  /// When [isWeight] is true, formats to 3 decimals on blur (grams precision).
+  /// Updates model only on blur (not every keystroke) to avoid lag.
   Widget _itemField(
       String label, double value, ValueChanged<String> onChanged,
       {bool isWeight = false}) {
@@ -1334,25 +1334,11 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           ? value.toInt().toString()
           : value.toString();
     }
-    final controller = TextEditingController(text: displayText);
-    return TextFormField(
-      controller: controller,
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      decoration: InputDecoration(
-        labelText: label,
-        suffixText: isWeight ? 'kg' : null,
-        border: InputBorder.none,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-        isDense: true,
-      ),
-      onChanged: onChanged,
-      onEditingComplete: isWeight
-          ? () {
-              final v = double.tryParse(controller.text) ?? 0;
-              controller.text = v > 0 ? v.toStringAsFixed(3) : '';
-            }
-          : null,
+    return _ItemFieldWidget(
+      label: label,
+      initialText: displayText,
+      isWeight: isWeight,
+      onValueCommitted: onChanged,
     );
   }
 
@@ -1631,6 +1617,87 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           _recalculate();
           Navigator.pop(ctx);
         },
+      ),
+    );
+  }
+}
+/// Stateful numeric field that owns its controller + focus node.
+/// Updates the parent model only on blur (not every keystroke) to avoid lag.
+class _ItemFieldWidget extends StatefulWidget {
+  const _ItemFieldWidget({
+    required this.label,
+    required this.initialText,
+    required this.onValueCommitted,
+    this.isWeight = false,
+  });
+
+  final String label;
+  final String initialText;
+  final ValueChanged<String> onValueCommitted;
+  final bool isWeight;
+
+  @override
+  State<_ItemFieldWidget> createState() => _ItemFieldWidgetState();
+}
+
+class _ItemFieldWidgetState extends State<_ItemFieldWidget> {
+  late TextEditingController _controller;
+  late FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialText);
+    _focusNode = FocusNode();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void didUpdateWidget(_ItemFieldWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Only update text if value changed externally AND field is not focused
+    if (!_focusNode.hasFocus && oldWidget.initialText != widget.initialText) {
+      _controller.text = widget.initialText;
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    _focusNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    if (!_focusNode.hasFocus) {
+      // Blur: commit value to parent
+      final text = _controller.text.trim();
+      widget.onValueCommitted(text);
+
+      // Format weight on blur
+      if (widget.isWeight && text.isNotEmpty) {
+        final v = double.tryParse(text) ?? 0;
+        if (v > 0) {
+          _controller.text = v.toStringAsFixed(3);
+        }
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: _controller,
+      focusNode: _focusNode,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      decoration: InputDecoration(
+        labelText: widget.label,
+        suffixText: widget.isWeight ? 'kg' : null,
+        border: InputBorder.none,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+        isDense: true,
       ),
     );
   }
