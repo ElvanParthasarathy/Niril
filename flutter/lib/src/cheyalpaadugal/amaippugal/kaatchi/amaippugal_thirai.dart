@@ -142,7 +142,7 @@ class SettingsHubScreen extends ConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  K.niruvanAmaippugal.tr(context, ref),
+                                  K.niruvanaAmaippugal.tr(context, ref),
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
@@ -239,7 +239,7 @@ class SettingsHubScreen extends ConsumerWidget {
                       icon: CupertinoIcons.briefcase_fill,
                       iconBgColor: iconBgColor,
                       title: K.adaiyaalam.tr(context, ref),
-                      description: K.kooliNiruvanAdaiyaalangal.tr(context, ref),
+                      description: K.kooliNiruvanaAdaiyaalangal.tr(context, ref),
                       onTap: () => _navigateTo(
                           context, const CoolieVanigaAdaiyalangalPage()),
                     )
@@ -248,7 +248,7 @@ class SettingsHubScreen extends ConsumerWidget {
                       icon: CupertinoIcons.briefcase_fill,
                       iconBgColor: iconBgColor,
                       title: K.adaiyaalam.tr(context, ref),
-                      description: K.pattuNiruvanAdaiyaalangal.tr(context, ref),
+                      description: K.pattuNiruvanaAdaiyaalangal.tr(context, ref),
                       onTap: () => _navigateTo(
                           context, const SilkVanigaAdaiyalangalPage()),
                     ),

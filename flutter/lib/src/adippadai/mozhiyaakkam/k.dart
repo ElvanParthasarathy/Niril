@@ -44,14 +44,14 @@ abstract final class K {
   static const niruvanathinPeyar = 'niruvanathinPeyar';
   static const kurugiyaNiruvanaPeyar = 'kurugiyaNiruvanaPeyar';
   static const niruvanam = 'niruvanam';
-  static const niruvanAmaippugal = 'niruvanAmaippugal';
+  static const niruvanaAmaippugal = 'niruvanaAmaippugal';
   static const kooliNiruvanaPeyar = 'kooliNiruvanaPeyar';
   static const adaimozhi = 'adaimozhi';
   static const nirilKooli = 'nirilKooli';
   static const nirilPattu = 'nirilPattu';
   static const adaiyaalam = 'adaiyaalam';
-  static const kooliNiruvanAdaiyaalangal = 'kooliNiruvanAdaiyaalangal';
-  static const pattuNiruvanAdaiyaalangal = 'pattuNiruvanAdaiyaalangal';
+  static const kooliNiruvanaAdaiyaalangal = 'kooliNiruvanaAdaiyaalangal';
+  static const pattuNiruvanaAdaiyaalangal = 'pattuNiruvanaAdaiyaalangal';
 
   // ── Settings & Preferences ──
   static const amaippugal = 'amaippugal';
