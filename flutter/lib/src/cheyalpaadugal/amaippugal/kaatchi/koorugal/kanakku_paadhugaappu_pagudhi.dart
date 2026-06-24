@@ -18,6 +18,10 @@ import '../../../../adippadai/panigal/niril_backup_service.dart';
 import '../../tharavu/niruvana_tharavugal_provider.dart';
 import '../../../ulnuzhaivu/kaatchi/thiraigal/ullnuzhaivu_thirai.dart';
 import '../../../ulnuzhaivu/kaatchi/thiraigal/nalvaravu_thirai.dart';
+import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
+import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
+import '../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
+import '../../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
 
 class AccountSecuritySection extends ConsumerWidget {
   const AccountSecuritySection({super.key});
@@ -40,6 +44,18 @@ class AccountSecuritySection extends ConsumerWidget {
           description: K.ungalTharavaiChaemikkavum.tr(context, ref),
           onTap: () {
             _showBackupFlow(context, ref);
+          },
+        ),
+        ElvanSettingsRow(
+          iconWidget: Icon(
+            CupertinoIcons.arrow_2_circlepath,
+            color: theme.colorScheme.onSurface,
+            size: 20,
+          ),
+          iconBgColor: iconBgColor,
+          title: K.orunginaiSeyaliPtn.tr(context, ref),
+          onTap: () {
+            _showSyncFlow(context, ref);
           },
         ),
         ElvanSettingsRow(
@@ -279,5 +295,30 @@ class AccountSecuritySection extends ConsumerWidget {
         );
       },
     );
+  }
+
+  void _showSyncFlow(BuildContext context, WidgetRef ref) {
+    showElvanLoadingOverlay(
+      context: context,
+      text: K.orunginaikkiRadhu.tr(context, ref),
+    );
+
+    // Invalidate all data providers to force a fresh DB read
+    ref.invalidate(pattiyalgalProvider);
+    ref.invalidate(patrugalProvider);
+    ref.invalidate(porulgalProvider);
+    ref.invalidate(vanigargalProvider);
+    ref.invalidate(currentModeProfilesStreamProvider);
+
+    // Small delay for UX so it doesn't flash instantly
+    Future.delayed(const Duration(milliseconds: 800), () {
+      if (context.mounted) {
+        Navigator.of(context, rootNavigator: true).pop();
+        ElvanSnackbar.show(
+          context,
+          K.orunginaikkappattathu.tr(context, ref),
+        );
+      }
+    });
   }
 }

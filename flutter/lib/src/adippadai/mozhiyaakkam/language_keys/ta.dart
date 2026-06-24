@@ -278,4 +278,9 @@ const Map<String, String> ta = {
   'pirandhaThaedhi': 'பிறந்த தேதி',
   'payanarTharavugalaiMaetriduPtn': 'சேமி',
   'payanarVilakkam': 'இப்பெயர் முகப்புத்திரையில் தோன்றும்.',
+
+  // ── ஒருங்கிணைப்பு ──
+  'orunginaiSeyaliPtn': 'செயலியை ஒருங்கிணை',
+  'orunginaikkiRadhu': 'ஒருங்கிணைக்கிறது...',
+  'orunginaikkappattathu': 'ஒருங்கிணைக்கப்பட்டது!',
 };

@@ -278,4 +278,9 @@ const Map<String, String> en = {
   'pirandhaThaedhi': 'Date of Birth',
   'payanarTharavugalaiMaetriduPtn': 'Save',
   'payanarVilakkam': 'This name will appear on the home screen greeting.',
+
+  // ── Sync ──
+  'orunginaiSeyaliPtn': 'Sync App',
+  'orunginaikkiRadhu': 'Syncing...',
+  'orunginaikkappattathu': 'Synced!',
 };

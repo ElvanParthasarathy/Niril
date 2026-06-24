@@ -312,4 +312,9 @@ abstract final class K {
   static const pirandhaThaedhi = 'pirandhaThaedhi';
   static const payanarTharavugalaiMaetriduPtn = 'payanarTharavugalaiMaetriduPtn';
   static const payanarVilakkam = 'payanarVilakkam';
+
+  // ── Sync ──
+  static const orunginaiSeyaliPtn = 'orunginaiSeyaliPtn';
+  static const orunginaikkiRadhu = 'orunginaikkiRadhu';
+  static const orunginaikkappattathu = 'orunginaikkappattathu';
 }
