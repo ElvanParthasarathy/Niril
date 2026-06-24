@@ -311,22 +311,24 @@ class _SilkPorulCard extends StatelessWidget {
     final primary = porul.porulPeyar[primaryLang] ?? '';
     final secondary = porul.porulPeyar[secondaryLang] ?? '';
 
-    return GestureDetector(
-      onTap: onTap,
-      onLongPress: onLongPress,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? (isDark
-                  ? const Color(0xFF1A1A1A)
-                  : Colors.black.withValues(alpha: 0.04))
-              : (isDark
-                  ? const Color(0xFF111111)
-                  : Colors.white),
-          borderRadius: BorderRadius.circular(24),
-        ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        onLongPress: onLongPress,
+        borderRadius: BorderRadius.circular(24),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? (isDark
+                    ? const Color(0xFF1A1A1A)
+                    : Colors.black.withValues(alpha: 0.04))
+                : (isDark
+                    ? const Color(0xFF111111)
+                    : Colors.white),
+            borderRadius: BorderRadius.circular(24),
+          ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -433,6 +435,7 @@ class _SilkPorulCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }
