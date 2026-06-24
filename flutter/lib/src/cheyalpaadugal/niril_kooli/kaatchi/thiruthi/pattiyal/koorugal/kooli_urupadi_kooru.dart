@@ -97,7 +97,6 @@ class KooliUrupadiKooru extends ConsumerWidget {
                             porulPeyarEn: tamilName.isNotEmpty
                                 ? englishName
                                 : '',
-                            vilai: p.vilai,
                           ));
                         },
                         onRequestAddNew: onRequestAddNewProduct,
