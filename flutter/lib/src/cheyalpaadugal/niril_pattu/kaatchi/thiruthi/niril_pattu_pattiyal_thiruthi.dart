@@ -13,8 +13,7 @@ import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_pagudhi_thalaipu_kooru.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
-import '../../../niril_podhu/kaatchi/koorugal/vanigar_thaedu_kooru.dart';
-import '../../../niril_podhu/kaatchi/koorugal/pattiyal_naal_kooru.dart';
+
 import '../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../niril_podhu/kalanjiyam/pattiyal_kanakku.dart';
 import '../../../niril_podhu/kalanjiyam/pattiyal_kalanjiyam.dart';
@@ -27,7 +26,8 @@ import 'niril_pattu_vanigar_thiruthi.dart';
 import 'niril_pattu_porul_thiruthi.dart';
 import 'koorugal/pattu_urupadi_attai.dart';
 import 'koorugal/pattu_mothangal_kooru.dart';
-import 'koorugal/maanila_thervu_meladukku.dart';
+import 'koorugal/pattu_vanigargal_kooru.dart';
+import 'koorugal/pattu_pattiyal_tharavugal_kooru.dart';
 
 
 /// Silk (GST) Invoice Editor — full form with line items, tax calculation,
@@ -516,7 +516,6 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
 
     // Resolve selected customer from stream for "Saved Details" card
     final vanigargalAsync = ref.watch(vanigargalStreamProvider);
@@ -545,7 +544,79 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           // Section 1: ① Billed To
           // ───────────────────────────────────────────────────────────────
           const ElvanPagudhiThalaipu(en: 1, thalaipu: 'Billed To'),
-          _buildCustomerSection(cs, tt, selectedVanigar),
+          PattuVanigargalKooru(
+            data: PattuVanigargalData(
+              selectedVanigarId: _selectedVanigarId,
+              selectedVanigarPeyar: _selectedVanigarPeyar,
+              selectedNiruvanamId: _selectedNiruvanamId,
+              placeOfSupply: _placeOfSupply,
+              placeOfSupplyTa: _placeOfSupplyTa,
+            ),
+            callbacks: PattuVanigargalCallbacks(
+              onCustomerSelected: (entry) {
+                setState(() {
+                  _selectedVanigarId = entry.id;
+                  _selectedVanigarPeyar =
+                      entry.peyar['Tamil'] ?? entry.peyar['English'] ?? '';
+                  _customerState = (entry.maanilam['English'] ??
+                              entry.maanilam['Tamil'] ??
+                              '')
+                          .trim()
+                          .toLowerCase();
+                  if (_placeOfSupply.isEmpty) {
+                    _placeOfSupply = (entry.maanilam['English'] ??
+                                entry.maanilam['Tamil'] ??
+                                '')
+                            .trim();
+                    _placeOfSupplyTa = (entry.maanilam['Tamil'] ?? '').trim();
+                  }
+                });
+                _hasUnsavedChanges = true;
+                _recalculate();
+              },
+              onCustomerCleared: () {
+                setState(() {
+                  _selectedVanigarId = null;
+                  _selectedVanigarPeyar = '';
+                  _customerState = '';
+                  _placeOfSupply = '';
+                  _placeOfSupplyTa = '';
+                });
+                _hasUnsavedChanges = true;
+                _recalculate();
+              },
+              onRequestAddNewCustomer: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const SilkMerchantEditor(),
+                  ),
+                );
+              },
+              onProfileChanged: (id, profile) {
+                setState(() {
+                  _selectedNiruvanamId = id;
+                  _selectedProfile = profile;
+                });
+                _recalculate();
+                _computePreviewInvoiceNumber();
+              },
+              onPlaceOfSupplyChanged: (en, ta) {
+                setState(() {
+                  _placeOfSupply = en;
+                  _placeOfSupplyTa = ta;
+                });
+                _recalculate();
+              },
+              onPlaceOfSupplyCleared: () {
+                setState(() {
+                  _placeOfSupply = '';
+                  _placeOfSupplyTa = '';
+                });
+                _recalculate();
+              },
+            ),
+            selectedVanigar: selectedVanigar,
+          ),
 
           const SizedBox(height: 24),
 
@@ -553,12 +624,67 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           // Section 2: ② Invoice Details
           // ───────────────────────────────────────────────────────────────
           const ElvanPagudhiThalaipu(en: 2, thalaipu: 'Invoice Details'),
-          _buildInvoiceDetailsSection(cs, tt),
+          PattuPattiyalTharavugalKooru(
+            isEditing: _isEditing,
+            invoiceNumberOverride: _invoiceNumberOverride,
+            previewInvoiceNumber: _previewInvoiceNumber,
+            isInvNumberEditing: _isInvNumberEditing,
+            invNumberController: _invNumberController,
+            profilePrefix: _selectedProfile?.kurumPeyar.isNotEmpty == true
+                ? _selectedProfile!.kurumPeyar
+                : 'INV',
+            pattiyalNaal: _pattiyalNaal,
+            onToggleEditInvNumber: () {
+              setState(() {
+                _isInvNumberEditing = !_isInvNumberEditing;
+                if (_isInvNumberEditing) {
+                  final current = _invoiceNumberOverride.isNotEmpty
+                      ? _invoiceNumberOverride
+                      : _previewInvoiceNumber;
+                  final parts = current.split('-');
+                  _invNumberController.text =
+                      parts.length > 1 ? parts.sublist(1).join('-') : parts.last;
+                } else {
+                  final numPart = _invNumberController.text.trim();
+                  if (numPart.isNotEmpty) {
+                    final prefix = _selectedProfile?.kurumPeyar.isNotEmpty == true
+                        ? _selectedProfile!.kurumPeyar
+                        : 'INV';
+                    _invoiceNumberOverride = '$prefix-$numPart';
+                  }
+                  _hasUnsavedChanges = true;
+                }
+              });
+            },
+            onInvNumberChanged: (_) {},
+            onDateChanged: (d) => setState(() {
+              _pattiyalNaal = d;
+              _hasUnsavedChanges = true;
+            }),
+            onDirty: () => _hasUnsavedChanges = true,
+          ),
 
           const SizedBox(height: 16),
 
           // ─── Place of Supply ───
-          _buildPlaceOfSupply(cs, tt),
+          PattuVilippiIdam(
+            placeOfSupply: _placeOfSupply,
+            placeOfSupplyTa: _placeOfSupplyTa,
+            onSelected: (en, ta) {
+              setState(() {
+                _placeOfSupply = en;
+                _placeOfSupplyTa = ta;
+              });
+              _recalculate();
+            },
+            onCleared: () {
+              setState(() {
+                _placeOfSupply = '';
+                _placeOfSupplyTa = '';
+              });
+              _recalculate();
+            },
+          ),
 
           const SizedBox(height: 24),
 
@@ -702,551 +828,6 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
 
           const SizedBox(height: 24),
         ],
-      ),
-    );
-  }
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // ── Section Builders ──
-  // ═══════════════════════════════════════════════════════════════════════════
-
-  /// Section 1: Customer search + saved details + profile dropdown
-  Widget _buildCustomerSection(
-      ColorScheme cs, TextTheme tt, VanigarEntry? selectedVanigar) {
-    return LayoutBuilder(builder: (context, constraints) {
-      final wide = constraints.maxWidth >= 700;
-      final customerSearch = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Caption
-          Text(
-            'Client Name',
-            style: tt.labelMedium?.copyWith(
-              color: cs.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 6),
-          // Customer autocomplete
-          VanigarThaeduKooru(
-            seyaliVagai: 'silk',
-            selectedId: _selectedVanigarId,
-            onSelected: (entry) {
-              setState(() {
-                _selectedVanigarId = entry.id;
-                _selectedVanigarPeyar =
-                    entry.peyar['Tamil'] ?? entry.peyar['English'] ?? '';
-                _customerState = (entry.maanilam['English'] ??
-                            entry.maanilam['Tamil'] ??
-                            '')
-                        .trim()
-                        .toLowerCase();
-                // Auto-set Place of Supply from customer
-                if (_placeOfSupply.isEmpty) {
-                  _placeOfSupply = (entry.maanilam['English'] ??
-                              entry.maanilam['Tamil'] ??
-                              '')
-                          .trim();
-                  _placeOfSupplyTa = (entry.maanilam['Tamil'] ?? '').trim();
-                }
-              });
-              _hasUnsavedChanges = true;
-              _recalculate();
-            },
-            onCleared: () {
-              setState(() {
-                _selectedVanigarId = null;
-                _selectedVanigarPeyar = '';
-                _customerState = '';
-                _placeOfSupply = '';
-                _placeOfSupplyTa = '';
-              });
-              _hasUnsavedChanges = true;
-              _recalculate();
-            },
-            onRequestAddNew: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const SilkMerchantEditor(),
-                ),
-              );
-            },
-          ),
-        ],
-      );
-
-      final savedDetailsCard = selectedVanigar != null
-          ? Padding(
-              padding: const EdgeInsets.only(top: 12),
-              child: ElvanThiruthiAttai(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Saved Details',
-                      style: tt.labelSmall?.copyWith(
-                        color: cs.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    // Primary name (Tamil)
-                    Text(
-                      selectedVanigar.peyar['Tamil'] ?? _selectedVanigarPeyar,
-                      style: tt.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    // Full bilingual address block (Tamil + English + GSTIN)
-                    _buildAddressBlock(selectedVanigar, cs, tt),
-                  ],
-                ),
-              ),
-            )
-          : const SizedBox.shrink();
-
-      final profileDropdown = _buildProfileDropdown();
-
-      final leftColumn = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          customerSearch,
-          savedDetailsCard,
-          profileDropdown,
-        ],
-      );
-
-      if (wide) {
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(flex: 5, child: leftColumn),
-            const SizedBox(width: 24),
-            const Expanded(flex: 7, child: SizedBox.shrink()),
-          ],
-        );
-      }
-      return leftColumn;
-    });
-  }
-
-  /// Section 2: Invoice number + date picker
-  Widget _buildInvoiceDetailsSection(ColorScheme cs, TextTheme tt) {
-    return LayoutBuilder(builder: (context, constraints) {
-      final wide = constraints.maxWidth >= 700;
-
-      final invoiceNumberField = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                'Invoice Number',
-                style: tt.labelMedium?.copyWith(
-                  color: cs.onSurfaceVariant,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              ...[
-                const SizedBox(width: 8),
-                InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: () {
-                    setState(() {
-                      _isInvNumberEditing = !_isInvNumberEditing;
-                      if (_isInvNumberEditing) {
-                        final current = _invoiceNumberOverride.isNotEmpty
-                            ? _invoiceNumberOverride
-                            : _previewInvoiceNumber;
-                        final parts = current.split('-');
-                        _invNumberController.text =
-                            parts.length > 1 ? parts.sublist(1).join('-') : parts.last;
-                      } else {
-                        final numPart = _invNumberController.text.trim();
-                        if (numPart.isNotEmpty) {
-                          final prefix = _selectedProfile?.kurumPeyar.isNotEmpty == true
-                              ? _selectedProfile!.kurumPeyar
-                              : 'INV';
-                          _invoiceNumberOverride = '$prefix-$numPart';
-                        }
-                        _hasUnsavedChanges = true;
-                      }
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: Icon(
-                      _isInvNumberEditing ? Icons.check : Icons.edit_outlined,
-                      size: 16,
-                      color: cs.primary,
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 6),
-          if (_isInvNumberEditing)
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 14, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: cs.surfaceContainerHighest,
-                    borderRadius: const BorderRadius.horizontal(
-                        left: Radius.circular(12)),
-                    border: Border.all(
-                      color: cs.outline.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Text(
-                    '${_selectedProfile?.kurumPeyar.isNotEmpty == true ? _selectedProfile!.kurumPeyar : "INV"}-',
-                    style: tt.bodyLarge?.copyWith(
-                      color: cs.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: TextField(
-                    controller: _invNumberController,
-                    keyboardType: TextInputType.number,
-                    autofocus: true,
-                    decoration: InputDecoration(
-                      hintText: '01',
-                      border: OutlineInputBorder(
-                        borderRadius: const BorderRadius.horizontal(
-                            right: Radius.circular(12)),
-                        borderSide: BorderSide(
-                          color: cs.outline.withValues(alpha: 0.3),
-                        ),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 14),
-                      isDense: true,
-                    ),
-                    onChanged: (v) {
-                      _hasUnsavedChanges = true;
-                    },
-                  ),
-                ),
-              ],
-            )
-          else
-            ElvanThiruthiAttai(
-              child: Text(
-                _invoiceNumberOverride.isNotEmpty
-                    ? _invoiceNumberOverride
-                    : _previewInvoiceNumber.isNotEmpty
-                        ? _previewInvoiceNumber
-                        : 'Auto-generated on save',
-                style: tt.bodyLarge?.copyWith(
-                  color: _invoiceNumberOverride.isNotEmpty
-                      ? cs.onSurface
-                      : cs.onSurfaceVariant,
-                  fontWeight: _invoiceNumberOverride.isNotEmpty
-                      ? FontWeight.w600
-                      : FontWeight.w500,
-                ),
-              ),
-            ),
-        ],
-      );
-
-      final dateField = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Date',
-            style: tt.labelMedium?.copyWith(
-              color: cs.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 6),
-          PattiyalNaalKooru(
-            selectedDate: _pattiyalNaal,
-            onDateChanged: (d) => setState(() {
-              _pattiyalNaal = d;
-              _hasUnsavedChanges = true;
-            }),
-          ),
-        ],
-      );
-
-      if (wide) {
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(child: invoiceNumberField),
-            const SizedBox(width: 24),
-            Expanded(child: dateField),
-          ],
-        );
-      }
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          invoiceNumberField,
-          const SizedBox(height: 16),
-          dateField,
-        ],
-      );
-    });
-  }
-
-  // ── Full Address Block in Saved Details Card ──
-  // Shows bilingual multi-line address: Tamil block, English block, then GSTIN
-  Widget _buildAddressBlock(VanigarEntry v, ColorScheme cs, TextTheme tt) {
-    // Build address lines for a given language key
-    List<String> buildLines(String key) {
-      final lines = <String>[];
-
-      // Street address
-      final mugavari = (v.mugavari[key] ?? '').trim();
-      if (mugavari.isNotEmpty) lines.add(mugavari);
-
-      // City - District - PIN
-      final oor = (v.oor[key] ?? '').trim();
-      final maavattam = (v.maavattam[key] ?? '').trim();
-      final pin = v.anjalKuriyeedu.trim();
-      final cityLine = [
-        if (oor.isNotEmpty) oor,
-        if (maavattam.isNotEmpty) maavattam,
-        if (pin.isNotEmpty) pin,
-      ].join(', ');
-      if (cityLine.isNotEmpty) lines.add(cityLine);
-
-      // State
-      final maanilam = (v.maanilam[key] ?? '').trim();
-      if (maanilam.isNotEmpty) lines.add(maanilam);
-
-      return lines;
-    }
-
-    final tamilLines = buildLines('Tamil');
-    final englishLines = buildLines('English');
-    final gstin = v.gstin.trim();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Tamil address block
-        if (tamilLines.isNotEmpty) ...[
-          const SizedBox(height: 8),
-          ...tamilLines.map((line) => Text(
-                line,
-                style: tt.bodySmall?.copyWith(
-                  color: cs.onSurfaceVariant,
-                  height: 1.5,
-                ),
-              )),
-        ],
-        // English address block (if different from Tamil)
-        if (englishLines.isNotEmpty &&
-            englishLines.join() != tamilLines.join()) ...[
-          const SizedBox(height: 6),
-          ...englishLines.map((line) => Text(
-                line,
-                style: tt.bodySmall?.copyWith(
-                  color: cs.onSurfaceVariant.withValues(alpha: 0.7),
-                  height: 1.5,
-                  fontStyle: FontStyle.italic,
-                ),
-              )),
-        ],
-        // GSTIN
-        if (gstin.isNotEmpty) ...[
-          const SizedBox(height: 6),
-          Text(
-            'GSTIN: $gstin',
-            style: tt.bodySmall?.copyWith(
-              color: cs.primary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-
-  /// Company profile dropdown (hidden if only 1 profile)
-  Widget _buildProfileDropdown() {
-    final profiles = ref.watch(vanigaTharavugalListProvider);
-    if (_selectedNiruvanamId == null && profiles.isNotEmpty) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
-          _selectedProfile = profiles.first;
-          _selectedNiruvanamId = profiles.first.id;
-        });
-      });
-    }
-    // Hide dropdown when only 1 profile
-    if (profiles.length <= 1) return const SizedBox.shrink();
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: DropdownButtonFormField<int>(
-        initialValue: _selectedNiruvanamId,
-        decoration: InputDecoration(
-          labelText: 'Company Profile',
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-        ),
-        items: profiles.map((p) {
-          final name = p.niruvanathinPeyar['Tamil'] ??
-              p.niruvanathinPeyar['English'] ??
-              'Company';
-          return DropdownMenuItem(value: p.id, child: Text(name));
-        }).toList(),
-        onChanged: (v) {
-          final match = profiles.where((p) => p.id == v).firstOrNull;
-          setState(() {
-            _selectedNiruvanamId = v;
-            _selectedProfile = match;
-          });
-          _recalculate();
-          _computePreviewInvoiceNumber();
-        },
-      ),
-    );
-  }
-
-  // ── Place of Supply: Two Pills (Editable + Bilingual Locked) ──
-  Widget _buildPlaceOfSupply(ColorScheme cs, TextTheme tt) {
-    return LayoutBuilder(builder: (context, constraints) {
-      final isNarrow = constraints.maxWidth < 500;
-
-      final editablePill = GestureDetector(
-        onTap: () => _showStatePickerSheet(cs),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            color: cs.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: cs.outline.withValues(alpha: 0.3),
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Expanded(
-                child: Text(
-                  _placeOfSupply.isEmpty
-                      ? 'Select State'
-                      : _placeOfSupply,
-                  style: tt.bodyMedium?.copyWith(
-                    color: _placeOfSupply.isEmpty
-                        ? cs.onSurfaceVariant
-                        : cs.onSurface,
-                    fontWeight: _placeOfSupply.isNotEmpty
-                        ? FontWeight.w600
-                        : FontWeight.w400,
-                  ),
-                ),
-              ),
-              if (_placeOfSupply.isNotEmpty)
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _placeOfSupply = '';
-                      _placeOfSupplyTa = '';
-                    });
-                    _recalculate();
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: Icon(Icons.close, size: 16, color: cs.onSurfaceVariant),
-                  ),
-                )
-              else
-                Icon(Icons.arrow_drop_down, size: 20, color: cs.onSurfaceVariant),
-            ],
-          ),
-        ),
-      );
-
-      final tamilPill = _placeOfSupplyTa.isNotEmpty
-          ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              decoration: BoxDecoration(
-                color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.lock_outline, size: 14, color: cs.onSurfaceVariant),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      _placeOfSupplyTa,
-                      style: tt.bodyMedium?.copyWith(
-                        color: cs.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : const SizedBox.shrink();
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Place of Supply',
-            style: tt.labelMedium?.copyWith(
-              color: cs.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 6),
-          if (isNarrow)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                editablePill,
-                if (_placeOfSupplyTa.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  tamilPill,
-                ],
-              ],
-            )
-          else
-            Row(
-              children: [
-                Expanded(child: editablePill),
-                if (_placeOfSupplyTa.isNotEmpty) ...[
-                  const SizedBox(width: 12),
-                  Expanded(child: tamilPill),
-                ],
-              ],
-            ),
-        ],
-      );
-    });
-  }
-
-  void _showStatePickerSheet(ColorScheme cs) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => MaanilaThervuMeladukku(
-        isDark: isDark,
-        onSelected: (en, ta) {
-          setState(() {
-            _placeOfSupply = en;
-            _placeOfSupplyTa = ta;
-          });
-          _recalculate();
-          Navigator.pop(ctx);
-        },
       ),
     );
   }
