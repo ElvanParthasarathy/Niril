@@ -256,6 +256,12 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
 
   // ── Save (delegates to helper) ──
   Future<void> _handleSave() async {
+    // Unfocus active field → triggers blur commit on ItemFieldWidget
+    FocusManager.instance.primaryFocus?.unfocus();
+    // Let blur handler run before we read field values
+    await Future.delayed(const Duration(milliseconds: 50));
+    if (!mounted) return;
+
     if (_selectedVanigarId == null && _selectedVanigarPeyar.isEmpty) {
       ElvanSnackbar.show(context, K.vanigaraiThaerodhu.tr(context, ref));
       return;
