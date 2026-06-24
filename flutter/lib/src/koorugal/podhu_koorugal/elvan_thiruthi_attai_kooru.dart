@@ -27,17 +27,15 @@ class ElvanThiruthiAttai extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final container = AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeOutCubic,
-      margin: margin,
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.03)
-            : Colors.white,
-        borderRadius: BorderRadius.circular(borderRadius),
-      ),
-      child: Padding(
+    final container = Material(
+      type: MaterialType.card,
+      color: isDark
+          ? Colors.white.withValues(alpha: 0.03)
+          : Colors.white,
+      borderRadius: BorderRadius.circular(borderRadius),
+      animationDuration: const Duration(milliseconds: 200),
+      child: Container(
+        margin: margin,
         padding: padding ??
             const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: child,

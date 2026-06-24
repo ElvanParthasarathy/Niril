@@ -27,34 +27,31 @@ class KooliVangiTharavugalKooru extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ElvanThiruthiAttai(
-      child: Material(
-        type: MaterialType.transparency,
-        child: Column(
-          children: [
+      child: Column(
+        children: [
+          SwitchListTile(
+            title: Text(K.vangiTharavuKaattu.tr(context, ref)),
+            value: showBankDetails,
+            onChanged: onToggled,
+            contentPadding: EdgeInsets.zero,
+          ),
+          if (showBankDetails) ...[
             SwitchListTile(
-              title: Text(K.vangiTharavuKaattu.tr(context, ref)),
-              value: showBankDetails,
-              onChanged: onToggled,
+              title: Text(K.ifscKaattu.tr(context, ref)),
+              value: showIfsc,
+              onChanged: onIfscToggled,
               contentPadding: EdgeInsets.zero,
+              dense: true,
             ),
-            if (showBankDetails) ...[
-              SwitchListTile(
-                title: Text(K.ifscKaattu.tr(context, ref)),
-                value: showIfsc,
-                onChanged: onIfscToggled,
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-              ),
-              const Divider(),
-              kooliBankRow(context, K.vangi.tr(context, ref), profile.vangiPeyar),
-              kooliBankRow(context, K.kilai.tr(context, ref), profile.kilai),
-              kooliBankRow(context, K.kanakkuKuriyeedu.tr(context, ref), profile.vangiKanakku),
-              if (showIfsc) kooliBankRow(context, 'IFSC', profile.ifsc),
-              if (profile.upiId.isNotEmpty)
-                kooliBankRow(context, 'UPI', profile.upiId),
-            ],
+            const Divider(),
+            kooliBankRow(context, K.vangi.tr(context, ref), profile.vangiPeyar),
+            kooliBankRow(context, K.kilai.tr(context, ref), profile.kilai),
+            kooliBankRow(context, K.kanakkuKuriyeedu.tr(context, ref), profile.vangiKanakku),
+            if (showIfsc) kooliBankRow(context, 'IFSC', profile.ifsc),
+            if (profile.upiId.isNotEmpty)
+              kooliBankRow(context, 'UPI', profile.upiId),
           ],
-        ),
+        ],
       ),
     );
   }
