@@ -122,18 +122,18 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
           headerLabel: K.uruvaakkuPtn.tr(context, ref),
         ),
         CustomNavItem(
+          icon: CupertinoIcons.cube_box,
+          activeIcon: CupertinoIcons.cube_box_fill,
+          label: K.porul.tr(context, ref),
+          headerLabel: K.porutkal.tr(context, ref),
+        ),
+        CustomNavItem(
           svgString:
               '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"></path></svg>',
           activeSvgString:
               '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M164.47,195.63a8,8,0,0,1-6.7,12.37H10.23a8,8,0,0,1-6.7-12.37,95.83,95.83,0,0,1,47.22-37.71,60,60,0,1,1,66.5,0A95.83,95.83,0,0,1,164.47,195.63Zm87.91-.15a95.87,95.87,0,0,0-47.13-37.56A60,60,0,0,0,144.7,54.59a4,4,0,0,0-1.33,6A75.83,75.83,0,0,1,147,150.53a4,4,0,0,0,1.07,5.53,112.32,112.32,0,0,1,29.85,30.83,23.92,23.92,0,0,1,3.65,16.47,4,4,0,0,0,3.95,4.64h60.3a8,8,0,0,0,7.73-5.93A8.22,8.22,0,0,0,252.38,195.48Z"></path></svg>',
           label: K.vanigar.tr(context, ref),
           headerLabel: K.vanigargal.tr(context, ref),
-        ),
-        CustomNavItem(
-          icon: CupertinoIcons.cube_box,
-          activeIcon: CupertinoIcons.cube_box_fill,
-          label: K.porul.tr(context, ref),
-          headerLabel: K.porutkal.tr(context, ref),
         ),
       ];
 
@@ -155,8 +155,8 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
           label: K.patrucheettu.tr(context, ref),
           headerLabel: K.patrucheettugal.tr(context, ref),
         ),
-        _mobileNavItems[2], // Merchants
-        _mobileNavItems[3], // Products
+        _mobileNavItems[2], // Products
+        _mobileNavItems[3], // Merchants
       ];
 
   // ── Search routing ─────────────────────────────────────────────────
@@ -206,10 +206,10 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
         }
         break;
       case 2:
-        _routeSearchQuery(query, NirilDestination.vanigar);
+        _routeSearchQuery(query, NirilDestination.porul);
         break;
       case 3:
-        _routeSearchQuery(query, NirilDestination.porul);
+        _routeSearchQuery(query, NirilDestination.vanigar);
         break;
     }
   }
@@ -313,8 +313,8 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
           NirilDestination.mugappu,
           NirilDestination.pattiyal,
           NirilDestination.raseethu,
-          NirilDestination.vanigar,
           NirilDestination.porul,
+          NirilDestination.vanigar,
         ];
         if (index >= 0 && index < destinations.length) {
           nav.goTo(destinations[index]);
@@ -389,8 +389,8 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
                         navState.uruvakkuSegment == 1
                             ? NirilDestination.raseethu
                             : NirilDestination.pattiyal,
-                        NirilDestination.vanigar,
                         NirilDestination.porul,
+                        NirilDestination.vanigar,
                       ];
                       if (index >= 0 && index < destinations.length) {
                         nav.goTo(destinations[index]);
@@ -420,8 +420,8 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
                     slivers: [
                       if (i == 0) const MugappuPage(),
                       if (i == 1) const UruvakkuPage(),
-                      if (i == 2) const VanigarPage(),
-                      if (i == 3) const PorulPage(),
+                      if (i == 2) const PorulPage(),
+                      if (i == 3) const VanigarPage(),
                     ],
                   ),
               ],

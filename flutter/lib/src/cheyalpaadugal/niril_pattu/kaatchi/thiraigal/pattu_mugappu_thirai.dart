@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
+
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
@@ -18,8 +18,7 @@ import '../thiruthi/niril_pattu_pattiyal_thiruthi.dart';
 class SilkHomePage extends ConsumerWidget {
   const SilkHomePage({super.key});
 
-  static final _currencyFormat =
-      NumberFormat.currency(locale: 'en_IN', symbol: '₹');
+
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -98,13 +97,9 @@ class SilkHomePage extends ConsumerWidget {
     bool isLoading,
   ) {
     // Compute stats
-    double totalAmount = 0;
-    double totalTax = 0;
-
-    for (final b in pattiyalgal) {
-      totalAmount += b.mothaThogai;
-      totalTax += b.variThogai;
-    }
+    final totalInvoices = pattiyalgal.length;
+    // TODO: wire up receipt count when receipt stream is available
+    const totalReceipts = 0;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -118,18 +113,18 @@ class SilkHomePage extends ConsumerWidget {
             children: [
               Expanded(
                 child: ElvanStatsCard(
-                  icon: CupertinoIcons.money_dollar_circle,
-                  label: K.mothaKanakku.tr(context, ref),
-                  value: _currencyFormat.format(totalAmount),
+                  icon: CupertinoIcons.doc_text,
+                  label: K.pattiyalEnnikai.tr(context, ref),
+                  value: '$totalInvoices',
                   isLoading: isLoading,
                 ),
               ),
               SizedBox(width: gap),
               Expanded(
                 child: ElvanStatsCard(
-                  icon: CupertinoIcons.graph_square,
-                  label: K.variThirattiyavai.tr(context, ref),
-                  value: _currencyFormat.format(totalTax),
+                  icon: CupertinoIcons.doc_plaintext,
+                  label: K.patrucheettuEnnikai.tr(context, ref),
+                  value: '$totalReceipts',
                   isLoading: isLoading,
                 ),
               ),
@@ -152,18 +147,18 @@ class SilkHomePage extends ConsumerWidget {
           children: [
             Expanded(
               child: ElvanStatsCard(
-                icon: CupertinoIcons.money_dollar_circle,
-                label: K.mothaKanakku.tr(context, ref),
-                value: _currencyFormat.format(totalAmount),
+                icon: CupertinoIcons.doc_text,
+                label: K.pattiyalEnnikai.tr(context, ref),
+                value: '$totalInvoices',
                 isLoading: isLoading,
               ),
             ),
             SizedBox(width: gap),
             Expanded(
               child: ElvanStatsCard(
-                icon: CupertinoIcons.graph_square,
-                label: K.variThirattiyavai.tr(context, ref),
-                value: _currencyFormat.format(totalTax),
+                icon: CupertinoIcons.doc_plaintext,
+                label: K.patrucheettuEnnikai.tr(context, ref),
+                value: '$totalReceipts',
                 isLoading: isLoading,
               ),
             ),

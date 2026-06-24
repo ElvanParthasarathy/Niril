@@ -124,6 +124,7 @@ class SilkMerchantsPage extends ConsumerWidget {
                   final isSelected = selectedIds.contains(vanigar.id);
 
                   return _SilkVanigarCard(
+                    index: index,
                     vanigar: vanigar,
                     primaryLang: primaryLang,
                     secondaryLang: secondaryLang,
@@ -250,6 +251,7 @@ class _SelectionBar extends ConsumerWidget {
 
 class _SilkVanigarCard extends StatelessWidget {
   const _SilkVanigarCard({
+    required this.index,
     required this.vanigar,
     required this.primaryLang,
     required this.secondaryLang,
@@ -260,6 +262,7 @@ class _SilkVanigarCard extends StatelessWidget {
     required this.onLongPress,
   });
 
+  final int index;
   final VanigarEntry vanigar;
   final String primaryLang;
   final String secondaryLang;
@@ -274,6 +277,7 @@ class _SilkVanigarCard extends StatelessWidget {
     final primaryName = vanigar.peyar[primaryLang] ?? '';
     final secondaryName = vanigar.peyar[secondaryLang] ?? '';
     final primaryCity = vanigar.oor[primaryLang] ?? '';
+    final secondaryCity = vanigar.oor[secondaryLang] ?? '';
     final gstin = vanigar.gstin;
     final phone = vanigar.tholaipaesi;
 
@@ -282,48 +286,63 @@ class _SilkVanigarCard extends StatelessWidget {
       onLongPress: onLongPress,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isSelected
-              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.12)
+              ? (isDark
+                  ? const Color(0xFF1A1A1A)
+                  : Colors.black.withValues(alpha: 0.04))
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.05)
-                  : Colors.black.withValues(alpha: 0.03)),
-          borderRadius: BorderRadius.circular(14),
-          border: isSelected
-              ? Border.all(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 1.5,
-                )
-              : null,
+                  ? const Color(0xFF111111)
+                  : Colors.white),
+          borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Selection checkbox
-            if (isSelecting) ...[
+            // Index circle or selection checkbox
+            if (isSelecting)
               Icon(
                 isSelected
-                    ? CupertinoIcons.checkmark_circle_fill
-                    : CupertinoIcons.circle,
-                size: 22,
+                    ? CupertinoIcons.checkmark_square_fill
+                    : CupertinoIcons.square,
+                size: 24,
                 color: isSelected
                     ? Theme.of(context).colorScheme.primary
-                    : (isDark ? Colors.white30 : Colors.black26),
+                    : (isDark ? Colors.white38 : Colors.black38),
+              )
+            else
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.12)
+                      : Colors.black.withValues(alpha: 0.08),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  (index + 1).toString().padLeft(2, '0'),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 11.2,
+                    color: isDark ? Colors.white : Colors.black,
+                    height: 1,
+                  ),
+                ),
               ),
-              const SizedBox(width: 12),
-            ],
+            const SizedBox(width: 12),
             // Content
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Name
                   Text(
                     primaryName,
                     style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 15.2,
+                      fontWeight: FontWeight.w700,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -335,87 +354,55 @@ class _SilkVanigarCard extends StatelessWidget {
                       secondaryName,
                       style: TextStyle(
                         fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: isDark ? Colors.white54 : Colors.black54,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                  if (primaryCity.isNotEmpty) ...[
+                    const SizedBox(height: 3),
+                    Text(
+                      primaryCity,
+                      style: TextStyle(
+                        fontSize: 13.6,
                         color: isDark ? Colors.white38 : Colors.black38,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
-                  const SizedBox(height: 4),
-                  // City + GSTIN pills
-                  Row(
-                    children: [
-                      if (primaryCity.isNotEmpty) ...[
-                        Icon(
-                          CupertinoIcons.location_solid,
-                          size: 11,
-                          color: isDark ? Colors.white.withValues(alpha: 0.26) : Colors.black26,
-                        ),
-                        const SizedBox(width: 3),
-                        Flexible(
-                          child: Text(
-                            primaryCity,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: isDark ? Colors.white30 : Colors.black.withValues(alpha: 0.30),
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                      if (gstin.isNotEmpty) ...[
-                        if (primaryCity.isNotEmpty) const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? Colors.blue.withValues(alpha: 0.12)
-                                : Colors.blue.withValues(alpha: 0.08),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            gstin,
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                              color: isDark
-                                  ? Colors.blue.shade300
-                                  : Colors.blue.shade700,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
-                      ],
-                      if (phone.isNotEmpty) ...[
-                        const SizedBox(width: 8),
-                        Icon(
-                          CupertinoIcons.phone,
-                          size: 11,
-                          color: isDark ? Colors.white.withValues(alpha: 0.26) : Colors.black26,
-                        ),
-                        const SizedBox(width: 3),
-                        Text(
-                          phone,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: isDark ? Colors.white.withValues(alpha: 0.26) : Colors.black26,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
+                  if (secondaryCity.isNotEmpty &&
+                      secondaryCity != primaryCity) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      secondaryCity,
+                      style: TextStyle(
+                        fontSize: 12.8,
+                        color: (isDark ? Colors.white30 : Colors.black.withValues(alpha: 0.30))
+                            .withValues(alpha: 0.8),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                  if (gstin.isNotEmpty || phone.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      [if (gstin.isNotEmpty) gstin, if (phone.isNotEmpty) phone]
+                          .join(' · '),
+                      style: TextStyle(
+                        fontSize: 13.6,
+                        color: isDark ? Colors.white38 : Colors.black38,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ],
               ),
             ),
-            // Chevron
-            if (!isSelecting)
-              Icon(
-                CupertinoIcons.chevron_right,
-                size: 14,
-                color: isDark ? Colors.white24 : Colors.black26,
-              ),
           ],
         ),
       ),

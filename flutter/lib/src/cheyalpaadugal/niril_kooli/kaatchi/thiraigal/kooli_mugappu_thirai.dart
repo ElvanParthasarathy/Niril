@@ -25,7 +25,7 @@ class CoolieHomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pattiyalgalAsync = ref.watch(pattiyalgalStreamProvider);
-    final profilesAsync = ref.watch(profilesStreamProvider);
+    final profilesAsync = ref.watch(currentModeProfilesStreamProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return pattiyalgalAsync.when(

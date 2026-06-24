@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Provider that holds the initialized SharedPreferences instance.
@@ -17,6 +18,11 @@ class PreferencesService {
   static const _isLoggedInKey = 'is_logged_in';
 
   static const _isSidebarCollapsedKey = 'is_sidebar_collapsed';
+
+  // ── Payanar (User Profile) ──
+  static const _payanarMudhalPeyarKey = 'payanar_mudhal_peyar';
+  static const _payanarIrudhiPeyarKey = 'payanar_irudhi_peyar';
+  static const _payanarPirandhaThaedhiKey = 'payanar_pirandha_thaedhi';
 
   // --- Auth ---
   bool getIsLoggedIn() {
@@ -70,9 +76,51 @@ class PreferencesService {
       await _prefs.setString(_localeKey, locale.languageCode);
     }
   }
+
+  // --- Payanar (User Profile) ---
+  String getPayanarMudhalPeyar() {
+    return _prefs.getString(_payanarMudhalPeyarKey) ?? '';
+  }
+
+  Future<void> setPayanarMudhalPeyar(String value) async {
+    await _prefs.setString(_payanarMudhalPeyarKey, value);
+  }
+
+  String getPayanarIrudhiPeyar() {
+    return _prefs.getString(_payanarIrudhiPeyarKey) ?? '';
+  }
+
+  Future<void> setPayanarIrudhiPeyar(String value) async {
+    await _prefs.setString(_payanarIrudhiPeyarKey, value);
+  }
+
+  String getPayanarPirandhaThaedhi() {
+    return _prefs.getString(_payanarPirandhaThaedhiKey) ?? '';
+  }
+
+  Future<void> setPayanarPirandhaThaedhi(String value) async {
+    await _prefs.setString(_payanarPirandhaThaedhiKey, value);
+  }
+
+  /// Returns the user's display name for the home screen.
+  /// Combines first + last name, or returns empty string if not set.
+  String getPayanarKaatchiPeyar() {
+    final first = getPayanarMudhalPeyar().trim();
+    final last = getPayanarIrudhiPeyar().trim();
+    if (first.isEmpty && last.isEmpty) return '';
+    return '$first $last'.trim();
+  }
 }
 
 // Provide the PreferencesService using the sharedPreferencesProvider
 final preferencesServiceProvider = Provider<PreferencesService>((ref) {
   return PreferencesService(ref.watch(sharedPreferencesProvider));
+});
+
+/// Reactive provider for the user's display name on the home screen.
+/// Updated manually via `ref.read(payanarKaatchiPeyarProvider.notifier).state = newName`
+/// after saving in the Payanar settings page.
+final payanarKaatchiPeyarProvider = StateProvider<String>((ref) {
+  final prefs = ref.watch(preferencesServiceProvider);
+  return prefs.getPayanarKaatchiPeyar();
 });

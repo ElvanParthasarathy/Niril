@@ -29,90 +29,105 @@ class ElvanStatsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
-        borderRadius: BorderRadius.circular(24),
-      ),
-      padding: const EdgeInsets.all(20),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final isNarrow = constraints.maxWidth < 160;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: Material(
+        color: isDark ? const Color(0xFF111111) : Colors.white,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(24),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 160;
+              final cardPadding = isNarrow ? 16.0 : 20.0;
 
-          final iconBox = Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.05)
-                  : const Color(0xFFF5F5F5),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(icon, size: 24,
-                color: isDark ? Colors.white : Colors.black),
-          );
-
-          final textContent = Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white54 : Colors.black54,
+              final iconBox = Container(
+                width: isNarrow ? 40 : 48,
+                height: isNarrow ? 40 : 48,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : const Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.circular(isNarrow ? 12 : 16),
                 ),
-              ),
-              const SizedBox(height: 4),
-              if (isLoading)
-                Container(
-                  width: 100,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.08)
-                        : Colors.black.withValues(alpha: 0.06),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                )
-              else
-                Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: _adaptiveFontSize(value),
-                    fontWeight: FontWeight.w800,
-                    color: isDark ? Colors.white : Colors.black,
-                    height: 1.2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  maxLines: 2,
+                child: Icon(icon, size: isNarrow ? 20 : 24,
+                    color: isDark ? Colors.white : Colors.black),
+              );
+
+              final textContent = Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: isNarrow ? 12 : 14,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white54 : Colors.black54,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    if (isLoading)
+                      Container(
+                        width: 80,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.08)
+                              : Colors.black.withValues(alpha: 0.06),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      )
+                    else
+                      Text(
+                        value,
+                        style: TextStyle(
+                          fontSize: isNarrow
+                              ? _adaptiveFontSize(value) * 0.8
+                              : _adaptiveFontSize(value),
+                          fontWeight: FontWeight.w800,
+                          color: isDark ? Colors.white : Colors.black,
+                          height: 1.2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        maxLines: 1,
+                      ),
+                  ],
                 ),
-            ],
-          );
+              );
 
-          // Column layout on narrow mobile, Row on wider screens
-          if (isNarrow) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                iconBox,
-                const SizedBox(height: 12),
-                textContent,
-              ],
-            );
-          }
+              // Column layout on narrow mobile, Row on wider screens
+              if (isNarrow) {
+                return Padding(
+                  padding: EdgeInsets.all(cardPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      iconBox,
+                      const SizedBox(height: 8),
+                      textContent,
+                    ],
+                  ),
+                );
+              }
 
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              iconBox,
-              const SizedBox(width: 16),
-              Expanded(child: textContent),
-            ],
-          );
-        },
+              return Padding(
+                padding: EdgeInsets.all(cardPadding),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    iconBox,
+                    const SizedBox(width: 16),
+                    textContent,
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
@@ -217,7 +232,6 @@ class _ElvanRecentCardState extends State<ElvanRecentCard> {
     final amountStr = _currencyFormat.format(p.mothaThogai);
 
     return GestureDetector(
-      onTap: widget.onTap,
       onTapDown: (_) => setState(() => _isPressed = true),
       onTapUp: (_) => setState(() => _isPressed = false),
       onTapCancel: () => setState(() => _isPressed = false),
@@ -227,117 +241,121 @@ class _ElvanRecentCardState extends State<ElvanRecentCard> {
             ? const Duration(milliseconds: 100)
             : const Duration(milliseconds: 200),
         curve: Curves.easeOut,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.03)
-                : Colors.white,
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Index circle
-              Container(
-                width: 28,
-                height: 28,
-                margin: const EdgeInsets.only(top: 1),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.12)
-                      : Colors.black.withValues(alpha: 0.08),
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Text(
-                    (widget.index + 1).toString().padLeft(2, '0'),
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w800,
-                      color: isDark ? Colors.white : Colors.black,
-                      height: 1,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              // Content
-              Expanded(
-                child: Column(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Material(
+            color: isDark ? const Color(0xFF111111) : Colors.white,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(24),
+              onTap: widget.onTap,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Customer name + chevron
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            p.vanigarPeyar.isNotEmpty
-                                ? p.vanigarPeyar
-                                : '-',
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
+                    // Index circle
+                    Container(
+                      width: 28,
+                      height: 28,
+                      margin: const EdgeInsets.only(top: 1),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.12)
+                            : Colors.black.withValues(alpha: 0.08),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Text(
+                          (widget.index + 1).toString().padLeft(2, '0'),
+                          style: TextStyle(
+                            fontSize: 11.2,
+                            fontWeight: FontWeight.w800,
+                            color: isDark ? Colors.white : Colors.black,
+                            height: 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Content
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Row 1: Customer name + chevron
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  p.vanigarPeyar.isNotEmpty
+                                      ? p.vanigarPeyar
+                                      : '-',
+                                  style: const TextStyle(
+                                    fontSize: 15.2,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              Icon(
+                                CupertinoIcons.chevron_right,
+                                size: 18,
+                                color: isDark
+                                    ? const Color(0xFF555555)
+                                    : const Color(0xFFAAAAAA),
+                              ),
+                            ],
+                          ),
+                          // Row 2: Invoice # + Date
+                          const SizedBox(height: 4),
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(text: p.patrucheettuEn),
+                                TextSpan(
+                                  text: '  •  ',
+                                  style: TextStyle(
+                                    color:
+                                        (isDark ? Colors.white : Colors.black)
+                                            .withValues(alpha: 0.4),
+                                  ),
+                                ),
+                                TextSpan(
+                                    text:
+                                        _dateFormat.format(p.pattiyalNaal)),
+                              ],
+                            ),
+                            style: TextStyle(
+                              fontSize: 13.6,
+                              color: isDark ? Colors.white54 : Colors.black54,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                        Icon(
-                          CupertinoIcons.chevron_right,
-                          size: 18,
-                          color: isDark
-                              ? const Color(0xFF555555)
-                              : const Color(0xFFAAAAAA),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    // Invoice # + Date
-                    Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(text: p.patrucheettuEn),
-                          TextSpan(
-                            text: '  •  ',
-                            style: TextStyle(
-                              color: (isDark ? Colors.white : Colors.black)
-                                  .withValues(alpha: 0.4),
+                          // Row 3: Amount (right-aligned)
+                          const SizedBox(height: 2),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              amountStr,
+                              style: TextStyle(
+                                fontSize:
+                                    amountStr.length > 11 ? 12.8 : 15.2,
+                                fontWeight: FontWeight.w800,
+                                color:
+                                    Theme.of(context).colorScheme.primary,
+                              ),
                             ),
                           ),
-                          TextSpan(
-                              text: _dateFormat.format(p.pattiyalNaal)),
                         ],
                       ),
-                      style: TextStyle(
-                        fontSize: 13.5,
-                        color: isDark ? Colors.white54 : Colors.black54,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2),
-                    // Amount row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        const Spacer(),
-                        Text(
-                          amountStr,
-                          style: TextStyle(
-                            fontSize: amountStr.length > 11 ? 12.5 : 15,
-                            fontWeight: FontWeight.w800,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                      ],
                     ),
                   ],
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -400,8 +418,8 @@ class MugappuLoadingSkeleton extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.03)
+               color: isDark
+                  ? const Color(0xFF111111)
                   : Colors.white,
               borderRadius: BorderRadius.circular(24),
             ),

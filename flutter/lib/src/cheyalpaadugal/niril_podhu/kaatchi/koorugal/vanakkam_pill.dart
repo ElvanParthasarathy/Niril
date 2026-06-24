@@ -7,6 +7,7 @@ import '../../../ullnuzhaivu/kaatchi/muraimai_thaervu_thirai.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/panigal/seyali_oaviyangal.dart';
 import '../../../../adippadai/tharavuru/seyali_murai.dart';
+import '../../../../adippadai/viruppangal_paniyagam.dart';
 
 class VanakkamPill extends ConsumerWidget {
   final String subtitleKey;
@@ -20,6 +21,7 @@ class VanakkamPill extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final appMode = ref.watch(appModeProvider);
+    final userName = ref.watch(payanarKaatchiPeyarProvider);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -88,40 +90,47 @@ class VanakkamPill extends ConsumerWidget {
                     ),
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          K.vanakkam.tr(context, ref),
-                          style: TextStyle(
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: -0.02,
-                            height: 1.2,
-                            fontSize: isMobile ? 22 : 20,
-                            color: isDark ? Colors.white : Colors.black,
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            K.vanakkam.tr(context, ref),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.02,
+                              height: 1.2,
+                              fontSize: isMobile ? 22 : 20,
+                              color: isDark ? Colors.white : Colors.black,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 4),
-                        const Icon(
-                          Icons.auto_awesome,
-                          size: 20,
-                          color: Color(0xFFFFC107),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitleKey.tr(context, ref),
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? const Color(0xFF9BA1A6) : const Color(0xFF666666),
-                        fontSize: isMobile ? 16.8 : 14,
+                          const SizedBox(width: 4),
+                          const Icon(
+                            Icons.auto_awesome,
+                            size: 20,
+                            color: Color(0xFFFFC107),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 2),
+                      Text(
+                        userName.isNotEmpty
+                            ? userName
+                            : subtitleKey.tr(context, ref),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? const Color(0xFF9BA1A6) : const Color(0xFF666666),
+                          fontSize: isMobile ? 14.4 : 13,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
@@ -22,6 +24,9 @@ import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 import '../../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
 import '../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
 import '../../../amaippugal/tharavu/vaniga_tharavugal.dart';
+import '../thiraigal/amaippugal/pattu_mugavari_tharavu.dart';
+import 'niril_pattu_vanigar_thiruthi.dart';
+import 'niril_pattu_porul_thiruthi.dart';
 
 /// Indian currency formatter: ₹1,23,456.00
 final _inrFormat = NumberFormat.currency(
@@ -34,8 +39,9 @@ final _inrFormat = NumberFormat.currency(
 /// auto-numbering, and FK-based customer storage.
 class SilkInvoiceEditor extends ConsumerStatefulWidget {
   final PatrucheettuEntry? editingEntry;
+  final PatrucheettuEntry? duplicateFrom;
 
-  const SilkInvoiceEditor({super.key, this.editingEntry});
+  const SilkInvoiceEditor({super.key, this.editingEntry, this.duplicateFrom});
 
   @override
   ConsumerState<SilkInvoiceEditor> createState() => _SilkInvoiceEditorState();
@@ -54,6 +60,10 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   // ── Metadata ──
   String _pattiyalVagai = 'tax-invoice';
   DateTime _pattiyalNaal = DateTime.now();
+  String _placeOfSupply = '';
+  String _placeOfSupplyTa = ''; // Tamil bilingual for Place of Supply
+  String _invoiceNumberOverride = ''; // Manual override for inv number
+  bool _isInvNumberEditing = false;
 
   // ── Line Items ──
   List<PattuUrupadi> _items = [const PattuUrupadi()];
@@ -73,7 +83,13 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   final _termsController = TextEditingController();
   final _notesController = TextEditingController();
   final _globalDiscountController = TextEditingController();
+  final _invNumberController = TextEditingController();
   bool _saving = false;
+
+  // ── Unsaved Changes & Draft ──
+  bool _hasUnsavedChanges = false;
+  Timer? _draftDebounce;
+  static const _draftKey = 'niril_draft_silk_invoice';
 
   bool get _isEditing => widget.editingEntry != null;
 
@@ -82,6 +98,11 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
     super.initState();
     if (_isEditing) {
       _loadEditingData();
+    } else if (widget.duplicateFrom != null) {
+      _loadDuplicateData();
+    } else {
+      // Check for saved draft
+      _tryRestoreDraft();
     }
     // Auto-select profile
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -118,24 +139,109 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
     _items = PattiyalUthavigal.pattuListFromJson(e.tharavugal);
     if (_items.isEmpty) _items = [const PattuUrupadi()];
 
-    // Load settings JSON for global discount
+    // Load settings JSON for global discount + place of supply
     try {
       final settings = jsonDecode(e.sonthaViruppangal) as Map<String, dynamic>;
       _globalDiscountValue = (settings['globalDiscountValue'] as num?)?.toDouble() ?? 0;
       _globalDiscountType = settings['globalDiscountType'] as String? ?? 'percentage';
       _globalDiscountController.text = _globalDiscountValue > 0 ? _globalDiscountValue.toString() : '';
+      _placeOfSupply = settings['placeOfSupply'] as String? ?? '';
+      _placeOfSupplyTa = settings['placeOfSupplyTa'] as String? ?? '';
     } catch (_) {}
 
-    // Load profile match
+    // Pre-fill invoice number controller for editing
+    _invoiceNumberOverride = e.patrucheettuEn;
+    _invNumberController.text = e.patrucheettuEn;
+
+    // Resolve Tamil for Place of Supply if missing
+    if (_placeOfSupply.isNotEmpty && _placeOfSupplyTa.isEmpty) {
+      final match = silkIndianStates.where(
+        (s) => (s['en'] ?? '').toLowerCase() == _placeOfSupply.toLowerCase(),
+      ).firstOrNull;
+      if (match != null) _placeOfSupplyTa = match['ta'] ?? '';
+    }
+
+    // Load profile match and restore customer state
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final profiles = ref.read(vanigaTharavugalListProvider);
       if (_selectedNiruvanamId != null) {
         final match = profiles.where((p) => p.id == _selectedNiruvanamId).firstOrNull;
         if (match != null) setState(() => _selectedProfile = match);
       }
-    });
 
-    _recalculate();
+      // Restore _customerState from saved merchant's maanilam
+      if (_selectedVanigarId != null) {
+        final vanigargalData = ref.read(vanigargalStreamProvider);
+        final vanigargal = vanigargalData.whenOrNull(data: (list) => list) ?? [];
+        final vanigar = vanigargal.where((v) => v.id == _selectedVanigarId).firstOrNull;
+        if (vanigar != null) {
+          _customerState = (vanigar.maanilam['English'] ??
+                      vanigar.maanilam['Tamil'] ??
+                      '')
+                  .trim()
+                  .toLowerCase();
+        }
+      }
+
+      _recalculate();
+    });
+  }
+
+  /// Load data from a source invoice for duplication.
+  /// Same as _loadEditingData but does NOT set editingEntry — creates a new invoice.
+  void _loadDuplicateData() {
+    final e = widget.duplicateFrom!;
+    _selectedNiruvanamId = e.niruvanamId;
+    _selectedVanigarId = e.vanigarId;
+    _selectedVanigarPeyar = e.vanigarPeyar;
+    _pattiyalVagai = e.pattiyalVagai;
+    _pattiyalNaal = DateTime.now(); // Fresh date for duplicate
+    _nibandhanaigal = e.nibandhanaigal;
+    _ullkurippu = e.ullkurippu;
+
+    _termsController.text = _nibandhanaigal;
+    _notesController.text = _ullkurippu;
+
+    // Load items from JSON
+    _items = PattiyalUthavigal.pattuListFromJson(e.tharavugal);
+    if (_items.isEmpty) _items = [const PattuUrupadi()];
+
+    // Load settings JSON
+    try {
+      final settings = jsonDecode(e.sonthaViruppangal) as Map<String, dynamic>;
+      _globalDiscountValue = (settings['globalDiscountValue'] as num?)?.toDouble() ?? 0;
+      _globalDiscountType = settings['globalDiscountType'] as String? ?? 'percentage';
+      _globalDiscountController.text = _globalDiscountValue > 0 ? _globalDiscountValue.toString() : '';
+      _placeOfSupply = settings['placeOfSupply'] as String? ?? '';
+      _placeOfSupplyTa = settings['placeOfSupplyTa'] as String? ?? '';
+    } catch (_) {}
+
+    // Invoice number: leave empty for auto-generation (new number)
+    _invoiceNumberOverride = '';
+
+    // Load profile match and restore customer state
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final profiles = ref.read(vanigaTharavugalListProvider);
+      if (_selectedNiruvanamId != null) {
+        final match = profiles.where((p) => p.id == _selectedNiruvanamId).firstOrNull;
+        if (match != null) setState(() => _selectedProfile = match);
+      }
+
+      if (_selectedVanigarId != null) {
+        final vanigargalData = ref.read(vanigargalStreamProvider);
+        final vanigargal = vanigargalData.whenOrNull(data: (list) => list) ?? [];
+        final vanigar = vanigargal.where((v) => v.id == _selectedVanigarId).firstOrNull;
+        if (vanigar != null) {
+          _customerState = (vanigar.maanilam['English'] ??
+                      vanigar.maanilam['Tamil'] ??
+                      '')
+                  .trim()
+                  .toLowerCase();
+        }
+      }
+
+      _recalculate();
+    });
   }
 
   @override
@@ -143,6 +249,8 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
     _termsController.dispose();
     _notesController.dispose();
     _globalDiscountController.dispose();
+    _invNumberController.dispose();
+    _draftDebounce?.cancel();
     super.dispose();
   }
 
@@ -155,16 +263,126 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
       businessState = (_selectedProfile!.maanilam['English'] ?? _selectedProfile!.maanilam['Tamil'] ?? '').trim().toLowerCase();
     }
 
+    // Place of Supply overrides customer state for GST split
+    final effectiveCustomerState =
+        _placeOfSupply.isNotEmpty ? _placeOfSupply.toLowerCase() : _customerState;
+
     setState(() {
       _totals = PattuKanakku.calculate(
         items: _items,
         globalDiscountValue: _globalDiscountValue,
         globalDiscountType: _globalDiscountType,
         businessState: businessState,
-        customerState: _customerState,
+        customerState: effectiveCustomerState,
         country: country,
       );
+      _hasUnsavedChanges = true;
     });
+    _scheduleDraftSave();
+  }
+
+  // ── Draft auto-save (debounced 2s) ──
+  void _scheduleDraftSave() {
+    _draftDebounce?.cancel();
+    _draftDebounce = Timer(const Duration(seconds: 2), _saveDraft);
+  }
+
+  Future<void> _saveDraft() async {
+    if (_isEditing) return; // Only for new invoices
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final draft = jsonEncode({
+        'vanigarId': _selectedVanigarId,
+        'vanigarPeyar': _selectedVanigarPeyar,
+        'customerState': _customerState,
+        'niruvanamId': _selectedNiruvanamId,
+        'pattiyalVagai': _pattiyalVagai,
+        'pattiyalNaal': _pattiyalNaal.toIso8601String(),
+        'placeOfSupply': _placeOfSupply,
+        'placeOfSupplyTa': _placeOfSupplyTa,
+        'invoiceNumberOverride': _invoiceNumberOverride,
+        'items': PattiyalUthavigal.pattuListToJson(_items),
+        'globalDiscountValue': _globalDiscountValue,
+        'globalDiscountType': _globalDiscountType,
+        'nibandhanaigal': _nibandhanaigal,
+        'ullkurippu': _ullkurippu,
+      });
+      await prefs.setString(_draftKey, draft);
+    } catch (_) {}
+  }
+
+  Future<void> _tryRestoreDraft() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final draftJson = prefs.getString(_draftKey);
+      if (draftJson == null || draftJson.isEmpty) return;
+      final draft = jsonDecode(draftJson) as Map<String, dynamic>;
+      // Check if draft is blank
+      final items = draft['items'] as String? ?? '[]';
+      final name = draft['vanigarPeyar'] as String? ?? '';
+      if (items == '[]' && name.isEmpty) {
+        await prefs.remove(_draftKey);
+        return;
+      }
+      if (!mounted) return;
+      // Show restore dialog
+      final restore = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('வரைவு மீட்கவா?'),
+          content: const Text('சேமிக்காத வரைவு உள்ளது. மீட்டமைக்கவா?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('நிராகரி'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('மீட்கவும்'),
+            ),
+          ],
+        ),
+      );
+      if (restore == true && mounted) {
+        setState(() {
+          _selectedVanigarId = draft['vanigarId'] as int?;
+          _selectedVanigarPeyar = draft['vanigarPeyar'] as String? ?? '';
+          _customerState = draft['customerState'] as String? ?? '';
+          _selectedNiruvanamId = draft['niruvanamId'] as int?;
+          _pattiyalVagai = draft['pattiyalVagai'] as String? ?? 'tax-invoice';
+          _pattiyalNaal = DateTime.tryParse(draft['pattiyalNaal'] as String? ?? '') ?? DateTime.now();
+          _placeOfSupply = draft['placeOfSupply'] as String? ?? '';
+          _placeOfSupplyTa = draft['placeOfSupplyTa'] as String? ?? '';
+          _invoiceNumberOverride = draft['invoiceNumberOverride'] as String? ?? '';
+          _invNumberController.text = _invoiceNumberOverride;
+          _items = PattiyalUthavigal.pattuListFromJson(items);
+          if (_items.isEmpty) _items = [const PattuUrupadi()];
+          _globalDiscountValue = (draft['globalDiscountValue'] as num?)?.toDouble() ?? 0;
+          _globalDiscountType = draft['globalDiscountType'] as String? ?? 'percentage';
+          _globalDiscountController.text = _globalDiscountValue > 0 ? _globalDiscountValue.toString() : '';
+          _nibandhanaigal = draft['nibandhanaigal'] as String? ?? '';
+          _ullkurippu = draft['ullkurippu'] as String? ?? '';
+          _termsController.text = _nibandhanaigal;
+          _notesController.text = _ullkurippu;
+        });
+        // Restore profile match
+        final profiles = ref.read(vanigaTharavugalListProvider);
+        if (_selectedNiruvanamId != null) {
+          final match = profiles.where((p) => p.id == _selectedNiruvanamId).firstOrNull;
+          if (match != null) setState(() => _selectedProfile = match);
+        }
+        _recalculate();
+      } else {
+        await prefs.remove(_draftKey);
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _clearDraft() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_draftKey);
+    } catch (_) {}
   }
 
   // ── Save ──
@@ -191,17 +409,22 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           ? _selectedProfile!.kurumPeyar
           : 'INV';
 
-      // Settings JSON
+      // Settings JSON (includes place of supply)
       final settingsJson = jsonEncode({
         'globalDiscountValue': _globalDiscountValue,
         'globalDiscountType': _globalDiscountType,
+        'placeOfSupply': _placeOfSupply,
+        'placeOfSupplyTa': _placeOfSupplyTa,
       });
 
       if (_isEditing) {
-        // Update existing
+        // Update existing — include invoice number if user changed it
+        final invNumChanged = _invoiceNumberOverride != widget.editingEntry!.patrucheettuEn;
         await kalanjiyam.updatePattiyal(
           widget.editingEntry!.id,
           PatrucheettuTableCompanion(
+            patrucheettuEn: invNumChanged ? Value(_invoiceNumberOverride) : const Value.absent(),
+            niruvanamId: Value(_selectedNiruvanamId),
             vanigarId: Value(_selectedVanigarId),
             vanigarPeyar: Value(_selectedVanigarPeyar),
             pattiyalVagai: Value(_pattiyalVagai),
@@ -218,9 +441,16 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           ),
         );
       } else {
-        // Create new — get next number
-        final vanakkam = await kalanjiyam.getNextVanakkam('silk', _selectedNiruvanamId, finYear);
-        final invoiceNumber = kalanjiyam.formatPattiyalEn(prefix, vanakkam);
+        // Create new — use manual override or auto-generate
+        String invoiceNumber;
+        int vanakkam;
+        if (_invoiceNumberOverride.isNotEmpty) {
+          invoiceNumber = _invoiceNumberOverride;
+          vanakkam = await kalanjiyam.getNextVanakkam('silk', _selectedNiruvanamId, finYear);
+        } else {
+          vanakkam = await kalanjiyam.getNextVanakkam('silk', _selectedNiruvanamId, finYear);
+          invoiceNumber = kalanjiyam.formatPattiyalEn(prefix, vanakkam);
+        }
 
         await kalanjiyam.createPattiyal(
           PatrucheettuTableCompanion.insert(
@@ -245,6 +475,8 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
         );
       }
 
+      await _clearDraft();
+      _hasUnsavedChanges = false;
       if (mounted) {
         ElvanSnackbar.show(context, K.porulChaemikkappattadhu.tr(context, ref));
         Navigator.of(context).pop();
@@ -283,6 +515,10 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           ? K.pattupattiyalthiruthi.tr(context, ref)
           : K.pudhiyaPattupPattiyal.tr(context, ref),
       onSave: _saving ? null : _handleSave,
+      hasUnsavedChanges: _hasUnsavedChanges,
+      onDiscard: () async {
+        await _clearDraft();
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -318,8 +554,34 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                                   '')
                               .trim()
                               .toLowerCase();
+                      // Auto-set Place of Supply from customer
+                      if (_placeOfSupply.isEmpty) {
+                        _placeOfSupply = (entry.maanilam['English'] ??
+                                    entry.maanilam['Tamil'] ??
+                                    '')
+                                .trim();
+                        _placeOfSupplyTa = (entry.maanilam['Tamil'] ?? '').trim();
+                      }
                     });
                     _recalculate();
+                  },
+                  onCleared: () {
+                    setState(() {
+                      _selectedVanigarId = null;
+                      _selectedVanigarPeyar = '';
+                      _customerState = '';
+                      _placeOfSupply = '';
+                      _placeOfSupplyTa = '';
+                    });
+                    _recalculate();
+                  },
+                  onRequestAddNew: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const SilkMerchantEditor(),
+                      ),
+                    );
+                    // Stream auto-refreshes; user can search for newly created customer
                   },
                 ),
               ],
@@ -341,36 +603,15 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                             ),
                           ),
                           const SizedBox(height: 8),
+                          // Primary name (Tamil)
                           Text(
-                            _selectedVanigarPeyar,
+                            selectedVanigar.peyar['Tamil'] ?? _selectedVanigarPeyar,
                             style: tt.bodyLarge?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          if (selectedVanigar.gstin.isNotEmpty) ...[
-                            const SizedBox(height: 4),
-                            Text(
-                              'GSTIN: ${selectedVanigar.gstin}',
-                              style: tt.bodySmall?.copyWith(
-                                color: cs.onSurfaceVariant,
-                                fontFamily: 'monospace',
-                              ),
-                            ),
-                          ],
-                          if ((selectedVanigar.maanilam['English'] ??
-                                      selectedVanigar.maanilam['Tamil'] ??
-                                      '')
-                                  .isNotEmpty) ...[
-                            const SizedBox(height: 4),
-                            Text(
-                              selectedVanigar.maanilam['English'] ??
-                                  selectedVanigar.maanilam['Tamil'] ??
-                                  '',
-                              style: tt.bodySmall?.copyWith(
-                                color: cs.outline,
-                              ),
-                            ),
-                          ],
+                          // Full bilingual address block (Tamil + English + GSTIN)
+                          _buildAddressBlock(selectedVanigar, cs, tt),
                         ],
                       ),
                     ),
@@ -413,26 +654,71 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
             final invoiceNumberField = Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Invoice Number',
-                  style: tt.labelMedium?.copyWith(
-                    color: cs.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      'Invoice Number',
+                      style: tt.labelMedium?.copyWith(
+                        color: cs.onSurfaceVariant,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    ...[
+                      const SizedBox(width: 8),
+                      InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () => setState(() {
+                          _isInvNumberEditing = !_isInvNumberEditing;
+                          if (!_isInvNumberEditing) {
+                            _invoiceNumberOverride = _invNumberController.text.trim();
+                          }
+                        }),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Icon(
+                            _isInvNumberEditing ? Icons.check : Icons.edit_outlined,
+                            size: 16,
+                            color: cs.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
                 const SizedBox(height: 6),
-                ElvanThiruthiAttai(
-                  child: Text(
-                    _isEditing
-                        ? (widget.editingEntry!.patrucheettuEn)
-                        : 'Auto-generated on save',
-                    style: tt.bodyLarge?.copyWith(
-                      color: _isEditing ? cs.onSurface : cs.onSurfaceVariant,
-                      fontWeight:
-                          _isEditing ? FontWeight.w600 : FontWeight.w400,
+                if (_isInvNumberEditing)
+                  TextField(
+                    controller: _invNumberController,
+                    decoration: InputDecoration(
+                      hintText: 'SJPS-01',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 14),
+                      isDense: true,
+                    ),
+                    onChanged: (v) {
+                      _invoiceNumberOverride = v.trim();
+                      _hasUnsavedChanges = true;
+                    },
+                  )
+                else
+                  ElvanThiruthiAttai(
+                    child: Text(
+                      _invoiceNumberOverride.isNotEmpty
+                          ? _invoiceNumberOverride
+                          : 'Auto-generated on save',
+                      style: tt.bodyLarge?.copyWith(
+                        color: _invoiceNumberOverride.isNotEmpty
+                            ? cs.onSurface
+                            : cs.onSurfaceVariant,
+                        fontWeight: _invoiceNumberOverride.isNotEmpty
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                      ),
                     ),
                   ),
-                ),
               ],
             );
 
@@ -473,6 +759,11 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
               ],
             );
           }),
+
+          const SizedBox(height: 16),
+
+          // ─── Place of Supply ───
+          _buildPlaceOfSupply(cs, tt),
 
           const SizedBox(height: 24),
 
@@ -571,50 +862,23 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                 DropdownMenuItem(
                     value: 'proforma', child: Text('Proforma')),
               ],
-              onChanged: (v) =>
-                  setState(() => _pattiyalVagai = v ?? 'tax-invoice'),
+              onChanged: (v) async {
+                final newType = v ?? 'tax-invoice';
+                setState(() => _pattiyalVagai = newType);
+                // Auto-generate new invoice number with new prefix
+                if (!_isEditing && _invoiceNumberOverride.isEmpty) {
+                  // The prefix changes based on type, so reset override
+                  // The actual number is generated at save time
+                }
+                _hasUnsavedChanges = true;
+                _scheduleDraftSave();
+              },
             ),
           ),
 
           const SizedBox(height: 24),
 
-          // ─────────────────────────────────────────────────────────────────
-          // Terms & Notes
-          // ─────────────────────────────────────────────────────────────────
-          ElvanThiruthiAttai(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Terms & Notes',
-                  style: tt.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: _termsController,
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    labelText: 'Terms & Conditions',
-                    border: InputBorder.none,
-                  ),
-                  onChanged: (v) => _nibandhanaigal = v,
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _notesController,
-                  maxLines: 2,
-                  decoration: const InputDecoration(
-                    labelText: 'Internal Note',
-                    border: InputBorder.none,
-                  ),
-                  onChanged: (v) => _ullkurippu = v,
-                ),
-              ],
-            ),
-          ),
+          // Terms & Notes removed per user request (not used in production)
         ],
       ),
     );
@@ -809,6 +1073,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                     porulId: p.id.toString(),
                     porulPeyar:
                         p.porulPeyar['Tamil'] ?? p.porulPeyar['English'] ?? '',
+                    porulPeyarEn: p.porulPeyar['English'] ?? '',
                     hsnKuriyeedu: p.hsnCode,
                     vilai: p.vilai,
                     variVizhukkaadu: p.variVeetham,
@@ -819,13 +1084,26 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                   });
                   _recalculate();
                 },
+                onRequestAddNew: () async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const SilkItemEditor(),
+                    ),
+                  );
+                },
               );
 
               // Build field widgets
-              final qtyField = _itemField('Qty', item.alavu, (v) {
-                _updateItem(
-                    index, item.copyWith(alavu: double.tryParse(v) ?? 0));
-              });
+              final isWeightItem = item.alagu == 'Kg';
+              final qtyField = _itemField(
+                isWeightItem ? 'Weight' : 'Qty',
+                item.alavu,
+                (v) {
+                  _updateItem(
+                      index, item.copyWith(alavu: double.tryParse(v) ?? 0));
+                },
+                isWeight: isWeightItem,
+              );
 
               final unitDropdown = DropdownButtonFormField<String>(
                 initialValue: item.alagu,
@@ -840,8 +1118,6 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                 items: const [
                   DropdownMenuItem(value: 'Nos', child: Text('Nos')),
                   DropdownMenuItem(value: 'Kg', child: Text('Kg')),
-                  DropdownMenuItem(value: 'Mtr', child: Text('Mtr')),
-                  DropdownMenuItem(value: 'Pcs', child: Text('Pcs')),
                 ],
                 onChanged: (v) =>
                     _updateItem(index, item.copyWith(alagu: v ?? 'Nos')),
@@ -917,6 +1193,23 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     productSearch,
+                    // Bilingual secondary info line
+                    if (item.porulPeyarEn.isNotEmpty || item.hsnKuriyeedu.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4, top: 4),
+                        child: Text(
+                          [
+                            if (item.porulPeyarEn.isNotEmpty) item.porulPeyarEn,
+                            if (item.hsnKuriyeedu.isNotEmpty) 'HSN: ${item.hsnKuriyeedu}',
+                            if (item.variVizhukkaadu > 0) 'GST ${item.variVizhukkaadu.toStringAsFixed(item.variVizhukkaadu.truncateToDouble() == item.variVizhukkaadu ? 0 : 1)}%',
+                          ].join(' · '),
+                          style: tt.bodySmall?.copyWith(
+                            color: cs.onSurfaceVariant,
+                            fontStyle: FontStyle.italic,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
                     vGap,
                     Row(
                       children: [
@@ -946,6 +1239,23 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   productSearch,
+                  // Bilingual secondary info line
+                  if (item.porulPeyarEn.isNotEmpty || item.hsnKuriyeedu.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4, top: 4),
+                      child: Text(
+                        [
+                          if (item.porulPeyarEn.isNotEmpty) item.porulPeyarEn,
+                          if (item.hsnKuriyeedu.isNotEmpty) 'HSN: ${item.hsnKuriyeedu}',
+                          if (item.variVizhukkaadu > 0) 'GST ${item.variVizhukkaadu.toStringAsFixed(item.variVizhukkaadu.truncateToDouble() == item.variVizhukkaadu ? 0 : 1)}%',
+                        ].join(' · '),
+                        style: tt.bodySmall?.copyWith(
+                          color: cs.onSurfaceVariant,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
                   vGap,
                   Row(children: [
                     Expanded(child: qtyField),
@@ -972,19 +1282,31 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   }
 
   /// Borderless numeric field used inside item cards.
+  /// When [isWeight] is true, formats to 3 decimals on blur (grams precision).
   Widget _itemField(
-      String label, double value, ValueChanged<String> onChanged) {
+      String label, double value, ValueChanged<String> onChanged,
+      {bool isWeight = false}) {
+    final controller = TextEditingController(
+      text: value == 0 ? '' : value.toString(),
+    );
     return TextFormField(
-      initialValue: value == 0 ? '' : value.toString(),
+      controller: controller,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       decoration: InputDecoration(
         labelText: label,
+        suffixText: isWeight ? 'kg' : null,
         border: InputBorder.none,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         isDense: true,
       ),
       onChanged: onChanged,
+      onEditingComplete: isWeight
+          ? () {
+              final v = double.tryParse(controller.text) ?? 0;
+              controller.text = v > 0 ? v.toStringAsFixed(3) : '';
+            }
+          : null,
     );
   }
 
@@ -1038,6 +1360,326 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           });
           _recalculate();
         },
+      ),
+    );
+  }
+
+  // ── Full Address Block in Saved Details Card ──
+  // Shows bilingual multi-line address: Tamil block, English block, then GSTIN
+  Widget _buildAddressBlock(VanigarEntry v, ColorScheme cs, TextTheme tt) {
+    // Build address lines for a given language key
+    List<String> buildLines(String key) {
+      final lines = <String>[];
+
+      // Street address
+      final mugavari = (v.mugavari[key] ?? '').trim();
+      if (mugavari.isNotEmpty) lines.add(mugavari);
+
+      // City - District - PIN
+      final oor = (v.oor[key] ?? '').trim();
+      final maavattam = (v.maavattam[key] ?? '').trim();
+      final pin = v.anjalKuriyeedu.trim();
+      final cityLine = [
+        if (oor.isNotEmpty) oor,
+        if (maavattam.isNotEmpty) maavattam,
+        if (pin.isNotEmpty) pin,
+      ].join(' - ');
+      if (cityLine.isNotEmpty) lines.add(cityLine);
+
+      // State
+      final maanilam = (v.maanilam[key] ?? '').trim();
+      if (maanilam.isNotEmpty) lines.add(maanilam);
+
+      // Country
+      final naadu = (v.naadu[key] ?? '').trim();
+      if (naadu.isNotEmpty) lines.add(naadu);
+
+      return lines;
+    }
+
+    final taLines = buildLines('Tamil');
+    final enLines = buildLines('English');
+
+    if (taLines.isEmpty && enLines.isEmpty && v.gstin.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Tamil address block
+          if (taLines.isNotEmpty) ...[
+            ...taLines.map((line) => Text(
+              line,
+              style: tt.bodySmall?.copyWith(
+                color: cs.onSurface,
+                height: 1.6,
+              ),
+            )),
+          ],
+          // Spacer between language blocks
+          if (taLines.isNotEmpty && enLines.isNotEmpty)
+            const SizedBox(height: 8),
+          // English address block (italic, dimmer)
+          if (enLines.isNotEmpty) ...[
+            ...enLines.map((line) => Text(
+              line,
+              style: tt.bodySmall?.copyWith(
+                color: cs.onSurfaceVariant,
+                fontStyle: FontStyle.italic,
+                height: 1.6,
+              ),
+            )),
+          ],
+          // GSTIN
+          if (v.gstin.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Text(
+              'GSTIN: ${v.gstin}',
+              style: tt.bodySmall?.copyWith(
+                color: cs.primary,
+                fontFamily: 'monospace',
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  // ── Place of Supply: Two Pills (Editable + Bilingual Locked) ──
+  Widget _buildPlaceOfSupply(ColorScheme cs, TextTheme tt) {
+    return LayoutBuilder(builder: (context, constraints) {
+      final isNarrow = constraints.maxWidth < 500;
+
+      final editablePill = GestureDetector(
+        onTap: () => _showStatePickerSheet(cs),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: cs.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: cs.outline.withValues(alpha: 0.3),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Expanded(
+                child: Text(
+                  _placeOfSupply.isEmpty
+                      ? 'Select State'
+                      : _placeOfSupply,
+                  style: tt.bodyMedium?.copyWith(
+                    color: _placeOfSupply.isEmpty
+                        ? cs.onSurfaceVariant
+                        : cs.onSurface,
+                    fontWeight: _placeOfSupply.isNotEmpty
+                        ? FontWeight.w600
+                        : FontWeight.w400,
+                  ),
+                ),
+              ),
+              if (_placeOfSupply.isNotEmpty)
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _placeOfSupply = '';
+                      _placeOfSupplyTa = '';
+                    });
+                    _recalculate();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Icon(Icons.close, size: 16, color: cs.onSurfaceVariant),
+                  ),
+                )
+              else
+                Icon(Icons.arrow_drop_down, size: 20, color: cs.onSurfaceVariant),
+            ],
+          ),
+        ),
+      );
+
+      final tamilPill = _placeOfSupplyTa.isNotEmpty
+          ? Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.lock_outline, size: 14, color: cs.onSurfaceVariant),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      _placeOfSupplyTa,
+                      style: tt.bodyMedium?.copyWith(
+                        color: cs.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : const SizedBox.shrink();
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Place of Supply',
+            style: tt.labelMedium?.copyWith(
+              color: cs.onSurfaceVariant,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 6),
+          if (isNarrow)
+            // Mobile: stacked vertically
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                editablePill,
+                if (_placeOfSupplyTa.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  tamilPill,
+                ],
+              ],
+            )
+          else
+            // Desktop: side by side
+            Row(
+              children: [
+                Expanded(child: editablePill),
+                if (_placeOfSupplyTa.isNotEmpty) ...[
+                  const SizedBox(width: 12),
+                  Expanded(child: tamilPill),
+                ],
+              ],
+            ),
+        ],
+      );
+    });
+  }
+
+  void _showStatePickerSheet(ColorScheme cs) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => _InvoiceStatePickerSheet(
+        isDark: isDark,
+        onSelected: (en, ta) {
+          setState(() {
+            _placeOfSupply = en;
+            _placeOfSupplyTa = ta;
+          });
+          _recalculate();
+          Navigator.pop(ctx);
+        },
+      ),
+    );
+  }
+}
+
+/// Bottom sheet state picker for Place of Supply — reuses silkIndianStates data.
+class _InvoiceStatePickerSheet extends StatefulWidget {
+  const _InvoiceStatePickerSheet({
+    required this.isDark,
+    required this.onSelected,
+  });
+
+  final bool isDark;
+  final void Function(String en, String ta) onSelected;
+
+  @override
+  State<_InvoiceStatePickerSheet> createState() =>
+      _InvoiceStatePickerSheetState();
+}
+
+class _InvoiceStatePickerSheetState extends State<_InvoiceStatePickerSheet> {
+  String _searchQuery = '';
+
+  List<Map<String, String>> get _filtered {
+    if (_searchQuery.isEmpty) return silkIndianStates;
+    final q = _searchQuery.toLowerCase();
+    return silkIndianStates.where((s) =>
+        (s['en']?.toLowerCase().contains(q) ?? false) ||
+        (s['ta']?.toLowerCase().contains(q) ?? false)).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.6,
+      ),
+      decoration: BoxDecoration(
+        color: widget.isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Handle bar
+          Container(
+            margin: const EdgeInsets.only(top: 12),
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: widget.isDark ? Colors.white24 : Colors.black12,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          // Search
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: TextField(
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: 'Search state...',
+                prefixIcon: const Icon(Icons.search, size: 20),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 12),
+                isDense: true,
+              ),
+              onChanged: (q) => setState(() => _searchQuery = q),
+            ),
+          ),
+          // List
+          Flexible(
+            child: ListView.builder(
+              itemCount: _filtered.length,
+              itemBuilder: (ctx, i) {
+                final item = _filtered[i];
+                return ListTile(
+                  title: Text(item['en'] ?? ''),
+                  subtitle: Text(
+                    item['ta'] ?? '',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: widget.isDark ? Colors.white38 : Colors.black38,
+                    ),
+                  ),
+                  onTap: () => widget.onSelected(
+                    item['en'] ?? '',
+                    item['ta'] ?? '',
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

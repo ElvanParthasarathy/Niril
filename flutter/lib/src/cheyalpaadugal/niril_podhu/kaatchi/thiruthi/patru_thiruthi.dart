@@ -64,11 +64,22 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
   bool _isSaving = false;
   bool _isInitialized = false;
+  bool _paidAmountsLoaded = false;
 
   @override
   void initState() {
     super.initState();
     _initializeForm();
+    _loadLinkedInvoices();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_paidAmountsLoaded) {
+      _paidAmountsLoaded = true;
+      _loadPaidAmounts();
+    }
   }
 
   void _initializeForm() {
@@ -265,7 +276,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
   @override
   Widget build(BuildContext context) {
-    final profilesAsync = ref.watch(profilesStreamProvider);
+    final profilesAsync = ref.watch(currentModeProfilesStreamProvider);
     final invoicesAsync = ref.watch(pattiyalgalStreamProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final mode = ref.watch(appModeProvider);
@@ -279,11 +290,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       }
     });
 
-    // Load linked invoices for editing
-    _loadLinkedInvoices();
 
-    // Load paid amounts for selected invoices
-    _loadPaidAmounts();
 
     final isEditing = widget.editingEntry != null;
     final title = isEditing ? 'பற்றுச்சீட்டுத் திருத்து' : 'புதிய பற்றுச்சீட்டு';
@@ -441,11 +448,11 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                 _selectedVanigarId = vanigar.id;
                 final peyarMap = vanigar.peyar;
                 _vanigarPeyar =
-                    peyarMap['ta'] ?? peyarMap['en'] ?? peyarMap.values.firstOrNull ?? '';
+                    peyarMap['Tamil'] ?? peyarMap['English'] ?? peyarMap.values.firstOrNull ?? '';
                 final mugavariMap = vanigar.mugavari;
                 _vanigarMunvari = [
-                  mugavariMap['ta'] ?? mugavariMap['en'] ?? '',
-                  vanigar.oor['ta'] ?? vanigar.oor['en'] ?? '',
+                  mugavariMap['Tamil'] ?? mugavariMap['English'] ?? '',
+                  vanigar.oor['Tamil'] ?? vanigar.oor['English'] ?? '',
                 ].where((s) => s.isNotEmpty).join(', ');
               });
             },
@@ -644,6 +651,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                                 _recalculateAmount();
                                 _autoFillFromInvoices();
                               });
+                              _loadPaidAmounts();
                               Navigator.of(ctx).pop();
                             },
                             child: const Text('முடிந்தது',

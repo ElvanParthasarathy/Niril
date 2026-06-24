@@ -26,7 +26,7 @@ class CoolieReceiptsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final query = ref.watch(coolieReceiptsSearchQueryProvider).toLowerCase();
     final patrugalAsync = ref.watch(patrugalStreamProvider);
-    final profilesAsync = ref.watch(profilesStreamProvider);
+    final profilesAsync = ref.watch(currentModeProfilesStreamProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelecting = ref.watch(patruSelectionModeProvider);
     final selectedIds = ref.watch(selectedPatruIdsProvider);
@@ -335,7 +335,7 @@ class _PatruCard extends StatelessWidget {
                   .primary
                   .withValues(alpha: 0.12)
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.05)
+                  ? const Color(0xFF111111)
                   : Colors.black.withValues(alpha: 0.03)),
           borderRadius: BorderRadius.circular(14),
           border: isSelected

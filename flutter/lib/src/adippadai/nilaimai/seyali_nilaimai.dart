@@ -67,6 +67,25 @@ final hasProfileForCurrentModeProvider = Provider<bool>((ref) {
   return profiles.any((p) => p.seyaliVagai == modeKey);
 });
 
+// ── Mode-Filtered Profiles Stream (Firewall) ────────────────────────────────
+// Returns ONLY profiles for the current app mode.
+// Use this in invoice/receipt/merchant lists to prevent cross-mode leaks.
+// The unfiltered `profilesStreamProvider` above is kept for onboarding checks.
+final currentModeProfilesStreamProvider =
+    StreamProvider<List<VanigaTharavugalEntry>>((ref) {
+  final db = ref.watch(appDatabaseProvider);
+  final mode = ref.watch(appModeProvider);
+
+  if (mode == null) {
+    return Stream.value(<VanigaTharavugalEntry>[]);
+  }
+
+  final modeKey = mode == AppMode.coolie ? 'coolie' : 'silk';
+  return (db.select(db.vanigaTharavugalTable)
+        ..where((t) => t.seyaliVagai.equals(modeKey)))
+      .watch();
+});
+
 // Tracks the selected segment inside the Uruvakku tab (0 = Invoices, 1 = Receipts)
 // Each mode has its own independent segment state so switching modes doesn't reset the tab.
 final _silkUruvakkuSegmentProvider = NotifierProvider<_SegmentNotifier, int>(_SegmentNotifier.new);

@@ -40,18 +40,18 @@ abstract final class K {
   static const appPeyar = 'appPeyar';
   static const elvanNiril = 'elvanNiril';
 
-  // ── Business Details ──
-  static const vanigathinPeyar = 'vanigathinPeyar';
-  static const kurugiyaVanigaPeyar = 'kurugiyaVanigaPeyar';
-  static const vanigam = 'vanigam';
-  static const vanigaAmaippugal = 'vanigaAmaippugal';
-  static const kooliVanigapPeyar = 'kooliVanigapPeyar';
+  // ── Business Details (நிறுவனம்) ──
+  static const niruvanathinPeyar = 'niruvanathinPeyar';
+  static const kurugiyaNiruvanaPeyar = 'kurugiyaNiruvanaPeyar';
+  static const niruvanam = 'niruvanam';
+  static const niruvanAmaippugal = 'niruvanAmaippugal';
+  static const kooliNiruvanaPeyar = 'kooliNiruvanaPeyar';
   static const adaimozhi = 'adaimozhi';
   static const nirilKooli = 'nirilKooli';
   static const nirilPattu = 'nirilPattu';
   static const adaiyaalam = 'adaiyaalam';
-  static const kooliVanigaAdaiyaalangal = 'kooliVanigaAdaiyaalangal';
-  static const pattuVanigaAdaiyaalangal = 'pattuVanigaAdaiyaalangal';
+  static const kooliNiruvanAdaiyaalangal = 'kooliNiruvanAdaiyaalangal';
+  static const pattuNiruvanAdaiyaalangal = 'pattuNiruvanAdaiyaalangal';
 
   // ── Settings & Preferences ──
   static const amaippugal = 'amaippugal';
@@ -85,8 +85,8 @@ abstract final class K {
   static const tamilLatin = 'tamilLatin';
   static const language = 'language';
 
-  // ── Profiles ──
-  static const tharpoadhaiyaVanigam = 'tharpoadhaiyaVanigam';
+  // ── Profiles (நிறுவனம்) ──
+  static const tharpoadhaiyaNiruvanam = 'tharpoadhaiyaNiruvanam';
   static const pudhiyaThannuruvaiUruvaakku = 'pudhiyaThannuruvaiUruvaakku';
   static const pudhiyaThannuruChaer = 'pudhiyaThannuruChaer';
   static const thannuruChaemikkappattadhu = 'thannuruChaemikkappattadhu';
@@ -204,7 +204,7 @@ abstract final class K {
   static const tharavugalaiUllidu = 'tharavugalaiUllidu';
   static const tharavugalaiUlliduga = 'tharavugalaiUlliduga';
   static const peyaraiUlliduga = 'peyaraiUlliduga';
-  static const vanigapeyaraiullidu = 'vanigapeyaraiullidu';
+  static const niruvanapeyaraiullidu = 'niruvanapeyaraiullidu';
 
   // ── About & Info ──
   static const cheyaliPatri = 'cheyaliPatri';
@@ -253,6 +253,7 @@ abstract final class K {
   static const mothaPattiyalgal = 'mothaPattiyalgal';
   static const variThirattiyavai = 'variThirattiyavai';
   static const pattiyalEnnikai = 'pattiyalEnnikai';
+  static const patrucheettuEnnikai = 'patrucheettuEnnikai';
   static const arugilSeyalgal = 'arugilSeyalgal';
   static const anaiththaiyumPaarPtn = 'anaiththaiyumPaarPtn';
   static const pattiyalgalIllai = 'pattiyalgalIllai';
@@ -302,4 +303,13 @@ abstract final class K {
   static const uruvaakkunarTharavugalaiAzhi = 'uruvaakkunarTharavugalaiAzhi';
   static const uruvaakkunarTharavugalaiUruvaakku = 'uruvaakkunarTharavugalaiUruvaakku';
   static const tharavugalaiUruvaakkuUruvaakkunar = 'tharavugalaiUruvaakkuUruvaakkunar';
+
+  // ── Payanar (User Profile) ──
+  static const payanar = 'payanar';
+  static const payanarAmaippugal = 'payanarAmaippugal';
+  static const mudhalPeyar = 'mudhalPeyar';
+  static const irudhiPeyar = 'irudhiPeyar';
+  static const pirandhaThaedhi = 'pirandhaThaedhi';
+  static const payanarTharavugalaiMaetriduPtn = 'payanarTharavugalaiMaetriduPtn';
+  static const payanarVilakkam = 'payanarVilakkam';
 }

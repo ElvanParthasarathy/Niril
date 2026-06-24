@@ -50,12 +50,10 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
   String? _gstinError;
 
   bool get _isIndia {
-    final primaryLang = ref.read(primaryLanguageProvider);
-    final country = _naadu[primaryLang]?.trim() ?? '';
-    if (country.isEmpty) return true; // Default: India
-    // Check both en and ta
-    final enName = _naadu['en']?.trim().toLowerCase() ?? '';
-    final taName = _naadu['ta']?.trim() ?? '';
+    if (_naadu.isEmpty) return true; // Default: India
+    // Check both key systems ('en'/'ta' from picker, 'Tamil'/'English' from DB)
+    final enName = (_naadu['en'] ?? _naadu['English'] ?? '').trim().toLowerCase();
+    final taName = (_naadu['ta'] ?? _naadu['Tamil'] ?? '').trim();
     return enName == 'india' || taName == 'இந்தியா' || enName.isEmpty;
   }
 

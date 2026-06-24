@@ -34,7 +34,7 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
 
     if ((needsSilk && _gstBusinessName.trim().isEmpty) ||
         (needsCoolie && _coolieBusinessName.trim().isEmpty)) {
-      ElvanSnackbar.show(context, K.vanigapeyaraiullidu.tr(context, ref));
+      ElvanSnackbar.show(context, K.niruvanapeyaraiullidu.tr(context, ref));
       return;
     }
 
@@ -141,8 +141,8 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
           const SizedBox(height: 32),
           if (needsSilk)
             AuthInput(
-              label: K.vanigathinPeyar.tr(context, ref).isNotEmpty
-                  ? K.vanigathinPeyar.tr(context, ref)
+              label: K.niruvanathinPeyar.tr(context, ref).isNotEmpty
+                  ? K.niruvanathinPeyar.tr(context, ref)
                   : 'GST Business Name',
               placeholder: K.peyaraiUlliduga.tr(context, ref),
               helperText: K.gstpattiyalukku.tr(context, ref),
@@ -151,7 +151,7 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
             ),
           if (needsCoolie)
             AuthInput(
-              label: K.kooliVanigapPeyar.tr(context, ref),
+              label: K.kooliNiruvanaPeyar.tr(context, ref),
               placeholder: K.peyaraiUlliduga.tr(context, ref),
               helperText:
                   K.koolipattiyalukku.tr(context, ref),

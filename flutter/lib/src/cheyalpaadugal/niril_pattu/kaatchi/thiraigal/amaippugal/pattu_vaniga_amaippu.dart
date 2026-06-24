@@ -52,18 +52,18 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
 
     final items = profiles.map((p) {
       final name = p.getPrimary('niruvanathinPeyar');
-      return name.isEmpty ? K.tharpoadhaiyaVanigam.tr(context, ref) : name;
+      return name.isEmpty ? K.tharpoadhaiyaNiruvanam.tr(context, ref) : name;
     }).toList();
 
     final activeName = activeProfile != null
         ? (activeProfile.getPrimary('niruvanathinPeyar').isEmpty
-            ? K.tharpoadhaiyaVanigam.tr(context, ref)
+            ? K.tharpoadhaiyaNiruvanam.tr(context, ref)
             : activeProfile.getPrimary('niruvanathinPeyar'))
         : '';
 
     showElvanSelectionBottomSheet(
       context: context,
-      title: K.tharpoadhaiyaVanigam.tr(context, ref),
+      title: K.tharpoadhaiyaNiruvanam.tr(context, ref),
       items: items,
       currentValue: activeName,
       onSelected: (val) {
@@ -135,13 +135,13 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                                         for (final profile in profiles)
                                           ElvanSettingsDisplayRow(
                                             title: profile.id == activeProfile?.id
-                                                ? K.tharpoadhaiyaVanigam.tr(context, ref)
+                                                ? K.tharpoadhaiyaNiruvanam.tr(context, ref)
                                                 : '',
                                             primaryValue: profile
                                                     .getPrimary(
                                                         'niruvanathinPeyar')
                                                     .isEmpty
-                                                ? K.tharpoadhaiyaVanigam.tr(context, ref)
+                                                ? K.tharpoadhaiyaNiruvanam.tr(context, ref)
                                                 : profile.getPrimary(
                                                     'niruvanathinPeyar'),
                                             icon: CupertinoIcons.delete_solid,
@@ -203,7 +203,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
         textAlign: TextAlign.center,
         onChanged: (val) => newName = val,
         decoration: InputDecoration(
-          hintText: K.vanigathinPeyar.tr(context, ref),
+          hintText: K.niruvanathinPeyar.tr(context, ref),
           hintStyle: TextStyle(
             fontSize: 13,
             color:
@@ -267,7 +267,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
     final profile = ref.watch(vanigaTharavugalProvider);
     final primaryName = profile?.getPrimary('niruvanathinPeyar') ?? '';
     final displayName =
-        primaryName.isEmpty ? K.tharpoadhaiyaVanigam.tr(context, ref) : primaryName;
+        primaryName.isEmpty ? K.tharpoadhaiyaNiruvanam.tr(context, ref) : primaryName;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
@@ -441,7 +441,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
 
   @override
   Widget build(BuildContext context) {
-    final title = K.vanigam.tr(context, ref);
+    final title = K.niruvanam.tr(context, ref);
     final isBilingual = ref.watch(bilingualProvider);
     final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
     final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
@@ -478,11 +478,11 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                     keyPrefix: 'business_name',
                     isEditing: _editingSection == 'niruvanathinPeyar',
                     editChild: _buildEditContainer(
-                      title: K.vanigathinPeyar.tr(context, ref),
+                      title: K.niruvanathinPeyar.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
                           label:
-                              '${K.vanigathinPeyar.tr(context, ref)} (${primaryLang.tr(context, ref)})',
+                              '${K.niruvanathinPeyar.tr(context, ref)} (${primaryLang.tr(context, ref)})',
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                         ),
@@ -490,7 +490,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                         if (isBilingual)
                           ElvanSettingsTextField(
                             label:
-                                '${K.vanigathinPeyar.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
+                                '${K.niruvanathinPeyar.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                             initialValue: _tempSecondary,
                             onChanged: (val) => _tempSecondary = val,
                           ),
@@ -500,7 +500,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                           currentProfile, 'niruvanathinPeyar'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
-                      title: K.vanigathinPeyar.tr(context, ref),
+                      title: K.niruvanathinPeyar.tr(context, ref),
                       primaryValue: niruvanathinPeyarPrimary,
                       secondaryValue:
                           isBilingual ? niruvanathinPeyarSecondary : null,
@@ -516,10 +516,10 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                     keyPrefix: 'short_business_name',
                     isEditing: _editingSection == 'kurumPeyar',
                     editChild: _buildEditContainer(
-                      title: K.kurugiyaVanigaPeyar.tr(context, ref),
+                      title: K.kurugiyaNiruvanaPeyar.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
-                          label: K.kurugiyaVanigaPeyar.tr(context, ref),
+                          label: K.kurugiyaNiruvanaPeyar.tr(context, ref),
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                         ),
@@ -529,7 +529,7 @@ class _SilkVanigaAmaippuPageState extends ConsumerState<SilkVanigaAmaippuPage> {
                           _saveSingleField(currentProfile, 'kurumPeyar'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
-                      title: K.kurugiyaVanigaPeyar.tr(context, ref),
+                      title: K.kurugiyaNiruvanaPeyar.tr(context, ref),
                       primaryValue: currentProfile.kurumPeyar,
                       onEdit: () => _beginEditSingle(
                           'kurumPeyar', currentProfile.kurumPeyar),

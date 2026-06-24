@@ -29,6 +29,9 @@ class PorulThaeduKooru extends ConsumerStatefulWidget {
   /// Callback fired when the user picks a product from the list.
   final ValueChanged<PorulEntry> onSelected;
 
+  /// Called when the user taps the "Add New Product" action.
+  final VoidCallback? onRequestAddNew;
+
   /// Optional text to pre-fill the search field.
   final String? initialText;
 
@@ -38,6 +41,7 @@ class PorulThaeduKooru extends ConsumerStatefulWidget {
   const PorulThaeduKooru({
     super.key,
     required this.onSelected,
+    this.onRequestAddNew,
     this.initialText,
     required this.seyaliVagai,
   });
@@ -185,53 +189,96 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
                     maxHeight: 280,
                     maxWidth: 420,
                   ),
-                  child: ListView.separated(
+                  child: ListView.builder(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     shrinkWrap: true,
-                    itemCount: options.length,
-                    separatorBuilder: (_, __) =>
-                        Divider(height: 1, color: colorScheme.outlineVariant),
+                    itemCount: options.length +
+                        (widget.onRequestAddNew != null ? 1 : 0),
                     itemBuilder: (context, index) {
+                      // ── "Add New Product" action tile ──
+                      if (index == options.length) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Divider(
+                              height: 1,
+                              color: colorScheme.outlineVariant,
+                            ),
+                            ListTile(
+                              dense: true,
+                              leading: Icon(
+                                Icons.add_circle_outline,
+                                color: colorScheme.primary,
+                              ),
+                              title: Text(
+                                'புதிய பொருள் சேர்',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              onTap: () {
+                                widget.onRequestAddNew?.call();
+                                FocusScope.of(context).unfocus();
+                              },
+                            ),
+                          ],
+                        );
+                      }
+
+                      // ── Regular product option tile ──
                       final entry = options.elementAt(index);
                       final primary = _getDisplayName(entry);
                       final secondary = _getSecondaryName(entry);
 
-                      return ListTile(
-                        dense: true,
-                        title: Text(
-                          primary,
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (secondary.isNotEmpty)
-                              Text(
-                                secondary,
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (index > 0)
+                            Divider(
+                              height: 1,
+                              color: colorScheme.outlineVariant,
+                            ),
+                          ListTile(
+                            dense: true,
+                            title: Text(
+                              primary,
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                fontWeight: FontWeight.w600,
                               ),
-                            if (_isSilk && entry.hsnCode.isNotEmpty)
-                              Text(
-                                'HSN: ${entry.hsnCode}',
-                                style: theme.textTheme.labelSmall?.copyWith(
-                                  color: colorScheme.outline,
-                                  fontFamily: 'monospace',
-                                ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (secondary.isNotEmpty)
+                                  Text(
+                                    secondary,
+                                    style:
+                                        theme.textTheme.bodySmall?.copyWith(
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                if (_isSilk && entry.hsnCode.isNotEmpty)
+                                  Text(
+                                    'HSN: ${entry.hsnCode}',
+                                    style:
+                                        theme.textTheme.labelSmall?.copyWith(
+                                      color: colorScheme.outline,
+                                      fontFamily: 'monospace',
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            trailing: Text(
+                              _inrFormat.format(entry.vilai),
+                              style: theme.textTheme.labelLarge?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.primary,
                               ),
-                          ],
-                        ),
-                        trailing: Text(
-                          _inrFormat.format(entry.vilai),
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: colorScheme.primary,
+                            ),
+                            onTap: () => onSelected(entry),
                           ),
-                        ),
-                        onTap: () => onSelected(entry),
+                        ],
                       );
                     },
                   ),

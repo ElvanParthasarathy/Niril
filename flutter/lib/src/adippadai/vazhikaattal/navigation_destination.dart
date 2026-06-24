@@ -33,8 +33,8 @@ extension NirilDestinationX on NirilDestination {
     NirilDestination.mugappu,
     NirilDestination.pattiyal,
     NirilDestination.raseethu,
-    NirilDestination.vanigar,
     NirilDestination.porul,
+    NirilDestination.vanigar,
   ];
 
   /// Whether this destination is a primary tab (not settings/reports/gst).
@@ -50,8 +50,8 @@ extension NirilDestinationX on NirilDestination {
         NirilDestination.mugappu => 0,
         NirilDestination.pattiyal => 1,
         NirilDestination.raseethu => 1,
-        NirilDestination.vanigar => 2,
-        NirilDestination.porul => 3,
+        NirilDestination.porul => 2,
+        NirilDestination.vanigar => 3,
         // Custom views don't have a tab — return 0 (home) as fallback
         _ => 0,
       };
@@ -61,8 +61,8 @@ extension NirilDestinationX on NirilDestination {
         NirilDestination.mugappu => 0,
         NirilDestination.pattiyal => 1,
         NirilDestination.raseethu => 2,
-        NirilDestination.vanigar => 3,
-        NirilDestination.porul => 4,
+        NirilDestination.porul => 3,
+        NirilDestination.vanigar => 4,
         // Custom views don't have a sidebar item, return -1
         _ => -1,
       };

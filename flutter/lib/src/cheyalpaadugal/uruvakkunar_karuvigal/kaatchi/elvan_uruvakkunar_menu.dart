@@ -62,25 +62,25 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
   }
 
   void _seedAllData() async {
-    // Seed Silk Mode
+    // ── Step 1: Erase existing data ──
+    await SodhanaiTharavuUruvakki.eraseData(ref);
+
+    // ── Step 2: Seed business profiles (both modes) ──
     ref.read(appModeProvider.notifier).setMode(AppMode.silk);
     await SodhanaiTharavuUruvakki.seedData(ref, AppMode.silk);
-
-    // Seed Coolie Mode
     ref.read(appModeProvider.notifier).setMode(AppMode.coolie);
     await SodhanaiTharavuUruvakki.seedData(ref, AppMode.coolie);
+
+    // ── Step 3: Seed products & merchants (both modes) ──
+    await SodhanaiTharavuUruvakki.seedPorulAndVanigar(ref);
+
+    // ── Step 4: Seed invoices (depends on profiles, products, merchants) ──
+    await SodhanaiTharavuUruvakki.seedPattiyalgal(ref);
 
     if (mounted) {
       ref.read(appModeProvider.notifier).setMode(AppMode.silk);
       ref.read(isLoggedInProvider.notifier).setLoggedIn(true);
-      ElvanSnackbar.show(context, 'Test Data Seeded Successfully');
-    }
-  }
-
-  void _seedPorulVanigar() async {
-    await SodhanaiTharavuUruvakki.seedPorulAndVanigar(ref);
-    if (mounted) {
-      ElvanSnackbar.show(context, 'Porul & Vanigar Seeded ✓');
+      ElvanSnackbar.show(context, 'All Data Seeded Successfully ✓');
     }
   }
 
@@ -138,17 +138,9 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
                     FloatingActionButton.extended(
                       heroTag: 'dev_seed',
                       onPressed: _seedAllData,
-                      label: const Text('Seed Profile'),
+                      label: const Text('Seed All'),
                       icon: const Icon(CupertinoIcons.rocket),
                       backgroundColor: Colors.green,
-                    ),
-                    const SizedBox(height: 8),
-                    FloatingActionButton.extended(
-                      heroTag: 'dev_seed_items',
-                      onPressed: _seedPorulVanigar,
-                      label: const Text('Seed Items'),
-                      icon: const Icon(CupertinoIcons.cube_box),
-                      backgroundColor: Colors.teal,
                     ),
                     const SizedBox(height: 8),
                     FloatingActionButton.extended(

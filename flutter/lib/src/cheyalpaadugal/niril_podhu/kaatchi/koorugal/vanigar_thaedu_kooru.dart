@@ -20,6 +20,12 @@ class VanigarThaeduKooru extends ConsumerStatefulWidget {
   /// Callback fired when the user picks a customer from the list.
   final ValueChanged<VanigarEntry> onSelected;
 
+  /// Called when the user clears the current selection via the X button.
+  final VoidCallback? onCleared;
+
+  /// Called when the user taps the "Add New Customer" action.
+  final VoidCallback? onRequestAddNew;
+
   /// If set, pre-fills the display text with this customer's name.
   final int? selectedId;
 
@@ -29,6 +35,8 @@ class VanigarThaeduKooru extends ConsumerStatefulWidget {
   const VanigarThaeduKooru({
     super.key,
     required this.onSelected,
+    this.onCleared,
+    this.onRequestAddNew,
     this.selectedId,
     required this.seyaliVagai,
   });
@@ -152,10 +160,15 @@ class _VanigarThaeduKooruState extends ConsumerState<VanigarThaeduKooru> {
                 ),
                 suffixIcon: fieldController.text.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear_rounded, size: 20),
+                        icon: Icon(
+                          Icons.close,
+                          size: 18,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
                         onPressed: () {
                           fieldController.clear();
                           _textController.clear();
+                          widget.onCleared?.call();
                         },
                       )
                     : null,
@@ -194,46 +207,89 @@ class _VanigarThaeduKooruState extends ConsumerState<VanigarThaeduKooru> {
                     maxHeight: 280,
                     maxWidth: 400,
                   ),
-                  child: ListView.separated(
+                  child: ListView.builder(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     shrinkWrap: true,
-                    itemCount: options.length,
-                    separatorBuilder: (_, __) =>
-                        Divider(height: 1, color: colorScheme.outlineVariant),
+                    itemCount: options.length +
+                        (widget.onRequestAddNew != null ? 1 : 0),
                     itemBuilder: (context, index) {
+                      // ── "Add New Customer" action tile ──
+                      if (index == options.length) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Divider(
+                              height: 1,
+                              color: colorScheme.outlineVariant,
+                            ),
+                            ListTile(
+                              dense: true,
+                              leading: Icon(
+                                Icons.add_circle_outline,
+                                color: colorScheme.primary,
+                              ),
+                              title: Text(
+                                'புதிய வாடிக்கையாளர் சேர்',
+                                style: theme.textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              onTap: () {
+                                widget.onRequestAddNew?.call();
+                                FocusScope.of(context).unfocus();
+                              },
+                            ),
+                          ],
+                        );
+                      }
+
+                      // ── Regular customer option tile ──
                       final entry = options.elementAt(index);
                       final primary = _getDisplayName(entry);
                       final secondary = _getSecondaryName(entry);
                       final oor = _getOorDisplay(entry);
 
-                      return ListTile(
-                        dense: true,
-                        title: Text(
-                          primary,
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (index > 0)
+                            Divider(
+                              height: 1,
+                              color: colorScheme.outlineVariant,
+                            ),
+                          ListTile(
+                            dense: true,
+                            title: Text(
+                              primary,
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (secondary.isNotEmpty)
+                                  Text(
+                                    secondary,
+                                    style:
+                                        theme.textTheme.bodySmall?.copyWith(
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                if (oor.isNotEmpty)
+                                  Text(
+                                    oor,
+                                    style:
+                                        theme.textTheme.labelSmall?.copyWith(
+                                      color: colorScheme.outline,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            onTap: () => onSelected(entry),
                           ),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (secondary.isNotEmpty)
-                              Text(
-                                secondary,
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            if (oor.isNotEmpty)
-                              Text(
-                                oor,
-                                style: theme.textTheme.labelSmall?.copyWith(
-                                  color: colorScheme.outline,
-                                ),
-                              ),
-                          ],
-                        ),
-                        onTap: () => onSelected(entry),
+                        ],
                       );
                     },
                   ),

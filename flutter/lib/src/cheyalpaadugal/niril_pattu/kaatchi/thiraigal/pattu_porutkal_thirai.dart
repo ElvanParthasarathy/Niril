@@ -119,6 +119,7 @@ class SilkItemsPage extends ConsumerWidget {
                   final isSelected = selectedIds.contains(porul.id);
 
                   return _SilkPorulCard(
+                    index: index,
                     porul: porul,
                     primaryLang: primaryLang,
                     secondaryLang: secondaryLang,
@@ -284,6 +285,7 @@ class _SelectionBar extends ConsumerWidget {
 
 class _SilkPorulCard extends StatelessWidget {
   const _SilkPorulCard({
+    required this.index,
     required this.porul,
     required this.primaryLang,
     required this.secondaryLang,
@@ -294,6 +296,7 @@ class _SilkPorulCard extends StatelessWidget {
     required this.onLongPress,
   });
 
+  final int index;
   final PorulEntry porul;
   final String primaryLang;
   final String secondaryLang;
@@ -307,157 +310,128 @@ class _SilkPorulCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final primary = porul.porulPeyar[primaryLang] ?? '';
     final secondary = porul.porulPeyar[secondaryLang] ?? '';
-    final isWeight = porul.alavuVagai == 'weight';
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        onLongPress: onLongPress,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? Theme.of(context)
-                    .colorScheme
-                    .primary
-                    .withValues(alpha: 0.12)
-                : (isDark
-                    ? Colors.white.withValues(alpha: 0.06)
-                    : Colors.black.withValues(alpha: 0.04)),
-            borderRadius: BorderRadius.circular(16),
-            border: isSelected
-                ? Border.all(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: 0.3),
-                    width: 1.5,
-                  )
-                : null,
-          ),
-          child: Row(
-            children: [
-              // Checkbox (only in selection mode)
-              if (isSelecting) ...[
-                Icon(
-                  isSelected
-                      ? CupertinoIcons.checkmark_square_fill
-                      : CupertinoIcons.square,
-                  size: 22,
-                  color: isSelected
-                      ? Theme.of(context).colorScheme.primary
-                      : (isDark ? Colors.white38 : Colors.black38),
+    return GestureDetector(
+      onTap: onTap,
+      onLongPress: onLongPress,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark
+                  ? const Color(0xFF1A1A1A)
+                  : Colors.black.withValues(alpha: 0.04))
+              : (isDark
+                  ? const Color(0xFF111111)
+                  : Colors.white),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Index circle or selection checkbox
+            if (isSelecting)
+              Icon(
+                isSelected
+                    ? CupertinoIcons.checkmark_square_fill
+                    : CupertinoIcons.square,
+                size: 24,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : (isDark ? Colors.white38 : Colors.black38),
+              )
+            else
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.12)
+                      : Colors.black.withValues(alpha: 0.08),
                 ),
-                const SizedBox(width: 12),
-              ],
-
-              // Product details
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Row 1: Product name + measure pill
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            primary,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: isWeight
-                                ? Colors.orange.withValues(alpha: 0.12)
-                                : Colors.blue.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: Text(
-                            isWeight ? 'kg' : 'Nos',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
-                              color: isWeight
-                                  ? Colors.orange.shade700
-                                  : Colors.blue.shade700,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    if (secondary.isNotEmpty) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        secondary,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: isDark ? Colors.white54 : Colors.black45,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-
-                    const SizedBox(height: 6),
-
-                    // Row 2: HSN + Tax % + Rate
-                    Row(
-                      children: [
-                        if (porul.hsnCode.isNotEmpty) ...[
-                          Text(
-                            'HSN: ${porul.hsnCode}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: isDark ? Colors.white38 : Colors.black38,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                        ],
-                        Text(
-                          'GST: ${porul.variVeetham.toStringAsFixed(0)}%',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: isDark ? Colors.white38 : Colors.black38,
-                          ),
-                        ),
-                        const Spacer(),
-                        if (porul.vilai > 0)
-                          Text(
-                            '₹${porul.vilai.toStringAsFixed(0)}',
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ],
+                alignment: Alignment.center,
+                child: Text(
+                  (index + 1).toString().padLeft(2, '0'),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 11.2,
+                    color: isDark ? Colors.white : Colors.black,
+                    height: 1,
+                  ),
                 ),
               ),
 
-              // Delete icon (only in selection mode when selected)
-              if (isSelecting && isSelected) ...[
-                const SizedBox(width: 8),
-                Icon(
-                  CupertinoIcons.trash,
-                  size: 18,
-                  color: Colors.red.withValues(alpha: 0.6),
-                ),
-              ],
-            ],
-          ),
+            const SizedBox(width: 12),
+
+            // Product details
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    primary,
+                    style: const TextStyle(
+                      fontSize: 15.2,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  if (secondary.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      secondary,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: isDark ? Colors.white54 : Colors.black54,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+
+                  const SizedBox(height: 6),
+
+                  // Row 2: HSN + Tax % + Rate
+                  Row(
+                    children: [
+                      if (porul.hsnCode.isNotEmpty) ...[
+                        Text(
+                          'HSN: ${porul.hsnCode}',
+                          style: TextStyle(
+                            fontSize: 13.6,
+                            color: isDark ? Colors.white38 : Colors.black38,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                      ],
+                      Text(
+                        'GST: ${porul.variVeetham.toStringAsFixed(0)}%',
+                        style: TextStyle(
+                          fontSize: 13.6,
+                          color: isDark ? Colors.white38 : Colors.black38,
+                        ),
+                      ),
+                      const Spacer(),
+                      if (porul.vilai > 0)
+                        Text(
+                          '₹${porul.vilai.toStringAsFixed(0)}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

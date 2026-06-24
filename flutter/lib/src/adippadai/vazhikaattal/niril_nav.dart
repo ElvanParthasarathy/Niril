@@ -32,7 +32,7 @@ class NirilNav {
       );
     } else {
       // Mobile: push onto the root navigator with Cupertino transition
-      return Navigator.of(context).push<T>(
+      return Navigator.of(context, rootNavigator: true).push<T>(
         ElvanPageRoute(builder: (_) => page),
       );
     }
@@ -45,7 +45,7 @@ class NirilNav {
     if (width >= 800 && desktopNavigatorKey.currentState != null) {
       desktopNavigatorKey.currentState!.pop<T>(result);
     } else {
-      Navigator.of(context).pop<T>(result);
+      Navigator.of(context, rootNavigator: true).pop<T>(result);
     }
   }
 }

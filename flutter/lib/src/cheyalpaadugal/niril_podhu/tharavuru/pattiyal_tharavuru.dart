@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 // =============================================================================
 // pattiyal_tharavuru.dart
 // ---------------------------------------------------------------------------
@@ -20,6 +22,9 @@ class PattuUrupadi {
 
   /// பொருள் பெயர் — Product name (bilingual JSON string)
   final String porulPeyar;
+
+  /// பொருள் பெயர் (English) — Product name in English
+  final String porulPeyarEn;
 
   /// HSN குறியீடு — Harmonized System Nomenclature code
   final String hsnKuriyeedu;
@@ -45,6 +50,7 @@ class PattuUrupadi {
   const PattuUrupadi({
     this.porulId,
     this.porulPeyar = '',
+    this.porulPeyarEn = '',
     this.hsnKuriyeedu = '',
     this.alavu = 1,
     this.alagu = 'Nos',
@@ -69,6 +75,7 @@ class PattuUrupadi {
   PattuUrupadi copyWith({
     String? porulId,
     String? porulPeyar,
+    String? porulPeyarEn,
     String? hsnKuriyeedu,
     double? alavu,
     String? alagu,
@@ -80,6 +87,7 @@ class PattuUrupadi {
     return PattuUrupadi(
       porulId: porulId ?? this.porulId,
       porulPeyar: porulPeyar ?? this.porulPeyar,
+      porulPeyarEn: porulPeyarEn ?? this.porulPeyarEn,
       hsnKuriyeedu: hsnKuriyeedu ?? this.hsnKuriyeedu,
       alavu: alavu ?? this.alavu,
       alagu: alagu ?? this.alagu,
@@ -95,6 +103,7 @@ class PattuUrupadi {
     return {
       'porulId': porulId,
       'porulPeyar': porulPeyar,
+      'porulPeyarEn': porulPeyarEn,
       'hsnKuriyeedu': hsnKuriyeedu,
       'alavu': alavu,
       'alagu': alagu,
@@ -110,6 +119,7 @@ class PattuUrupadi {
     return PattuUrupadi(
       porulId: json['porulId'] as String?,
       porulPeyar: (json['porulPeyar'] as String?) ?? '',
+      porulPeyarEn: (json['porulPeyarEn'] as String?) ?? '',
       hsnKuriyeedu: (json['hsnKuriyeedu'] as String?) ?? '',
       alavu: (json['alavu'] as num?)?.toDouble() ?? 1,
       alagu: (json['alagu'] as String?) ?? 'Nos',
@@ -131,6 +141,7 @@ class PattuUrupadi {
           runtimeType == other.runtimeType &&
           porulId == other.porulId &&
           porulPeyar == other.porulPeyar &&
+          porulPeyarEn == other.porulPeyarEn &&
           hsnKuriyeedu == other.hsnKuriyeedu &&
           alavu == other.alavu &&
           alagu == other.alagu &&
@@ -143,6 +154,7 @@ class PattuUrupadi {
   int get hashCode => Object.hash(
         porulId,
         porulPeyar,
+        porulPeyarEn,
         hsnKuriyeedu,
         alavu,
         alagu,
@@ -439,10 +451,15 @@ class PattiyalUthavigal {
   /// Returns an empty list if [json] is empty or not a valid JSON array.
   static List<PattuUrupadi> pattuListFromJson(String json) {
     if (json.isEmpty) return [];
-    final List<dynamic> decoded = jsonDecode(json) as List<dynamic>;
-    return decoded
-        .map((e) => PattuUrupadi.fromJson(e as Map<String, dynamic>))
-        .toList();
+    try {
+      final List<dynamic> decoded = jsonDecode(json) as List<dynamic>;
+      return decoded
+          .map((e) => PattuUrupadi.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      debugPrint('⚠️ PattuUrupadi JSON pakuppaaivil pizhai: $e');
+      return [];
+    }
   }
 
   /// Encodes a list of [PattuUrupadi] into a JSON string.
@@ -459,10 +476,15 @@ class PattiyalUthavigal {
   /// Returns an empty list if [json] is empty or not a valid JSON array.
   static List<KooliUrupadi> kooliListFromJson(String json) {
     if (json.isEmpty) return [];
-    final List<dynamic> decoded = jsonDecode(json) as List<dynamic>;
-    return decoded
-        .map((e) => KooliUrupadi.fromJson(e as Map<String, dynamic>))
-        .toList();
+    try {
+      final List<dynamic> decoded = jsonDecode(json) as List<dynamic>;
+      return decoded
+          .map((e) => KooliUrupadi.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      debugPrint('⚠️ KooliUrupadi JSON pakuppaaivil pizhai: $e');
+      return [];
+    }
   }
 
   /// Encodes a list of [KooliUrupadi] into a JSON string.
@@ -479,10 +501,15 @@ class PattiyalUthavigal {
   /// Returns an empty list if [json] is empty or not a valid JSON array.
   static List<PiraVarivu> piraVarivuListFromJson(String json) {
     if (json.isEmpty) return [];
-    final List<dynamic> decoded = jsonDecode(json) as List<dynamic>;
-    return decoded
-        .map((e) => PiraVarivu.fromJson(e as Map<String, dynamic>))
-        .toList();
+    try {
+      final List<dynamic> decoded = jsonDecode(json) as List<dynamic>;
+      return decoded
+          .map((e) => PiraVarivu.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      debugPrint('⚠️ PiraVarivu JSON pakuppaaivil pizhai: $e');
+      return [];
+    }
   }
 
   /// Encodes a list of [PiraVarivu] into a JSON string.

@@ -11,7 +11,7 @@ import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../koorugal/meladukkugal/elvan_cheyal_meladukku.dart';
 import '../../../chattagam/kaatchi/koorugal/elvan_uyir_valai.dart';
 import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
-import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
+
 import '../thiruthi/niril_kooli_pattiyal_thiruthi.dart';
 
 /// Coolie invoice list — real DB-backed view.
@@ -28,7 +28,7 @@ class CoolieInvoicesPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final query = ref.watch(coolieInvoicesSearchQueryProvider).toLowerCase();
     final pattiyalgalAsync = ref.watch(pattiyalgalStreamProvider);
-    final profilesAsync = ref.watch(profilesStreamProvider);
+    final profilesAsync = ref.watch(currentModeProfilesStreamProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelecting = ref.watch(pattiyalSelectionModeProvider);
     final selectedIds = ref.watch(selectedPattiyalIdsProvider);
@@ -171,6 +171,7 @@ class CoolieInvoicesPage extends ConsumerWidget {
                 final isSelected = selectedIds.contains(pattiyal.id);
 
                 return _CooliePatrucheettuCard(
+                  index: index,
                   pattiyal: pattiyal,
                   isDark: isDark,
                   isSelecting: isSelecting,
@@ -304,8 +305,9 @@ class _SelectionBar extends ConsumerWidget {
 
 // ── Coolie Invoice Card ─────────────────────────────────────────────────────
 
-class _CooliePatrucheettuCard extends ConsumerWidget {
+class _CooliePatrucheettuCard extends StatelessWidget {
   const _CooliePatrucheettuCard({
+    required this.index,
     required this.pattiyal,
     required this.isDark,
     required this.isSelecting,
@@ -316,6 +318,7 @@ class _CooliePatrucheettuCard extends ConsumerWidget {
     required this.onLongPress,
   });
 
+  final int index;
   final PatrucheettuEntry pattiyal;
   final bool isDark;
   final bool isSelecting;
@@ -326,168 +329,97 @@ class _CooliePatrucheettuCard extends ConsumerWidget {
   final VoidCallback onLongPress;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Watch payment status reactively
-    final paidAsync = ref.watch(paidAmountProvider(pattiyal.id));
-    final paid = paidAsync.value ?? 0.0;
-    final total = pattiyal.mothaThogai;
-    final isPaid = paid >= total && total > 0;
-    final isPartial = paid > 0 && paid < total;
+  Widget build(BuildContext context) {
+    final amountStr = currencyFormat.format(pattiyal.mothaThogai);
 
     return GestureDetector(
       onTap: onTap,
       onLongPress: onLongPress,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isSelected
-              ? Theme.of(context)
-                  .colorScheme
-                  .primary
-                  .withValues(alpha: 0.12)
+              ? (isDark
+                  ? const Color(0xFF1A1A1A)
+                  : Colors.black.withValues(alpha: 0.04))
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.05)
-                  : Colors.black.withValues(alpha: 0.03)),
-          borderRadius: BorderRadius.circular(14),
-          border: isSelected
-              ? Border.all(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 1.5,
-                )
-              : null,
+                  ? const Color(0xFF111111)
+                  : Colors.white),
+          borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Selection checkbox
-            if (isSelecting) ...[
+            // Index circle or selection checkbox
+            if (isSelecting)
               Icon(
                 isSelected
-                    ? CupertinoIcons.checkmark_circle_fill
-                    : CupertinoIcons.circle,
-                size: 22,
+                    ? CupertinoIcons.checkmark_square_fill
+                    : CupertinoIcons.square,
+                size: 24,
                 color: isSelected
                     ? Theme.of(context).colorScheme.primary
-                    : (isDark ? Colors.white30 : Colors.black26),
+                    : (isDark ? Colors.white38 : Colors.black38),
+              )
+            else
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.12)
+                      : Colors.black.withValues(alpha: 0.08),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  (index + 1).toString().padLeft(2, '0'),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 11.2,
+                    color: isDark ? Colors.white : Colors.black,
+                    height: 1,
+                  ),
+                ),
               ),
-              const SizedBox(width: 12),
-            ],
-            // Content
+            const SizedBox(width: 12),
+            // Content column
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        pattiyal.patrucheettuEn,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        dateFormat.format(pattiyal.pattiyalNaal),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: isDark ? Colors.white38 : Colors.black38,
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (pattiyal.vanigarPeyar.isNotEmpty) ...[
-                    const SizedBox(height: 3),
-                    Text(
-                      pattiyal.vanigarPeyar,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: isDark ? Colors.white38 : Colors.black38,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                  // Row 1: Customer name (primary)
+                  Text(
+                    pattiyal.vanigarPeyar,
+                    style: const TextStyle(
+                      fontSize: 15.2,
+                      fontWeight: FontWeight.w700,
                     ),
-                  ],
-                  const SizedBox(height: 3),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  // Row 2: placeholder (no secondary name yet)
+                  // Row 3: Bill number • date
+                  const SizedBox(height: 4),
+                  Text(
+                    '${pattiyal.patrucheettuEn} • ${dateFormat.format(pattiyal.pattiyalNaal)}',
+                    style: TextStyle(
+                      fontSize: 13.6,
+                      color: isDark ? Colors.white38 : Colors.black38,
+                    ),
+                  ),
+                  // Row 4: Amount
+                  const SizedBox(height: 4),
                   Row(
                     children: [
-                      // Weight badge
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.orange.withValues(alpha: 0.15)
-                              : Colors.orange.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          '${pattiyal.mothaEdai.toStringAsFixed(2)} KG',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: isDark
-                                ? Colors.orange.shade200
-                                : Colors.orange.shade800,
-                          ),
-                        ),
-                      ),
-                      // Payment status badge
-                      if (isPaid) ...[
-                        const SizedBox(width: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? Colors.green.withValues(alpha: 0.15)
-                                : Colors.green.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            'Paid ✓',
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              color: isDark
-                                  ? Colors.green.shade300
-                                  : Colors.green.shade700,
-                            ),
-                          ),
-                        ),
-                      ] else if (isPartial) ...[
-                        const SizedBox(width: 6),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? Colors.blue.withValues(alpha: 0.15)
-                                : Colors.blue.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            'Partial',
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                              color: isDark
-                                  ? Colors.blue.shade300
-                                  : Colors.blue.shade700,
-                            ),
-                          ),
-                        ),
-                      ],
                       const Spacer(),
                       Text(
-                        currencyFormat.format(pattiyal.mothaThogai),
+                        amountStr,
                         style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: isDark
-                              ? Colors.orange.shade200
-                              : Colors.orange.shade700,
+                          fontWeight: FontWeight.w800,
+                          fontSize: amountStr.length > 11 ? 12.8 : 15.2,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ],
@@ -495,15 +427,6 @@ class _CooliePatrucheettuCard extends ConsumerWidget {
                 ],
               ),
             ),
-            // Chevron
-            if (!isSelecting) ...[
-              const SizedBox(width: 8),
-              Icon(
-                CupertinoIcons.chevron_right,
-                size: 14,
-                color: isDark ? Colors.white24 : Colors.black26,
-              ),
-            ],
           ],
         ),
       ),

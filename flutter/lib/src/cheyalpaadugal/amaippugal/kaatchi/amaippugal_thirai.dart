@@ -24,6 +24,7 @@ import 'koorugal/elvan_amaippu_pagudhi.dart';
 import '../../niril_podhu/kaatchi/koorugal/elvan_amaippu_chinnam.dart';
 import 'thiraigal/paadhugaappu_amaippugal_thirai.dart';
 import 'thiraigal/seyali_patri_thirai.dart';
+import 'thiraigal/payanar_amaippugal_thirai.dart';
 
 import '../../chattagam/kaatchi/kanini/elvan_kanini_utpakkach_chattagam.dart';
 import '../../ullnuzhaivu/kaatchi/muraimai_thaervu_thirai.dart';
@@ -141,7 +142,7 @@ class SettingsHubScreen extends ConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  K.vanigaAmaippugal.tr(context, ref),
+                                  K.niruvanAmaippugal.tr(context, ref),
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600,
@@ -238,7 +239,7 @@ class SettingsHubScreen extends ConsumerWidget {
                       icon: CupertinoIcons.briefcase_fill,
                       iconBgColor: iconBgColor,
                       title: K.adaiyaalam.tr(context, ref),
-                      description: K.kooliVanigaAdaiyaalangal.tr(context, ref),
+                      description: K.kooliNiruvanAdaiyaalangal.tr(context, ref),
                       onTap: () => _navigateTo(
                           context, const CoolieVanigaAdaiyalangalPage()),
                     )
@@ -247,7 +248,7 @@ class SettingsHubScreen extends ConsumerWidget {
                       icon: CupertinoIcons.briefcase_fill,
                       iconBgColor: iconBgColor,
                       title: K.adaiyaalam.tr(context, ref),
-                      description: K.pattuVanigaAdaiyaalangal.tr(context, ref),
+                      description: K.pattuNiruvanAdaiyaalangal.tr(context, ref),
                       onTap: () => _navigateTo(
                           context, const SilkVanigaAdaiyalangalPage()),
                     ),
@@ -295,6 +296,14 @@ class SettingsHubScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ElvanSettingsSection(
                 children: [
+                  ElvanSettingsRow(
+                    icon: CupertinoIcons.person_fill,
+                    iconBgColor: iconBgColor,
+                    title: K.payanar.tr(context, ref),
+                    description: K.payanarAmaippugal.tr(context, ref),
+                    onTap: () =>
+                        _navigateTo(context, const PayanarAmaippugalPage()),
+                  ),
                   if (!Platform.isWindows)
                     ElvanSettingsRow(
                       icon: CupertinoIcons.sun_max_fill,
