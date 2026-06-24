@@ -122,8 +122,12 @@ class PattuMothangalKooru extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label,
-            style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant)),
+        Flexible(
+          child: Text(label,
+              overflow: TextOverflow.ellipsis,
+              style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant)),
+        ),
+        const SizedBox(width: 12),
         Text(_inrFormat.format(amount),
             style: tt.bodyMedium
                 ?.copyWith(fontWeight: FontWeight.w500, color: color ?? cs.onSurface)),

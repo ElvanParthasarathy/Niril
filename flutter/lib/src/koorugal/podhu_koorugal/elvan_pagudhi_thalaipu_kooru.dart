@@ -47,12 +47,15 @@ class ElvanPagudhiThalaipu extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           // ── Section Title ──
-          Text(
-            thalaipu,
-            style: TextStyle(
-              fontSize: 17.6, // 1.1rem
-              fontWeight: FontWeight.w600,
-              color: cs.onSurface,
+          Flexible(
+            child: Text(
+              thalaipu,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 17.6, // 1.1rem
+                fontWeight: FontWeight.w600,
+                color: cs.onSurface,
+              ),
             ),
           ),
         ],

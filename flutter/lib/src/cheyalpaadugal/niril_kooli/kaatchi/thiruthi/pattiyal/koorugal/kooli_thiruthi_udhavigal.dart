@@ -84,11 +84,15 @@ Widget kooliTotalsRow(
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
-      Text(label,
-          style: TextStyle(
-            fontWeight: labelWeight ?? FontWeight.w500,
-            color: labelColor,
-          )),
+      Flexible(
+        child: Text(label,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontWeight: labelWeight ?? FontWeight.w500,
+              color: labelColor,
+            )),
+      ),
+      const SizedBox(width: 12),
       Text(value,
           style: TextStyle(
             fontWeight: valueWeight ?? FontWeight.w600,
