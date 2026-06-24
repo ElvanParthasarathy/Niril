@@ -49,7 +49,6 @@ class ElvanShell extends ConsumerStatefulWidget {
     this.startCollapsed = false,
     this.backgroundColor,
     this.syncWithGlobalHeader = true,
-    this.onRefresh,
   });
 
   /// The scrollable content placed inside the [CustomScrollView] as slivers.
@@ -98,10 +97,6 @@ class ElvanShell extends ConsumerStatefulWidget {
 
   /// Whether to sync header collapse/expand state with the global headerExpandedProvider.
   final bool syncWithGlobalHeader;
-
-  /// Optional pull-to-refresh callback. When provided, wraps the scroll view
-  /// with a RefreshIndicator.
-  final Future<void> Function()? onRefresh;
 
   @override
   ConsumerState<ElvanShell> createState() => _ElvanShellState();
@@ -487,7 +482,6 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
                   leadingWidget: widget.leadingWidget,
                   showLeadingWidgetInExpandedBar:
                       widget.showLeadingWidgetInExpandedBar,
-                  onRefresh: widget.onRefresh,
                 ),
               ),
             ),

@@ -23,7 +23,6 @@ class ElvanPageContent extends ConsumerWidget {
     this.leadingWidget,
     this.showLeadingWidgetInExpandedBar = true,
     this.isSearchActiveNotifier,
-    this.onRefresh,
   });
 
   final ScrollController scrollController;
@@ -36,7 +35,6 @@ class ElvanPageContent extends ConsumerWidget {
   final Widget? leadingWidget;
   final bool showLeadingWidgetInExpandedBar;
   final ValueNotifier<bool>? isSearchActiveNotifier;
-  final Future<void> Function()? onRefresh;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -45,7 +43,9 @@ class ElvanPageContent extends ConsumerWidget {
     final double snapThreshold =
         expandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
 
-    final scrollView = CustomScrollView(
+    return Stack(
+      children: [
+        CustomScrollView(
           controller: scrollController,
           cacheExtent:
               1500, // Pre-builds items off-screen to prevent frame drops during slow scrolling!
@@ -107,22 +107,7 @@ class ElvanPageContent extends ConsumerWidget {
               },
             ),
           ],
-        );
-
-    return Stack(
-      children: [
-        onRefresh != null
-            ? RefreshIndicator(
-                onRefresh: onRefresh!,
-                // Disable overscroll stretch/glow so it doesn't fight
-                // with RefreshIndicator's own pull-down handling.
-                child: ScrollConfiguration(
-                  behavior: ScrollConfiguration.of(context)
-                      .copyWith(overscroll: false),
-                  child: scrollView,
-                ),
-              )
-            : scrollView,
+        ),
       ],
     );
   }
