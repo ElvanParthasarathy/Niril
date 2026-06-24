@@ -1173,7 +1173,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
               // Build field widgets
               final isWeightItem = item.alagu == 'Kg';
               final qtyField = _itemField(
-                isWeightItem ? 'Weight' : 'Qty',
+                isWeightItem ? 'Weight (kg)' : 'Qty',
                 item.alavu,
                 (v) {
                   _updateItem(
@@ -1182,33 +1182,9 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                 isWeight: isWeightItem,
               );
 
-              final unitDropdown = DropdownButtonFormField<String>(
-                initialValue: item.alagu,
-                isExpanded: true,
-                decoration: const InputDecoration(
-                  labelText: 'Unit',
-                  border: InputBorder.none,
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                  isDense: true,
-                ),
-                items: const [
-                  DropdownMenuItem(value: 'Nos', child: Text('Nos')),
-                  DropdownMenuItem(value: 'Kg', child: Text('Kg')),
-                ],
-                onChanged: (v) =>
-                    _updateItem(index, item.copyWith(alagu: v ?? 'Nos')),
-              );
-
               final rateField = _itemField('Rate', item.vilai, (v) {
                 _updateItem(
                     index, item.copyWith(vilai: double.tryParse(v) ?? 0));
-              });
-
-              final taxField =
-                  _itemField('Tax %', item.variVizhukkaadu, (v) {
-                _updateItem(index,
-                    item.copyWith(variVizhukkaadu: double.tryParse(v) ?? 0));
               });
 
               final discField = Row(
@@ -1264,49 +1240,49 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                 ],
               );
 
+              // Bilingual info line (English name · Unit · HSN · GST%)
+              final infoLine = (item.porulPeyarEn.isNotEmpty ||
+                      item.hsnKuriyeedu.isNotEmpty ||
+                      item.alagu.isNotEmpty)
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 4, top: 4),
+                      child: Text(
+                        [
+                          if (item.porulPeyarEn.isNotEmpty) item.porulPeyarEn,
+                          if (item.alagu.isNotEmpty) item.alagu,
+                          if (item.hsnKuriyeedu.isNotEmpty)
+                            'HSN: ${item.hsnKuriyeedu}',
+                          if (item.variVizhukkaadu > 0)
+                            'GST ${item.variVizhukkaadu.toStringAsFixed(item.variVizhukkaadu.truncateToDouble() == item.variVizhukkaadu ? 0 : 1)}%',
+                        ].join(' · '),
+                        style: tt.bodySmall?.copyWith(
+                          color: cs.onSurfaceVariant,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 12,
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink();
+
               if (isWide) {
-                // Desktop: bento wrap layout
+                // Desktop: clean 3-column layout
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     productSearch,
-                    // Bilingual secondary info line
-                    if (item.porulPeyarEn.isNotEmpty || item.hsnKuriyeedu.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4, top: 4),
-                        child: Text(
-                          [
-                            if (item.porulPeyarEn.isNotEmpty) item.porulPeyarEn,
-                            if (item.hsnKuriyeedu.isNotEmpty) 'HSN: ${item.hsnKuriyeedu}',
-                            if (item.variVizhukkaadu > 0) 'GST ${item.variVizhukkaadu.toStringAsFixed(item.variVizhukkaadu.truncateToDouble() == item.variVizhukkaadu ? 0 : 1)}%',
-                          ].join(' · '),
-                          style: tt.bodySmall?.copyWith(
-                            color: cs.onSurfaceVariant,
-                            fontStyle: FontStyle.italic,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
+                    infoLine,
                     vGap,
                     Row(
                       children: [
                         Expanded(child: qtyField),
                         gap,
-                        Expanded(child: unitDropdown),
-                        gap,
                         Expanded(child: rateField),
+                        gap,
+                        Expanded(child: discField),
                       ],
                     ),
                     vGap,
-                    Row(
-                      children: [
-                        Expanded(child: taxField),
-                        gap,
-                        Expanded(child: discField),
-                        gap,
-                        Expanded(child: totalDisplay),
-                      ],
-                    ),
+                    totalDisplay,
                   ],
                 );
               }
@@ -1316,34 +1292,12 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   productSearch,
-                  // Bilingual secondary info line
-                  if (item.porulPeyarEn.isNotEmpty || item.hsnKuriyeedu.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4, top: 4),
-                      child: Text(
-                        [
-                          if (item.porulPeyarEn.isNotEmpty) item.porulPeyarEn,
-                          if (item.hsnKuriyeedu.isNotEmpty) 'HSN: ${item.hsnKuriyeedu}',
-                          if (item.variVizhukkaadu > 0) 'GST ${item.variVizhukkaadu.toStringAsFixed(item.variVizhukkaadu.truncateToDouble() == item.variVizhukkaadu ? 0 : 1)}%',
-                        ].join(' · '),
-                        style: tt.bodySmall?.copyWith(
-                          color: cs.onSurfaceVariant,
-                          fontStyle: FontStyle.italic,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
+                  infoLine,
                   vGap,
                   Row(children: [
                     Expanded(child: qtyField),
                     gap,
-                    Expanded(child: unitDropdown),
-                  ]),
-                  vGap,
-                  Row(children: [
                     Expanded(child: rateField),
-                    gap,
-                    Expanded(child: taxField),
                   ]),
                   vGap,
                   discField,
