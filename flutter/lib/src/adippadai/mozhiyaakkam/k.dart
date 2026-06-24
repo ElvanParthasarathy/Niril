@@ -316,5 +316,5 @@ abstract final class K {
   // ── Sync ──
   static const orunginaiSeyaliPtn = 'orunginaiSeyaliPtn';
   static const orunginaikkiRadhu = 'orunginaikkiRadhu';
-  static const orunginaikkappattathu = 'orunginaikkappattathu';
+  static const orunginaikkappattadhu = 'orunginaikkappattadhu';
 }

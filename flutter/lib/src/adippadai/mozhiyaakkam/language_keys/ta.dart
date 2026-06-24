@@ -282,5 +282,5 @@ const Map<String, String> ta = {
   // ── ஒருங்கிணைப்பு ──
   'orunginaiSeyaliPtn': 'செயலியை ஒருங்கிணை',
   'orunginaikkiRadhu': 'ஒருங்கிணைக்கிறது...',
-  'orunginaikkappattathu': 'ஒருங்கிணைக்கப்பட்டது!',
+  'orunginaikkappattadhu': 'ஒருங்கிணைக்கப்பட்டது!',
 };

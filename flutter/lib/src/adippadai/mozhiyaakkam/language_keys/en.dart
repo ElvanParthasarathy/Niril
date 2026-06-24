@@ -282,5 +282,5 @@ const Map<String, String> en = {
   // ── Sync ──
   'orunginaiSeyaliPtn': 'Sync App',
   'orunginaikkiRadhu': 'Syncing...',
-  'orunginaikkappattathu': 'Synced!',
+  'orunginaikkappattadhu': 'Synced!',
 };

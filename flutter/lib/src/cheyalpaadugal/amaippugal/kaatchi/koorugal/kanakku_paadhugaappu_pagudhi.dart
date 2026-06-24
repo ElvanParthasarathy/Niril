@@ -316,7 +316,7 @@ class AccountSecuritySection extends ConsumerWidget {
         Navigator.of(context, rootNavigator: true).pop();
         ElvanSnackbar.show(
           context,
-          K.orunginaikkappattathu.tr(context, ref),
+          K.orunginaikkappattadhu.tr(context, ref),
         );
       }
     });
