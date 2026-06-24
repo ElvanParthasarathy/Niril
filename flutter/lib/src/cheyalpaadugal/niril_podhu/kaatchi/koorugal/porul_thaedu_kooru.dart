@@ -274,13 +274,16 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
                                   ),
                               ],
                             ),
-                            trailing: Text(
-                              _inrFormat.format(entry.vilai),
-                              style: theme.textTheme.labelLarge?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: colorScheme.primary,
-                              ),
-                            ),
+                            trailing: (_isSilk || entry.vilai > 0)
+                                ? Text(
+                                    _inrFormat.format(entry.vilai),
+                                    style:
+                                        theme.textTheme.labelLarge?.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      color: colorScheme.primary,
+                                    ),
+                                  )
+                                : null,
                             onTap: () => onSelected(entry),
                           ),
                         ],
