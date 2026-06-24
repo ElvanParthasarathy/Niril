@@ -106,7 +106,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
                         },
                       ),
                     ),
-                    // Weight (kg) — blur-based, 3 decimals
+                    // Weight (kg) — instant math, 3-decimal on blur
                     SizedBox(
                       width: 120,
                       child: ItemFieldWidget(
@@ -118,15 +118,25 @@ class KooliUrupadiKooru extends ConsumerWidget {
                             item.copyWith(edai: double.tryParse(v) ?? 0),
                           );
                         },
+                        onChanged: (v) {
+                          onUpdated(
+                            item.copyWith(edai: double.tryParse(v) ?? 0),
+                          );
+                        },
                       ),
                     ),
-                    // Rate (per kg) — blur-based, clean integer
+                    // Rate (per kg) — instant math, clean integer on blur
                     SizedBox(
                       width: 120,
                       child: ItemFieldWidget(
                         label: K.vilaiKiKi.tr(context, ref),
                         initialText: rateText,
                         onValueCommitted: (v) {
+                          onUpdated(
+                            item.copyWith(vilai: double.tryParse(v) ?? 0),
+                          );
+                        },
+                        onChanged: (v) {
                           onUpdated(
                             item.copyWith(vilai: double.tryParse(v) ?? 0),
                           );

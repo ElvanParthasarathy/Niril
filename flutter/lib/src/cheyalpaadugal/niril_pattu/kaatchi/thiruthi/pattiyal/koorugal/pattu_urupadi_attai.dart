@@ -288,6 +288,7 @@ class ItemFieldWidget extends StatefulWidget {
     required this.onValueCommitted,
     this.isWeight = false,
     this.onDirty,
+    this.onChanged,
   });
 
   final String label;
@@ -296,6 +297,8 @@ class ItemFieldWidget extends StatefulWidget {
   final bool isWeight;
   /// Called on first keystroke to mark form as dirty (before blur).
   final VoidCallback? onDirty;
+  /// Called on every keystroke for instant calculation (optional).
+  final ValueChanged<String>? onChanged;
 
   @override
   State<ItemFieldWidget> createState() => _ItemFieldWidgetState();
@@ -353,11 +356,12 @@ class _ItemFieldWidgetState extends State<ItemFieldWidget> {
       controller: _controller,
       focusNode: _focusNode,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      onChanged: (_) {
+      onChanged: (v) {
         if (!_isDirty) {
           _isDirty = true;
           widget.onDirty?.call();
         }
+        widget.onChanged?.call(v);
       },
       decoration: InputDecoration(
         labelText: widget.label,
