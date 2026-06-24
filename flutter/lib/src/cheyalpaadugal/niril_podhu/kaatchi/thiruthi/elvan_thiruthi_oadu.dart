@@ -93,7 +93,10 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.sizeOf(context).width >= 800;
 
-    final shell = PopScope(
+    final shell = GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      behavior: HitTestBehavior.translucent,
+      child: PopScope(
       canPop: !widget.hasUnsavedChanges,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop && widget.hasUnsavedChanges) {
@@ -186,6 +189,7 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
             ),
           ),
         ],
+      ),
       ),
     );
 
