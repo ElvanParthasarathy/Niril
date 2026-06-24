@@ -332,105 +332,102 @@ class _CooliePatrucheettuCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final amountStr = currencyFormat.format(pattiyal.mothaThogai);
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        onLongPress: onLongPress,
-        borderRadius: BorderRadius.circular(24),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? (isDark
-                    ? const Color(0xFF1A1A1A)
-                    : Colors.black.withValues(alpha: 0.04))
-                : (isDark
-                    ? const Color(0xFF111111)
-                    : Colors.white),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Index circle or selection checkbox
-              if (isSelecting)
-                Icon(
-                  isSelected
-                      ? CupertinoIcons.checkmark_square_fill
-                      : CupertinoIcons.square,
-                  size: 24,
-                  color: isSelected
-                      ? Theme.of(context).colorScheme.primary
-                      : (isDark ? Colors.white38 : Colors.black38),
-                )
-              else
-                Container(
-                  width: 28,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.12)
-                        : Colors.black.withValues(alpha: 0.08),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    (index + 1).toString().padLeft(2, '0'),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 11.2,
-                      color: isDark ? Colors.white : Colors.black,
-                      height: 1,
-                    ),
-                  ),
+    return GestureDetector(
+      onTap: onTap,
+      onLongPress: onLongPress,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark
+                  ? const Color(0xFF1A1A1A)
+                  : Colors.black.withValues(alpha: 0.04))
+              : (isDark
+                  ? const Color(0xFF111111)
+                  : Colors.white),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Index circle or selection checkbox
+            if (isSelecting)
+              Icon(
+                isSelected
+                    ? CupertinoIcons.checkmark_square_fill
+                    : CupertinoIcons.square,
+                size: 24,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : (isDark ? Colors.white38 : Colors.black38),
+              )
+            else
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.12)
+                      : Colors.black.withValues(alpha: 0.08),
                 ),
-              const SizedBox(width: 12),
-              // Content column
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Row 1: Customer name (primary)
-                    Text(
-                      pattiyal.vanigarPeyar,
-                      style: const TextStyle(
-                        fontSize: 15.2,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    // Row 2: placeholder (no secondary name yet)
-                    // Row 3: Bill number • date
-                    const SizedBox(height: 4),
-                    Text(
-                      '${pattiyal.patrucheettuEn} • ${dateFormat.format(pattiyal.pattiyalNaal)}',
-                      style: TextStyle(
-                        fontSize: 13.6,
-                        color: isDark ? Colors.white38 : Colors.black38,
-                      ),
-                    ),
-                    // Row 4: Amount
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Spacer(),
-                        Text(
-                          amountStr,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w800,
-                            fontSize: amountStr.length > 11 ? 12.8 : 15.2,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                alignment: Alignment.center,
+                child: Text(
+                  (index + 1).toString().padLeft(2, '0'),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 11.2,
+                    color: isDark ? Colors.white : Colors.black,
+                    height: 1,
+                  ),
                 ),
               ),
-            ],
-          ),
+            const SizedBox(width: 12),
+            // Content column
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Row 1: Customer name (primary)
+                  Text(
+                    pattiyal.vanigarPeyar,
+                    style: const TextStyle(
+                      fontSize: 15.2,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  // Row 2: placeholder (no secondary name yet)
+                  // Row 3: Bill number • date
+                  const SizedBox(height: 4),
+                  Text(
+                    '${pattiyal.patrucheettuEn} • ${dateFormat.format(pattiyal.pattiyalNaal)}',
+                    style: TextStyle(
+                      fontSize: 13.6,
+                      color: isDark ? Colors.white38 : Colors.black38,
+                    ),
+                  ),
+                  // Row 4: Amount
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Spacer(),
+                      Text(
+                        amountStr,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: amountStr.length > 11 ? 12.8 : 15.2,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

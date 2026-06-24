@@ -313,95 +313,92 @@ class _CooliePorulCard extends StatelessWidget {
     final primary = porul.porulPeyar[primaryLang] ?? '';
     final secondary = porul.porulPeyar[secondaryLang] ?? '';
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        onLongPress: onLongPress,
-        borderRadius: BorderRadius.circular(24),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? (isDark
-                    ? const Color(0xFF1A1A1A)
-                    : Colors.black.withValues(alpha: 0.04))
-                : (isDark
-                    ? const Color(0xFF111111)
-                    : Colors.white),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Index circle or selection checkbox
-              if (isSelecting)
-                Icon(
-                  isSelected
-                      ? CupertinoIcons.checkmark_square_fill
-                      : CupertinoIcons.square,
-                  size: 24,
-                  color: isSelected
-                      ? Theme.of(context).colorScheme.primary
-                      : (isDark ? Colors.white38 : Colors.black38),
-                )
-              else
-                Container(
-                  width: 28,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.12)
-                        : Colors.black.withValues(alpha: 0.08),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    (index + 1).toString().padLeft(2, '0'),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 11.2,
-                      color: isDark ? Colors.white : Colors.black,
-                      height: 1,
-                    ),
+    return GestureDetector(
+      onTap: onTap,
+      onLongPress: onLongPress,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark
+                  ? const Color(0xFF1A1A1A)
+                  : Colors.black.withValues(alpha: 0.04))
+              : (isDark
+                  ? const Color(0xFF111111)
+                  : Colors.white),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Index circle or selection checkbox
+            if (isSelecting)
+              Icon(
+                isSelected
+                    ? CupertinoIcons.checkmark_square_fill
+                    : CupertinoIcons.square,
+                size: 24,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : (isDark ? Colors.white38 : Colors.black38),
+              )
+            else
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.12)
+                      : Colors.black.withValues(alpha: 0.08),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  (index + 1).toString().padLeft(2, '0'),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 11.2,
+                    color: isDark ? Colors.white : Colors.black,
+                    height: 1,
                   ),
                 ),
+              ),
 
-              const SizedBox(width: 12),
+            const SizedBox(width: 12),
 
-              // Product name
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
+            // Product name
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    primary,
+                    style: const TextStyle(
+                      fontSize: 15.2,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (secondary.isNotEmpty) ...[
+                    const SizedBox(height: 2),
                     Text(
-                      primary,
-                      style: const TextStyle(
-                        fontSize: 15.2,
-                        fontWeight: FontWeight.w700,
+                      secondary,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: isDark ? Colors.white54 : Colors.black54,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    if (secondary.isNotEmpty) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        secondary,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: isDark ? Colors.white54 : Colors.black54,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
                   ],
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

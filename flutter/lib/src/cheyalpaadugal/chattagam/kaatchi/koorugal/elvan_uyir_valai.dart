@@ -50,7 +50,10 @@ class ElvanResponsiveGrid extends StatelessWidget {
               (context, index) {
                 return Padding(
                   padding: EdgeInsets.only(bottom: mainAxisSpacing),
-                  child: itemBuilder(context, index),
+                  child: SizedBox(
+                    height: mobileItemHeight,
+                    child: itemBuilder(context, index),
+                  ),
                 );
               },
               childCount: itemCount,

@@ -322,137 +322,134 @@ class _PatruCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final mode = SeluthiVagaiX.fromStored(patru.seluthiVagai);
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        onLongPress: onLongPress,
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? Theme.of(context)
-                    .colorScheme
-                    .primary
-                    .withValues(alpha: 0.12)
-                : (isDark
-                    ? const Color(0xFF111111)
-                    : Colors.black.withValues(alpha: 0.03)),
-            borderRadius: BorderRadius.circular(14),
-            border: isSelected
-                ? Border.all(
-                    color: Theme.of(context).colorScheme.primary,
-                    width: 1.5,
-                  )
-                : null,
-          ),
-          child: Row(
-            children: [
-              // Selection checkbox
-              if (isSelecting) ...[
-                Icon(
-                  isSelected
-                      ? CupertinoIcons.checkmark_circle_fill
-                      : CupertinoIcons.circle,
-                  size: 22,
-                  color: isSelected
-                      ? Theme.of(context).colorScheme.primary
-                      : (isDark ? Colors.white30 : Colors.black26),
-                ),
-                const SizedBox(width: 12),
-              ],
-              // Content
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Row 1: Customer name + date
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            patru.vanigarPeyar.isNotEmpty
-                                ? patru.vanigarPeyar
-                                : patru.patruEn,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          dateFormat.format(patru.patruNaal),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: isDark ? Colors.white38 : Colors.black38,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    // Row 2: Receipt number + payment mode badge + amount
-                    Row(
-                      children: [
-                        Text(
-                          patru.patruEn,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: isDark ? Colors.white38 : Colors.black45,
-                          ),
-                        ),
-                        if (mode != null) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: mode
-                                  .badgeColor(isDark)
-                                  .withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              mode.tamilLabel,
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: mode.badgeColor(isDark),
-                              ),
-                            ),
-                          ),
-                        ],
-                        const Spacer(),
-                        Text(
-                          currencyFormat.format(patru.thogai),
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: isDark
-                                ? Colors.green.shade300
-                                : Colors.green.shade700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+    return GestureDetector(
+      onTap: onTap,
+      onLongPress: onLongPress,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? Theme.of(context)
+                  .colorScheme
+                  .primary
+                  .withValues(alpha: 0.12)
+              : (isDark
+                  ? const Color(0xFF111111)
+                  : Colors.black.withValues(alpha: 0.03)),
+          borderRadius: BorderRadius.circular(14),
+          border: isSelected
+              ? Border.all(
+                  color: Theme.of(context).colorScheme.primary,
+                  width: 1.5,
+                )
+              : null,
+        ),
+        child: Row(
+          children: [
+            // Selection checkbox
+            if (isSelecting) ...[
+              Icon(
+                isSelected
+                    ? CupertinoIcons.checkmark_circle_fill
+                    : CupertinoIcons.circle,
+                size: 22,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : (isDark ? Colors.white30 : Colors.black26),
               ),
-              // Chevron
-              if (!isSelecting) ...[
-                const SizedBox(width: 8),
-                Icon(
-                  CupertinoIcons.chevron_right,
-                  size: 14,
-                  color: isDark ? Colors.white24 : Colors.black26,
-                ),
-              ],
+              const SizedBox(width: 12),
             ],
-          ),
+            // Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Row 1: Customer name + date
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          patru.vanigarPeyar.isNotEmpty
+                              ? patru.vanigarPeyar
+                              : patru.patruEn,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        dateFormat.format(patru.patruNaal),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark ? Colors.white38 : Colors.black38,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  // Row 2: Receipt number + payment mode badge + amount
+                  Row(
+                    children: [
+                      Text(
+                        patru.patruEn,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark ? Colors.white38 : Colors.black45,
+                        ),
+                      ),
+                      if (mode != null) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: mode
+                                .badgeColor(isDark)
+                                .withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            mode.tamilLabel,
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: mode.badgeColor(isDark),
+                            ),
+                          ),
+                        ),
+                      ],
+                      const Spacer(),
+                      Text(
+                        currencyFormat.format(patru.thogai),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: isDark
+                              ? Colors.green.shade300
+                              : Colors.green.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            // Chevron
+            if (!isSelecting) ...[
+              const SizedBox(width: 8),
+              Icon(
+                CupertinoIcons.chevron_right,
+                size: 14,
+                color: isDark ? Colors.white24 : Colors.black26,
+              ),
+            ],
+          ],
         ),
       ),
     );
