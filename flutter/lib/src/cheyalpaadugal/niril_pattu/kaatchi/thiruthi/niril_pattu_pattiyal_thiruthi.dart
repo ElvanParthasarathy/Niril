@@ -1326,12 +1326,16 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   Widget _itemField(
       String label, double value, ValueChanged<String> onChanged,
       {bool isWeight = false}) {
-    // Show clean number: 6 not 6.0, but keep 6.5 as-is
+    // Weight: always 3 decimals (24.100 = 24kg 100g). Others: clean integer.
     String displayText = '';
     if (value != 0) {
-      displayText = value == value.truncateToDouble()
-          ? value.toInt().toString()
-          : value.toString();
+      if (isWeight) {
+        displayText = value.toStringAsFixed(3);
+      } else {
+        displayText = value == value.truncateToDouble()
+            ? value.toInt().toString()
+            : value.toString();
+      }
     }
     return _ItemFieldWidget(
       label: label,
