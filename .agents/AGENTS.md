@@ -64,3 +64,36 @@ Example valid paths:
 - `lib/src/cheyalpaadugal/ullnuzhaivu/kaatchi/thiraigal/ullnuzhaivu_thirai.dart` (Login Screen)
 - `lib/src/koorugal/meladukkugal/elvan_azhippu_urudhi_meladukku.dart` (Delete Confirm Modal)
 - `lib/src/adippadai/tharavuthalam/app_database.dart` (Database - App layer)
+
+### Editor Folder Structure (thiruthi/)
+When a feature has **multiple editors** (e.g., invoice, customer, product), each editor MUST live in its own subfolder inside `thiruthi/`. **NEVER** place multiple editor files flat in the same `thiruthi/` folder.
+
+**Pattern:**
+```
+kaatchi/
+  thiruthi/
+    pattiyal/                     ← Invoice editor + its components
+      niril_xxx_pattiyal_thiruthi.dart
+      koorugal/                   ← Components extracted from this editor
+        koorugal.dart             ← Barrel file (re-exports all components)
+        some_kooru.dart
+    vanigar/                      ← Customer editor + its components
+      niril_xxx_vanigar_thiruthi.dart
+    porul/                        ← Product editor + its components
+      niril_xxx_porul_thiruthi.dart
+    patrucheettu/                 ← Receipt editor
+      niril_xxx_patrucheettu_thiruthi.dart
+```
+
+**Rules:**
+1. **One editor per subfolder** — never mix editors in the same directory.
+2. **Subfolder name = entity name** — `pattiyal/` for invoices, `vanigar/` for customers, `porul/` for products, `patrucheettu/` for receipts.
+3. **Components go inside the editor's folder** — `pattiyal/koorugal/`, NOT a shared `thiruthi/koorugal/`.
+4. **Barrel file required** — if a `koorugal/` folder has 3+ files, create a `koorugal.dart` barrel that re-exports all components.
+5. **Shared editor widgets** (used by ALL editors) stay at `thiruthi/` root level (e.g., `elvan_thiruthi_oadu.dart`).
+
+### File Size Limits
+- **Target**: 200–400 lines per file.
+- **Acceptable**: Up to 600 lines for complex stateful editors.
+- **Action required**: If a file exceeds 600 lines, extract sub-components into a `koorugal/` subfolder.
+- **Extract candidates**: Build sections, row builders, modals, and data load/save logic (into a `_uthavi.dart` helper).
