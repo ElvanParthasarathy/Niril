@@ -111,6 +111,9 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     _ahimsaPattuThogai = snapshot.ahimsaPattuThogai;
     _piraVarivugal = snapshot.piraVarivugal;
 
+    // Load existing bill number for display
+    _previewBillNumber = widget.editingEntry!.patrucheettuEn;
+
     _setharamCtrl.text = _setharamGrams > 0 ? _setharamGrams.toString() : '';
     _thapaalCtrl.text = _thapaalThogai > 0 ? _thapaalThogai.toString() : '';
     _ahimsaCtrl.text = _ahimsaPattuThogai > 0 ? _ahimsaPattuThogai.toString() : '';
@@ -357,6 +360,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                   KooliPattiyalTharavugalKooru(
                     pattiyalNaal: _pattiyalNaal,
                     previewBillNumber: _previewBillNumber,
+                    isEditing: _isEditing,
                     onDateChanged: (d) => setState(() {
                       _pattiyalNaal = d;
                       _hasUnsavedChanges = true;
