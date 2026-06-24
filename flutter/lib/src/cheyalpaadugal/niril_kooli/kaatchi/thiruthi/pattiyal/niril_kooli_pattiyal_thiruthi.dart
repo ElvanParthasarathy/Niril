@@ -88,19 +88,6 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     } else {
       _tryRestoreDraft();
     }
-    // Auto-select first profile
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_isEditing) {
-        final profiles = ref.read(NiruvanaTharavugalListProvider);
-        if (profiles.isNotEmpty) {
-          setState(() {
-            _selectedProfile = profiles.first;
-            _selectedNiruvanamId = profiles.first.id;
-          });
-          _computePreviewBillNumber();
-        }
-      }
-    });
   }
 
   void _loadEditingData() {
