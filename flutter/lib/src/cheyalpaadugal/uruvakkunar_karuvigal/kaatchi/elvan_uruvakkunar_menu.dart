@@ -95,77 +95,98 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
     }
   }
 
-  void _addExtraSilkProfile() async {
-    // Temporarily switch to silk mode to seed the extra profile
+  /// Toggle extra Silk profile (EPS) — add if missing, remove if exists.
+  void _toggleExtraSilk() async {
     final currentMode = ref.read(appModeProvider);
     ref.read(appModeProvider.notifier).setMode(AppMode.silk);
     final notifier = ref.read(NiruvanaTharavugalListProvider.notifier);
-    final secondProfile = mockSilkProfiles.length > 1 ? mockSilkProfiles[1] : null;
-    if (secondProfile != null) {
-      final profile = NiruvanaTharavugal(
-        mudhanMozhi: secondProfile['mudhanMozhi'] ?? 'Tamil',
-        thunaiMozhi: secondProfile['thunaiMozhi'] ?? 'English',
-        iruMozhi: secondProfile['iruMozhi'] ?? true,
-        niruvanathinPeyar: {
-          'Tamil': secondProfile['niruvanathinPeyar_Tamil'] ?? '',
-          'English': secondProfile['niruvanathinPeyar_English'] ?? '',
-        },
-        kurumPeyar: secondProfile['kurumPeyar'] ?? '',
-        tholaipaesi1: secondProfile['tholaipesi_1'] ?? '',
-        tholaipaesi2: secondProfile['tholaipesi_2'] ?? '',
-        minnanjal: secondProfile['minnanjal'] ?? '',
-        gstin: secondProfile['gstin'] ?? '',
-        mugavari: {
-          'Tamil': secondProfile['mugavari_Tamil'] ?? '',
-          'English': secondProfile['mugavari_English'] ?? '',
-        },
-        oor: {
-          'Tamil': secondProfile['oor_Tamil'] ?? '',
-          'English': secondProfile['oor_English'] ?? '',
-        },
-        maavattam: {
-          'Tamil': secondProfile['maavattam_Tamil'] ?? '',
-          'English': secondProfile['maavattam_English'] ?? '',
-        },
-        maanilam: {
-          'Tamil': secondProfile['maanilam_Tamil'] ?? '',
-          'English': secondProfile['maanilam_English'] ?? '',
-        },
-        naadu: {
-          'Tamil': secondProfile['naadu_Tamil'] ?? '',
-          'English': secondProfile['naadu_English'] ?? '',
-        },
-        anjalKuriyeedu: secondProfile['anjalKuriyeedu'] ?? '',
-        vangiPeyar: {
-          'Tamil': secondProfile['vangiPeyar_Tamil'] ?? '',
-          'English': secondProfile['vangiPeyar_English'] ?? '',
-        },
-        kilai: {
-          'Tamil': secondProfile['kilai_Tamil'] ?? '',
-          'English': secondProfile['kilai_English'] ?? '',
-        },
-        vangiKanakku: secondProfile['vangiKanakku'] ?? '',
-        ifsc: secondProfile['ifsc'] ?? '',
-        oavuru: secondProfile['oavuru'] ?? '',
-        agalaOavuru: secondProfile['agalaOavuru'] ?? '',
-        thalaippuVadivu: secondProfile['thalaippuVadivu'] ?? 'small',
-        kaiyoppam: secondProfile['kaiyoppam'] ?? '',
-        oppamPeyar: secondProfile['oppamPeyar'] ?? '',
-        adaimozhi: {
-          'Tamil': secondProfile['adaimozhi_Tamil'] ?? '',
-          'English': secondProfile['adaimozhi_English'] ?? '',
-        },
-        upiId: secondProfile['upiId'] ?? '',
-        thoatraNiram: secondProfile['thoatraNiram'] ?? '',
-      );
-      await notifier.createProfile(profile);
+    final profiles = ref.read(NiruvanaTharavugalListProvider);
+
+    // Check if EPS already exists
+    final existing = profiles.where((p) => p.kurumPeyar == 'EPS').firstOrNull;
+    if (existing != null) {
+      // Remove it
+      await notifier.deleteProfile(existing.id!);
+      if (currentMode != null) {
+        ref.read(appModeProvider.notifier).setMode(currentMode);
+      }
+      if (mounted) ElvanSnackbar.show(context, 'Silk EPS Removed ✗');
+    } else {
+      // Add it
+      final data = mockSilkProfiles.length > 1 ? mockSilkProfiles[1] : null;
+      if (data != null) {
+        await notifier.createProfile(_profileFromMap(data));
+      }
+      if (currentMode != null) {
+        ref.read(appModeProvider.notifier).setMode(currentMode);
+      }
+      if (mounted) ElvanSnackbar.show(context, 'Silk EPS Added ✓');
     }
-    if (currentMode != null) {
-      ref.read(appModeProvider.notifier).setMode(currentMode);
+  }
+
+  /// Toggle Coolie to single-profile — remove PVS if exists, add back if missing.
+  void _toggleCoolieSingle() async {
+    final currentMode = ref.read(appModeProvider);
+    ref.read(appModeProvider.notifier).setMode(AppMode.coolie);
+    final notifier = ref.read(NiruvanaTharavugalListProvider.notifier);
+    final profiles = ref.read(NiruvanaTharavugalListProvider);
+
+    // Check if PVS exists
+    final pvs = profiles.where((p) => p.kurumPeyar == 'PVS').firstOrNull;
+    if (pvs != null) {
+      // Remove PVS → single profile mode
+      await notifier.deleteProfile(pvs.id!);
+      if (currentMode != null) {
+        ref.read(appModeProvider.notifier).setMode(currentMode);
+      }
+      if (mounted) ElvanSnackbar.show(context, 'Coolie PVS Removed (1 biz) ✗');
+    } else {
+      // Add PVS back
+      final data = mockCoolieProfiles.length > 1 ? mockCoolieProfiles[1] : null;
+      if (data != null) {
+        await notifier.createProfile(_profileFromMap(data));
+      }
+      if (currentMode != null) {
+        ref.read(appModeProvider.notifier).setMode(currentMode);
+      }
+      if (mounted) ElvanSnackbar.show(context, 'Coolie PVS Added (2 biz) ✓');
     }
-    if (mounted) {
-      ElvanSnackbar.show(context, 'Extra Silk Profile (EPS) Added ✓');
-    }
+  }
+
+  /// Builds a NiruvanaTharavugal from a mock map.
+  NiruvanaTharavugal _profileFromMap(Map<String, dynamic> d) {
+    return NiruvanaTharavugal(
+      mudhanMozhi: d['mudhanMozhi'] ?? 'Tamil',
+      thunaiMozhi: d['thunaiMozhi'] ?? 'English',
+      iruMozhi: d['iruMozhi'] ?? true,
+      niruvanathinPeyar: {
+        'Tamil': d['niruvanathinPeyar_Tamil'] ?? '',
+        'English': d['niruvanathinPeyar_English'] ?? '',
+      },
+      kurumPeyar: d['kurumPeyar'] ?? '',
+      tholaipaesi1: d['tholaipesi_1'] ?? '',
+      tholaipaesi2: d['tholaipesi_2'] ?? '',
+      minnanjal: d['minnanjal'] ?? '',
+      gstin: d['gstin'] ?? '',
+      mugavari: {'Tamil': d['mugavari_Tamil'] ?? '', 'English': d['mugavari_English'] ?? ''},
+      oor: {'Tamil': d['oor_Tamil'] ?? '', 'English': d['oor_English'] ?? ''},
+      maavattam: {'Tamil': d['maavattam_Tamil'] ?? '', 'English': d['maavattam_English'] ?? ''},
+      maanilam: {'Tamil': d['maanilam_Tamil'] ?? '', 'English': d['maanilam_English'] ?? ''},
+      naadu: {'Tamil': d['naadu_Tamil'] ?? '', 'English': d['naadu_English'] ?? ''},
+      anjalKuriyeedu: d['anjalKuriyeedu'] ?? '',
+      vangiPeyar: {'Tamil': d['vangiPeyar_Tamil'] ?? '', 'English': d['vangiPeyar_English'] ?? ''},
+      kilai: {'Tamil': d['kilai_Tamil'] ?? '', 'English': d['kilai_English'] ?? ''},
+      vangiKanakku: d['vangiKanakku'] ?? '',
+      ifsc: d['ifsc'] ?? '',
+      oavuru: d['oavuru'] ?? '',
+      agalaOavuru: d['agalaOavuru'] ?? '',
+      thalaippuVadivu: d['thalaippuVadivu'] ?? 'small',
+      kaiyoppam: d['kaiyoppam'] ?? '',
+      oppamPeyar: d['oppamPeyar'] ?? '',
+      adaimozhi: {'Tamil': d['adaimozhi_Tamil'] ?? '', 'English': d['adaimozhi_English'] ?? ''},
+      upiId: d['upiId'] ?? '',
+      thoatraNiram: d['thoatraNiram'] ?? '',
+    );
   }
 
   @override
@@ -228,11 +249,19 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
                     ),
                     const SizedBox(height: 8),
                     FloatingActionButton.extended(
-                      heroTag: 'dev_extra_silk',
-                      onPressed: _addExtraSilkProfile,
-                      label: const Text('Extra Silk Biz'),
-                      icon: const Icon(CupertinoIcons.add_circled),
+                      heroTag: 'dev_toggle_silk',
+                      onPressed: _toggleExtraSilk,
+                      label: const Text('Toggle Silk ±EPS'),
+                      icon: const Icon(CupertinoIcons.repeat),
                       backgroundColor: Colors.deepPurple,
+                    ),
+                    const SizedBox(height: 8),
+                    FloatingActionButton.extended(
+                      heroTag: 'dev_toggle_coolie',
+                      onPressed: _toggleCoolieSingle,
+                      label: const Text('Toggle Coolie ±PVS'),
+                      icon: const Icon(CupertinoIcons.repeat),
+                      backgroundColor: Colors.teal,
                     ),
                   ],
                 ],
