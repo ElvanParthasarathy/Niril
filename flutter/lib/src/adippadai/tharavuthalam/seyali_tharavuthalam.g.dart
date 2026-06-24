@@ -4170,6 +4170,12 @@ class $PatrugalTableTable extends PatrugalTable
   late final GeneratedColumn<String> vanigarPeyar = GeneratedColumn<String>(
       'vanigar_peyar', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _vanigarPeyarEnMeta =
+      const VerificationMeta('vanigarPeyarEn');
+  @override
+  late final GeneratedColumn<String> vanigarPeyarEn = GeneratedColumn<String>(
+      'vanigar_peyar_en', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _vanigarMunvariMeta =
       const VerificationMeta('vanigarMunvari');
   @override
@@ -4178,6 +4184,12 @@ class $PatrugalTableTable extends PatrugalTable
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultValue: const Constant(''));
+  static const VerificationMeta _vanigarMunvariEnMeta =
+      const VerificationMeta('vanigarMunvariEn');
+  @override
+  late final GeneratedColumn<String> vanigarMunvariEn = GeneratedColumn<String>(
+      'vanigar_munvari_en', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _patruNaalMeta =
       const VerificationMeta('patruNaal');
   @override
@@ -4252,7 +4264,9 @@ class $PatrugalTableTable extends PatrugalTable
         vanakkam,
         vanigarId,
         vanigarPeyar,
+        vanigarPeyarEn,
         vanigarMunvari,
+        vanigarMunvariEn,
         patruNaal,
         thogai,
         seluthiVagai,
@@ -4311,11 +4325,23 @@ class $PatrugalTableTable extends PatrugalTable
     } else if (isInserting) {
       context.missing(_vanigarPeyarMeta);
     }
+    if (data.containsKey('vanigar_peyar_en')) {
+      context.handle(
+          _vanigarPeyarEnMeta,
+          vanigarPeyarEn.isAcceptableOrUnknown(
+              data['vanigar_peyar_en']!, _vanigarPeyarEnMeta));
+    }
     if (data.containsKey('vanigar_munvari')) {
       context.handle(
           _vanigarMunvariMeta,
           vanigarMunvari.isAcceptableOrUnknown(
               data['vanigar_munvari']!, _vanigarMunvariMeta));
+    }
+    if (data.containsKey('vanigar_munvari_en')) {
+      context.handle(
+          _vanigarMunvariEnMeta,
+          vanigarMunvariEn.isAcceptableOrUnknown(
+              data['vanigar_munvari_en']!, _vanigarMunvariEnMeta));
     }
     if (data.containsKey('patru_naal')) {
       context.handle(_patruNaalMeta,
@@ -4376,8 +4402,12 @@ class $PatrugalTableTable extends PatrugalTable
           .read(DriftSqlType.int, data['${effectivePrefix}vanigar_id']),
       vanigarPeyar: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}vanigar_peyar'])!,
+      vanigarPeyarEn: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}vanigar_peyar_en']),
       vanigarMunvari: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}vanigar_munvari'])!,
+      vanigarMunvariEn: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}vanigar_munvari_en']),
       patruNaal: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}patru_naal'])!,
       thogai: attachedDatabase.typeMapping
@@ -4411,7 +4441,9 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
   final int vanakkam;
   final int? vanigarId;
   final String vanigarPeyar;
+  final String? vanigarPeyarEn;
   final String vanigarMunvari;
+  final String? vanigarMunvariEn;
   final DateTime patruNaal;
   final double thogai;
   final String seluthiVagai;
@@ -4428,7 +4460,9 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
       required this.vanakkam,
       this.vanigarId,
       required this.vanigarPeyar,
+      this.vanigarPeyarEn,
       required this.vanigarMunvari,
+      this.vanigarMunvariEn,
       required this.patruNaal,
       required this.thogai,
       required this.seluthiVagai,
@@ -4451,7 +4485,13 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
       map['vanigar_id'] = Variable<int>(vanigarId);
     }
     map['vanigar_peyar'] = Variable<String>(vanigarPeyar);
+    if (!nullToAbsent || vanigarPeyarEn != null) {
+      map['vanigar_peyar_en'] = Variable<String>(vanigarPeyarEn);
+    }
     map['vanigar_munvari'] = Variable<String>(vanigarMunvari);
+    if (!nullToAbsent || vanigarMunvariEn != null) {
+      map['vanigar_munvari_en'] = Variable<String>(vanigarMunvariEn);
+    }
     map['patru_naal'] = Variable<DateTime>(patruNaal);
     map['thogai'] = Variable<double>(thogai);
     map['seluthi_vagai'] = Variable<String>(seluthiVagai);
@@ -4476,7 +4516,13 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
           ? const Value.absent()
           : Value(vanigarId),
       vanigarPeyar: Value(vanigarPeyar),
+      vanigarPeyarEn: vanigarPeyarEn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(vanigarPeyarEn),
       vanigarMunvari: Value(vanigarMunvari),
+      vanigarMunvariEn: vanigarMunvariEn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(vanigarMunvariEn),
       patruNaal: Value(patruNaal),
       thogai: Value(thogai),
       seluthiVagai: Value(seluthiVagai),
@@ -4499,7 +4545,9 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
       vanakkam: serializer.fromJson<int>(json['vanakkam']),
       vanigarId: serializer.fromJson<int?>(json['vanigarId']),
       vanigarPeyar: serializer.fromJson<String>(json['vanigarPeyar']),
+      vanigarPeyarEn: serializer.fromJson<String?>(json['vanigarPeyarEn']),
       vanigarMunvari: serializer.fromJson<String>(json['vanigarMunvari']),
+      vanigarMunvariEn: serializer.fromJson<String?>(json['vanigarMunvariEn']),
       patruNaal: serializer.fromJson<DateTime>(json['patruNaal']),
       thogai: serializer.fromJson<double>(json['thogai']),
       seluthiVagai: serializer.fromJson<String>(json['seluthiVagai']),
@@ -4521,7 +4569,9 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
       'vanakkam': serializer.toJson<int>(vanakkam),
       'vanigarId': serializer.toJson<int?>(vanigarId),
       'vanigarPeyar': serializer.toJson<String>(vanigarPeyar),
+      'vanigarPeyarEn': serializer.toJson<String?>(vanigarPeyarEn),
       'vanigarMunvari': serializer.toJson<String>(vanigarMunvari),
+      'vanigarMunvariEn': serializer.toJson<String?>(vanigarMunvariEn),
       'patruNaal': serializer.toJson<DateTime>(patruNaal),
       'thogai': serializer.toJson<double>(thogai),
       'seluthiVagai': serializer.toJson<String>(seluthiVagai),
@@ -4541,7 +4591,9 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
           int? vanakkam,
           Value<int?> vanigarId = const Value.absent(),
           String? vanigarPeyar,
+          Value<String?> vanigarPeyarEn = const Value.absent(),
           String? vanigarMunvari,
+          Value<String?> vanigarMunvariEn = const Value.absent(),
           DateTime? patruNaal,
           double? thogai,
           String? seluthiVagai,
@@ -4558,7 +4610,12 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
         vanakkam: vanakkam ?? this.vanakkam,
         vanigarId: vanigarId.present ? vanigarId.value : this.vanigarId,
         vanigarPeyar: vanigarPeyar ?? this.vanigarPeyar,
+        vanigarPeyarEn:
+            vanigarPeyarEn.present ? vanigarPeyarEn.value : this.vanigarPeyarEn,
         vanigarMunvari: vanigarMunvari ?? this.vanigarMunvari,
+        vanigarMunvariEn: vanigarMunvariEn.present
+            ? vanigarMunvariEn.value
+            : this.vanigarMunvariEn,
         patruNaal: patruNaal ?? this.patruNaal,
         thogai: thogai ?? this.thogai,
         seluthiVagai: seluthiVagai ?? this.seluthiVagai,
@@ -4581,9 +4638,15 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
       vanigarPeyar: data.vanigarPeyar.present
           ? data.vanigarPeyar.value
           : this.vanigarPeyar,
+      vanigarPeyarEn: data.vanigarPeyarEn.present
+          ? data.vanigarPeyarEn.value
+          : this.vanigarPeyarEn,
       vanigarMunvari: data.vanigarMunvari.present
           ? data.vanigarMunvari.value
           : this.vanigarMunvari,
+      vanigarMunvariEn: data.vanigarMunvariEn.present
+          ? data.vanigarMunvariEn.value
+          : this.vanigarMunvariEn,
       patruNaal: data.patruNaal.present ? data.patruNaal.value : this.patruNaal,
       thogai: data.thogai.present ? data.thogai.value : this.thogai,
       seluthiVagai: data.seluthiVagai.present
@@ -4608,7 +4671,9 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
           ..write('vanakkam: $vanakkam, ')
           ..write('vanigarId: $vanigarId, ')
           ..write('vanigarPeyar: $vanigarPeyar, ')
+          ..write('vanigarPeyarEn: $vanigarPeyarEn, ')
           ..write('vanigarMunvari: $vanigarMunvari, ')
+          ..write('vanigarMunvariEn: $vanigarMunvariEn, ')
           ..write('patruNaal: $patruNaal, ')
           ..write('thogai: $thogai, ')
           ..write('seluthiVagai: $seluthiVagai, ')
@@ -4630,7 +4695,9 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
       vanakkam,
       vanigarId,
       vanigarPeyar,
+      vanigarPeyarEn,
       vanigarMunvari,
+      vanigarMunvariEn,
       patruNaal,
       thogai,
       seluthiVagai,
@@ -4650,7 +4717,9 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
           other.vanakkam == this.vanakkam &&
           other.vanigarId == this.vanigarId &&
           other.vanigarPeyar == this.vanigarPeyar &&
+          other.vanigarPeyarEn == this.vanigarPeyarEn &&
           other.vanigarMunvari == this.vanigarMunvari &&
+          other.vanigarMunvariEn == this.vanigarMunvariEn &&
           other.patruNaal == this.patruNaal &&
           other.thogai == this.thogai &&
           other.seluthiVagai == this.seluthiVagai &&
@@ -4669,7 +4738,9 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
   final Value<int> vanakkam;
   final Value<int?> vanigarId;
   final Value<String> vanigarPeyar;
+  final Value<String?> vanigarPeyarEn;
   final Value<String> vanigarMunvari;
+  final Value<String?> vanigarMunvariEn;
   final Value<DateTime> patruNaal;
   final Value<double> thogai;
   final Value<String> seluthiVagai;
@@ -4686,7 +4757,9 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
     this.vanakkam = const Value.absent(),
     this.vanigarId = const Value.absent(),
     this.vanigarPeyar = const Value.absent(),
+    this.vanigarPeyarEn = const Value.absent(),
     this.vanigarMunvari = const Value.absent(),
+    this.vanigarMunvariEn = const Value.absent(),
     this.patruNaal = const Value.absent(),
     this.thogai = const Value.absent(),
     this.seluthiVagai = const Value.absent(),
@@ -4704,7 +4777,9 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
     this.vanakkam = const Value.absent(),
     this.vanigarId = const Value.absent(),
     required String vanigarPeyar,
+    this.vanigarPeyarEn = const Value.absent(),
     this.vanigarMunvari = const Value.absent(),
+    this.vanigarMunvariEn = const Value.absent(),
     this.patruNaal = const Value.absent(),
     this.thogai = const Value.absent(),
     this.seluthiVagai = const Value.absent(),
@@ -4724,7 +4799,9 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
     Expression<int>? vanakkam,
     Expression<int>? vanigarId,
     Expression<String>? vanigarPeyar,
+    Expression<String>? vanigarPeyarEn,
     Expression<String>? vanigarMunvari,
+    Expression<String>? vanigarMunvariEn,
     Expression<DateTime>? patruNaal,
     Expression<double>? thogai,
     Expression<String>? seluthiVagai,
@@ -4742,7 +4819,9 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
       if (vanakkam != null) 'vanakkam': vanakkam,
       if (vanigarId != null) 'vanigar_id': vanigarId,
       if (vanigarPeyar != null) 'vanigar_peyar': vanigarPeyar,
+      if (vanigarPeyarEn != null) 'vanigar_peyar_en': vanigarPeyarEn,
       if (vanigarMunvari != null) 'vanigar_munvari': vanigarMunvari,
+      if (vanigarMunvariEn != null) 'vanigar_munvari_en': vanigarMunvariEn,
       if (patruNaal != null) 'patru_naal': patruNaal,
       if (thogai != null) 'thogai': thogai,
       if (seluthiVagai != null) 'seluthi_vagai': seluthiVagai,
@@ -4762,7 +4841,9 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
       Value<int>? vanakkam,
       Value<int?>? vanigarId,
       Value<String>? vanigarPeyar,
+      Value<String?>? vanigarPeyarEn,
       Value<String>? vanigarMunvari,
+      Value<String?>? vanigarMunvariEn,
       Value<DateTime>? patruNaal,
       Value<double>? thogai,
       Value<String>? seluthiVagai,
@@ -4779,7 +4860,9 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
       vanakkam: vanakkam ?? this.vanakkam,
       vanigarId: vanigarId ?? this.vanigarId,
       vanigarPeyar: vanigarPeyar ?? this.vanigarPeyar,
+      vanigarPeyarEn: vanigarPeyarEn ?? this.vanigarPeyarEn,
       vanigarMunvari: vanigarMunvari ?? this.vanigarMunvari,
+      vanigarMunvariEn: vanigarMunvariEn ?? this.vanigarMunvariEn,
       patruNaal: patruNaal ?? this.patruNaal,
       thogai: thogai ?? this.thogai,
       seluthiVagai: seluthiVagai ?? this.seluthiVagai,
@@ -4815,8 +4898,14 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
     if (vanigarPeyar.present) {
       map['vanigar_peyar'] = Variable<String>(vanigarPeyar.value);
     }
+    if (vanigarPeyarEn.present) {
+      map['vanigar_peyar_en'] = Variable<String>(vanigarPeyarEn.value);
+    }
     if (vanigarMunvari.present) {
       map['vanigar_munvari'] = Variable<String>(vanigarMunvari.value);
+    }
+    if (vanigarMunvariEn.present) {
+      map['vanigar_munvari_en'] = Variable<String>(vanigarMunvariEn.value);
     }
     if (patruNaal.present) {
       map['patru_naal'] = Variable<DateTime>(patruNaal.value);
@@ -4855,7 +4944,9 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
           ..write('vanakkam: $vanakkam, ')
           ..write('vanigarId: $vanigarId, ')
           ..write('vanigarPeyar: $vanigarPeyar, ')
+          ..write('vanigarPeyarEn: $vanigarPeyarEn, ')
           ..write('vanigarMunvari: $vanigarMunvari, ')
+          ..write('vanigarMunvariEn: $vanigarMunvariEn, ')
           ..write('patruNaal: $patruNaal, ')
           ..write('thogai: $thogai, ')
           ..write('seluthiVagai: $seluthiVagai, ')
@@ -6974,7 +7065,9 @@ typedef $$PatrugalTableTableCreateCompanionBuilder = PatrugalTableCompanion
   Value<int> vanakkam,
   Value<int?> vanigarId,
   required String vanigarPeyar,
+  Value<String?> vanigarPeyarEn,
   Value<String> vanigarMunvari,
+  Value<String?> vanigarMunvariEn,
   Value<DateTime> patruNaal,
   Value<double> thogai,
   Value<String> seluthiVagai,
@@ -6993,7 +7086,9 @@ typedef $$PatrugalTableTableUpdateCompanionBuilder = PatrugalTableCompanion
   Value<int> vanakkam,
   Value<int?> vanigarId,
   Value<String> vanigarPeyar,
+  Value<String?> vanigarPeyarEn,
   Value<String> vanigarMunvari,
+  Value<String?> vanigarMunvariEn,
   Value<DateTime> patruNaal,
   Value<double> thogai,
   Value<String> seluthiVagai,
@@ -7034,8 +7129,16 @@ class $$PatrugalTableTableFilterComposer
   ColumnFilters<String> get vanigarPeyar => $composableBuilder(
       column: $table.vanigarPeyar, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<String> get vanigarPeyarEn => $composableBuilder(
+      column: $table.vanigarPeyarEn,
+      builder: (column) => ColumnFilters(column));
+
   ColumnFilters<String> get vanigarMunvari => $composableBuilder(
       column: $table.vanigarMunvari,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get vanigarMunvariEn => $composableBuilder(
+      column: $table.vanigarMunvariEn,
       builder: (column) => ColumnFilters(column));
 
   ColumnFilters<DateTime> get patruNaal => $composableBuilder(
@@ -7094,8 +7197,16 @@ class $$PatrugalTableTableOrderingComposer
       column: $table.vanigarPeyar,
       builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get vanigarPeyarEn => $composableBuilder(
+      column: $table.vanigarPeyarEn,
+      builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get vanigarMunvari => $composableBuilder(
       column: $table.vanigarMunvari,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get vanigarMunvariEn => $composableBuilder(
+      column: $table.vanigarMunvariEn,
       builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<DateTime> get patruNaal => $composableBuilder(
@@ -7154,8 +7265,14 @@ class $$PatrugalTableTableAnnotationComposer
   GeneratedColumn<String> get vanigarPeyar => $composableBuilder(
       column: $table.vanigarPeyar, builder: (column) => column);
 
+  GeneratedColumn<String> get vanigarPeyarEn => $composableBuilder(
+      column: $table.vanigarPeyarEn, builder: (column) => column);
+
   GeneratedColumn<String> get vanigarMunvari => $composableBuilder(
       column: $table.vanigarMunvari, builder: (column) => column);
+
+  GeneratedColumn<String> get vanigarMunvariEn => $composableBuilder(
+      column: $table.vanigarMunvariEn, builder: (column) => column);
 
   GeneratedColumn<DateTime> get patruNaal =>
       $composableBuilder(column: $table.patruNaal, builder: (column) => column);
@@ -7215,7 +7332,9 @@ class $$PatrugalTableTableTableManager extends RootTableManager<
             Value<int> vanakkam = const Value.absent(),
             Value<int?> vanigarId = const Value.absent(),
             Value<String> vanigarPeyar = const Value.absent(),
+            Value<String?> vanigarPeyarEn = const Value.absent(),
             Value<String> vanigarMunvari = const Value.absent(),
+            Value<String?> vanigarMunvariEn = const Value.absent(),
             Value<DateTime> patruNaal = const Value.absent(),
             Value<double> thogai = const Value.absent(),
             Value<String> seluthiVagai = const Value.absent(),
@@ -7233,7 +7352,9 @@ class $$PatrugalTableTableTableManager extends RootTableManager<
             vanakkam: vanakkam,
             vanigarId: vanigarId,
             vanigarPeyar: vanigarPeyar,
+            vanigarPeyarEn: vanigarPeyarEn,
             vanigarMunvari: vanigarMunvari,
+            vanigarMunvariEn: vanigarMunvariEn,
             patruNaal: patruNaal,
             thogai: thogai,
             seluthiVagai: seluthiVagai,
@@ -7251,7 +7372,9 @@ class $$PatrugalTableTableTableManager extends RootTableManager<
             Value<int> vanakkam = const Value.absent(),
             Value<int?> vanigarId = const Value.absent(),
             required String vanigarPeyar,
+            Value<String?> vanigarPeyarEn = const Value.absent(),
             Value<String> vanigarMunvari = const Value.absent(),
+            Value<String?> vanigarMunvariEn = const Value.absent(),
             Value<DateTime> patruNaal = const Value.absent(),
             Value<double> thogai = const Value.absent(),
             Value<String> seluthiVagai = const Value.absent(),
@@ -7269,7 +7392,9 @@ class $$PatrugalTableTableTableManager extends RootTableManager<
             vanakkam: vanakkam,
             vanigarId: vanigarId,
             vanigarPeyar: vanigarPeyar,
+            vanigarPeyarEn: vanigarPeyarEn,
             vanigarMunvari: vanigarMunvari,
+            vanigarMunvariEn: vanigarMunvariEn,
             patruNaal: patruNaal,
             thogai: thogai,
             seluthiVagai: seluthiVagai,

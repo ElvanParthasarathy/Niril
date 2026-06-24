@@ -42,7 +42,9 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   // ── Customer ──
   int? _selectedVanigarId;
   String _vanigarPeyar = '';
+  String _vanigarPeyarEn = '';
   String _vanigarMunvari = '';
+  String _vanigarMunvariEn = '';
 
   // ── Receipt Data ──
   DateTime _patruNaal = DateTime.now();
@@ -90,7 +92,9 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       _selectedNiruvanamId = entry.niruvanamId;
       _selectedVanigarId = entry.vanigarId;
       _vanigarPeyar = entry.vanigarPeyar;
+      _vanigarPeyarEn = entry.vanigarPeyarEn ?? '';
       _vanigarMunvari = entry.vanigarMunvari;
+      _vanigarMunvariEn = entry.vanigarMunvariEn ?? '';
       _patruNaal = entry.patruNaal;
       _patruEn = entry.patruEn;
       _vanakkam = entry.vanakkam;
@@ -247,7 +251,9 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
         vanakkam: Value(_vanakkam),
         vanigarId: Value(_selectedVanigarId),
         vanigarPeyar: Value(_vanigarPeyar),
+        vanigarPeyarEn: Value(_vanigarPeyarEn.isEmpty ? null : _vanigarPeyarEn),
         vanigarMunvari: Value(_vanigarMunvari),
+        vanigarMunvariEn: Value(_vanigarMunvariEn.isEmpty ? null : _vanigarMunvariEn),
         patruNaal: Value(_patruNaal),
         thogai: Value(_thogai),
         seluthiVagai: Value(_seluthiVagai!.storedValue),
@@ -387,10 +393,15 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
           final peyarMap = vanigar.peyar;
           _vanigarPeyar =
               peyarMap['Tamil'] ?? peyarMap['English'] ?? peyarMap.values.firstOrNull ?? '';
+          _vanigarPeyarEn = peyarMap['English'] ?? '';
           final mugavariMap = vanigar.mugavari;
           _vanigarMunvari = [
             mugavariMap['Tamil'] ?? mugavariMap['English'] ?? '',
             vanigar.oor['Tamil'] ?? vanigar.oor['English'] ?? '',
+          ].where((s) => s.isNotEmpty).join(', ');
+          _vanigarMunvariEn = [
+            mugavariMap['English'] ?? '',
+            vanigar.oor['English'] ?? '',
           ].where((s) => s.isNotEmpty).join(', ');
         });
       },
@@ -459,6 +470,9 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     if (_selectedVanigarId == null && first.vanigarId != null) {
       _selectedVanigarId = first.vanigarId;
       _vanigarPeyar = first.vanigarPeyar;
+      _vanigarPeyarEn = first.vanigarPeyarEn ?? '';
+      _vanigarMunvari = first.vanigarMunvari;
+      _vanigarMunvariEn = first.vanigarMunvariEn ?? '';
     }
   }
 

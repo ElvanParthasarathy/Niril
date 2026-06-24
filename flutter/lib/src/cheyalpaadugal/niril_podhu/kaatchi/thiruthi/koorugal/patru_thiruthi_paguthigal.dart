@@ -266,14 +266,29 @@ class PatruSeluthiPagudhi extends StatelessWidget {
                   ),
                 ),
                 items: SeluthiVagai.values.map((mode) {
+                  final isUpi = mode == SeluthiVagai.upi;
                   return DropdownMenuItem(
                     value: mode,
                     child: Row(
                       children: [
-                        Icon(mode.icon, size: 18,
-                            color: mode.badgeColor(isDark)),
+                        Icon(mode.icon, size: 18, color: mode.badgeColor(isDark)),
                         const SizedBox(width: 10),
-                        Text(mode.tamilLabel),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(mode.tamilLabel, style: const TextStyle(height: 1.2)),
+                            if (!isUpi)
+                              Text(
+                                mode.englishLabel,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  height: 1.2,
+                                  color: isDark ? Colors.white60 : Colors.black54,
+                                ),
+                              ),
+                          ],
+                        ),
                       ],
                     ),
                   );

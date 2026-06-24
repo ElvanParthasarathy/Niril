@@ -157,10 +157,20 @@ class PatruPattiyalTheervuMaeladukku {
                                     ],
                                   ),
                                   subtitle: inv.vanigarPeyar.isNotEmpty
-                                      ? Text(inv.vanigarPeyar,
-                                          style: const TextStyle(fontSize: 13),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis)
+                                      ? Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(inv.vanigarPeyar,
+                                                style: const TextStyle(fontSize: 13),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis),
+                                            if (inv.vanigarMunvari.isNotEmpty)
+                                              Text(inv.vanigarMunvari,
+                                                  style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis),
+                                          ],
+                                        )
                                       : null,
                                   trailing: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,

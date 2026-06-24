@@ -249,8 +249,12 @@ class PatrugalTable extends Table {
   IntColumn get vanigarId =>
       integer().nullable()(); // FK → VanigarTable
   TextColumn get vanigarPeyar => text()(); // Snapshot name
+  TextColumn get vanigarPeyarEn =>
+      text().nullable()(); // Snapshot name (English fallback)
   TextColumn get vanigarMunvari =>
       text().withDefault(const Constant(''))(); // Snapshot address
+  TextColumn get vanigarMunvariEn =>
+      text().nullable()(); // Snapshot address (English fallback)
 
   // ── Receipt Data ──
   DateTimeColumn get patruNaal =>
@@ -302,7 +306,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -387,6 +391,11 @@ class AppDatabase extends _$AppDatabase {
             await customStatement(
               'ALTER TABLE vaniga_tharavugal_table RENAME TO niruvana_tharavugal_table',
             );
+          }
+          if (from < 9) {
+            // v9: Add English fallback snapshot fields to patrugal_table
+            await m.addColumn(patrugalTable, patrugalTable.vanigarPeyarEn);
+            await m.addColumn(patrugalTable, patrugalTable.vanigarMunvariEn);
           }
         },
       );
