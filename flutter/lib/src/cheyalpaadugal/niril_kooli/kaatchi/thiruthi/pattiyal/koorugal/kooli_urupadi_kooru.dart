@@ -10,7 +10,7 @@ import '../../../../../niril_podhu/kaatchi/koorugal/porul_thaedu_kooru.dart';
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 
 /// Builds a single coolie line-item row: header label + delete + ElvanUrupadiAttai.
-class KooliUrupadiKooru extends ConsumerWidget {
+class KooliUrupadiKooru extends ConsumerStatefulWidget {
   final int index;
   final KooliUrupadi item;
   final int itemCount;
@@ -31,9 +31,57 @@ class KooliUrupadiKooru extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<KooliUrupadiKooru> createState() => _KooliUrupadiKooruState();
+}
+
+class _KooliUrupadiKooruState extends ConsumerState<KooliUrupadiKooru> {
+  late final TextEditingController _edaiCtrl;
+  late final TextEditingController _vilaiCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _edaiCtrl = TextEditingController(
+      text: widget.item.edai > 0 ? widget.item.edai.toString() : '',
+    );
+    _vilaiCtrl = TextEditingController(
+      text: widget.item.vilai > 0 ? widget.item.vilai.toString() : '',
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant KooliUrupadiKooru oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Sync controllers when parent pushes new values (e.g. product selected
+    // sets a default rate), but NOT while the user is actively editing.
+    if (oldWidget.item.edai != widget.item.edai) {
+      final current = double.tryParse(_edaiCtrl.text) ?? 0;
+      if (current != widget.item.edai) {
+        _edaiCtrl.text =
+            widget.item.edai > 0 ? widget.item.edai.toString() : '';
+      }
+    }
+    if (oldWidget.item.vilai != widget.item.vilai) {
+      final current = double.tryParse(_vilaiCtrl.text) ?? 0;
+      if (current != widget.item.vilai) {
+        _vilaiCtrl.text =
+            widget.item.vilai > 0 ? widget.item.vilai.toString() : '';
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _edaiCtrl.dispose();
+    _vilaiCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
+    final item = widget.item;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -42,16 +90,16 @@ class KooliUrupadiKooru extends ConsumerWidget {
           // Item #N header + trash
           Row(
             children: [
-              Text('${K.porul.tr(context, ref)} #${index + 1}',
+              Text('${K.porul.tr(context, ref)} #${widget.index + 1}',
                   style: tt.titleSmall?.copyWith(
                     color: cs.onSurfaceVariant,
                   )),
               const Spacer(),
-              if (itemCount > 1)
+              if (widget.itemCount > 1)
                 IconButton(
                   icon: Icon(Icons.delete_outline,
                       color: cs.error, size: 20),
-                  onPressed: onDeleted,
+                  onPressed: widget.onDeleted,
                 ),
             ],
           ),
@@ -74,7 +122,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
                         onSelected: (p) {
                           final tamilName = p.porulPeyar['Tamil'] ?? '';
                           final englishName = p.porulPeyar['English'] ?? '';
-                          onUpdated(item.copyWith(
+                          widget.onUpdated(item.copyWith(
                             porulId: p.id.toString(),
                             porulPeyar: tamilName.isNotEmpty
                                 ? tamilName
@@ -85,24 +133,50 @@ class KooliUrupadiKooru extends ConsumerWidget {
                             vilai: p.vilai,
                           ));
                         },
-                        onRequestAddNew: onRequestAddNewProduct,
+                        onRequestAddNew: widget.onRequestAddNewProduct,
                       ),
                     ),
-                    // Weight
+                    // Weight (kg)
                     SizedBox(
                       width: 120,
-                      child: _numField(K.kiKi.tr(context, ref), item.edai, (v) {
-                        onUpdated(
-                            item.copyWith(edai: double.tryParse(v) ?? 0));
-                      }),
+                      child: TextFormField(
+                        controller: _edaiCtrl,
+                        keyboardType:
+                            const TextInputType.numberWithOptions(decimal: true),
+                        decoration: InputDecoration(
+                          labelText: K.kiKi.tr(context, ref),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 12),
+                          isDense: true,
+                        ),
+                        onChanged: (v) {
+                          widget.onUpdated(
+                            item.copyWith(edai: double.tryParse(v) ?? 0),
+                          );
+                        },
+                      ),
                     ),
-                    // Rate
+                    // Rate (per kg)
                     SizedBox(
                       width: 120,
-                      child: _numField(K.vilaiKiKi.tr(context, ref), item.vilai, (v) {
-                        onUpdated(
-                            item.copyWith(vilai: double.tryParse(v) ?? 0));
-                      }),
+                      child: TextFormField(
+                        controller: _vilaiCtrl,
+                        keyboardType:
+                            const TextInputType.numberWithOptions(decimal: true),
+                        decoration: InputDecoration(
+                          labelText: K.vilaiKiKi.tr(context, ref),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 12),
+                          isDense: true,
+                        ),
+                        onChanged: (v) {
+                          widget.onUpdated(
+                            item.copyWith(vilai: double.tryParse(v) ?? 0),
+                          );
+                        },
+                      ),
                     ),
                     // Row total (read-only)
                     SizedBox(
@@ -115,7 +189,8 @@ class KooliUrupadiKooru extends ConsumerWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         alignment: Alignment.center,
-                        child: Text('₹${formatter.format(item.varisaiThogai)}',
+                        child: Text(
+                            '₹${widget.formatter.format(item.varisaiThogai)}',
                             style: TextStyle(
                               fontWeight: FontWeight.w700,
                               color: cs.primary,
@@ -141,24 +216,6 @@ class KooliUrupadiKooru extends ConsumerWidget {
           ),
         ],
       ),
-    );
-  }
-
-  /// Compact borderless number field for use inside item cards.
-  Widget _numField(
-      String label, double value, ValueChanged<String> onChanged) {
-    return TextFormField(
-      key: ValueKey('$label-$value'),
-      initialValue: value > 0 ? value.toString() : '',
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      decoration: InputDecoration(
-        labelText: label,
-        border: InputBorder.none,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-        isDense: true,
-      ),
-      onChanged: onChanged,
     );
   }
 }
