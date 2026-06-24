@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
+import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 import '../../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
@@ -6,7 +10,7 @@ import '../../../../../niril_podhu/kaatchi/koorugal/vanigar_thaedu_kooru.dart';
 import '../../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 
 /// §1 Customer — client search + company dropdown + saved-details card.
-class KooliVanigarKooru extends StatelessWidget {
+class KooliVanigarKooru extends ConsumerWidget {
   final int? selectedVanigarId;
   final String selectedVanigarPeyar;
   final int? selectedNiruvanamId;
@@ -29,7 +33,7 @@ class KooliVanigarKooru extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
@@ -40,7 +44,7 @@ class KooliVanigarKooru extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 12, bottom: 6),
-            child: Text('Client Name',
+            child: Text(K.vanigarPeyarThaedu.tr(context, ref),
                 style: tt.bodySmall?.copyWith(
                   color: cs.onSurfaceVariant,
                   fontSize: 12,
@@ -60,7 +64,7 @@ class KooliVanigarKooru extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('SAVED DETAILS',
+                  Text(K.saemiththaTharavugal.tr(context, ref).toUpperCase(),
                       style: tt.labelSmall?.copyWith(
                         color: cs.onSurfaceVariant,
                         letterSpacing: 1.2,
@@ -110,7 +114,7 @@ class KooliVanigarKooru extends StatelessWidget {
           const SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.only(left: 12, bottom: 6),
-            child: Text('Company',
+            child: Text(K.niruvanam.tr(context, ref),
                 style: tt.bodySmall?.copyWith(
                   color: cs.onSurfaceVariant,
                   fontSize: 12,

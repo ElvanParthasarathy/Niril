@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
+import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
@@ -6,7 +10,7 @@ import '../../../../../niril_podhu/kaatchi/koorugal/porul_thaedu_kooru.dart';
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 
 /// Builds a single coolie line-item row: header label + delete + ElvanUrupadiAttai.
-class KooliUrupadiKooru extends StatelessWidget {
+class KooliUrupadiKooru extends ConsumerWidget {
   final int index;
   final KooliUrupadi item;
   final int itemCount;
@@ -27,7 +31,7 @@ class KooliUrupadiKooru extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
@@ -38,7 +42,7 @@ class KooliUrupadiKooru extends StatelessWidget {
           // Item #N header + trash
           Row(
             children: [
-              Text('Item #${index + 1}',
+              Text('${K.porul.tr(context, ref)} #${index + 1}',
                   style: tt.titleSmall?.copyWith(
                     color: cs.onSurfaceVariant,
                   )),
@@ -79,7 +83,7 @@ class KooliUrupadiKooru extends StatelessWidget {
                 // Weight
                 SizedBox(
                   width: 120,
-                  child: _numField('KG', item.edai, (v) {
+                  child: _numField(K.kiKi.tr(context, ref), item.edai, (v) {
                     onUpdated(
                         item.copyWith(edai: double.tryParse(v) ?? 0));
                   }),
@@ -87,7 +91,7 @@ class KooliUrupadiKooru extends StatelessWidget {
                 // Rate
                 SizedBox(
                   width: 120,
-                  child: _numField('Rate/KG', item.vilai, (v) {
+                  child: _numField(K.vilaiKiKi.tr(context, ref), item.vilai, (v) {
                     onUpdated(
                         item.copyWith(vilai: double.tryParse(v) ?? 0));
                   }),

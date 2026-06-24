@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
+import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 
 /// Builds a dynamic "other charge" row inside an ElvanUrupadiAttai.
-class KooliPiraVarivuKooru extends StatelessWidget {
+class KooliPiraVarivuKooru extends ConsumerWidget {
   final int index;
   final PiraVarivu charge;
   final ValueChanged<PiraVarivu> onUpdated;
@@ -21,7 +25,7 @@ class KooliPiraVarivuKooru extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
@@ -31,7 +35,7 @@ class KooliPiraVarivuKooru extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text('Other Charge #${index + 1}',
+              Text('${K.pira.tr(context, ref)} #${index + 1}',
                   style: tt.titleSmall?.copyWith(
                     color: cs.onSurfaceVariant,
                   )),
@@ -52,8 +56,8 @@ class KooliPiraVarivuKooru extends StatelessWidget {
                   flex: 2,
                   child: TextFormField(
                     initialValue: charge.peyar,
-                    decoration: const InputDecoration(
-                      hintText: 'Charge Name',
+                    decoration: InputDecoration(
+                      hintText: K.kattanaPeyar.tr(context, ref),
                       border: InputBorder.none,
                       isDense: true,
                       contentPadding:

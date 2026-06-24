@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
+import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 /// பட்டியல் வகை கூறு — Invoice Type dropdown (Tax Invoice / Proforma).
-class PattuPattiyalVagaiKooru extends StatelessWidget {
+class PattuPattiyalVagaiKooru extends ConsumerWidget {
   const PattuPattiyalVagaiKooru({
     super.key,
     required this.pattiyalVagai,
@@ -15,7 +18,7 @@ class PattuPattiyalVagaiKooru extends StatelessWidget {
   final ValueChanged<String?> onChanged;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 400),
       child: DropdownButtonFormField<String>(
@@ -26,11 +29,11 @@ class PattuPattiyalVagaiKooru extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(
               horizontal: 20, vertical: 14),
         ),
-        items: const [
+        items: [
           DropdownMenuItem(
-              value: 'tax-invoice', child: Text('Tax Invoice')),
+              value: 'tax-invoice', child: Text(K.varipPattiyal.tr(context, ref))),
           DropdownMenuItem(
-              value: 'proforma', child: Text('Proforma')),
+              value: 'proforma', child: Text(K.munvaraivu.tr(context, ref))),
         ],
         onChanged: onChanged,
       ),

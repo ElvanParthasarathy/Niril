@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
+import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../niril_podhu/kaatchi/koorugal/pattiyal_naal_kooru.dart';
 
@@ -7,7 +10,7 @@ import '../../../../../niril_podhu/kaatchi/koorugal/pattiyal_naal_kooru.dart';
 // ─────────────────────────────────────────────────────────────────────────────
 
 /// Section 2: Invoice number (editable) + Date picker, responsive layout.
-class PattuPattiyalTharavugalKooru extends StatelessWidget {
+class PattuPattiyalTharavugalKooru extends ConsumerWidget {
   const PattuPattiyalTharavugalKooru({
     super.key,
     required this.isEditing,
@@ -36,7 +39,7 @@ class PattuPattiyalTharavugalKooru extends StatelessWidget {
   final VoidCallback onDirty;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
@@ -49,7 +52,7 @@ class PattuPattiyalTharavugalKooru extends StatelessWidget {
           Row(
             children: [
               Text(
-                'Invoice Number',
+                K.pattiyalEn.tr(context, ref),
                 style: tt.labelMedium?.copyWith(
                   color: cs.onSurfaceVariant,
                   fontWeight: FontWeight.w500,
@@ -130,7 +133,7 @@ class PattuPattiyalTharavugalKooru extends StatelessWidget {
                     ? invoiceNumberOverride
                     : previewInvoiceNumber.isNotEmpty
                         ? previewInvoiceNumber
-                        : 'Auto-generated on save',
+                        : K.thaaniyangkiUruvaam.tr(context, ref),
                 style: tt.bodyLarge?.copyWith(
                   color: invoiceNumberOverride.isNotEmpty
                       ? cs.onSurface
@@ -148,7 +151,7 @@ class PattuPattiyalTharavugalKooru extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Date',
+            K.naal.tr(context, ref),
             style: tt.labelMedium?.copyWith(
               color: cs.onSurfaceVariant,
               fontWeight: FontWeight.w500,

@@ -257,13 +257,13 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   // ── Save (delegates to helper) ──
   Future<void> _handleSave() async {
     if (_selectedVanigarId == null && _selectedVanigarPeyar.isEmpty) {
-      ElvanSnackbar.show(context, 'Select a customer');
+      ElvanSnackbar.show(context, K.vanigaraiThaerodhu.tr(context, ref));
       return;
     }
     final validItems =
         _items.where((i) => i.alavu > 0 && i.vilai > 0).toList();
     if (validItems.isEmpty) {
-      ElvanSnackbar.show(context, 'Add at least one item');
+      ElvanSnackbar.show(context, K.kuriaindhOruUrupadi.tr(context, ref));
       return;
     }
 
@@ -330,7 +330,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           // ───────────────────────────────────────────────────────────────
           // Section 1: ① Billed To
           // ───────────────────────────────────────────────────────────────
-          const ElvanPagudhiThalaipu(en: 1, thalaipu: 'Billed To'),
+          ElvanPagudhiThalaipu(en: 1, thalaipu: K.perunar.tr(context, ref)),
           PattuVanigargalKooru(
             data: PattuVanigargalData(
               selectedVanigarId: _selectedVanigarId,
@@ -410,7 +410,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           // ───────────────────────────────────────────────────────────────
           // Section 2: ② Invoice Details
           // ───────────────────────────────────────────────────────────────
-          const ElvanPagudhiThalaipu(en: 2, thalaipu: 'Invoice Details'),
+          ElvanPagudhiThalaipu(en: 2, thalaipu: K.pattiyalTharavugal.tr(context, ref)),
           PattuPattiyalTharavugalKooru(
             isEditing: _isEditing,
             invoiceNumberOverride: _invoiceNumberOverride,
@@ -478,7 +478,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           // ───────────────────────────────────────────────────────────────
           // Section 3: ③ Line Items (uses PattuUrupadiAttai component)
           // ───────────────────────────────────────────────────────────────
-          const ElvanPagudhiThalaipu(en: 3, thalaipu: 'Line Items'),
+          ElvanPagudhiThalaipu(en: 3, thalaipu: K.varisaiUrupadigal.tr(context, ref)),
           ...List.generate(_items.length, (i) => PattuUrupadiAttai(
             item: _items[i],
             index: i,
@@ -522,7 +522,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                 setState(() => _items = [..._items, const PattuUrupadi()]);
               },
               icon: const Icon(Icons.add_circle_outline, size: 20),
-              label: const Text('Add Item'),
+              label: Text(K.urupadiChaer.tr(context, ref)),
               style: TextButton.styleFrom(
                 backgroundColor: cs.surfaceContainerHighest,
                 foregroundColor: cs.onSurface,
@@ -564,7 +564,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           // ───────────────────────────────────────────────────────────────
           // Section 5: ⑤ Invoice Type
           // ───────────────────────────────────────────────────────────────
-          const ElvanPagudhiThalaipu(en: 5, thalaipu: 'Invoice Type'),
+          ElvanPagudhiThalaipu(en: 5, thalaipu: K.pattiyalVagai.tr(context, ref)),
           PattuPattiyalVagaiKooru(
             pattiyalVagai: _pattiyalVagai,
             onChanged: (v) {

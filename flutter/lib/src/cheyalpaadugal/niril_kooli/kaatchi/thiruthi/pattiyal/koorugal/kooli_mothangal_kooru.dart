@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
+import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import 'kooli_thiruthi_udhavigal.dart';
 
 /// §5 Totals — sub-totals, weight, setharam, ahimsa, courier, other charges,
 /// grand total.
-class KooliMothangalKooru extends StatelessWidget {
+class KooliMothangalKooru extends ConsumerWidget {
   final KooliMothangal totals;
   final double setharamGrams;
   final double ahimsaPattuThogai;
@@ -26,7 +29,7 @@ class KooliMothangalKooru extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
@@ -37,7 +40,7 @@ class KooliMothangalKooru extends StatelessWidget {
         child: Column(
           children: [
             kooliTotalsRow(
-              'Sub Total',
+              K.ulmotham.tr(context, ref),
               '₹${formatter.format(totals.adippadaiMothangal)}',
               labelWeight: FontWeight.w600,
               labelColor: cs.onSurfaceVariant,
@@ -45,25 +48,25 @@ class KooliMothangalKooru extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             if (ahimsaPattuThogai > 0) ...[
-              kooliTotalsRow('Ahimsa Silk',
+              kooliTotalsRow(K.ahimsaiPattu.tr(context, ref),
                   '₹${formatter.format(ahimsaPattuThogai)}'),
               const SizedBox(height: 12),
             ],
             if (thapaalThogai > 0) ...[
               kooliTotalsRow(
-                  'Courier', '₹${formatter.format(thapaalThogai)}'),
+                  K.thapaal.tr(context, ref), '₹${formatter.format(thapaalThogai)}'),
               const SizedBox(height: 12),
             ],
             for (final charge in piraVarivugal)
               if (charge.thogai > 0) ...[
                 kooliTotalsRow(
-                  charge.peyar.isNotEmpty ? charge.peyar : 'Other',
+                  charge.peyar.isNotEmpty ? charge.peyar : K.pira.tr(context, ref),
                   '₹${formatter.format(charge.thogai)}',
                 ),
                 const SizedBox(height: 12),
               ],
             kooliTotalsRow(
-              'Total Weight',
+              K.mothaEdai.tr(context, ref),
               '${totals.mothaEdai.toStringAsFixed(3)} Kg',
               labelWeight: FontWeight.w600,
               valueWeight: FontWeight.w700,
@@ -71,7 +74,7 @@ class KooliMothangalKooru extends StatelessWidget {
             const SizedBox(height: 12),
             if (setharamGrams > 0) ...[
               kooliTotalsRow(
-                  '+ Setharam', '${setharamGrams.toStringAsFixed(1)} g'),
+                  '+ ${K.saetharam.tr(context, ref)}', '${setharamGrams.toStringAsFixed(1)} g'),
               const SizedBox(height: 12),
             ],
             const Divider(),
@@ -80,7 +83,7 @@ class KooliMothangalKooru extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Total',
+                Text(K.motham.tr(context, ref),
                     style: tt.titleLarge?.copyWith(
                       fontWeight: FontWeight.w700,
                       color: cs.primary,

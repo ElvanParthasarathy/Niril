@@ -115,14 +115,14 @@ class PattuUrupadiAttai extends ConsumerWidget {
               // Build field widgets
               final isWeightItem = item.alagu == 'Kg';
               final qtyField = _buildItemField(
-                isWeightItem ? 'Weight (kg)' : 'Qty',
+                isWeightItem ? K.edaiKiKi.tr(context, ref) : K.alavu.tr(context, ref),
                 item.alavu,
                 (v) => onItemUpdated(
                     item.copyWith(alavu: double.tryParse(v) ?? 0)),
                 isWeight: isWeightItem,
               );
 
-              final rateField = _buildItemField('Rate', item.vilai, (v) {
+              final rateField = _buildItemField(K.vilaiVeedham.tr(context, ref), item.vilai, (v) {
                 onItemUpdated(
                     item.copyWith(vilai: double.tryParse(v) ?? 0));
               });
@@ -130,7 +130,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
               final discField = Row(
                 children: [
                   Expanded(
-                    child: _buildItemField('Disc', item.thallupadi, (v) {
+                    child: _buildItemField(K.thallupadiChurukkam.tr(context, ref), item.thallupadi, (v) {
                       onItemUpdated(item.copyWith(
                           thallupadi: double.tryParse(v) ?? 0));
                     }),
@@ -164,7 +164,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Total',
+                    K.motham.tr(context, ref),
                     style: tt.labelSmall?.copyWith(
                       color: cs.onSurfaceVariant,
                     ),

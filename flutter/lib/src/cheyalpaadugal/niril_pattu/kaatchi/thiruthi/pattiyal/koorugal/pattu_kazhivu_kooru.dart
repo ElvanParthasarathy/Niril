@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
+import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 
 /// கழிவு கூறு — Global Discount row with a text field and
 /// percentage / amount toggle (SegmentedButton).
-class PattuKazhivuKooru extends StatelessWidget {
+class PattuKazhivuKooru extends ConsumerWidget {
   const PattuKazhivuKooru({
     super.key,
     required this.controller,
@@ -26,7 +29,7 @@ class PattuKazhivuKooru extends StatelessWidget {
   final ValueChanged<String> onTypeChanged;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ElvanThiruthiAttai(
       child: Row(
         children: [
@@ -35,11 +38,11 @@ class PattuKazhivuKooru extends StatelessWidget {
               controller: controller,
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                labelText: 'Global Discount',
+              decoration: InputDecoration(
+                labelText: K.muzhuThallupadi.tr(context, ref),
                 border: InputBorder.none,
                 contentPadding:
-                    EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
               ),
               onChanged: onValueChanged,
             ),

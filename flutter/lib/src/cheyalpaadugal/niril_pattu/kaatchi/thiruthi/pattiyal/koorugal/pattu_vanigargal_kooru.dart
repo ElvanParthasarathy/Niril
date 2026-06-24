@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
+import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../niril_podhu/kaatchi/koorugal/vanigar_thaedu_kooru.dart';
@@ -72,7 +74,7 @@ class PattuVanigargalKooru extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Client Name',
+            K.vanigarPeyarThaedu.tr(context, ref),
             style: tt.labelMedium?.copyWith(
               color: cs.onSurfaceVariant,
               fontWeight: FontWeight.w500,
@@ -97,7 +99,7 @@ class PattuVanigargalKooru extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Saved Details',
+                      K.saemiththaTharavugal.tr(context, ref),
                       style: tt.labelSmall?.copyWith(
                         color: cs.onSurfaceVariant,
                         fontWeight: FontWeight.w600,
@@ -118,7 +120,7 @@ class PattuVanigargalKooru extends ConsumerWidget {
             )
           : const SizedBox.shrink();
 
-      final profileDropdown = _buildProfileDropdown(ref);
+      final profileDropdown = _buildProfileDropdown(context, ref);
 
       final leftColumn = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,7 +209,7 @@ class PattuVanigargalKooru extends ConsumerWidget {
   }
 
   // ── Profile Dropdown ──
-  Widget _buildProfileDropdown(WidgetRef ref) {
+  Widget _buildProfileDropdown(BuildContext context, WidgetRef ref) {
     final profiles = ref.watch(NiruvanaTharavugalListProvider);
     if (profiles.length <= 1) return const SizedBox.shrink();
 
@@ -216,7 +218,7 @@ class PattuVanigargalKooru extends ConsumerWidget {
       child: DropdownButtonFormField<int>(
         initialValue: data.selectedNiruvanamId,
         decoration: InputDecoration(
-          labelText: 'Company Profile',
+          labelText: K.niruvanaThannuru.tr(context, ref),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
@@ -224,7 +226,7 @@ class PattuVanigargalKooru extends ConsumerWidget {
         items: profiles.map((p) {
           final name = p.niruvanathinPeyar['Tamil'] ??
               p.niruvanathinPeyar['English'] ??
-              'Company';
+               K.niruvanam.tr(context, ref);
           return DropdownMenuItem(value: p.id, child: Text(name));
         }).toList(),
         onChanged: (v) {
@@ -237,7 +239,7 @@ class PattuVanigargalKooru extends ConsumerWidget {
 }
 
 /// Place of Supply widget: two pills (editable English + locked Tamil).
-class PattuVilippiIdam extends StatelessWidget {
+class PattuVilippiIdam extends ConsumerWidget {
   const PattuVilippiIdam({
     super.key,
     required this.placeOfSupply,
@@ -252,7 +254,7 @@ class PattuVilippiIdam extends StatelessWidget {
   final VoidCallback onCleared;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
@@ -275,7 +277,7 @@ class PattuVilippiIdam extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  placeOfSupply.isEmpty ? 'Select State' : placeOfSupply,
+                  placeOfSupply.isEmpty ? K.maanilamThaerodhu.tr(context, ref) : placeOfSupply,
                   style: tt.bodyMedium?.copyWith(
                     color: placeOfSupply.isEmpty
                         ? cs.onSurfaceVariant
@@ -330,7 +332,7 @@ class PattuVilippiIdam extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Place of Supply',
+            K.vazhangalIdam.tr(context, ref),
             style: tt.labelMedium?.copyWith(
               color: cs.onSurfaceVariant,
               fontWeight: FontWeight.w500,

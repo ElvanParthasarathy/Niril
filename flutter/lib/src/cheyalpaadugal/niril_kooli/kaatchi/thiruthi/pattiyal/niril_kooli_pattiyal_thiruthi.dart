@@ -224,16 +224,16 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
 
   Future<void> _handleSave() async {
     if (_selectedProfile == null) {
-      ElvanSnackbar.show(context, 'Select a company profile');
+      ElvanSnackbar.show(context, K.niruvanamThaerodhu.tr(context, ref));
       return;
     }
     if (_selectedVanigarId == null && _selectedVanigarPeyar.isEmpty) {
-      ElvanSnackbar.show(context, 'Select a customer');
+      ElvanSnackbar.show(context, K.vanigaraiThaerodhu.tr(context, ref));
       return;
     }
     final validItems = _items.where((i) => i.edai > 0 && i.vilai > 0).toList();
     if (validItems.isEmpty) {
-      ElvanSnackbar.show(context, 'Add at least one item');
+      ElvanSnackbar.show(context, K.kuriaindhOruUrupadi.tr(context, ref));
       return;
     }
 
@@ -311,7 +311,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // ── Section 1: ① Customer ──
-          const ElvanPagudhiThalaipu(en: 1, thalaipu: 'Customer'),
+          ElvanPagudhiThalaipu(en: 1, thalaipu: K.vanigar.tr(context, ref)),
           KooliVanigarKooru(
             selectedVanigarId: _selectedVanigarId,
             selectedVanigarPeyar: _selectedVanigarPeyar,
@@ -353,7 +353,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // ── Section 2: ② Invoice Details ──
-                  const ElvanPagudhiThalaipu(en: 2, thalaipu: 'Invoice Details'),
+                  ElvanPagudhiThalaipu(en: 2, thalaipu: K.pattiyalTharavugal.tr(context, ref)),
                   KooliPattiyalTharavugalKooru(
                     pattiyalNaal: _pattiyalNaal,
                     previewBillNumber: _previewBillNumber,
@@ -366,7 +366,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                   const SizedBox(height: 24),
 
                   // ── Section 3: ③ Items ──
-                  const ElvanPagudhiThalaipu(en: 3, thalaipu: 'Items'),
+                  ElvanPagudhiThalaipu(en: 3, thalaipu: K.urupadigal.tr(context, ref)),
                   ...List.generate(_items.length, (i) => KooliUrupadiKooru(
                     index: i,
                     item: _items[i],
@@ -422,7 +422,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                     children: [
                       kooliPillButton(context,
                         icon: Icons.add_rounded,
-                        label: 'Add Item',
+                        label: K.urupadiChaer.tr(context, ref),
                         onPressed: () => setState(() {
                           _items = [..._items, const KooliUrupadi()];
                           _hasUnsavedChanges = true;
@@ -431,7 +431,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                       // Always show the Add Other Charges button (not just when empty)
                       kooliPillButton(context,
                           icon: Icons.add_rounded,
-                          label: 'Add Other Charges',
+                          label: K.piraVarivuChaer.tr(context, ref),
                           onPressed: () => setState(() {
                             _piraVarivugal = [
                               ..._piraVarivugal,

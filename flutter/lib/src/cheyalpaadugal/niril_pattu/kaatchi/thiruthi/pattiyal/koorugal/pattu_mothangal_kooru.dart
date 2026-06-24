@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
+import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 
 /// Displays invoice totals — subtotal, discount, taxes, round off, and grand total.
-class PattuMothangalKooru extends StatelessWidget {
+class PattuMothangalKooru extends ConsumerWidget {
   const PattuMothangalKooru({super.key, required this.totals});
 
   final PattuMothangal totals;
@@ -17,7 +20,7 @@ class PattuMothangalKooru extends StatelessWidget {
   );
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
@@ -48,7 +51,7 @@ class PattuMothangalKooru extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                'Totals',
+                K.mothangal.tr(context, ref),
                 style: TextStyle(
                   fontSize: 17.6,
                   fontWeight: FontWeight.w600,
@@ -65,10 +68,10 @@ class PattuMothangalKooru extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _totalsRow('Subtotal', totals.adippadaiMothangal, cs, tt),
+                _totalsRow(K.ulmotham.tr(context, ref), totals.adippadaiMothangal, cs, tt),
                 if (totals.thallupadiMothangal > 0) ...[
                   const SizedBox(height: 6),
-                  _totalsRow('Discount', -totals.thallupadiMothangal, cs, tt,
+                  _totalsRow(K.thallupadi.tr(context, ref), -totals.thallupadiMothangal, cs, tt,
                       color: Colors.red),
                 ],
                 if (totals.cgst > 0) ...[
@@ -85,7 +88,7 @@ class PattuMothangalKooru extends StatelessWidget {
                 ],
                 if (totals.suttruOff != 0) ...[
                   const SizedBox(height: 6),
-                  _totalsRow('Round Off', totals.suttruOff, cs, tt),
+                  _totalsRow(K.suttruOppu.tr(context, ref), totals.suttruOff, cs, tt),
                 ],
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
@@ -94,7 +97,7 @@ class PattuMothangalKooru extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Grand Total',
+                    Text(K.perumMotham.tr(context, ref),
                         style: tt.titleMedium?.copyWith(
                             fontWeight: FontWeight.w700,
                             color: cs.onSurface)),

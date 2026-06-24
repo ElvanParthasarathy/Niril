@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
+import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 import 'kooli_thiruthi_udhavigal.dart';
 
 /// §3.5 Extra Charges — setharam / ahimsa silk / courier fields in a
 /// responsive bento grid layout.
-class KooliMelthogaiKooru extends StatelessWidget {
+class KooliMelthogaiKooru extends ConsumerWidget {
   final TextEditingController setharamCtrl;
   final TextEditingController ahimsaCtrl;
   final TextEditingController thapaalCtrl;
@@ -23,7 +27,7 @@ class KooliMelthogaiKooru extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return LayoutBuilder(builder: (context, constraints) {
       final isDesktop = constraints.maxWidth >= 600;
       final gap = 12.0;
@@ -37,15 +41,15 @@ class KooliMelthogaiKooru extends StatelessWidget {
             SizedBox(
                 width: colWidth,
                 child: kooliChargeField(
-                    'Setharam (grams)', setharamCtrl, onSetharamChanged)),
+                    K.saetharamGiraam.tr(context, ref), setharamCtrl, onSetharamChanged)),
             SizedBox(
                 width: colWidth,
                 child: kooliChargeField(
-                    'Ahimsa Silk (₹)', ahimsaCtrl, onAhimsaChanged)),
+                    K.ahimsaiPattuThogai.tr(context, ref), ahimsaCtrl, onAhimsaChanged)),
             SizedBox(
                 width: colWidth,
                 child: kooliChargeField(
-                    'Courier (₹)', thapaalCtrl, onThapaalChanged)),
+                    K.thapaalThogai.tr(context, ref), thapaalCtrl, onThapaalChanged)),
           ],
         );
       }
@@ -57,15 +61,15 @@ class KooliMelthogaiKooru extends StatelessWidget {
           SizedBox(
               width: constraints.maxWidth,
               child: kooliChargeField(
-                  'Setharam (grams)', setharamCtrl, onSetharamChanged)),
+                  K.saetharamGiraam.tr(context, ref), setharamCtrl, onSetharamChanged)),
           SizedBox(
               width: halfWidth,
               child: kooliChargeField(
-                  'Ahimsa Silk (₹)', ahimsaCtrl, onAhimsaChanged)),
+                  K.ahimsaiPattuThogai.tr(context, ref), ahimsaCtrl, onAhimsaChanged)),
           SizedBox(
               width: halfWidth,
               child: kooliChargeField(
-                  'Courier (₹)', thapaalCtrl, onThapaalChanged)),
+                  K.thapaalThogai.tr(context, ref), thapaalCtrl, onThapaalChanged)),
         ],
       );
     });

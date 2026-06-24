@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
+import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 import '../../../thiraigal/amaippugal/pattu_mugavari_tharavu.dart';
 
 /// Bottom sheet state picker for Place of Supply — reuses silkIndianStates data.
-class MaanilaThervuMeladukku extends StatefulWidget {
+class MaanilaThervuMeladukku extends ConsumerStatefulWidget {
   const MaanilaThervuMeladukku({
     super.key,
     required this.isDark,
@@ -14,11 +17,11 @@ class MaanilaThervuMeladukku extends StatefulWidget {
   final void Function(String en, String ta) onSelected;
 
   @override
-  State<MaanilaThervuMeladukku> createState() =>
+  ConsumerState<MaanilaThervuMeladukku> createState() =>
       _MaanilaThervuMeladukkuState();
 }
 
-class _MaanilaThervuMeladukkuState extends State<MaanilaThervuMeladukku> {
+class _MaanilaThervuMeladukkuState extends ConsumerState<MaanilaThervuMeladukku> {
   String _searchQuery = '';
 
   List<Map<String, String>> get _filtered {
@@ -56,7 +59,7 @@ class _MaanilaThervuMeladukkuState extends State<MaanilaThervuMeladukku> {
             child: TextField(
               autofocus: true,
               decoration: InputDecoration(
-                hintText: 'Search state...',
+                hintText: K.maanilamThaedu.tr(context, ref),
                 prefixIcon: const Icon(Icons.search, size: 20),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
