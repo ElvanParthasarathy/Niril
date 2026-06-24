@@ -267,7 +267,7 @@ const Map<String, String> ta = {
   'velinaadMugavari': 'முழு முகவரி',
   'gstinTavaru': 'GSTIN வடிவம் தவறானது',
   'thanipPayanPtn': 'தனிப்பயன்',
-  'tholaipaesi': 'தொலைபேசி',
+  'tholaipaesi': 'தொலைப்பேசி',
   'anaithaiyumTheriPtn': 'அனைத்தையும் தேர்',
 
   // ── பயனர் (User Profile) ──
