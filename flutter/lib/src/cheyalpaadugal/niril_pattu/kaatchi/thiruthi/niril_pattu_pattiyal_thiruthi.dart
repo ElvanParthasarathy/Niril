@@ -20,11 +20,7 @@ import '../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
 import '../../../amaippugal/tharavu/vaniga_tharavugal.dart';
 import 'niril_pattu_vanigar_thiruthi.dart';
 import 'niril_pattu_porul_thiruthi.dart';
-import 'koorugal/pattu_urupadi_attai.dart';
-import 'koorugal/pattu_mothangal_kooru.dart';
-import 'koorugal/pattu_vanigargal_kooru.dart';
-import 'koorugal/pattu_pattiyal_tharavugal_kooru.dart';
-import 'koorugal/pattu_pattiyal_uthavi.dart';
+import 'koorugal/koorugal.dart';
 
 
 /// Silk (GST) Invoice Editor — full form with line items, tax calculation,
