@@ -114,7 +114,13 @@ class ElvanPageContent extends ConsumerWidget {
         onRefresh != null
             ? RefreshIndicator(
                 onRefresh: onRefresh!,
-                child: scrollView,
+                // Disable overscroll stretch/glow so it doesn't fight
+                // with RefreshIndicator's own pull-down handling.
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context)
+                      .copyWith(overscroll: false),
+                  child: scrollView,
+                ),
               )
             : scrollView,
       ],

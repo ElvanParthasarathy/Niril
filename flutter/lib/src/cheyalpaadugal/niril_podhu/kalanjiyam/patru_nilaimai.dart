@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
@@ -23,12 +21,7 @@ final patruKalanjiyamProvider = Provider<PatruKalanjiyam>((ref) {
 final patrugalProvider =
     FutureProvider<List<PatrugalEntry>>((ref) {
   final kalanjiyam = ref.watch(patruKalanjiyamProvider);
-
-  // Defer mode-change invalidation to avoid setState-during-build
-  ref.listen(appModeProvider, (_, __) {
-    Future.microtask(() => ref.invalidateSelf());
-  });
-  final mode = ref.read(appModeProvider);
+  final mode = ref.watch(appModeProvider);
 
   final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
   return kalanjiyam.getPatrugal(seyaliVagai);
