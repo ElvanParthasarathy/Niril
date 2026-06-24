@@ -131,7 +131,7 @@ const Map<String, String> ta = {
   'aangilam': 'ஆங்கிலம்',
   'tamil': 'தமிழ்',
   'english': 'ஆங்கிலம்',
-  'tamilLatin': 'தமிழ் இலத்தின்',
+  'tamilLatin': 'தமிழ் இலத்தீன்',
   'niruvanathinOavuru': 'நிறுவனத்தின் ஓவுரு',
   'kaiyoppam': 'கையொப்பம்',
   'paesiEn': 'பேசி எண்',
