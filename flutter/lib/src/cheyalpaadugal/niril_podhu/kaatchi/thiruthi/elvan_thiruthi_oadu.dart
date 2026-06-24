@@ -93,9 +93,11 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.sizeOf(context).width >= 800;
 
-    final shell = GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      behavior: HitTestBehavior.translucent,
+    final shell = Listener(
+      onPointerDown: (_) {
+        final focus = FocusManager.instance.primaryFocus;
+        if (focus != null) focus.unfocus();
+      },
       child: PopScope(
       canPop: !widget.hasUnsavedChanges,
       onPopInvokedWithResult: (didPop, _) {
