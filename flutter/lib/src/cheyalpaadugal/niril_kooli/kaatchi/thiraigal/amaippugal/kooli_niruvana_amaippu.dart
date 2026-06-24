@@ -11,7 +11,7 @@ import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dar
 import '../../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
-import 'koorugal/kooli_thannuru_maeladukkugal.dart';
+import '../../../../niril_podhu/kaatchi/koorugal/maeladukkugal/thannuru_maeladukkugal.dart';
 
 class CoolieNiruvanaAmaippuPage extends ConsumerStatefulWidget {
   const CoolieNiruvanaAmaippuPage({super.key});

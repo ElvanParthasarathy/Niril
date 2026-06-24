@@ -3,19 +3,53 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
-import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
-import '../../../../../../koorugal/podhu_koorugal/elvan_muzhuthirai_maeladukku.dart';
-import '../../../../../../koorugal/maeladukkugal/elvan_cheyal_maeladukku.dart';
-import '../../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_pagudhi.dart';
-import '../../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dart';
-import '../../../../../amaippugal/kaatchi/koorugal/elvan_azhippu_urudhi_maeladukku.dart';
-import '../../../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
-import '../../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
-import '../../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
+import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
+import '../../../../../koorugal/podhu_koorugal/elvan_muzhuthirai_maeladukku.dart';
+import '../../../../../koorugal/maeladukkugal/elvan_cheyal_maeladukku.dart';
+import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_pagudhi.dart';
+import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dart';
+import '../../../../amaippugal/kaatchi/koorugal/elvan_azhippu_urudhi_maeladukku.dart';
+import '../../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
+import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
+import '../../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku.dart';
 
 /// Maximum number of business profiles allowed.
 const int maxProfiles = 5;
+
+/// Shows a bottom sheet to switch between business profiles.
+void showBusinessSelectorModal({
+  required BuildContext context,
+  required WidgetRef ref,
+}) {
+  final profiles = ref.read(NiruvanaTharavugalListProvider);
+  final activeProfile = ref.read(NiruvanaTharavugalProvider);
+
+  final items = profiles.map((p) {
+    final name = p.getPrimary('niruvanathinPeyar');
+    return name.isEmpty ? K.tharpoadhaiyaNiruvanam.tr(context, ref) : name;
+  }).toList();
+
+  final activeName = activeProfile != null
+      ? (activeProfile.getPrimary('niruvanathinPeyar').isEmpty
+          ? K.tharpoadhaiyaNiruvanam.tr(context, ref)
+          : activeProfile.getPrimary('niruvanathinPeyar'))
+      : '';
+
+  showElvanSelectionBottomSheet(
+    context: context,
+    title: K.tharpoadhaiyaNiruvanam.tr(context, ref),
+    items: items,
+    currentValue: activeName,
+    onSelected: (val) {
+      final idx = items.indexOf(val);
+      if (idx >= 0 && profiles[idx].id != null) {
+        ref.read(NiruvanaTharavugalListProvider.notifier).setActiveProfile(profiles[idx].id!);
+      }
+    },
+  );
+}
 
 /// Shows the "Manage Profiles" full-screen dialog — lists all profiles
 /// with delete and switch-active actions.
