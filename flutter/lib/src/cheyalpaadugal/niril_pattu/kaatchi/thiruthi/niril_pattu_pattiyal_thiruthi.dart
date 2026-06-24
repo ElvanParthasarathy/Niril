@@ -1,10 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:drift/drift.dart' show Value;
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
@@ -21,13 +18,13 @@ import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 import '../../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
 import '../../../amaippugal/tharavu/vaniga_tharavugal_provider.dart';
 import '../../../amaippugal/tharavu/vaniga_tharavugal.dart';
-import '../thiraigal/amaippugal/pattu_mugavari_tharavu.dart';
 import 'niril_pattu_vanigar_thiruthi.dart';
 import 'niril_pattu_porul_thiruthi.dart';
 import 'koorugal/pattu_urupadi_attai.dart';
 import 'koorugal/pattu_mothangal_kooru.dart';
 import 'koorugal/pattu_vanigargal_kooru.dart';
 import 'koorugal/pattu_pattiyal_tharavugal_kooru.dart';
+import 'koorugal/pattu_pattiyal_uthavi.dart';
 
 
 /// Silk (GST) Invoice Editor — full form with line items, tax calculation,
@@ -85,7 +82,6 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   // ── Unsaved Changes & Draft ──
   bool _hasUnsavedChanges = false;
   Timer? _draftDebounce;
-  static const _draftKey = 'niril_draft_silk_invoice';
 
   bool get _isEditing => widget.editingEntry != null;
 
@@ -93,19 +89,46 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   void initState() {
     super.initState();
     if (_isEditing) {
-      _loadEditingData();
+      _applySnapshot(
+        PattuPattiyalUthavi.loadFromEntry(widget.editingEntry!),
+      );
     } else if (widget.duplicateFrom != null) {
-      _loadDuplicateData();
+      _applySnapshot(
+        PattuPattiyalUthavi.loadFromEntry(widget.duplicateFrom!,
+            isDuplicate: true),
+      );
     } else {
-      // Check for saved draft
       _tryRestoreDraft();
     }
-    // Auto-select profile
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!_isEditing) {
-        _autoSelectProfile();
-      }
+      if (!_isEditing) _autoSelectProfile();
+      _resolveCustomerState();
+      _recalculate();
     });
+  }
+
+  /// Applies a loaded snapshot to all state fields + controllers.
+  void _applySnapshot(PattuThiruththiNilaimai s) {
+    _selectedNiruvanamId = s.selectedNiruvanamId;
+    _selectedVanigarId = s.selectedVanigarId;
+    _selectedVanigarPeyar = s.selectedVanigarPeyar;
+    _customerState = s.customerState;
+    _pattiyalVagai = s.pattiyalVagai;
+    _pattiyalNaal = s.pattiyalNaal;
+    _placeOfSupply = s.placeOfSupply;
+    _placeOfSupplyTa = s.placeOfSupplyTa;
+    _invoiceNumberOverride = s.invoiceNumberOverride;
+    _items = s.items.isNotEmpty ? s.items : [const PattuUrupadi()];
+    _globalDiscountValue = s.globalDiscountValue;
+    _globalDiscountType = s.globalDiscountType;
+    _nibandhanaigal = s.nibandhanaigal;
+    _ullkurippu = s.ullkurippu;
+
+    _termsController.text = _nibandhanaigal;
+    _notesController.text = _ullkurippu;
+    _invNumberController.text = _invoiceNumberOverride;
+    _globalDiscountController.text =
+        _globalDiscountValue > 0 ? _globalDiscountValue.toString() : '';
   }
 
   void _autoSelectProfile() {
@@ -116,13 +139,33 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
         _selectedNiruvanamId = profiles.first.id;
       });
     }
-    // Compute preview invoice number for new invoices
-    if (!_isEditing) {
-      _computePreviewInvoiceNumber();
+    if (!_isEditing) _computePreviewInvoiceNumber();
+  }
+
+  /// Resolves _selectedProfile and _customerState from provider data.
+  void _resolveCustomerState() {
+    final profiles = ref.read(vanigaTharavugalListProvider);
+    if (_selectedNiruvanamId != null) {
+      final match =
+          profiles.where((p) => p.id == _selectedNiruvanamId).firstOrNull;
+      if (match != null) setState(() => _selectedProfile = match);
+    }
+    if (_selectedVanigarId != null) {
+      final vanigargalData = ref.read(vanigargalStreamProvider);
+      final vanigargal =
+          vanigargalData.whenOrNull(data: (list) => list) ?? [];
+      final vanigar =
+          vanigargal.where((v) => v.id == _selectedVanigarId).firstOrNull;
+      if (vanigar != null) {
+        _customerState = (vanigar.maanilam['English'] ??
+                    vanigar.maanilam['Tamil'] ??
+                    '')
+                .trim()
+                .toLowerCase();
+      }
     }
   }
 
-  /// Fetches next vanakkam from DB and formats a preview invoice number.
   Future<void> _computePreviewInvoiceNumber() async {
     if (_isEditing) return;
     try {
@@ -136,132 +179,11 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
       );
       if (mounted) {
         setState(() {
-          _previewInvoiceNumber = kalanjiyam.formatPattiyalEn(prefix, vanakkam);
+          _previewInvoiceNumber =
+              kalanjiyam.formatPattiyalEn(prefix, vanakkam);
         });
       }
     } catch (_) {}
-  }
-
-  void _loadEditingData() {
-    final e = widget.editingEntry!;
-    _selectedNiruvanamId = e.niruvanamId;
-    _selectedVanigarId = e.vanigarId;
-    _selectedVanigarPeyar = e.vanigarPeyar;
-    _pattiyalVagai = e.pattiyalVagai;
-    _pattiyalNaal = e.pattiyalNaal;
-    _nibandhanaigal = e.nibandhanaigal;
-    _ullkurippu = e.ullkurippu;
-
-    _termsController.text = _nibandhanaigal;
-    _notesController.text = _ullkurippu;
-
-    // Load items from JSON
-    _items = PattiyalUthavigal.pattuListFromJson(e.tharavugal);
-    if (_items.isEmpty) _items = [const PattuUrupadi()];
-
-    // Load settings JSON for global discount + place of supply
-    try {
-      final settings = jsonDecode(e.sonthaViruppangal) as Map<String, dynamic>;
-      _globalDiscountValue = (settings['globalDiscountValue'] as num?)?.toDouble() ?? 0;
-      _globalDiscountType = settings['globalDiscountType'] as String? ?? 'percentage';
-      _globalDiscountController.text = _globalDiscountValue > 0 ? _globalDiscountValue.toString() : '';
-      _placeOfSupply = settings['placeOfSupply'] as String? ?? '';
-      _placeOfSupplyTa = settings['placeOfSupplyTa'] as String? ?? '';
-    } catch (_) {}
-
-    // Pre-fill invoice number controller for editing
-    _invoiceNumberOverride = e.patrucheettuEn;
-    _invNumberController.text = e.patrucheettuEn;
-
-    // Resolve Tamil for Place of Supply if missing
-    if (_placeOfSupply.isNotEmpty && _placeOfSupplyTa.isEmpty) {
-      final match = silkIndianStates.where(
-        (s) => (s['en'] ?? '').toLowerCase() == _placeOfSupply.toLowerCase(),
-      ).firstOrNull;
-      if (match != null) _placeOfSupplyTa = match['ta'] ?? '';
-    }
-
-    // Load profile match and restore customer state
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final profiles = ref.read(vanigaTharavugalListProvider);
-      if (_selectedNiruvanamId != null) {
-        final match = profiles.where((p) => p.id == _selectedNiruvanamId).firstOrNull;
-        if (match != null) setState(() => _selectedProfile = match);
-      }
-
-      // Restore _customerState from saved merchant's maanilam
-      if (_selectedVanigarId != null) {
-        final vanigargalData = ref.read(vanigargalStreamProvider);
-        final vanigargal = vanigargalData.whenOrNull(data: (list) => list) ?? [];
-        final vanigar = vanigargal.where((v) => v.id == _selectedVanigarId).firstOrNull;
-        if (vanigar != null) {
-          _customerState = (vanigar.maanilam['English'] ??
-                      vanigar.maanilam['Tamil'] ??
-                      '')
-                  .trim()
-                  .toLowerCase();
-        }
-      }
-
-      _recalculate();
-    });
-  }
-
-  /// Load data from a source invoice for duplication.
-  /// Same as _loadEditingData but does NOT set editingEntry — creates a new invoice.
-  void _loadDuplicateData() {
-    final e = widget.duplicateFrom!;
-    _selectedNiruvanamId = e.niruvanamId;
-    _selectedVanigarId = e.vanigarId;
-    _selectedVanigarPeyar = e.vanigarPeyar;
-    _pattiyalVagai = e.pattiyalVagai;
-    _pattiyalNaal = DateTime.now(); // Fresh date for duplicate
-    _nibandhanaigal = e.nibandhanaigal;
-    _ullkurippu = e.ullkurippu;
-
-    _termsController.text = _nibandhanaigal;
-    _notesController.text = _ullkurippu;
-
-    // Load items from JSON
-    _items = PattiyalUthavigal.pattuListFromJson(e.tharavugal);
-    if (_items.isEmpty) _items = [const PattuUrupadi()];
-
-    // Load settings JSON
-    try {
-      final settings = jsonDecode(e.sonthaViruppangal) as Map<String, dynamic>;
-      _globalDiscountValue = (settings['globalDiscountValue'] as num?)?.toDouble() ?? 0;
-      _globalDiscountType = settings['globalDiscountType'] as String? ?? 'percentage';
-      _globalDiscountController.text = _globalDiscountValue > 0 ? _globalDiscountValue.toString() : '';
-      _placeOfSupply = settings['placeOfSupply'] as String? ?? '';
-      _placeOfSupplyTa = settings['placeOfSupplyTa'] as String? ?? '';
-    } catch (_) {}
-
-    // Invoice number: leave empty for auto-generation (new number)
-    _invoiceNumberOverride = '';
-
-    // Load profile match and restore customer state
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final profiles = ref.read(vanigaTharavugalListProvider);
-      if (_selectedNiruvanamId != null) {
-        final match = profiles.where((p) => p.id == _selectedNiruvanamId).firstOrNull;
-        if (match != null) setState(() => _selectedProfile = match);
-      }
-
-      if (_selectedVanigarId != null) {
-        final vanigargalData = ref.read(vanigargalStreamProvider);
-        final vanigargal = vanigargalData.whenOrNull(data: (list) => list) ?? [];
-        final vanigar = vanigargal.where((v) => v.id == _selectedVanigarId).firstOrNull;
-        if (vanigar != null) {
-          _customerState = (vanigar.maanilam['English'] ??
-                      vanigar.maanilam['Tamil'] ??
-                      '')
-                  .trim()
-                  .toLowerCase();
-        }
-      }
-
-      _recalculate();
-    });
   }
 
   @override
@@ -274,18 +196,19 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
     super.dispose();
   }
 
-  // ── Recalculate totals using the pure calculation engine ──
+  // ── Recalculate totals ──
   void _recalculate() {
-    // Get business state from selected profile
     String businessState = '';
-    String country = 'India';
     if (_selectedProfile != null) {
-      businessState = (_selectedProfile!.maanilam['English'] ?? _selectedProfile!.maanilam['Tamil'] ?? '').trim().toLowerCase();
+      businessState = (_selectedProfile!.maanilam['English'] ??
+              _selectedProfile!.maanilam['Tamil'] ??
+              '')
+          .trim()
+          .toLowerCase();
     }
-
-    // Place of Supply overrides customer state for GST split
-    final effectiveCustomerState =
-        _placeOfSupply.isNotEmpty ? _placeOfSupply.toLowerCase() : _customerState;
+    final effectiveCustomerState = _placeOfSupply.isNotEmpty
+        ? _placeOfSupply.toLowerCase()
+        : _customerState;
 
     setState(() {
       _totals = PattuKanakku.calculate(
@@ -294,216 +217,84 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
         globalDiscountType: _globalDiscountType,
         businessState: businessState,
         customerState: effectiveCustomerState,
-        country: country,
+        country: 'India',
       );
     });
     _scheduleDraftSave();
   }
 
-  // ── Draft auto-save (debounced 2s) ──
+  // ── Draft (delegates to helper) ──
   void _scheduleDraftSave() {
     _draftDebounce?.cancel();
-    _draftDebounce = Timer(const Duration(seconds: 2), _saveDraft);
-  }
-
-  Future<void> _saveDraft() async {
-    if (_isEditing) return; // Only for new invoices
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final draft = jsonEncode({
-        'vanigarId': _selectedVanigarId,
-        'vanigarPeyar': _selectedVanigarPeyar,
-        'customerState': _customerState,
-        'niruvanamId': _selectedNiruvanamId,
-        'pattiyalVagai': _pattiyalVagai,
-        'pattiyalNaal': _pattiyalNaal.toIso8601String(),
-        'placeOfSupply': _placeOfSupply,
-        'placeOfSupplyTa': _placeOfSupplyTa,
-        'invoiceNumberOverride': _invoiceNumberOverride,
-        'items': PattiyalUthavigal.pattuListToJson(_items),
-        'globalDiscountValue': _globalDiscountValue,
-        'globalDiscountType': _globalDiscountType,
-        'nibandhanaigal': _nibandhanaigal,
-        'ullkurippu': _ullkurippu,
-      });
-      await prefs.setString(_draftKey, draft);
-    } catch (_) {}
+    _draftDebounce = Timer(const Duration(seconds: 2), () {
+      if (_isEditing) return;
+      PattuPattiyalUthavi.saveDraft(_currentSnapshot());
+    });
   }
 
   Future<void> _tryRestoreDraft() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final draftJson = prefs.getString(_draftKey);
-      if (draftJson == null || draftJson.isEmpty) return;
-      final draft = jsonDecode(draftJson) as Map<String, dynamic>;
-      // Check if draft is blank
-      final items = draft['items'] as String? ?? '[]';
-      final name = draft['vanigarPeyar'] as String? ?? '';
-      if (items == '[]' && name.isEmpty) {
-        await prefs.remove(_draftKey);
-        return;
-      }
-      if (!mounted) return;
-      // Show restore dialog
-      final restore = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('வரைவு மீட்கவா?'),
-          content: const Text('சேமிக்காத வரைவு உள்ளது. மீட்டமைக்கவா?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('நிராகரி'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('மீட்கவும்'),
-            ),
-          ],
-        ),
+    final snapshot = await PattuPattiyalUthavi.tryRestoreDraft(context);
+    if (snapshot != null && mounted) {
+      setState(() => _applySnapshot(snapshot));
+      _resolveCustomerState();
+      _recalculate();
+    }
+  }
+
+  /// Builds a snapshot from current state (for draft / save).
+  PattuThiruththiNilaimai _currentSnapshot() => PattuThiruththiNilaimai(
+        selectedNiruvanamId: _selectedNiruvanamId,
+        selectedVanigarId: _selectedVanigarId,
+        selectedVanigarPeyar: _selectedVanigarPeyar,
+        customerState: _customerState,
+        pattiyalVagai: _pattiyalVagai,
+        pattiyalNaal: _pattiyalNaal,
+        placeOfSupply: _placeOfSupply,
+        placeOfSupplyTa: _placeOfSupplyTa,
+        invoiceNumberOverride: _invoiceNumberOverride,
+        items: _items,
+        globalDiscountValue: _globalDiscountValue,
+        globalDiscountType: _globalDiscountType,
+        nibandhanaigal: _nibandhanaigal,
+        ullkurippu: _ullkurippu,
       );
-      if (restore == true && mounted) {
-        setState(() {
-          _selectedVanigarId = draft['vanigarId'] as int?;
-          _selectedVanigarPeyar = draft['vanigarPeyar'] as String? ?? '';
-          _customerState = draft['customerState'] as String? ?? '';
-          _selectedNiruvanamId = draft['niruvanamId'] as int?;
-          _pattiyalVagai = draft['pattiyalVagai'] as String? ?? 'tax-invoice';
-          _pattiyalNaal = DateTime.tryParse(draft['pattiyalNaal'] as String? ?? '') ?? DateTime.now();
-          _placeOfSupply = draft['placeOfSupply'] as String? ?? '';
-          _placeOfSupplyTa = draft['placeOfSupplyTa'] as String? ?? '';
-          _invoiceNumberOverride = draft['invoiceNumberOverride'] as String? ?? '';
-          _invNumberController.text = _invoiceNumberOverride;
-          _items = PattiyalUthavigal.pattuListFromJson(items);
-          if (_items.isEmpty) _items = [const PattuUrupadi()];
-          _globalDiscountValue = (draft['globalDiscountValue'] as num?)?.toDouble() ?? 0;
-          _globalDiscountType = draft['globalDiscountType'] as String? ?? 'percentage';
-          _globalDiscountController.text = _globalDiscountValue > 0 ? _globalDiscountValue.toString() : '';
-          _nibandhanaigal = draft['nibandhanaigal'] as String? ?? '';
-          _ullkurippu = draft['ullkurippu'] as String? ?? '';
-          _termsController.text = _nibandhanaigal;
-          _notesController.text = _ullkurippu;
-        });
-        // Restore profile match
-        final profiles = ref.read(vanigaTharavugalListProvider);
-        if (_selectedNiruvanamId != null) {
-          final match = profiles.where((p) => p.id == _selectedNiruvanamId).firstOrNull;
-          if (match != null) setState(() => _selectedProfile = match);
-        }
-        _recalculate();
-      } else {
-        await prefs.remove(_draftKey);
-      }
-    } catch (_) {}
-  }
 
-  Future<void> _clearDraft() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(_draftKey);
-    } catch (_) {}
-  }
-
-  // ── Save ──
+  // ── Save (delegates to helper) ──
   Future<void> _handleSave() async {
-    // Validate
     if (_selectedVanigarId == null && _selectedVanigarPeyar.isEmpty) {
       ElvanSnackbar.show(context, 'Select a customer');
       return;
     }
-    final validItems = _items.where((i) => i.alavu > 0 && i.vilai > 0).toList();
+    final validItems =
+        _items.where((i) => i.alavu > 0 && i.vilai > 0).toList();
     if (validItems.isEmpty) {
       ElvanSnackbar.show(context, 'Add at least one item');
       return;
     }
 
     setState(() => _saving = true);
-
     try {
       final kalanjiyam = ref.read(pattiyalKalanjiyamProvider);
-      final finYear = PattiyalKalanjiyam.getCurrentFinYear();
-
-      // Get business prefix from selected profile
       final prefix = _selectedProfile?.kurumPeyar.isNotEmpty == true
           ? _selectedProfile!.kurumPeyar
           : 'INV';
 
-      // Settings JSON (includes place of supply)
-      final settingsJson = jsonEncode({
-        'globalDiscountValue': _globalDiscountValue,
-        'globalDiscountType': _globalDiscountType,
-        'placeOfSupply': _placeOfSupply,
-        'placeOfSupplyTa': _placeOfSupplyTa,
-      });
+      await PattuPattiyalUthavi.save(
+        kalanjiyam: kalanjiyam,
+        state: _currentSnapshot(),
+        totals: _totals,
+        profilePrefix: prefix,
+        editingEntry: widget.editingEntry,
+      );
 
-      if (_isEditing) {
-        // Update existing — include invoice number if user changed it
-        final invNumChanged = _invoiceNumberOverride != widget.editingEntry!.patrucheettuEn;
-        await kalanjiyam.updatePattiyal(
-          widget.editingEntry!.id,
-          PatrucheettuTableCompanion(
-            patrucheettuEn: invNumChanged ? Value(_invoiceNumberOverride) : const Value.absent(),
-            niruvanamId: Value(_selectedNiruvanamId),
-            vanigarId: Value(_selectedVanigarId),
-            vanigarPeyar: Value(_selectedVanigarPeyar),
-            pattiyalVagai: Value(_pattiyalVagai),
-            pattiyalNaal: Value(_pattiyalNaal),
-            tharavugal: Value(PattiyalUthavigal.pattuListToJson(validItems)),
-            mothaThogai: Value(_totals.mothaMothangal),
-            thallupadi: Value(_totals.thallupadiMothangal),
-            variThogai: Value(_totals.variMothangal),
-            variTharavugal: Value(jsonEncode(_totals.variToJson())),
-            sonthaViruppangal: Value(settingsJson),
-            nibandhanaigal: Value(_nibandhanaigal),
-            ullkurippu: Value(_ullkurippu),
-            updatedAt: Value(DateTime.now()),
-          ),
-        );
-      } else {
-        // Create new — use manual override or auto-generate
-        String invoiceNumber;
-        int vanakkam;
-        if (_invoiceNumberOverride.isNotEmpty) {
-          invoiceNumber = _invoiceNumberOverride;
-          vanakkam = await kalanjiyam.getNextVanakkam('silk', _selectedNiruvanamId, finYear);
-        } else {
-          vanakkam = await kalanjiyam.getNextVanakkam('silk', _selectedNiruvanamId, finYear);
-          invoiceNumber = kalanjiyam.formatPattiyalEn(prefix, vanakkam);
-        }
-
-        await kalanjiyam.createPattiyal(
-          PatrucheettuTableCompanion.insert(
-            seyaliVagai: 'silk',
-            patrucheettuEn: invoiceNumber,
-            finYear: finYear,
-            vanakkam: Value(vanakkam),
-            niruvanamId: Value(_selectedNiruvanamId),
-            vanigarPeyar: _selectedVanigarPeyar,
-            vanigarId: Value(_selectedVanigarId),
-            pattiyalVagai: Value(_pattiyalVagai),
-            pattiyalNaal: Value(_pattiyalNaal),
-            tharavugal: Value(PattiyalUthavigal.pattuListToJson(validItems)),
-            mothaThogai: Value(_totals.mothaMothangal),
-            thallupadi: Value(_totals.thallupadiMothangal),
-            variThogai: Value(_totals.variMothangal),
-            variTharavugal: Value(jsonEncode(_totals.variToJson())),
-            sonthaViruppangal: Value(settingsJson),
-            nibandhanaigal: Value(_nibandhanaigal),
-            ullkurippu: Value(_ullkurippu),
-          ),
-        );
-      }
-
-      await _clearDraft();
+      await PattuPattiyalUthavi.clearDraft();
       _hasUnsavedChanges = false;
       if (mounted) {
         ElvanSnackbar.show(context, K.porulChaemikkappattadhu.tr(context, ref));
         Navigator.of(context).pop();
       }
     } catch (e) {
-      if (mounted) {
-        ElvanSnackbar.show(context, 'Error: $e');
-      }
+      if (mounted) ElvanSnackbar.show(context, 'Error: $e');
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -535,7 +326,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
       onSave: _saving ? null : _handleSave,
       hasUnsavedChanges: _hasUnsavedChanges,
       onDiscard: () async {
-        await _clearDraft();
+        await PattuPattiyalUthavi.clearDraft();
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
