@@ -291,7 +291,7 @@ class SettingsHubScreen extends ConsumerWidget {
 
             const SizedBox(height: 24),
 
-            // ── Section 3: App Experience & Display ──
+            // ── Section 3: User & Display ──
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ElvanSettingsSection(
@@ -313,6 +313,17 @@ class SettingsHubScreen extends ConsumerWidget {
                       onTap: () =>
                           _navigateTo(context, const DisplaySettingsPage()),
                     ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // ── Section 4: Language & Security ──
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ElvanSettingsSection(
+                children: [
                   ElvanSettingsRow(
                     icon: Icons.language,
                     iconBgColor: iconBgColor,
@@ -335,7 +346,7 @@ class SettingsHubScreen extends ConsumerWidget {
 
             const SizedBox(height: 24),
 
-            // ── Section 4: System & About ──
+            // ── Section 5: System & About ──
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: ElvanSettingsSection(

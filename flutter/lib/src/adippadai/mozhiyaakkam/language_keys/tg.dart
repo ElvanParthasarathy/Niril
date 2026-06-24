@@ -135,7 +135,7 @@ const Map<String, String> tg = {
   'aangilam': 'Aangilam',
   'tamil': 'Thamizh',
   'english': 'Aangilam',
-  'tamilLatin': 'Thamizh Ilatheen',
+  'tamilLatin': 'Thamizh Latin',
   'niruvanathinOavuru': 'Niruvanathin Oavuru',
   'kaiyoppam': 'Kaiyoppam',
   'paesiEn': 'Paesi En',
