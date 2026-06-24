@@ -119,9 +119,9 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     _invoiceNumberOverride = widget.editingEntry!.patrucheettuEn;
     _invNumberController.text = _invoiceNumberOverride;
 
-    _setharamCtrl.text = _setharamGrams > 0 ? _setharamGrams.toString() : '';
-    _thapaalCtrl.text = _thapaalThogai > 0 ? _thapaalThogai.toString() : '';
-    _ahimsaCtrl.text = _ahimsaPattuThogai > 0 ? _ahimsaPattuThogai.toString() : '';
+    _setharamCtrl.text = _setharamGrams > 0 ? _cleanNum(_setharamGrams) : '';
+    _thapaalCtrl.text = _thapaalThogai > 0 ? _cleanNum(_thapaalThogai) : '';
+    _ahimsaCtrl.text = _ahimsaPattuThogai > 0 ? _cleanNum(_ahimsaPattuThogai) : '';
 
     // Load profile match + derive prefix
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -149,6 +149,10 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     _draftDebounce?.cancel();
     super.dispose();
   }
+
+  /// Clean number display: 100 → '100', 100.5 → '100.5' (no trailing .0)
+  static String _cleanNum(double v) =>
+      v == v.truncateToDouble() ? v.toInt().toString() : v.toString();
 
   void _recalculate() {
     setState(() {
@@ -190,11 +194,11 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
         _invoiceNumberOverride = snapshot.invoiceNumberOverride;
 
         _setharamCtrl.text =
-            _setharamGrams > 0 ? _setharamGrams.toString() : '';
+            _setharamGrams > 0 ? _cleanNum(_setharamGrams) : '';
         _thapaalCtrl.text =
-            _thapaalThogai > 0 ? _thapaalThogai.toString() : '';
+            _thapaalThogai > 0 ? _cleanNum(_thapaalThogai) : '';
         _ahimsaCtrl.text =
-            _ahimsaPattuThogai > 0 ? _ahimsaPattuThogai.toString() : '';
+            _ahimsaPattuThogai > 0 ? _cleanNum(_ahimsaPattuThogai) : '';
       });
       _recalculate();
     }
