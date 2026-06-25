@@ -1,3 +1,4 @@
+import 'package:niril/src/cheyalpaadugal/niril_podhu/kalanjiyam/kooli_pattiyal_kalanjiyam.dart';
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'dart:async';
 
@@ -219,7 +220,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     if (_isEditing) return;
     try {
       final kalanjiyam = ref.read(pattiyalKalanjiyamProvider);
-      final finYear = PattiyalKalanjiyam.getCurrentFinYear();
+      final finYear = KooliPattiyalKalanjiyam.getCurrentFinYear();
       final shortName = (_selectedProfile?.kurumPeyar.isNotEmpty == true
           ? _selectedProfile!.kurumPeyar
           : 'CB');

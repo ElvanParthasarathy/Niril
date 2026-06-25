@@ -1,3 +1,4 @@
+import 'package:niril/src/cheyalpaadugal/ulnuzhaivu/amaippugal/tharavu/kooli_niruvana_tharavugal_provider.dart';
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,7 +29,7 @@ class CoolieReceiptsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final query = ref.watch(coolieReceiptsSearchQueryProvider).toLowerCase();
     final patrugalAsync = ref.watch(patrugalProvider);
-    final profilesAsync = ref.watch(currentModeProfilesStreamProvider);
+    final profilesAsync = ref.watch(kooliNiruvanaTharavugalListProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelecting = ref.watch(patruSelectionModeProvider);
     final selectedIds = ref.watch(selectedPatruIdsProvider);
@@ -55,7 +56,7 @@ class CoolieReceiptsPage extends ConsumerWidget {
                 final en = p.patruEn.toLowerCase();
                 final peyarPrimary = (p.vaangunarPeyar[primaryLang] ?? '').toLowerCase();
                 final peyarSecondary = (p.vaangunarPeyar[secondaryLang] ?? '').toLowerCase();
-                final vagai = p.seluthiVagai.toLowerCase();
+                final vagai = p.seluthumMurai.toLowerCase();
                 return en.contains(query) ||
                     peyarPrimary.contains(query) ||
                     peyarSecondary.contains(query) ||
@@ -336,7 +337,7 @@ class _PatruCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mode = SeluthiVagaiX.fromStored(patru.seluthiVagai);
+    final mode = SeluthiVagaiX.fromStored(patru.seluthumMurai);
 
     return GestureDetector(
       onTap: onTap,

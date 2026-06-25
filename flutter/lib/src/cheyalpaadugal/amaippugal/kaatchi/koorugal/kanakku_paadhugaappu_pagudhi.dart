@@ -325,7 +325,7 @@ class AccountSecuritySection extends ConsumerWidget {
     ref.invalidate(patrugalProvider);
     ref.invalidate(porulgalProvider);
     ref.invalidate(vaangunargalProvider);
-    ref.invalidate(currentModeProfilesStreamProvider);
+    ref.invalidate(pattuNiruvanaTharavugalListProvider);
 
     // Small delay for UX so it doesn't flash instantly
     Future.delayed(const Duration(milliseconds: 800), () {

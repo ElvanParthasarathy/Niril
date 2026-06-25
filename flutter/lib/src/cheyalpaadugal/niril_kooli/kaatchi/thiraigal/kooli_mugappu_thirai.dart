@@ -1,3 +1,4 @@
+import 'package:niril/src/cheyalpaadugal/ulnuzhaivu/amaippugal/tharavu/kooli_niruvana_tharavugal_provider.dart';
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -27,7 +28,7 @@ class CoolieHomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pattiyalgalAsync = ref.watch(pattiyalgalProvider);
-    final profilesAsync = ref.watch(currentModeProfilesStreamProvider);
+    final profilesAsync = ref.watch(kooliNiruvanaTharavugalListProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return pattiyalgalAsync.when(

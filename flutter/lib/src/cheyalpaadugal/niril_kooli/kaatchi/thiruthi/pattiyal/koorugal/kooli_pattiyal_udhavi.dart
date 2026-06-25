@@ -79,8 +79,8 @@ class KooliPattiyalUthavi {
     return KooliThiruththiNilaimai(
       selectedNiruvanamId: entry.niruvanamId,
       selectedVaangunarId: entry.vaangunarId,
-      selectedVaangunarPeyarMap: entry.vaangunarPeyar,
-      selectedVaangunarMunvariMap: entry.vaangunarMunvari,
+      selectedVaangunarPeyarMap: entry.vaangunarPeyar.cast<String, String>(),
+      selectedVaangunarMunvariMap: entry.vaangunarMunvari.cast<String, String>(),
       pattiyalNaal: entry.pattiyalNaal,
       items: items,
       setharamGrams: entry.setharamGrams,
@@ -189,7 +189,7 @@ class KooliPattiyalUthavi {
       await kalanjiyam.createPattiyal(
         PattiyalTharavuru(
           id: 0,
-          seyaliVagai: 'kooli',
+          
           patrucheettuEn: finalBillNumber,
           finYear: finYear,
           vanakkam: vanakkam,
@@ -292,8 +292,8 @@ class KooliPattiyalUthavi {
             draft['piraVarivugal'] as String? ?? '[]');
         return KooliThiruththiNilaimai(
           selectedVaangunarId: draft['vaangunarId'] as int?,
-          selectedVaangunarPeyarMap: nameMap,
-          selectedVaangunarMunvariMap: addrMap,
+          selectedVaangunarPeyarMap: nameMap.cast<String, String>(),
+          selectedVaangunarMunvariMap: addrMap.cast<String, String>(),
           selectedNiruvanamId: draft['niruvanamId'] as int?,
           pattiyalNaal: DateTime.tryParse(
                   draft['pattiyalNaal'] as String? ?? '') ??
