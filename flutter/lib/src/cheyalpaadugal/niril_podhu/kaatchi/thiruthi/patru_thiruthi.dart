@@ -102,12 +102,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       _ullkurippuCtrl.text = _ullkurippu;
       _patruEnCtrl.text = _patruEn;
     } else {
-      // New receipt: Pre-select active business profile
-      final activeProfile = ref.read(NiruvanaTharavugalProvider);
-      if (activeProfile != null) {
-        _selectedNiruvanamId = activeProfile.id;
-        _selectedProfile = activeProfile;
-      }
+      // New receipt: Do NOT pre-select business profile (user requested manual selection)
     }
   }
 

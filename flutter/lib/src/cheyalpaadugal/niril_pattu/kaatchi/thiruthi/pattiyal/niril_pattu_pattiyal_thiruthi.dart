@@ -95,14 +95,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_isEditing && _selectedNiruvanamId == null) {
-        final activeProfile = ref.read(NiruvanaTharavugalProvider);
-        if (activeProfile != null) {
-          setState(() {
-            _selectedProfile = activeProfile;
-            _selectedNiruvanamId = activeProfile.id;
-          });
-          _computePreviewInvoiceNumber();
-        }
+        _computePreviewInvoiceNumber();
       }
       _resolveCustomerState();
       _recalculate();

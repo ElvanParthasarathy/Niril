@@ -88,17 +88,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_isEditing && _selectedNiruvanamId == null) {
-        final activeProfile = ref.read(NiruvanaTharavugalProvider);
-        if (activeProfile != null) {
-          setState(() {
-            _selectedProfile = activeProfile;
-            _selectedNiruvanamId = activeProfile.id;
-            _profilePrefix = activeProfile.kurumPeyar.isNotEmpty
-                ? activeProfile.kurumPeyar
-                : 'CB';
-          });
-          _computePreviewBillNumber();
-        }
+        _computePreviewBillNumber();
       }
     });
   }
