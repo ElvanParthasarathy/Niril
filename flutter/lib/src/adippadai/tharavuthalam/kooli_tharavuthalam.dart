@@ -64,6 +64,7 @@ class KooliNiruvanaTharavugalTable extends Table {
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
 }
 
 // ── Table: வணிகர் (Customer / Merchant) ──
@@ -100,6 +101,7 @@ class KooliVaangunarTable extends Table {
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
 }
 
 // ── Table: பொருள் (Items / Products) ──
@@ -123,6 +125,7 @@ class KooliPorulTable extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 }
 
@@ -195,8 +198,8 @@ class KooliPatrucheettuTable extends Table {
       dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt =>
       dateTime().withDefault(currentDateAndTime)();
-  BoolColumn get isDeleted =>
-      boolean().withDefault(const Constant(false))();
+  BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 }
 
@@ -208,7 +211,8 @@ class KooliPatrugalTable extends Table {
       integer().nullable()(); // FK → KooliNiruvanaTharavugalTable
 
   // ── Receipt Identity ──
-  TextColumn get patruEn => text()(); // Display: 'RCP/SJS/01'
+  TextColumn get patruEn => text()();
+  TextColumn get finYear => text().withDefault(const Constant(''))();
   IntColumn get vanakkam =>
       integer().withDefault(const Constant(1))(); // Seq # for auto-numbering
 
@@ -227,10 +231,9 @@ class KooliPatrugalTable extends Table {
       real().withDefault(const Constant(0.0))(); // Amount received
 
   // ── Payment ──
-  TextColumn get seluthiVagai =>
-      text().withDefault(const Constant(''))(); // 'cash'|'upi'|'bank_transfer'|'cheque'|'card'
-  TextColumn get suttruEn =>
-      text().withDefault(const Constant(''))(); // Reference/Transaction ID
+  TextColumn get seluthumMurai => text().withDefault(const Constant('cash'))();
+  TextColumn get vangiPeyar => text().nullable()(); // 'cash'|'upi'|'bank_transfer'|'cheque'|'card'
+  TextColumn get parivarthanaiEn => text().nullable()(); // Reference/Transaction ID
 
   // ── Note ──
   TextColumn get ullkurippu =>
@@ -241,8 +244,8 @@ class KooliPatrugalTable extends Table {
       dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt =>
       dateTime().withDefault(currentDateAndTime)();
-  BoolColumn get isDeleted =>
-      boolean().withDefault(const Constant(false))();
+  BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
+  DateTimeColumn get deletedAt => dateTime().nullable()();
 }
 
 // ── Receipt ↔ Invoice Junction Table ──

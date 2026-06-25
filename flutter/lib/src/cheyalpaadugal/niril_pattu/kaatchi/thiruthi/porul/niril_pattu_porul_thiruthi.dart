@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
@@ -13,7 +14,7 @@ class SilkItemEditor extends ConsumerStatefulWidget {
   const SilkItemEditor({super.key, this.product});
 
   /// If provided, we're editing an existing product.
-  final PorulEntry? product;
+  final PorulTharavuru? product;
 
   @override
   ConsumerState<SilkItemEditor> createState() => _SilkItemEditorState();

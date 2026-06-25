@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
@@ -24,7 +25,7 @@ import 'koorugal/vaangunar_thiruthi_koorugal.dart';
 class SilkMerchantEditor extends ConsumerStatefulWidget {
   const SilkMerchantEditor({super.key, this.vaangunar});
 
-  final VaangunarEntry? vaangunar;
+  final VaangunarTharavuru? vaangunar;
 
   @override
   ConsumerState<SilkMerchantEditor> createState() =>

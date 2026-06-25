@@ -5,6 +5,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
+import '../../../../../adippadai/tharavuru/uruvugal.dart';
 import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
@@ -13,7 +14,7 @@ class CoolieItemEditor extends ConsumerStatefulWidget {
   const CoolieItemEditor({super.key, this.product});
 
   /// If provided, we're editing an existing product.
-  final PorulEntry? product;
+  final PorulTharavuru? product;
 
   @override
   ConsumerState<CoolieItemEditor> createState() => _CoolieItemEditorState();
@@ -50,11 +51,20 @@ class _CoolieItemEditorState extends ConsumerState<CoolieItemEditor> {
 
     final kalanjiyam = ref.read(porulKalanjiyamProvider);
 
-    kalanjiyam.savePorul(
-      id: _isEditing ? widget.product!.id : null,
-      seyaliVagai: 'coolie',
+    final tharavuru = PorulTharavuru(
+      id: widget.product?.id ?? 0,
       porulPeyar: _porulPeyar,
-    ).then((_) {
+      hsnCode: '',
+      vilai: 0.0,
+      variVeetham: 0.0,
+      alavuVagai: '',
+      alagu: '',
+      createdAt: widget.product?.createdAt ?? DateTime.now(),
+      updatedAt: DateTime.now(),
+      isDeleted: widget.product?.isDeleted ?? false,
+    );
+
+    kalanjiyam.savePorul(tharavuru).then((_) {
       if (mounted) {
         ref.invalidate(porulgalProvider);
         ScaffoldMessenger.of(context).showSnackBar(

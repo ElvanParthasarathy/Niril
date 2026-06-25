@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
@@ -13,7 +14,7 @@ class CoolieMerchantEditor extends ConsumerStatefulWidget {
   const CoolieMerchantEditor({super.key, this.vaangunar});
 
   /// If provided, we're editing an existing merchant.
-  final VaangunarEntry? vaangunar;
+  final VaangunarTharavuru? vaangunar;
 
   @override
   ConsumerState<CoolieMerchantEditor> createState() =>

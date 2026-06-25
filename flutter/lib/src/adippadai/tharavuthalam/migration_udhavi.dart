@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:drift/drift.dart';
 
 import 'kooli_tharavuthalam.dart';
 import 'pattu_tharavuthalam.dart';
+import 'seyali_tharavuthalam.dart';
 import 'seyali_tharavuthalam.dart';
 
 /// Service to migrate data from the legacy AppDatabase (elvan_niril.db) 
@@ -42,7 +44,7 @@ class MigrationUdhavi {
       if (entry.seyaliVagai == 'silk') {
         await pattuDb.into(pattuDb.pattuNiruvanaTharavugalTable).insert(
           PattuNiruvanaTharavugalTableCompanion.insert(
-            id: drift.Value(entry.id),
+            id: Value(entry.id),
             niruvanamPeyar: entry.niruvanamPeyar,
             mugavari: entry.mugavari,
             minnanjal: entry.minnanjal,
@@ -57,12 +59,12 @@ class MigrationUdhavi {
             nibandhanaigal: entry.nibandhanaigal,
             sonthaViruppangal: entry.sonthaViruppangal,
           ),
-          mode: drift.InsertMode.insertOrIgnore,
+          mode: InsertMode.insertOrIgnore,
         );
       } else if (entry.seyaliVagai == 'coolie') {
         await kooliDb.into(kooliDb.kooliNiruvanaTharavugalTable).insert(
           KooliNiruvanaTharavugalTableCompanion.insert(
-            id: drift.Value(entry.id),
+            id: Value(entry.id),
             niruvanamPeyar: entry.niruvanamPeyar,
             mugavari: entry.mugavari,
             minnanjal: entry.minnanjal,
@@ -77,7 +79,7 @@ class MigrationUdhavi {
             nibandhanaigal: entry.nibandhanaigal,
             sonthaViruppangal: entry.sonthaViruppangal,
           ),
-          mode: drift.InsertMode.insertOrIgnore,
+          mode: InsertMode.insertOrIgnore,
         );
       }
     }
@@ -90,46 +92,46 @@ class MigrationUdhavi {
       if (entry.seyaliVagai == 'silk') {
         await pattuDb.into(pattuDb.pattuVaangunarTable).insert(
           PattuVaangunarTableCompanion.insert(
-            id: drift.Value(entry.id),
-            peyar: drift.Value(entry.peyar),
-            mugavari: drift.Value(entry.mugavari),
-            oor: drift.Value(entry.oor),
-            maavattam: drift.Value(entry.maavattam),
-            maanilam: drift.Value(entry.maanilam),
-            naadu: drift.Value(entry.naadu),
-            velinaadMugavari: drift.Value(entry.velinaadMugavari),
-            anjalKuriyeedu: drift.Value(entry.anjalKuriyeedu),
-            gstin: drift.Value(entry.gstin),
-            minnanjal: drift.Value(entry.minnanjal),
-            tholaipaesi: drift.Value(entry.tholaipaesi),
-            isDeleted: drift.Value(entry.isDeleted),
-            createdAt: drift.Value(entry.createdAt),
-            updatedAt: drift.Value(entry.updatedAt),
-            deletedAt: drift.Value(entry.deletedAt),
+            id: Value(entry.id),
+            peyar: Value(entry.peyar),
+            mugavari: Value(entry.mugavari),
+            oor: Value(entry.oor),
+            maavattam: Value(entry.maavattam),
+            maanilam: Value(entry.maanilam),
+            naadu: Value(entry.naadu),
+            velinaadMugavari: Value(entry.velinaadMugavari),
+            anjalKuriyeedu: Value(entry.anjalKuriyeedu),
+            gstin: Value(entry.gstin),
+            minnanjal: Value(entry.minnanjal),
+            tholaipaesi: Value(entry.tholaipaesi),
+            isDeleted: Value(entry.isDeleted),
+            createdAt: Value(entry.createdAt),
+            updatedAt: Value(entry.updatedAt),
+            deletedAt: Value(entry.deletedAt),
           ),
-          mode: drift.InsertMode.insertOrIgnore,
+          mode: InsertMode.insertOrIgnore,
         );
       } else if (entry.seyaliVagai == 'coolie') {
         await kooliDb.into(kooliDb.kooliVaangunarTable).insert(
           KooliVaangunarTableCompanion.insert(
-            id: drift.Value(entry.id),
-            peyar: drift.Value(entry.peyar),
-            mugavari: drift.Value(entry.mugavari),
-            oor: drift.Value(entry.oor),
-            maavattam: drift.Value(entry.maavattam),
-            maanilam: drift.Value(entry.maanilam),
-            naadu: drift.Value(entry.naadu),
-            velinaadMugavari: drift.Value(entry.velinaadMugavari),
-            anjalKuriyeedu: drift.Value(entry.anjalKuriyeedu),
-            gstin: drift.Value(entry.gstin),
-            minnanjal: drift.Value(entry.minnanjal),
-            tholaipaesi: drift.Value(entry.tholaipaesi),
-            isDeleted: drift.Value(entry.isDeleted),
-            createdAt: drift.Value(entry.createdAt),
-            updatedAt: drift.Value(entry.updatedAt),
-            deletedAt: drift.Value(entry.deletedAt),
+            id: Value(entry.id),
+            peyar: Value(entry.peyar),
+            mugavari: Value(entry.mugavari),
+            oor: Value(entry.oor),
+            maavattam: Value(entry.maavattam),
+            maanilam: Value(entry.maanilam),
+            naadu: Value(entry.naadu),
+            velinaadMugavari: Value(entry.velinaadMugavari),
+            anjalKuriyeedu: Value(entry.anjalKuriyeedu),
+            gstin: Value(entry.gstin),
+            minnanjal: Value(entry.minnanjal),
+            tholaipaesi: Value(entry.tholaipaesi),
+            isDeleted: Value(entry.isDeleted),
+            createdAt: Value(entry.createdAt),
+            updatedAt: Value(entry.updatedAt),
+            deletedAt: Value(entry.deletedAt),
           ),
-          mode: drift.InsertMode.insertOrIgnore,
+          mode: InsertMode.insertOrIgnore,
         );
       }
     }
@@ -142,36 +144,36 @@ class MigrationUdhavi {
       if (entry.seyaliVagai == 'silk') {
         await pattuDb.into(pattuDb.pattuPorulTable).insert(
           PattuPorulTableCompanion.insert(
-            id: drift.Value(entry.id),
-            porulPeyar: drift.Value(entry.porulPeyar),
-            hsnCode: drift.Value(entry.hsnCode),
-            vilai: drift.Value(entry.vilai),
-            variVeetham: drift.Value(entry.variVeetham),
-            alavuVagai: drift.Value(entry.alavuVagai),
-            alagu: drift.Value(entry.alagu),
-            isDeleted: drift.Value(entry.isDeleted),
-            createdAt: drift.Value(entry.createdAt),
-            updatedAt: drift.Value(entry.updatedAt),
-            deletedAt: drift.Value(entry.deletedAt),
+            id: Value(entry.id),
+            porulPeyar: Value(entry.porulPeyar),
+            hsnCode: Value(entry.hsnCode),
+            vilai: Value(entry.vilai),
+            variVeetham: Value(entry.variVeetham),
+            alavuVagai: Value(entry.alavuVagai),
+            alagu: Value(entry.alagu),
+            isDeleted: Value(entry.isDeleted),
+            createdAt: Value(entry.createdAt),
+            updatedAt: Value(entry.updatedAt),
+            deletedAt: Value(entry.deletedAt),
           ),
-          mode: drift.InsertMode.insertOrIgnore,
+          mode: InsertMode.insertOrIgnore,
         );
       } else if (entry.seyaliVagai == 'coolie') {
         await kooliDb.into(kooliDb.kooliPorulTable).insert(
           KooliPorulTableCompanion.insert(
-            id: drift.Value(entry.id),
-            porulPeyar: drift.Value(entry.porulPeyar),
-            hsnCode: drift.Value(entry.hsnCode),
-            vilai: drift.Value(entry.vilai),
-            variVeetham: drift.Value(entry.variVeetham),
-            alavuVagai: drift.Value(entry.alavuVagai),
-            alagu: drift.Value(entry.alagu),
-            isDeleted: drift.Value(entry.isDeleted),
-            createdAt: drift.Value(entry.createdAt),
-            updatedAt: drift.Value(entry.updatedAt),
-            deletedAt: drift.Value(entry.deletedAt),
+            id: Value(entry.id),
+            porulPeyar: Value(entry.porulPeyar),
+            hsnCode: Value(entry.hsnCode),
+            vilai: Value(entry.vilai),
+            variVeetham: Value(entry.variVeetham),
+            alavuVagai: Value(entry.alavuVagai),
+            alagu: Value(entry.alagu),
+            isDeleted: Value(entry.isDeleted),
+            createdAt: Value(entry.createdAt),
+            updatedAt: Value(entry.updatedAt),
+            deletedAt: Value(entry.deletedAt),
           ),
-          mode: drift.InsertMode.insertOrIgnore,
+          mode: InsertMode.insertOrIgnore,
         );
       }
     }
@@ -184,47 +186,47 @@ class MigrationUdhavi {
       if (entry.seyaliVagai == 'silk') {
         await pattuDb.into(pattuDb.pattuPatrucheettuTable).insert(
           PattuPatrucheettuTableCompanion.insert(
-            id: drift.Value(entry.id),
-            niruvanamId: drift.Value(entry.niruvanamId),
+            id: Value(entry.id),
+            niruvanamId: Value(entry.niruvanamId),
             patrucheettuEn: entry.patrucheettuEn,
             finYear: entry.finYear,
             vanakkam: entry.vanakkam,
             pattiyalVagai: entry.pattiyalVagai,
-            vaangunarId: drift.Value(entry.vaangunarId),
-            vaangunarPeyar: drift.Value(entry.vaangunarPeyar),
-            vaangunarMunvari: drift.Value(entry.vaangunarMunvari),
+            vaangunarId: Value(entry.vaangunarId),
+            vaangunarPeyar: Value(entry.vaangunarPeyar),
+            vaangunarMunvari: Value(entry.vaangunarMunvari),
             pattiyalNaal: entry.pattiyalNaal,
             tharavugal: entry.tharavugal,
             mothaThogai: entry.mothaThogai,
-            thallupadi: drift.Value(entry.thallupadi),
+            thallupadi: Value(entry.thallupadi),
             variThogai: entry.variThogai,
             variTharavugal: entry.variTharavugal,
-            sonthaViruppangal: drift.Value(entry.sonthaViruppangal),
-            nibandhanaigal: drift.Value(entry.nibandhanaigal),
-            ullkurippu: drift.Value(entry.ullkurippu),
-            isDeleted: drift.Value(entry.isDeleted),
-            createdAt: drift.Value(entry.createdAt),
-            updatedAt: drift.Value(entry.updatedAt),
-            deletedAt: drift.Value(entry.deletedAt),
+            sonthaViruppangal: Value(entry.sonthaViruppangal),
+            nibandhanaigal: Value(entry.nibandhanaigal),
+            ullkurippu: Value(entry.ullkurippu),
+            isDeleted: Value(entry.isDeleted),
+            createdAt: Value(entry.createdAt),
+            updatedAt: Value(entry.updatedAt),
+            deletedAt: Value(entry.deletedAt),
           ),
-          mode: drift.InsertMode.insertOrIgnore,
+          mode: InsertMode.insertOrIgnore,
         );
       } else if (entry.seyaliVagai == 'coolie') {
         await kooliDb.into(kooliDb.kooliPatrucheettuTable).insert(
           KooliPatrucheettuTableCompanion.insert(
-            id: drift.Value(entry.id),
-            niruvanamId: drift.Value(entry.niruvanamId),
+            id: Value(entry.id),
+            niruvanamId: Value(entry.niruvanamId),
             patrucheettuEn: entry.patrucheettuEn,
             finYear: entry.finYear,
             vanakkam: entry.vanakkam,
             pattiyalVagai: entry.pattiyalVagai,
-            vaangunarId: drift.Value(entry.vaangunarId),
-            vaangunarPeyar: drift.Value(entry.vaangunarPeyar),
-            vaangunarMunvari: drift.Value(entry.vaangunarMunvari),
+            vaangunarId: Value(entry.vaangunarId),
+            vaangunarPeyar: Value(entry.vaangunarPeyar),
+            vaangunarMunvari: Value(entry.vaangunarMunvari),
             pattiyalNaal: entry.pattiyalNaal,
             tharavugal: entry.tharavugal,
             mothaThogai: entry.mothaThogai,
-            thallupadi: drift.Value(entry.thallupadi),
+            thallupadi: Value(entry.thallupadi),
             variThogai: entry.variThogai,
             variTharavugal: entry.variTharavugal,
             mothaEdai: entry.mothaEdai,
@@ -232,13 +234,13 @@ class MigrationUdhavi {
             thabaalThogai: entry.thabaalThogai,
             ahimsaPattuThogai: entry.ahimsaPattuThogai,
             piravariVugal: entry.piravariVugal,
-            vangiTharavugal: drift.Value(entry.vangiTharavugal),
-            isDeleted: drift.Value(entry.isDeleted),
-            createdAt: drift.Value(entry.createdAt),
-            updatedAt: drift.Value(entry.updatedAt),
-            deletedAt: drift.Value(entry.deletedAt),
+            vangiTharavugal: Value(entry.vangiTharavugal),
+            isDeleted: Value(entry.isDeleted),
+            createdAt: Value(entry.createdAt),
+            updatedAt: Value(entry.updatedAt),
+            deletedAt: Value(entry.deletedAt),
           ),
-          mode: drift.InsertMode.insertOrIgnore,
+          mode: InsertMode.insertOrIgnore,
         );
       }
     }
@@ -252,48 +254,48 @@ class MigrationUdhavi {
       if (entry.seyaliVagai == 'silk') {
         await pattuDb.into(pattuDb.pattuPatrugalTable).insert(
           PattuPatrugalTableCompanion.insert(
-            id: drift.Value(entry.id),
-            niruvanamId: drift.Value(entry.niruvanamId),
+            id: Value(entry.id),
+            niruvanamId: Value(entry.niruvanamId),
             patruEn: entry.patruEn,
             vanakkam: entry.vanakkam,
             finYear: entry.finYear,
-            vaangunarId: drift.Value(entry.vaangunarId),
-            vaangunarPeyar: drift.Value(entry.vaangunarPeyar),
+            vaangunarId: Value(entry.vaangunarId),
+            vaangunarPeyar: Value(entry.vaangunarPeyar),
             patruNaal: entry.patruNaal,
             thogai: entry.thogai,
             seluthumMurai: entry.seluthumMurai,
-            vangiPeyar: drift.Value(entry.vangiPeyar),
-            parivarthanaiEn: drift.Value(entry.parivarthanaiEn),
-            ullkurippu: drift.Value(entry.ullkurippu),
-            isDeleted: drift.Value(entry.isDeleted),
-            createdAt: drift.Value(entry.createdAt),
-            updatedAt: drift.Value(entry.updatedAt),
-            deletedAt: drift.Value(entry.deletedAt),
+            vangiPeyar: Value(entry.vangiPeyar),
+            parivarthanaiEn: Value(entry.parivarthanaiEn),
+            ullkurippu: Value(entry.ullkurippu),
+            isDeleted: Value(entry.isDeleted),
+            createdAt: Value(entry.createdAt),
+            updatedAt: Value(entry.updatedAt),
+            deletedAt: Value(entry.deletedAt),
           ),
-          mode: drift.InsertMode.insertOrIgnore,
+          mode: InsertMode.insertOrIgnore,
         );
       } else if (entry.seyaliVagai == 'coolie') {
         await kooliDb.into(kooliDb.kooliPatrugalTable).insert(
           KooliPatrugalTableCompanion.insert(
-            id: drift.Value(entry.id),
-            niruvanamId: drift.Value(entry.niruvanamId),
+            id: Value(entry.id),
+            niruvanamId: Value(entry.niruvanamId),
             patruEn: entry.patruEn,
             vanakkam: entry.vanakkam,
             finYear: entry.finYear,
-            vaangunarId: drift.Value(entry.vaangunarId),
-            vaangunarPeyar: drift.Value(entry.vaangunarPeyar),
+            vaangunarId: Value(entry.vaangunarId),
+            vaangunarPeyar: Value(entry.vaangunarPeyar),
             patruNaal: entry.patruNaal,
             thogai: entry.thogai,
             seluthumMurai: entry.seluthumMurai,
-            vangiPeyar: drift.Value(entry.vangiPeyar),
-            parivarthanaiEn: drift.Value(entry.parivarthanaiEn),
-            ullkurippu: drift.Value(entry.ullkurippu),
-            isDeleted: drift.Value(entry.isDeleted),
-            createdAt: drift.Value(entry.createdAt),
-            updatedAt: drift.Value(entry.updatedAt),
-            deletedAt: drift.Value(entry.deletedAt),
+            vangiPeyar: Value(entry.vangiPeyar),
+            parivarthanaiEn: Value(entry.parivarthanaiEn),
+            ullkurippu: Value(entry.ullkurippu),
+            isDeleted: Value(entry.isDeleted),
+            createdAt: Value(entry.createdAt),
+            updatedAt: Value(entry.updatedAt),
+            deletedAt: Value(entry.deletedAt),
           ),
-          mode: drift.InsertMode.insertOrIgnore,
+          mode: InsertMode.insertOrIgnore,
         );
       }
     }
@@ -311,18 +313,18 @@ class MigrationUdhavi {
           PattuPatruPattiyalTableCompanion.insert(
             patruId: link.patruId,
             pattiyalId: link.pattiyalId,
-            poruthiyaThogai: drift.Value(link.poruthiyaThogai),
+            poruthiyaThogai: Value(link.poruthiyaThogai),
           ),
-          mode: drift.InsertMode.insertOrIgnore,
+          mode: InsertMode.insertOrIgnore,
         );
       } else if (patru.seyaliVagai == 'coolie') {
         await kooliDb.into(kooliDb.kooliPatruPattiyalTable).insert(
           KooliPatruPattiyalTableCompanion.insert(
             patruId: link.patruId,
             pattiyalId: link.pattiyalId,
-            poruthiyaThogai: drift.Value(link.poruthiyaThogai),
+            poruthiyaThogai: Value(link.poruthiyaThogai),
           ),
-          mode: drift.InsertMode.insertOrIgnore,
+          mode: InsertMode.insertOrIgnore,
         );
       }
     }

@@ -8,6 +8,8 @@ import '../../../../adippadai/panigal/niril_backup_service.dart';
 import '../../../../koorugal/maeladukkugal/elvan_aetrum_maeladukku.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
+import '../../../../adippadai/tharavuthalam/pattu_tharavuthalam.dart';
+import '../../../../adippadai/tharavuthalam/kooli_tharavuthalam.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../koorugal/ullnuzhaivu_koorugal.dart';
 
@@ -48,11 +50,13 @@ class _RestorePageState extends ConsumerState<RestorePage> {
     try {
       final backupService = ref.read(backupServiceProvider);
 
-      // Close the current database connection before overwriting the file
-      final db = ref.read(appDatabaseProvider);
-      await db.close();
+      // Close the current database connections before overwriting the files
+      final pattuDb = ref.read(pattuDatabaseProvider);
+      final kooliDb = ref.read(kooliDatabaseProvider);
+      await pattuDb.close();
+      await kooliDb.close();
 
-      // Restore from backup (copies backup.db → main elvan_niril.db)
+      // Restore from backup
       final success = await backupService.restoreFromBackup();
 
       if (!mounted) return;
@@ -63,9 +67,10 @@ class _RestorePageState extends ConsumerState<RestorePage> {
       if (success) {
         ElvanSnackbar.show(context, K.meetteduppuvetri.tr(context, ref));
 
-        // Invalidate the database provider so a brand new AppDatabase instance 
-        // is created that connects to the newly restored file!
-        ref.invalidate(appDatabaseProvider);
+        // Invalidate the database providers so brand new instances
+        // are created that connect to the newly restored files!
+        ref.invalidate(pattuDatabaseProvider);
+        ref.invalidate(kooliDatabaseProvider);
         
         // Invalidate the backup check
         ref.invalidate(hasBackupProvider);

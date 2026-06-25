@@ -3752,6 +3752,14 @@ class $PattuPatrugalTableTable extends PattuPatrugalTable
   late final GeneratedColumn<String> patruEn = GeneratedColumn<String>(
       'patru_en', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _finYearMeta =
+      const VerificationMeta('finYear');
+  @override
+  late final GeneratedColumn<String> finYear = GeneratedColumn<String>(
+      'fin_year', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(''));
   static const VerificationMeta _vanakkamMeta =
       const VerificationMeta('vanakkam');
   @override
@@ -3799,22 +3807,26 @@ class $PattuPatrugalTableTable extends PattuPatrugalTable
       type: DriftSqlType.double,
       requiredDuringInsert: false,
       defaultValue: const Constant(0.0));
-  static const VerificationMeta _seluthiVagaiMeta =
-      const VerificationMeta('seluthiVagai');
+  static const VerificationMeta _seluthumMuraiMeta =
+      const VerificationMeta('seluthumMurai');
   @override
-  late final GeneratedColumn<String> seluthiVagai = GeneratedColumn<String>(
-      'seluthi_vagai', aliasedName, false,
+  late final GeneratedColumn<String> seluthumMurai = GeneratedColumn<String>(
+      'seluthum_murai', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultValue: const Constant(''));
-  static const VerificationMeta _suttruEnMeta =
-      const VerificationMeta('suttruEn');
+      defaultValue: const Constant('cash'));
+  static const VerificationMeta _vangiPeyarMeta =
+      const VerificationMeta('vangiPeyar');
   @override
-  late final GeneratedColumn<String> suttruEn = GeneratedColumn<String>(
-      'suttru_en', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: false,
-      defaultValue: const Constant(''));
+  late final GeneratedColumn<String> vangiPeyar = GeneratedColumn<String>(
+      'vangi_peyar', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _parivarthanaiEnMeta =
+      const VerificationMeta('parivarthanaiEn');
+  @override
+  late final GeneratedColumn<String> parivarthanaiEn = GeneratedColumn<String>(
+      'parivarthanai_en', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _ullkurippuMeta =
       const VerificationMeta('ullkurippu');
   @override
@@ -3849,23 +3861,32 @@ class $PattuPatrugalTableTable extends PattuPatrugalTable
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("is_deleted" IN (0, 1))'),
       defaultValue: const Constant(false));
+  static const VerificationMeta _deletedAtMeta =
+      const VerificationMeta('deletedAt');
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+      'deleted_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
         niruvanamId,
         patruEn,
+        finYear,
         vanakkam,
         vaangunarId,
         vaangunarPeyar,
         vaangunarMunvari,
         patruNaal,
         thogai,
-        seluthiVagai,
-        suttruEn,
+        seluthumMurai,
+        vangiPeyar,
+        parivarthanaiEn,
         ullkurippu,
         createdAt,
         updatedAt,
-        isDeleted
+        isDeleted,
+        deletedAt
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3892,6 +3913,10 @@ class $PattuPatrugalTableTable extends PattuPatrugalTable
     } else if (isInserting) {
       context.missing(_patruEnMeta);
     }
+    if (data.containsKey('fin_year')) {
+      context.handle(_finYearMeta,
+          finYear.isAcceptableOrUnknown(data['fin_year']!, _finYearMeta));
+    }
     if (data.containsKey('vanakkam')) {
       context.handle(_vanakkamMeta,
           vanakkam.isAcceptableOrUnknown(data['vanakkam']!, _vanakkamMeta));
@@ -3910,15 +3935,23 @@ class $PattuPatrugalTableTable extends PattuPatrugalTable
       context.handle(_thogaiMeta,
           thogai.isAcceptableOrUnknown(data['thogai']!, _thogaiMeta));
     }
-    if (data.containsKey('seluthi_vagai')) {
+    if (data.containsKey('seluthum_murai')) {
       context.handle(
-          _seluthiVagaiMeta,
-          seluthiVagai.isAcceptableOrUnknown(
-              data['seluthi_vagai']!, _seluthiVagaiMeta));
+          _seluthumMuraiMeta,
+          seluthumMurai.isAcceptableOrUnknown(
+              data['seluthum_murai']!, _seluthumMuraiMeta));
     }
-    if (data.containsKey('suttru_en')) {
-      context.handle(_suttruEnMeta,
-          suttruEn.isAcceptableOrUnknown(data['suttru_en']!, _suttruEnMeta));
+    if (data.containsKey('vangi_peyar')) {
+      context.handle(
+          _vangiPeyarMeta,
+          vangiPeyar.isAcceptableOrUnknown(
+              data['vangi_peyar']!, _vangiPeyarMeta));
+    }
+    if (data.containsKey('parivarthanai_en')) {
+      context.handle(
+          _parivarthanaiEnMeta,
+          parivarthanaiEn.isAcceptableOrUnknown(
+              data['parivarthanai_en']!, _parivarthanaiEnMeta));
     }
     if (data.containsKey('ullkurippu')) {
       context.handle(
@@ -3938,6 +3971,10 @@ class $PattuPatrugalTableTable extends PattuPatrugalTable
       context.handle(_isDeletedMeta,
           isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta));
     }
+    if (data.containsKey('deleted_at')) {
+      context.handle(_deletedAtMeta,
+          deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta));
+    }
     return context;
   }
 
@@ -3953,6 +3990,8 @@ class $PattuPatrugalTableTable extends PattuPatrugalTable
           .read(DriftSqlType.int, data['${effectivePrefix}niruvanam_id']),
       patruEn: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}patru_en'])!,
+      finYear: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}fin_year'])!,
       vanakkam: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}vanakkam'])!,
       vaangunarId: attachedDatabase.typeMapping
@@ -3967,10 +4006,12 @@ class $PattuPatrugalTableTable extends PattuPatrugalTable
           .read(DriftSqlType.dateTime, data['${effectivePrefix}patru_naal'])!,
       thogai: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}thogai'])!,
-      seluthiVagai: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}seluthi_vagai'])!,
-      suttruEn: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}suttru_en'])!,
+      seluthumMurai: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}seluthum_murai'])!,
+      vangiPeyar: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}vangi_peyar']),
+      parivarthanaiEn: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}parivarthanai_en']),
       ullkurippu: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}ullkurippu'])!,
       createdAt: attachedDatabase.typeMapping
@@ -3979,6 +4020,8 @@ class $PattuPatrugalTableTable extends PattuPatrugalTable
           .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
       isDeleted: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}is_deleted'])!,
+      deletedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}deleted_at']),
     );
   }
 
@@ -3998,34 +4041,40 @@ class PattuPatrugalEntry extends DataClass
   final int id;
   final int? niruvanamId;
   final String patruEn;
+  final String finYear;
   final int vanakkam;
   final int? vaangunarId;
   final Map<String, String> vaangunarPeyar;
   final Map<String, String> vaangunarMunvari;
   final DateTime patruNaal;
   final double thogai;
-  final String seluthiVagai;
-  final String suttruEn;
+  final String seluthumMurai;
+  final String? vangiPeyar;
+  final String? parivarthanaiEn;
   final String ullkurippu;
   final DateTime createdAt;
   final DateTime updatedAt;
   final bool isDeleted;
+  final DateTime? deletedAt;
   const PattuPatrugalEntry(
       {required this.id,
       this.niruvanamId,
       required this.patruEn,
+      required this.finYear,
       required this.vanakkam,
       this.vaangunarId,
       required this.vaangunarPeyar,
       required this.vaangunarMunvari,
       required this.patruNaal,
       required this.thogai,
-      required this.seluthiVagai,
-      required this.suttruEn,
+      required this.seluthumMurai,
+      this.vangiPeyar,
+      this.parivarthanaiEn,
       required this.ullkurippu,
       required this.createdAt,
       required this.updatedAt,
-      required this.isDeleted});
+      required this.isDeleted,
+      this.deletedAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -4034,6 +4083,7 @@ class PattuPatrugalEntry extends DataClass
       map['niruvanam_id'] = Variable<int>(niruvanamId);
     }
     map['patru_en'] = Variable<String>(patruEn);
+    map['fin_year'] = Variable<String>(finYear);
     map['vanakkam'] = Variable<int>(vanakkam);
     if (!nullToAbsent || vaangunarId != null) {
       map['vaangunar_id'] = Variable<int>(vaangunarId);
@@ -4050,12 +4100,20 @@ class PattuPatrugalEntry extends DataClass
     }
     map['patru_naal'] = Variable<DateTime>(patruNaal);
     map['thogai'] = Variable<double>(thogai);
-    map['seluthi_vagai'] = Variable<String>(seluthiVagai);
-    map['suttru_en'] = Variable<String>(suttruEn);
+    map['seluthum_murai'] = Variable<String>(seluthumMurai);
+    if (!nullToAbsent || vangiPeyar != null) {
+      map['vangi_peyar'] = Variable<String>(vangiPeyar);
+    }
+    if (!nullToAbsent || parivarthanaiEn != null) {
+      map['parivarthanai_en'] = Variable<String>(parivarthanaiEn);
+    }
     map['ullkurippu'] = Variable<String>(ullkurippu);
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
     map['is_deleted'] = Variable<bool>(isDeleted);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
     return map;
   }
 
@@ -4066,6 +4124,7 @@ class PattuPatrugalEntry extends DataClass
           ? const Value.absent()
           : Value(niruvanamId),
       patruEn: Value(patruEn),
+      finYear: Value(finYear),
       vanakkam: Value(vanakkam),
       vaangunarId: vaangunarId == null && nullToAbsent
           ? const Value.absent()
@@ -4074,12 +4133,20 @@ class PattuPatrugalEntry extends DataClass
       vaangunarMunvari: Value(vaangunarMunvari),
       patruNaal: Value(patruNaal),
       thogai: Value(thogai),
-      seluthiVagai: Value(seluthiVagai),
-      suttruEn: Value(suttruEn),
+      seluthumMurai: Value(seluthumMurai),
+      vangiPeyar: vangiPeyar == null && nullToAbsent
+          ? const Value.absent()
+          : Value(vangiPeyar),
+      parivarthanaiEn: parivarthanaiEn == null && nullToAbsent
+          ? const Value.absent()
+          : Value(parivarthanaiEn),
       ullkurippu: Value(ullkurippu),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
       isDeleted: Value(isDeleted),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
     );
   }
 
@@ -4090,6 +4157,7 @@ class PattuPatrugalEntry extends DataClass
       id: serializer.fromJson<int>(json['id']),
       niruvanamId: serializer.fromJson<int?>(json['niruvanamId']),
       patruEn: serializer.fromJson<String>(json['patruEn']),
+      finYear: serializer.fromJson<String>(json['finYear']),
       vanakkam: serializer.fromJson<int>(json['vanakkam']),
       vaangunarId: serializer.fromJson<int?>(json['vaangunarId']),
       vaangunarPeyar:
@@ -4098,12 +4166,14 @@ class PattuPatrugalEntry extends DataClass
           serializer.fromJson<Map<String, String>>(json['vaangunarMunvari']),
       patruNaal: serializer.fromJson<DateTime>(json['patruNaal']),
       thogai: serializer.fromJson<double>(json['thogai']),
-      seluthiVagai: serializer.fromJson<String>(json['seluthiVagai']),
-      suttruEn: serializer.fromJson<String>(json['suttruEn']),
+      seluthumMurai: serializer.fromJson<String>(json['seluthumMurai']),
+      vangiPeyar: serializer.fromJson<String?>(json['vangiPeyar']),
+      parivarthanaiEn: serializer.fromJson<String?>(json['parivarthanaiEn']),
       ullkurippu: serializer.fromJson<String>(json['ullkurippu']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
       isDeleted: serializer.fromJson<bool>(json['isDeleted']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
     );
   }
   @override
@@ -4113,6 +4183,7 @@ class PattuPatrugalEntry extends DataClass
       'id': serializer.toJson<int>(id),
       'niruvanamId': serializer.toJson<int?>(niruvanamId),
       'patruEn': serializer.toJson<String>(patruEn),
+      'finYear': serializer.toJson<String>(finYear),
       'vanakkam': serializer.toJson<int>(vanakkam),
       'vaangunarId': serializer.toJson<int?>(vaangunarId),
       'vaangunarPeyar': serializer.toJson<Map<String, String>>(vaangunarPeyar),
@@ -4120,12 +4191,14 @@ class PattuPatrugalEntry extends DataClass
           serializer.toJson<Map<String, String>>(vaangunarMunvari),
       'patruNaal': serializer.toJson<DateTime>(patruNaal),
       'thogai': serializer.toJson<double>(thogai),
-      'seluthiVagai': serializer.toJson<String>(seluthiVagai),
-      'suttruEn': serializer.toJson<String>(suttruEn),
+      'seluthumMurai': serializer.toJson<String>(seluthumMurai),
+      'vangiPeyar': serializer.toJson<String?>(vangiPeyar),
+      'parivarthanaiEn': serializer.toJson<String?>(parivarthanaiEn),
       'ullkurippu': serializer.toJson<String>(ullkurippu),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
       'isDeleted': serializer.toJson<bool>(isDeleted),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
     };
   }
 
@@ -4133,34 +4206,42 @@ class PattuPatrugalEntry extends DataClass
           {int? id,
           Value<int?> niruvanamId = const Value.absent(),
           String? patruEn,
+          String? finYear,
           int? vanakkam,
           Value<int?> vaangunarId = const Value.absent(),
           Map<String, String>? vaangunarPeyar,
           Map<String, String>? vaangunarMunvari,
           DateTime? patruNaal,
           double? thogai,
-          String? seluthiVagai,
-          String? suttruEn,
+          String? seluthumMurai,
+          Value<String?> vangiPeyar = const Value.absent(),
+          Value<String?> parivarthanaiEn = const Value.absent(),
           String? ullkurippu,
           DateTime? createdAt,
           DateTime? updatedAt,
-          bool? isDeleted}) =>
+          bool? isDeleted,
+          Value<DateTime?> deletedAt = const Value.absent()}) =>
       PattuPatrugalEntry(
         id: id ?? this.id,
         niruvanamId: niruvanamId.present ? niruvanamId.value : this.niruvanamId,
         patruEn: patruEn ?? this.patruEn,
+        finYear: finYear ?? this.finYear,
         vanakkam: vanakkam ?? this.vanakkam,
         vaangunarId: vaangunarId.present ? vaangunarId.value : this.vaangunarId,
         vaangunarPeyar: vaangunarPeyar ?? this.vaangunarPeyar,
         vaangunarMunvari: vaangunarMunvari ?? this.vaangunarMunvari,
         patruNaal: patruNaal ?? this.patruNaal,
         thogai: thogai ?? this.thogai,
-        seluthiVagai: seluthiVagai ?? this.seluthiVagai,
-        suttruEn: suttruEn ?? this.suttruEn,
+        seluthumMurai: seluthumMurai ?? this.seluthumMurai,
+        vangiPeyar: vangiPeyar.present ? vangiPeyar.value : this.vangiPeyar,
+        parivarthanaiEn: parivarthanaiEn.present
+            ? parivarthanaiEn.value
+            : this.parivarthanaiEn,
         ullkurippu: ullkurippu ?? this.ullkurippu,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
         isDeleted: isDeleted ?? this.isDeleted,
+        deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
       );
   PattuPatrugalEntry copyWithCompanion(PattuPatrugalTableCompanion data) {
     return PattuPatrugalEntry(
@@ -4168,6 +4249,7 @@ class PattuPatrugalEntry extends DataClass
       niruvanamId:
           data.niruvanamId.present ? data.niruvanamId.value : this.niruvanamId,
       patruEn: data.patruEn.present ? data.patruEn.value : this.patruEn,
+      finYear: data.finYear.present ? data.finYear.value : this.finYear,
       vanakkam: data.vanakkam.present ? data.vanakkam.value : this.vanakkam,
       vaangunarId:
           data.vaangunarId.present ? data.vaangunarId.value : this.vaangunarId,
@@ -4179,15 +4261,20 @@ class PattuPatrugalEntry extends DataClass
           : this.vaangunarMunvari,
       patruNaal: data.patruNaal.present ? data.patruNaal.value : this.patruNaal,
       thogai: data.thogai.present ? data.thogai.value : this.thogai,
-      seluthiVagai: data.seluthiVagai.present
-          ? data.seluthiVagai.value
-          : this.seluthiVagai,
-      suttruEn: data.suttruEn.present ? data.suttruEn.value : this.suttruEn,
+      seluthumMurai: data.seluthumMurai.present
+          ? data.seluthumMurai.value
+          : this.seluthumMurai,
+      vangiPeyar:
+          data.vangiPeyar.present ? data.vangiPeyar.value : this.vangiPeyar,
+      parivarthanaiEn: data.parivarthanaiEn.present
+          ? data.parivarthanaiEn.value
+          : this.parivarthanaiEn,
       ullkurippu:
           data.ullkurippu.present ? data.ullkurippu.value : this.ullkurippu,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
       isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
     );
   }
 
@@ -4197,18 +4284,21 @@ class PattuPatrugalEntry extends DataClass
           ..write('id: $id, ')
           ..write('niruvanamId: $niruvanamId, ')
           ..write('patruEn: $patruEn, ')
+          ..write('finYear: $finYear, ')
           ..write('vanakkam: $vanakkam, ')
           ..write('vaangunarId: $vaangunarId, ')
           ..write('vaangunarPeyar: $vaangunarPeyar, ')
           ..write('vaangunarMunvari: $vaangunarMunvari, ')
           ..write('patruNaal: $patruNaal, ')
           ..write('thogai: $thogai, ')
-          ..write('seluthiVagai: $seluthiVagai, ')
-          ..write('suttruEn: $suttruEn, ')
+          ..write('seluthumMurai: $seluthumMurai, ')
+          ..write('vangiPeyar: $vangiPeyar, ')
+          ..write('parivarthanaiEn: $parivarthanaiEn, ')
           ..write('ullkurippu: $ullkurippu, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('isDeleted: $isDeleted')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('deletedAt: $deletedAt')
           ..write(')'))
         .toString();
   }
@@ -4218,18 +4308,21 @@ class PattuPatrugalEntry extends DataClass
       id,
       niruvanamId,
       patruEn,
+      finYear,
       vanakkam,
       vaangunarId,
       vaangunarPeyar,
       vaangunarMunvari,
       patruNaal,
       thogai,
-      seluthiVagai,
-      suttruEn,
+      seluthumMurai,
+      vangiPeyar,
+      parivarthanaiEn,
       ullkurippu,
       createdAt,
       updatedAt,
-      isDeleted);
+      isDeleted,
+      deletedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -4237,103 +4330,121 @@ class PattuPatrugalEntry extends DataClass
           other.id == this.id &&
           other.niruvanamId == this.niruvanamId &&
           other.patruEn == this.patruEn &&
+          other.finYear == this.finYear &&
           other.vanakkam == this.vanakkam &&
           other.vaangunarId == this.vaangunarId &&
           other.vaangunarPeyar == this.vaangunarPeyar &&
           other.vaangunarMunvari == this.vaangunarMunvari &&
           other.patruNaal == this.patruNaal &&
           other.thogai == this.thogai &&
-          other.seluthiVagai == this.seluthiVagai &&
-          other.suttruEn == this.suttruEn &&
+          other.seluthumMurai == this.seluthumMurai &&
+          other.vangiPeyar == this.vangiPeyar &&
+          other.parivarthanaiEn == this.parivarthanaiEn &&
           other.ullkurippu == this.ullkurippu &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
-          other.isDeleted == this.isDeleted);
+          other.isDeleted == this.isDeleted &&
+          other.deletedAt == this.deletedAt);
 }
 
 class PattuPatrugalTableCompanion extends UpdateCompanion<PattuPatrugalEntry> {
   final Value<int> id;
   final Value<int?> niruvanamId;
   final Value<String> patruEn;
+  final Value<String> finYear;
   final Value<int> vanakkam;
   final Value<int?> vaangunarId;
   final Value<Map<String, String>> vaangunarPeyar;
   final Value<Map<String, String>> vaangunarMunvari;
   final Value<DateTime> patruNaal;
   final Value<double> thogai;
-  final Value<String> seluthiVagai;
-  final Value<String> suttruEn;
+  final Value<String> seluthumMurai;
+  final Value<String?> vangiPeyar;
+  final Value<String?> parivarthanaiEn;
   final Value<String> ullkurippu;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   final Value<bool> isDeleted;
+  final Value<DateTime?> deletedAt;
   const PattuPatrugalTableCompanion({
     this.id = const Value.absent(),
     this.niruvanamId = const Value.absent(),
     this.patruEn = const Value.absent(),
+    this.finYear = const Value.absent(),
     this.vanakkam = const Value.absent(),
     this.vaangunarId = const Value.absent(),
     this.vaangunarPeyar = const Value.absent(),
     this.vaangunarMunvari = const Value.absent(),
     this.patruNaal = const Value.absent(),
     this.thogai = const Value.absent(),
-    this.seluthiVagai = const Value.absent(),
-    this.suttruEn = const Value.absent(),
+    this.seluthumMurai = const Value.absent(),
+    this.vangiPeyar = const Value.absent(),
+    this.parivarthanaiEn = const Value.absent(),
     this.ullkurippu = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
+    this.deletedAt = const Value.absent(),
   });
   PattuPatrugalTableCompanion.insert({
     this.id = const Value.absent(),
     this.niruvanamId = const Value.absent(),
     required String patruEn,
+    this.finYear = const Value.absent(),
     this.vanakkam = const Value.absent(),
     this.vaangunarId = const Value.absent(),
     this.vaangunarPeyar = const Value.absent(),
     this.vaangunarMunvari = const Value.absent(),
     this.patruNaal = const Value.absent(),
     this.thogai = const Value.absent(),
-    this.seluthiVagai = const Value.absent(),
-    this.suttruEn = const Value.absent(),
+    this.seluthumMurai = const Value.absent(),
+    this.vangiPeyar = const Value.absent(),
+    this.parivarthanaiEn = const Value.absent(),
     this.ullkurippu = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.isDeleted = const Value.absent(),
+    this.deletedAt = const Value.absent(),
   }) : patruEn = Value(patruEn);
   static Insertable<PattuPatrugalEntry> custom({
     Expression<int>? id,
     Expression<int>? niruvanamId,
     Expression<String>? patruEn,
+    Expression<String>? finYear,
     Expression<int>? vanakkam,
     Expression<int>? vaangunarId,
     Expression<String>? vaangunarPeyar,
     Expression<String>? vaangunarMunvari,
     Expression<DateTime>? patruNaal,
     Expression<double>? thogai,
-    Expression<String>? seluthiVagai,
-    Expression<String>? suttruEn,
+    Expression<String>? seluthumMurai,
+    Expression<String>? vangiPeyar,
+    Expression<String>? parivarthanaiEn,
     Expression<String>? ullkurippu,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<bool>? isDeleted,
+    Expression<DateTime>? deletedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (niruvanamId != null) 'niruvanam_id': niruvanamId,
       if (patruEn != null) 'patru_en': patruEn,
+      if (finYear != null) 'fin_year': finYear,
       if (vanakkam != null) 'vanakkam': vanakkam,
       if (vaangunarId != null) 'vaangunar_id': vaangunarId,
       if (vaangunarPeyar != null) 'vaangunar_peyar': vaangunarPeyar,
       if (vaangunarMunvari != null) 'vaangunar_munvari': vaangunarMunvari,
       if (patruNaal != null) 'patru_naal': patruNaal,
       if (thogai != null) 'thogai': thogai,
-      if (seluthiVagai != null) 'seluthi_vagai': seluthiVagai,
-      if (suttruEn != null) 'suttru_en': suttruEn,
+      if (seluthumMurai != null) 'seluthum_murai': seluthumMurai,
+      if (vangiPeyar != null) 'vangi_peyar': vangiPeyar,
+      if (parivarthanaiEn != null) 'parivarthanai_en': parivarthanaiEn,
       if (ullkurippu != null) 'ullkurippu': ullkurippu,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (isDeleted != null) 'is_deleted': isDeleted,
+      if (deletedAt != null) 'deleted_at': deletedAt,
     });
   }
 
@@ -4341,34 +4452,40 @@ class PattuPatrugalTableCompanion extends UpdateCompanion<PattuPatrugalEntry> {
       {Value<int>? id,
       Value<int?>? niruvanamId,
       Value<String>? patruEn,
+      Value<String>? finYear,
       Value<int>? vanakkam,
       Value<int?>? vaangunarId,
       Value<Map<String, String>>? vaangunarPeyar,
       Value<Map<String, String>>? vaangunarMunvari,
       Value<DateTime>? patruNaal,
       Value<double>? thogai,
-      Value<String>? seluthiVagai,
-      Value<String>? suttruEn,
+      Value<String>? seluthumMurai,
+      Value<String?>? vangiPeyar,
+      Value<String?>? parivarthanaiEn,
       Value<String>? ullkurippu,
       Value<DateTime>? createdAt,
       Value<DateTime>? updatedAt,
-      Value<bool>? isDeleted}) {
+      Value<bool>? isDeleted,
+      Value<DateTime?>? deletedAt}) {
     return PattuPatrugalTableCompanion(
       id: id ?? this.id,
       niruvanamId: niruvanamId ?? this.niruvanamId,
       patruEn: patruEn ?? this.patruEn,
+      finYear: finYear ?? this.finYear,
       vanakkam: vanakkam ?? this.vanakkam,
       vaangunarId: vaangunarId ?? this.vaangunarId,
       vaangunarPeyar: vaangunarPeyar ?? this.vaangunarPeyar,
       vaangunarMunvari: vaangunarMunvari ?? this.vaangunarMunvari,
       patruNaal: patruNaal ?? this.patruNaal,
       thogai: thogai ?? this.thogai,
-      seluthiVagai: seluthiVagai ?? this.seluthiVagai,
-      suttruEn: suttruEn ?? this.suttruEn,
+      seluthumMurai: seluthumMurai ?? this.seluthumMurai,
+      vangiPeyar: vangiPeyar ?? this.vangiPeyar,
+      parivarthanaiEn: parivarthanaiEn ?? this.parivarthanaiEn,
       ullkurippu: ullkurippu ?? this.ullkurippu,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isDeleted: isDeleted ?? this.isDeleted,
+      deletedAt: deletedAt ?? this.deletedAt,
     );
   }
 
@@ -4383,6 +4500,9 @@ class PattuPatrugalTableCompanion extends UpdateCompanion<PattuPatrugalEntry> {
     }
     if (patruEn.present) {
       map['patru_en'] = Variable<String>(patruEn.value);
+    }
+    if (finYear.present) {
+      map['fin_year'] = Variable<String>(finYear.value);
     }
     if (vanakkam.present) {
       map['vanakkam'] = Variable<int>(vanakkam.value);
@@ -4406,11 +4526,14 @@ class PattuPatrugalTableCompanion extends UpdateCompanion<PattuPatrugalEntry> {
     if (thogai.present) {
       map['thogai'] = Variable<double>(thogai.value);
     }
-    if (seluthiVagai.present) {
-      map['seluthi_vagai'] = Variable<String>(seluthiVagai.value);
+    if (seluthumMurai.present) {
+      map['seluthum_murai'] = Variable<String>(seluthumMurai.value);
     }
-    if (suttruEn.present) {
-      map['suttru_en'] = Variable<String>(suttruEn.value);
+    if (vangiPeyar.present) {
+      map['vangi_peyar'] = Variable<String>(vangiPeyar.value);
+    }
+    if (parivarthanaiEn.present) {
+      map['parivarthanai_en'] = Variable<String>(parivarthanaiEn.value);
     }
     if (ullkurippu.present) {
       map['ullkurippu'] = Variable<String>(ullkurippu.value);
@@ -4424,6 +4547,9 @@ class PattuPatrugalTableCompanion extends UpdateCompanion<PattuPatrugalEntry> {
     if (isDeleted.present) {
       map['is_deleted'] = Variable<bool>(isDeleted.value);
     }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
     return map;
   }
 
@@ -4433,18 +4559,21 @@ class PattuPatrugalTableCompanion extends UpdateCompanion<PattuPatrugalEntry> {
           ..write('id: $id, ')
           ..write('niruvanamId: $niruvanamId, ')
           ..write('patruEn: $patruEn, ')
+          ..write('finYear: $finYear, ')
           ..write('vanakkam: $vanakkam, ')
           ..write('vaangunarId: $vaangunarId, ')
           ..write('vaangunarPeyar: $vaangunarPeyar, ')
           ..write('vaangunarMunvari: $vaangunarMunvari, ')
           ..write('patruNaal: $patruNaal, ')
           ..write('thogai: $thogai, ')
-          ..write('seluthiVagai: $seluthiVagai, ')
-          ..write('suttruEn: $suttruEn, ')
+          ..write('seluthumMurai: $seluthumMurai, ')
+          ..write('vangiPeyar: $vangiPeyar, ')
+          ..write('parivarthanaiEn: $parivarthanaiEn, ')
           ..write('ullkurippu: $ullkurippu, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
-          ..write('isDeleted: $isDeleted')
+          ..write('isDeleted: $isDeleted, ')
+          ..write('deletedAt: $deletedAt')
           ..write(')'))
         .toString();
   }
@@ -6428,36 +6557,42 @@ typedef $$PattuPatrugalTableTableCreateCompanionBuilder
   Value<int> id,
   Value<int?> niruvanamId,
   required String patruEn,
+  Value<String> finYear,
   Value<int> vanakkam,
   Value<int?> vaangunarId,
   Value<Map<String, String>> vaangunarPeyar,
   Value<Map<String, String>> vaangunarMunvari,
   Value<DateTime> patruNaal,
   Value<double> thogai,
-  Value<String> seluthiVagai,
-  Value<String> suttruEn,
+  Value<String> seluthumMurai,
+  Value<String?> vangiPeyar,
+  Value<String?> parivarthanaiEn,
   Value<String> ullkurippu,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
   Value<bool> isDeleted,
+  Value<DateTime?> deletedAt,
 });
 typedef $$PattuPatrugalTableTableUpdateCompanionBuilder
     = PattuPatrugalTableCompanion Function({
   Value<int> id,
   Value<int?> niruvanamId,
   Value<String> patruEn,
+  Value<String> finYear,
   Value<int> vanakkam,
   Value<int?> vaangunarId,
   Value<Map<String, String>> vaangunarPeyar,
   Value<Map<String, String>> vaangunarMunvari,
   Value<DateTime> patruNaal,
   Value<double> thogai,
-  Value<String> seluthiVagai,
-  Value<String> suttruEn,
+  Value<String> seluthumMurai,
+  Value<String?> vangiPeyar,
+  Value<String?> parivarthanaiEn,
   Value<String> ullkurippu,
   Value<DateTime> createdAt,
   Value<DateTime> updatedAt,
   Value<bool> isDeleted,
+  Value<DateTime?> deletedAt,
 });
 
 class $$PattuPatrugalTableTableFilterComposer
@@ -6477,6 +6612,9 @@ class $$PattuPatrugalTableTableFilterComposer
 
   ColumnFilters<String> get patruEn => $composableBuilder(
       column: $table.patruEn, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get finYear => $composableBuilder(
+      column: $table.finYear, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<int> get vanakkam => $composableBuilder(
       column: $table.vanakkam, builder: (column) => ColumnFilters(column));
@@ -6502,11 +6640,15 @@ class $$PattuPatrugalTableTableFilterComposer
   ColumnFilters<double> get thogai => $composableBuilder(
       column: $table.thogai, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get seluthiVagai => $composableBuilder(
-      column: $table.seluthiVagai, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get seluthumMurai => $composableBuilder(
+      column: $table.seluthumMurai, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get suttruEn => $composableBuilder(
-      column: $table.suttruEn, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get vangiPeyar => $composableBuilder(
+      column: $table.vangiPeyar, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get parivarthanaiEn => $composableBuilder(
+      column: $table.parivarthanaiEn,
+      builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get ullkurippu => $composableBuilder(
       column: $table.ullkurippu, builder: (column) => ColumnFilters(column));
@@ -6519,6 +6661,9 @@ class $$PattuPatrugalTableTableFilterComposer
 
   ColumnFilters<bool> get isDeleted => $composableBuilder(
       column: $table.isDeleted, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+      column: $table.deletedAt, builder: (column) => ColumnFilters(column));
 }
 
 class $$PattuPatrugalTableTableOrderingComposer
@@ -6538,6 +6683,9 @@ class $$PattuPatrugalTableTableOrderingComposer
 
   ColumnOrderings<String> get patruEn => $composableBuilder(
       column: $table.patruEn, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get finYear => $composableBuilder(
+      column: $table.finYear, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<int> get vanakkam => $composableBuilder(
       column: $table.vanakkam, builder: (column) => ColumnOrderings(column));
@@ -6559,12 +6707,16 @@ class $$PattuPatrugalTableTableOrderingComposer
   ColumnOrderings<double> get thogai => $composableBuilder(
       column: $table.thogai, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get seluthiVagai => $composableBuilder(
-      column: $table.seluthiVagai,
+  ColumnOrderings<String> get seluthumMurai => $composableBuilder(
+      column: $table.seluthumMurai,
       builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get suttruEn => $composableBuilder(
-      column: $table.suttruEn, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get vangiPeyar => $composableBuilder(
+      column: $table.vangiPeyar, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get parivarthanaiEn => $composableBuilder(
+      column: $table.parivarthanaiEn,
+      builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get ullkurippu => $composableBuilder(
       column: $table.ullkurippu, builder: (column) => ColumnOrderings(column));
@@ -6577,6 +6729,9 @@ class $$PattuPatrugalTableTableOrderingComposer
 
   ColumnOrderings<bool> get isDeleted => $composableBuilder(
       column: $table.isDeleted, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+      column: $table.deletedAt, builder: (column) => ColumnOrderings(column));
 }
 
 class $$PattuPatrugalTableTableAnnotationComposer
@@ -6596,6 +6751,9 @@ class $$PattuPatrugalTableTableAnnotationComposer
 
   GeneratedColumn<String> get patruEn =>
       $composableBuilder(column: $table.patruEn, builder: (column) => column);
+
+  GeneratedColumn<String> get finYear =>
+      $composableBuilder(column: $table.finYear, builder: (column) => column);
 
   GeneratedColumn<int> get vanakkam =>
       $composableBuilder(column: $table.vanakkam, builder: (column) => column);
@@ -6617,11 +6775,14 @@ class $$PattuPatrugalTableTableAnnotationComposer
   GeneratedColumn<double> get thogai =>
       $composableBuilder(column: $table.thogai, builder: (column) => column);
 
-  GeneratedColumn<String> get seluthiVagai => $composableBuilder(
-      column: $table.seluthiVagai, builder: (column) => column);
+  GeneratedColumn<String> get seluthumMurai => $composableBuilder(
+      column: $table.seluthumMurai, builder: (column) => column);
 
-  GeneratedColumn<String> get suttruEn =>
-      $composableBuilder(column: $table.suttruEn, builder: (column) => column);
+  GeneratedColumn<String> get vangiPeyar => $composableBuilder(
+      column: $table.vangiPeyar, builder: (column) => column);
+
+  GeneratedColumn<String> get parivarthanaiEn => $composableBuilder(
+      column: $table.parivarthanaiEn, builder: (column) => column);
 
   GeneratedColumn<String> get ullkurippu => $composableBuilder(
       column: $table.ullkurippu, builder: (column) => column);
@@ -6634,6 +6795,9 @@ class $$PattuPatrugalTableTableAnnotationComposer
 
   GeneratedColumn<bool> get isDeleted =>
       $composableBuilder(column: $table.isDeleted, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
 }
 
 class $$PattuPatrugalTableTableTableManager extends RootTableManager<
@@ -6668,69 +6832,81 @@ class $$PattuPatrugalTableTableTableManager extends RootTableManager<
             Value<int> id = const Value.absent(),
             Value<int?> niruvanamId = const Value.absent(),
             Value<String> patruEn = const Value.absent(),
+            Value<String> finYear = const Value.absent(),
             Value<int> vanakkam = const Value.absent(),
             Value<int?> vaangunarId = const Value.absent(),
             Value<Map<String, String>> vaangunarPeyar = const Value.absent(),
             Value<Map<String, String>> vaangunarMunvari = const Value.absent(),
             Value<DateTime> patruNaal = const Value.absent(),
             Value<double> thogai = const Value.absent(),
-            Value<String> seluthiVagai = const Value.absent(),
-            Value<String> suttruEn = const Value.absent(),
+            Value<String> seluthumMurai = const Value.absent(),
+            Value<String?> vangiPeyar = const Value.absent(),
+            Value<String?> parivarthanaiEn = const Value.absent(),
             Value<String> ullkurippu = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> updatedAt = const Value.absent(),
             Value<bool> isDeleted = const Value.absent(),
+            Value<DateTime?> deletedAt = const Value.absent(),
           }) =>
               PattuPatrugalTableCompanion(
             id: id,
             niruvanamId: niruvanamId,
             patruEn: patruEn,
+            finYear: finYear,
             vanakkam: vanakkam,
             vaangunarId: vaangunarId,
             vaangunarPeyar: vaangunarPeyar,
             vaangunarMunvari: vaangunarMunvari,
             patruNaal: patruNaal,
             thogai: thogai,
-            seluthiVagai: seluthiVagai,
-            suttruEn: suttruEn,
+            seluthumMurai: seluthumMurai,
+            vangiPeyar: vangiPeyar,
+            parivarthanaiEn: parivarthanaiEn,
             ullkurippu: ullkurippu,
             createdAt: createdAt,
             updatedAt: updatedAt,
             isDeleted: isDeleted,
+            deletedAt: deletedAt,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<int?> niruvanamId = const Value.absent(),
             required String patruEn,
+            Value<String> finYear = const Value.absent(),
             Value<int> vanakkam = const Value.absent(),
             Value<int?> vaangunarId = const Value.absent(),
             Value<Map<String, String>> vaangunarPeyar = const Value.absent(),
             Value<Map<String, String>> vaangunarMunvari = const Value.absent(),
             Value<DateTime> patruNaal = const Value.absent(),
             Value<double> thogai = const Value.absent(),
-            Value<String> seluthiVagai = const Value.absent(),
-            Value<String> suttruEn = const Value.absent(),
+            Value<String> seluthumMurai = const Value.absent(),
+            Value<String?> vangiPeyar = const Value.absent(),
+            Value<String?> parivarthanaiEn = const Value.absent(),
             Value<String> ullkurippu = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime> updatedAt = const Value.absent(),
             Value<bool> isDeleted = const Value.absent(),
+            Value<DateTime?> deletedAt = const Value.absent(),
           }) =>
               PattuPatrugalTableCompanion.insert(
             id: id,
             niruvanamId: niruvanamId,
             patruEn: patruEn,
+            finYear: finYear,
             vanakkam: vanakkam,
             vaangunarId: vaangunarId,
             vaangunarPeyar: vaangunarPeyar,
             vaangunarMunvari: vaangunarMunvari,
             patruNaal: patruNaal,
             thogai: thogai,
-            seluthiVagai: seluthiVagai,
-            suttruEn: suttruEn,
+            seluthumMurai: seluthumMurai,
+            vangiPeyar: vangiPeyar,
+            parivarthanaiEn: parivarthanaiEn,
             ullkurippu: ullkurippu,
             createdAt: createdAt,
             updatedAt: updatedAt,
             isDeleted: isDeleted,
+            deletedAt: deletedAt,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
