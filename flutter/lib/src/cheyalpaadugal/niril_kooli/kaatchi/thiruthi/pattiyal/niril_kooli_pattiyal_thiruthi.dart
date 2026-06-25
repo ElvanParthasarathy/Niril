@@ -1,4 +1,4 @@
-import 'package:niril/src/cheyalpaadugal/niril_podhu/kalanjiyam/kooli_pattiyal_kalanjiyam.dart';
+import 'package:elvan_niril/src/cheyalpaadugal/niril_podhu/kalanjiyam/kooli_pattiyal_kalanjiyam.dart';
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'dart:async';
 
