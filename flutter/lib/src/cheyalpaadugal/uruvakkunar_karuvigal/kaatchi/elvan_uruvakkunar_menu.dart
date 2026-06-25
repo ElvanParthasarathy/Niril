@@ -115,6 +115,29 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
     }
   }
 
+  void _toggleBilingual() {
+    final currentState = ref.read(bilingualProvider);
+    ref.read(bilingualProvider.notifier).state = !currentState;
+    if (mounted) {
+      ElvanSnackbar.show(context, !currentState ? 'Bilingual Mode: ON ✓' : 'Bilingual Mode: OFF ✗');
+    }
+  }
+
+  void _swapDataLanguages() {
+    final currentPrimary = ref.read(primaryLanguageProvider);
+    final currentSecondary = ref.read(secondaryLanguageProvider);
+
+    ref.read(primaryLanguageProvider.notifier).state = currentSecondary;
+    ref.read(secondaryLanguageProvider.notifier).state = currentPrimary;
+
+    if (mounted) {
+      ElvanSnackbar.show(
+        context,
+        'Swapped: $currentSecondary ↔️ $currentPrimary',
+      );
+    }
+  }
+
   /// Toggle extra Coolie profile (PVS) — add if missing, remove if exists.
   void _toggleCoolieSingle() async {
     final currentMode = ref.read(appModeProvider);
@@ -183,10 +206,42 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
     );
   }
 
+  Widget _buildCompactAction({
+    required String label,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // If not in debug mode, simply return the app
     if (!kDebugMode) return widget.child;
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Stack(
       children: [
@@ -208,55 +263,92 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
                   FloatingActionButton(
                     heroTag: 'dev_menu_toggle',
                     mini: true,
-                    backgroundColor: Colors.black87,
+                    backgroundColor: _isExpanded ? Colors.redAccent : Colors.black87,
+                    elevation: 4,
                     onPressed: () {
                       setState(() {
                         _isExpanded = !_isExpanded;
                       });
                     },
-                    child: const Icon(Icons.developer_mode, color: Colors.white),
+                    child: Icon(
+                      _isExpanded ? CupertinoIcons.clear : Icons.developer_mode, 
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                   if (_isExpanded) ...[
-
-                    const SizedBox(height: 8),
-                    FloatingActionButton.extended(
-                      heroTag: 'dev_seed',
-                      onPressed: _seedAllData,
-                      label: const Text('Seed All'),
-                      icon: const Icon(CupertinoIcons.rocket),
-                      backgroundColor: Colors.green,
-                    ),
-                    const SizedBox(height: 8),
-                    FloatingActionButton.extended(
-                      heroTag: 'dev_erase',
-                      onPressed: _eraseAllData,
-                      label: const Text('Erase Data'),
-                      icon: const Icon(CupertinoIcons.trash),
-                      backgroundColor: Colors.red,
-                    ),
-                    const SizedBox(height: 8),
-                    FloatingActionButton.extended(
-                      heroTag: 'dev_toggle_silk',
-                      onPressed: _toggleExtraSilk,
-                      label: const Text('Toggle Silk ±EPS'),
-                      icon: const Icon(CupertinoIcons.repeat),
-                      backgroundColor: Colors.deepPurple,
-                    ),
-                    const SizedBox(height: 8),
-                    FloatingActionButton.extended(
-                      heroTag: 'dev_toggle_coolie',
-                      onPressed: _toggleCoolieSingle,
-                      label: const Text('Toggle Coolie ±PVS'),
-                      icon: const Icon(CupertinoIcons.repeat),
-                      backgroundColor: Colors.teal,
-                    ),
-                    const SizedBox(height: 8),
-                    FloatingActionButton.extended(
-                      heroTag: 'dev_toggle_lang',
-                      onPressed: _toggleLanguage,
-                      label: const Text('Toggle UI Lang'),
-                      icon: const Icon(Icons.language),
-                      backgroundColor: Colors.blueAccent,
+                    const SizedBox(height: 12),
+                    Material(
+                      color: Colors.transparent,
+                      elevation: 8,
+                      shadowColor: Colors.black.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(16),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Container(
+                          width: 220,
+                          decoration: BoxDecoration(
+                            color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _buildCompactAction(
+                                label: 'Seed All',
+                                icon: CupertinoIcons.rocket,
+                                color: Colors.green,
+                                onTap: _seedAllData,
+                              ),
+                              Divider(height: 1, thickness: 1, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)),
+                              _buildCompactAction(
+                                label: 'Erase Data',
+                                icon: CupertinoIcons.trash,
+                                color: Colors.red,
+                                onTap: _eraseAllData,
+                              ),
+                              Divider(height: 1, thickness: 1, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)),
+                              _buildCompactAction(
+                                label: 'Toggle Silk ±EPS',
+                                icon: CupertinoIcons.repeat,
+                                color: Colors.deepPurple,
+                                onTap: _toggleExtraSilk,
+                              ),
+                              Divider(height: 1, thickness: 1, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)),
+                              _buildCompactAction(
+                                label: 'Toggle Coolie ±PVS',
+                                icon: CupertinoIcons.repeat,
+                                color: Colors.teal,
+                                onTap: _toggleCoolieSingle,
+                              ),
+                              Divider(height: 1, thickness: 1, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)),
+                              _buildCompactAction(
+                                label: 'Toggle UI Lang',
+                                icon: Icons.language,
+                                color: Colors.blueAccent,
+                                onTap: _toggleLanguage,
+                              ),
+                              Divider(height: 1, thickness: 1, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)),
+                              _buildCompactAction(
+                                label: 'Toggle Bilingual',
+                                icon: Icons.translate,
+                                color: Colors.orange,
+                                onTap: _toggleBilingual,
+                              ),
+                              Divider(height: 1, thickness: 1, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)),
+                              _buildCompactAction(
+                                label: 'Swap Data Langs',
+                                icon: Icons.swap_vert,
+                                color: Colors.purpleAccent,
+                                onTap: _swapDataLanguages,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ],
                 ],

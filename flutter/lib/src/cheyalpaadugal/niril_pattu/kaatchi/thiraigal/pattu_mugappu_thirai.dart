@@ -1,15 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:intl/intl.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../adippadai/vazhikaattal/navigation_provider.dart';
 import '../../../../adippadai/vazhikaattal/navigation_destination.dart';
 import '../../../../adippadai/vazhikaattal/niril_nav.dart';
 import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
+import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 import '../../../niril_podhu/kaatchi/koorugal/mugappu_tharavugal_kooru.dart';
 import '../thiruthi/pattiyal/niril_pattu_pattiyal_thiruthi.dart';
 
@@ -18,11 +20,13 @@ import '../thiruthi/pattiyal/niril_pattu_pattiyal_thiruthi.dart';
 class SilkHomePage extends ConsumerWidget {
   const SilkHomePage({super.key});
 
-
+  static final _currencyFormat =
+      NumberFormat.currency(locale: 'en_IN', symbol: '₹');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pattiyalgalAsync = ref.watch(pattiyalgalProvider);
+    final profilesAsync = ref.watch(currentModeProfilesStreamProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return pattiyalgalAsync.when(
@@ -31,7 +35,7 @@ class SilkHomePage extends ConsumerWidget {
         sliver: SliverToBoxAdapter(
           child: Column(
             children: [
-              _buildStatsGrid(context, ref, [], isDark, true),
+              _buildStatsGrid(context, ref, [], [], isDark, true),
               const SizedBox(height: 24),
               const MugappuLoadingSkeleton(),
             ],
@@ -42,6 +46,8 @@ class SilkHomePage extends ConsumerWidget {
         child: Center(child: Text('Error: $e')),
       ),
       data: (pattiyalgal) {
+        final profiles = profilesAsync.value ?? [];
+
         // Sort by date descending, take top 6
         final sorted = [...pattiyalgal]
           ..sort((a, b) => b.pattiyalNaal.compareTo(a.pattiyalNaal));
@@ -54,7 +60,7 @@ class SilkHomePage extends ConsumerWidget {
               children: [
                 // Stats bento grid
                 _buildStatsGrid(
-                    context, ref, pattiyalgal, isDark, false),
+                    context, ref, pattiyalgal, profiles, isDark, false),
                 const SizedBox(height: 8),
 
                 // Recent activity header
@@ -93,13 +99,55 @@ class SilkHomePage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     List<PatrucheettuEntry> pattiyalgal,
+    List<NiruvanaTharavugalEntry> profiles,
     bool isDark,
     bool isLoading,
   ) {
     // Compute stats
-    final totalInvoices = pattiyalgal.length;
-    // TODO: wire up receipt count when receipt stream is available
-    const totalReceipts = 0;
+    double overallTotal = 0;
+    final byCompany = <int, ({String name, double total, int count})>{};
+
+    for (final p in profiles) {
+      byCompany[p.id] = (
+        name: p.kurumPeyar.isNotEmpty
+            ? p.kurumPeyar
+            : (p.niruvanathinPeyar.values.firstOrNull ?? ''),
+        total: 0.0,
+        count: 0,
+      );
+    }
+
+    for (final b in pattiyalgal) {
+      overallTotal += b.mothaThogai;
+      if (b.niruvanamId != null && byCompany.containsKey(b.niruvanamId)) {
+        final prev = byCompany[b.niruvanamId]!;
+        byCompany[b.niruvanamId!] = (
+          name: prev.name,
+          total: prev.total + b.mothaThogai,
+          count: prev.count + 1,
+        );
+      }
+    }
+
+    final activeCompanies = byCompany.values
+        .where((c) => c.count > 0)
+        .toList();
+
+    // Company names value
+    final companiesValue = activeCompanies.isEmpty
+        ? '—'
+        : activeCompanies.map((c) => c.name).join(', ');
+
+    // Invoice count value (detailed per-company breakdown)
+    String invoiceCountValue;
+    if (activeCompanies.length == 1) {
+      invoiceCountValue =
+          '${activeCompanies[0].count} · ${activeCompanies[0].name}';
+    } else if (activeCompanies.length > 1) {
+      invoiceCountValue = '${activeCompanies.map((c) => '${c.count} · ${c.name}').join('  +  ')}  =  ${pattiyalgal.length}';
+    } else {
+      invoiceCountValue = '${pattiyalgal.length}';
+    }
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -113,18 +161,18 @@ class SilkHomePage extends ConsumerWidget {
             children: [
               Expanded(
                 child: ElvanStatsCard(
-                  icon: CupertinoIcons.doc_text,
-                  label: K.pattiyalEnnikai.tr(context, ref),
-                  value: '$totalInvoices',
+                  icon: CupertinoIcons.money_dollar_circle,
+                  label: K.mothaKanakku.tr(context, ref),
+                  value: _currencyFormat.format(overallTotal),
                   isLoading: isLoading,
                 ),
               ),
               SizedBox(width: gap),
               Expanded(
                 child: ElvanStatsCard(
-                  icon: CupertinoIcons.doc_plaintext,
-                  label: K.patrucheettuEnnikai.tr(context, ref),
-                  value: '$totalReceipts',
+                  icon: CupertinoIcons.building_2_fill,
+                  label: K.niruvanangal.tr(context, ref),
+                  value: companiesValue,
                   isLoading: isLoading,
                 ),
               ),
@@ -132,8 +180,8 @@ class SilkHomePage extends ConsumerWidget {
               Expanded(
                 child: ElvanStatsCard(
                   icon: CupertinoIcons.doc_text,
-                  label: K.pattiyalEnnikai.tr(context, ref),
-                  value: '${pattiyalgal.length}',
+                  label: K.mothaPattiyalgal.tr(context, ref),
+                  value: invoiceCountValue,
                   isLoading: isLoading,
                 ),
               ),
@@ -141,26 +189,37 @@ class SilkHomePage extends ConsumerWidget {
           );
         }
 
-        // Mobile: 2-col only (third card hidden on mobile — matches React)
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        // Mobile: 2-col top row + full-width third card
+        return Column(
           children: [
-            Expanded(
-              child: ElvanStatsCard(
-                icon: CupertinoIcons.doc_text,
-                label: K.pattiyalEnnikai.tr(context, ref),
-                value: '$totalInvoices',
-                isLoading: isLoading,
-              ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: ElvanStatsCard(
+                    icon: CupertinoIcons.money_dollar_circle,
+                    label: K.mothaKanakku.tr(context, ref),
+                    value: _currencyFormat.format(overallTotal),
+                    isLoading: isLoading,
+                  ),
+                ),
+                SizedBox(width: gap),
+                Expanded(
+                  child: ElvanStatsCard(
+                    icon: CupertinoIcons.building_2_fill,
+                    label: K.niruvanangal.tr(context, ref),
+                    value: companiesValue,
+                    isLoading: isLoading,
+                  ),
+                ),
+              ],
             ),
-            SizedBox(width: gap),
-            Expanded(
-              child: ElvanStatsCard(
-                icon: CupertinoIcons.doc_plaintext,
-                label: K.patrucheettuEnnikai.tr(context, ref),
-                value: '$totalReceipts',
-                isLoading: isLoading,
-              ),
+            SizedBox(height: gap),
+            ElvanStatsCard(
+              icon: CupertinoIcons.doc_text,
+              label: K.mothaPattiyalgal.tr(context, ref),
+              value: invoiceCountValue,
+              isLoading: isLoading,
             ),
           ],
         );

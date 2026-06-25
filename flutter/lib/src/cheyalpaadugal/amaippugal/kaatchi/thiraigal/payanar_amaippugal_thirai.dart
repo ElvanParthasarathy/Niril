@@ -8,7 +8,7 @@ import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/viruppangal_paniyagam.dart';
 import '../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
 import '../koorugal/elvan_amaippu_pagudhi.dart';
-import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
+import '../koorugal/elvan_amaippu_thirutha_attai.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 
 class PayanarAmaippugalPage extends ConsumerStatefulWidget {
@@ -19,12 +19,13 @@ class PayanarAmaippugalPage extends ConsumerStatefulWidget {
       _PayanarAmaippugalPageState();
 }
 
-class _PayanarAmaippugalPageState
-    extends ConsumerState<PayanarAmaippugalPage> {
-  late TextEditingController _mudhalPeyarController;
-  late TextEditingController _irudhiPeyarController;
+class _PayanarAmaippugalPageState extends ConsumerState<PayanarAmaippugalPage> {
+  String? _editingSection;
+  String _tempPrimary = '';
+
+  String _mudhalPeyar = '';
+  String _irudhiPeyar = '';
   String _pirandhaThaedhi = '';
-  bool _hasChanges = false;
 
   static final _dateFormat = DateFormat('dd/MM/yyyy');
 
@@ -32,44 +33,48 @@ class _PayanarAmaippugalPageState
   void initState() {
     super.initState();
     final prefs = ref.read(preferencesServiceProvider);
-    _mudhalPeyarController =
-        TextEditingController(text: prefs.getPayanarMudhalPeyar());
-    _irudhiPeyarController =
-        TextEditingController(text: prefs.getPayanarIrudhiPeyar());
+    _mudhalPeyar = prefs.getPayanarMudhalPeyar();
+    _irudhiPeyar = prefs.getPayanarIrudhiPeyar();
     _pirandhaThaedhi = prefs.getPayanarPirandhaThaedhi();
-
-    _mudhalPeyarController.addListener(_markChanged);
-    _irudhiPeyarController.addListener(_markChanged);
   }
 
-  void _markChanged() {
-    if (!_hasChanges) setState(() => _hasChanges = true);
+  void _beginEditSingle(String section, String val) {
+    setState(() {
+      _tempPrimary = val;
+      _editingSection = section;
+    });
   }
 
-  @override
-  void dispose() {
-    _mudhalPeyarController.dispose();
-    _irudhiPeyarController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _save() async {
+  Future<void> _saveField(String fieldName) async {
     final prefs = ref.read(preferencesServiceProvider);
-    await prefs.setPayanarMudhalPeyar(_mudhalPeyarController.text.trim());
-    await prefs.setPayanarIrudhiPeyar(_irudhiPeyarController.text.trim());
-    await prefs.setPayanarPirandhaThaedhi(_pirandhaThaedhi);
+    if (fieldName == 'mudhalPeyar') {
+      _mudhalPeyar = _tempPrimary;
+      await prefs.setPayanarMudhalPeyar(_mudhalPeyar);
+    } else if (fieldName == 'irudhiPeyar') {
+      _irudhiPeyar = _tempPrimary;
+      await prefs.setPayanarIrudhiPeyar(_irudhiPeyar);
+    } else if (fieldName == 'pirandhaThaedhi') {
+      _pirandhaThaedhi = _tempPrimary;
+      await prefs.setPayanarPirandhaThaedhi(_pirandhaThaedhi);
+    }
+    
     // Update the reactive provider so VanakkamPill rebuilds
     ref.read(payanarKaatchiPeyarProvider.notifier).state =
         prefs.getPayanarKaatchiPeyar();
-    setState(() => _hasChanges = false);
+        
+    setState(() => _editingSection = null);
     if (mounted) {
-      ElvanSnackbar.show(context, '✓');
+      ElvanSnackbar.show(context, K.tharavugalChaemippuVetri.tr(context, ref));
     }
   }
 
   Future<void> _pickDate() async {
     DateTime initialDate = DateTime.now();
-    if (_pirandhaThaedhi.isNotEmpty) {
+    if (_tempPrimary.isNotEmpty) {
+      try {
+        initialDate = _dateFormat.parse(_tempPrimary);
+      } catch (_) {}
+    } else if (_pirandhaThaedhi.isNotEmpty) {
       try {
         initialDate = _dateFormat.parse(_pirandhaThaedhi);
       } catch (_) {}
@@ -83,11 +88,61 @@ class _PayanarAmaippugalPageState
     );
 
     if (picked != null) {
+      final newDate = _dateFormat.format(picked);
       setState(() {
-        _pirandhaThaedhi = _dateFormat.format(picked);
-        _hasChanges = true;
+        _tempPrimary = newDate;
       });
     }
+  }
+
+  Widget _buildEditContainer({
+    required String title,
+    required List<Widget> inputFields,
+    required VoidCallback onCancel,
+    required VoidCallback onSave,
+  }) {
+    return ElvanSettingsEditContainer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ...inputFields,
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: onCancel,
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7),
+                ),
+                child: Text(K.kaividuPtn.tr(context, ref)),
+              ),
+              const SizedBox(width: 8),
+              FilledButton(
+                onPressed: onSave,
+                style: FilledButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.onSurface,
+                  foregroundColor: Theme.of(context).colorScheme.surface,
+                ),
+                child: Text(K.chaemiPtn.tr(context, ref)),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -96,7 +151,7 @@ class _PayanarAmaippugalPageState
     final theme = Theme.of(context);
 
     return ElvanSubpageShell(
-      title: K.payanarAmaippugal.tr(context, ref),
+      title: K.payanar.tr(context, ref),
       backgroundColor:
           isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
       slivers: [
@@ -109,82 +164,119 @@ class _PayanarAmaippugalPageState
           ),
           sliver: SliverList.list(
             children: [
-              // Description
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: Text(
-                  K.payanarVilakkam.tr(context, ref),
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-                  ),
-                ),
-              ),
-
               // Form section
               ElvanSettingsSection(
+                dividerIndent: 16.0,
                 children: [
                   // First Name
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    child: ElvanTextField(
-                      decoration: InputDecoration(
-                        labelText: K.mudhalPeyar.tr(context, ref),
-                      ),
-                      controller: _mudhalPeyarController,
+                  ElvanSettingsAnimatedExpand(
+                    keyPrefix: 'mudhalPeyar',
+                    isEditing: _editingSection == 'mudhalPeyar',
+                    editChild: _buildEditContainer(
+                      title: K.mudhalPeyar.tr(context, ref),
+                      inputFields: [
+                        ElvanSettingsTextField(
+                          label: K.mudhalPeyar.tr(context, ref),
+                          initialValue: _tempPrimary,
+                          onChanged: (val) => _tempPrimary = val,
+                        ),
+                      ],
+                      onCancel: () => setState(() => _editingSection = null),
+                      onSave: () => _saveField('mudhalPeyar'),
+                    ),
+                    displayChild: ElvanSettingsDisplayRow(
+                      title: K.mudhalPeyar.tr(context, ref),
+                      primaryValue: _mudhalPeyar,
+                      onEdit: () => _beginEditSingle('mudhalPeyar', _mudhalPeyar),
                     ),
                   ),
 
                   // Last Name
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    child: ElvanTextField(
-                      decoration: InputDecoration(
-                        labelText: K.irudhiPeyar.tr(context, ref),
-                      ),
-                      controller: _irudhiPeyarController,
+                  ElvanSettingsAnimatedExpand(
+                    keyPrefix: 'irudhiPeyar',
+                    isEditing: _editingSection == 'irudhiPeyar',
+                    editChild: _buildEditContainer(
+                      title: K.irudhiPeyar.tr(context, ref),
+                      inputFields: [
+                        ElvanSettingsTextField(
+                          label: K.irudhiPeyar.tr(context, ref),
+                          initialValue: _tempPrimary,
+                          onChanged: (val) => _tempPrimary = val,
+                        ),
+                      ],
+                      onCancel: () => setState(() => _editingSection = null),
+                      onSave: () => _saveField('irudhiPeyar'),
+                    ),
+                    displayChild: ElvanSettingsDisplayRow(
+                      title: K.irudhiPeyar.tr(context, ref),
+                      primaryValue: _irudhiPeyar,
+                      onEdit: () => _beginEditSingle('irudhiPeyar', _irudhiPeyar),
                     ),
                   ),
 
                   // Date of Birth
-                  ElvanSimpleSettingsRow(
-                    title: K.pirandhaThaedhi.tr(context, ref),
-                    description: _pirandhaThaedhi.isNotEmpty
-                        ? _pirandhaThaedhi
-                        : null,
-                    trailing: Icon(
-                      CupertinoIcons.calendar,
-                      size: 20,
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  ElvanSettingsAnimatedExpand(
+                    keyPrefix: 'pirandhaThaedhi',
+                    isEditing: _editingSection == 'pirandhaThaedhi',
+                    editChild: _buildEditContainer(
+                      title: K.pirandhaThaedhi.tr(context, ref),
+                      inputFields: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16, bottom: 8),
+                              child: Text(
+                                K.pirandhaThaedhi.tr(context, ref),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                  letterSpacing: 0.3,
+                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: _pickDate,
+                              borderRadius: BorderRadius.circular(100),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      _tempPrimary.isNotEmpty ? _tempPrimary : '...',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w400,
+                                        color: theme.colorScheme.onSurface,
+                                      ),
+                                    ),
+                                    Icon(
+                                      CupertinoIcons.calendar,
+                                      color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                      onCancel: () => setState(() => _editingSection = null),
+                      onSave: () => _saveField('pirandhaThaedhi'),
                     ),
-                    onTap: _pickDate,
+                    displayChild: ElvanSettingsDisplayRow(
+                      title: K.pirandhaThaedhi.tr(context, ref),
+                      primaryValue: _pirandhaThaedhi,
+                      onEdit: () => _beginEditSingle('pirandhaThaedhi', _pirandhaThaedhi),
+                    ),
                   ),
                 ],
-              ),
-
-              const SizedBox(height: 24),
-
-              // Save button
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: FilledButton(
-                  onPressed: _hasChanges ? _save : null,
-                  style: FilledButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  child: Text(
-                    K.payanarTharavugalaiMaetriduPtn.tr(context, ref),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
               ),
             ],
           ),
