@@ -16,6 +16,9 @@ import '../../../../adippadai/thoatra_vazhanguthi.dart';
 import '../../../../adippadai/vazhikaattal/navigation_provider.dart';
 import '../../../../adippadai/panigal/niril_backup_service.dart';
 import '../../tharavu/niruvana_tharavugal_provider.dart';
+import '../../tharavu/pattu_niruvana_tharavugal_provider.dart';
+import '../../tharavu/kooli_niruvana_tharavugal_provider.dart';
+
 import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 import '../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
@@ -263,26 +266,22 @@ class AccountSecuritySection extends ConsumerWidget {
               // Wipe BOTH databases by switching modes and deleting all tables
               
               // 1. Wipe Silk Database
-              ref.read(appModeProvider.notifier).setMode(AppMode.silk);
-              await Future.delayed(const Duration(milliseconds: 100));
-              var db = ref.read(appDatabaseProvider);
-              await db.delete(db.niruvanaTharavugalTable).go();
-              await db.delete(db.porulTable).go();
-              await db.delete(db.vaangunarTable).go();
-              await db.delete(db.patrucheettuTable).go();
-              await db.delete(db.patrugalTable).go();
-              await db.delete(db.patruPattiyalTable).go();
+              final pattuDb = ref.read(pattuDatabaseProvider);
+              await pattuDb.delete(pattuDb.pattuNiruvanaTharavugalTable).go();
+              await pattuDb.delete(pattuDb.pattuPorulTable).go();
+              await pattuDb.delete(pattuDb.pattuVaangunarTable).go();
+              await pattuDb.delete(pattuDb.pattuPatrucheettuTable).go();
+              await pattuDb.delete(pattuDb.pattuPatrugalTable).go();
+              await pattuDb.delete(pattuDb.pattuPatruPattiyalTable).go();
 
               // 2. Wipe Coolie Database
-              ref.read(appModeProvider.notifier).setMode(AppMode.coolie);
-              await Future.delayed(const Duration(milliseconds: 100));
-              db = ref.read(appDatabaseProvider);
-              await db.delete(db.niruvanaTharavugalTable).go();
-              await db.delete(db.porulTable).go();
-              await db.delete(db.vaangunarTable).go();
-              await db.delete(db.patrucheettuTable).go();
-              await db.delete(db.patrugalTable).go();
-              await db.delete(db.patruPattiyalTable).go();
+              final kooliDb = ref.read(kooliDatabaseProvider);
+              await kooliDb.delete(kooliDb.kooliNiruvanaTharavugalTable).go();
+              await kooliDb.delete(kooliDb.kooliPorulTable).go();
+              await kooliDb.delete(kooliDb.kooliVaangunarTable).go();
+              await kooliDb.delete(kooliDb.kooliPatrucheettuTable).go();
+              await kooliDb.delete(kooliDb.kooliPatrugalTable).go();
+              await kooliDb.delete(kooliDb.kooliPatruPattiyalTable).go();
 
               // Clear SharedPreferences
               final prefs = ref.read(sharedPreferencesProvider);

@@ -1,12 +1,10 @@
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../niril_podhu/kaatchi/koorugal/vaangunar_thaedu_kooru.dart';
-import '../../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
-import '../../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import 'maanila_thervu_maeladukku.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -38,7 +36,7 @@ class PattuVaangunargalCallbacks {
     required this.onPlaceOfSupplyCleared,
   });
 
-  final void Function(VaangunarEntry entry) onCustomerSelected;
+  final void Function(VaangunarTharavuru entry) onCustomerSelected;
   final VoidCallback onCustomerCleared;
   final VoidCallback onRequestAddNewCustomer;
   final void Function(String en, String ta) onPlaceOfSupplyChanged;
@@ -57,7 +55,7 @@ class PattuVaangunargalKooru extends ConsumerWidget {
 
   final PattuVaangunargalData data;
   final PattuVaangunargalCallbacks callbacks;
-  final VaangunarEntry? selectedVaangunar;
+  final VaangunarTharavuru? selectedVaangunar;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -78,7 +76,7 @@ class PattuVaangunargalKooru extends ConsumerWidget {
           ),
           const SizedBox(height: 6),
           VaangunarThaeduKooru(
-            seyaliVagai: 'silk',
+            
             selectedId: data.selectedVaangunarId,
             onSelected: callbacks.onCustomerSelected,
             onCleared: callbacks.onCustomerCleared,
@@ -139,7 +137,7 @@ class PattuVaangunargalKooru extends ConsumerWidget {
   }
 
   // ── Address Block ──
-  Widget _buildAddressBlock(VaangunarEntry v, ColorScheme cs, TextTheme tt) {
+  Widget _buildAddressBlock(VaangunarTharavuru v, ColorScheme cs, TextTheme tt) {
     List<String> buildLines(String key) {
       final lines = <String>[];
       final mugavari = (v.mugavari[key] ?? '').trim();

@@ -1,16 +1,15 @@
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:drift/drift.dart' show Value;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../../adippadai/mozhiyaakkam/k.dart';
-import '../../../../../../adippadai/mozhiyaakkam/extensions.dart';
+import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
-import '../../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../../../niril_podhu/kalanjiyam/pattiyal_kalanjiyam.dart';
 import '../../../thiraigal/amaippugal/pattu_mugavari_tharavu.dart';
@@ -54,7 +53,7 @@ class PattuThiruththiNilaimai {
 }
 
 /// Pure data helper — no widget dependency. Handles:
-///   • Loading from an existing PatrucheettuEntry (edit / duplicate)
+///   • Loading from an existing PattiyalTharavuru (edit / duplicate)
 ///   • Saving (create + update) via PattiyalKalanjiyam
 ///   • Draft persistence via SharedPreferences
 class PattuPattiyalUthavi {
@@ -64,11 +63,11 @@ class PattuPattiyalUthavi {
 
   // ── Load from entry (edit OR duplicate) ──────────────────────────────────
 
-  /// Parses a [PatrucheettuEntry] into a state snapshot.
+  /// Parses a [PattiyalTharavuru] into a state snapshot.
   /// When [isDuplicate] is true, the invoice number is cleared and date is
   /// set to now (creating a fresh copy).
   static PattuThiruththiNilaimai loadFromEntry(
-    PatrucheettuEntry entry, {
+    PattiyalTharavuru entry, {
     bool isDuplicate = false,
   }) {
     // Parse items
@@ -102,8 +101,8 @@ class PattuPattiyalUthavi {
     return PattuThiruththiNilaimai(
       selectedNiruvanamId: entry.niruvanamId,
       selectedVaangunarId: entry.vaangunarId,
-      selectedVaangunarPeyarMap: entry.vaangunarPeyar,
-      selectedVaangunarMunvariMap: entry.vaangunarMunvari,
+      selectedVaangunarPeyarMap: entry.vaangunarPeyar.cast<String, String>(),
+      selectedVaangunarMunvariMap: entry.vaangunarMunvari.cast<String, String>(),
       pattiyalVagai: entry.pattiyalVagai,
       pattiyalNaal: isDuplicate ? DateTime.now() : entry.pattiyalNaal,
       placeOfSupply: placeOfSupply,
@@ -123,9 +122,10 @@ class PattuPattiyalUthavi {
     required PattuThiruththiNilaimai state,
     required PattuMothangal totals,
     required String profilePrefix,
-    PatrucheettuEntry? editingEntry,
+    PattiyalTharavuru? editingEntry,
   }) async {
-    final finYear = PattiyalKalanjiyam.getCurrentFinYear();
+    final now = DateTime.now();
+    final finYear = now.month >= 4 ? now.year : now.year - 1;
     final validItems =
         state.items.where((i) => i.alavu > 0 && i.vilai > 0).toList();
 
@@ -142,24 +142,18 @@ class PattuPattiyalUthavi {
 
     if (state.invoiceNumberOverride.isNotEmpty) {
       finalBillNumber = state.invoiceNumberOverride;
-      vanakkam = await kalanjiyam.getNextVanakkam(
-          'silk', state.selectedNiruvanamId, finYear);
+      vanakkam = await kalanjiyam.getNextVanakkam(state.selectedNiruvanamId, finYear);
     } else if (editingEntry != null) {
       finalBillNumber = editingEntry.patrucheettuEn;
       vanakkam = editingEntry.vanakkam;
     } else {
-      vanakkam = await kalanjiyam.getNextVanakkam(
-          'silk', state.selectedNiruvanamId, finYear);
+      vanakkam = await kalanjiyam.getNextVanakkam(state.selectedNiruvanamId, finYear);
       finalBillNumber =
           kalanjiyam.formatPattiyalEn(profilePrefix, vanakkam);
     }
 
     // Duplicate check
-    final isDuplicate = await kalanjiyam.isPattiyalEnDuplicate(
-      'silk',
-      state.selectedNiruvanamId,
-      finYear,
-      finalBillNumber,
+    final isDuplicate = await kalanjiyam.isPattiyalEnDuplicate(state.selectedNiruvanamId, finYear, finalBillNumber,
       excludeId: editingEntry?.id,
     );
 
@@ -173,45 +167,69 @@ class PattuPattiyalUthavi {
           state.invoiceNumberOverride != editingEntry.patrucheettuEn;
       await kalanjiyam.updatePattiyal(
         editingEntry.id,
-        PatrucheettuTableCompanion(
-          patrucheettuEn: invNumChanged
-              ? Value(finalBillNumber)
-              : const Value.absent(),
-          niruvanamId: Value(state.selectedNiruvanamId),
-          vaangunarId: Value(state.selectedVaangunarId),
-          vaangunarPeyar: Value(state.selectedVaangunarPeyarMap),
-          vaangunarMunvari: Value(state.selectedVaangunarMunvariMap),
-          pattiyalVagai: Value(state.pattiyalVagai),
-          pattiyalNaal: Value(state.pattiyalNaal),
-          tharavugal: Value(PattiyalUthavigal.pattuListToJson(validItems)),
-          mothaThogai: Value(totals.mothaMothangal),
-          thallupadi: Value(totals.thallupadiMothangal),
-          variThogai: Value(totals.variMothangal),
-          variTharavugal: Value(jsonEncode(totals.variToJson())),
-          sonthaViruppangal: Value(settingsJson),
-          updatedAt: Value(DateTime.now()),
+        PattiyalTharavuru(
+          id: editingEntry.id,
+          vanakkam: editingEntry.vanakkam,
+          finYear: editingEntry.finYear,
+          patrucheettuEn: finalBillNumber,
+          niruvanamId: state.selectedNiruvanamId,
+          vaangunarId: state.selectedVaangunarId,
+          vaangunarPeyar: state.selectedVaangunarPeyarMap.cast<String, String>(),
+          vaangunarMunvari: state.selectedVaangunarMunvariMap.cast<String, String>(),
+          pattiyalVagai: state.pattiyalVagai,
+          pattiyalNaal: state.pattiyalNaal,
+          tharavugal: PattiyalUthavigal.pattuListToJson(validItems),
+          mothaThogai: totals.mothaMothangal,
+          thallupadi: totals.thallupadiMothangal,
+          variThogai: totals.variMothangal,
+          variTharavugal: jsonEncode(totals.variToJson()),
+          sonthaViruppangal: settingsJson,
+          createdAt: editingEntry.createdAt,
+          updatedAt: DateTime.now(),
+          isDeleted: editingEntry.isDeleted,
+          deletedAt: editingEntry.deletedAt,
+          mothaEdai: editingEntry.mothaEdai,
+          setharamGrams: editingEntry.setharamGrams,
+          thabaalThogai: editingEntry.thabaalThogai,
+          ahimsaPattuThogai: editingEntry.ahimsaPattuThogai,
+          piravariVugal: editingEntry.piravariVugal,
+          nibandhanaigal: editingEntry.nibandhanaigal,
+          ullkurippu: editingEntry.ullkurippu,
+          vangiTharavugal: editingEntry.vangiTharavugal,
         ),
       );
     } else {
       // ── Create ──
       await kalanjiyam.createPattiyal(
-        PatrucheettuTableCompanion.insert(
-          seyaliVagai: 'silk',
+        PattiyalTharavuru(
+          id: 0,
+          
           patrucheettuEn: finalBillNumber,
           finYear: finYear,
-          vanakkam: Value(vanakkam),
-          niruvanamId: Value(state.selectedNiruvanamId),
-          vaangunarPeyar: Value(state.selectedVaangunarPeyarMap),
-          vaangunarMunvari: Value(state.selectedVaangunarMunvariMap),
-          vaangunarId: Value(state.selectedVaangunarId),
-          pattiyalVagai: Value(state.pattiyalVagai),
-          pattiyalNaal: Value(state.pattiyalNaal),
-          tharavugal: Value(PattiyalUthavigal.pattuListToJson(validItems)),
-          mothaThogai: Value(totals.mothaMothangal),
-          thallupadi: Value(totals.thallupadiMothangal),
-          variThogai: Value(totals.variMothangal),
-          variTharavugal: Value(jsonEncode(totals.variToJson())),
-          sonthaViruppangal: Value(settingsJson),
+          vanakkam: vanakkam,
+          niruvanamId: state.selectedNiruvanamId,
+          vaangunarId: state.selectedVaangunarId,
+          vaangunarPeyar: state.selectedVaangunarPeyarMap.cast<String, String>(),
+          vaangunarMunvari: state.selectedVaangunarMunvariMap.cast<String, String>(),
+          pattiyalVagai: state.pattiyalVagai,
+          pattiyalNaal: state.pattiyalNaal,
+          tharavugal: PattiyalUthavigal.pattuListToJson(validItems),
+          mothaThogai: totals.mothaMothangal,
+          thallupadi: totals.thallupadiMothangal,
+          variThogai: totals.variMothangal,
+          variTharavugal: jsonEncode(totals.variToJson()),
+          sonthaViruppangal: settingsJson,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+          isDeleted: false,
+          mothaEdai: 0.0,
+          setharamGrams: 0.0,
+          thabaalThogai: 0.0,
+          ahimsaPattuThogai: 0.0,
+          piravariVugal: '[]',
+          nibandhanaigal: '',
+          ullkurippu: '',
+          vangiTharavugal: '{}',
         ),
       );
     }
@@ -227,8 +245,8 @@ class PattuPattiyalUthavi {
       final prefs = await SharedPreferences.getInstance();
       final draft = jsonEncode({
         'vaangunarId': state.selectedVaangunarId,
-        'vaangunarPeyarMap': state.selectedVaangunarPeyarMap,
-        'vaangunarMunvariMap': state.selectedVaangunarMunvariMap,
+        'vaangunarPeyarMap': state.selectedVaangunarPeyarMap.cast<String, String>(),
+        'vaangunarMunvariMap': state.selectedVaangunarMunvariMap.cast<String, String>(),
         'customerState': state.customerState,
         'niruvanamId': state.selectedNiruvanamId,
         'pattiyalVagai': state.pattiyalVagai,
@@ -286,8 +304,8 @@ class PattuPattiyalUthavi {
         final parsedItems = PattiyalUthavigal.pattuListFromJson(items);
         return PattuThiruththiNilaimai(
           selectedVaangunarId: draft['vaangunarId'] as int?,
-          selectedVaangunarPeyarMap: nameMap,
-          selectedVaangunarMunvariMap: addrMap,
+          selectedVaangunarPeyarMap: nameMap.cast<String, String>(),
+          selectedVaangunarMunvariMap: addrMap.cast<String, String>(),
           customerState: draft['customerState'] as String? ?? '',
           selectedNiruvanamId: draft['niruvanamId'] as int?,
           pattiyalVagai: draft['pattiyalVagai'] as String? ?? 'tax-invoice',

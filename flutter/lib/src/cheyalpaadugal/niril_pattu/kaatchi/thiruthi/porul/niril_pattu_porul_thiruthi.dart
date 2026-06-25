@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
@@ -69,16 +68,18 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
     final kalanjiyam = ref.read(porulKalanjiyamProvider);
     final alagu = _alavuVagai == 'weight' ? 'kg' : 'Nos';
 
-    kalanjiyam.savePorul(
-      id: _isEditing ? widget.product!.id : null,
-      seyaliVagai: 'silk',
+    kalanjiyam.savePorul(PorulTharavuru(
+      id: _isEditing ? widget.product!.id : -1,
       porulPeyar: _porulPeyar,
       hsnCode: _hsnController.text.trim(),
       vilai: double.tryParse(_vilaiController.text) ?? 0.0,
       variVeetham: double.tryParse(_variController.text) ?? 0.0,
       alavuVagai: _alavuVagai,
       alagu: alagu,
-    ).then((_) {
+      createdAt: widget.product?.createdAt ?? DateTime.now(),
+      updatedAt: DateTime.now(),
+      isDeleted: widget.product?.isDeleted ?? false,
+    )).then((_) {
       if (mounted) {
         ref.invalidate(porulgalProvider);
         ScaffoldMessenger.of(context).showSnackBar(

@@ -1,3 +1,5 @@
+import '../../../../niril_podhu/kalanjiyam/pattu_pattiyal_kalanjiyam.dart';
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -5,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_pagudhi_thalaipu_kooru.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
@@ -26,8 +27,8 @@ import '../../../../niril_podhu/kaatchi/koorugal/elvan_pattiyal_tharavugal_kooru
 /// Silk (GST) Invoice Editor — full form with line items, tax calculation,
 /// auto-numbering, and FK-based customer storage.
 class SilkInvoiceEditor extends ConsumerStatefulWidget {
-  final PatrucheettuEntry? editingEntry;
-  final PatrucheettuEntry? duplicateFrom;
+  final PattiyalTharavuru? editingEntry;
+  final PattiyalTharavuru? duplicateFrom;
 
   const SilkInvoiceEditor({super.key, this.editingEntry, this.duplicateFrom});
 
@@ -150,13 +151,11 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
     if (_isEditing) return;
     try {
       final kalanjiyam = ref.read(pattiyalKalanjiyamProvider);
-      final finYear = PattiyalKalanjiyam.getCurrentFinYear();
+      final finYear = PattuPattiyalKalanjiyam.getCurrentFinYear();
       final prefix = _selectedProfile?.kurumPeyar.isNotEmpty == true
           ? _selectedProfile!.kurumPeyar
           : 'INV';
-      final vanakkam = await kalanjiyam.getNextVanakkam(
-        'silk', _selectedNiruvanamId, finYear,
-      );
+      final vanakkam = await kalanjiyam.getNextVanakkam(_selectedNiruvanamId, finYear);
       if (mounted) {
         setState(() {
           _previewInvoiceNumber =
@@ -295,9 +294,9 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
 
     // Resolve selected customer from stream for "Saved Details" card
     final vaangunargalAsync = ref.watch(vaangunargalProvider);
-    final VaangunarEntry? selectedVaangunar = vaangunargalAsync.whenOrNull(
+    final VaangunarTharavuru? selectedVaangunar = vaangunargalAsync.whenOrNull(
       data: (list) => _selectedVaangunarId != null
-          ? list.cast<VaangunarEntry?>().firstWhere(
+          ? list.cast<VaangunarTharavuru?>().firstWhere(
                 (v) => v!.id == _selectedVaangunarId,
                 orElse: () => null,
               )

@@ -1,3 +1,4 @@
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../koorugal/maeladukkugal/elvan_cheyal_maeladukku.dart';
 import '../../kalanjiyam/porul_nilaimai.dart';
 import '../../kalanjiyam/vaangunar_nilaimai.dart';
@@ -137,7 +137,7 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
   }
 
   void _restorePorul(
-      BuildContext context, WidgetRef ref, PorulEntry porul) {
+      BuildContext context, WidgetRef ref, PorulTharavuru porul) {
     ref.read(porulKalanjiyamProvider).restorePorul(porul.id);
     ref.invalidate(porulgalProvider);
     ref.invalidate(deletedPorulgalProvider);
@@ -151,7 +151,7 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
   }
 
   void _permanentDeletePorul(
-      BuildContext context, WidgetRef ref, PorulEntry porul) {
+      BuildContext context, WidgetRef ref, PorulTharavuru porul) {
     showElvanActionSheet(
       context: context,
       title: K.nirandharaAzhippuUrudhi.tr(context, ref),
@@ -166,7 +166,7 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
   }
 
   void _restoreVaangunar(
-      BuildContext context, WidgetRef ref, VaangunarEntry vaangunar) {
+      BuildContext context, WidgetRef ref, VaangunarTharavuru vaangunar) {
     ref.read(vaangunarKalanjiyamProvider).restoreVaangunar(vaangunar.id);
     ref.invalidate(vaangunargalProvider);
     ref.invalidate(deletedVaangunargalProvider);
@@ -180,7 +180,7 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
   }
 
   void _permanentDeleteVaangunar(
-      BuildContext context, WidgetRef ref, VaangunarEntry vaangunar) {
+      BuildContext context, WidgetRef ref, VaangunarTharavuru vaangunar) {
     showElvanActionSheet(
       context: context,
       title: K.nirandharaAzhippuUrudhi.tr(context, ref),

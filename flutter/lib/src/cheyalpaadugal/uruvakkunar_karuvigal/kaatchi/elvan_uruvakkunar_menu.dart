@@ -34,7 +34,7 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
   void _seedAllData() async {
     // ── Step 1: Seed Silk Data ──
     ref.read(appModeProvider.notifier).setMode(AppMode.silk);
-    // Yield to let providers (especially appDatabaseProvider) rebuild
+    // Yield to let providers rebuild
     await Future.delayed(const Duration(milliseconds: 100));
 
     await SodhanaiTharavuUruvakki.eraseData(ref);
@@ -45,7 +45,7 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
 
     // ── Step 2: Seed Coolie Data ──
     ref.read(appModeProvider.notifier).setMode(AppMode.coolie);
-    // Yield to let providers (especially appDatabaseProvider) rebuild
+    // Yield to let providers rebuild
     await Future.delayed(const Duration(milliseconds: 100));
 
     await SodhanaiTharavuUruvakki.eraseData(ref);

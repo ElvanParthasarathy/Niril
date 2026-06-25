@@ -54,7 +54,7 @@ class KooliPorulKalanjiyam implements PorulKalanjiyam {
   @override
   Future<int> savePorul(PorulTharavuru tharavuru) async {
     final companion = KooliPorulTableCompanion(
-      porulPeyar: Value(tharavuru.porulPeyar),
+      porulPeyar: Value(tharavuru.porulPeyar.cast<String, String>()),
       hsnCode: Value(tharavuru.hsnCode),
       vilai: Value(tharavuru.vilai),
       variVeetham: Value(tharavuru.variVeetham),

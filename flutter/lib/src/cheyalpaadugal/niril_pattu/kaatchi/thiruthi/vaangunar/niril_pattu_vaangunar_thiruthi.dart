@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
@@ -125,9 +124,8 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
 
     final kalanjiyam = ref.read(vaangunarKalanjiyamProvider);
 
-    kalanjiyam.saveVaangunar(
-      id: _isEditing ? widget.vaangunar!.id : null,
-      seyaliVagai: 'silk',
+    kalanjiyam.saveVaangunar(VaangunarTharavuru(
+      id: _isEditing ? widget.vaangunar!.id : -1,
       peyar: _peyar,
       mugavari: _mugavari,
       oor: _oor,
@@ -139,7 +137,10 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
       gstin: gstin.toUpperCase(),
       minnanjal: _minnanjalController.text.trim(),
       tholaipaesi: _tholaipaesiController.text.trim(),
-    ).then((_) {
+      createdAt: widget.vaangunar?.createdAt ?? DateTime.now(),
+      updatedAt: DateTime.now(),
+      isDeleted: widget.vaangunar?.isDeleted ?? false,
+    )).then((_) {
       if (mounted) {
         ref.invalidate(vaangunargalProvider);
         ScaffoldMessenger.of(context).showSnackBar(

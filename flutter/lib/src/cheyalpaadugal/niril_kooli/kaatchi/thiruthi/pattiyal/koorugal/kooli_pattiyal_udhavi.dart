@@ -1,3 +1,4 @@
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -56,7 +57,7 @@ class KooliThiruththiNilaimai {
 }
 
 /// Pure data helper — no widget dependency. Handles:
-///   • Loading from an existing PatrucheettuEntry (edit)
+///   • Loading from an existing PattiyalTharavuru (edit)
 ///   • Saving (create + update) via PattiyalKalanjiyam
 class KooliPattiyalUthavi {
   KooliPattiyalUthavi._();
@@ -65,8 +66,8 @@ class KooliPattiyalUthavi {
 
   // ── Load from entry (edit) ────────────────────────────────────────────────
 
-  /// Parses a [PatrucheettuEntry] into a state snapshot for editing.
-  static KooliThiruththiNilaimai loadFromEntry(PatrucheettuEntry entry) {
+  /// Parses a [PattiyalTharavuru] into a state snapshot for editing.
+  static KooliThiruththiNilaimai loadFromEntry(PattiyalTharavuru entry) {
     // Parse items
     var items = PattiyalUthavigal.kooliListFromJson(entry.tharavugal);
     if (items.isEmpty) items = [const KooliUrupadi()];
@@ -98,9 +99,10 @@ class KooliPattiyalUthavi {
     required KooliMothangal totals,
     required String profilePrefix,
     required NiruvanaTharavugal profile,
-    PatrucheettuEntry? editingEntry,
+    PattiyalTharavuru? editingEntry,
   }) async {
-    final finYear = PattiyalKalanjiyam.getCurrentFinYear();
+    final now = DateTime.now();
+    final finYear = now.month >= 4 ? now.year : now.year - 1;
     final validItems =
         state.items.where((i) => i.edai > 0 && i.vilai > 0).toList();
 
@@ -151,53 +153,69 @@ class KooliPattiyalUthavi {
       // ── Update ──
       await kalanjiyam.updatePattiyal(
         editingEntry.id,
-        PatrucheettuTableCompanion(
-          patrucheettuEn: state.invoiceNumberOverride.isNotEmpty
-              ? Value(finalBillNumber)
-              : const Value.absent(),
-          vanakkam: state.invoiceNumberOverride.isNotEmpty
-              ? Value(vanakkam)
-              : const Value.absent(),
-          vaangunarId: Value(state.selectedVaangunarId),
-          vaangunarPeyar: Value(state.selectedVaangunarPeyarMap),
-          vaangunarMunvari: Value(state.selectedVaangunarMunvariMap),
-          niruvanamId: Value(state.selectedNiruvanamId),
-          pattiyalNaal: Value(state.pattiyalNaal),
-          tharavugal: Value(PattiyalUthavigal.kooliListToJson(validItems)),
-          mothaThogai: Value(totals.perumMothangal),
-          mothaEdai: Value(totals.mothaEdai),
-          setharamGrams: Value(state.setharamGrams),
-          thabaalThogai: Value(state.thabaalThogai),
-          ahimsaPattuThogai: Value(state.ahimsaPattuThogai),
-          piravariVugal: Value(
-              PattiyalUthavigal.piraVarivuListToJson(state.piraVarivugal)),
-          vangiTharavugal: Value(bankSnapshot),
-          createdAt: Value(editingEntry.createdAt),
-          updatedAt: Value(DateTime.now()),
+        PattiyalTharavuru(
+          id: editingEntry.id,
+          vanakkam: editingEntry.vanakkam,
+          finYear: editingEntry.finYear,
+          patrucheettuEn: finalBillNumber,
+          niruvanamId: state.selectedNiruvanamId,
+          vaangunarId: state.selectedVaangunarId,
+          vaangunarPeyar: state.selectedVaangunarPeyarMap,
+          vaangunarMunvari: state.selectedVaangunarMunvariMap,
+          pattiyalVagai: state.pattiyalVagai,
+          pattiyalNaal: state.pattiyalNaal,
+          tharavugal: PattiyalUthavigal.pattuListToJson(validItems),
+          mothaThogai: totals.mothaMothangal,
+          thallupadi: totals.thallupadiMothangal,
+          variThogai: totals.variMothangal,
+          variTharavugal: jsonEncode(totals.variToJson()),
+          sonthaViruppangal: settingsJson,
+          createdAt: editingEntry.createdAt,
+          updatedAt: DateTime.now(),
+          isDeleted: editingEntry.isDeleted,
+          deletedAt: editingEntry.deletedAt,
+          mothaEdai: editingEntry.mothaEdai,
+          setharamGrams: editingEntry.setharamGrams,
+          thabaalThogai: editingEntry.thabaalThogai,
+          ahimsaPattuThogai: editingEntry.ahimsaPattuThogai,
+          piravariVugal: editingEntry.piravariVugal,
+          nibandhanaigal: editingEntry.nibandhanaigal,
+          ullkurippu: editingEntry.ullkurippu,
+          vangiTharavugal: editingEntry.vangiTharavugal,
         ),
       );
     } else {
       // ── Create ──
       await kalanjiyam.createPattiyal(
-        PatrucheettuTableCompanion.insert(
-          seyaliVagai: 'coolie',
+        PattiyalTharavuru(
+          id: 0,
+          seyaliVagai: 'kooli',
           patrucheettuEn: finalBillNumber,
           finYear: finYear,
-          vanakkam: Value(vanakkam),
-          niruvanamId: Value(state.selectedNiruvanamId),
-          vaangunarPeyar: Value(state.selectedVaangunarPeyarMap),
-          vaangunarMunvari: Value(state.selectedVaangunarMunvariMap),
-          vaangunarId: Value(state.selectedVaangunarId),
-          pattiyalNaal: Value(state.pattiyalNaal),
-          tharavugal: Value(PattiyalUthavigal.kooliListToJson(validItems)),
-          mothaThogai: Value(totals.perumMothangal),
-          mothaEdai: Value(totals.mothaEdai),
-          setharamGrams: Value(state.setharamGrams),
-          thabaalThogai: Value(state.thabaalThogai),
-          ahimsaPattuThogai: Value(state.ahimsaPattuThogai),
-          piravariVugal: Value(
-              PattiyalUthavigal.piraVarivuListToJson(state.piraVarivugal)),
-          vangiTharavugal: Value(bankSnapshot),
+          vanakkam: vanakkam,
+          niruvanamId: state.selectedNiruvanamId,
+          vaangunarId: state.selectedVaangunarId,
+          vaangunarPeyar: state.selectedVaangunarPeyarMap,
+          vaangunarMunvari: state.selectedVaangunarMunvariMap,
+          pattiyalVagai: state.pattiyalVagai,
+          pattiyalNaal: state.pattiyalNaal,
+          tharavugal: PattiyalUthavigal.pattuListToJson(validItems),
+          mothaThogai: totals.mothaMothangal,
+          thallupadi: totals.thallupadiMothangal,
+          variThogai: totals.variMothangal,
+          variTharavugal: jsonEncode(totals.variToJson()),
+          sonthaViruppangal: settingsJson,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+          isDeleted: false,
+          mothaEdai: 0.0,
+          setharamGrams: 0.0,
+          thabaalThogai: 0.0,
+          ahimsaPattuThogai: 0.0,
+          piravariVugal: '[]',
+          nibandhanaigal: '',
+          ullkurippu: '',
+          vangiTharavugal: '{}',
         ),
       );
     }

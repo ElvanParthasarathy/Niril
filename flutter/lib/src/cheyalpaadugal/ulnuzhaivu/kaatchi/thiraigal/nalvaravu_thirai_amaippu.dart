@@ -147,7 +147,7 @@ class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
       canPop: _phase == WelcomePhase.greeting || 
               _phase == WelcomePhase.checkingBackup ||
               _phase == WelcomePhase.restore,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
 
         if (_phase == WelcomePhase.language) {

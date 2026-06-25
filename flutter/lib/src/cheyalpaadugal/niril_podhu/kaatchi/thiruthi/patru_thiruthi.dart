@@ -1,21 +1,16 @@
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:drift/drift.dart' show Value;
 
-import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../../../../adippadai/tharavuru/seyali_murai.dart';
-import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_pagudhi_thalaipu_kooru.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_niruvanam_oadu.dart';
-import '../../../niril_podhu/kalanjiyam/patru_kalanjiyam.dart';
 import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 import '../../../niril_podhu/tharavuru/seluthi_vagai.dart';
-import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import 'koorugal/patru_pattiyal_theervu_maeladukku.dart';
 import 'koorugal/patru_thiruthi_paguthigal.dart';
@@ -27,7 +22,7 @@ import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 /// Shared Receipt Editor — used by both Coolie and Silk modes.
 /// Three sections: ① Invoice picker, ② Receipt data, ③ Payment details.
 class PatruThiruthi extends ConsumerStatefulWidget {
-  final PatrugalEntry? editingEntry;
+  final PatrugalTharavuru? editingEntry;
 
   const PatruThiruthi({super.key, this.editingEntry});
 
@@ -62,7 +57,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   String _ullkurippu = '';
 
   // ── Linked Invoices ──
-  List<PatrucheettuEntry> _selectedInvoices = [];
+  List<PattiyalTharavuru> _selectedInvoices = [];
 
   // ── Controllers ──
   final _thogaiCtrl = TextEditingController();
@@ -87,14 +82,13 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     if (entry != null) {
       _selectedNiruvanamId = entry.niruvanamId;
       _selectedVaangunarId = entry.vaangunarId;
-      _vaangunarPeyarMap = entry.vaangunarPeyar;
-      _vaangunarMunvariMap = entry.vaangunarMunvari;
+      _vaangunarPeyarMap = entry.vaangunarPeyar.cast<String, String>();
       _patruNaal = entry.patruNaal;
       _patruEn = entry.patruEn;
       _vanakkam = entry.vanakkam;
       _thogai = entry.thogai;
-      _seluthiVagai = SeluthiVagaiX.fromStored(entry.seluthiVagai);
-      _suttruEn = entry.suttruEn;
+      _seluthiVagai = SeluthiVagaiX.fromStored(entry.seluthumMurai);
+      _suttruEn = entry.parivarthanaiEn; // Map parivarthanaiEn to UI's suttruEn
       _ullkurippu = entry.ullkurippu;
 
       _thogaiCtrl.text = _thogai > 0 ? _thogai.toStringAsFixed(2) : '';
@@ -124,7 +118,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     final links = await kalanjiyam.getLinksForPatru(widget.editingEntry!.id);
     final pattiyalKal = ref.read(pattiyalKalanjiyamProvider);
 
-    final invoices = <PatrucheettuEntry>[];
+    final invoices = <PattiyalTharavuru>[];
     for (final link in links) {
       final inv = await pattiyalKal.getById(link.pattiyalId);
       if (inv != null) invoices.add(inv);
@@ -145,15 +139,13 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     if (widget.editingEntry != null) return; // Don't regenerate for edits
 
     final kalanjiyam = ref.read(patruKalanjiyamProvider);
-    final mode = ref.read(appModeProvider);
-    final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
-
+    
     final bizShort = (_selectedProfile?.kurumPeyar.isNotEmpty == true
             ? _selectedProfile!.kurumPeyar
             : 'BIZ')
         .toUpperCase();
     _vanakkam =
-        await kalanjiyam.getNextVanakkam(seyaliVagai, _selectedNiruvanamId);
+        await kalanjiyam.getNextVanakkam(_selectedNiruvanamId);
 
     // Format is RCP/bizShort/01
     final formatted = kalanjiyam.formatPatruEn(bizShort, _vanakkam);
@@ -188,11 +180,9 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
     try {
       final kalanjiyam = ref.read(patruKalanjiyamProvider);
-      final mode = ref.read(appModeProvider);
-      final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
-
+      
       // Build junction links — distribute amount across invoices (oldest first)
-      final links = <PatruPattiyalLink>[];
+      final links = <PatruPattiyalInaippuTharavuru>[];
       double remaining = _thogai;
 
       for (final inv in _selectedInvoices) {
@@ -201,7 +191,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
         final apply = remaining.clamp(0.0, inv.mothaThogai);
 
         if (apply > 0) {
-          links.add(PatruPattiyalLink(
+          links.add(PatruPattiyalInaippuTharavuru(
             pattiyalId: inv.id,
             poruthiyaThogai: apply,
           ));
@@ -224,7 +214,6 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
       // Check for duplicate receipt number
       final isDuplicate = await kalanjiyam.isPatruEnDuplicate(
-        seyaliVagai,
         _selectedNiruvanamId,
         _patruEn,
         excludeId: widget.editingEntry?.id,
@@ -240,20 +229,23 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       }
 
       // Build receipt companion
-      final companion = PatrugalTableCompanion(
-        seyaliVagai: Value(seyaliVagai),
-        niruvanamId: Value(_selectedNiruvanamId),
-        patruEn: Value(_patruEn),
-        vanakkam: Value(_vanakkam),
-        vaangunarId: Value(_selectedVaangunarId),
-        vaangunarPeyar: Value(_vaangunarPeyarMap),
-        vaangunarMunvari: Value(_vaangunarMunvariMap),
-        patruNaal: Value(_patruNaal),
-        thogai: Value(_thogai),
-        seluthiVagai: Value(_seluthiVagai!.storedValue),
-        suttruEn: Value(_seluthiVagai!.needsReference ? _suttruEn : ''),
-        ullkurippu: Value(_ullkurippu),
-        updatedAt: Value(DateTime.now()),
+      final companion = PatrugalTharavuru(
+        id: widget.editingEntry?.id ?? 0,
+        niruvanamId: _selectedNiruvanamId,
+        patruEn: _patruEn,
+        vanakkam: _vanakkam,
+        finYear: widget.editingEntry?.finYear ?? DateTime.now().year,
+        vaangunarId: _selectedVaangunarId,
+        vaangunarPeyar: _vaangunarPeyarMap,
+        patruNaal: _patruNaal,
+        thogai: _thogai,
+        seluthumMurai: _seluthiVagai!.storedValue,
+        vangiPeyar: widget.editingEntry?.vangiPeyar ?? '',
+        parivarthanaiEn: widget.editingEntry?.parivarthanaiEn ?? '',
+        ullkurippu: _ullkurippu,
+        createdAt: widget.editingEntry?.createdAt ?? DateTime.now(),
+        updatedAt: DateTime.now(),
+        isDeleted: false,
       );
 
       if (widget.editingEntry != null) {
@@ -281,9 +273,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   Widget build(BuildContext context) {
     final invoicesAsync = ref.watch(pattiyalgalProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final mode = ref.watch(appModeProvider);
-    final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
-
+    
     if (widget.editingEntry == null &&
         _patruEn.isEmpty &&
         _selectedNiruvanamId != null) {
@@ -366,7 +356,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
             ),
             ElvanThiruthiAttai(
               padding: const EdgeInsets.all(24),
-              child: _buildReceiptDataSection(seyaliVagai, isDark),
+              child: _buildReceiptDataSection(isDark),
             ),
             const SizedBox(height: 24),
 
@@ -387,7 +377,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
   // ── Section 1: Invoice Picker ──
   Widget _buildInvoicePickerSection(
-      AsyncValue<List<PatrucheettuEntry>> invoicesAsync, bool isDark) {
+      AsyncValue<List<PattiyalTharavuru>> invoicesAsync, bool isDark) {
     return PatruPattiyalTheervuPagudhi(
       selectedInvoices: _selectedInvoices,
       isDark: isDark,
@@ -402,7 +392,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   }
 
   // ── Section 2: Receipt Data ──
-  Widget _buildReceiptDataSection(String seyaliVagai, bool isDark) {
+  Widget _buildReceiptDataSection(bool isDark) {
     final bizShort = (_selectedProfile?.kurumPeyar.isNotEmpty == true
             ? _selectedProfile!.kurumPeyar
             : 'BIZ')
@@ -497,7 +487,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
           // Advance Mode — manual selection
           if (_selectedVaangunarId == null)
             VaangunarThaeduKooru(
-              seyaliVagai: seyaliVagai,
+              
               selectedId: _selectedVaangunarId,
               onSelected: (v) {
                 setState(() {
@@ -618,7 +608,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
   // ── Invoice Picker Dialog ──
   void _showInvoicePickerDialog(
-      AsyncValue<List<PatrucheettuEntry>> invoicesAsync) {
+      AsyncValue<List<PattiyalTharavuru>> invoicesAsync) {
     final allInvoices = invoicesAsync.value ?? [];
     final filteredByBusiness = _selectedNiruvanamId != null
         ? allInvoices
@@ -670,8 +660,8 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     // Auto-fill customer from first invoice (if not already set)
     if (_selectedVaangunarId == null && first.vaangunarId != null) {
       _selectedVaangunarId = first.vaangunarId;
-      _vaangunarPeyarMap = first.vaangunarPeyar;
-      _vaangunarMunvariMap = first.vaangunarMunvari;
+      _vaangunarPeyarMap = first.vaangunarPeyar.cast<String, String>();
+      _vaangunarMunvariMap = first.vaangunarMunvari.cast<String, String>();
     }
   }
 

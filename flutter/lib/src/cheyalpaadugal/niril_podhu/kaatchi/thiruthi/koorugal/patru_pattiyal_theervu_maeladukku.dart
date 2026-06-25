@@ -1,10 +1,10 @@
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
@@ -14,9 +14,9 @@ class PatruPattiyalTheervuMaeladukku {
   static void show({
     required BuildContext context,
     required WidgetRef ref,
-    required List<PatrucheettuEntry> invoices,
+    required List<PattiyalTharavuru> invoices,
     required Set<int> initialSelectedIds,
-    required void Function(List<PatrucheettuEntry> selected) onConfirmed,
+    required void Function(List<PattiyalTharavuru> selected) onConfirmed,
   }) {
     final searchCtrl = TextEditingController();
     var searchQuery = '';
@@ -33,7 +33,7 @@ class PatruPattiyalTheervuMaeladukku {
         return StatefulBuilder(
           builder: (ctx, setDialogState) {
             // Smart Filtering: Lock to the first selected invoice's company, customer, and exact address
-            PatrucheettuEntry? firstSelected;
+            PattiyalTharavuru? firstSelected;
             if (selectedIds.isNotEmpty) {
               final firstId = selectedIds.first;
               for (var i in invoices) {

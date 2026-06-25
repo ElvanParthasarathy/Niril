@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -501,7 +502,6 @@ class AppDatabase extends _$AppDatabase {
 }
 
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
   final db = AppDatabase(AppDatabase.openConnection('elvan_niril.db'));
   ref.onDispose(db.close);

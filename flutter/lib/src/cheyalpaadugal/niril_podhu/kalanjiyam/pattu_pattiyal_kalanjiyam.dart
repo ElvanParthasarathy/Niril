@@ -4,6 +4,13 @@ import '../../../adippadai/tharavuru/uruvugal.dart';
 import 'pattiyal_kalanjiyam.dart';
 
 class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
+  static int getCurrentFinYear() {
+    final now = DateTime.now();
+    if (now.month >= 4) {
+      return now.year;
+    }
+    return now.year - 1;
+  }
   final PattuDatabase _db;
 
   PattuPattiyalKalanjiyam(this._db);
@@ -17,8 +24,8 @@ class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
       vanakkam: entry.vanakkam,
       pattiyalVagai: entry.pattiyalVagai,
       vaangunarId: entry.vaangunarId,
-      vaangunarPeyar: entry.vaangunarPeyar,
-      vaangunarMunvari: entry.vaangunarMunvari,
+      vaangunarPeyar: Map<String, String>.from(entry.vaangunarPeyar as Map),
+      vaangunarMunvari: Map<String, String>.from(entry.vaangunarMunvari as Map),
       pattiyalNaal: entry.pattiyalNaal,
       tharavugal: entry.tharavugal,
       mothaThogai: entry.mothaThogai,
@@ -52,8 +59,8 @@ class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
       vanakkam: Value(tharavuru.vanakkam),
       pattiyalVagai: Value(tharavuru.pattiyalVagai),
       vaangunarId: Value(tharavuru.vaangunarId),
-      vaangunarPeyar: Value(tharavuru.vaangunarPeyar),
-      vaangunarMunvari: Value(tharavuru.vaangunarMunvari),
+      vaangunarPeyar: Value(tharavuru.vaangunarPeyar.cast<String, String>()),
+      vaangunarMunvari: Value(tharavuru.vaangunarMunvari.cast<String, String>()),
       pattiyalNaal: Value(tharavuru.pattiyalNaal),
       tharavugal: Value(tharavuru.tharavugal),
       mothaThogai: Value(tharavuru.mothaThogai),

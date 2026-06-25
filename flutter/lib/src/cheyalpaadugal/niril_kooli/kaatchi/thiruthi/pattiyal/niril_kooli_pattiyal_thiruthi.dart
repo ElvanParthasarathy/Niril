@@ -1,10 +1,10 @@
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
@@ -26,7 +26,7 @@ import '../../../../niril_podhu/kaatchi/koorugal/elvan_pattiyal_tharavugal_kooru
 /// Coolie Invoice Editor — weight-based billing with setharam, courier,
 /// ahimsa, and other charges. Uses floor(kg × rate) truncation.
 class CoolieInvoiceEditor extends ConsumerStatefulWidget {
-  final PatrucheettuEntry? editingEntry;
+  final PattiyalTharavuru? editingEntry;
 
   const CoolieInvoiceEditor({super.key, this.editingEntry});
 
@@ -312,9 +312,9 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     final profiles = ref.watch(NiruvanaTharavugalListProvider);
     final formatter = NumberFormat('#,##0', 'en_IN');
     final vaangunargalAsync = ref.watch(vaangunargalProvider);
-    final VaangunarEntry? selectedVaangunar = vaangunargalAsync.whenOrNull(
+    final VaangunarTharavuru? selectedVaangunar = vaangunargalAsync.whenOrNull(
       data: (list) => _selectedVaangunarId != null
-          ? list.cast<VaangunarEntry?>().firstWhere(
+          ? list.cast<VaangunarTharavuru?>().firstWhere(
                 (v) => v!.id == _selectedVaangunarId, orElse: () => null)
           : null,
     );

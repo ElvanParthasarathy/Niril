@@ -64,7 +64,6 @@ class KooliNiruvanaTharavugalTable extends Table {
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
-  DateTimeColumn get deletedAt => dateTime().nullable()();
 }
 
 // ── Table: வணிகர் (Customer / Merchant) ──
@@ -101,7 +100,6 @@ class KooliVaangunarTable extends Table {
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
-  DateTimeColumn get deletedAt => dateTime().nullable()();
 }
 
 // ── Table: பொருள் (Items / Products) ──
@@ -125,7 +123,6 @@ class KooliPorulTable extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
-  DateTimeColumn get deletedAt => dateTime().nullable()();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 }
 
@@ -199,7 +196,6 @@ class KooliPatrucheettuTable extends Table {
   DateTimeColumn get updatedAt =>
       dateTime().withDefault(currentDateAndTime)();
   BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
-  DateTimeColumn get deletedAt => dateTime().nullable()();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 }
 

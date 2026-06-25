@@ -1,9 +1,9 @@
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:intl/intl.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../kalanjiyam/porul_nilaimai.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -21,13 +21,13 @@ final _inrFormat = NumberFormat.currency(
   decimalDigits: 2,
 );
 
-/// Autocomplete search widget for selecting a [PorulEntry].
+/// Autocomplete search widget for selecting a [PorulTharavuru].
 ///
 /// Watches [porulgalProvider] and filters the list by matching the
 /// query against both Tamil and English name fields from the `porulPeyar` map.
 class PorulThaeduKooru extends ConsumerStatefulWidget {
   /// Callback fired when the user picks a product from the list.
-  final ValueChanged<PorulEntry> onSelected;
+  final ValueChanged<PorulTharavuru> onSelected;
 
   /// Called when the user taps the "Add New Product" action.
   final VoidCallback? onRequestAddNew;
@@ -71,14 +71,14 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
 
   // ── Helpers ────────────────────────────────────────────────────────────────
 
-  /// Extracts the display name from a [PorulEntry], preferring Tamil.
-  String _getDisplayName(PorulEntry entry) {
+  /// Extracts the display name from a [PorulTharavuru], preferring Tamil.
+  String _getDisplayName(PorulTharavuru entry) {
     final peyar = entry.porulPeyar; // Map<String, String>
     return peyar['Tamil'] ?? peyar['English'] ?? '';
   }
 
   /// Extracts the secondary (alternate-language) name, or empty string.
-  String _getSecondaryName(PorulEntry entry) {
+  String _getSecondaryName(PorulTharavuru entry) {
     final peyar = entry.porulPeyar;
     if (peyar.containsKey('Tamil') && peyar['Tamil']!.isNotEmpty) {
       return peyar['English'] ?? '';
@@ -87,7 +87,7 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
   }
 
   /// Returns `true` if the entry matches the search [query] (case-insensitive).
-  bool _matchesQuery(PorulEntry entry, String query) {
+  bool _matchesQuery(PorulTharavuru entry, String query) {
     final q = query.toLowerCase();
     final peyar = entry.porulPeyar;
     final tamilMatch =
@@ -120,7 +120,7 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
         hintText: K.pizhai.tr(context, ref),
       ),
       data: (porulgal) {
-        return Autocomplete<PorulEntry>(
+        return Autocomplete<PorulTharavuru>(
           displayStringForOption: _getDisplayName,
           initialValue: widget.initialText != null
               ? TextEditingValue(text: widget.initialText!)

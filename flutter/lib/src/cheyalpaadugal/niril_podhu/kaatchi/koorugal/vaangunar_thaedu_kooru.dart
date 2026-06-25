@@ -1,8 +1,8 @@
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../kalanjiyam/vaangunar_nilaimai.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -12,13 +12,13 @@ import '../../kalanjiyam/vaangunar_nilaimai.dart';
 // name (Tamil & English). Used by both Silk and Coolie invoice editors.
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// Autocomplete search widget for selecting a [VaangunarEntry].
+/// Autocomplete search widget for selecting a [VaangunarTharavuru].
 ///
 /// Watches [vaangunargalProvider] and filters the list by matching the
 /// query against both Tamil and English name fields from the `peyar` map.
 class VaangunarThaeduKooru extends ConsumerStatefulWidget {
   /// Callback fired when the user picks a customer from the list.
-  final ValueChanged<VaangunarEntry> onSelected;
+  final ValueChanged<VaangunarTharavuru> onSelected;
 
   /// Called when the user clears the current selection via the X button.
   final VoidCallback? onCleared;
@@ -30,15 +30,14 @@ class VaangunarThaeduKooru extends ConsumerStatefulWidget {
   final int? selectedId;
 
   /// The app mode identifier ('silk' or 'coolie').
-  final String seyaliVagai;
-
+  
   const VaangunarThaeduKooru({
     super.key,
     required this.onSelected,
     this.onCleared,
     this.onRequestAddNew,
     this.selectedId,
-    required this.seyaliVagai,
+    
   });
 
   @override
@@ -63,14 +62,14 @@ class _VaangunarThaeduKooruState extends ConsumerState<VaangunarThaeduKooru> {
 
   // ── Helpers ────────────────────────────────────────────────────────────────
 
-  /// Extracts the display name from a [VaangunarEntry], preferring Tamil.
-  String _getDisplayName(VaangunarEntry entry) {
+  /// Extracts the display name from a [VaangunarTharavuru], preferring Tamil.
+  String _getDisplayName(VaangunarTharavuru entry) {
     final peyar = entry.peyar; // Map<String, String>
     return peyar['Tamil'] ?? peyar['English'] ?? '';
   }
 
   /// Extracts the secondary (alternate-language) name, or empty string.
-  String _getSecondaryName(VaangunarEntry entry) {
+  String _getSecondaryName(VaangunarTharavuru entry) {
     final peyar = entry.peyar;
     // If Tamil is the primary, show English as secondary (and vice versa).
     if (peyar.containsKey('Tamil') && peyar['Tamil']!.isNotEmpty) {
@@ -80,13 +79,13 @@ class _VaangunarThaeduKooruState extends ConsumerState<VaangunarThaeduKooru> {
   }
 
   /// Extracts the city display text from the bilingual `oor` map.
-  String _getOorDisplay(VaangunarEntry entry) {
+  String _getOorDisplay(VaangunarTharavuru entry) {
     final oor = entry.oor;
     return oor['Tamil'] ?? oor['English'] ?? '';
   }
 
   /// Returns `true` if the entry matches the search [query] (case-insensitive).
-  bool _matchesQuery(VaangunarEntry entry, String query) {
+  bool _matchesQuery(VaangunarTharavuru entry, String query) {
     final q = query.toLowerCase();
     final peyar = entry.peyar;
     final tamilMatch =
@@ -116,7 +115,7 @@ class _VaangunarThaeduKooruState extends ConsumerState<VaangunarThaeduKooru> {
       data: (vaangunargal) {
         // Pre-fill text if selectedId is provided.
         if (widget.selectedId != null && _textController.text.isEmpty) {
-          final selected = vaangunargal.cast<VaangunarEntry?>().firstWhere(
+          final selected = vaangunargal.cast<VaangunarTharavuru?>().firstWhere(
                 (v) => v!.id == widget.selectedId,
                 orElse: () => null,
               );
@@ -125,7 +124,7 @@ class _VaangunarThaeduKooruState extends ConsumerState<VaangunarThaeduKooru> {
           }
         }
 
-        return Autocomplete<VaangunarEntry>(
+        return Autocomplete<VaangunarTharavuru>(
           displayStringForOption: _getDisplayName,
           optionsBuilder: (textEditingValue) {
             final query = textEditingValue.text.trim();

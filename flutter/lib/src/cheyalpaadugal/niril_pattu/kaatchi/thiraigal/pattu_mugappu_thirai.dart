@@ -1,3 +1,5 @@
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
+import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -98,7 +100,7 @@ class SilkHomePage extends ConsumerWidget {
   Widget _buildStatsGrid(
     BuildContext context,
     WidgetRef ref,
-    List<PatrucheettuEntry> pattiyalgal,
+    List<PattiyalTharavuru> pattiyalgal,
     List<NiruvanaTharavugalEntry> profiles,
     bool isDark,
     bool isLoading,
@@ -230,7 +232,7 @@ class SilkHomePage extends ConsumerWidget {
   // ── Desktop 2-col grid ──────────────────────────────────────────────────
 
   Widget _buildDesktopGrid(
-    List<PatrucheettuEntry> items,
+    List<PattiyalTharavuru> items,
     BuildContext context,
     WidgetRef ref,
   ) {
@@ -271,7 +273,7 @@ class SilkHomePage extends ConsumerWidget {
   // ── Mobile list ─────────────────────────────────────────────────────────
 
   Widget _buildMobileList(
-    List<PatrucheettuEntry> items,
+    List<PattiyalTharavuru> items,
     BuildContext context,
     WidgetRef ref,
   ) {
@@ -292,7 +294,7 @@ class SilkHomePage extends ConsumerWidget {
     );
   }
 
-  void _openEditor(BuildContext context, PatrucheettuEntry pattiyal) {
+  void _openEditor(BuildContext context, PattiyalTharavuru pattiyal) {
     NirilNav.push(
       context,
       SilkInvoiceEditor(editingEntry: pattiyal),

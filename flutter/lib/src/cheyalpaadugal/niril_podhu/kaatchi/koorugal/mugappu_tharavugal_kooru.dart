@@ -1,3 +1,4 @@
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,7 +6,6 @@ import 'package:intl/intl.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 
 // ── Stats Card (Bento Grid Item) ────────────────────────────────────────────
 
@@ -212,7 +212,7 @@ class ElvanRecentCard extends ConsumerStatefulWidget {
   });
 
   final int index;
-  final PatrucheettuEntry pattiyal;
+  final PattiyalTharavuru pattiyal;
   final VoidCallback onTap;
 
   @override

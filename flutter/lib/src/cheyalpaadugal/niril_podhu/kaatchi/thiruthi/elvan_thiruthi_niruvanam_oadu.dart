@@ -49,7 +49,7 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
               children: [
                 Expanded(
                   child: DropdownButtonFormField<int>(
-                    value: selectedNiruvanamId,
+                    initialValue: selectedNiruvanamId,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: cs.surfaceContainerHighest,

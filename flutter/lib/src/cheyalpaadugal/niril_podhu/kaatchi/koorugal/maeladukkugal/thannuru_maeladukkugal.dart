@@ -135,8 +135,7 @@ void showManageProfilesModal({
                                               showElvanDeleteConfirmModal(
                                                   context, ref, () {
                                             ref
-                                                .read(NiruvanaTharavugalListProvider
-                                                    .notifier)
+                                                .read(niruvanaTharavugalNotifierProvider)
                                                 .deleteProfile(profile.id!);
                                             ElvanSnackbar.show(
                                                 context,

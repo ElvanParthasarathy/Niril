@@ -68,7 +68,6 @@ class PattuNiruvanaTharavugalTable extends Table {
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
-  DateTimeColumn get deletedAt => dateTime().nullable()();
 }
 
 // ── Table: வணிகர் (Customer / Merchant) ──
@@ -105,7 +104,6 @@ class PattuVaangunarTable extends Table {
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
   DateTimeColumn get deletedAt => dateTime().nullable()();
-  DateTimeColumn get deletedAt => dateTime().nullable()();
 }
 
 // ── Table: பொருள் (Items / Products) ──
@@ -129,7 +127,6 @@ class PattuPorulTable extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
   BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
-  DateTimeColumn get deletedAt => dateTime().nullable()();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 }
 
@@ -187,7 +184,6 @@ class PattuPatrucheettuTable extends Table {
   DateTimeColumn get updatedAt =>
       dateTime().withDefault(currentDateAndTime)();
   BoolColumn get isDeleted => boolean().withDefault(const Constant(false))();
-  DateTimeColumn get deletedAt => dateTime().nullable()();
   DateTimeColumn get deletedAt => dateTime().nullable()();
 }
 

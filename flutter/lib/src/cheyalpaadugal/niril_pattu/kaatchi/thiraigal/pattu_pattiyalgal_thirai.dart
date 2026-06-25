@@ -1,3 +1,6 @@
+import '../../../amaippugal/tharavu/pattu_niruvana_tharavugal_provider.dart';
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
+import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,7 +31,7 @@ class SilkInvoicesPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final query = ref.watch(silkInvoicesSearchQueryProvider).toLowerCase();
     final pattiyalgalAsync = ref.watch(pattiyalgalProvider);
-    final profilesAsync = ref.watch(currentModeProfilesStreamProvider);
+    final profilesAsync = ref.watch(pattuNiruvanaTharavugalListProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelecting = ref.watch(pattiyalSelectionModeProvider);
     final selectedIds = ref.watch(selectedPattiyalIdsProvider);
@@ -96,7 +99,7 @@ class SilkInvoicesPage extends ConsumerWidget {
         }
 
         // Group invoices by niruvanamId
-        final grouped = <int?, List<PatrucheettuEntry>>{};
+        final grouped = <int?, List<PattiyalTharavuru>>{};
         for (final p in filtered) {
           grouped.putIfAbsent(p.niruvanamId, () => []).add(p);
         }
@@ -343,7 +346,7 @@ class _SilkPatrucheettuCard extends StatelessWidget {
   });
 
   final int index;
-  final PatrucheettuEntry pattiyal;
+  final PattiyalTharavuru pattiyal;
   final bool isDark;
   final bool isSelecting;
   final bool isSelected;

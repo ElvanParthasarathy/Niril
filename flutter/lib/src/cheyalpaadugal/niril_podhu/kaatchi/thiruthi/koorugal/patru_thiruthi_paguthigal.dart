@@ -1,8 +1,8 @@
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
@@ -23,10 +23,10 @@ class PatruPattiyalTheervuPagudhi extends ConsumerWidget {
     required this.onRemoveInvoice,
   });
 
-  final List<PatrucheettuEntry> selectedInvoices;
+  final List<PattiyalTharavuru> selectedInvoices;
   final bool isDark;
   final VoidCallback onPickInvoices;
-  final void Function(PatrucheettuEntry invoice) onRemoveInvoice;
+  final void Function(PattiyalTharavuru invoice) onRemoveInvoice;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

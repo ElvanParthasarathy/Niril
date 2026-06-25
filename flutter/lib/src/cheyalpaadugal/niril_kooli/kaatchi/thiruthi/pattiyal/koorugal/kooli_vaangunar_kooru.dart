@@ -1,20 +1,19 @@
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
-import '../../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../niril_podhu/kaatchi/koorugal/vaangunar_thaedu_kooru.dart';
-import '../../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 
 /// §1 Customer — client search + company dropdown + saved-details card.
 class KooliVaangunarKooru extends ConsumerWidget {
   final int? selectedVaangunarId;
   final Map<String, String> selectedVaangunarPeyarMap;
-  final VaangunarEntry? selectedVaangunar;
-  final ValueChanged<VaangunarEntry> onVaangunarSelected;
+  final VaangunarTharavuru? selectedVaangunar;
+  final ValueChanged<VaangunarTharavuru> onVaangunarSelected;
   final VoidCallback onVaangunarCleared;
 
   const KooliVaangunarKooru({
@@ -102,7 +101,7 @@ class KooliVaangunarKooru extends ConsumerWidget {
   /// Builds combined address lines for a given language key.
   /// Tamil: normal color. English (isSubtitle): lighter, italic.
   List<Widget> _buildAddressLines(
-    VaangunarEntry v,
+    VaangunarTharavuru v,
     String key,
     TextTheme tt,
     ColorScheme cs, {

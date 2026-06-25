@@ -1,3 +1,5 @@
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
+import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -96,7 +98,7 @@ class CoolieReceiptsPage extends ConsumerWidget {
         }
 
         // Group by niruvanamId
-        final grouped = <int?, List<PatrugalEntry>>{};
+        final grouped = <int?, List<PatrugalTharavuru>>{};
         for (final p in filtered) {
           grouped.putIfAbsent(p.niruvanamId, () => []).add(p);
         }
@@ -321,7 +323,7 @@ class _PatruCard extends ConsumerWidget {
     required this.onLongPress,
   });
 
-  final PatrugalEntry patru;
+  final PatrugalTharavuru patru;
   final bool isDark;
   final bool isSelecting;
   final bool isSelected;
