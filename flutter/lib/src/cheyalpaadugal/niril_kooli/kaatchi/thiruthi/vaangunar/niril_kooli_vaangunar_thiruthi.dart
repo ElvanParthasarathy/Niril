@@ -57,11 +57,9 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
 
     kalanjiyam.saveVaangunar(VaangunarTharavuru(
       id: _isEditing ? widget.vaangunar!.id : null,
-      seyaliVagai: 'coolie',
       peyar: _peyar,
       oor: _oor,
       mugavari: _mugavari,
-      kurippu: {},
       ninaivuttalTharavugal: [],
       olikkappattadhu: false,
       isDeleted: false,

@@ -49,7 +49,7 @@ class SilkHomePage extends ConsumerWidget {
         child: Center(child: Text('Error: $e')),
       ),
       data: (pattiyalgal) {
-        final profiles = profilesAsync.value ?? [];
+        final profiles = profilesAsync;
 
         // Sort by date descending, take top 6
         final sorted = [...pattiyalgal]
@@ -102,7 +102,7 @@ class SilkHomePage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     List<PattiyalTharavuru> pattiyalgal,
-    List<NiruvanaTharavugalEntry> profiles,
+    List<NiruvanaTharavugal> profiles,
     bool isDark,
     bool isLoading,
   ) {
