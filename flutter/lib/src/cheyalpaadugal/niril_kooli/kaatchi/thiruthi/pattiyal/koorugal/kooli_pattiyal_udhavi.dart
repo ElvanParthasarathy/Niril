@@ -130,16 +130,13 @@ class KooliPattiyalUthavi {
       vanakkam = editingEntry.vanakkam;
     } else {
       // New invoice — auto-generate
-      vanakkam = await kalanjiyam.getNextVanakkam(
-          'coolie', state.selectedNiruvanamId, finYear);
+      vanakkam = await kalanjiyam.getNextVanakkam(state.selectedNiruvanamId, finYear);
       finalBillNumber =
           kalanjiyam.formatPattiyalEn(profilePrefix, vanakkam);
     }
 
     // Duplicate check
-    final isDuplicate = await kalanjiyam.isPattiyalEnDuplicate(
-      'coolie',
-      state.selectedNiruvanamId,
+    final isDuplicate = await kalanjiyam.isPattiyalEnDuplicate(state.selectedNiruvanamId,
       finYear,
       finalBillNumber,
       excludeId: editingEntry?.id,
@@ -162,14 +159,14 @@ class KooliPattiyalUthavi {
           vaangunarId: state.selectedVaangunarId,
           vaangunarPeyar: state.selectedVaangunarPeyarMap,
           vaangunarMunvari: state.selectedVaangunarMunvariMap,
-          pattiyalVagai: state.pattiyalVagai,
+          pattiyalVagai: '',
           pattiyalNaal: state.pattiyalNaal,
-          tharavugal: PattiyalUthavigal.pattuListToJson(validItems),
-          mothaThogai: totals.mothaMothangal,
-          thallupadi: totals.thallupadiMothangal,
-          variThogai: totals.variMothangal,
-          variTharavugal: jsonEncode(totals.variToJson()),
-          sonthaViruppangal: settingsJson,
+          tharavugal: PattiyalUthavigal.kooliListToJson(validItems),
+          mothaThogai: totals.perumMothangal,
+          thallupadi: 0.0,
+          variThogai: 0.0,
+          variTharavugal: '{}',
+          sonthaViruppangal: '{}',
           createdAt: editingEntry.createdAt,
           updatedAt: DateTime.now(),
           isDeleted: editingEntry.isDeleted,
@@ -197,14 +194,14 @@ class KooliPattiyalUthavi {
           vaangunarId: state.selectedVaangunarId,
           vaangunarPeyar: state.selectedVaangunarPeyarMap,
           vaangunarMunvari: state.selectedVaangunarMunvariMap,
-          pattiyalVagai: state.pattiyalVagai,
+          pattiyalVagai: '',
           pattiyalNaal: state.pattiyalNaal,
-          tharavugal: PattiyalUthavigal.pattuListToJson(validItems),
-          mothaThogai: totals.mothaMothangal,
-          thallupadi: totals.thallupadiMothangal,
-          variThogai: totals.variMothangal,
-          variTharavugal: jsonEncode(totals.variToJson()),
-          sonthaViruppangal: settingsJson,
+          tharavugal: PattiyalUthavigal.kooliListToJson(validItems),
+          mothaThogai: totals.perumMothangal,
+          thallupadi: 0.0,
+          variThogai: 0.0,
+          variTharavugal: '{}',
+          sonthaViruppangal: '{}',
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
           isDeleted: false,

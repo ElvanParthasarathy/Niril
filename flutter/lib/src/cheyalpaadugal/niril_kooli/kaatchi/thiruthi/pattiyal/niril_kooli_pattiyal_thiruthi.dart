@@ -225,8 +225,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
           ? _selectedProfile!.kurumPeyar
           : 'CB');
       _profilePrefix = '$shortName-';
-      final vanakkam = await kalanjiyam.getNextVanakkam(
-        'coolie', _selectedNiruvanamId, finYear,
+      final vanakkam = await kalanjiyam.getNextVanakkam(_selectedNiruvanamId, finYear,
       );
       if (mounted) {
         setState(() {
