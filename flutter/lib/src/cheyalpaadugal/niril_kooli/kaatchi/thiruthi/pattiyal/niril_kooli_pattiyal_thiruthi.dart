@@ -20,6 +20,7 @@ import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../porul/niril_kooli_porul_thiruthi.dart';
 import 'koorugal/koorugal.dart';
+import '../../../../niril_podhu/kaatchi/koorugal/elvan_pattiyal_tharavugal_kooru.dart';
 
 /// Coolie Invoice Editor — weight-based billing with setharam, courier,
 /// ahimsa, and other charges. Uses floor(kg × rate) truncation.
@@ -392,10 +393,10 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                 children: [
                   // ── Section 2: ② Invoice Details ──
                   ElvanPagudhiThalaipu(en: 2, thalaipu: K.pattiyalTharavugal.tr(context, ref)),
-                  KooliPattiyalTharavugalKooru(
+                  ElvanPattiyalTharavugalKooru(
                     isEditing: _isEditing,
                     invoiceNumberOverride: _invoiceNumberOverride,
-                    previewBillNumber: _previewBillNumber,
+                    previewInvoiceNumber: _previewBillNumber,
                     isInvNumberEditing: _isInvNumberEditing,
                     invNumberController: _invNumberController,
                     profilePrefix: _profilePrefix,
