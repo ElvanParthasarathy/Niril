@@ -32,6 +32,11 @@ class SilkInvoicesPage extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelecting = ref.watch(pattiyalSelectionModeProvider);
     final selectedIds = ref.watch(selectedPattiyalIdsProvider);
+    
+    final currentLocale = ref.watch(localeProvider);
+    final effectiveLang = currentLocale?.languageCode ?? Localizations.localeOf(context).languageCode;
+    final primaryLang = effectiveLang == 'ta' ? 'Tamil' : 'English';
+    final secondaryLang = effectiveLang == 'ta' ? 'English' : 'Tamil';
 
     return pattiyalgalAsync.when(
       loading: () => const SliverFillRemaining(
@@ -48,8 +53,11 @@ class SilkInvoicesPage extends ConsumerWidget {
             ? pattiyalgal
             : pattiyalgal.where((p) {
                 final en = p.patrucheettuEn.toLowerCase();
-                final peyar = p.vanigarPeyar.toLowerCase();
-                return en.contains(query) || peyar.contains(query);
+                final peyarPrimary = (p.vanigarPeyar[primaryLang] ?? '').toLowerCase();
+                final peyarSecondary = (p.vanigarPeyar[secondaryLang] ?? '').toLowerCase();
+                return en.contains(query) || 
+                       peyarPrimary.contains(query) || 
+                       peyarSecondary.contains(query);
               }).toList();
 
         // Empty state
@@ -168,16 +176,17 @@ class SilkInvoicesPage extends ConsumerWidget {
               mobileItemHeight: 88,
               itemBuilder: (context, index) {
                 final pattiyal = items[index];
-                final isSelected = selectedIds.contains(pattiyal.id);
 
                 return _SilkPatrucheettuCard(
                   index: index,
                   pattiyal: pattiyal,
                   isDark: isDark,
                   isSelecting: isSelecting,
-                  isSelected: isSelected,
+                  isSelected: selectedIds.contains(pattiyal.id),
                   dateFormat: _dateFormat,
                   currencyFormat: _currencyFormat,
+                  primaryLang: primaryLang,
+                  secondaryLang: secondaryLang,
                   onTap: () {
                     if (isSelecting) {
                       _toggleSelection(ref, pattiyal.id, selectedIds);
@@ -326,6 +335,8 @@ class _SilkPatrucheettuCard extends StatelessWidget {
     required this.isSelected,
     required this.dateFormat,
     required this.currencyFormat,
+    required this.primaryLang,
+    required this.secondaryLang,
     required this.onTap,
     required this.onLongPress,
     required this.onDuplicate,
@@ -338,6 +349,8 @@ class _SilkPatrucheettuCard extends StatelessWidget {
   final bool isSelected;
   final DateFormat dateFormat;
   final NumberFormat currencyFormat;
+  final String primaryLang;
+  final String secondaryLang;
   final VoidCallback onTap;
   final VoidCallback onLongPress;
   final VoidCallback onDuplicate;
@@ -405,7 +418,9 @@ class _SilkPatrucheettuCard extends StatelessWidget {
                 children: [
                   // Row 1: Customer name (primary)
                   Text(
-                    pattiyal.vanigarPeyar,
+                    pattiyal.vanigarPeyar[primaryLang]?.isNotEmpty == true
+                        ? pattiyal.vanigarPeyar[primaryLang]!
+                        : pattiyal.vanigarPeyar[secondaryLang] ?? '',
                     style: const TextStyle(
                       fontSize: 15.2,
                       fontWeight: FontWeight.w700,

@@ -20,7 +20,8 @@ class PattuThiruththiNilaimai {
   const PattuThiruththiNilaimai({
     this.selectedNiruvanamId,
     this.selectedVanigarId,
-    this.selectedVanigarPeyar = '',
+    this.selectedVanigarPeyarMap = const {},
+    this.selectedVanigarMunvariMap = const {},
     this.customerState = '',
     this.pattiyalVagai = 'tax-invoice',
     required this.pattiyalNaal,
@@ -30,13 +31,12 @@ class PattuThiruththiNilaimai {
     this.items = const [],
     this.globalDiscountValue = 0,
     this.globalDiscountType = 'percentage',
-    this.nibandhanaigal = '',
-    this.ullkurippu = '',
   });
 
   final int? selectedNiruvanamId;
   final int? selectedVanigarId;
-  final String selectedVanigarPeyar;
+  final Map<String, String> selectedVanigarPeyarMap;
+  final Map<String, String> selectedVanigarMunvariMap;
   final String customerState;
   final String pattiyalVagai;
   final DateTime pattiyalNaal;
@@ -46,8 +46,6 @@ class PattuThiruththiNilaimai {
   final List<PattuUrupadi> items;
   final double globalDiscountValue;
   final String globalDiscountType;
-  final String nibandhanaigal;
-  final String ullkurippu;
 }
 
 /// Pure data helper — no widget dependency. Handles:
@@ -99,7 +97,8 @@ class PattuPattiyalUthavi {
     return PattuThiruththiNilaimai(
       selectedNiruvanamId: entry.niruvanamId,
       selectedVanigarId: entry.vanigarId,
-      selectedVanigarPeyar: entry.vanigarPeyar,
+      selectedVanigarPeyarMap: entry.vanigarPeyar,
+      selectedVanigarMunvariMap: entry.vanigarMunvari,
       pattiyalVagai: entry.pattiyalVagai,
       pattiyalNaal: isDuplicate ? DateTime.now() : entry.pattiyalNaal,
       placeOfSupply: placeOfSupply,
@@ -108,15 +107,13 @@ class PattuPattiyalUthavi {
       items: items,
       globalDiscountValue: globalDiscountValue,
       globalDiscountType: globalDiscountType,
-      nibandhanaigal: entry.nibandhanaigal,
-      ullkurippu: entry.ullkurippu,
     );
   }
 
   // ── Save ─────────────────────────────────────────────────────────────────
 
-  /// Saves the invoice (create or update) and returns the generated number.
-  static Future<void> save({
+  /// Saves the invoice (create or update) and returns the generated number. Returns error string if any.
+  static Future<String?> save({
     required PattiyalKalanjiyam kalanjiyam,
     required PattuThiruththiNilaimai state,
     required PattuMothangal totals,
@@ -134,6 +131,37 @@ class PattuPattiyalUthavi {
       'placeOfSupplyTa': state.placeOfSupplyTa,
     });
 
+    // Determine final bill number
+    late final String finalBillNumber;
+    late final int vanakkam;
+
+    if (state.invoiceNumberOverride.isNotEmpty) {
+      finalBillNumber = state.invoiceNumberOverride;
+      vanakkam = await kalanjiyam.getNextVanakkam(
+          'silk', state.selectedNiruvanamId, finYear);
+    } else if (editingEntry != null) {
+      finalBillNumber = editingEntry.patrucheettuEn;
+      vanakkam = editingEntry.vanakkam;
+    } else {
+      vanakkam = await kalanjiyam.getNextVanakkam(
+          'silk', state.selectedNiruvanamId, finYear);
+      finalBillNumber =
+          kalanjiyam.formatPattiyalEn(profilePrefix, vanakkam);
+    }
+
+    // Duplicate check
+    final isDuplicate = await kalanjiyam.isPattiyalEnDuplicate(
+      'silk',
+      state.selectedNiruvanamId,
+      finYear,
+      finalBillNumber,
+      excludeId: editingEntry?.id,
+    );
+
+    if (isDuplicate) {
+      return 'Invoice number $finalBillNumber already exists!';
+    }
+
     if (editingEntry != null) {
       // ── Update ──
       final invNumChanged =
@@ -142,11 +170,12 @@ class PattuPattiyalUthavi {
         editingEntry.id,
         PatrucheettuTableCompanion(
           patrucheettuEn: invNumChanged
-              ? Value(state.invoiceNumberOverride)
+              ? Value(finalBillNumber)
               : const Value.absent(),
           niruvanamId: Value(state.selectedNiruvanamId),
           vanigarId: Value(state.selectedVanigarId),
-          vanigarPeyar: Value(state.selectedVanigarPeyar),
+          vanigarPeyar: Value(state.selectedVanigarPeyarMap),
+          vanigarMunvari: Value(state.selectedVanigarMunvariMap),
           pattiyalVagai: Value(state.pattiyalVagai),
           pattiyalNaal: Value(state.pattiyalNaal),
           tharavugal: Value(PattiyalUthavigal.pattuListToJson(validItems)),
@@ -155,34 +184,20 @@ class PattuPattiyalUthavi {
           variThogai: Value(totals.variMothangal),
           variTharavugal: Value(jsonEncode(totals.variToJson())),
           sonthaViruppangal: Value(settingsJson),
-          nibandhanaigal: Value(state.nibandhanaigal),
-          ullkurippu: Value(state.ullkurippu),
           updatedAt: Value(DateTime.now()),
         ),
       );
     } else {
       // ── Create ──
-      String invoiceNumber;
-      int vanakkam;
-      if (state.invoiceNumberOverride.isNotEmpty) {
-        invoiceNumber = state.invoiceNumberOverride;
-        vanakkam = await kalanjiyam.getNextVanakkam(
-            'silk', state.selectedNiruvanamId, finYear);
-      } else {
-        vanakkam = await kalanjiyam.getNextVanakkam(
-            'silk', state.selectedNiruvanamId, finYear);
-        invoiceNumber =
-            kalanjiyam.formatPattiyalEn(profilePrefix, vanakkam);
-      }
-
       await kalanjiyam.createPattiyal(
         PatrucheettuTableCompanion.insert(
           seyaliVagai: 'silk',
-          patrucheettuEn: invoiceNumber,
+          patrucheettuEn: finalBillNumber,
           finYear: finYear,
           vanakkam: Value(vanakkam),
           niruvanamId: Value(state.selectedNiruvanamId),
-          vanigarPeyar: state.selectedVanigarPeyar,
+          vanigarPeyar: Value(state.selectedVanigarPeyarMap),
+          vanigarMunvari: Value(state.selectedVanigarMunvariMap),
           vanigarId: Value(state.selectedVanigarId),
           pattiyalVagai: Value(state.pattiyalVagai),
           pattiyalNaal: Value(state.pattiyalNaal),
@@ -192,11 +207,11 @@ class PattuPattiyalUthavi {
           variThogai: Value(totals.variMothangal),
           variTharavugal: Value(jsonEncode(totals.variToJson())),
           sonthaViruppangal: Value(settingsJson),
-          nibandhanaigal: Value(state.nibandhanaigal),
-          ullkurippu: Value(state.ullkurippu),
         ),
       );
     }
+    
+    return null;
   }
 
   // ── Draft persistence ───────────────────────────────────────────────────
@@ -207,7 +222,8 @@ class PattuPattiyalUthavi {
       final prefs = await SharedPreferences.getInstance();
       final draft = jsonEncode({
         'vanigarId': state.selectedVanigarId,
-        'vanigarPeyar': state.selectedVanigarPeyar,
+        'vanigarPeyarMap': state.selectedVanigarPeyarMap,
+        'vanigarMunvariMap': state.selectedVanigarMunvariMap,
         'customerState': state.customerState,
         'niruvanamId': state.selectedNiruvanamId,
         'pattiyalVagai': state.pattiyalVagai,
@@ -218,8 +234,6 @@ class PattuPattiyalUthavi {
         'items': PattiyalUthavigal.pattuListToJson(state.items),
         'globalDiscountValue': state.globalDiscountValue,
         'globalDiscountType': state.globalDiscountType,
-        'nibandhanaigal': state.nibandhanaigal,
-        'ullkurippu': state.ullkurippu,
       });
       await prefs.setString(_draftKey, draft);
     } catch (_) {}
@@ -236,8 +250,9 @@ class PattuPattiyalUthavi {
 
       final draft = jsonDecode(draftJson) as Map<String, dynamic>;
       final items = draft['items'] as String? ?? '[]';
-      final name = draft['vanigarPeyar'] as String? ?? '';
-      if (items == '[]' && name.isEmpty) {
+      final nameMap = (draft['vanigarPeyarMap'] as Map?)?.cast<String, String>() ?? {};
+      final addrMap = (draft['vanigarMunvariMap'] as Map?)?.cast<String, String>() ?? {};
+      if (items == '[]' && nameMap.isEmpty) {
         await prefs.remove(_draftKey);
         return null;
       }
@@ -266,7 +281,8 @@ class PattuPattiyalUthavi {
         final parsedItems = PattiyalUthavigal.pattuListFromJson(items);
         return PattuThiruththiNilaimai(
           selectedVanigarId: draft['vanigarId'] as int?,
-          selectedVanigarPeyar: draft['vanigarPeyar'] as String? ?? '',
+          selectedVanigarPeyarMap: nameMap,
+          selectedVanigarMunvariMap: addrMap,
           customerState: draft['customerState'] as String? ?? '',
           selectedNiruvanamId: draft['niruvanamId'] as int?,
           pattiyalVagai: draft['pattiyalVagai'] as String? ?? 'tax-invoice',
@@ -282,8 +298,6 @@ class PattuPattiyalUthavi {
               (draft['globalDiscountValue'] as num?)?.toDouble() ?? 0,
           globalDiscountType:
               draft['globalDiscountType'] as String? ?? 'percentage',
-          nibandhanaigal: draft['nibandhanaigal'] as String? ?? '',
-          ullkurippu: draft['ullkurippu'] as String? ?? '',
         );
       } else {
         await prefs.remove(_draftKey);

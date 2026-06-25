@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
-import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../niril_podhu/kaatchi/koorugal/vanigar_thaedu_kooru.dart';
 import '../../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
@@ -17,15 +15,13 @@ import 'maanila_thervu_maeladukku.dart';
 class PattuVanigargalData {
   const PattuVanigargalData({
     required this.selectedVanigarId,
-    required this.selectedVanigarPeyar,
-    required this.selectedNiruvanamId,
+    required this.selectedVanigarPeyarMap,
     required this.placeOfSupply,
     required this.placeOfSupplyTa,
   });
 
   final int? selectedVanigarId;
-  final String selectedVanigarPeyar;
-  final int? selectedNiruvanamId;
+  final Map<String, String> selectedVanigarPeyarMap;
   final String placeOfSupply;
   final String placeOfSupplyTa;
 }
@@ -36,7 +32,6 @@ class PattuVanigargalCallbacks {
     required this.onCustomerSelected,
     required this.onCustomerCleared,
     required this.onRequestAddNewCustomer,
-    required this.onProfileChanged,
     required this.onPlaceOfSupplyChanged,
     required this.onPlaceOfSupplyCleared,
   });
@@ -44,7 +39,6 @@ class PattuVanigargalCallbacks {
   final void Function(VanigarEntry entry) onCustomerSelected;
   final VoidCallback onCustomerCleared;
   final VoidCallback onRequestAddNewCustomer;
-  final void Function(int? id, NiruvanaTharavugal? profile) onProfileChanged;
   final void Function(String en, String ta) onPlaceOfSupplyChanged;
   final VoidCallback onPlaceOfSupplyCleared;
 }
@@ -108,7 +102,7 @@ class PattuVanigargalKooru extends ConsumerWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      selectedVanigar!.peyar['Tamil'] ?? data.selectedVanigarPeyar,
+                      selectedVanigar!.peyar['Tamil'] ?? (data.selectedVanigarPeyarMap['Tamil']?.isNotEmpty == true ? data.selectedVanigarPeyarMap['Tamil'] : data.selectedVanigarPeyarMap['English']) ?? '',
                       style: tt.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -120,12 +114,9 @@ class PattuVanigargalKooru extends ConsumerWidget {
             )
           : const SizedBox.shrink();
 
-      final profileDropdown = _buildProfileDropdown(context, ref);
-
       final leftColumn = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          profileDropdown,
           customerSearch,
           savedDetailsCard,
         ],
@@ -208,47 +199,6 @@ class PattuVanigargalKooru extends ConsumerWidget {
     );
   }
 
-  // ── Profile Dropdown ──
-  Widget _buildProfileDropdown(BuildContext context, WidgetRef ref) {
-    final profiles = ref.watch(NiruvanaTharavugalListProvider);
-    if (profiles.length <= 1) return const SizedBox.shrink();
-    final cs = Theme.of(context).colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: Row(
-        children: [
-          Expanded(
-            child: DropdownButtonFormField<int>(
-              initialValue: data.selectedNiruvanamId,
-              decoration: InputDecoration(
-                labelText: K.niruvanaThannuru.tr(context, ref),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(24)),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-              ),
-              items: profiles.map((p) {
-                final name = p.niruvanathinPeyar['Tamil'] ??
-                    p.niruvanathinPeyar['English'] ??
-                     K.niruvanam.tr(context, ref);
-                return DropdownMenuItem(value: p.id, child: Text(name));
-              }).toList(),
-              onChanged: (v) {
-                final match = profiles.where((p) => p.id == v).firstOrNull;
-                callbacks.onProfileChanged(v, match);
-              },
-            ),
-          ),
-          if (data.selectedNiruvanamId != null)
-            IconButton(
-              icon: Icon(Icons.close, color: cs.error, size: 20),
-              tooltip: 'Clear',
-              onPressed: () => callbacks.onProfileChanged(null, null),
-            ),
-        ],
-      ),
-    );
-  }
 }
 
 /// Place of Supply widget: two pills (editable English + locked Tamil).

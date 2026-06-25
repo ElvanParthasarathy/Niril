@@ -12,7 +12,7 @@ import '../panigal/elvan_pizhaipadhivu.dart';
 /// Currently logs locally. Will also send to Crashlytics when Firebase is live.
 Future<void> vizhuppuPathivu(dynamic error, StackTrace stack, {String? reason}) async {
   // Local logging (always active)
-  ElvanPizhaipadhivu.logError(error.toString(), stack);
+  ElvanPizhaipadhivu.logError(error.toString(), stackTrace: stack);
 
   // Remote logging (enable when Firebase is configured)
   // await FirebaseCrashlytics.instance.recordError(error, stack, reason: reason);

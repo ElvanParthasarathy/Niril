@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -262,7 +261,7 @@ class _AuthLayoutState extends ConsumerState<AuthLayout> with TickerProviderStat
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
                       letterSpacing: 1.2,
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                     ),
                   ),
                 ),

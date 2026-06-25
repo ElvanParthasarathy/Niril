@@ -38,8 +38,9 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
                     value: AppMode.silk,
                     groupValue: currentAppMode ?? AppMode.silk,
                     onChanged: (val) {
-                      if (val != null)
+                      if (val != null) {
                         ref.read(appModeProvider.notifier).setMode(val);
+                      }
                     },
                   ),
                   ElvanRadioSettingsRow<AppMode>(
@@ -47,8 +48,9 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
                     value: AppMode.coolie,
                     groupValue: currentAppMode ?? AppMode.silk,
                     onChanged: (val) {
-                      if (val != null)
+                      if (val != null) {
                         ref.read(appModeProvider.notifier).setMode(val);
+                      }
                     },
                   ),
                 ],

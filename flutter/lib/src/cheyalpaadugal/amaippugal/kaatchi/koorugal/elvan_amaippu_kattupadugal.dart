@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
-import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ElvanSettingsSwitch — A standard switch with Elvan's monochrome styling
@@ -24,7 +22,7 @@ class ElvanSettingsSwitch extends StatelessWidget {
     return Switch(
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       value: value,
-      activeColor: Theme.of(context).colorScheme.surface,
+      activeThumbColor: Theme.of(context).colorScheme.surface,
       activeTrackColor: Theme.of(context).colorScheme.onSurface,
       inactiveThumbColor:
           Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),

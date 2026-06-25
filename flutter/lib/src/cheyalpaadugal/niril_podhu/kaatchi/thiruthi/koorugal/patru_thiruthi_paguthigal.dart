@@ -1,57 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
-import '../../../../niril_podhu/kaatchi/koorugal/vanigar_thaedu_kooru.dart';
-import '../../../../niril_podhu/kaatchi/koorugal/pattiyal_naal_kooru.dart';
+
 import '../../../../niril_podhu/tharavuru/seluthi_vagai.dart';
-import '../../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // RECEIPT EDITOR — EXTRACTED SECTION BUILDERS
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// Profile switcher chips for multi-profile companies.
-class PatruThannuruMaatrigan extends StatelessWidget {
-  const PatruThannuruMaatrigan({
-    super.key,
-    required this.profiles,
-    required this.selectedNiruvanamId,
-    required this.isDark,
-    required this.onSelected,
-  });
-
-  final List<NiruvanaTharavugalEntry> profiles;
-  final int? selectedNiruvanamId;
-  final bool isDark;
-  final void Function(NiruvanaTharavugalEntry profile) onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: profiles.map((p) {
-            final isActive = p.id == selectedNiruvanamId;
-            return Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: ChoiceChip(
-                label: Text(p.kurumPeyar.isNotEmpty
-                    ? p.kurumPeyar
-                    : (p.niruvanathinPeyar.values.firstOrNull ?? '')),
-                selected: isActive,
-                onSelected: (_) => onSelected(p),
-              ),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-}
 
 /// Invoice picker button + selected invoice chips.
 class PatruPattiyalTheervuPagudhi extends StatelessWidget {
@@ -116,86 +73,6 @@ class PatruPattiyalTheervuPagudhi extends StatelessWidget {
             }).toList(),
           ),
         ],
-      ],
-    );
-  }
-}
-
-/// Receipt data section: date, customer, receipt number.
-class PatruTharavuPagudhi extends StatelessWidget {
-  const PatruTharavuPagudhi({
-    super.key,
-    required this.patruNaal,
-    required this.seyaliVagai,
-    required this.selectedVanigarId,
-    required this.patruEn,
-    required this.isDark,
-    required this.onDateChanged,
-    required this.onVanigarSelected,
-  });
-
-  final DateTime patruNaal;
-  final String seyaliVagai;
-  final int? selectedVanigarId;
-  final String patruEn;
-  final bool isDark;
-  final ValueChanged<DateTime> onDateChanged;
-  final void Function(VanigarEntry vanigar) onVanigarSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
-
-    return Wrap(
-      spacing: 16,
-      runSpacing: 16,
-      children: [
-        // Date picker
-        SizedBox(
-          width: isDesktop ? 280 : double.infinity,
-          child: PattiyalNaalKooru(
-            selectedDate: patruNaal,
-            onDateChanged: onDateChanged,
-          ),
-        ),
-        // Customer picker
-        SizedBox(
-          width: isDesktop ? 380 : double.infinity,
-          child: VanigarThaeduKooru(
-            seyaliVagai: seyaliVagai,
-            selectedId: selectedVanigarId,
-            onSelected: onVanigarSelected,
-          ),
-        ),
-        // Receipt number (read-only display)
-        if (patruEn.isNotEmpty)
-          Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.05)
-                  : Colors.black.withValues(alpha: 0.03),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(CupertinoIcons.number,
-                    size: 16,
-                    color: isDark ? Colors.white38 : Colors.black38),
-                const SizedBox(width: 8),
-                Text(
-                  patruEn,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white70 : Colors.black87,
-                  ),
-                ),
-              ],
-            ),
-          ),
       ],
     );
   }

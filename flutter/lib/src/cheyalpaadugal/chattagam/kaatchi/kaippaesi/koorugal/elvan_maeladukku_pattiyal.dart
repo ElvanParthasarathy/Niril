@@ -4,12 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_gst_thaakkal_thirai.dart';
 import '../../../../amaippugal/kaatchi/amaippugal_thirai.dart';
 import 'elvan_mel_pattai_chinnam.dart';
 
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_arikkaigal_thirai.dart';
 import '../../../../niril_podhu/kaatchi/thiraigal/meetpagam_thirai.dart';
 import '../../../../../adippadai/vazhikaattal/niril_nav.dart';
 
@@ -208,65 +206,7 @@ class _ElvanPopupMenuState extends ConsumerState<ElvanPopupMenu> {
                               ),
                             ),
                           ),
-                          if (widget.isSilkHome) ...[
-                            InkWell(
-                              borderRadius: BorderRadius.zero,
-                              highlightColor: sharedHighlightColor,
-                              splashColor: sharedSplashColor,
-                              onTap: () {
-                                _closeMenu();
-                                NirilNav.push(context, const SilkReportsPage());
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 14),
-                                child: Row(
-                                  children: [
-                                    Icon(CupertinoIcons.chart_pie,
-                                        size: 22,
-                                        color: Theme.of(context).brightness ==
-                                                Brightness.dark
-                                            ? Colors.white
-                                            : Colors.black),
-                                    const SizedBox(width: 12),
-                                    Text(K.arikkaigal.tr(context, ref),
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              borderRadius: const BorderRadius.vertical(
-                                  bottom: Radius.circular(24)),
-                              highlightColor: sharedHighlightColor,
-                              splashColor: sharedSplashColor,
-                              onTap: () {
-                                _closeMenu();
-                                NirilNav.push(context, const SilkGstReturnsPage());
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 14),
-                                child: Row(
-                                  children: [
-                                    Icon(CupertinoIcons.doc_checkmark,
-                                        size: 22,
-                                        color: Theme.of(context).brightness ==
-                                                Brightness.dark
-                                            ? Colors.white
-                                            : Colors.black),
-                                    const SizedBox(width: 12),
-                                    Text(K.variArikkaigal.tr(context, ref),
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+
                           if (widget.showSelectOption) ...[
                             InkWell(
                               borderRadius: const BorderRadius.vertical(

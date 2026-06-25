@@ -1,7 +1,6 @@
 
 
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' show Value;
 
@@ -13,14 +12,19 @@ import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_pagudhi_thalaipu_kooru.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
-import '../../../niril_podhu/kaatchi/koorugal/vanigar_thaedu_kooru.dart';
-import '../../../niril_podhu/kaatchi/koorugal/pattiyal_naal_kooru.dart';
+import '../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_niruvanam_oadu.dart';
 import '../../../niril_podhu/kalanjiyam/patru_kalanjiyam.dart';
 import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 import '../../../niril_podhu/tharavuru/seluthi_vagai.dart';
+import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
+import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import 'koorugal/patru_pattiyal_theervu_maeladukku.dart';
 import 'koorugal/patru_thiruthi_paguthigal.dart';
+import '../koorugal/elvan_pattiyal_tharavugal_kooru.dart';
+import '../koorugal/vanigar_thaedu_kooru.dart';
+import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
+import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 
 /// Shared Receipt Editor — used by both Coolie and Silk modes.
@@ -37,14 +41,12 @@ class PatruThiruthi extends ConsumerStatefulWidget {
 class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   // ── Company Profile ──
   int? _selectedNiruvanamId;
-  NiruvanaTharavugalEntry? _selectedProfile;
+  NiruvanaTharavugal? _selectedProfile;
 
   // ── Customer ──
   int? _selectedVanigarId;
-  String _vanigarPeyar = '';
-  String _vanigarPeyarEn = '';
-  String _vanigarMunvari = '';
-  String _vanigarMunvariEn = '';
+  Map<String, String> _vanigarPeyarMap = {};
+  Map<String, String> _vanigarMunvariMap = {};
 
   // ── Receipt Data ──
   DateTime _patruNaal = DateTime.now();
@@ -65,10 +67,13 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   final _thogaiCtrl = TextEditingController();
   final _suttruEnCtrl = TextEditingController();
   final _ullkurippuCtrl = TextEditingController();
+  final _patruEnCtrl = TextEditingController();
 
   bool _isSaving = false;
   bool _isInitialized = false;
   bool _paidAmountsLoaded = false;
+  bool _isPatruEnEditing = false;
+  String _previewPatruEn = '';
 
   @override
   void initState() {
@@ -91,10 +96,8 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     if (entry != null) {
       _selectedNiruvanamId = entry.niruvanamId;
       _selectedVanigarId = entry.vanigarId;
-      _vanigarPeyar = entry.vanigarPeyar;
-      _vanigarPeyarEn = entry.vanigarPeyarEn ?? '';
-      _vanigarMunvari = entry.vanigarMunvari;
-      _vanigarMunvariEn = entry.vanigarMunvariEn ?? '';
+      _vanigarPeyarMap = entry.vanigarPeyar;
+      _vanigarMunvariMap = entry.vanigarMunvari;
       _patruNaal = entry.patruNaal;
       _patruEn = entry.patruEn;
       _vanakkam = entry.vanakkam;
@@ -106,6 +109,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       _thogaiCtrl.text = _thogai > 0 ? _thogai.toStringAsFixed(2) : '';
       _suttruEnCtrl.text = _suttruEn;
       _ullkurippuCtrl.text = _ullkurippu;
+      _patruEnCtrl.text = _patruEn;
     }
   }
 
@@ -114,6 +118,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     _thogaiCtrl.dispose();
     _suttruEnCtrl.dispose();
     _ullkurippuCtrl.dispose();
+    _patruEnCtrl.dispose();
     super.dispose();
   }
 
@@ -137,25 +142,6 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     }
   }
 
-  // ── Auto-assign profile ──
-  void _autoAssignProfile(List<NiruvanaTharavugalEntry> profiles) {
-    if (_selectedProfile != null) return;
-    if (profiles.isEmpty) return;
-
-    if (widget.editingEntry != null && _selectedNiruvanamId != null) {
-      final match =
-          profiles.where((p) => p.id == _selectedNiruvanamId).firstOrNull;
-      if (match != null) {
-        _selectedProfile = match;
-        return;
-      }
-    }
-
-    // Auto-select first profile
-    _selectedProfile = profiles.first;
-    _selectedNiruvanamId = profiles.first.id;
-  }
-
   // ── Auto-generate receipt number ──
   Future<void> _generatePatruEn() async {
     if (widget.editingEntry != null) return; // Don't regenerate for edits
@@ -170,7 +156,15 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
             : 'BIZ').toUpperCase();
     _vanakkam =
         await kalanjiyam.getNextVanakkam(seyaliVagai, _selectedNiruvanamId);
-    _patruEn = kalanjiyam.formatPatruEn(bizShort, _vanakkam);
+    
+    // Format is RCP/bizShort/01
+    final formatted = kalanjiyam.formatPatruEn(bizShort, _vanakkam);
+    if (_isPatruEnEditing) {
+      _previewPatruEn = formatted;
+    } else {
+      _patruEn = formatted;
+      _previewPatruEn = '';
+    }
 
     if (mounted) setState(() {});
   }
@@ -178,7 +172,8 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   // ── Save ──
   Future<void> _handleSave() async {
     // Validation
-    if (_vanigarPeyar.trim().isEmpty) {
+    final peyarTamil = _vanigarPeyarMap['Tamil'] ?? '';
+    if (peyarTamil.trim().isEmpty) {
       ElvanSnackbar.show(context, 'வாடிக்கையாளர் பெயர் தேவை');
       return;
     }
@@ -243,6 +238,22 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
         return;
       }
 
+      // Check for duplicate receipt number
+      final isDuplicate = await kalanjiyam.isPatruEnDuplicate(
+        seyaliVagai,
+        _selectedNiruvanamId,
+        _patruEn,
+        excludeId: widget.editingEntry?.id,
+      );
+
+      if (isDuplicate) {
+        if (mounted) {
+          ElvanSnackbar.show(context, 'Receipt number $_patruEn already exists!');
+          setState(() => _isSaving = false);
+        }
+        return;
+      }
+
       // Build receipt companion
       final companion = PatrugalTableCompanion(
         seyaliVagai: Value(seyaliVagai),
@@ -250,10 +261,8 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
         patruEn: Value(_patruEn),
         vanakkam: Value(_vanakkam),
         vanigarId: Value(_selectedVanigarId),
-        vanigarPeyar: Value(_vanigarPeyar),
-        vanigarPeyarEn: Value(_vanigarPeyarEn.isEmpty ? null : _vanigarPeyarEn),
-        vanigarMunvari: Value(_vanigarMunvari),
-        vanigarMunvariEn: Value(_vanigarMunvariEn.isEmpty ? null : _vanigarMunvariEn),
+        vanigarPeyar: Value(_vanigarPeyarMap),
+        vanigarMunvari: Value(_vanigarMunvariMap),
         patruNaal: Value(_patruNaal),
         thogai: Value(_thogai),
         seluthiVagai: Value(_seluthiVagai!.storedValue),
@@ -286,21 +295,14 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
   @override
   Widget build(BuildContext context) {
-    final profilesAsync = ref.watch(currentModeProfilesStreamProvider);
     final invoicesAsync = ref.watch(pattiyalgalProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final mode = ref.watch(appModeProvider);
     final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
 
-    // Auto-assign profile
-    profilesAsync.whenData((profiles) {
-      _autoAssignProfile(profiles);
-      if (widget.editingEntry == null && _patruEn.isEmpty) {
-        _generatePatruEn();
-      }
-    });
-
-
+    if (widget.editingEntry == null && _patruEn.isEmpty && _selectedNiruvanamId != null) {
+      _generatePatruEn();
+    }
 
     final isEditing = widget.editingEntry != null;
     final title = isEditing ? 'பற்றுச்சீட்டுத் திருத்து' : 'புதிய பற்றுச்சீட்டு';
@@ -308,57 +310,44 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     return ElvanEditorShell(
       title: title,
       onSave: _isSaving ? null : _handleSave,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // ── Profile Switcher (if 2+ profiles) ──
-          profilesAsync.when(
-            loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
-            data: (profiles) {
-              if (profiles.length < 2) return const SizedBox.shrink();
-              return _buildProfileSwitcher(profiles, isDark);
-            },
-          ),
+      child: ElvanThiruthiNiruvanamOadu(
+        selectedNiruvanamId: _selectedNiruvanamId,
+        onChanged: (p) {
+          setState(() {
+            _selectedNiruvanamId = p?.id;
+            _selectedProfile = p;
+          });
+          if (p != null) {
+            _generatePatruEn();
+          }
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // ── Section 1: Against Invoice ──
+            const ElvanPagudhiThalaipu(en: 1, thalaipu: 'எந்தப் பட்டியலுக்கு'),
+            ElvanThiruthiAttai(
+              child: _buildInvoicePickerSection(invoicesAsync, isDark),
+            ),
+            const SizedBox(height: 24),
 
-          // ── Section 1: Against Invoice ──
-          const ElvanPagudhiThalaipu(en: 1, thalaipu: 'எந்தப் பட்டியலுக்கு'),
-          ElvanThiruthiAttai(
-            child: _buildInvoicePickerSection(invoicesAsync, isDark),
-          ),
-          const SizedBox(height: 24),
+            // ── Section 2: Receipt Data ──
+            const ElvanPagudhiThalaipu(en: 2, thalaipu: 'பற்றுச்சீட்டு தரவுகள்'),
+            ElvanThiruthiAttai(
+              padding: const EdgeInsets.all(24),
+              child: _buildReceiptDataSection(seyaliVagai, isDark),
+            ),
+            const SizedBox(height: 24),
 
-          // ── Section 2: Receipt Data ──
-          const ElvanPagudhiThalaipu(en: 2, thalaipu: 'பற்றுச்சீட்டு தரவுகள்'),
-          ElvanThiruthiAttai(
-            child: _buildReceiptDataSection(seyaliVagai, isDark),
-          ),
-          const SizedBox(height: 24),
-
-          // ── Section 3: Payment Details ──
-          const ElvanPagudhiThalaipu(en: 3, thalaipu: 'செலுத்திய விவரம்'),
-          ElvanThiruthiAttai(
-            child: _buildPaymentSection(isDark),
-          ),
-          const SizedBox(height: 40),
-        ],
+            // ── Section 3: Payment Details ──
+            const ElvanPagudhiThalaipu(en: 3, thalaipu: 'செலுத்திய விவரம்'),
+            ElvanThiruthiAttai(
+              child: _buildPaymentSection(isDark),
+            ),
+            const SizedBox(height: 40),
+          ],
+        ),
       ),
-    );
-  }
-
-  // ── Profile Switcher ──
-  Widget _buildProfileSwitcher(List<NiruvanaTharavugalEntry> profiles, bool isDark) {
-    return PatruThannuruMaatrigan(
-      profiles: profiles,
-      selectedNiruvanamId: _selectedNiruvanamId,
-      isDark: isDark,
-      onSelected: (p) {
-        setState(() {
-          _selectedNiruvanamId = p.id;
-          _selectedProfile = p;
-        });
-        _generatePatruEn();
-      },
     );
   }
 
@@ -380,31 +369,91 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
   // ── Section 2: Receipt Data ──
   Widget _buildReceiptDataSection(String seyaliVagai, bool isDark) {
-    return PatruTharavuPagudhi(
-      patruNaal: _patruNaal,
-      seyaliVagai: seyaliVagai,
-      selectedVanigarId: _selectedVanigarId,
-      patruEn: _patruEn,
-      isDark: isDark,
-      onDateChanged: (date) => setState(() => _patruNaal = date),
-      onVanigarSelected: (vanigar) {
-        setState(() {
-          _selectedVanigarId = vanigar.id;
-          final peyarMap = vanigar.peyar;
-          _vanigarPeyar =
-              peyarMap['Tamil'] ?? peyarMap['English'] ?? peyarMap.values.firstOrNull ?? '';
-          _vanigarPeyarEn = peyarMap['English'] ?? '';
-          final mugavariMap = vanigar.mugavari;
-          _vanigarMunvari = [
-            mugavariMap['Tamil'] ?? mugavariMap['English'] ?? '',
-            vanigar.oor['Tamil'] ?? vanigar.oor['English'] ?? '',
-          ].where((s) => s.isNotEmpty).join(', ');
-          _vanigarMunvariEn = [
-            mugavariMap['English'] ?? '',
-            vanigar.oor['English'] ?? '',
-          ].where((s) => s.isNotEmpty).join(', ');
-        });
-      },
+    final bizShort = (_selectedProfile?.kurumPeyar.isNotEmpty == true
+            ? _selectedProfile!.kurumPeyar
+            : 'BIZ')
+        .toUpperCase();
+    final profilePrefix = 'RCP/$bizShort/';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // 1. Receipt Number & Date
+        ElvanPattiyalTharavugalKooru(
+          customNumberTitle: 'பற்றுச்சீட்டு எண்', // Receipt Number
+          customDateTitle: 'பற்றுச்சீட்டு தேதி', // Receipt Date
+          isEditing: widget.editingEntry != null,
+          invoiceNumberOverride: _patruEnCtrl.text,
+          previewInvoiceNumber: _previewPatruEn,
+          isInvNumberEditing: _isPatruEnEditing,
+          invNumberController: _patruEnCtrl,
+          profilePrefix: profilePrefix,
+          pattiyalNaal: _patruNaal,
+          onToggleEditInvNumber: () {
+            setState(() {
+              if (_isPatruEnEditing) {
+                // Done editing: user typed custom number
+                final numPart = _patruEnCtrl.text.trim();
+                if (numPart.isNotEmpty) {
+                  _patruEn = '$profilePrefix$numPart';
+                } else {
+                  _patruEn = '';
+                }
+                _isPatruEnEditing = false;
+              } else {
+                // Start editing
+                _isPatruEnEditing = true;
+                _patruEnCtrl.text = ''; // Clear so they type only the number
+              }
+            });
+          },
+          onInvNumberChanged: (val) {
+            setState(() {
+              _previewPatruEn = val.isEmpty ? '' : '$profilePrefix$val';
+            });
+          },
+          onDateChanged: (date) {
+            setState(() => _patruNaal = date);
+          },
+          onDirty: () {},
+        ),
+        const SizedBox(height: 24),
+        
+        // 2. Customer Selector
+        Text(
+          K.vanigar.tr(context, ref),
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 8),
+        VanigarThaeduKooru(
+          seyaliVagai: seyaliVagai,
+          selectedId: _selectedVanigarId,
+          onSelected: (v) {
+            setState(() {
+              _selectedVanigarId = v.id;
+              _vanigarPeyarMap = Map<String, String>.from(v.peyar);
+              
+              final tamilAddr = [
+                if (v.oor['Tamil']?.isNotEmpty == true) v.oor['Tamil'],
+                if (v.maavattam['Tamil']?.isNotEmpty == true) v.maavattam['Tamil'],
+              ].where((e) => e != null).join(', ');
+              
+              final engAddr = [
+                if (v.oor['English']?.isNotEmpty == true) v.oor['English'],
+                if (v.maavattam['English']?.isNotEmpty == true) v.maavattam['English'],
+              ].where((e) => e != null).join(', ');
+
+              _vanigarMunvariMap = {
+                'Tamil': tamilAddr.isNotEmpty ? tamilAddr : (v.mugavari['Tamil'] ?? ''),
+                'English': engAddr.isNotEmpty ? engAddr : (v.mugavari['English'] ?? ''),
+              };
+            });
+          },
+        ),
+      ],
     );
   }
 
@@ -469,10 +518,8 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     // Auto-fill customer from first invoice (if not already set)
     if (_selectedVanigarId == null && first.vanigarId != null) {
       _selectedVanigarId = first.vanigarId;
-      _vanigarPeyar = first.vanigarPeyar;
-      _vanigarPeyarEn = first.vanigarPeyarEn ?? '';
-      _vanigarMunvari = first.vanigarMunvari;
-      _vanigarMunvariEn = first.vanigarMunvariEn ?? '';
+      _vanigarPeyarMap = first.vanigarPeyar;
+      _vanigarMunvariMap = first.vanigarMunvari;
     }
   }
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ElvanSettingsSection — Groups rows inside a single rounded card with dividers

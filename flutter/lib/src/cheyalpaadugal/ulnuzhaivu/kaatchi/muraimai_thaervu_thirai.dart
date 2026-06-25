@@ -1,7 +1,5 @@
-import 'dart:ui';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';

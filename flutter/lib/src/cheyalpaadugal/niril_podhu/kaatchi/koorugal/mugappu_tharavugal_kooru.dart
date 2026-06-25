@@ -203,7 +203,7 @@ class RecentActivityHeader extends StatelessWidget {
 
 /// Pixel-perfect port of React's ElvanCard + renderRecentItem.
 /// Shows: index circle + customer name + invoice # + date + amount.
-class ElvanRecentCard extends StatefulWidget {
+class ElvanRecentCard extends ConsumerStatefulWidget {
   const ElvanRecentCard({
     super.key,
     required this.index,
@@ -216,10 +216,10 @@ class ElvanRecentCard extends StatefulWidget {
   final VoidCallback onTap;
 
   @override
-  State<ElvanRecentCard> createState() => _ElvanRecentCardState();
+  ConsumerState<ElvanRecentCard> createState() => _ElvanRecentCardState();
 }
 
-class _ElvanRecentCardState extends State<ElvanRecentCard> {
+class _ElvanRecentCardState extends ConsumerState<ElvanRecentCard> {
   bool _isPressed = false;
   static final _dateFormat = DateFormat('dd/MM/yyyy');
   static final _currencyFormat =
@@ -230,6 +230,11 @@ class _ElvanRecentCardState extends State<ElvanRecentCard> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final p = widget.pattiyal;
     final amountStr = _currencyFormat.format(p.mothaThogai);
+    
+    final currentLocale = ref.watch(localeProvider);
+    final effectiveLang = currentLocale?.languageCode ?? Localizations.localeOf(context).languageCode;
+    final primaryLang = effectiveLang == 'ta' ? 'Tamil' : 'English';
+    final secondaryLang = effectiveLang == 'ta' ? 'English' : 'Tamil';
 
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
@@ -288,9 +293,9 @@ class _ElvanRecentCardState extends State<ElvanRecentCard> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  p.vanigarPeyar.isNotEmpty
-                                      ? p.vanigarPeyar
-                                      : '-',
+                                  p.vanigarPeyar[primaryLang]?.isNotEmpty == true
+                                      ? p.vanigarPeyar[primaryLang]!
+                                      : p.vanigarPeyar[secondaryLang] ?? '-',
                                   style: const TextStyle(
                                     fontSize: 15.2,
                                     fontWeight: FontWeight.w700,

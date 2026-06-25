@@ -4,14 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../adippadai/viruppangal_paniyagam.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../adippadai/panigal/niril_backup_service.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import 'package:drift/drift.dart' hide Column;
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
-import '../muraimai_thaervu_thirai.dart';
 import '../koorugal/ullnuzhaivu_koorugal.dart';
 
 class VanakkamPage extends ConsumerStatefulWidget {

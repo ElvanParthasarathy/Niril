@@ -12,26 +12,18 @@ import '../../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 /// §1 Customer — client search + company dropdown + saved-details card.
 class KooliVanigarKooru extends ConsumerWidget {
   final int? selectedVanigarId;
-  final String selectedVanigarPeyar;
-  final int? selectedNiruvanamId;
-  final List<NiruvanaTharavugal> profiles;
-  final ValueChanged<VanigarEntry> onVanigarSelected;
-  final VoidCallback? onVanigarCleared;
-  final ValueChanged<int?> onNiruvanamChanged;
-  final VoidCallback? onRequestAddNewVanigar;
+  final Map<String, String> selectedVanigarPeyarMap;
   final VanigarEntry? selectedVanigar;
+  final ValueChanged<VanigarEntry> onVanigarSelected;
+  final VoidCallback onVanigarCleared;
 
   const KooliVanigarKooru({
     super.key,
     required this.selectedVanigarId,
-    required this.selectedVanigarPeyar,
-    required this.selectedNiruvanamId,
-    required this.profiles,
+    required this.selectedVanigarPeyarMap,
+    required this.selectedVanigar,
     required this.onVanigarSelected,
-    this.onVanigarCleared,
-    required this.onNiruvanamChanged,
-    this.onRequestAddNewVanigar,
-    this.selectedVanigar,
+    required this.onVanigarCleared,
   });
 
   @override
@@ -40,7 +32,6 @@ class KooliVanigarKooru extends ConsumerWidget {
     final tt = Theme.of(context).textTheme;
 
     return LayoutBuilder(builder: (context, constraints) {
-      final isDesktop = constraints.maxWidth >= 600;
       final customerColumn = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -57,7 +48,6 @@ class KooliVanigarKooru extends ConsumerWidget {
             selectedId: selectedVanigarId,
             onSelected: onVanigarSelected,
             onCleared: onVanigarCleared,
-            onRequestAddNew: onRequestAddNewVanigar,
           ),
           if (selectedVanigar != null) ...[
             const SizedBox(height: 12),
@@ -77,7 +67,7 @@ class KooliVanigarKooru extends ConsumerWidget {
                   Text(
                     selectedVanigar!.peyar['English'] ??
                         selectedVanigar!.peyar['Tamil'] ??
-                        selectedVanigarPeyar,
+                        (selectedVanigarPeyarMap['English']?.isNotEmpty == true ? selectedVanigarPeyarMap['English'] : selectedVanigarPeyarMap['Tamil']) ?? '',
                     style: tt.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -105,72 +95,7 @@ class KooliVanigarKooru extends ConsumerWidget {
         ],
       );
 
-      final companyColumn = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.only(left: 12, bottom: 6),
-            child: Text(K.niruvanam.tr(context, ref),
-                style: tt.bodySmall?.copyWith(
-                  color: cs.onSurfaceVariant,
-                  fontSize: 12,
-                )),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: DropdownButtonFormField<int>(
-                  initialValue: selectedNiruvanamId,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(50)),
-                    filled: true,
-                    fillColor: cs.surfaceContainerHighest.withValues(alpha: 0.4),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 14),
-                  ),
-                  items: profiles.map((p) {
-                    final name = p.niruvanathinPeyar['Tamil'] ??
-                        p.niruvanathinPeyar['English'] ??
-                        'Company';
-                    return DropdownMenuItem(value: p.id, child: Text(name));
-                  }).toList(),
-                  onChanged: onNiruvanamChanged,
-                ),
-              ),
-              if (selectedNiruvanamId != null)
-                IconButton(
-                  icon: Icon(Icons.close, color: cs.error, size: 20),
-                  tooltip: 'Clear',
-                  onPressed: () => onNiruvanamChanged(null),
-                ),
-            ],
-          ),
-        ],
-      );
-
-      final showCompanySelector = profiles.length > 1;
-
-      if (isDesktop) {
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (showCompanySelector) ...[
-              Expanded(flex: 7, child: companyColumn),
-              const SizedBox(width: 24),
-            ],
-            Expanded(flex: 5, child: customerColumn),
-          ],
-        );
-      }
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (showCompanySelector) companyColumn,
-          customerColumn,
-        ],
-      );
+      return customerColumn;
     });
   }
 

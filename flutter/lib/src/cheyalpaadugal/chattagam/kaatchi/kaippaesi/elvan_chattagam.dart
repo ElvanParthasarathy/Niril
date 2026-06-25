@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'dart:math';
 
 import 'thalaippu_nilaimai.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_menmai_nagarvu.dart';
@@ -9,7 +8,6 @@ import '../../../../koorugal/podhu_koorugal/elvan_menmai_nagarvu.dart';
 export 'elvan_kizh_pattai.dart';
 import 'elvan_kizh_pattai.dart';
 import 'elvan_surungiya_pattai.dart';
-import 'elvan_virindha_pattai.dart';
 import 'elvan_thirai_ulladakkam.dart';
 import 'koorugal/elvan_mel_pattai_chinnam.dart';
 import 'elvan_thaedal_pattai.dart';

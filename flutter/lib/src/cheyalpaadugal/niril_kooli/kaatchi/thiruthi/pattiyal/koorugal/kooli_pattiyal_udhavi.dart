@@ -20,7 +20,8 @@ class KooliThiruththiNilaimai {
     this.selectedNiruvanamId,
     this.selectedProfile,
     this.selectedVanigarId,
-    this.selectedVanigarPeyar = '',
+    this.selectedVanigarPeyarMap = const {},
+    this.selectedVanigarMunvariMap = const {},
     required this.pattiyalNaal,
     this.items = const [],
     this.setharamGrams = 0,
@@ -34,7 +35,8 @@ class KooliThiruththiNilaimai {
   final int? selectedNiruvanamId;
   final NiruvanaTharavugal? selectedProfile;
   final int? selectedVanigarId;
-  final String selectedVanigarPeyar;
+  final Map<String, String> selectedVanigarPeyarMap;
+  final Map<String, String> selectedVanigarMunvariMap;
   final DateTime pattiyalNaal;
   final List<KooliUrupadi> items;
   final double setharamGrams;
@@ -71,7 +73,8 @@ class KooliPattiyalUthavi {
     return KooliThiruththiNilaimai(
       selectedNiruvanamId: entry.niruvanamId,
       selectedVanigarId: entry.vanigarId,
-      selectedVanigarPeyar: entry.vanigarPeyar,
+      selectedVanigarPeyarMap: entry.vanigarPeyar,
+      selectedVanigarMunvariMap: entry.vanigarMunvari,
       pattiyalNaal: entry.pattiyalNaal,
       items: items,
       setharamGrams: entry.setharamGrams,
@@ -83,8 +86,8 @@ class KooliPattiyalUthavi {
 
   // ── Save ─────────────────────────────────────────────────────────────────
 
-  /// Saves the coolie invoice (create or update).
-  static Future<void> save({
+  /// Saves the coolie invoice (create or update). Returns error string if any.
+  static Future<String?> save({
     required PattiyalKalanjiyam kalanjiyam,
     required KooliThiruththiNilaimai state,
     required KooliMothangal totals,
@@ -126,6 +129,19 @@ class KooliPattiyalUthavi {
           kalanjiyam.formatPattiyalEn(profilePrefix, vanakkam);
     }
 
+    // Duplicate check
+    final isDuplicate = await kalanjiyam.isPattiyalEnDuplicate(
+      'coolie',
+      state.selectedNiruvanamId,
+      finYear,
+      finalBillNumber,
+      excludeId: editingEntry?.id,
+    );
+
+    if (isDuplicate) {
+      return 'Invoice number $finalBillNumber already exists!';
+    }
+
     if (editingEntry != null) {
       // ── Update ──
       await kalanjiyam.updatePattiyal(
@@ -138,7 +154,8 @@ class KooliPattiyalUthavi {
               ? Value(vanakkam)
               : const Value.absent(),
           vanigarId: Value(state.selectedVanigarId),
-          vanigarPeyar: Value(state.selectedVanigarPeyar),
+          vanigarPeyar: Value(state.selectedVanigarPeyarMap),
+          vanigarMunvari: Value(state.selectedVanigarMunvariMap),
           niruvanamId: Value(state.selectedNiruvanamId),
           pattiyalNaal: Value(state.pattiyalNaal),
           tharavugal: Value(PattiyalUthavigal.kooliListToJson(validItems)),
@@ -150,6 +167,7 @@ class KooliPattiyalUthavi {
           piravariVugal: Value(
               PattiyalUthavigal.piraVarivuListToJson(state.piraVarivugal)),
           vangiTharavugal: Value(bankSnapshot),
+          createdAt: Value(editingEntry.createdAt),
           updatedAt: Value(DateTime.now()),
         ),
       );
@@ -162,7 +180,8 @@ class KooliPattiyalUthavi {
           finYear: finYear,
           vanakkam: Value(vanakkam),
           niruvanamId: Value(state.selectedNiruvanamId),
-          vanigarPeyar: state.selectedVanigarPeyar,
+          vanigarPeyar: Value(state.selectedVanigarPeyarMap),
+          vanigarMunvari: Value(state.selectedVanigarMunvariMap),
           vanigarId: Value(state.selectedVanigarId),
           pattiyalNaal: Value(state.pattiyalNaal),
           tharavugal: Value(PattiyalUthavigal.kooliListToJson(validItems)),
@@ -177,6 +196,8 @@ class KooliPattiyalUthavi {
         ),
       );
     }
+    
+    return null;
   }
 
   // ── Draft persistence ───────────────────────────────────────────────────
@@ -187,7 +208,8 @@ class KooliPattiyalUthavi {
       final prefs = await SharedPreferences.getInstance();
       final draft = jsonEncode({
         'vanigarId': state.selectedVanigarId,
-        'vanigarPeyar': state.selectedVanigarPeyar,
+        'vanigarPeyarMap': state.selectedVanigarPeyarMap,
+        'vanigarMunvariMap': state.selectedVanigarMunvariMap,
         'niruvanamId': state.selectedNiruvanamId,
         'pattiyalNaal': state.pattiyalNaal.toIso8601String(),
         'items': PattiyalUthavigal.kooliListToJson(state.items),
@@ -214,8 +236,9 @@ class KooliPattiyalUthavi {
 
       final draft = jsonDecode(draftJson) as Map<String, dynamic>;
       final items = draft['items'] as String? ?? '[]';
-      final name = draft['vanigarPeyar'] as String? ?? '';
-      if (items == '[]' && name.isEmpty) {
+      final nameMap = (draft['vanigarPeyarMap'] as Map?)?.cast<String, String>() ?? {};
+      final addrMap = (draft['vanigarMunvariMap'] as Map?)?.cast<String, String>() ?? {};
+      if (items == '[]' && nameMap.isEmpty) {
         await prefs.remove(_draftKey);
         return null;
       }
@@ -246,7 +269,8 @@ class KooliPattiyalUthavi {
             draft['piraVarivugal'] as String? ?? '[]');
         return KooliThiruththiNilaimai(
           selectedVanigarId: draft['vanigarId'] as int?,
-          selectedVanigarPeyar: draft['vanigarPeyar'] as String? ?? '',
+          selectedVanigarPeyarMap: nameMap,
+          selectedVanigarMunvariMap: addrMap,
           selectedNiruvanamId: draft['niruvanamId'] as int?,
           pattiyalNaal: DateTime.tryParse(
                   draft['pattiyalNaal'] as String? ?? '') ??

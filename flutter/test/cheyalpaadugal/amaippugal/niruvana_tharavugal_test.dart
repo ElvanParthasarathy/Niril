@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:elvan_niril/src/cheyalpaadugal/amaippugal/tharavu/vaniga_tharavugal.dart';
+import 'package:elvan_niril/src/cheyalpaadugal/amaippugal/tharavu/niruvana_tharavugal.dart';
 
-/// Tests for the VanigaTharavugal domain model.
+/// Tests for the NiruvanaTharavugal domain model.
 void main() {
-  group('VanigaTharavugal Model', () {
+  group('NiruvanaTharavugal Model', () {
     test('Default constructor creates valid empty model', () {
-      final model = VanigaTharavugal();
+      final model = NiruvanaTharavugal();
 
       expect(model.id, isNull);
       expect(model.mudhanMozhi, 'Tamil');
@@ -23,7 +23,7 @@ void main() {
     });
 
     test('Constructor with bilingual data works correctly', () {
-      final model = VanigaTharavugal(
+      final model = NiruvanaTharavugal(
         id: 1,
         niruvanathinPeyar: {'Tamil': 'எல்வன்', 'English': 'Elvan'},
         mugavari: {'Tamil': 'சென்னை', 'English': 'Chennai'},
@@ -37,7 +37,7 @@ void main() {
     });
 
     test('getPrimary returns correct language value', () {
-      final model = VanigaTharavugal(
+      final model = NiruvanaTharavugal(
         mudhanMozhi: 'Tamil',
         niruvanathinPeyar: {'Tamil': 'எல்வன்', 'English': 'Elvan'},
       );
@@ -46,7 +46,7 @@ void main() {
     });
 
     test('getSecondary returns correct language value', () {
-      final model = VanigaTharavugal(
+      final model = NiruvanaTharavugal(
         thunaiMozhi: 'English',
         niruvanathinPeyar: {'Tamil': 'எல்வன்', 'English': 'Elvan'},
       );
@@ -55,7 +55,7 @@ void main() {
     });
 
     test('getPrimary returns empty string for missing language', () {
-      final model = VanigaTharavugal(
+      final model = NiruvanaTharavugal(
         mudhanMozhi: 'French',
         niruvanathinPeyar: {'Tamil': 'எல்வன்'},
       );
@@ -64,7 +64,7 @@ void main() {
     });
 
     test('setBilingual updates the correct field', () {
-      final model = VanigaTharavugal();
+      final model = NiruvanaTharavugal();
       model.setBilingual('vangiPeyar', 'Tamil', 'இந்தியன் வங்கி');
       model.setBilingual('vangiPeyar', 'English', 'Indian Bank');
 
@@ -73,7 +73,7 @@ void main() {
     });
 
     test('copyWith creates independent deep copy', () {
-      final original = VanigaTharavugal(
+      final original = NiruvanaTharavugal(
         id: 1,
         niruvanathinPeyar: {'Tamil': 'ஒன்று'},
         kurumPeyar: 'Original',
@@ -91,7 +91,7 @@ void main() {
     });
 
     test('copyWith preserves all fields when no overrides given', () {
-      final original = VanigaTharavugal(
+      final original = NiruvanaTharavugal(
         id: 42,
         mudhanMozhi: 'English',
         thunaiMozhi: 'Tamil',
@@ -125,15 +125,15 @@ void main() {
     });
   });
 
-  group('VanigaTharavugal Bilingual Field Resolution', () {
+  group('NiruvanaTharavugal Bilingual Field Resolution', () {
     test('_getBilingualMap returns empty map for unknown field', () {
-      final model = VanigaTharavugal();
+      final model = NiruvanaTharavugal();
       // getPrimary calls _getBilingualMap internally
       expect(model.getPrimary('nonExistentField'), isEmpty);
     });
 
     test('All bilingual field names resolve correctly', () {
-      final model = VanigaTharavugal(
+      final model = NiruvanaTharavugal(
         niruvanathinPeyar: {'Tamil': 'a'},
         mugavari: {'Tamil': 'b'},
         oor: {'Tamil': 'c'},

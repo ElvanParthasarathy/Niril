@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -59,8 +58,9 @@ class ElvanCollapsedBar extends ConsumerWidget {
         if (!isPinned) return const SizedBox.shrink();
 
         // If there are no icons AND no leading widget to display, we don't need to draw anything!
-        if (navActions.isEmpty && leadingWidget == null)
+        if (navActions.isEmpty && leadingWidget == null) {
           return const SizedBox.shrink();
+        }
 
         double liftProgress = 0.0;
 

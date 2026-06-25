@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'nalvaravu_thirai_amaippu.dart';
 import '../koorugal/ullnuzhaivu_koorugal.dart';
-import '../../../../../main.dart'; // To access ShellDemoScreen
+// To access ShellDemoScreen
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../muraimai_thaervu_thirai.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 class LoginPage extends ConsumerStatefulWidget {

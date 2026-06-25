@@ -37,8 +37,9 @@ final profilesLoadingProvider = Provider<bool>((ref) {
 // Returns a list of AppMode strings (e.g. ['silk', 'coolie'], ['coolie'], or [])
 final missingProfilesProvider = Provider<List<String>>((ref) {
   final profiles = ref.watch(profilesStreamProvider).value;
-  if (profiles == null)
+  if (profiles == null) {
     return ['silk', 'coolie']; // Assume both missing while loading so onboarding fields are visible
+  }
 
   final existingModes = profiles.map((p) => p.seyaliVagai).toList();
   final missing = <String>[];
@@ -139,6 +140,7 @@ class BilingualNotifier extends Notifier<bool> {
     }
   }
 
+  @override
   set state(bool value) {
     final mode = ref.read(appModeProvider);
     if (mode == AppMode.coolie) {
@@ -165,6 +167,7 @@ class PrimaryLanguageNotifier extends Notifier<String> {
     return profile?.mudhanMozhi ?? 'Tamil';
   }
 
+  @override
   set state(String value) {
     final profile = ref.read(NiruvanaTharavugalProvider);
     if (profile != null) {
@@ -187,6 +190,7 @@ class SecondaryLanguageNotifier extends Notifier<String> {
     return profile?.thunaiMozhi ?? 'English';
   }
 
+  @override
   set state(String value) {
     final profile = ref.read(NiruvanaTharavugalProvider);
     if (profile != null) {

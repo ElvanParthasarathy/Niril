@@ -140,15 +140,23 @@ class PatruKalanjiyam {
   Future<void> bulkDeletePatrugal(List<int> ids) {
     return _db.transaction(() async {
       await (_db.update(_db.patrugalTable)..where((t) => t.id.isIn(ids)))
-          .write(PatrugalTableCompanion(
-        isDeleted: const Value(true),
-        updatedAt: Value(DateTime.now()),
+          .write(const PatrugalTableCompanion(
+        isDeleted: Value(true),
+        // deletedAt: Value.ofNonNull(null), // TODO: Use actual timestamp if needed
       ));
 
       // Remove all junction rows for deleted receipts
       await (_db.delete(_db.patruPattiyalTable)
             ..where((t) => t.patruId.isIn(ids)))
           .go();
+    });
+  }
+
+  /// Hard delete all receipts (for dev seeding)
+  Future<void> deleteAllPatrugal() {
+    return _db.transaction(() async {
+      await _db.delete(_db.patruPattiyalTable).go();
+      await _db.delete(_db.patrugalTable).go();
     });
   }
 
@@ -258,6 +266,32 @@ class PatruKalanjiyam {
   }
 
   // ── Validation ────────────────────────────────────────────────────────
+
+  /// Checks if a receipt number already exists for the given mode and company.
+  /// Check is case-insensitive.
+  Future<bool> isPatruEnDuplicate(
+    String seyaliVagai,
+    int? niruvanamId,
+    String patruEn, {
+    int? excludeId,
+  }) async {
+    final query = _db.select(_db.patrugalTable)
+      ..where((t) => t.seyaliVagai.equals(seyaliVagai))
+      ..where((t) => t.patruEn.upper().equals(patruEn.toUpperCase()));
+
+    if (niruvanamId != null) {
+      query.where((t) => t.niruvanamId.equals(niruvanamId));
+    } else {
+      query.where((t) => t.niruvanamId.isNull());
+    }
+
+    if (excludeId != null) {
+      query.where((t) => t.id.isNotValue(excludeId));
+    }
+
+    final existing = await query.get();
+    return existing.isNotEmpty;
+  }
 
   /// Validate that the receipt amount doesn't exceed invoice balances.
   /// Returns null if valid, or an error message string if invalid.

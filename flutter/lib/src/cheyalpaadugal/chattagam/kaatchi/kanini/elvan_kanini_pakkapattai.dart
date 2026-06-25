@@ -24,10 +24,6 @@ class ElvanDesktopSidebar extends ConsumerWidget {
   final int currentIndex;
   final ValueChanged<int> onTabSelected;
   final VoidCallback onSettingsPressed;
-  final VoidCallback onReportsPressed;
-  final VoidCallback onGstReturnsPressed;
-  final bool isReportsSelected;
-  final bool isGstReturnsSelected;
   final List<CustomNavItem> navItems;
   final AppMode appMode;
 
@@ -38,10 +34,6 @@ class ElvanDesktopSidebar extends ConsumerWidget {
     required this.currentIndex,
     required this.onTabSelected,
     required this.onSettingsPressed,
-    required this.onReportsPressed,
-    required this.onGstReturnsPressed,
-    this.isReportsSelected = false,
-    this.isGstReturnsSelected = false,
     required this.navItems,
     required this.appMode,
   });
@@ -84,60 +76,7 @@ class ElvanDesktopSidebar extends ConsumerWidget {
                         ),
                       );
                     }),
-                    if (appMode == AppMode.silk) ...[
-                      if (!isCollapsed)
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 32, right: 24, top: 8, bottom: 12),
-                          child: Text(K.arikkaigal.tr(context, ref),
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurface
-                                      .withValues(alpha: 0.5))),
-                        ),
-                      if (isCollapsed)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Divider(
-                              height: 24,
-                              color: isDark
-                                  ? Colors.white.withValues(alpha: 0.1)
-                                  : Colors.black.withValues(alpha: 0.05)),
-                        ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Padding(
-                          padding: EdgeInsets.only(bottom: isCollapsed ? 0 : 10),
-                          child: KaniniNavKooru(
-                            item: CustomNavItem(
-                                icon: CupertinoIcons.chart_pie,
-                                label: K.arikkai.tr(context, ref)),
-                            isSelected: isReportsSelected,
-                            isDark: isDark,
-                            isCollapsed: isCollapsed,
-                            onTap: onReportsPressed,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: Padding(
-                          padding: EdgeInsets.only(bottom: isCollapsed ? 0 : 10),
-                          child: KaniniNavKooru(
-                            item: CustomNavItem(
-                                icon: CupertinoIcons.doc_checkmark,
-                                label: K.variArikkai.tr(context, ref)),
-                            isSelected: isGstReturnsSelected,
-                            isDark: isDark,
-                            isCollapsed: isCollapsed,
-                            onTap: onGstReturnsPressed,
-                          ),
-                        ),
-                      ),
-                    ],
+
                   ],
                 ),
               ),

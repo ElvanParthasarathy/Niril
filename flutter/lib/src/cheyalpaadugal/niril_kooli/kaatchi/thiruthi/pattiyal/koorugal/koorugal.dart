@@ -5,5 +5,4 @@ export 'kooli_pattiyal_udhavi.dart';
 export 'kooli_vanigar_kooru.dart';
 export 'kooli_mothangal_kooru.dart';
 export 'kooli_melthogai_kooru.dart';
-export 'kooli_pattiyal_tharavugal_kooru.dart';
 export 'kooli_vangi_tharavugal_kooru.dart';

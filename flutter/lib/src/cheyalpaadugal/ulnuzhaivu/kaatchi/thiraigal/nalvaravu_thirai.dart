@@ -5,11 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'ullnuzhaivu_thirai.dart';
 import '../koorugal/ullnuzhaivu_koorugal.dart';
-import '../../../../adippadai/viruppangal_paniyagam.dart';
-import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../../../../adippadai/tharavuru/seyali_murai.dart';
-import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
-import '../../../chattagam/kaatchi/kaippaesi/koorugal/elvan_thirai_vazhi.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 class WelcomePage extends ConsumerWidget {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -39,7 +38,7 @@ class ElvanSettingsAnimatedExpand extends StatelessWidget {
             );
           },
           child: !isEditing
-              ? Container(
+              ? SizedBox(
                   key: ValueKey('${keyPrefix}_display'),
                   width: double.infinity,
                   child: displayChild,
@@ -61,7 +60,7 @@ class ElvanSettingsAnimatedExpand extends StatelessWidget {
             );
           },
           child: isEditing
-              ? Container(
+              ? SizedBox(
                   key: ValueKey('${keyPrefix}_edit'),
                   width: double.infinity,
                   child: editChild,

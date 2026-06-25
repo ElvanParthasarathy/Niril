@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
-import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
-import '../../../../../niril_podhu/kaatchi/koorugal/pattiyal_naal_kooru.dart';
+import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
+import 'pattiyal_naal_kooru.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // பட்டியல் தரவுகள் கூறு — Invoice Details Section (Number + Date)
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// Section 2: Invoice number (editable) + Date picker, responsive layout.
-class PattuPattiyalTharavugalKooru extends ConsumerWidget {
-  const PattuPattiyalTharavugalKooru({
+/// Section 2/3: Invoice number (editable) + Date picker, responsive layout.
+/// Used commonly across Silk and Coolie editors.
+class ElvanPattiyalTharavugalKooru extends ConsumerWidget {
+  const ElvanPattiyalTharavugalKooru({
     super.key,
     required this.isEditing,
     required this.invoiceNumberOverride,
@@ -24,6 +25,8 @@ class PattuPattiyalTharavugalKooru extends ConsumerWidget {
     required this.onInvNumberChanged,
     required this.onDateChanged,
     required this.onDirty,
+    this.customNumberTitle,
+    this.customDateTitle,
   });
 
   final bool isEditing;
@@ -37,6 +40,8 @@ class PattuPattiyalTharavugalKooru extends ConsumerWidget {
   final ValueChanged<String> onInvNumberChanged;
   final ValueChanged<DateTime> onDateChanged;
   final VoidCallback onDirty;
+  final String? customNumberTitle;
+  final String? customDateTitle;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -52,7 +57,7 @@ class PattuPattiyalTharavugalKooru extends ConsumerWidget {
           Row(
             children: [
               Text(
-                K.pattiyalEn.tr(context, ref),
+                customNumberTitle ?? K.pattiyalEn.tr(context, ref),
                 style: tt.labelMedium?.copyWith(
                   color: cs.onSurfaceVariant,
                   fontWeight: FontWeight.w500,
@@ -92,7 +97,7 @@ class PattuPattiyalTharavugalKooru extends ConsumerWidget {
                     ),
                   ),
                   child: Text(
-                    '$profilePrefix-',
+                    profilePrefix,
                     style: tt.bodyLarge?.copyWith(
                       color: cs.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
@@ -151,7 +156,7 @@ class PattuPattiyalTharavugalKooru extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            K.naal.tr(context, ref),
+            customDateTitle ?? K.naal.tr(context, ref),
             style: tt.labelMedium?.copyWith(
               color: cs.onSurfaceVariant,
               fontWeight: FontWeight.w500,

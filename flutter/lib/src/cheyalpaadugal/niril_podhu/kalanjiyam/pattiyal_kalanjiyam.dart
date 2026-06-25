@@ -170,6 +170,36 @@ class PattiyalKalanjiyam {
     return now.month >= 4 ? now.year : now.year - 1;
   }
 
+  // ── Validation ─────────────────────────────────────────────────────────
+
+  /// Checks if an invoice number already exists for the given mode,
+  /// financial year, and company. Check is case-insensitive.
+  Future<bool> isPattiyalEnDuplicate(
+    String seyaliVagai,
+    int? niruvanamId,
+    int finYear,
+    String pattiyalEn, {
+    int? excludeId,
+  }) async {
+    final query = _db.select(_db.patrucheettuTable)
+      ..where((t) => t.seyaliVagai.equals(seyaliVagai))
+      ..where((t) => t.finYear.equals(finYear))
+      ..where((t) => t.patrucheettuEn.upper().equals(pattiyalEn.toUpperCase()));
+
+    if (niruvanamId != null) {
+      query.where((t) => t.niruvanamId.equals(niruvanamId));
+    } else {
+      query.where((t) => t.niruvanamId.isNull());
+    }
+
+    if (excludeId != null) {
+      query.where((t) => t.id.isNotValue(excludeId));
+    }
+
+    final existing = await query.get();
+    return existing.isNotEmpty;
+  }
+
   // ── Auto-Purge ─────────────────────────────────────────────────────────
 
   /// Hard-delete all soft-deleted invoices older than [days] (default 30).

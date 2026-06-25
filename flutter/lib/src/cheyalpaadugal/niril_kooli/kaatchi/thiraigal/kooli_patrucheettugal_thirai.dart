@@ -30,6 +30,11 @@ class CoolieReceiptsPage extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelecting = ref.watch(patruSelectionModeProvider);
     final selectedIds = ref.watch(selectedPatruIdsProvider);
+    
+    final currentLocale = ref.watch(localeProvider);
+    final effectiveLang = currentLocale?.languageCode ?? Localizations.localeOf(context).languageCode;
+    final primaryLang = effectiveLang == 'ta' ? 'Tamil' : 'English';
+    final secondaryLang = effectiveLang == 'ta' ? 'English' : 'Tamil';
 
     return patrugalAsync.when(
       loading: () => const SliverFillRemaining(
@@ -46,10 +51,12 @@ class CoolieReceiptsPage extends ConsumerWidget {
             ? patrugal
             : patrugal.where((p) {
                 final en = p.patruEn.toLowerCase();
-                final peyar = p.vanigarPeyar.toLowerCase();
+                final peyarPrimary = (p.vanigarPeyar[primaryLang] ?? '').toLowerCase();
+                final peyarSecondary = (p.vanigarPeyar[secondaryLang] ?? '').toLowerCase();
                 final vagai = p.seluthiVagai.toLowerCase();
                 return en.contains(query) ||
-                    peyar.contains(query) ||
+                    peyarPrimary.contains(query) ||
+                    peyarSecondary.contains(query) ||
                     vagai.contains(query);
               }).toList();
 
@@ -170,6 +177,8 @@ class CoolieReceiptsPage extends ConsumerWidget {
                       isSelected: isSelected,
                       dateFormat: _dateFormat,
                       currencyFormat: _currencyFormat,
+                      primaryLang: primaryLang,
+                      secondaryLang: secondaryLang,
                       onTap: () {
                         if (isSelecting) {
                           _toggleSelection(ref, patru.id, selectedIds);
@@ -306,6 +315,8 @@ class _PatruCard extends StatelessWidget {
     required this.isSelected,
     required this.dateFormat,
     required this.currencyFormat,
+    required this.primaryLang,
+    required this.secondaryLang,
     required this.onTap,
     required this.onLongPress,
   });
@@ -316,6 +327,8 @@ class _PatruCard extends StatelessWidget {
   final bool isSelected;
   final DateFormat dateFormat;
   final NumberFormat currencyFormat;
+  final String primaryLang;
+  final String secondaryLang;
   final VoidCallback onTap;
   final VoidCallback onLongPress;
 
@@ -372,9 +385,9 @@ class _PatruCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          patru.vanigarPeyar.isNotEmpty
-                              ? patru.vanigarPeyar
-                              : patru.patruEn,
+                          patru.vanigarPeyar[primaryLang]?.isNotEmpty == true
+                              ? patru.vanigarPeyar[primaryLang]!
+                              : patru.vanigarPeyar[secondaryLang] ?? patru.patruEn,
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,

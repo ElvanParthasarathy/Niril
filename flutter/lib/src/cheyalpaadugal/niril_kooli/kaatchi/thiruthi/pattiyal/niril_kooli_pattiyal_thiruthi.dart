@@ -18,7 +18,6 @@ import '../../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 import '../../../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
-import '../vanigar/niril_kooli_vanigar_thiruthi.dart';
 import '../porul/niril_kooli_porul_thiruthi.dart';
 import 'koorugal/koorugal.dart';
 
@@ -131,7 +130,8 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
         if (match != null) {
           setState(() {
             _selectedProfile = match;
-            _profilePrefix = match.kurumPeyar.isNotEmpty ? match.kurumPeyar : 'CB';
+            final shortName = match.kurumPeyar.isNotEmpty ? match.kurumPeyar : 'CB';
+            _profilePrefix = '$shortName-';
           });
         }
       }
@@ -225,17 +225,17 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     try {
       final kalanjiyam = ref.read(pattiyalKalanjiyamProvider);
       final finYear = PattiyalKalanjiyam.getCurrentFinYear();
-      final prefix = _selectedProfile?.kurumPeyar.isNotEmpty == true
+      final shortName = (_selectedProfile?.kurumPeyar.isNotEmpty == true
           ? _selectedProfile!.kurumPeyar
-          : 'CB';
-      _profilePrefix = prefix;
+          : 'CB');
+      _profilePrefix = '$shortName-';
       final vanakkam = await kalanjiyam.getNextVanakkam(
         'coolie', _selectedNiruvanamId, finYear,
       );
       if (mounted) {
         setState(() {
           _previewBillNumber =
-              kalanjiyam.formatPattiyalEn(prefix, vanakkam);
+              kalanjiyam.formatPattiyalEn(shortName, vanakkam);
         });
       }
     } catch (_) {}
@@ -408,8 +408,8 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                           if (numPart.isNotEmpty) {
                             final prefix = _profilePrefix.isNotEmpty
                                 ? _profilePrefix
-                                : 'CB';
-                            _invoiceNumberOverride = '$prefix-$numPart';
+                                : 'CB-';
+                            _invoiceNumberOverride = '$prefix$numPart';
                           }
                         } else {
                           // Starting edit → extract number part

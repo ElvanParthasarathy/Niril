@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 
 /// A scroll behavior that allows mouse and trackpad dragging for easier
 /// testing and interaction on Desktop/Windows.

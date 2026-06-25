@@ -32,8 +32,9 @@ class PatruPattiyalTheervuMaeladukku {
                 ? invoices
                 : invoices.where((inv) {
                     final q = searchQuery.toLowerCase();
+                    final pName = (inv.vanigarPeyar['Tamil'] ?? inv.vanigarPeyar['English'] ?? '').toLowerCase();
                     return inv.patrucheettuEn.toLowerCase().contains(q) ||
-                        inv.vanigarPeyar.toLowerCase().contains(q);
+                        pName.contains(q);
                   }).toList();
 
             return DraggableScrollableSheet(
@@ -156,16 +157,16 @@ class PatruPattiyalTheervuMaeladukku {
                                       ),
                                     ],
                                   ),
-                                  subtitle: inv.vanigarPeyar.isNotEmpty
+                                  subtitle: (inv.vanigarPeyar['Tamil'] ?? inv.vanigarPeyar['English'] ?? '').isNotEmpty
                                       ? Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Text(inv.vanigarPeyar,
+                                            Text(inv.vanigarPeyar['Tamil'] ?? inv.vanigarPeyar['English'] ?? '',
                                                 style: const TextStyle(fontSize: 13),
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis),
-                                            if (inv.vanigarMunvari.isNotEmpty)
-                                              Text(inv.vanigarMunvari,
+                                            if ((inv.vanigarMunvari['Tamil'] ?? inv.vanigarMunvari['English'] ?? '').isNotEmpty)
+                                              Text(inv.vanigarMunvari['Tamil'] ?? inv.vanigarMunvari['English'] ?? '',
                                                   style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis),

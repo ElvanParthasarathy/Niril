@@ -176,7 +176,10 @@ class PatrucheettuTable extends Table {
 
   // ── Customer (FK — not snapshot) ──
   IntColumn get vanigarId => integer().nullable()(); // FK → VanigarTable
-  TextColumn get vanigarPeyar => text()(); // Fallback name for deleted customers
+  TextColumn get vanigarPeyar =>
+      text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
+  TextColumn get vanigarMunvari =>
+      text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
 
   // ── Date ──
   DateTimeColumn get pattiyalNaal =>
@@ -248,13 +251,10 @@ class PatrugalTable extends Table {
   // ── Customer (FK-first, fallback snapshot) ──
   IntColumn get vanigarId =>
       integer().nullable()(); // FK → VanigarTable
-  TextColumn get vanigarPeyar => text()(); // Snapshot name
-  TextColumn get vanigarPeyarEn =>
-      text().nullable()(); // Snapshot name (English fallback)
+  TextColumn get vanigarPeyar =>
+      text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
   TextColumn get vanigarMunvari =>
-      text().withDefault(const Constant(''))(); // Snapshot address
-  TextColumn get vanigarMunvariEn =>
-      text().nullable()(); // Snapshot address (English fallback)
+      text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
 
   // ── Receipt Data ──
   DateTimeColumn get patruNaal =>
@@ -306,7 +306,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -394,8 +394,57 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 9) {
             // v9: Add English fallback snapshot fields to patrugal_table
-            await m.addColumn(patrugalTable, patrugalTable.vanigarPeyarEn);
-            await m.addColumn(patrugalTable, patrugalTable.vanigarMunvariEn);
+            await customStatement(
+                'ALTER TABLE patrugal_table ADD COLUMN vanigar_peyar_en TEXT DEFAULT ""');
+            await customStatement(
+                'ALTER TABLE patrugal_table ADD COLUMN vanigar_munvari_en TEXT DEFAULT ""');
+          }
+          if (from < 10) {
+            await customStatement(
+                'ALTER TABLE patrucheettu_table ADD COLUMN vanigar_peyar_en TEXT DEFAULT ""');
+            await m.addColumn(patrucheettuTable, patrucheettuTable.vanigarMunvari);
+            await customStatement(
+                'ALTER TABLE patrucheettu_table ADD COLUMN vanigar_munvari_en TEXT DEFAULT ""');
+          }
+          if (from < 11) {
+            // Drop _en columns
+            await customStatement(
+              'ALTER TABLE patrucheettu_table DROP COLUMN IF EXISTS vanigar_peyar_en',
+            );
+            await customStatement(
+              'ALTER TABLE patrucheettu_table DROP COLUMN IF EXISTS vanigar_munvari_en',
+            );
+            await customStatement(
+              'ALTER TABLE patrugal_table DROP COLUMN IF EXISTS vanigar_peyar_en',
+            );
+            await customStatement(
+              'ALTER TABLE patrugal_table DROP COLUMN IF EXISTS vanigar_munvari_en',
+            );
+
+            // Migrate flat text to JSON map (e.g. {"Tamil":"..."})
+            await customStatement(
+              "UPDATE patrucheettu_table SET vanigar_peyar = '{\"Tamil\":' || '\"' || vanigar_peyar || '\"' || '}' "
+              "WHERE vanigar_peyar NOT LIKE '{%}'",
+            );
+            await customStatement(
+              "UPDATE patrucheettu_table SET vanigar_munvari = '{\"Tamil\":' || '\"' || vanigar_munvari || '\"' || '}' "
+              "WHERE vanigar_munvari NOT LIKE '{%}' AND vanigar_munvari != ''",
+            );
+            await customStatement(
+              "UPDATE patrucheettu_table SET vanigar_munvari = '{}' WHERE vanigar_munvari = ''",
+            );
+
+            await customStatement(
+              "UPDATE patrugal_table SET vanigar_peyar = '{\"Tamil\":' || '\"' || vanigar_peyar || '\"' || '}' "
+              "WHERE vanigar_peyar NOT LIKE '{%}'",
+            );
+            await customStatement(
+              "UPDATE patrugal_table SET vanigar_munvari = '{\"Tamil\":' || '\"' || vanigar_munvari || '\"' || '}' "
+              "WHERE vanigar_munvari NOT LIKE '{%}' AND vanigar_munvari != ''",
+            );
+            await customStatement(
+              "UPDATE patrugal_table SET vanigar_munvari = '{}' WHERE vanigar_munvari = ''",
+            );
           }
         },
       );

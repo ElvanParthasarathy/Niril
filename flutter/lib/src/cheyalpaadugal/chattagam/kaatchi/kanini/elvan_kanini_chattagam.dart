@@ -1,25 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../kaippaesi/elvan_kizh_pattai.dart'; // For CustomNavItem
 import 'elvan_kanini_pakkapattai.dart';
-import 'elvan_kanini_karuvipattai.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_menmai_nagarvu.dart';
 import '../../../../adippadai/viruppangal_paniyagam.dart';
-import '../../../ulnuzhaivu/kaatchi/koorugal/ullnuzhaivu_koorugal.dart';
 
 class ElvanDesktopShell extends ConsumerStatefulWidget {
   final int currentIndex;
   final ValueChanged<int> onTabSelected;
   final VoidCallback onSettingsPressed;
-  final VoidCallback onReportsPressed;
-  final VoidCallback onGstReturnsPressed;
-  final bool isReportsSelected;
-  final bool isGstReturnsSelected;
   final List<CustomNavItem> navItems;
   final List<Widget> slivers; // The pages (SliverOffstage)
   final Widget? customContent;
@@ -31,10 +22,6 @@ class ElvanDesktopShell extends ConsumerStatefulWidget {
     required this.currentIndex,
     required this.onTabSelected,
     required this.onSettingsPressed,
-    required this.onReportsPressed,
-    required this.onGstReturnsPressed,
-    this.isReportsSelected = false,
-    this.isGstReturnsSelected = false,
     required this.navItems,
     required this.slivers,
     this.customContent,
@@ -50,8 +37,8 @@ final GlobalKey<NavigatorState> desktopNavigatorKey = GlobalKey<NavigatorState>(
 
 class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
   bool isCollapsed = false;
-  double _sidebarOpacity = 1.0;
-  bool _isAnimatingSidebar = false;
+  final double _sidebarOpacity = 1.0;
+  final bool _isAnimatingSidebar = false;
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -116,16 +103,6 @@ class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
                 desktopNavigatorKey.currentState?.popUntil((route) => route.isFirst);
                 widget.onSettingsPressed();
               },
-              onReportsPressed: () {
-                desktopNavigatorKey.currentState?.popUntil((route) => route.isFirst);
-                widget.onReportsPressed();
-              },
-              onGstReturnsPressed: () {
-                desktopNavigatorKey.currentState?.popUntil((route) => route.isFirst);
-                widget.onGstReturnsPressed();
-              },
-              isReportsSelected: widget.isReportsSelected,
-              isGstReturnsSelected: widget.isGstReturnsSelected,
               navItems: widget.navItems,
               appMode: mode ?? AppMode.silk,
             ),
@@ -141,9 +118,7 @@ class _ElvanDesktopShellState extends ConsumerState<ElvanDesktopShell> {
                   key: const ValueKey('desktop_root'),
                   child: Container(
                     color: Theme.of(context).scaffoldBackgroundColor,
-                    child: widget.customContent != null
-                        ? widget.customContent
-                        : ElvanSmoothScroll(
+                    child: widget.customContent ?? ElvanSmoothScroll(
                             controller: _scrollController,
                             child: CustomScrollView(
                               controller: _scrollController,

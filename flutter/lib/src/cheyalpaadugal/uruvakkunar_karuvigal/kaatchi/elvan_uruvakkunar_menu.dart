@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../adippadai/tharavuru/seyali_murai.dart';
+import '../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../ulnuzhaivu/kaatchi/koorugal/ullnuzhaivu_koorugal.dart';
 import '../../amaippugal/tharavu/niruvana_tharavugal.dart';
@@ -30,40 +31,6 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
   bool _isExpanded = false;
   Offset _position = const Offset(20, 100);
 
-  void _showDesignLoader() {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (ctx) => Scaffold(
-        body: Stack(
-          children: [
-            AuthLayout(
-              hideLogo: true,
-              showBranding: true,
-              child: Center(
-                child: Text(
-                  'niril',
-                  style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -1.0,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              top: 48,
-              left: 24,
-              child: IconButton(
-                icon: const Icon(CupertinoIcons.back),
-                onPressed: () => Navigator.of(ctx).pop(),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ));
-  }
-
   void _seedAllData() async {
     // ── Step 1: Erase existing data ──
     await SodhanaiTharavuUruvakki.eraseData(ref);
@@ -79,6 +46,9 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
 
     // ── Step 4: Seed invoices (depends on profiles, products, merchants) ──
     await SodhanaiTharavuUruvakki.seedPattiyalgal(ref);
+
+    // ── Step 5: Seed receipts (depends on profiles, merchants) ──
+    await SodhanaiTharavuUruvakki.seedPatrugal(ref);
 
     if (mounted) {
       ref.read(appModeProvider.notifier).setMode(AppMode.silk);
@@ -105,17 +75,20 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
     // Check if EPS already exists
     final existing = profiles.where((p) => p.kurumPeyar == 'EPS').firstOrNull;
     if (existing != null) {
-      // Remove it
-      await notifier.deleteProfile(existing.id!);
+      // Hide it instead of deleting
+      await notifier.hideProfile(existing.id!);
       if (currentMode != null) {
         ref.read(appModeProvider.notifier).setMode(currentMode);
       }
       if (mounted) ElvanSnackbar.show(context, 'Silk EPS Removed ✗');
     } else {
-      // Add it
-      final data = mockSilkProfiles.length > 1 ? mockSilkProfiles[1] : null;
-      if (data != null) {
-        await notifier.createProfile(_profileFromMap(data));
+      // Try to restore it first, if not found then add it
+      final restored = await notifier.restoreProfile('EPS');
+      if (!restored) {
+        final data = mockSilkProfiles.length > 1 ? mockSilkProfiles[1] : null;
+        if (data != null) {
+          await notifier.createProfile(_profileFromMap(data));
+        }
       }
       if (currentMode != null) {
         ref.read(appModeProvider.notifier).setMode(currentMode);
@@ -124,7 +97,21 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
     }
   }
 
-  /// Toggle Coolie to single-profile — remove PVS if exists, add back if missing.
+  void _toggleLanguage() {
+    final currentLocale = ref.read(localeProvider);
+    if (currentLocale?.languageCode == 'ta') {
+      ref.read(localeProvider.notifier).setLocale(const Locale('en'));
+      if (mounted) ElvanSnackbar.show(context, 'Language: English');
+    } else if (currentLocale?.languageCode == 'en') {
+      ref.read(localeProvider.notifier).setLocale(const Locale('tg'));
+      if (mounted) ElvanSnackbar.show(context, 'Language: Tanglish');
+    } else {
+      ref.read(localeProvider.notifier).setLocale(const Locale('ta'));
+      if (mounted) ElvanSnackbar.show(context, 'மொழி: தமிழ்');
+    }
+  }
+
+  /// Toggle extra Coolie profile (PVS) — add if missing, remove if exists.
   void _toggleCoolieSingle() async {
     final currentMode = ref.read(appModeProvider);
     ref.read(appModeProvider.notifier).setMode(AppMode.coolie);
@@ -134,17 +121,20 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
     // Check if PVS exists
     final pvs = profiles.where((p) => p.kurumPeyar == 'PVS').firstOrNull;
     if (pvs != null) {
-      // Remove PVS → single profile mode
-      await notifier.deleteProfile(pvs.id!);
+      // Hide PVS → single profile mode
+      await notifier.hideProfile(pvs.id!);
       if (currentMode != null) {
         ref.read(appModeProvider.notifier).setMode(currentMode);
       }
       if (mounted) ElvanSnackbar.show(context, 'Coolie PVS Removed (1 biz) ✗');
     } else {
-      // Add PVS back
-      final data = mockCoolieProfiles.length > 1 ? mockCoolieProfiles[1] : null;
-      if (data != null) {
-        await notifier.createProfile(_profileFromMap(data));
+      // Try to restore it first, if not found then add it
+      final restored = await notifier.restoreProfile('PVS');
+      if (!restored) {
+        final data = mockCoolieProfiles.length > 1 ? mockCoolieProfiles[1] : null;
+        if (data != null) {
+          await notifier.createProfile(_profileFromMap(data));
+        }
       }
       if (currentMode != null) {
         ref.read(appModeProvider.notifier).setMode(currentMode);
@@ -223,14 +213,7 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
                     child: const Icon(Icons.developer_mode, color: Colors.white),
                   ),
                   if (_isExpanded) ...[
-                    const SizedBox(height: 8),
-                    FloatingActionButton.extended(
-                      heroTag: 'dev_loader',
-                      onPressed: _showDesignLoader,
-                      label: const Text('Design Loader'),
-                      icon: const Icon(CupertinoIcons.eye),
-                      backgroundColor: Colors.purple,
-                    ),
+
                     const SizedBox(height: 8),
                     FloatingActionButton.extended(
                       heroTag: 'dev_seed',
@@ -262,6 +245,14 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
                       label: const Text('Toggle Coolie ±PVS'),
                       icon: const Icon(CupertinoIcons.repeat),
                       backgroundColor: Colors.teal,
+                    ),
+                    const SizedBox(height: 8),
+                    FloatingActionButton.extended(
+                      heroTag: 'dev_toggle_lang',
+                      onPressed: _toggleLanguage,
+                      label: const Text('Toggle UI Lang'),
+                      icon: const Icon(Icons.language),
+                      backgroundColor: Colors.blueAccent,
                     ),
                   ],
                 ],

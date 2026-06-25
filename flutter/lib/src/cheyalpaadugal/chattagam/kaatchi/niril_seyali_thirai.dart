@@ -22,8 +22,7 @@ import '../../niril_pattu/kaatchi/thiruthi/pattiyal/niril_pattu_pattiyal_thiruth
 import '../../niril_pattu/kaatchi/thiruthi/patrucheettu/niril_pattu_patrucheettu_thiruthi.dart';
 import '../../niril_pattu/kaatchi/thiruthi/vanigar/niril_pattu_vanigar_thiruthi.dart';
 import '../../niril_pattu/kaatchi/thiruthi/porul/niril_pattu_porul_thiruthi.dart';
-import '../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_arikkaigal_thirai.dart';
-import '../../niril_pattu/kaatchi/thiraigal/arikkaigal/pattu_gst_thaakkal_thirai.dart';
+
 
 import '../../niril_kooli/kaatchi/thiraigal/kooli_pattiyalgal_thirai.dart';
 import '../../niril_kooli/kaatchi/thiraigal/kooli_patrucheettugal_thirai.dart';
@@ -36,11 +35,8 @@ import '../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 import '../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
 
 import '../../amaippugal/kaatchi/amaippugal_thirai.dart';
-import '../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 
 import 'kaippaesi/elvan_chattagam.dart';
-import 'kaippaesi/elvan_kizh_pattai.dart';
-import '../../ulnuzhaivu/kaatchi/koorugal/ullnuzhaivu_koorugal.dart';
 import 'kaippaesi/koorugal/elvan_maeladukku_pattiyal.dart';
 import 'kaippaesi/koorugal/elvan_mel_pattai_chinnam.dart';
 import 'kanini/elvan_kanini_chattagam.dart';
@@ -165,28 +161,32 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
     final mode = ref.read(appModeProvider);
     switch (dest) {
       case NirilDestination.pattiyal:
-        if (mode == AppMode.coolie)
+        if (mode == AppMode.coolie) {
           ref.read(coolieInvoicesSearchQueryProvider.notifier).state = query;
-        else
+        } else {
           ref.read(silkInvoicesSearchQueryProvider.notifier).state = query;
+        }
         break;
       case NirilDestination.raseethu:
-        if (mode == AppMode.coolie)
+        if (mode == AppMode.coolie) {
           ref.read(coolieReceiptsSearchQueryProvider.notifier).state = query;
-        else
+        } else {
           ref.read(silkReceiptsSearchQueryProvider.notifier).state = query;
+        }
         break;
       case NirilDestination.vanigar:
-        if (mode == AppMode.coolie)
+        if (mode == AppMode.coolie) {
           ref.read(coolieMerchantsSearchQueryProvider.notifier).state = query;
-        else
+        } else {
           ref.read(silkMerchantsSearchQueryProvider.notifier).state = query;
+        }
         break;
       case NirilDestination.porul:
-        if (mode == AppMode.coolie)
+        if (mode == AppMode.coolie) {
           ref.read(coolieItemsSearchQueryProvider.notifier).state = query;
-        else
+        } else {
           ref.read(silkItemsSearchQueryProvider.notifier).state = query;
+        }
         break;
       default:
         break;
@@ -290,12 +290,6 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
     if (dest == NirilDestination.settings) {
       customContent = const SettingsScreen();
       title = K.amaippugal.tr(context, ref);
-    } else if (dest == NirilDestination.reports) {
-      customContent = const SilkReportsPage();
-      title = K.arikkaigal.tr(context, ref);
-    } else if (dest == NirilDestination.gstReturns) {
-      customContent = const SilkGstReturnsPage();
-      title = K.variArikkaigal.tr(context, ref);
     } else {
       title = desktopIndex >= 0 && desktopIndex < desktopNavItems.length
           ? (desktopIndex == 0
@@ -321,10 +315,7 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
         }
       },
       onSettingsPressed: () => nav.goTo(NirilDestination.settings),
-      onReportsPressed: () => nav.goTo(NirilDestination.reports),
-      onGstReturnsPressed: () => nav.goTo(NirilDestination.gstReturns),
-      isReportsSelected: dest == NirilDestination.reports,
-      isGstReturnsSelected: dest == NirilDestination.gstReturns,
+
       customContent: customContent,
       title: title,
       toolbar: desktopToolbar,

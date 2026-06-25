@@ -9,7 +9,7 @@ import '../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_pagudhi_thalaipu_kooru.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
-
+import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_niruvanam_oadu.dart';
 import '../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_kanakku.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_kalanjiyam.dart';
@@ -20,6 +20,7 @@ import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../vanigar/niril_pattu_vanigar_thiruthi.dart';
 import '../porul/niril_pattu_porul_thiruthi.dart';
 import 'koorugal/koorugal.dart';
+import '../../../../niril_podhu/kaatchi/koorugal/elvan_pattiyal_tharavugal_kooru.dart';
 
 
 /// Silk (GST) Invoice Editor — full form with line items, tax calculation,
@@ -60,16 +61,13 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   double _globalDiscountValue = 0;
   String _globalDiscountType = 'percentage';
 
-  // ── Notes ──
-  String _nibandhanaigal = '';
-  String _ullkurippu = '';
+
 
   // ── Calculated Totals ──
   PattuMothangal _totals = const PattuMothangal();
 
   // ── Controllers ──
-  final _termsController = TextEditingController();
-  final _notesController = TextEditingController();
+
   final _globalDiscountController = TextEditingController();
   final _invNumberController = TextEditingController();
   bool _saving = false;
@@ -116,7 +114,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   void _applySnapshot(PattuThiruththiNilaimai s) {
     _selectedNiruvanamId = s.selectedNiruvanamId;
     _selectedVanigarId = s.selectedVanigarId;
-    _selectedVanigarPeyar = s.selectedVanigarPeyar;
+    _selectedVanigarPeyar = s.selectedVanigarPeyarMap['Tamil'] ?? s.selectedVanigarPeyarMap['English'] ?? '';
     _customerState = s.customerState;
     _pattiyalVagai = s.pattiyalVagai;
     _pattiyalNaal = s.pattiyalNaal;
@@ -126,11 +124,6 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
     _items = s.items.isNotEmpty ? s.items : [const PattuUrupadi()];
     _globalDiscountValue = s.globalDiscountValue;
     _globalDiscountType = s.globalDiscountType;
-    _nibandhanaigal = s.nibandhanaigal;
-    _ullkurippu = s.ullkurippu;
-
-    _termsController.text = _nibandhanaigal;
-    _notesController.text = _ullkurippu;
     _invNumberController.text = _invoiceNumberOverride;
     _globalDiscountController.text =
         _globalDiscountValue > 0 ? _globalDiscountValue.toString() : '';
@@ -183,8 +176,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
 
   @override
   void dispose() {
-    _termsController.dispose();
-    _notesController.dispose();
+
     _globalDiscountController.dispose();
     _invNumberController.dispose();
     _draftDebounce?.cancel();
@@ -240,7 +232,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   PattuThiruththiNilaimai _currentSnapshot() => PattuThiruththiNilaimai(
         selectedNiruvanamId: _selectedNiruvanamId,
         selectedVanigarId: _selectedVanigarId,
-        selectedVanigarPeyar: _selectedVanigarPeyar,
+        selectedVanigarPeyarMap: {'Tamil': _selectedVanigarPeyar, 'English': _selectedVanigarPeyar},
         customerState: _customerState,
         pattiyalVagai: _pattiyalVagai,
         pattiyalNaal: _pattiyalNaal,
@@ -250,8 +242,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
         items: _items,
         globalDiscountValue: _globalDiscountValue,
         globalDiscountType: _globalDiscountType,
-        nibandhanaigal: _nibandhanaigal,
-        ullkurippu: _ullkurippu,
+
       );
 
   // ── Save (delegates to helper) ──
@@ -330,9 +321,19 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
       onDiscard: () async {
         await PattuPattiyalUthavi.clearDraft();
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+      child: ElvanThiruthiNiruvanamOadu(
+        selectedNiruvanamId: _selectedNiruvanamId,
+        onChanged: (p) {
+          setState(() {
+            _selectedNiruvanamId = p?.id;
+            _selectedProfile = p;
+          });
+          _recalculate();
+          _computePreviewInvoiceNumber();
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
           // ───────────────────────────────────────────────────────────────
           // Section 1: ① Billed To
           // ───────────────────────────────────────────────────────────────
@@ -340,8 +341,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           PattuVanigargalKooru(
             data: PattuVanigargalData(
               selectedVanigarId: _selectedVanigarId,
-              selectedVanigarPeyar: _selectedVanigarPeyar,
-              selectedNiruvanamId: _selectedNiruvanamId,
+              selectedVanigarPeyarMap: {'Tamil': _selectedVanigarPeyar, 'English': _selectedVanigarPeyar},
               placeOfSupply: _placeOfSupply,
               placeOfSupplyTa: _placeOfSupplyTa,
             ),
@@ -385,14 +385,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                   ),
                 );
               },
-              onProfileChanged: (id, profile) {
-                setState(() {
-                  _selectedNiruvanamId = id;
-                  _selectedProfile = profile;
-                });
-                _recalculate();
-                _computePreviewInvoiceNumber();
-              },
+
               onPlaceOfSupplyChanged: (en, ta) {
                 setState(() {
                   _placeOfSupply = en;
@@ -425,15 +418,15 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           // Section 2: ② Invoice Details
           // ───────────────────────────────────────────────────────────────
           ElvanPagudhiThalaipu(en: 2, thalaipu: K.pattiyalTharavugal.tr(context, ref)),
-          PattuPattiyalTharavugalKooru(
+          ElvanPattiyalTharavugalKooru(
             isEditing: _isEditing,
             invoiceNumberOverride: _invoiceNumberOverride,
             previewInvoiceNumber: _previewInvoiceNumber,
             isInvNumberEditing: _isInvNumberEditing,
             invNumberController: _invNumberController,
             profilePrefix: _selectedProfile?.kurumPeyar.isNotEmpty == true
-                ? _selectedProfile!.kurumPeyar
-                : 'INV',
+                ? '${_selectedProfile!.kurumPeyar}-'
+                : 'INV-',
             pattiyalNaal: _pattiyalNaal,
             onToggleEditInvNumber: () {
               setState(() {
@@ -449,9 +442,9 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                   final numPart = _invNumberController.text.trim();
                   if (numPart.isNotEmpty) {
                     final prefix = _selectedProfile?.kurumPeyar.isNotEmpty == true
-                        ? _selectedProfile!.kurumPeyar
-                        : 'INV';
-                    _invoiceNumberOverride = '$prefix-$numPart';
+                        ? '${_selectedProfile!.kurumPeyar}-'
+                        : 'INV-';
+                    _invoiceNumberOverride = '$prefix$numPart';
                   }
                   _hasUnsavedChanges = true;
                 }
@@ -596,6 +589,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           ),
         ],
       ),
-    );
+    ),
+  );
   }
 }

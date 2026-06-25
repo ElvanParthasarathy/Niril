@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
-export 'elvan_navbar.dart';
 import 'elvan_kizh_pattai.dart';
 import 'elvan_mel_pattai.dart';
 
@@ -70,9 +68,6 @@ class _ElvanShellState extends State<ElvanShell>
 
   /// Bottom margin between the pill and the screen edge.
   static const double _kNavbarBottomMargin = 28.0;
-
-  /// Horizontal margin for the floating pill.
-  static const double _kNavbarHorizontalMargin = 20.0;
 
   /// Height of the gradient fade mask at each boundary.
   static const double _kFadeMaskHeight = 96.0;

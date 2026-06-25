@@ -33,6 +33,11 @@ class CoolieInvoicesPage extends ConsumerWidget {
     final isSelecting = ref.watch(pattiyalSelectionModeProvider);
     final selectedIds = ref.watch(selectedPattiyalIdsProvider);
 
+    final currentLocale = ref.watch(localeProvider);
+    final effectiveLang = currentLocale?.languageCode ?? Localizations.localeOf(context).languageCode;
+    final primaryLang = effectiveLang == 'ta' ? 'Tamil' : 'English';
+    final secondaryLang = effectiveLang == 'ta' ? 'English' : 'Tamil';
+
     return pattiyalgalAsync.when(
       loading: () => const SliverFillRemaining(
         child: Center(child: CupertinoActivityIndicator()),
@@ -48,8 +53,11 @@ class CoolieInvoicesPage extends ConsumerWidget {
             ? pattiyalgal
             : pattiyalgal.where((p) {
                 final en = p.patrucheettuEn.toLowerCase();
-                final peyar = p.vanigarPeyar.toLowerCase();
-                return en.contains(query) || peyar.contains(query);
+                final peyarPrimary = (p.vanigarPeyar[primaryLang] ?? '').toLowerCase();
+                final peyarSecondary = (p.vanigarPeyar[secondaryLang] ?? '').toLowerCase();
+                return en.contains(query) || 
+                       peyarPrimary.contains(query) || 
+                       peyarSecondary.contains(query);
               }).toList();
 
         // Empty state
@@ -178,6 +186,8 @@ class CoolieInvoicesPage extends ConsumerWidget {
                   isSelected: isSelected,
                   dateFormat: _dateFormat,
                   currencyFormat: _currencyFormat,
+                  primaryLang: primaryLang,
+                  secondaryLang: secondaryLang,
                   onTap: () {
                     if (isSelecting) {
                       _toggleSelection(ref, pattiyal.id, selectedIds);
@@ -315,6 +325,8 @@ class _CooliePatrucheettuCard extends StatelessWidget {
     required this.isSelected,
     required this.dateFormat,
     required this.currencyFormat,
+    required this.primaryLang,
+    required this.secondaryLang,
     required this.onTap,
     required this.onLongPress,
   });
@@ -326,6 +338,8 @@ class _CooliePatrucheettuCard extends StatelessWidget {
   final bool isSelected;
   final DateFormat dateFormat;
   final NumberFormat currencyFormat;
+  final String primaryLang;
+  final String secondaryLang;
   final VoidCallback onTap;
   final VoidCallback onLongPress;
 
@@ -392,7 +406,9 @@ class _CooliePatrucheettuCard extends StatelessWidget {
                 children: [
                   // Row 1: Customer name (primary)
                   Text(
-                    pattiyal.vanigarPeyar,
+                    pattiyal.vanigarPeyar[primaryLang]?.isNotEmpty == true
+                        ? pattiyal.vanigarPeyar[primaryLang]!
+                        : pattiyal.vanigarPeyar[secondaryLang] ?? '',
                     style: const TextStyle(
                       fontSize: 15.2,
                       fontWeight: FontWeight.w700,

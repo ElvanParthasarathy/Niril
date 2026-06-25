@@ -21,7 +21,6 @@ import 'thiraigal/uruvakku_amaippugal_thirai.dart';
 import 'thiraigal/kaatchi_amaippugal_thirai.dart';
 import 'thiraigal/mozhi_amaippugal_thirai.dart';
 import 'koorugal/elvan_amaippu_pagudhi.dart';
-import '../../niril_podhu/kaatchi/koorugal/elvan_amaippu_chinnam.dart';
 import 'thiraigal/paadhugaappu_amaippugal_thirai.dart';
 import 'thiraigal/seyali_patri_thirai.dart';
 import 'thiraigal/payanar_amaippugal_thirai.dart';
