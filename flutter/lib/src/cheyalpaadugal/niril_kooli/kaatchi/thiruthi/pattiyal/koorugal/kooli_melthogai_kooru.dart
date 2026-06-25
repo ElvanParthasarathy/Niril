@@ -49,7 +49,7 @@ class KooliMelthogaiKooru extends ConsumerWidget {
             SizedBox(
                 width: colWidth,
                 child: kooliChargeField(
-                    K.thabaalThogai.tr(context, ref), thabaalCtrl, onThabaalChanged)),
+                    K.koriyarKattanam.tr(context, ref), thabaalCtrl, onThabaalChanged)),
           ],
         );
       }
@@ -69,7 +69,7 @@ class KooliMelthogaiKooru extends ConsumerWidget {
           SizedBox(
               width: halfWidth,
               child: kooliChargeField(
-                  K.thabaalThogai.tr(context, ref), thabaalCtrl, onThabaalChanged)),
+                  K.koriyarKattanam.tr(context, ref), thabaalCtrl, onThabaalChanged)),
         ],
       );
     });

@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../adippadai/mozhiyaakkam/k.dart';
+import '../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 /// Type-safe payment mode enum with localized display names.
 /// Stored as lowercase string in DB (e.g. 'cash', 'upi', 'bank_transfer').
@@ -47,35 +51,19 @@ extension SeluthiVagaiX on SeluthiVagai {
     }
   }
 
-  /// Tamil display name.
-  String get tamilLabel {
+  /// Localized display name.
+  String label(BuildContext context, WidgetRef ref) {
     switch (this) {
       case SeluthiVagai.panam:
-        return 'பணம்';
+        return K.kaasu.tr(context, ref);
       case SeluthiVagai.upi:
         return 'UPI';
       case SeluthiVagai.vangiMaatram:
-        return 'வங்கி மாற்றம்';
+        return K.vangiParimaatram.tr(context, ref);
       case SeluthiVagai.kaasoalai:
-        return 'காசோலை';
+        return K.kaasoalai.tr(context, ref);
       case SeluthiVagai.attai:
-        return 'அட்டை';
-    }
-  }
-
-  /// English display name.
-  String get englishLabel {
-    switch (this) {
-      case SeluthiVagai.panam:
-        return 'Cash';
-      case SeluthiVagai.upi:
-        return 'UPI';
-      case SeluthiVagai.vangiMaatram:
-        return 'Bank Transfer';
-      case SeluthiVagai.kaasoalai:
-        return 'Cheque';
-      case SeluthiVagai.attai:
-        return 'Card';
+        return K.attai.tr(context, ref);
     }
   }
 

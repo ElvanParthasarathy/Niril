@@ -131,7 +131,6 @@ abstract final class K {
   static const anjalKuriyeedu = 'anjalKuriyeedu';
 
   // ── Bank ──
-  static const vangi = 'vangi';
   static const vangiyinPeyar = 'vangiyinPeyar';
   static const kanakkuEn = 'kanakkuEn';
   static const kanakkuEnIfsc = 'kanakkuEnIfsc';
@@ -229,21 +228,9 @@ abstract final class K {
 
   // ── Mode-Specific Screens ──
   static const kooliMugappupPakkam = 'kooliMugappupPakkam';
-  static const koolipattiyalthiruthi = 'koolipattiyalthiruthi';
-  static const pudhiyaKoolipPattiyal = 'pudhiyaKoolipPattiyal';
-  static const koolipPorulThiruthi = 'koolipPorulThiruthi';
-  static const pudhiyaKoolipPorul = 'pudhiyaKoolipPorul';
-  static const kooliVanigarThiruthi = 'kooliVanigarThiruthi';
-  static const pudhiyaKooliVanigar = 'pudhiyaKooliVanigar';
   static const koolipPatrucheettuThiruthi = 'koolipPatrucheettuThiruthi';
   static const pudhiyaKoolipPatrucheettu = 'pudhiyaKoolipPatrucheettu';
   static const pattuMugappupPakkam = 'pattuMugappupPakkam';
-  static const pattupattiyalthiruthi = 'pattupattiyalthiruthi';
-  static const pudhiyaPattupPattiyal = 'pudhiyaPattupPattiyal';
-  static const pattupPorulThiruthi = 'pattupPorulThiruthi';
-  static const pudhiyaPattupPorul = 'pudhiyaPattupPorul';
-  static const pattuVanigarThiruthi = 'pattuVanigarThiruthi';
-  static const pudhiyaPattuVanigar = 'pudhiyaPattuVanigar';
   static const pattupPatrucheettuThiruthi = 'pattupPatrucheettuThiruthi';
   static const pudhiyaPattupPatrucheettu = 'pudhiyaPattupPatrucheettu';
 
@@ -321,9 +308,7 @@ abstract final class K {
   // ── Invoice Editor (Pattiyal Thiruthi) ──
   static const perunar = 'perunar';
   static const pattiyalTharavugal = 'pattiyalTharavugal';
-  static const varisaiUrupadigal = 'varisaiUrupadigal';
   static const pattiyalVagai = 'pattiyalVagai';
-  static const urupadigal = 'urupadigal';
   static const mothangal = 'mothangal';
   static const vanigarPeyarThaedu = 'vanigarPeyarThaedu';
   static const chaemiththaTharavugal = 'chaemiththaTharavugal';
@@ -334,39 +319,28 @@ abstract final class K {
   static const naal = 'naal';
   static const thaaniyangkiUruvaam = 'thaaniyangkiUruvaam';
   static const thaaniyangki = 'thaaniyangki';
-  static const edaiKiKi = 'edaiKiKi';
   static const vilaiVeedham = 'vilaiVeedham';
   static const thallupadi = 'thallupadi';
   static const thallupadiChurukkam = 'thallupadiChurukkam';
   static const motham = 'motham';
   static const muzhuThallupadi = 'muzhuThallupadi';
-  static const kiKi = 'kiKi';
-  static const vilaiKiKi = 'vilaiKiKi';
   static const pattiyalKuriyeedu = 'pattiyalKuriyeedu';
   static const ulmotham = 'ulmotham';
   static const chuttruOppu = 'chuttruOppu';
   static const perumMotham = 'perumMotham';
   static const ahimsaiPattu = 'ahimsaiPattu';
-  static const thabaal = 'thabaal';
   static const pira = 'pira';
   static const mothaEdai = 'mothaEdai';
   static const chaedhaaram = 'chaedhaaram';
   static const chaedhaaramGiraam = 'chaedhaaramGiraam';
   static const ahimsaiPattuThogai = 'ahimsaiPattuThogai';
-  static const thabaalThogai = 'thabaalThogai';
   static const varipPattiyal = 'varipPattiyal';
   static const munvaraivu = 'munvaraivu';
-  static const urupadiChaer = 'urupadiChaer';
   static const piraVarivuChaer = 'piraVarivuChaer';
   static const vanigaraiThaerodhu = 'vanigaraiThaerodhu';
   static const niruvanamThaerodhu = 'niruvanamThaerodhu';
-  static const kuriaindhOruUrupadi = 'kuriaindhOruUrupadi';
   static const maanilamThaedu = 'maanilamThaedu';
   static const kattanaPeyar = 'kattanaPeyar';
-  static const vangiTharavuKaattu = 'vangiTharavuKaattu';
-  static const ifscKaattu = 'ifscKaattu';
-  static const kilai = 'kilai';
-  static const kanakkuKuriyeedu = 'kanakkuKuriyeedu';
   static const varaivu = 'varaivu';
   static const varaivuMeetka = 'varaivuMeetka';
   static const chaemikkaadhaVaraivu = 'chaemikkaadhaVaraivu';
@@ -378,7 +352,7 @@ abstract final class K {
   static const munpanam = 'munpanam';
   static const endhapPattiyalukku = 'endhapPattiyalukku';
   static const patrucheettuTharavugal = 'patrucheettuTharavugal';
-  static const seluthiyaVivaram = 'seluthiyaVivaram';
+  static const cheluthiyaTharavu = 'cheluthiyaTharavu';
 
   // ── Receipt Editor (Patrucheettu Thiruthi) ──
   static const thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum = 'thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum';
@@ -400,4 +374,29 @@ abstract final class K {
   static const pattiyalgalaiThaernhedu = 'pattiyalgalaiThaernhedu';
   static const mudindhadhu = 'mudindhadhu';
   static const pattiyalEnVanigar = 'pattiyalEnVanigar';
+
+  // ── Subcomponents & Enums ──
+  static const munthogai = 'munthogai';
+  static const kaasu = 'kaasu';
+  static const vangiParimaatram = 'vangiParimaatram';
+  static const kaasoalai = 'kaasoalai';
+  static const attai = 'attai';
+  static const pizhai = 'pizhai';
+  static const pudhiyaChaerkkai = 'pudhiyaChaerkkai';
+  static const niruvanaththaithThaernhedu = 'niruvanaththaithThaernhedu';
+  static const azhikka = 'azhikka';
+  static const chaemippuNiluvai = 'chaemippuNiluvai';
+  static const thodarPtn = 'thodarPtn';
+  static const purakkaniPtn = 'purakkaniPtn';
+
+  static const kuriaindhOruPorul = 'kuriaindhOruPorul';
+  static const koriyar = 'koriyar';
+  static const koriyarKattanam = 'koriyarKattanam';
+
+  static const vangiTharavuKaattu = 'vangiTharavuKaattu';
+  static const vangi = 'vangi';
+  static const kilai = 'kilai';
+  static const kanakkuKuriyeedu = 'kanakkuKuriyeedu';
+  static const ifscKaattu = 'ifscKaattu';
+  static const india = 'india';
 }

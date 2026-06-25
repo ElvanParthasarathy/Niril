@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../adippadai/nilaimai/seyali_nilaimai.dart';
+import '../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 /// A reusable bilingual text field widget.
 /// Renders 1 or 2 TextFields based on the app's bilingual setting.
@@ -43,6 +44,9 @@ class ElvanIrumozhiPulan extends ConsumerWidget {
     final primaryLang = ref.watch(primaryLanguageProvider);
     final secondaryLang = ref.watch(secondaryLanguageProvider);
 
+    final translatedPrimaryLang = primaryLang.toLowerCase().tr(context, ref);
+    final translatedSecondaryLang = secondaryLang.toLowerCase().tr(context, ref);
+
     final primaryValue = value[primaryLang] ?? '';
     final secondaryValue = value[secondaryLang] ?? '';
 
@@ -55,7 +59,7 @@ class ElvanIrumozhiPulan extends ConsumerWidget {
         _buildTextField(
           context: context,
           isDark: isDark,
-          label: '$label ($primaryLang)',
+          label: '$label ($translatedPrimaryLang)',
           initialValue: primaryValue,
           controller: primaryController,
           autofocus: autofocus,
@@ -72,7 +76,7 @@ class ElvanIrumozhiPulan extends ConsumerWidget {
           _buildTextField(
             context: context,
             isDark: isDark,
-            label: '$label ($secondaryLang)',
+            label: '$label ($translatedSecondaryLang)',
             initialValue: secondaryValue,
             controller: secondaryController,
             onChanged: (text) {

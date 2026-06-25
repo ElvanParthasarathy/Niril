@@ -153,22 +153,7 @@ class PatruSeluthiPagudhi extends ConsumerWidget {
                       children: [
                         Icon(mode.icon, size: 18, color: mode.badgeColor(isDark)),
                         const SizedBox(width: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(mode.tamilLabel, style: const TextStyle(height: 1.2)),
-                            if (!isUpi)
-                              Text(
-                                mode.englishLabel,
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  height: 1.2,
-                                  color: isDark ? Colors.white60 : Colors.black54,
-                                ),
-                              ),
-                          ],
-                        ),
+                        Text(mode.label(context, ref), style: const TextStyle(height: 1.2)),
                       ],
                     ),
                   );

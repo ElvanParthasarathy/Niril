@@ -97,8 +97,8 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
 
     return ElvanEditorShell(
       title: _isEditing
-          ? K.pattupPorulThiruthi.tr(context, ref)
-          : K.pudhiyaPattupPorul.tr(context, ref),
+          ? K.maatriyamai.tr(context, ref)
+          : K.pudhiyaAakkam.tr(context, ref),
       onSave: _handleSave,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

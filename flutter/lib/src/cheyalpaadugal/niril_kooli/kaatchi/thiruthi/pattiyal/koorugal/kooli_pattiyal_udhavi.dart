@@ -3,6 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:drift/drift.dart' show Value;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../../../adippadai/mozhiyaakkam/k.dart';
+import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 import '../../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
@@ -228,7 +232,7 @@ class KooliPattiyalUthavi {
   /// Attempts to restore a draft. Returns null if no valid draft exists
   /// or if the user declines. Shows a dialog for confirmation.
   static Future<KooliThiruththiNilaimai?> tryRestoreDraft(
-      BuildContext context) async {
+      BuildContext context, WidgetRef ref) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final draftJson = prefs.getString(_draftKey);
@@ -248,16 +252,16 @@ class KooliPattiyalUthavi {
       final restore = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('வரைவு மீட்கவா?'),
-          content: const Text('சேமிக்காத வரைவு உள்ளது. மீட்டமைக்கவா?'),
+          title: Text(K.varaivuMeetka.tr(context, ref)),
+          content: Text(K.chaemikkaadhaVaraivu.tr(context, ref)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('நிராகரி'),
+              child: Text(K.purakkaniPtn.tr(context, ref)),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('மீட்கவும்'),
+              child: Text(K.meetkavum.tr(context, ref)),
             ),
           ],
         ),

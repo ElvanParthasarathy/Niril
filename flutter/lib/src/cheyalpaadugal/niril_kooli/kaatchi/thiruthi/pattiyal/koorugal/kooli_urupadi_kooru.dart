@@ -109,7 +109,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
                     SizedBox(
                       width: 120,
                       child: ItemFieldWidget(
-                        label: K.kiKi.tr(context, ref),
+                        label: K.edai.tr(context, ref),
                         initialText: weightText,
                         isWeight: true,
                         onValueCommitted: (v) {
@@ -128,7 +128,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
                     SizedBox(
                       width: 120,
                       child: ItemFieldWidget(
-                        label: K.vilaiKiKi.tr(context, ref),
+                        label: K.vilai.tr(context, ref),
                         initialText: rateText,
                         onValueCommitted: (v) {
                           onUpdated(

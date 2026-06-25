@@ -170,7 +170,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   }
 
   Future<void> _tryRestoreDraft() async {
-    final snapshot = await KooliPattiyalUthavi.tryRestoreDraft(context);
+    final snapshot = await KooliPattiyalUthavi.tryRestoreDraft(context, ref);
     if (snapshot != null && mounted) {
       setState(() {
         _selectedVanigarId = snapshot.selectedVanigarId;
@@ -253,7 +253,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     }
     final validItems = _items.where((i) => i.edai > 0 && i.vilai > 0).toList();
     if (validItems.isEmpty) {
-      ElvanSnackbar.show(context, K.kuriaindhOruUrupadi.tr(context, ref));
+      ElvanSnackbar.show(context, K.kuriaindhOruPorul.tr(context, ref));
       return;
     }
 
@@ -321,8 +321,8 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
 
     return ElvanEditorShell(
       title: _isEditing
-          ? K.koolipattiyalthiruthi.tr(context, ref)
-          : K.pudhiyaKoolipPattiyal.tr(context, ref),
+          ? K.maatriyamai.tr(context, ref)
+          : K.pudhiyaAakkam.tr(context, ref),
       onSave: _saving ? null : _handleSave,
       hasUnsavedChanges: _hasUnsavedChanges,
       onDiscard: () async {
@@ -425,7 +425,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                     const SizedBox(height: 24),
 
                     // ── Section 3: ③ Items ──
-                    ElvanPagudhiThalaipu(en: 3, thalaipu: K.urupadigal.tr(context, ref)),
+                    ElvanPagudhiThalaipu(en: 3, thalaipu: K.porutkal.tr(context, ref)),
                     ...List.generate(_items.length, (i) => KooliUrupadiKooru(
                       index: i,
                       item: _items[i],
@@ -481,7 +481,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                       children: [
                         kooliPillButton(context,
                           icon: Icons.add_rounded,
-                          label: K.urupadiChaer.tr(context, ref),
+                          label: K.porulaichChaerPtn.tr(context, ref),
                           onPressed: () => setState(() {
                             _items = [..._items, const KooliUrupadi()];
                             _hasUnsavedChanges = true;

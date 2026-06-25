@@ -307,7 +307,7 @@ class _SelectionBar extends ConsumerWidget {
 
 // ── Receipt Card ────────────────────────────────────────────────────────────
 
-class _PatruCard extends StatelessWidget {
+class _PatruCard extends ConsumerWidget {
   const _PatruCard({
     required this.patru,
     required this.isDark,
@@ -333,7 +333,7 @@ class _PatruCard extends StatelessWidget {
   final VoidCallback onLongPress;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final mode = SeluthiVagaiX.fromStored(patru.seluthiVagai);
 
     return GestureDetector(
@@ -429,7 +429,7 @@ class _PatruCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            mode.tamilLabel,
+                            mode.label(context, ref),
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,

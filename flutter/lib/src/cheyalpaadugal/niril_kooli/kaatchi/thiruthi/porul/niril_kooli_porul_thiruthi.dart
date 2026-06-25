@@ -72,8 +72,8 @@ class _CoolieItemEditorState extends ConsumerState<CoolieItemEditor> {
   Widget build(BuildContext context) {
     return ElvanEditorShell(
       title: _isEditing
-          ? K.koolipPorulThiruthi.tr(context, ref)
-          : K.pudhiyaKoolipPorul.tr(context, ref),
+          ? K.maatriyamai.tr(context, ref)
+          : K.pudhiyaAakkam.tr(context, ref),
       onSave: _handleSave,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

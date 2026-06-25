@@ -47,24 +47,24 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
     final result = await showDialog<String>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('மாற்றங்கள் சேமிக்கப்படவில்லை'),
-        content: const Text('சேமிக்காத மாற்றங்கள் உள்ளன.'),
+        title: Text(K.chaemippuNiluvai.tr(context, ref)),
+        content: Text(K.chaemippuNiluvai.tr(context, ref)),
         actions: [
           // Cancel — stay on editor
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop('cancel'),
-            child: const Text('தொடர்'),
+            child: Text(K.thodarPtn.tr(context, ref)),
           ),
           // Discard — lose changes
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop('discard'),
             style: TextButton.styleFrom(foregroundColor: cs.error),
-            child: const Text('நிராகரி'),
+            child: Text(K.purakkaniPtn.tr(context, ref)),
           ),
           // Save — real save
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop('save'),
-            child: const Text('சேமி'),
+            child: Text(K.chaemiPtn.tr(context, ref)),
           ),
         ],
       ),
@@ -239,7 +239,7 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                langChip('ta', 'தமிழ்'),
+                langChip('ta', K.thamizh.tr(context, ref)),
                 const SizedBox(width: 4),
                 langChip('en', 'EN'),
                 const SizedBox(width: 4),

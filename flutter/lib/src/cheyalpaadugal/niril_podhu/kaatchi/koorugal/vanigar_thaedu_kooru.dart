@@ -111,7 +111,7 @@ class _VanigarThaeduKooruState extends ConsumerState<VanigarThaeduKooru> {
       error: (err, _) => _buildTextField(
         context,
         enabled: false,
-        hintText: 'பிழை', // Error
+        hintText: K.pizhai.tr(context, ref), // Error
       ),
       data: (vanigargal) {
         // Pre-fill text if selectedId is provided.
@@ -229,7 +229,7 @@ class _VanigarThaeduKooruState extends ConsumerState<VanigarThaeduKooru> {
                                 color: colorScheme.primary,
                               ),
                               title: Text(
-                                'புதிய வாடிக்கையாளர் சேர்',
+                                K.pudhiyaChaerkkai.tr(context, ref),
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: colorScheme.primary,
                                   fontWeight: FontWeight.w600,

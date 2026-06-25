@@ -212,7 +212,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   }
 
   Future<void> _tryRestoreDraft() async {
-    final snapshot = await PattuPattiyalUthavi.tryRestoreDraft(context);
+    final snapshot = await PattuPattiyalUthavi.tryRestoreDraft(context, ref);
     if (snapshot != null && mounted) {
       setState(() => _applySnapshot(snapshot));
       _resolveCustomerState();
@@ -252,7 +252,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
     final validItems =
         _items.where((i) => i.alavu > 0 && i.vilai > 0).toList();
     if (validItems.isEmpty) {
-      ElvanSnackbar.show(context, K.kuriaindhOruUrupadi.tr(context, ref));
+      ElvanSnackbar.show(context, K.kuriaindhOruPorul.tr(context, ref));
       return;
     }
 
@@ -306,8 +306,8 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
 
     return ElvanEditorShell(
       title: _isEditing
-          ? K.pattupattiyalthiruthi.tr(context, ref)
-          : K.pudhiyaPattupPattiyal.tr(context, ref),
+          ? K.maatriyamai.tr(context, ref)
+          : K.pudhiyaAakkam.tr(context, ref),
       onSave: _saving ? null : _handleSave,
       hasUnsavedChanges: _hasUnsavedChanges,
       onDiscard: () async {
@@ -477,7 +477,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           // ───────────────────────────────────────────────────────────────
           // Section 3: ③ Line Items (uses PattuUrupadiAttai component)
           // ───────────────────────────────────────────────────────────────
-          ElvanPagudhiThalaipu(en: 3, thalaipu: K.varisaiUrupadigal.tr(context, ref)),
+          ElvanPagudhiThalaipu(en: 3, thalaipu: K.porutkal.tr(context, ref)),
           ...List.generate(_items.length, (i) => PattuUrupadiAttai(
             item: _items[i],
             index: i,
@@ -521,7 +521,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                 setState(() => _items = [..._items, const PattuUrupadi()]);
               },
               icon: const Icon(Icons.add_circle_outline, size: 20),
-              label: Text(K.urupadiChaer.tr(context, ref)),
+              label: Text(K.porulaichChaerPtn.tr(context, ref)),
               style: TextButton.styleFrom(
                 backgroundColor: cs.surfaceContainerHighest,
                 foregroundColor: cs.onSurface,

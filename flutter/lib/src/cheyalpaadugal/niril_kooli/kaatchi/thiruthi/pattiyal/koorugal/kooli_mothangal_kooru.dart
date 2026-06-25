@@ -54,7 +54,7 @@ class KooliMothangalKooru extends ConsumerWidget {
             ],
             if (thabaalThogai > 0) ...[
               kooliTotalsRow(
-                  K.thabaal.tr(context, ref), '₹${formatter.format(thabaalThogai)}'),
+                  K.koriyar.tr(context, ref), '₹${formatter.format(thabaalThogai)}'),
               const SizedBox(height: 12),
             ],
             for (final charge in piraVarivugal)

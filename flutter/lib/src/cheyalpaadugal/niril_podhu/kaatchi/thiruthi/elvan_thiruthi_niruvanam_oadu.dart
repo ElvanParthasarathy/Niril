@@ -61,7 +61,7 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
                         horizontal: 16,
                         vertical: 12,
                       ),
-                      hintText: 'நிறுவனத்தைத் தேர்ந்தெடுக்கவும்',
+                      hintText: K.niruvanaththaithThaernhedu.tr(context, ref),
                     ),
                     items: profiles.map((p) {
                       final name = p.niruvanathinPeyar['Tamil']?.isNotEmpty == true
@@ -90,7 +90,7 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
                   IconButton(
                     onPressed: () => onChanged(null),
                     icon: Icon(Icons.clear, color: cs.onSurfaceVariant),
-                    tooltip: 'அழிக்க', // Clear
+                    tooltip: K.azhikka.tr(context, ref), // Clear
                   ),
                 ],
               ],

@@ -324,13 +324,13 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                   PatruMode.againstInvoice: Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 24, vertical: 10),
-                    child: Text(K.pattiyalTheervu.tr(context, ref),
+                    child: Text(K.pattiyal.tr(context, ref),
                         style: const TextStyle(fontWeight: FontWeight.w600)),
                   ),
                   PatruMode.advance: Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 24, vertical: 10),
-                    child: Text(K.munpanam.tr(context, ref),
+                    child: Text(K.munthogai.tr(context, ref),
                         style: const TextStyle(fontWeight: FontWeight.w600)),
                   ),
                 },
@@ -373,7 +373,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
             // ── Section 3: Payment Details ──
             ElvanPagudhiThalaipu(
               en: _mode == PatruMode.againstInvoice ? 3 : 2,
-              thalaipu: K.seluthiyaVivaram.tr(context, ref),
+              thalaipu: K.cheluthiyaTharavu.tr(context, ref),
             ),
             ElvanThiruthiAttai(
               child: _buildPaymentSection(isDark),

@@ -117,7 +117,7 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
       error: (err, _) => _buildTextField(
         context,
         enabled: false,
-        hintText: 'பிழை',
+        hintText: K.pizhai.tr(context, ref),
       ),
       data: (porulgal) {
         return Autocomplete<PorulEntry>(
@@ -216,7 +216,7 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
                                 color: colorScheme.primary,
                               ),
                               title: Text(
-                                'புதிய பொருள் சேர்',
+                                K.pudhiyaChaerkkai.tr(context, ref),
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: colorScheme.primary,
                                   fontWeight: FontWeight.w600,

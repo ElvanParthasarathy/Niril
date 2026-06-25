@@ -54,7 +54,7 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
     // Check both key systems ('en'/'ta' from picker, 'Tamil'/'English' from DB)
     final enName = (_naadu['en'] ?? _naadu['English'] ?? '').trim().toLowerCase();
     final taName = (_naadu['ta'] ?? _naadu['Tamil'] ?? '').trim();
-    return enName == 'india' || taName == 'இந்தியா' || enName.isEmpty;
+    return enName == 'india' || taName == K.india.tr(context, ref) || enName.isEmpty;
   }
 
   @override
@@ -75,7 +75,7 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
       _tholaipaesiController.text = v.tholaipaesi;
     } else {
       // Default country: India (bilingual)
-      _naadu = {'en': 'India', 'ta': 'இந்தியா'};
+      _naadu = {'en': 'India', 'ta': K.india.tr(context, ref)};
     }
   }
 
@@ -239,8 +239,8 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
 
     return ElvanEditorShell(
       title: _isEditing
-          ? K.pattuVanigarThiruthi.tr(context, ref)
-          : K.pudhiyaPattuVanigar.tr(context, ref),
+          ? K.maatriyamai.tr(context, ref)
+          : K.pudhiyaAakkam.tr(context, ref),
       onSave: _handleSave,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
