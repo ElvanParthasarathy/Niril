@@ -56,7 +56,7 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
     final kalanjiyam = ref.read(vaangunarKalanjiyamProvider);
 
     kalanjiyam.saveVaangunar(VaangunarTharavuru(
-      id: _isEditing ? widget.vaangunar!.id : null,
+      id: _isEditing ? widget.vaangunar!.id : -1,
       peyar: _peyar,
       oor: _oor,
       mugavari: _mugavari,
