@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../tharavuru/seyali_murai.dart';
 import '../viruppangal_paniyagam.dart';
@@ -23,8 +24,37 @@ final appModeProvider = NotifierProvider<AppStateNotifier, AppMode?>(() {
 // Stream of all profiles in the database
 final profilesStreamProvider =
     StreamProvider<List<NiruvanaTharavugalEntry>>((ref) {
-  final db = ref.watch(appDatabaseProvider);
-  return db.select(db.niruvanaTharavugalTable).watch();
+  final silkDb = AppDatabase(AppDatabase.openConnection('elvan_niril_silk.db', keepMode: 'silk'));
+  final coolieDb = AppDatabase(AppDatabase.openConnection('elvan_niril_coolie.db', keepMode: 'coolie'));
+  
+  final controller = StreamController<List<NiruvanaTharavugalEntry>>();
+  List<NiruvanaTharavugalEntry>? silkProfiles;
+  List<NiruvanaTharavugalEntry>? coolieProfiles;
+
+  void update() {
+    if (silkProfiles != null && coolieProfiles != null) {
+      controller.add([...silkProfiles!, ...coolieProfiles!]);
+    }
+  }
+
+  final sub1 = silkDb.select(silkDb.niruvanaTharavugalTable).watch().listen((data) {
+    silkProfiles = data;
+    update();
+  });
+  final sub2 = coolieDb.select(coolieDb.niruvanaTharavugalTable).watch().listen((data) {
+    coolieProfiles = data;
+    update();
+  });
+
+  ref.onDispose(() {
+    sub1.cancel();
+    sub2.cancel();
+    controller.close();
+    silkDb.close();
+    coolieDb.close();
+  });
+
+  return controller.stream;
 });
 
 // Exposes the loading state of the profiles stream

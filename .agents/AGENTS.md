@@ -107,3 +107,7 @@ kaatchi/
 - **Acceptable**: Up to 600 lines for complex stateful editors.
 - **Action required**: If a file exceeds 600 lines, extract sub-components into a `koorugal/` subfolder.
 - **Extract candidates**: Build sections, row builders, modals, and data load/save logic (into a `_udhavi.dart` helper).
+
+## Source Control Policy
+1. **NO UNAPPROVED GIT CHECKOUTS**: Agents are STRICTLY FORBIDDEN from running `git checkout` or any command that reverts code to a previous state (e.g., `git reset --hard`) WITHOUT EXPLICIT PERMISSION from the user.
+2. If you realize a mistake was made, you must either manually fix the mistake with code editing tools or ask the user for permission to run a git checkout/reset command to restore the previous state.

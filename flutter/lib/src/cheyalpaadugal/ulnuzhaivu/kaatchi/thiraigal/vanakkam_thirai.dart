@@ -43,12 +43,11 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
     try {
       debugPrint('STEP 1: Starting DB insert...');
       // Insert initial profiles into the database
-      final db = ref.read(appDatabaseProvider);
-
       // Insert Silk profile if needed
       if (needsSilk) {
         debugPrint('STEP 2: Inserting silk...');
-        await db.into(db.niruvanaTharavugalTable).insert(
+        final silkDb = AppDatabase(AppDatabase.openConnection('elvan_niril_silk.db', keepMode: 'silk'));
+        await silkDb.into(silkDb.niruvanaTharavugalTable).insert(
               NiruvanaTharavugalTableCompanion.insert(
                 seyaliVagai: 'silk',
                 niruvanathinPeyar:
@@ -59,13 +58,15 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
                 iruMozhi: const Value(true), // default bilingual on for silk
               ),
             );
+        await silkDb.close();
         debugPrint('STEP 2: Silk inserted OK');
       }
 
       // Insert Coolie profile if needed
       if (needsCoolie) {
         debugPrint('STEP 3: Inserting coolie...');
-        await db.into(db.niruvanaTharavugalTable).insert(
+        final coolieDb = AppDatabase(AppDatabase.openConnection('elvan_niril_coolie.db', keepMode: 'coolie'));
+        await coolieDb.into(coolieDb.niruvanaTharavugalTable).insert(
               NiruvanaTharavugalTableCompanion.insert(
                 seyaliVagai: 'coolie',
                 niruvanathinPeyar:
@@ -73,6 +74,7 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
                 mudhanMozhi: Value(widget.billingLanguage),
               ),
             );
+        await coolieDb.close();
         debugPrint('STEP 3: Coolie inserted OK');
       }
 
@@ -81,13 +83,6 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
       final backupService = ref.read(backupServiceProvider);
       await backupService.createBackup();
       debugPrint('STEP 4: Backup done');
-
-      // Direct verification: is the data actually in the DB?
-      final allProfiles = await db.select(db.niruvanaTharavugalTable).get();
-      debugPrint('STEP 4a: Direct DB query found ${allProfiles.length} profiles');
-      for (final p in allProfiles) {
-        debugPrint('  - id=${p.id}, seyaliVagai=${p.seyaliVagai}, peyar=${p.niruvanathinPeyar}');
-      }
 
       // Force the profiles stream to re-fetch from DB
       // (NativeDatabase.createInBackground uses a separate isolate — stream

@@ -32,23 +32,27 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
   Offset _position = const Offset(20, 100);
 
   void _seedAllData() async {
-    // ── Step 1: Erase existing data ──
-    await SodhanaiTharavuUruvakki.eraseData(ref);
-
-    // ── Step 2: Seed business profiles (both modes) ──
+    // ── Step 1: Seed Silk Data ──
     ref.read(appModeProvider.notifier).setMode(AppMode.silk);
+    // Yield to let providers (especially appDatabaseProvider) rebuild
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    await SodhanaiTharavuUruvakki.eraseData(ref);
     await SodhanaiTharavuUruvakki.seedData(ref, AppMode.silk);
+    await SodhanaiTharavuUruvakki.seedPorulAndVanigar(ref, mode: AppMode.silk);
+    await SodhanaiTharavuUruvakki.seedPattiyalgal(ref, mode: AppMode.silk);
+    await SodhanaiTharavuUruvakki.seedPatrugal(ref, mode: AppMode.silk);
+
+    // ── Step 2: Seed Coolie Data ──
     ref.read(appModeProvider.notifier).setMode(AppMode.coolie);
+    // Yield to let providers (especially appDatabaseProvider) rebuild
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    await SodhanaiTharavuUruvakki.eraseData(ref);
     await SodhanaiTharavuUruvakki.seedData(ref, AppMode.coolie);
-
-    // ── Step 3: Seed products & merchants (both modes) ──
-    await SodhanaiTharavuUruvakki.seedPorulAndVanigar(ref);
-
-    // ── Step 4: Seed invoices (depends on profiles, products, merchants) ──
-    await SodhanaiTharavuUruvakki.seedPattiyalgal(ref);
-
-    // ── Step 5: Seed receipts (depends on profiles, merchants) ──
-    await SodhanaiTharavuUruvakki.seedPatrugal(ref);
+    await SodhanaiTharavuUruvakki.seedPorulAndVanigar(ref, mode: AppMode.coolie);
+    await SodhanaiTharavuUruvakki.seedPattiyalgal(ref, mode: AppMode.coolie);
+    await SodhanaiTharavuUruvakki.seedPatrugal(ref, mode: AppMode.coolie);
 
     if (mounted) {
       ref.read(appModeProvider.notifier).setMode(AppMode.silk);

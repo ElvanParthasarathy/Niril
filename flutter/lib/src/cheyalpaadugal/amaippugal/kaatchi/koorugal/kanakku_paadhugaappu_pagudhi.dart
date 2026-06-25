@@ -259,9 +259,29 @@ class AccountSecuritySection extends ConsumerWidget {
               // pop animations that crash the Navigator (!_debugLocked).
               // pushAndRemoveUntil below will cleanly destroy all dialogs instantly.
 
-              // Wipe local DB profiles
-              final db = ref.read(appDatabaseProvider);
+              // Wipe BOTH databases by switching modes and deleting all tables
+              
+              // 1. Wipe Silk Database
+              ref.read(appModeProvider.notifier).setMode(AppMode.silk);
+              await Future.delayed(const Duration(milliseconds: 100));
+              var db = ref.read(appDatabaseProvider);
               await db.delete(db.niruvanaTharavugalTable).go();
+              await db.delete(db.porulTable).go();
+              await db.delete(db.vanigarTable).go();
+              await db.delete(db.patrucheettuTable).go();
+              await db.delete(db.patrugalTable).go();
+              await db.delete(db.patruPattiyalLinkTable).go();
+
+              // 2. Wipe Coolie Database
+              ref.read(appModeProvider.notifier).setMode(AppMode.coolie);
+              await Future.delayed(const Duration(milliseconds: 100));
+              db = ref.read(appDatabaseProvider);
+              await db.delete(db.niruvanaTharavugalTable).go();
+              await db.delete(db.porulTable).go();
+              await db.delete(db.vanigarTable).go();
+              await db.delete(db.patrucheettuTable).go();
+              await db.delete(db.patrugalTable).go();
+              await db.delete(db.patruPattiyalLinkTable).go();
 
               // Clear SharedPreferences
               final prefs = ref.read(sharedPreferencesProvider);

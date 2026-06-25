@@ -450,7 +450,7 @@ class AppDatabase extends _$AppDatabase {
       );
 
   /// Opens the SQLite file safely on all platforms.
-  static LazyDatabase openConnection() {
+  static LazyDatabase openConnection(String dbName, {String? keepMode}) {
     return LazyDatabase(() async {
       // Use Support Directory instead of Documents Directory.
       // Windows Documents dir is often locked by OneDrive or permissions, preventing SQLite journaling.
@@ -460,7 +460,34 @@ class AppDatabase extends _$AppDatabase {
         await dbFolder.create(recursive: true);
       }
 
-      final file = File(p.join(dbFolder.path, 'elvan_niril.db'));
+      final file = File(p.join(dbFolder.path, dbName));
+
+      // ── MIGRATION LOGIC ──
+      // If the target DB does not exist, check if we need to migrate from legacy single DB
+      if (!await file.exists()) {
+        final legacyFile = File(p.join(dbFolder.path, 'elvan_niril.db'));
+        if (await legacyFile.exists()) {
+          // Copy legacy DB to the new split DB
+          await legacyFile.copy(file.path);
+          
+          // Scrub data belonging to the OTHER mode
+          if (keepMode != null) {
+            // We use native SQLite driver to do a quick scrub before drift opens it
+            final tempDb = sqlite3.open(file.path);
+            try {
+              tempDb.execute("DELETE FROM patrucheettu_table WHERE seyali_vagai != '$keepMode'");
+              tempDb.execute("DELETE FROM patrugal_table WHERE seyali_vagai != '$keepMode'");
+              tempDb.execute("DELETE FROM porul_table WHERE seyali_vagai != '$keepMode'");
+              tempDb.execute("DELETE FROM vanigar_table WHERE seyali_vagai != '$keepMode'");
+              tempDb.execute("DELETE FROM niruvana_tharavugal_table WHERE seyali_vagai != '$keepMode'");
+            } catch (e) {
+              // ignore if tables don't exist yet
+            } finally {
+              tempDb.dispose();
+            }
+          }
+        }
+      }
 
       if (Platform.isWindows) {
         // Essential for Windows: tell SQLite where to store temporary files (like WAL journals)

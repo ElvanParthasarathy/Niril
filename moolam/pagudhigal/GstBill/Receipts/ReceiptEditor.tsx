@@ -455,7 +455,9 @@ export default function ReceiptEditor({ profile, onBack, onSaved, editingReceipt
                 const availableBills = firstSelected
                   ? bills.filter(b =>
                       (b.clientName || '') === (firstSelected.clientName || '') &&
-                      (b.clientNameEn || '') === (firstSelected.clientNameEn || '')
+                      (b.clientNameEn || '') === (firstSelected.clientNameEn || '') &&
+                      (b.client?.mugavari || b.clientAddress || '') === (firstSelected.client?.mugavari || firstSelected.clientAddress || '') &&
+                      (b.client?.city || '') === (firstSelected.client?.city || '')
                     )
                   : bills;
 

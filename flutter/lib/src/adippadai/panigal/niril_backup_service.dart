@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
@@ -8,149 +9,132 @@ import 'package:path/path.dart' as p;
 // NIRIL BACKUP SERVICE — தரவு பாதுகாப்பு (Data Safety)
 // ─────────────────────────────────────────────────────────────────────────────
 // Keeps a raw copy of the SQLite database in a safe location outside the app's
-// internal data directory. This backup survives:
-//   • "Erase Data" (which only wipes the main DB)
-//   • App uninstall + reinstall (stored in user Documents folder)
-//   • Future Firebase glitches
-//
-// The backup is a plain file copy — no schema rewrite, no extra overhead.
+// internal data directory. This backup survives app uninstall + reinstall.
 
-/// Provider for the backup service. Override in main.dart after initialization.
 final backupServiceProvider = Provider<NirilBackupService>((ref) {
-  throw UnimplementedError(
-      'backupServiceProvider must be overridden in ProviderScope');
+  throw UnimplementedError('backupServiceProvider must be overridden in ProviderScope');
 });
 
-/// Provider that checks if a backup file exists.
-/// Used by main.dart to decide whether to show the Restore screen.
 final hasBackupProvider = FutureProvider<bool>((ref) async {
   final backupService = ref.watch(backupServiceProvider);
   return backupService.hasBackup();
 });
 
 class NirilBackupService {
-  /// The path to the main database file (in Application Support).
-  final String _mainDbPath;
-
-  /// The path to the backup database file (in user Documents folder).
+  final String _coolieDbPath;
+  final String _silkDbPath;
   final String _backupDbPath;
 
   NirilBackupService._({
-    required String mainDbPath,
+    required String coolieDbPath,
+    required String silkDbPath,
     required String backupDbPath,
-  })  : _mainDbPath = mainDbPath,
+  })  : _coolieDbPath = coolieDbPath,
+        _silkDbPath = silkDbPath,
         _backupDbPath = backupDbPath;
 
-  /// Factory constructor that resolves platform-appropriate paths.
   static Future<NirilBackupService> initialize() async {
-    // Main DB location: Application Support directory (same as AppDatabase)
     final appSupportDir = await getApplicationSupportDirectory();
-    final mainDbPath = p.join(appSupportDir.path, 'elvan_niril.db');
+    final coolieDbPath = p.join(appSupportDir.path, 'elvan_niril_coolie.db');
+    final silkDbPath = p.join(appSupportDir.path, 'elvan_niril_silk.db');
 
-    // Backup location: User's Documents folder (survives app uninstall)
     final backupDir = await _getBackupDirectory();
     final backupDbPath = p.join(backupDir, 'elvan_niril_backup.db');
 
     return NirilBackupService._(
-      mainDbPath: mainDbPath,
+      coolieDbPath: coolieDbPath,
+      silkDbPath: silkDbPath,
       backupDbPath: backupDbPath,
     );
   }
 
-  /// Returns the platform-appropriate backup directory path.
-  /// - Windows: %USERPROFILE%/Documents/Niril/backup/
-  /// - Android: /storage/emulated/0/Documents/Niril/backup/
   static Future<String> _getBackupDirectory() async {
     String basePath;
-
     if (Platform.isAndroid) {
       basePath = '/storage/emulated/0/Documents';
     } else {
-      // Use path_provider to correctly resolve OneDrive redirects on Windows/Mac/Linux
       final dir = await getApplicationDocumentsDirectory();
       basePath = dir.path;
     }
-
     final backupDir = p.join(basePath, 'Elvan Niril', 'backup');
-
-    // Ensure the directory exists
     final dir = Directory(backupDir);
     if (!await dir.exists()) {
       await dir.create(recursive: true);
     }
-
     return backupDir;
   }
 
-  Future<void> _safeCopy(String source, String dest) async {
-    final sourceFile = File(source);
-    if (!await sourceFile.exists()) return;
-    try {
-      await sourceFile.copy(dest);
-    } catch (e) {
-      if (Platform.isWindows) {
-        // On Windows, File.copy (CopyFileEx) often fails with sharing violations (Error 32)
-        // when SQLite holds a lock. Reading bytes manually bypasses this.
-        final bytes = await sourceFile.readAsBytes();
-        await File(dest).writeAsBytes(bytes, flush: true);
-      } else {
-        rethrow;
-      }
-    }
-  }
-
-  /// Creates a backup by copying the main database file to the backup location.
-  ///
-  /// Also copies WAL and SHM journal files if they exist, to ensure
-  /// the backup is a complete snapshot.
   Future<void> createBackup() async {
     try {
-      final mainFile = File(_mainDbPath);
-      if (!await mainFile.exists()) return;
+      final backupFile = File(_backupDbPath);
+      final sink = backupFile.openWrite();
 
-      // Ensure backup directory exists
-      final backupDir = Directory(p.dirname(_backupDbPath));
-      if (!await backupDir.exists()) {
-        await backupDir.create(recursive: true);
+      final filesToPack = [
+        _coolieDbPath,
+        '$_coolieDbPath-wal',
+        '$_coolieDbPath-shm',
+        _silkDbPath,
+        '$_silkDbPath-wal',
+        '$_silkDbPath-shm',
+      ];
+
+      final header = ByteData(48); // 6 files * 8 bytes
+      final fileBytes = <List<int>>[];
+
+      for (int i = 0; i < filesToPack.length; i++) {
+        final file = File(filesToPack[i]);
+        if (await file.exists()) {
+          final bytes = await file.readAsBytes();
+          header.setInt64(i * 8, bytes.length, Endian.little);
+          fileBytes.add(bytes);
+        } else {
+          header.setInt64(i * 8, 0, Endian.little);
+          fileBytes.add([]);
+        }
       }
 
-      // Copy main database file
-      await _safeCopy(_mainDbPath, _backupDbPath);
-
-      // Copy WAL journal if it exists (important for in-progress transactions)
-      await _safeCopy('$_mainDbPath-wal', '$_backupDbPath-wal');
-
-      // Copy SHM file if it exists
-      await _safeCopy('$_mainDbPath-shm', '$_backupDbPath-shm');
+      sink.add(header.buffer.asUint8List());
+      for (final bytes in fileBytes) {
+        sink.add(bytes);
+      }
+      await sink.close();
     } catch (e) {
-      // Backup failure should never crash the app — it's a safety net, not critical path
-      print('Backup failed (non-critical): $e');
+      print('Backup failed: $e');
     }
   }
 
-  /// Restores the backup by copying it back to the main database location.
-  ///
-  /// Returns `true` if the restore was successful, `false` otherwise.
   Future<bool> restoreFromBackup() async {
     try {
       final backupFile = File(_backupDbPath);
       if (!await backupFile.exists()) return false;
 
-      // Ensure main DB directory exists
-      final mainDir = Directory(p.dirname(_mainDbPath));
-      if (!await mainDir.exists()) {
-        await mainDir.create(recursive: true);
+      final bytes = await backupFile.readAsBytes();
+      if (bytes.length < 48) return false;
+
+      final header = ByteData.view(bytes.buffer, 0, 48);
+      int offset = 48;
+
+      final filesToUnpack = [
+        _coolieDbPath,
+        '$_coolieDbPath-wal',
+        '$_coolieDbPath-shm',
+        _silkDbPath,
+        '$_silkDbPath-wal',
+        '$_silkDbPath-shm',
+      ];
+
+      for (int i = 0; i < filesToUnpack.length; i++) {
+        final size = header.getInt64(i * 8, Endian.little);
+        final file = File(filesToUnpack[i]);
+        if (size > 0) {
+          // Sublist creates a view, copy it if needed, but writeAsBytes handles it
+          final fileContent = bytes.sublist(offset, offset + size);
+          await file.writeAsBytes(fileContent, flush: true);
+          offset += size;
+        } else {
+          if (await file.exists()) await file.delete();
+        }
       }
-
-      // Copy backup to main location
-      await _safeCopy(_backupDbPath, _mainDbPath);
-
-      // Copy WAL journal if it exists
-      await _safeCopy('$_backupDbPath-wal', '$_mainDbPath-wal');
-
-      // Copy SHM file if it exists
-      await _safeCopy('$_backupDbPath-shm', '$_mainDbPath-shm');
-
       return true;
     } catch (e) {
       print('Restore failed: $e');
@@ -158,17 +142,14 @@ class NirilBackupService {
     }
   }
 
-  /// Checks whether a backup file exists and is valid (size > 0).
   Future<bool> hasBackup() async {
     try {
       final backupFile = File(_backupDbPath);
       if (await backupFile.exists()) {
-        // Aggressive scan: check if it's a 0-byte ghost file
         final length = await backupFile.length();
         if (length > 0) {
           return true;
         } else {
-          // It's a ghost file left by Android OS, clean it up and report no backup
           try { await backupFile.delete(); } catch (_) {}
           return false;
         }
@@ -179,20 +160,12 @@ class NirilBackupService {
     }
   }
 
-  /// Permanently deletes the backup file. Use with extreme caution.
   Future<void> deleteBackup() async {
     try {
       final backupFile = File(_backupDbPath);
       if (await backupFile.exists()) {
         await backupFile.delete();
       }
-
-      // Also clean up journal files
-      final walFile = File('$_backupDbPath-wal');
-      if (await walFile.exists()) await walFile.delete();
-
-      final shmFile = File('$_backupDbPath-shm');
-      if (await shmFile.exists()) await shmFile.delete();
     } catch (e) {
       print('Delete backup failed: $e');
     }
