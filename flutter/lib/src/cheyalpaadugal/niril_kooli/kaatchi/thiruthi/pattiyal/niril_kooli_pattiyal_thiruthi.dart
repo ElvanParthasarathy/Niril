@@ -40,7 +40,8 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
 
   // ── Customer ──
   int? _selectedVanigarId;
-  String _selectedVanigarPeyar = '';
+  Map<String, String> _selectedVanigarPeyarMap = const {};
+  Map<String, String> _selectedVanigarMunvariMap = const {};
 
   // ── Metadata ──
   DateTime _pattiyalNaal = DateTime.now();
@@ -105,7 +106,8 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   void _loadEditingData() {
     final snapshot = KooliPattiyalUthavi.loadFromEntry(widget.editingEntry!);
     _selectedVanigarId = snapshot.selectedVanigarId;
-    _selectedVanigarPeyar = snapshot.selectedVanigarPeyar;
+    _selectedVanigarPeyarMap = snapshot.selectedVanigarPeyarMap;
+    _selectedVanigarMunvariMap = snapshot.selectedVanigarMunvariMap;
     _selectedNiruvanamId = snapshot.selectedNiruvanamId;
     _pattiyalNaal = snapshot.pattiyalNaal;
     _items = snapshot.items.isNotEmpty ? snapshot.items : [const KooliUrupadi()];
@@ -182,7 +184,8 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     if (snapshot != null && mounted) {
       setState(() {
         _selectedVanigarId = snapshot.selectedVanigarId;
-        _selectedVanigarPeyar = snapshot.selectedVanigarPeyar;
+        _selectedVanigarPeyarMap = snapshot.selectedVanigarPeyarMap;
+        _selectedVanigarMunvariMap = snapshot.selectedVanigarMunvariMap;
         _selectedNiruvanamId = snapshot.selectedNiruvanamId;
         _pattiyalNaal = snapshot.pattiyalNaal;
         _items = snapshot.items.isNotEmpty
@@ -210,7 +213,8 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
         selectedNiruvanamId: _selectedNiruvanamId,
         selectedProfile: _selectedProfile,
         selectedVanigarId: _selectedVanigarId,
-        selectedVanigarPeyar: _selectedVanigarPeyar,
+        selectedVanigarPeyarMap: _selectedVanigarPeyarMap,
+        selectedVanigarMunvariMap: _selectedVanigarMunvariMap,
         pattiyalNaal: _pattiyalNaal,
         items: _items,
         setharamGrams: _setharamGrams,
@@ -253,7 +257,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
       ElvanSnackbar.show(context, K.niruvanamThaerodhu.tr(context, ref));
       return;
     }
-    if (_selectedVanigarId == null && _selectedVanigarPeyar.isEmpty) {
+    if (_selectedVanigarId == null && _selectedVanigarPeyarMap.isEmpty) {
       ElvanSnackbar.show(context, K.vanigaraiThaerodhu.tr(context, ref));
       return;
     }
@@ -277,7 +281,8 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
           selectedNiruvanamId: _selectedNiruvanamId,
           selectedProfile: _selectedProfile,
           selectedVanigarId: _selectedVanigarId,
-          selectedVanigarPeyar: _selectedVanigarPeyar,
+          selectedVanigarPeyarMap: _selectedVanigarPeyarMap,
+          selectedVanigarMunvariMap: _selectedVanigarMunvariMap,
           pattiyalNaal: _pattiyalNaal,
           items: validItems,
           setharamGrams: _setharamGrams,
@@ -340,44 +345,23 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
           ElvanPagudhiThalaipu(en: 1, thalaipu: K.vanigar.tr(context, ref)),
           KooliVanigarKooru(
             selectedVanigarId: _selectedVanigarId,
-            selectedVanigarPeyar: _selectedVanigarPeyar,
-            selectedNiruvanamId: _selectedNiruvanamId,
-            profiles: profiles,
+            selectedVanigarPeyarMap: _selectedVanigarPeyarMap,
             selectedVanigar: selectedVanigar,
             onVanigarSelected: (entry) {
               setState(() {
                 _selectedVanigarId = entry.id;
-                _selectedVanigarPeyar =
-                    entry.peyar['Tamil'] ?? entry.peyar['English'] ?? '';
+                _selectedVanigarPeyarMap = entry.peyar;
+                _selectedVanigarMunvariMap = entry.mugavari;
                 _hasUnsavedChanges = true;
               });
             },
             onVanigarCleared: () {
               setState(() {
                 _selectedVanigarId = null;
-                _selectedVanigarPeyar = '';
+                _selectedVanigarPeyarMap = const {};
+                _selectedVanigarMunvariMap = const {};
                 _hasUnsavedChanges = true;
               });
-            },
-            onNiruvanamChanged: (v) {
-              final match = profiles.where((p) => p.id == v).firstOrNull;
-              setState(() {
-                _selectedNiruvanamId = v;
-                _selectedProfile = match;
-                _profilePrefix = match?.kurumPeyar.isNotEmpty == true
-                    ? match!.kurumPeyar
-                    : 'CB';
-                // Reset override when business changes (prefix changed)
-                _invoiceNumberOverride = '';
-                _isInvNumberEditing = false;
-                _hasUnsavedChanges = true;
-              });
-              _computePreviewBillNumber();
-            },
-            onRequestAddNewVanigar: () async {
-              await Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const CoolieMerchantEditor()),
-              );
             },
           ),
 

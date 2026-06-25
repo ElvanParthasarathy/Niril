@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
+import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../niril_podhu/kaatchi/koorugal/vanigar_thaedu_kooru.dart';
 import '../../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
