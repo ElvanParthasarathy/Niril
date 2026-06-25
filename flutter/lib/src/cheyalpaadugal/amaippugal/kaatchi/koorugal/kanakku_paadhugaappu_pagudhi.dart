@@ -11,6 +11,7 @@ import '../../../../koorugal/maeladukkugal/elvan_aetrum_maeladukku.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../../adippadai/viruppangal_paniyagam.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
+import '../../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../../adippadai/thoatra_vazhanguthi.dart';
 import '../../../../adippadai/vazhikaattal/navigation_provider.dart';
 import '../../../../adippadai/panigal/niril_backup_service.dart';
@@ -270,7 +271,7 @@ class AccountSecuritySection extends ConsumerWidget {
               await db.delete(db.vanigarTable).go();
               await db.delete(db.patrucheettuTable).go();
               await db.delete(db.patrugalTable).go();
-              await db.delete(db.patruPattiyalLinkTable).go();
+              await db.delete(db.patruPattiyalTable).go();
 
               // 2. Wipe Coolie Database
               ref.read(appModeProvider.notifier).setMode(AppMode.coolie);
@@ -281,7 +282,7 @@ class AccountSecuritySection extends ConsumerWidget {
               await db.delete(db.vanigarTable).go();
               await db.delete(db.patrucheettuTable).go();
               await db.delete(db.patrugalTable).go();
-              await db.delete(db.patruPattiyalLinkTable).go();
+              await db.delete(db.patruPattiyalTable).go();
 
               // Clear SharedPreferences
               final prefs = ref.read(sharedPreferencesProvider);
