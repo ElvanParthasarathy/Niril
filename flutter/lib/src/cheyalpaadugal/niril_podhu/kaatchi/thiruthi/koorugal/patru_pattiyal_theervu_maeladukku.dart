@@ -11,7 +11,6 @@ class PatruPattiyalTheervuMaeladukku {
     required BuildContext context,
     required List<PatrucheettuEntry> invoices,
     required Set<int> initialSelectedIds,
-    required Map<int, double> paidAmounts,
     required void Function(List<PatrucheettuEntry> selected) onConfirmed,
   }) {
     final searchCtrl = TextEditingController();
@@ -146,10 +145,6 @@ class PatruPattiyalTheervuMaeladukku {
                                 final inv = filtered[index];
                                 final isSelected =
                                     selectedIds.contains(inv.id);
-                                final paid =
-                                    paidAmounts[inv.id] ?? 0.0;
-                                final balance = (inv.mothaThogai - paid)
-                                    .clamp(0.0, double.infinity);
                                 final currFmt = NumberFormat.currency(
                                     locale: 'en_IN', symbol: '₹');
                                 final dateFmt = DateFormat('dd/MM/yyyy');
@@ -211,16 +206,6 @@ class PatruPattiyalTheervuMaeladukku {
                                             fontWeight: FontWeight.w600,
                                             fontSize: 13),
                                       ),
-                                      if (paid > 0)
-                                        Text(
-                                          'மீதி: ${currFmt.format(balance)}',
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            color: balance > 0
-                                                ? Colors.orange.shade700
-                                                : Colors.green.shade700,
-                                          ),
-                                        ),
                                     ],
                                   ),
                                   onTap: () {

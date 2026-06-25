@@ -63,7 +63,6 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
   // ── Linked Invoices ──
   List<PatrucheettuEntry> _selectedInvoices = [];
-  Map<int, double> _invoicePaidAmounts = {};
 
   // ── Controllers ──
   final _thogaiCtrl = TextEditingController();
@@ -73,7 +72,6 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
   bool _isSaving = false;
   bool _isInitialized = false;
-  bool _paidAmountsLoaded = false;
   bool _isPatruEnEditing = false;
   String _previewPatruEn = '';
 
@@ -82,15 +80,6 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     super.initState();
     _initializeForm();
     _loadLinkedInvoices();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_paidAmountsLoaded) {
-      _paidAmountsLoaded = true;
-      _loadPaidAmounts();
-    }
   }
 
   void _initializeForm() {
@@ -214,22 +203,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       for (final inv in _selectedInvoices) {
         if (remaining <= 0) break;
 
-        final paidAlready = _invoicePaidAmounts[inv.id] ?? 0.0;
-        // When editing, exclude current receipt's contribution
-        double adjustedPaid = paidAlready;
-        if (widget.editingEntry != null) {
-          final existingLinks =
-              await kalanjiyam.getLinksForPatru(widget.editingEntry!.id);
-          for (final el in existingLinks) {
-            if (el.pattiyalId == inv.id) {
-              adjustedPaid -= el.poruthiyaThogai;
-            }
-          }
-        }
-
-        final balance =
-            (inv.mothaThogai - adjustedPaid).clamp(0.0, double.infinity);
-        final apply = remaining.clamp(0.0, balance);
+        final apply = remaining.clamp(0.0, inv.mothaThogai);
 
         if (apply > 0) {
           links.add(PatruPattiyalLink(
@@ -661,14 +635,12 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       context: context,
       invoices: filteredByBusiness,
       initialSelectedIds: Set<int>.from(_selectedInvoices.map((i) => i.id)),
-      paidAmounts: _invoicePaidAmounts,
       onConfirmed: (selected) {
         setState(() {
           _selectedInvoices = selected;
           _recalculateAmount();
           _autoFillFromInvoices();
         });
-        _loadPaidAmounts();
       },
     );
   }
@@ -684,9 +656,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
     double total = 0;
     for (final inv in _selectedInvoices) {
-      final paid = _invoicePaidAmounts[inv.id] ?? 0.0;
-      final balance = (inv.mothaThogai - paid).clamp(0.0, double.infinity);
-      total += balance;
+      total += inv.mothaThogai;
     }
 
     _thogai = total;
@@ -709,16 +679,4 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     }
   }
 
-  Future<void> _loadPaidAmounts() async {
-    final kalanjiyam = ref.read(patruKalanjiyamProvider);
-    final invoicesAsync = ref.read(pattiyalgalProvider);
-    final invoices = invoicesAsync.value ?? [];
-    if (invoices.isEmpty) return;
-
-    final ids = invoices.map((i) => i.id).toList();
-    final amounts = await kalanjiyam.getPaidAmountsForInvoices(ids);
-    if (mounted && amounts != _invoicePaidAmounts) {
-      setState(() => _invoicePaidAmounts = amounts);
-    }
-  }
 }
