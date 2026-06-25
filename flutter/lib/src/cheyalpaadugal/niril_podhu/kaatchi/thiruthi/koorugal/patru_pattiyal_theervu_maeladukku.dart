@@ -2,13 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
+import '../../../../../adippadai/mozhiyaakkam/k.dart';
+import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 /// Bottom-sheet dialog for picking one or more invoices.
 /// Returns the selected list via [onConfirmed].
 class PatruPattiyalTheervuMaeladukku {
   static void show({
     required BuildContext context,
+    required WidgetRef ref,
     required List<PatrucheettuEntry> invoices,
     required Set<int> initialSelectedIds,
     required void Function(List<PatrucheettuEntry> selected) onConfirmed,
@@ -87,9 +92,9 @@ class PatruPattiyalTheervuMaeladukku {
                       padding: const EdgeInsets.all(16),
                       child: Row(
                         children: [
-                          const Text(
-                            'பட்டியல்களைத் தேர்ந்தெடு',
-                            style: TextStyle(
+                          Text(
+                            K.pattiyalgalaiThaernhedu.tr(context, ref),
+                            style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w600),
                           ),
                           const Spacer(),
@@ -101,8 +106,8 @@ class PatruPattiyalTheervuMaeladukku {
                               onConfirmed(selected);
                               Navigator.of(ctx).pop();
                             },
-                            child: const Text('முடிந்தது',
-                                style: TextStyle(fontWeight: FontWeight.w600)),
+                            child: Text(K.mudindhadhu.tr(context, ref),
+                                style: const TextStyle(fontWeight: FontWeight.w600)),
                           ),
                         ],
                       ),
@@ -113,7 +118,7 @@ class PatruPattiyalTheervuMaeladukku {
                       child: TextField(
                         controller: searchCtrl,
                         decoration: InputDecoration(
-                          hintText: 'பட்டியல் எண் / வாடிக்கையாளர்...',
+                          hintText: K.pattiyalEnVanigar.tr(context, ref),
                           prefixIcon:
                               const Icon(CupertinoIcons.search, size: 18),
                           border: OutlineInputBorder(
@@ -133,9 +138,9 @@ class PatruPattiyalTheervuMaeladukku {
                     // Invoice list
                     Expanded(
                       child: filtered.isEmpty
-                          ? const Center(
-                              child: Text('பட்டியல்கள் இல்லை',
-                                  style: TextStyle(color: Colors.grey)))
+                          ? Center(
+                              child: Text(K.pattiyalgalIllai.tr(context, ref),
+                                  style: const TextStyle(color: Colors.grey)))
                           : ListView.separated(
                               controller: scrollController,
                               itemCount: filtered.length,

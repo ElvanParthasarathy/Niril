@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
+import '../../../../../adippadai/mozhiyaakkam/k.dart';
+import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 import '../../../../niril_podhu/tharavuru/seluthi_vagai.dart';
 
@@ -11,7 +14,7 @@ import '../../../../niril_podhu/tharavuru/seluthi_vagai.dart';
 
 
 /// Invoice picker button + selected invoice chips.
-class PatruPattiyalTheervuPagudhi extends StatelessWidget {
+class PatruPattiyalTheervuPagudhi extends ConsumerWidget {
   const PatruPattiyalTheervuPagudhi({
     super.key,
     required this.selectedInvoices,
@@ -26,7 +29,7 @@ class PatruPattiyalTheervuPagudhi extends StatelessWidget {
   final void Function(PatrucheettuEntry invoice) onRemoveInvoice;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -38,8 +41,8 @@ class PatruPattiyalTheervuPagudhi extends StatelessWidget {
             icon: const Icon(CupertinoIcons.doc_text, size: 18),
             label: Text(
               selectedInvoices.isEmpty
-                  ? 'பட்டியலைத் தேர்ந்தெடு'
-                  : '${selectedInvoices.length} பட்டியல்கள்',
+                  ? K.pattiyalgalaiThaernhedu.tr(context, ref)
+                  : '${selectedInvoices.length} ${K.pattiyalgal.tr(context, ref)}',
             ),
             style: ElevatedButton.styleFrom(
               padding:
@@ -79,7 +82,7 @@ class PatruPattiyalTheervuPagudhi extends StatelessWidget {
 }
 
 /// Payment section: amount, payment mode, reference, note.
-class PatruSeluthiPagudhi extends StatelessWidget {
+class PatruSeluthiPagudhi extends ConsumerWidget {
   const PatruSeluthiPagudhi({
     super.key,
     required this.thogaiCtrl,
@@ -104,7 +107,7 @@ class PatruSeluthiPagudhi extends StatelessWidget {
   final ValueChanged<String> onUllkurippuChanged;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDesktop = MediaQuery.sizeOf(context).width >= 800;
 
     return Column(
@@ -120,7 +123,7 @@ class PatruSeluthiPagudhi extends StatelessWidget {
               child: TextField(
                 controller: thogaiCtrl,
                 decoration: InputDecoration(
-                  labelText: 'தொகை *',
+                  labelText: K.thogaiVinmeen.tr(context, ref),
                   prefixText: '₹ ',
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -137,7 +140,7 @@ class PatruSeluthiPagudhi extends StatelessWidget {
               child: DropdownButtonFormField<SeluthiVagai>(
                 initialValue: seluthiVagai,
                 decoration: InputDecoration(
-                  labelText: 'செலுத்தி வகை *',
+                  labelText: K.cheluthumMuraiVinmeen.tr(context, ref),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -184,7 +187,7 @@ class PatruSeluthiPagudhi extends StatelessWidget {
             child: TextField(
               controller: suttruEnCtrl,
               decoration: InputDecoration(
-                labelText: 'குறிப்பு எண் / Transaction ID',
+                labelText: K.kurippuEnParimaatraEn.tr(context, ref),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -199,7 +202,7 @@ class PatruSeluthiPagudhi extends StatelessWidget {
         TextField(
           controller: ullkurippuCtrl,
           decoration: InputDecoration(
-            labelText: 'குறிப்பு',
+            labelText: K.kurippu.tr(context, ref),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
             ),

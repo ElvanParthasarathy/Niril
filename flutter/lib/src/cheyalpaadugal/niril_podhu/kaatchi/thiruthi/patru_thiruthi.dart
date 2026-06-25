@@ -172,15 +172,15 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     // Validation
     final peyarTamil = _vanigarPeyarMap['Tamil'] ?? '';
     if (peyarTamil.trim().isEmpty) {
-      ElvanSnackbar.show(context, 'வாடிக்கையாளர் பெயர் தேவை');
+      ElvanSnackbar.show(context, K.vanigarPeyarThaevai.tr(context, ref));
       return;
     }
     if (_thogai <= 0) {
-      ElvanSnackbar.show(context, 'தொகை 0-ஐ விட அதிகமாக இருக்க வேண்டும்');
+      ElvanSnackbar.show(context, K.thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum.tr(context, ref));
       return;
     }
     if (_seluthiVagai == null) {
-      ElvanSnackbar.show(context, 'செலுத்தி வகையைத் தேர்ந்தெடுக்கவும்');
+      ElvanSnackbar.show(context, K.cheluthumMuraiThaernhedu.tr(context, ref));
       return;
     }
 
@@ -233,7 +233,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       if (isDuplicate) {
         if (mounted) {
           ElvanSnackbar.show(
-              context, 'Receipt number $_patruEn already exists!');
+              context, '$_patruEn - ${K.patrucheettuEnYaerkanavaeUlladhu.tr(context, ref)}');
           setState(() => _isSaving = false);
         }
         return;
@@ -265,12 +265,12 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       if (mounted) {
         ref.invalidate(patrugalProvider);
         ref.invalidate(pattiyalgalProvider);
-        ElvanSnackbar.show(context, 'பற்றுச்சீட்டு சேமிக்கப்பட்டது');
+        ElvanSnackbar.show(context, K.patrucheettuChaemikkappattadhu.tr(context, ref));
         Navigator.of(context).pop();
       }
     } catch (e) {
       if (mounted) {
-        ElvanSnackbar.show(context, 'சேமிக்க இயலவில்லை: $e');
+        ElvanSnackbar.show(context, '${K.chaemikkaIyalavillai.tr(context, ref)} $e');
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -292,7 +292,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
     final isEditing = widget.editingEntry != null;
     final title =
-        isEditing ? 'பற்றுச்சீட்டுத் திருத்து' : 'புதிய பற்றுச்சீட்டு';
+        isEditing ? K.maatriyamai.tr(context, ref) : K.pudhiyaAakkam.tr(context, ref);
 
     return ElvanEditorShell(
       title: title,
@@ -414,8 +414,8 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       children: [
         // 1. Receipt Number & Date
         ElvanPattiyalTharavugalKooru(
-          customNumberTitle: 'பற்றுச்சீட்டு எண்', // Receipt Number
-          customDateTitle: 'பற்றுச்சீட்டு தேதி', // Receipt Date
+          customNumberTitle: K.patrucheettuEn.tr(context, ref), // Receipt Number
+          customDateTitle: K.patrucheettuNaal.tr(context, ref), // Receipt Date
           isEditing: widget.editingEntry != null,
           invoiceNumberOverride: _patruEnCtrl.text,
           previewInvoiceNumber: _patruEn.isNotEmpty ? _patruEn : _previewPatruEn,
@@ -485,7 +485,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'பட்டியலைத் தேர்ந்தெடுத்ததும் வாடிக்கையாளர் விவரங்கள் தானாக நிரப்பப்படும்.',
+                      K.pattiyalThaervukkuPinVanigarTharavugalNirappappadum.tr(context, ref),
                       style: TextStyle(
                           color: isDark ? Colors.white70 : Colors.black87),
                     ),
@@ -586,7 +586,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
               IconButton(
                 icon: const Icon(CupertinoIcons.clear_circled_solid),
                 color: isDark ? Colors.white54 : Colors.black45,
-                tooltip: 'மாற்று', // Change
+                tooltip: K.maatru.tr(context, ref), // Change
                 onPressed: () {
                   setState(() {
                     _selectedVanigarId = null;
@@ -627,8 +627,9 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
         : allInvoices;
 
     PatruPattiyalTheervuMaeladukku.show(
-      context: context,
-      invoices: filteredByBusiness,
+        context: context,
+        ref: ref,
+        invoices: filteredByBusiness,
       initialSelectedIds: Set<int>.from(_selectedInvoices.map((i) => i.id)),
       onConfirmed: (selected) {
         setState(() {

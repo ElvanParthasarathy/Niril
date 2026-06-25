@@ -379,4 +379,25 @@ abstract final class K {
   static const endhapPattiyalukku = 'endhapPattiyalukku';
   static const patrucheettuTharavugal = 'patrucheettuTharavugal';
   static const seluthiyaVivaram = 'seluthiyaVivaram';
+
+  // ── Receipt Editor (Patrucheettu Thiruthi) ──
+  static const thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum = 'thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum';
+  static const cheluthumMuraiThaernhedu = 'cheluthumMuraiThaernhedu';
+  static const patrucheettuEnYaerkanavaeUlladhu = 'patrucheettuEnYaerkanavaeUlladhu';
+  static const patrucheettuChaemikkappattadhu = 'patrucheettuChaemikkappattadhu';
+  static const chaemikkaIyalavillai = 'chaemikkaIyalavillai';
+  static const maatriyamai = 'maatriyamai';
+  static const pudhiyaAakkam = 'pudhiyaAakkam';
+  static const patrucheettuEn = 'patrucheettuEn';
+  static const patrucheettuNaal = 'patrucheettuNaal';
+  static const pattiyalThaervukkuPinVanigarTharavugalNirappappadum = 'pattiyalThaervukkuPinVanigarTharavugalNirappappadum';
+  static const maatru = 'maatru';
+  static const pattiyalaiThaernhedu = 'pattiyalaiThaernhedu';
+  static const thogaiVinmeen = 'thogaiVinmeen';
+  static const cheluthumMuraiVinmeen = 'cheluthumMuraiVinmeen';
+  static const kurippuEnParimaatraEn = 'kurippuEnParimaatraEn';
+  static const kurippu = 'kurippu';
+  static const pattiyalgalaiThaernhedu = 'pattiyalgalaiThaernhedu';
+  static const mudindhadhu = 'mudindhadhu';
+  static const pattiyalEnVanigar = 'pattiyalEnVanigar';
 }

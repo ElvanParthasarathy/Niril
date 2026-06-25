@@ -5,10 +5,6 @@ const Map<String, String> en = {
   'pudhiyadhaagaThodanguPtn': 'Start Fresh',
   'mozhiThaervu': 'Select Language',
   'viruppaMozhiThaervu': 'Choose your preferred language',
-
-  // ========================================
-  // Help Center
-  // ========================================
   'niruvanathinPeyar': 'Company Name',
   'vanigargal': 'Merchants',
   'porutkal': 'Products',
@@ -16,10 +12,6 @@ const Map<String, String> en = {
   'patrucheettugal': 'Receipts',
   'arikkai': 'Report',
   'variArikkai': 'GST Return',
-
-  // ========================================
-  // Settings & Preferences
-  // ========================================
   'amaippugal': 'Settings',
   'veliyaeru': 'Logout',
   'cheyaliMozhi': 'App Language',
@@ -49,10 +41,6 @@ const Map<String, String> en = {
   'tharavuchaemippuvetri': 'Backup successfully saved to Documents.',
   'mudhanmaiMozhi': 'Primary Language',
   'irandaamMozhi': 'Secondary Language',
-
-  // ========================================
-  // Merchants & Customers
-  // ========================================
   'vanigar': 'Merchant',
   'minnanjal': 'Email',
   'vanigaraichChaer': 'Add Merchant',
@@ -66,10 +54,6 @@ const Map<String, String> en = {
   'minnanjalMugavari': 'Email Address',
   'minnanjalaiUllidavum': 'Enter your email',
   'mugavaritharavugal': 'Company address details',
-
-  // ========================================
-  // Inventory & Items
-  // ========================================
   'porul': 'Product',
   'porulaichChaerPtn': 'Add Product',
   'gstpirippugal': 'Show GST splits in table',
@@ -84,10 +68,6 @@ const Map<String, String> en = {
   'pilVadivamaippuViruppangal': 'PDF styling options',
   'chinnathinVadivam': 'Bill Header Style',
   'meetteduppuvetri': 'Data restored successfully!',
-
-  // ========================================
-  // Expenses & Purchases
-  // ========================================
   'arikkaigal': 'Reports',
   'variArikkaigal': 'GST Returns',
   'chaer': 'Add',
@@ -108,10 +88,6 @@ const Map<String, String> en = {
   'veliyaeraVaendumaa': 'Sign Out?',
   'thodangugaPtn': 'Get Started',
   'meetteduPtn': 'Restore Data',
-
-  // ========================================
-  // Miscellaneous
-  // ========================================
   'niril': 'Niril',
   'thodaravum': 'Continue',
   'mugappu': 'Home',
@@ -135,7 +111,7 @@ const Map<String, String> en = {
   'nirilPattu': 'Niril Silk',
   'meendumThaedu': 'Scan Again',
   'vanakkam': 'Vanakkam!',
-  'indruEndhakKanakku': 'Who\'s working today?',
+  'indruEndhakKanakku': 'Who\'s account today?',
   'veliyaerugiradhu': 'Signing out...',
   'aluvalkaiyoppam': 'Authorized Signatory Name',
   'neriyuga': 'Manage',
@@ -175,14 +151,10 @@ const Map<String, String> en = {
   'pazhaiyaTharavuKidaikkiradhu': 'Old data available',
   'pazhaiyaTharavaiMeettedukkavaa': 'Your previous data was found. Would you like to restore it?',
   'tharavaiMeettedukkiradhu': 'Restoring data...',
-
-
-  // === Auto Added Keys ===
   'pugaippadakKaruvi': 'Camera',
   'pugaippadathThoguppu': 'Gallery',
   'padammoolam': 'Select Image Source',
   'menporulVadivaalarPatri': 'About Developer',
-
   'cheyaliPatriMaadhiri': 'About App (Dummy)',
   'menporulVadivaalarPatriMaadhiri': 'About Developer (Dummy)',
   'kooliMugappupPakkam': 'Coolie Home Page',
@@ -228,8 +200,6 @@ const Map<String, String> en = {
   'elvanParthasarathy': 'Elvan Parthasarathy',
   'appPeyar': 'Elvan Niril',
   'elvanNiril': 'Elvan Niril',
-
-  // === Porul (Product) Keys ===
   'porulTharavugal': 'Product Details',
   'vilaiMatrumVari': 'Pricing & Tax',
   'alavuVagai': 'Measure Type',
@@ -243,8 +213,6 @@ const Map<String, String> en = {
   'porulAzhikkappattadhu': 'Product deleted',
   'porulgalIllai': 'No products yet',
   'porulaiChaerkkavum': 'Add your first product',
-
-  // ── Meetpagam (Recycle Bin) ──
   'meetpagam': 'Recycle Bin',
   'meetpagamKaaliyanadhu': 'Recycle bin is empty',
   'meeteduppuVetri': 'Restored successfully',
@@ -253,8 +221,6 @@ const Map<String, String> en = {
   'nirandharaAzhippuUrudhi': 'Delete permanently? This cannot be undone.',
   'azhikkappattaPorulgal': 'Deleted Products',
   'meetpagam30Naal': 'Items in the recycle bin will be automatically deleted after 30 days',
-
-  // === Vanigar (Merchant) CRUD Keys ===
   'vanigarTharavugal': 'Business Details',
   'vanigarPeyar': 'Merchant Name',
   'vanigarPeyarThaevai': 'Merchant name is required',
@@ -269,8 +235,6 @@ const Map<String, String> en = {
   'thanipPayanPtn': 'Custom',
   'tholaipaesi': 'Phone',
   'anaithaiyumTheriPtn': 'Select All',
-
-  // ── Payanar (User Profile) ──
   'payanar': 'User',
   'payanarAmaippugal': 'User Settings',
   'mudhalPeyar': 'First Name',
@@ -278,13 +242,9 @@ const Map<String, String> en = {
   'pirandhaThaedhi': 'Date of Birth',
   'payanarTharavugalaiMaetriduPtn': 'Save',
   'payanarVilakkam': 'This name will appear on the home screen greeting.',
-
-  // ── Sync ──
   'orunginaiCheyaliPtn': 'Sync App',
   'orunginaikkiRadhu': 'Syncing...',
   'orunginaikkappattadhu': 'Synced!',
-
-  // ── Invoice Editor (Pattiyal Thiruthi) ──
   'perunar': 'Billed To',
   'pattiyalTharavugal': 'Invoice Details',
   'varisaiUrupadigal': 'Line Items',
@@ -337,10 +297,23 @@ const Map<String, String> en = {
   'varaivuMeetka': 'Restore draft?',
   'chaemikkaadhaVaraivu': 'Unsaved draft found. Restore it?',
   'niraagari': 'Dismiss',
-  'meetkavum': 'Restore',
-  'pattiyalTheervu': 'Against Invoice',
-  'munpanam': 'Advance Receipt',
-  'endhapPattiyalukku': 'Which Invoice?',
-  'patrucheettuTharavugal': 'Receipt Data',
-  'seluthiyaVivaram': 'Payment Details',
+  'pudhiyaAakkam': 'Create',
+  'patrucheettuEn': 'Receipt Number',
+  'patrucheettuNaal': 'Receipt Date',
+  'pattiyalThaervukkuPinVanigarTharavugalNirappappadum': 'Customer details will be auto-filled after selecting an invoice.',
+  'maatru': 'Change',
+  'pattiyalaiThaernhedu': 'Select Invoice',
+  'thogaiVinmeen': 'Amount *',
+  'cheluthumMuraiVinmeen': 'Payment Mode *',
+  'kurippuEnParimaatraEn': 'Reference No / Transaction No',
+  'kurippu': 'Remarks',
+  'thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum': 'Amount must be greater than 0',
+  'cheluthumMuraiThaernhedu': 'Select payment mode',
+  'patrucheettuEnYaerkanavaeUlladhu': 'Receipt number already exists!',
+  'patrucheettuChaemikkappattadhu': 'Receipt saved',
+  'chaemikkaIyalavillai': 'Could not save:',
+  'maatriyamai': 'Edit',
+  'pattiyalgalaiThaernhedu': 'Select Invoices',
+  'mudindhadhu': 'Done',
+  'pattiyalEnVanigar': 'Invoice No / Customer...',
 };

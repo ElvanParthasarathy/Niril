@@ -5,10 +5,6 @@ const Map<String, String> ta = {
   'pudhiyadhaagaThodanguPtn': 'புதியதாக தொடங்கு',
   'mozhiThaervu': 'மொழியைத் தேர்ந்தெடு',
   'viruppaMozhiThaervu': 'விருப்பமான மொழியைத் தேர்வு செய்க',
-
-  // ========================================
-  // Help Center
-  // ========================================
   'niruvanathinPeyar': 'நிறுவனத்தின் பெயர்',
   'vanigargal': 'வணிகர்கள்',
   'porutkal': 'பொருட்கள்',
@@ -16,10 +12,6 @@ const Map<String, String> ta = {
   'patrucheettugal': 'பற்றுச்சீட்டுகள்',
   'arikkai': 'அறிக்கை',
   'variArikkai': 'வரி அறிக்கை',
-
-  // ========================================
-  // Settings & Preferences
-  // ========================================
   'amaippugal': 'அமைப்புகள்',
   'veliyaeru': 'வெளியேறு',
   'cheyaliMozhi': 'செயலி மொழி',
@@ -49,10 +41,6 @@ const Map<String, String> ta = {
   'tharavuchaemippuvetri': 'தரவு ஆவணங்களில் சேமிக்கப்பட்டது.',
   'mudhanmaiMozhi': 'முதன்மை மொழி',
   'irandaamMozhi': 'இரண்டாம் மொழி',
-
-  // ========================================
-  // Merchants & Customers
-  // ========================================
   'vanigar': 'வணிகர்',
   'minnanjal': 'மின்னஞ்சல்',
   'vanigaraichChaer': 'வணிகரைச் சேர்',
@@ -66,10 +54,6 @@ const Map<String, String> ta = {
   'minnanjalMugavari': 'மின்னஞ்சல் முகவரி',
   'minnanjalaiUllidavum': 'மின்னஞ்சலை உள்ளிடவும்',
   'mugavaritharavugal': 'நிறுவன முகவரித் தரவுகள்',
-
-  // ========================================
-  // Inventory & Items
-  // ========================================
   'porul': 'பொருள்',
   'porulaichChaerPtn': 'பொருளைச் சேர்',
   'gstpirippugal': 'GST பிரிப்புகளைக் காட்டு',
@@ -84,10 +68,6 @@ const Map<String, String> ta = {
   'pilVadivamaippuViruppangal': 'PDF வடிவமைப்பு விருப்பங்கள்',
   'chinnathinVadivam': 'ஓவுருவின் வடிவம்',
   'meetteduppuvetri': 'தரவு வெற்றிகரமாக மீட்டெடுக்கப்பட்டது!',
-
-  // ========================================
-  // Expenses & Purchases
-  // ========================================
   'arikkaigal': 'அறிக்கைகள்',
   'variArikkaigal': 'வரி அறிக்கைகள்',
   'chaer': 'சேர்',
@@ -108,10 +88,6 @@ const Map<String, String> ta = {
   'veliyaeraVaendumaa': 'வெளியேற வேண்டுமா?',
   'thodangugaPtn': 'தொடங்குக',
   'meetteduPtn': 'மீட்டெடு',
-
-  // ========================================
-  // Miscellaneous
-  // ========================================
   'appPeyar': 'Elvan Niril',
   'elvanNiril': 'எல்வன் நிறிள்',
   'niril': 'நிறிள்',
@@ -185,14 +161,10 @@ const Map<String, String> ta = {
   'pazhaiyaTharavuKidaikkiradhu': 'பழைய தரவு கிடைக்கிறது',
   'pazhaiyaTharavaiMeettedukkavaa': 'பழைய தரவை மீட்டெடுக்கவா?',
   'tharavaiMeettedukkiradhu': 'தரவை மீட்டெடுக்கிறது...',
-
-
-  // === Auto Added Keys ===
   'pugaippadakKaruvi': 'புகைப்படக் கருவி',
   'pugaippadathThoguppu': 'புகைப்படத் தொகுப்பு',
   'padammoolam': 'படத்தின் மூலத்தைத் தேர்ந்தெடுக்கவும்',
   'menporulVadivaalarPatri': 'மென்பொருள் வடிவாளர் பற்றி',
-
   'cheyaliPatriMaadhiri': 'செயலி பற்றி (மாதிரி)',
   'menporulVadivaalarPatriMaadhiri': 'மென்பொருள் வடிவாளர் பற்றி (மாதிரி)',
   'kooliMugappupPakkam': 'கூலி முகப்புப் பக்கம்',
@@ -228,8 +200,6 @@ const Map<String, String> ta = {
   'niruvanapeyaraiullidu': 'தேவையான அனைத்து நிறுவனப் பெயர்களையும் உள்ளிடுக.',
   'gstinVariAdaiyaalaEn': 'GSTIN / வரி அடையாள எண்',
   'elvanParthasarathy': 'எல்வன் பார்த்தசாரதி',
-
-  // === Porul (Product) Keys ===
   'porulTharavugal': 'பொருள் தரவுகள்',
   'vilaiMatrumVari': 'விலை மற்றும் வரி',
   'alavuVagai': 'அளவு வகை',
@@ -243,8 +213,6 @@ const Map<String, String> ta = {
   'porulAzhikkappattadhu': 'பொருள் அழிக்கப்பட்டது',
   'porulgalIllai': 'பொருட்கள் இல்லை',
   'porulaiChaerkkavum': 'முதல் பொருளைச் சேர்க்கவும்',
-
-  // ── Meetpagam (Recycle Bin) ──
   'meetpagam': 'மீட்பகம்',
   'meetpagamKaaliyanadhu': 'மீட்பகம் காலியானது',
   'meeteduppuVetri': 'வெற்றிகரமாக மீட்கப்பட்டது',
@@ -253,8 +221,6 @@ const Map<String, String> ta = {
   'nirandharaAzhippuUrudhi': 'நிரந்தரமாக அழிக்கவா? மீட்க இயலாது.',
   'azhikkappattaPorulgal': 'அழிக்கப்பட்ட பொருள்கள்',
   'meetpagam30Naal': 'மீட்பகத்தில் உள்ளவை 30 நாள்களுக்குப் பிறகு தானாகவே அழிக்கப்படும்',
-
-  // === Vanigar (Merchant) CRUD Keys ===
   'vanigarTharavugal': 'வணிகத் தரவுகள்',
   'vanigarPeyar': 'வணிகர் பெயர்',
   'vanigarPeyarThaevai': 'வணிகர் பெயர் தேவை',
@@ -269,8 +235,6 @@ const Map<String, String> ta = {
   'thanipPayanPtn': 'தனிப்பயன்',
   'tholaipaesi': 'தொலைப்பேசி',
   'anaithaiyumTheriPtn': 'அனைத்தையும் தேர்',
-
-  // ── பயனர் (User Profile) ──
   'payanar': 'பயனர்',
   'payanarAmaippugal': 'பயனர் அமைப்புகள்',
   'mudhalPeyar': 'முதற்பெயர்',
@@ -278,13 +242,9 @@ const Map<String, String> ta = {
   'pirandhaThaedhi': 'பிறந்த தேதி',
   'payanarTharavugalaiMaetriduPtn': 'சேமி',
   'payanarVilakkam': 'இப்பெயர் முகப்புத்திரையில் தோன்றும்.',
-
-  // ── ஒருங்கிணைப்பு ──
   'orunginaiCheyaliPtn': 'செயலியை ஒருங்கிணை',
   'orunginaikkiRadhu': 'ஒருங்கிணைக்கிறது...',
   'orunginaikkappattadhu': 'ஒருங்கிணைக்கப்பட்டது!',
-
-  // ── பட்டியல் திருத்தி (Invoice Editor) ──
   'perunar': 'பெறுநர்',
   'pattiyalTharavugal': 'பட்டியல் தரவுகள்',
   'varisaiUrupadigal': 'உருப்படிகள்',
@@ -337,10 +297,23 @@ const Map<String, String> ta = {
   'varaivuMeetka': 'வரைவு மீட்கவா?',
   'chaemikkaadhaVaraivu': 'சேமிக்காத வரைவு உள்ளது. மீட்டமைக்கவா?',
   'niraagari': 'நிராகரி',
-  'meetkavum': 'மீட்கவும்',
-  'pattiyalTheervu': 'பட்டியல் தீர்வு',
-  'munpanam': 'முன்பணம்',
-  'endhapPattiyalukku': 'எந்தப் பட்டியலுக்கு',
-  'patrucheettuTharavugal': 'பற்றுச்சீட்டு தரவுகள்',
-  'seluthiyaVivaram': 'செலுத்திய விவரம்',
+  'pudhiyaAakkam': 'புதிய ஆக்கம்',
+  'patrucheettuEn': 'பற்றுச்சீட்டு எண்',
+  'patrucheettuNaal': 'பற்றுச்சீட்டு நாள்',
+  'pattiyalThaervukkuPinVanigarTharavugalNirappappadum': 'பட்டியலைத் தேர்ந்தெடுத்ததும் வணிகர் தரவுகள் தானே நிரப்பப்படும்.',
+  'maatru': 'மாற்று',
+  'pattiyalaiThaernhedu': 'பட்டியலைத் தேர்ந்தெடு',
+  'thogaiVinmeen': 'தொகை *',
+  'cheluthumMuraiVinmeen': 'செலுத்தும் முறை *',
+  'kurippuEnParimaatraEn': 'குறிப்பு எண் / பரிமாற்ற எண்',
+  'kurippu': 'குறிப்பு',
+  'thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum': 'தொகை 0-ஐ விட மிகுதியாக இருக்க வேண்டும்',
+  'cheluthumMuraiThaernhedu': 'செலுத்தும் முறையைத் தேர்ந்தெடு',
+  'patrucheettuEnYaerkanavaeUlladhu': 'பற்றுச்சீட்டு எண் ஏற்கனவே உள்ளது!',
+  'patrucheettuChaemikkappattadhu': 'பற்றுச்சீட்டு சேமிக்கப்பட்டது',
+  'chaemikkaIyalavillai': 'சேமிக்க இயலவில்லை:',
+  'maatriyamai': 'மாற்றியமை',
+  'pattiyalgalaiThaernhedu': 'பட்டியல்களைத் தேர்ந்தெடு',
+  'mudindhadhu': 'முடிந்தது',
+  'pattiyalEnVanigar': 'பட்டியல் எண் / வணிகர்...',
 };

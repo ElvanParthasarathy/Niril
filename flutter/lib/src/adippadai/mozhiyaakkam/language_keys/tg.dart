@@ -5,10 +5,6 @@ const Map<String, String> tg = {
   'pudhiyadhaagaThodanguPtn': 'Pudhiyadhaaga Thodangu',
   'mozhiThaervu': 'Mozhiyaith Thaerndhedu',
   'viruppaMozhiThaervu': 'Viruppamaana Mozhiyaith Thaervu Cheiga',
-
-  // ========================================
-  // Help Center
-  // ========================================
   'niruvanathinPeyar': 'Niruvanathin Peyar',
   'vanigargal': 'Vanigargal',
   'porutkal': 'Porutkal',
@@ -16,12 +12,7 @@ const Map<String, String> tg = {
   'patrucheettugal': 'Patrucheettugal',
   'arikkai': 'Arikkai',
   'variArikkai': 'Vari Arikkai',
-
-  // ========================================
-  // Settings & Preferences
-  // ========================================
   'amaippugal': 'Amaippugal',
-
   'veliyaeru': 'Veliyaeru',
   'cheyaliMozhi': 'Cheyali Mozhi',
   'vangiyinPeyar': 'Vangiyin Peyar',
@@ -50,12 +41,7 @@ const Map<String, String> tg = {
   'tharavuchaemippuvetri': 'Tharavu Aavanangalil Chaemikkappattadhu.',
   'mudhanmaiMozhi': 'Mudhanmai Mozhi',
   'irandaamMozhi': 'Irandaam Mozhi',
-
-  // ========================================
-  // Merchants & Customers
-  // ========================================
   'vanigar': 'Vanigar',
-
   'minnanjal': 'Minnanjal',
   'vanigaraichChaer': 'Vanigaraich Chaer',
   'oor': 'Oor',
@@ -70,12 +56,7 @@ const Map<String, String> tg = {
   'minnanjalMugavari': 'Minnanjal Mugavari',
   'minnanjalaiUllidavum': 'Minnanjalai Ullidavum',
   'mugavaritharavugal': 'Niruvana Mugavarith Tharavugal',
-
-  // ========================================
-  // Inventory & Items
-  // ========================================
   'porul': 'Porul',
-
   'porulaichChaerPtn': 'Porulaich Chaer',
   'gstpirippugal': 'GST Pirippugalaik Kaattu',
   'pattiyal': 'Pattiyal',
@@ -89,10 +70,6 @@ const Map<String, String> tg = {
   'pilVadivamaippuViruppangal': 'PDF Vadivamaippu Viruppangal',
   'chinnathinVadivam': 'Oavuruvin Vadivam',
   'meetteduppuvetri': 'Tharavu Vetrigaramaaga Meettedukkappattadhu!',
-
-  // ========================================
-  // Expenses & Purchases
-  // ========================================
   'arikkaigal': 'Arikkaigal',
   'variArikkaigal': 'Vari Arikkaigal',
   'chaer': 'Chaer',
@@ -113,18 +90,13 @@ const Map<String, String> tg = {
   'veliyaeraVaendumaa': 'Veliyaera Vaendumaa?',
   'thodangugaPtn': 'Thodanguga',
   'meetteduPtn': 'Meettedu',
-
-  // ========================================
-  // Miscellaneous
-  // ========================================
   'niril': 'Niril',
   'thodaravum': 'Thodaravum',
   'gstin': 'GSTIN',
   'language': 'Mozhi',
   'kaapputhTharavuKidaithadhu': 'Kaapputh Tharavu Kidaithadhu!',
   'kaapputhTharavuThaedal': 'Kaapputh Tharavu Thaedappadugiradhu...',
-  'kaapputhTharavuIllai':
-      'Kaapputh Tharavu Illai, Pudhidhaaga Thodangugiradhu.',
+  'kaapputhTharavuIllai': 'Kaapputh Tharavu Illai, Pudhidhaaga Thodangugiradhu.',
   'mugappu': 'Mugappu',
   'mugavari': 'Mugavari',
   'irulNilai': 'Irul Nilai',
@@ -147,6 +119,7 @@ const Map<String, String> tg = {
   'meendumThaedu': 'Meendum Thaedu',
   'veliyaerugiradhu': 'Veliyaerugiradhu...',
   'aluvalkaiyoppam': 'Aluval Kaiyoppathin Peyar',
+  'chaemiththaTharavugal': 'Chaemitha Tharavugal',
   'neriyuga': 'Neriyuga',
   'pachai': 'Pachai',
   'oodhaa': 'Oodhaa',
@@ -162,8 +135,7 @@ const Map<String, String> tg = {
   'peyaraiUlliduga': 'Peyarai Ulliduga',
   'gstpattiyalukku': 'Vazhakkamaana GST Pattiyalgalukkup Payanbaduthappadum.',
   'kooliNiruvanaPeyar': 'Kooli Niruvanap Peyar',
-  'koolipattiyalukku':
-      'Kooli Pattiyalgal Matrum Patrucheettugalukkup Payanbaduthappadum.',
+  'koolipattiyalukku': 'Kooli Pattiyalgal Matrum Patrucheettugalukkup Payanbaduthappadum.',
   'niruvanam': 'Niruvanam',
   'niruvanaAmaippugal': 'Niruvana Amaippugal',
   'vangi': 'Vangi',
@@ -190,8 +162,6 @@ const Map<String, String> tg = {
   'pazhaiyaTharavuKidaikkiradhu': 'Pazhaiya Tharavu Kidaikkiradhu',
   'pazhaiyaTharavaiMeettedukkavaa': 'Pazhaiya Tharavai Meettedukkavaa?',
   'tharavaiMeettedukkiradhu': 'Tharavai Meettedukkiradhu...',
-
-  // === Auto Added Keys ===
   'pugaippadakKaruvi': 'Pugaippadak Karuvi',
   'pugaippadathThoguppu': 'Pugaippadath Thoguppu',
   'padammoolam': 'Padathin Moolathaith Thaerndhedukkavum',
@@ -228,12 +198,9 @@ const Map<String, String> tg = {
   'uruvaakkunarTharavugalaiAzhi': 'Uruvaakkunar: Tharavugalai Azhi',
   'uruvaakkunarTharavugalaiUruvaakku': 'Uruvaakkunar: Tharavugalai Uruvaakku',
   'tharavugalaiUruvaakkuUruvaakkunar': 'Tharavugalai Uruvaakku (Uruvaakkunar)',
-  'niruvanapeyaraiullidu':
-      'Thaevaiyaana Anaithu Niruvanap Peyargalaiyum Ullidavum.',
+  'niruvanapeyaraiullidu': 'Thaevaiyaana Anaithu Niruvanap Peyargalaiyum Ullidavum.',
   'gstinVariAdaiyaalaEn': 'GSTIN / Vari Adaiyaala En',
   'elvanParthasarathy': 'Elvan Parthasarathy',
-
-  // === Porul (Product) Keys ===
   'porulTharavugal': 'Porul Tharavugal',
   'vilaiMatrumVari': 'Vilai matrum Vari',
   'alavuVagai': 'Alavu Vagai',
@@ -247,8 +214,6 @@ const Map<String, String> tg = {
   'porulAzhikkappattadhu': 'Porul Azhikkappattadhu',
   'porulgalIllai': 'Porutkal Illai',
   'porulaiChaerkkavum': 'Mudhal Porulai Chaerkkavum',
-
-  // ── Meetpagam (Recycle Bin) ──
   'meetpagam': 'Meetpagam',
   'meetpagamKaaliyanadhu': 'Meetpagam Kaaliyanadhu',
   'meeteduppuVetri': 'Vetrigaramaaga Meetkappattadhu',
@@ -257,8 +222,6 @@ const Map<String, String> tg = {
   'nirandharaAzhippuUrudhi': 'Nirandharamaaga Azhikkavaa? Meetka Iyalaadhu.',
   'azhikkappattaPorulgal': 'Azhikkappatta Porulgal',
   'meetpagam30Naal': 'Meetpagatthil Ullavai 30 Naalgalukku Piragu Thaanaagavae Azhikkapppadum',
-
-  // === Vanigar (Merchant) CRUD Keys ===
   'vanigarTharavugal': 'Vanigath Tharavugal',
   'vanigarPeyar': 'Vanigar Peyar',
   'vanigarPeyarThaevai': 'Vanigar Peyar Thaevai',
@@ -273,8 +236,6 @@ const Map<String, String> tg = {
   'thanipPayanPtn': 'Thanippayan',
   'tholaipaesi': 'Tholaippaesi',
   'anaithaiyumTheriPtn': 'Anaithaiyum Theri',
-
-  // ── Payanar (User Profile) ──
   'payanar': 'Payanar',
   'payanarAmaippugal': 'Payanar Amaippugal',
   'mudhalPeyar': 'Mudhal Peyar',
@@ -282,13 +243,9 @@ const Map<String, String> tg = {
   'pirandhaThaedhi': 'Pirandha Naal',
   'payanarTharavugalaiMaetriduPtn': 'Chaemi',
   'payanarVilakkam': 'Ippeyar Mugappu Thiraiyil Thoandrum.',
-
-  // ── Orunginai ──
   'orunginaiCheyaliPtn': 'Cheyaliyai Orunginai',
   'orunginaikkiRadhu': 'Orunginaikkiradhu...',
   'orunginaikkappattadhu': 'Orunginaikkappattadhu!',
-
-  // ── Pattiyal Thiruthi (Invoice Editor) ──
   'perunar': 'Perunar',
   'pattiyalTharavugal': 'Pattiyal Tharavugal',
   'varisaiUrupadigal': 'Urupadigal',
@@ -296,7 +253,7 @@ const Map<String, String> tg = {
   'urupadigal': 'Urupadigal',
   'mothangal': 'Mothangal',
   'vanigarPeyarThaedu': 'Vanigar Peyar',
-  'chaemiththaTharavugal': 'Chaemitha Tharavugal',
+  'chaemithaTharavugal': 'Chaemitha Tharavugal',
   'niruvanaThannuru': 'Niruvana Thannuru',
   'maanilamThaerodhu': 'Maanilam Thaer',
   'vazhangalIdam': 'Vazhangal Idam',
@@ -341,10 +298,23 @@ const Map<String, String> tg = {
   'varaivuMeetka': 'Varaivu Meetkavaa?',
   'chaemikkaadhaVaraivu': 'Chaemikkaadha varaivu ulladhu. Meettamaikkavaa?',
   'niraagari': 'Niraagari',
-  'meetkavum': 'Meetkavum',
-  'pattiyalTheervu': 'Pattiyal Theervu',
-  'munpanam': 'Munpanam',
-  'endhapPattiyalukku': 'Endhap Pattiyalukku',
-  'patrucheettuTharavugal': 'Patrucheettu Tharavugal',
-  'seluthiyaVivaram': 'Seluthiya Vivaram',
+  'pudhiyaAakkam': 'Pudhiya Aakkam',
+  'patrucheettuEn': 'Patrucheettu En',
+  'patrucheettuNaal': 'Patrucheettu Naal',
+  'pattiyalThaervukkuPinVanigarTharavugalNirappappadum': 'Pattiyalait Thaerndhedutthadhum Vanigar Tharavugal Thaanae Nirappappadum.',
+  'maatru': 'Maatru',
+  'pattiyalaiThaernhedu': 'Pattiyalai Thaernhedu',
+  'thogaiVinmeen': 'Thogai *',
+  'cheluthumMuraiVinmeen': 'Cheluthum Murai *',
+  'kurippuEnParimaatraEn': 'Kurippu En / Parimaatra En',
+  'kurippu': 'Kurippu',
+  'thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum': 'Thogai 0-ai vida migudhiyaaga irukka vaendum',
+  'cheluthumMuraiThaernhedu': 'Cheluthum Muraiyai Thaerndhedu',
+  'patrucheettuEnYaerkanavaeUlladhu': 'Patrucheettu en yaerkanavae ulladhu!',
+  'patrucheettuChaemikkappattadhu': 'Patrucheettu chaemikkappattadhu',
+  'chaemikkaIyalavillai': 'Chaemikka iyalavillai:',
+  'maatriyamai': 'Maatriyamai',
+  'pattiyalgalaiThaernhedu': 'Pattiyalgalai thaernhedu',
+  'mudindhadhu': 'Mudindhadhu',
+  'pattiyalEnVanigar': 'Pattiyal en / Vanigar...',
 };
