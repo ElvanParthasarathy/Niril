@@ -338,4 +338,9 @@ const Map<String, String> ta = {
   'chaemikkaadhaVaraivu': 'சேமிக்காத வரைவு உள்ளது. மீட்டமைக்கவா?',
   'niraagari': 'நிராகரி',
   'meetkavum': 'மீட்கவும்',
+  'pattiyalTheervu': 'பட்டியல் தீர்வு',
+  'munpanam': 'முன்பணம்',
+  'endhapPattiyalukku': 'எந்தப் பட்டியலுக்கு',
+  'patrucheettuTharavugal': 'பற்றுச்சீட்டு தரவுகள்',
+  'seluthiyaVivaram': 'செலுத்திய விவரம்',
 };

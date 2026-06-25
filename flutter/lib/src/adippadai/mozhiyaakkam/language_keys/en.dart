@@ -338,4 +338,9 @@ const Map<String, String> en = {
   'chaemikkaadhaVaraivu': 'Unsaved draft found. Restore it?',
   'niraagari': 'Dismiss',
   'meetkavum': 'Restore',
+  'pattiyalTheervu': 'Against Invoice',
+  'munpanam': 'Advance Receipt',
+  'endhapPattiyalukku': 'Which Invoice?',
+  'patrucheettuTharavugal': 'Receipt Data',
+  'seluthiyaVivaram': 'Payment Details',
 };

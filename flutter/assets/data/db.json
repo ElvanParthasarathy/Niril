@@ -970,8 +970,10 @@
       "type": "coolie"
     },
     "e8078880-997f-4515-988a-8f6f4732b502": {
-      "address": "",
-      "addressEn": "",
+      "address1": "",
+      "address1En": "",
+      "address1_English": "",
+      "address1_Tamil": "",
       "city": "திருச்சேறை, கும்பகோணம்",
       "cityEn": "Thirucherai, Kumbakonam",
       "city_English": "Thirucherai, Kumbakonam",
@@ -981,7 +983,8 @@
       "nameEn": "Sundari Silks India",
       "name_English": "Sundari Silks India",
       "name_Tamil": "சுந்தரி சில்க்ஸ் இந்தியா",
-      "phone": ""
+      "phone": "",
+      "type": "coolie"
     }
   },
   "meta": {

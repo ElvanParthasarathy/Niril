@@ -28,9 +28,37 @@ class PatruPattiyalTheervuMaeladukku {
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setDialogState) {
+            // Smart Filtering: Lock to the first selected invoice's company, customer, and exact address
+            PatrucheettuEntry? firstSelected;
+            if (selectedIds.isNotEmpty) {
+              final firstId = selectedIds.first;
+              for (var i in invoices) {
+                if (i.id == firstId) {
+                  firstSelected = i;
+                  break;
+                }
+              }
+            }
+
+            final availableInvoices = firstSelected != null
+                ? invoices.where((inv) {
+                    final sameNiruvanam = inv.niruvanamId == firstSelected!.niruvanamId;
+                    
+                    final pName1 = inv.vanigarPeyar['Tamil'] ?? inv.vanigarPeyar['English'] ?? '';
+                    final pName2 = firstSelected.vanigarPeyar['Tamil'] ?? firstSelected.vanigarPeyar['English'] ?? '';
+                    final sameName = pName1 == pName2;
+
+                    final pAddr1 = inv.vanigarMunvari['Tamil'] ?? inv.vanigarMunvari['English'] ?? '';
+                    final pAddr2 = firstSelected.vanigarMunvari['Tamil'] ?? firstSelected.vanigarMunvari['English'] ?? '';
+                    final sameAddr = pAddr1 == pAddr2;
+
+                    return sameNiruvanam && sameName && sameAddr;
+                  }).toList()
+                : invoices;
+
             final filtered = searchQuery.isEmpty
-                ? invoices
-                : invoices.where((inv) {
+                ? availableInvoices
+                : availableInvoices.where((inv) {
                     final q = searchQuery.toLowerCase();
                     final pName = (inv.vanigarPeyar['Tamil'] ?? inv.vanigarPeyar['English'] ?? '').toLowerCase();
                     return inv.patrucheettuEn.toLowerCase().contains(q) ||

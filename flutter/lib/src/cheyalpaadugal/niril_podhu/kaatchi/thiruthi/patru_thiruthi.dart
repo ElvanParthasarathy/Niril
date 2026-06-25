@@ -1,9 +1,7 @@
-
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart' show Value;
-
 
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/tharavuru/seyali_murai.dart';
@@ -26,7 +24,6 @@ import '../koorugal/vanigar_thaedu_kooru.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
-
 /// Shared Receipt Editor — used by both Coolie and Silk modes.
 /// Three sections: ① Invoice picker, ② Receipt data, ③ Payment details.
 class PatruThiruthi extends ConsumerStatefulWidget {
@@ -38,7 +35,12 @@ class PatruThiruthi extends ConsumerStatefulWidget {
   ConsumerState<PatruThiruthi> createState() => _PatruThiruthiState();
 }
 
+enum PatruMode { againstInvoice, advance }
+
 class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
+  // ── Mode ──
+  PatruMode _mode = PatruMode.againstInvoice;
+
   // ── Company Profile ──
   int? _selectedNiruvanamId;
   NiruvanaTharavugal? _selectedProfile;
@@ -55,7 +57,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
   // ── Payment ──
   double _thogai = 0.0;
-  SeluthiVagai? _seluthiVagai;
+  SeluthiVagai? _seluthiVagai = SeluthiVagai.vangiMaatram;
   String _suttruEn = '';
   String _ullkurippu = '';
 
@@ -110,6 +112,13 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       _suttruEnCtrl.text = _suttruEn;
       _ullkurippuCtrl.text = _ullkurippu;
       _patruEnCtrl.text = _patruEn;
+    } else {
+      // New receipt: Pre-select active business profile
+      final activeProfile = ref.read(NiruvanaTharavugalProvider);
+      if (activeProfile != null) {
+        _selectedNiruvanamId = activeProfile.id;
+        _selectedProfile = activeProfile;
+      }
     }
   }
 
@@ -138,7 +147,12 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     }
 
     if (mounted) {
-      setState(() => _selectedInvoices = invoices);
+      setState(() {
+        _selectedInvoices = invoices;
+        _mode =
+            invoices.isNotEmpty ? PatruMode.againstInvoice : PatruMode.advance;
+      });
+      _autoFillFromInvoices();
     }
   }
 
@@ -150,13 +164,13 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     final mode = ref.read(appModeProvider);
     final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
 
-    final bizShort =
-        (_selectedProfile?.kurumPeyar.isNotEmpty == true
+    final bizShort = (_selectedProfile?.kurumPeyar.isNotEmpty == true
             ? _selectedProfile!.kurumPeyar
-            : 'BIZ').toUpperCase();
+            : 'BIZ')
+        .toUpperCase();
     _vanakkam =
         await kalanjiyam.getNextVanakkam(seyaliVagai, _selectedNiruvanamId);
-    
+
     // Format is RCP/bizShort/01
     final formatted = kalanjiyam.formatPatruEn(bizShort, _vanakkam);
     if (_isPatruEnEditing) {
@@ -213,7 +227,8 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
           }
         }
 
-        final balance = (inv.mothaThogai - adjustedPaid).clamp(0.0, double.infinity);
+        final balance =
+            (inv.mothaThogai - adjustedPaid).clamp(0.0, double.infinity);
         final apply = remaining.clamp(0.0, balance);
 
         if (apply > 0) {
@@ -248,7 +263,8 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
       if (isDuplicate) {
         if (mounted) {
-          ElvanSnackbar.show(context, 'Receipt number $_patruEn already exists!');
+          ElvanSnackbar.show(
+              context, 'Receipt number $_patruEn already exists!');
           setState(() => _isSaving = false);
         }
         return;
@@ -272,8 +288,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       );
 
       if (widget.editingEntry != null) {
-        await kalanjiyam.updatePatru(
-            widget.editingEntry!.id, companion, links);
+        await kalanjiyam.updatePatru(widget.editingEntry!.id, companion, links);
       } else {
         await kalanjiyam.insertPatru(companion, links);
       }
@@ -300,12 +315,15 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     final mode = ref.watch(appModeProvider);
     final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
 
-    if (widget.editingEntry == null && _patruEn.isEmpty && _selectedNiruvanamId != null) {
+    if (widget.editingEntry == null &&
+        _patruEn.isEmpty &&
+        _selectedNiruvanamId != null) {
       _generatePatruEn();
     }
 
     final isEditing = widget.editingEntry != null;
-    final title = isEditing ? 'பற்றுச்சீட்டுத் திருத்து' : 'புதிய பற்றுச்சீட்டு';
+    final title =
+        isEditing ? 'பற்றுச்சீட்டுத் திருத்து' : 'புதிய பற்றுச்சீட்டு';
 
     return ElvanEditorShell(
       title: title,
@@ -324,15 +342,59 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // ── Section 1: Against Invoice ──
-            const ElvanPagudhiThalaipu(en: 1, thalaipu: 'எந்தப் பட்டியலுக்கு'),
-            ElvanThiruthiAttai(
-              child: _buildInvoicePickerSection(invoicesAsync, isDark),
+            // ── Mode Switcher ──
+            const SizedBox(height: 16),
+            Center(
+              child: CupertinoSlidingSegmentedControl<PatruMode>(
+                groupValue: _mode,
+                backgroundColor: isDark
+                    ? Colors.white10
+                    : Colors.black.withValues(alpha: 0.05),
+                thumbColor: isDark ? const Color(0xFF3B3B3D) : Colors.white,
+                children: {
+                  PatruMode.againstInvoice: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 10),
+                    child: Text(K.pattiyalTheervu.tr(context, ref),
+                        style: const TextStyle(fontWeight: FontWeight.w600)),
+                  ),
+                  PatruMode.advance: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 10),
+                    child: Text(K.munpanam.tr(context, ref),
+                        style: const TextStyle(fontWeight: FontWeight.w600)),
+                  ),
+                },
+                onValueChanged: (val) {
+                  if (val != null) {
+                    setState(() {
+                      _mode = val;
+                      if (_mode == PatruMode.advance) {
+                        _selectedInvoices.clear();
+                        _recalculateAmount();
+                      }
+                    });
+                  }
+                },
+              ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
+
+            // ── Section 1: Against Invoice ──
+            if (_mode == PatruMode.againstInvoice) ...[
+              ElvanPagudhiThalaipu(
+                  en: 1, thalaipu: K.endhapPattiyalukku.tr(context, ref)),
+              ElvanThiruthiAttai(
+                child: _buildInvoicePickerSection(invoicesAsync, isDark),
+              ),
+              const SizedBox(height: 24),
+            ],
 
             // ── Section 2: Receipt Data ──
-            const ElvanPagudhiThalaipu(en: 2, thalaipu: 'பற்றுச்சீட்டு தரவுகள்'),
+            ElvanPagudhiThalaipu(
+              en: _mode == PatruMode.againstInvoice ? 2 : 1,
+              thalaipu: K.patrucheettuTharavugal.tr(context, ref),
+            ),
             ElvanThiruthiAttai(
               padding: const EdgeInsets.all(24),
               child: _buildReceiptDataSection(seyaliVagai, isDark),
@@ -340,7 +402,10 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
             const SizedBox(height: 24),
 
             // ── Section 3: Payment Details ──
-            const ElvanPagudhiThalaipu(en: 3, thalaipu: 'செலுத்திய விவரம்'),
+            ElvanPagudhiThalaipu(
+              en: _mode == PatruMode.againstInvoice ? 3 : 2,
+              thalaipu: K.seluthiyaVivaram.tr(context, ref),
+            ),
             ElvanThiruthiAttai(
               child: _buildPaymentSection(isDark),
             ),
@@ -384,7 +449,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
           customDateTitle: 'பற்றுச்சீட்டு தேதி', // Receipt Date
           isEditing: widget.editingEntry != null,
           invoiceNumberOverride: _patruEnCtrl.text,
-          previewInvoiceNumber: _previewPatruEn,
+          previewInvoiceNumber: _patruEn.isNotEmpty ? _patruEn : _previewPatruEn,
           isInvNumberEditing: _isPatruEnEditing,
           invNumberController: _patruEnCtrl,
           profilePrefix: profilePrefix,
@@ -418,42 +483,152 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
           onDirty: () {},
         ),
         const SizedBox(height: 24),
-        
-        // 2. Customer Selector
+
+        // 2. Customer Selector / Info
         Text(
           K.vanigar.tr(context, ref),
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontWeight: FontWeight.w500,
-          ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
         ),
         const SizedBox(height: 8),
-        VanigarThaeduKooru(
-          seyaliVagai: seyaliVagai,
-          selectedId: _selectedVanigarId,
-          onSelected: (v) {
-            setState(() {
-              _selectedVanigarId = v.id;
-              _vanigarPeyarMap = Map<String, String>.from(v.peyar);
-              
-              final tamilAddr = [
-                if (v.oor['Tamil']?.isNotEmpty == true) v.oor['Tamil'],
-                if (v.maavattam['Tamil']?.isNotEmpty == true) v.maavattam['Tamil'],
-              ].where((e) => e != null).join(', ');
-              
-              final engAddr = [
-                if (v.oor['English']?.isNotEmpty == true) v.oor['English'],
-                if (v.maavattam['English']?.isNotEmpty == true) v.maavattam['English'],
-              ].where((e) => e != null).join(', ');
 
-              _vanigarMunvariMap = {
-                'Tamil': tamilAddr.isNotEmpty ? tamilAddr : (v.mugavari['Tamil'] ?? ''),
-                'English': engAddr.isNotEmpty ? engAddr : (v.mugavari['English'] ?? ''),
-              };
-            });
-          },
-        ),
+        if (_mode == PatruMode.againstInvoice) ...[
+          if (_selectedInvoices.isNotEmpty)
+            _buildCustomerCard(isDark, isLocked: true)
+          else
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.05)
+                    : Colors.black.withValues(alpha: 0.03),
+                borderRadius: BorderRadius.circular(12),
+                border:
+                    Border.all(color: isDark ? Colors.white12 : Colors.black12),
+              ),
+              child: Row(
+                children: [
+                  Icon(CupertinoIcons.info_circle_fill,
+                      size: 24,
+                      color: isDark ? Colors.white54 : Colors.black45),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'பட்டியலைத் தேர்ந்தெடுத்ததும் வாடிக்கையாளர் விவரங்கள் தானாக நிரப்பப்படும்.',
+                      style: TextStyle(
+                          color: isDark ? Colors.white70 : Colors.black87),
+                    ),
+                  ),
+                ],
+              ),
+            )
+        ] else ...[
+          // Advance Mode — manual selection
+          if (_selectedVanigarId == null)
+            VanigarThaeduKooru(
+              seyaliVagai: seyaliVagai,
+              selectedId: _selectedVanigarId,
+              onSelected: (v) {
+                setState(() {
+                  _selectedVanigarId = v.id;
+                  _vanigarPeyarMap = Map<String, String>.from(v.peyar);
+
+                  final tamilAddr = [
+                    if (v.oor['Tamil']?.isNotEmpty == true) v.oor['Tamil'],
+                    if (v.maavattam['Tamil']?.isNotEmpty == true)
+                      v.maavattam['Tamil'],
+                  ].where((e) => e != null).join(', ');
+
+                  final engAddr = [
+                    if (v.oor['English']?.isNotEmpty == true) v.oor['English'],
+                    if (v.maavattam['English']?.isNotEmpty == true)
+                      v.maavattam['English'],
+                  ].where((e) => e != null).join(', ');
+
+                  _vanigarMunvariMap = {
+                    'Tamil': tamilAddr.isNotEmpty
+                        ? tamilAddr
+                        : (v.mugavari['Tamil'] ?? ''),
+                    'English': engAddr.isNotEmpty
+                        ? engAddr
+                        : (v.mugavari['English'] ?? ''),
+                  };
+                });
+              },
+            )
+          else
+            _buildCustomerCard(isDark, isLocked: false),
+        ],
       ],
+    );
+  }
+
+  // ── Helper: Customer Info Card ──
+  Widget _buildCustomerCard(bool isDark, {required bool isLocked}) {
+    return Card(
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      color: isDark
+          ? Colors.white.withValues(alpha: 0.05)
+          : Colors.black.withValues(alpha: 0.03),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: isDark ? Colors.white12 : Colors.black12,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Icon(CupertinoIcons.person_solid,
+                size: 28, color: isDark ? Colors.white54 : Colors.black54),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _vanigarPeyarMap['Tamil'] ?? '',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  if (_vanigarMunvariMap['Tamil']?.isNotEmpty == true) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      _vanigarMunvariMap['Tamil'] ?? '',
+                      style: TextStyle(
+                        color: isDark ? Colors.white60 : Colors.black54,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (isLocked)
+              Icon(CupertinoIcons.lock_fill,
+                  size: 16, color: isDark ? Colors.white30 : Colors.black26)
+            else
+              IconButton(
+                icon: const Icon(CupertinoIcons.clear_circled_solid),
+                color: isDark ? Colors.white54 : Colors.black45,
+                tooltip: 'மாற்று', // Change
+                onPressed: () {
+                  setState(() {
+                    _selectedVanigarId = null;
+                    _vanigarPeyarMap.clear();
+                    _vanigarMunvariMap.clear();
+                  });
+                },
+              ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -475,9 +650,16 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   // ── Invoice Picker Dialog ──
   void _showInvoicePickerDialog(
       AsyncValue<List<PatrucheettuEntry>> invoicesAsync) {
+    final allInvoices = invoicesAsync.value ?? [];
+    final filteredByBusiness = _selectedNiruvanamId != null
+        ? allInvoices
+            .where((i) => i.niruvanamId == _selectedNiruvanamId)
+            .toList()
+        : allInvoices;
+
     PatruPattiyalTheervuMaeladukku.show(
       context: context,
-      invoices: invoicesAsync.value ?? [],
+      invoices: filteredByBusiness,
       initialSelectedIds: Set<int>.from(_selectedInvoices.map((i) => i.id)),
       paidAmounts: _invoicePaidAmounts,
       onConfirmed: (selected) {
@@ -508,7 +690,11 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     }
 
     _thogai = total;
-    _thogaiCtrl.text = total > 0 ? total.toStringAsFixed(2) : '';
+    _thogaiCtrl.text = total > 0
+        ? (total.truncateToDouble() == total
+            ? total.toInt().toString()
+            : total.toStringAsFixed(2))
+        : '';
   }
 
   void _autoFillFromInvoices() {

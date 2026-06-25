@@ -372,4 +372,11 @@ abstract final class K {
   static const chaemikkaadhaVaraivu = 'chaemikkaadhaVaraivu';
   static const niraagari = 'niraagari';
   static const meetkavum = 'meetkavum';
+
+  // ── Patrucheettu Mode ──
+  static const pattiyalTheervu = 'pattiyalTheervu';
+  static const munpanam = 'munpanam';
+  static const endhapPattiyalukku = 'endhapPattiyalukku';
+  static const patrucheettuTharavugal = 'patrucheettuTharavugal';
+  static const seluthiyaVivaram = 'seluthiyaVivaram';
 }

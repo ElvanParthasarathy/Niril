@@ -342,4 +342,9 @@ const Map<String, String> tg = {
   'chaemikkaadhaVaraivu': 'Chaemikkaadha varaivu ulladhu. Meettamaikkavaa?',
   'niraagari': 'Niraagari',
   'meetkavum': 'Meetkavum',
+  'pattiyalTheervu': 'Pattiyal Theervu',
+  'munpanam': 'Munpanam',
+  'endhapPattiyalukku': 'Endhap Pattiyalukku',
+  'patrucheettuTharavugal': 'Patrucheettu Tharavugal',
+  'seluthiyaVivaram': 'Seluthiya Vivaram',
 };

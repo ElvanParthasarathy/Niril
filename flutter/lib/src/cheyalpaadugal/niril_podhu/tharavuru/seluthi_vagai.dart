@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 /// Type-safe payment mode enum with localized display names.
 /// Stored as lowercase string in DB (e.g. 'cash', 'upi', 'bank_transfer').
 enum SeluthiVagai {
-  panam,        // Cash — பணம்
-  upi,          // UPI
   vangiMaatram, // Bank Transfer — வங்கி மாற்றம்
+  upi,          // UPI
+  panam,        // Cash — பணம்
   kaasoalai,    // Cheque — காசோலை
   attai,        // Card — அட்டை
 }
