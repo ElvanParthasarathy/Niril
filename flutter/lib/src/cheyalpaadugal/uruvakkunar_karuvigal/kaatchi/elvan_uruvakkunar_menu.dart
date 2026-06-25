@@ -73,7 +73,7 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
   void _toggleExtraSilk() async {
     final currentMode = ref.read(appModeProvider);
     ref.read(appModeProvider.notifier).setMode(AppMode.silk);
-    final notifier = ref.read(NiruvanaTharavugalListProvider.notifier);
+    final notifier = ref.read(niruvanaTharavugalNotifierProvider);
     final profiles = ref.read(NiruvanaTharavugalListProvider);
 
     // Check if EPS already exists
@@ -142,7 +142,7 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
   void _toggleCoolieSingle() async {
     final currentMode = ref.read(appModeProvider);
     ref.read(appModeProvider.notifier).setMode(AppMode.coolie);
-    final notifier = ref.read(NiruvanaTharavugalListProvider.notifier);
+    final notifier = ref.read(niruvanaTharavugalNotifierProvider);
     final profiles = ref.read(NiruvanaTharavugalListProvider);
 
     // Check if PVS exists

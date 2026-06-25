@@ -32,7 +32,7 @@ class _CoolieNiruvanaAmaippuPageState
   void _savePhoneNumbers(NiruvanaTharavugal currentProfile) {
     currentProfile.tholaipaesi1 = _tempPrimary;
     currentProfile.tholaipaesi2 = _showExtraPhone ? _tempSecondary : '';
-    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(currentProfile);
+    ref.read(niruvanaTharavugalNotifierProvider).updateProfile(currentProfile);
     setState(() {
       _editingSection = null;
       _showExtraPhone = false;
@@ -67,7 +67,7 @@ class _CoolieNiruvanaAmaippuPageState
       onSelected: (val) {
         final idx = items.indexOf(val);
         if (idx >= 0 && profiles[idx].id != null) {
-          ref.read(NiruvanaTharavugalListProvider.notifier).setActiveProfile(profiles[idx].id!);
+          ref.read(niruvanaTharavugalNotifierProvider).setActiveProfile(profiles[idx].id!);
         }
       },
     );
@@ -236,7 +236,7 @@ class _CoolieNiruvanaAmaippuPageState
     final updatedProfile = profile.copyWith();
     updatedProfile.setBilingual(fieldName, 'Tamil', _tempPrimary);
     updatedProfile.setBilingual(fieldName, 'English', _tempSecondary);
-    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(niruvanaTharavugalNotifierProvider).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }
@@ -257,7 +257,7 @@ class _CoolieNiruvanaAmaippuPageState
         updatedProfile.minnanjal = _tempPrimary;
         break;
     }
-    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(niruvanaTharavugalNotifierProvider).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }

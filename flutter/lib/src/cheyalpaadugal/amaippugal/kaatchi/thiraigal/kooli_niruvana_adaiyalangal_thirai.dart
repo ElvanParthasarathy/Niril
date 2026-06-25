@@ -67,7 +67,7 @@ class _CoolieNiruvanaAdaiyalangalPageState
         updatedProfile.oavuru = value;
         break;
     }
-    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(niruvanaTharavugalNotifierProvider).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }
@@ -76,7 +76,7 @@ class _CoolieNiruvanaAdaiyalangalPageState
     final updatedProfile = profile.copyWith();
     updatedProfile.kaiyoppam = path;
     updatedProfile.oppamPeyar = name;
-    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(niruvanaTharavugalNotifierProvider).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }

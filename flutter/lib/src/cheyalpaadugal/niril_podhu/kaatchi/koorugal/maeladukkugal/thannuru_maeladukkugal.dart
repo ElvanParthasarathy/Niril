@@ -45,7 +45,7 @@ void showBusinessSelectorModal({
     onSelected: (val) {
       final idx = items.indexOf(val);
       if (idx >= 0 && profiles[idx].id != null) {
-        ref.read(NiruvanaTharavugalListProvider.notifier).setActiveProfile(profiles[idx].id!);
+        ref.read(niruvanaTharavugalNotifierProvider).setActiveProfile(profiles[idx].id!);
       }
     },
   );
@@ -127,7 +127,7 @@ void showManageProfilesModal({
                                           icon: CupertinoIcons.delete_solid,
                                           onTap: profile.id != activeProfile?.id
                                               ? () {
-                                                  ref.read(NiruvanaTharavugalListProvider.notifier)
+                                                  ref.read(niruvanaTharavugalNotifierProvider)
                                                       .setActiveProfile(profile.id!);
                                                 }
                                               : null,
@@ -295,7 +295,7 @@ void showNewProfileModal({
         newProfile.setBilingual('niruvanathinPeyar', 'Tamil', newNamePrimary);
         newProfile.setBilingual(
             'niruvanathinPeyar', 'English', newNameSecondary);
-        ref.read(NiruvanaTharavugalListProvider.notifier).createProfile(newProfile);
+        ref.read(niruvanaTharavugalNotifierProvider).createProfile(newProfile);
         onSuccess();
       }
     },

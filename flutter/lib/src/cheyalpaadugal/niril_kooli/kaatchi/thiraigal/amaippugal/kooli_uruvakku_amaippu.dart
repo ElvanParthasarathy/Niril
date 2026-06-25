@@ -73,7 +73,7 @@ class _CoolieUruvakkuAmaippuPageState
                     final newProfile = profile.copyWith(
                       mudhanMozhi: _tempPrimaryLanguage,
                     );
-                    ref.read(NiruvanaTharavugalListProvider.notifier)
+                    ref.read(niruvanaTharavugalNotifierProvider)
                         .updateProfile(newProfile);
                   }
                   setState(() {
@@ -313,7 +313,7 @@ class _CoolieUruvakkuAmaippuPageState
                   if (profile != null) {
                     final updatedProfile = profile.copyWith();
                     updatedProfile.thoatraNiram = _tempThemeColor;
-                    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+                    ref.read(niruvanaTharavugalNotifierProvider).updateProfile(updatedProfile);
                   }
                   setState(() {
                     _isEditingTheme = false;

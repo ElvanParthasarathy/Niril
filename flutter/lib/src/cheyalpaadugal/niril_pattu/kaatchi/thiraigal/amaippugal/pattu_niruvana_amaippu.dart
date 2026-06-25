@@ -30,7 +30,7 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
   void _savePhoneNumbers(NiruvanaTharavugal currentProfile) {
     currentProfile.tholaipaesi1 = _tempPrimary;
     currentProfile.tholaipaesi2 = _showExtraPhone ? _tempSecondary : '';
-    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(currentProfile);
+    ref.read(niruvanaTharavugalNotifierProvider).updateProfile(currentProfile);
     setState(() {
       _editingSection = null;
       _showExtraPhone = false;
@@ -207,7 +207,7 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
     final updatedProfile = profile.copyWith();
     updatedProfile.setBilingual(fieldName, profile.mudhanMozhi, _tempPrimary);
     updatedProfile.setBilingual(fieldName, profile.thunaiMozhi, _tempSecondary);
-    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(niruvanaTharavugalNotifierProvider).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }
@@ -231,7 +231,7 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
         updatedProfile.gstin = _tempPrimary;
         break;
     }
-    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(niruvanaTharavugalNotifierProvider).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }

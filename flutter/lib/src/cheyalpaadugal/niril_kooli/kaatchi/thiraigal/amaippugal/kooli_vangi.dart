@@ -98,7 +98,7 @@ class _CoolieVangiPageState extends ConsumerState<CoolieVangiPage> {
     final updatedProfile = profile.copyWith();
     updatedProfile.setBilingual(fieldName, profile.mudhanMozhi, _tempPrimary);
     updatedProfile.setBilingual(fieldName, profile.thunaiMozhi, _tempSecondary);
-    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(niruvanaTharavugalNotifierProvider).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }
@@ -113,7 +113,7 @@ class _CoolieVangiPageState extends ConsumerState<CoolieVangiPage> {
         updatedProfile.ifsc = _tempPrimary;
         break;
     }
-    ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(updatedProfile);
+    ref.read(niruvanaTharavugalNotifierProvider).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
   }

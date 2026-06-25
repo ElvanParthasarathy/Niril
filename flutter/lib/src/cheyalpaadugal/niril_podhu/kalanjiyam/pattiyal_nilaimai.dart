@@ -2,36 +2,39 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 import '../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../../../adippadai/tharavuru/seyali_murai.dart';
-import '../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
-import '../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
+import '../../../adippadai/tharavuru/uruvugal.dart';
+import '../../amaippugal/tharavu/kooli_niruvana_tharavugal_provider.dart';
+import '../../amaippugal/tharavu/pattu_niruvana_tharavugal_provider.dart';
 import 'pattiyal_kalanjiyam.dart';
+import 'kooli_pattiyal_kalanjiyam.dart';
+import 'pattu_pattiyal_kalanjiyam.dart';
 
 // ── Repository Provider ─────────────────────────────────────────────────────
 
 final pattiyalKalanjiyamProvider = Provider<PattiyalKalanjiyam>((ref) {
-  final db = ref.watch(appDatabaseProvider);
-  return PattiyalKalanjiyam(db);
+  final mode = ref.watch(appModeProvider);
+  if (mode == AppMode.coolie) {
+    final db = ref.watch(kooliDatabaseProvider);
+    return KooliPattiyalKalanjiyam(db);
+  } else {
+    final db = ref.watch(pattuDatabaseProvider);
+    return PattuPattiyalKalanjiyam(db);
+  }
 });
 
 // ── Mode-Aware Invoice List (one-shot, pull-to-refresh) ─────────────────────
 
 /// Fetches all invoices once for the current app mode.
 /// Call `ref.invalidate(pattiyalgalProvider)` after any CRUD to refresh.
-final pattiyalgalProvider =
-    FutureProvider<List<PatrucheettuEntry>>((ref) {
+final pattiyalgalProvider = FutureProvider<List<PattiyalTharavuru>>((ref) {
   final kalanjiyam = ref.watch(pattiyalKalanjiyamProvider);
-  final mode = ref.watch(appModeProvider);
-
-  final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
-  return kalanjiyam.getPattiyalgal(seyaliVagai);
+  return kalanjiyam.getPattiyalgal();
 });
 
 // ── Editing State ───────────────────────────────────────────────────────────
 
 /// Holds the invoice currently being edited (null = creating new).
-final editingPattiyalProvider =
-    StateProvider<PatrucheettuEntry?>((ref) => null);
+final editingPattiyalProvider = StateProvider<PattiyalTharavuru?>((ref) => null);
 
 // ── Selection Mode ──────────────────────────────────────────────────────────
 
@@ -45,11 +48,7 @@ final selectedPattiyalIdsProvider = StateProvider<Set<int>>((ref) => {});
 
 /// Fetches all soft-deleted invoices once for the current app mode.
 /// Call `ref.invalidate(deletedPattiyalgalProvider)` after restore/purge.
-final deletedPattiyalgalProvider =
-    FutureProvider<List<PatrucheettuEntry>>((ref) {
+final deletedPattiyalgalProvider = FutureProvider<List<PattiyalTharavuru>>((ref) {
   final kalanjiyam = ref.watch(pattiyalKalanjiyamProvider);
-  final mode = ref.watch(appModeProvider);
-
-  final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
-  return kalanjiyam.getDeletedPattiyalgal(seyaliVagai);
+  return kalanjiyam.getDeletedPattiyalgal();
 });

@@ -92,7 +92,7 @@ class _SilkUruvakkuAmaippuPageState
                       mudhanMozhi: _tempPrimaryLanguage,
                       thunaiMozhi: _tempSecondaryLanguage,
                     );
-                    ref.read(NiruvanaTharavugalListProvider.notifier)
+                    ref.read(niruvanaTharavugalNotifierProvider)
                         .updateProfile(newProfile);
                   }
                   setState(() {

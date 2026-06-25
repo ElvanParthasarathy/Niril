@@ -2,13 +2,14 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../tharavuru/seyali_murai.dart';
 import '../viruppangal_paniyagam.dart';
-import '../tharavuthalam/seyali_tharavuthalam.dart';
+import '../../cheyalpaadugal/amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../../cheyalpaadugal/amaippugal/tharavu/niruvana_tharavugal_provider.dart';
+import '../../cheyalpaadugal/amaippugal/tharavu/pattu_niruvana_tharavugal_provider.dart';
+import '../../cheyalpaadugal/amaippugal/tharavu/kooli_niruvana_tharavugal_provider.dart';
 
 class AppStateNotifier extends Notifier<AppMode?> {
   @override
   AppMode? build() {
-    // Always return null initially so the Mode Selector is shown on every app launch
     return null;
   }
 
@@ -23,26 +24,49 @@ final appModeProvider = NotifierProvider<AppStateNotifier, AppMode?>(() {
 
 // Stream of all profiles in the database
 final profilesStreamProvider =
-    StreamProvider<List<NiruvanaTharavugalEntry>>((ref) {
-  final silkDb = AppDatabase(AppDatabase.openConnection('elvan_niril_silk.db', keepMode: 'silk'));
-  final coolieDb = AppDatabase(AppDatabase.openConnection('elvan_niril_coolie.db', keepMode: 'coolie'));
+    StreamProvider<List<NiruvanaTharavugal>>((ref) {
+  final pattuDb = ref.watch(pattuDatabaseProvider);
+  final kooliDb = ref.watch(kooliDatabaseProvider);
   
-  final controller = StreamController<List<NiruvanaTharavugalEntry>>();
-  List<NiruvanaTharavugalEntry>? silkProfiles;
-  List<NiruvanaTharavugalEntry>? coolieProfiles;
+  final controller = StreamController<List<NiruvanaTharavugal>>();
+  List<NiruvanaTharavugal>? pattuProfiles;
+  List<NiruvanaTharavugal>? kooliProfiles;
 
   void update() {
-    if (silkProfiles != null && coolieProfiles != null) {
-      controller.add([...silkProfiles!, ...coolieProfiles!]);
+    if (pattuProfiles != null && kooliProfiles != null) {
+      controller.add([...pattuProfiles!, ...kooliProfiles!]);
     }
   }
 
-  final sub1 = silkDb.select(silkDb.niruvanaTharavugalTable).watch().listen((data) {
-    silkProfiles = data;
+  // We use the notifiers' methods or just watch the stream from DB
+  final sub1 = pattuDb.select(pattuDb.pattuNiruvanaTharavugalTable).watch().listen((data) {
+    pattuProfiles = data.map((e) => NiruvanaTharavugal(
+      id: e.id,
+      mudhanMozhi: e.mudhanMozhi,
+      thunaiMozhi: e.thunaiMozhi,
+      iruMozhi: e.iruMozhi,
+      niruvanathinPeyar: e.niruvanathinPeyar,
+      kurumPeyar: e.kurumPeyar,
+      // mapping others as empty string to save space here, since this stream is just for mode checking
+      // but let's map seyaliVagai for hasProfileForCurrentModeProvider. 
+      // Wait, NiruvanaTharavugal domain model doesn't have seyaliVagai!
+      // We can use an adaimozhi trick or just map it properly.
+    )).toList();
+    // Because domain model doesn't have seyaliVagai, we just inject it into adaimozhi for the stream check
+    for(var p in pattuProfiles!) {
+      p.adaimozhi = {'mode': 'silk'};
+    }
     update();
   });
-  final sub2 = coolieDb.select(coolieDb.niruvanaTharavugalTable).watch().listen((data) {
-    coolieProfiles = data;
+
+  final sub2 = kooliDb.select(kooliDb.kooliNiruvanaTharavugalTable).watch().listen((data) {
+    kooliProfiles = data.map((e) => NiruvanaTharavugal(
+      id: e.id,
+      kurumPeyar: e.kurumPeyar,
+    )).toList();
+    for(var p in kooliProfiles!) {
+      p.adaimozhi = {'mode': 'coolie'};
+    }
     update();
   });
 
@@ -50,28 +74,23 @@ final profilesStreamProvider =
     sub1.cancel();
     sub2.cancel();
     controller.close();
-    silkDb.close();
-    coolieDb.close();
   });
 
   return controller.stream;
 });
 
-// Exposes the loading state of the profiles stream
 final profilesLoadingProvider = Provider<bool>((ref) {
   final asyncValue = ref.watch(profilesStreamProvider);
   return asyncValue.isLoading && !asyncValue.hasValue;
 });
 
-// Derived provider: Which profiles are missing from the DB?
-// Returns a list of AppMode strings (e.g. ['silk', 'coolie'], ['coolie'], or [])
 final missingProfilesProvider = Provider<List<String>>((ref) {
   final profiles = ref.watch(profilesStreamProvider).value;
   if (profiles == null) {
-    return ['silk', 'coolie']; // Assume both missing while loading so onboarding fields are visible
+    return ['silk', 'coolie']; 
   }
 
-  final existingModes = profiles.map((p) => p.seyaliVagai).toList();
+  final existingModes = profiles.map((p) => p.adaimozhi['mode'] ?? '').toList();
   final missing = <String>[];
 
   if (!existingModes.contains('silk')) missing.add('silk');
@@ -80,45 +99,23 @@ final missingProfilesProvider = Provider<List<String>>((ref) {
   return missing;
 });
 
-// Derived provider: Do we have at least one profile setup?
 final isSetupCompleteProvider = Provider<bool>((ref) {
   final profiles = ref.watch(profilesStreamProvider).value;
   return profiles != null && profiles.isNotEmpty;
 });
 
-// Derived provider: Do we have a profile for the currently selected mode?
 final hasProfileForCurrentModeProvider = Provider<bool>((ref) {
   final mode = ref.watch(appModeProvider);
   if (mode == null) return false;
 
   final profiles = ref.watch(profilesStreamProvider).value;
-  if (profiles == null) return true; // Assume true while loading
+  if (profiles == null) return true; 
 
   final modeKey = mode == AppMode.coolie ? 'coolie' : 'silk';
-  return profiles.any((p) => p.seyaliVagai == modeKey);
+  return profiles.any((p) => p.adaimozhi['mode'] == modeKey);
 });
 
-// ── Mode-Filtered Profiles Stream (Firewall) ────────────────────────────────
-// Returns ONLY profiles for the current app mode.
-// Use this in invoice/receipt/merchant lists to prevent cross-mode leaks.
-// The unfiltered `profilesStreamProvider` above is kept for onboarding checks.
-final currentModeProfilesStreamProvider =
-    StreamProvider<List<NiruvanaTharavugalEntry>>((ref) {
-  final db = ref.watch(appDatabaseProvider);
-  final mode = ref.watch(appModeProvider);
-
-  if (mode == null) {
-    return Stream.value(<NiruvanaTharavugalEntry>[]);
-  }
-
-  final modeKey = mode == AppMode.coolie ? 'coolie' : 'silk';
-  return (db.select(db.niruvanaTharavugalTable)
-        ..where((t) => t.seyaliVagai.equals(modeKey)))
-      .watch();
-});
-
-// Tracks the selected segment inside the Uruvakku tab (0 = Invoices, 1 = Receipts)
-// Each mode has its own independent segment state so switching modes doesn't reset the tab.
+// Segment state inside Uruvakku tab
 final _silkUruvakkuSegmentProvider = NotifierProvider<_SegmentNotifier, int>(_SegmentNotifier.new);
 final _coolieUruvakkuSegmentProvider = NotifierProvider<_SegmentNotifier, int>(_SegmentNotifier.new);
 
@@ -156,31 +153,19 @@ final uruvakkuSegmentProvider =
   return UruvakkuSegmentNotifier();
 });
 
-// Tracks whether bilingual mode is enabled across the app (Firewalled by AppMode)
 class BilingualNotifier extends Notifier<bool> {
   @override
   bool build() {
-    final mode = ref.watch(appModeProvider);
-    if (mode == AppMode.coolie) {
-      // Coolie mode always collects both languages in settings
-      return true;
-    } else {
-      final profile = ref.watch(NiruvanaTharavugalProvider);
-      return profile?.iruMozhi ?? false;
-    }
+    final profile = ref.watch(NiruvanaTharavugalProvider);
+    return profile?.iruMozhi ?? false;
   }
 
   @override
   set state(bool value) {
-    final mode = ref.read(appModeProvider);
-    if (mode == AppMode.coolie) {
-      // Ignore: Coolie settings are strictly always bilingual for data entry
-    } else {
-      final profile = ref.read(NiruvanaTharavugalProvider);
-      if (profile != null) {
-        final newProfile = profile.copyWith(iruMozhi: value);
-        ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(newProfile);
-      }
+    final profile = ref.read(NiruvanaTharavugalProvider);
+    if (profile != null) {
+      final newProfile = profile.copyWith(iruMozhi: value);
+      ref.read(niruvanaTharavugalNotifierProvider).updateProfile(newProfile);
     }
   }
 }
@@ -189,7 +174,6 @@ final bilingualProvider = NotifierProvider<BilingualNotifier, bool>(() {
   return BilingualNotifier();
 });
 
-// Tracks primary language for data entry
 class PrimaryLanguageNotifier extends Notifier<String> {
   @override
   String build() {
@@ -202,7 +186,7 @@ class PrimaryLanguageNotifier extends Notifier<String> {
     final profile = ref.read(NiruvanaTharavugalProvider);
     if (profile != null) {
       final newProfile = profile.copyWith(mudhanMozhi: value);
-      ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(newProfile);
+      ref.read(niruvanaTharavugalNotifierProvider).updateProfile(newProfile);
     }
   }
 }
@@ -212,7 +196,6 @@ final primaryLanguageProvider =
   return PrimaryLanguageNotifier();
 });
 
-// Tracks secondary language for data entry
 class SecondaryLanguageNotifier extends Notifier<String> {
   @override
   String build() {
@@ -225,7 +208,7 @@ class SecondaryLanguageNotifier extends Notifier<String> {
     final profile = ref.read(NiruvanaTharavugalProvider);
     if (profile != null) {
       final newProfile = profile.copyWith(thunaiMozhi: value);
-      ref.read(NiruvanaTharavugalListProvider.notifier).updateProfile(newProfile);
+      ref.read(niruvanaTharavugalNotifierProvider).updateProfile(newProfile);
     }
   }
 }
@@ -235,7 +218,6 @@ final secondaryLanguageProvider =
   return SecondaryLanguageNotifier();
 });
 
-// Tracks authentication state via SharedPreferences
 class IsLoggedInNotifier extends Notifier<bool> {
   @override
   bool build() {
@@ -252,7 +234,6 @@ final isLoggedInProvider = NotifierProvider<IsLoggedInNotifier, bool>(() {
   return IsLoggedInNotifier();
 });
 
-/// Provider to track if the user clicked "Start Fresh" to skip the restore screen
 class SkipRestoreNotifier extends Notifier<bool> {
   @override
   bool build() => false;
