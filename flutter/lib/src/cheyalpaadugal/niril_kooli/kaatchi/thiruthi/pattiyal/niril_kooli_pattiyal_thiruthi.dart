@@ -353,8 +353,8 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
               onVaangunarSelected: (entry) {
                 setState(() {
                   _selectedVaangunarId = entry.id;
-                  _selectedVaangunarPeyarMap = entry.peyar;
-                  _selectedVaangunarMunvariMap = entry.mugavari;
+                  _selectedVaangunarPeyarMap = entry.peyar.cast<String, String>();
+                  _selectedVaangunarMunvariMap = entry.mugavari.cast<String, String>();
                   _hasUnsavedChanges = true;
                 });
               },

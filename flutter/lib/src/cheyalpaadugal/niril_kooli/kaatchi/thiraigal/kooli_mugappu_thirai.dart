@@ -1,4 +1,4 @@
-import 'package:elvan_niril/src/cheyalpaadugal/ulnuzhaivu/amaippugal/tharavu/kooli_niruvana_tharavugal_provider.dart';
+import 'package:elvan_niril/src/cheyalpaadugal/amaippugal/tharavu/kooli_niruvana_tharavugal_provider.dart';
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import 'package:flutter/cupertino.dart';

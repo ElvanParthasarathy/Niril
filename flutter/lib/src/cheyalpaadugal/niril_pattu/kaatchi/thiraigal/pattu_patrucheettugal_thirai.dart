@@ -47,7 +47,7 @@ class SilkReceiptsPage extends ConsumerWidget {
         child: Center(child: Text('Error: $e')),
       ),
       data: (patrugal) {
-        final profiles = profilesAsync.value ?? [];
+        final profiles = profilesAsync;
 
         // Filter by search query
         final filtered = query.isEmpty

@@ -49,7 +49,7 @@ class SilkInvoicesPage extends ConsumerWidget {
         child: Center(child: Text('Error: $e')),
       ),
       data: (pattiyalgal) {
-        final profiles = profilesAsync.value ?? [];
+        final profiles = profilesAsync;
 
         // Filter by search query
         final filtered = query.isEmpty

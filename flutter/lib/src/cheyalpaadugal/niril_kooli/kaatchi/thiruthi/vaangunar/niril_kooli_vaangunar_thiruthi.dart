@@ -55,13 +55,19 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
 
     final kalanjiyam = ref.read(vaangunarKalanjiyamProvider);
 
-    kalanjiyam.saveVaangunar(
+    kalanjiyam.saveVaangunar(VaangunarTharavuru(
       id: _isEditing ? widget.vaangunar!.id : null,
       seyaliVagai: 'coolie',
       peyar: _peyar,
       oor: _oor,
       mugavari: _mugavari,
-    ).then((_) {
+      kurippu: {},
+      ninaivuttalTharavugal: [],
+      olikkappattadhu: false,
+      isDeleted: false,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    )).then((_) {
       if (mounted) {
         ref.invalidate(vaangunargalProvider);
         ScaffoldMessenger.of(context).showSnackBar(

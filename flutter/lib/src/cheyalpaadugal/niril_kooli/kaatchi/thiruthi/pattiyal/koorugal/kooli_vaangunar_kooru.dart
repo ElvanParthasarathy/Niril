@@ -43,7 +43,6 @@ class KooliVaangunarKooru extends ConsumerWidget {
                 )),
           ),
           VaangunarThaeduKooru(
-            seyaliVagai: 'coolie',
             selectedId: selectedVaangunarId,
             onSelected: onVaangunarSelected,
             onCleared: onVaangunarCleared,
