@@ -1,5 +1,6 @@
 import 'package:elvan_niril/src/cheyalpaadugal/amaippugal/tharavu/kooli_niruvana_tharavugal_provider.dart';
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
+import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -110,13 +111,15 @@ class CoolieHomePage extends ConsumerWidget {
     final byCompany = <int, ({String name, double total, int count})>{};
 
     for (final p in profiles) {
-      byCompany[p.id] = (
-        name: p.kurumPeyar.isNotEmpty
-            ? p.kurumPeyar
-            : (p.niruvanathinPeyar.values.firstOrNull ?? ''),
-        total: 0.0,
-        count: 0,
-      );
+      if (p.id != null) {
+        byCompany[p.id!] = (
+          name: p.kurumPeyar.isNotEmpty
+              ? p.kurumPeyar
+              : (p.niruvanathinPeyar.values.firstOrNull ?? ''),
+          total: 0.0,
+          count: 0,
+        );
+      }
     }
 
     for (final b in pattiyalgal) {

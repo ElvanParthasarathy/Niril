@@ -60,8 +60,6 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
       peyar: _peyar,
       oor: _oor,
       mugavari: _mugavari,
-      ninaivuttalTharavugal: [],
-      olikkappattadhu: false,
       isDeleted: false,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
