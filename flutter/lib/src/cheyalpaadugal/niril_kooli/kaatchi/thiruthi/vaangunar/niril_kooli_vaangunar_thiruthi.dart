@@ -7,13 +7,13 @@ import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
-import '../../../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
+import '../../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 
 class CoolieMerchantEditor extends ConsumerStatefulWidget {
-  const CoolieMerchantEditor({super.key, this.vanigar});
+  const CoolieMerchantEditor({super.key, this.vaangunar});
 
   /// If provided, we're editing an existing merchant.
-  final VanigarEntry? vanigar;
+  final VaangunarEntry? vaangunar;
 
   @override
   ConsumerState<CoolieMerchantEditor> createState() =>
@@ -29,14 +29,14 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
   void initState() {
     super.initState();
     // Pre-fill if editing
-    if (widget.vanigar != null) {
-      _peyar = Map<String, String>.from(widget.vanigar!.peyar);
-      _oor = Map<String, String>.from(widget.vanigar!.oor);
-      _mugavari = Map<String, String>.from(widget.vanigar!.mugavari);
+    if (widget.vaangunar != null) {
+      _peyar = Map<String, String>.from(widget.vaangunar!.peyar);
+      _oor = Map<String, String>.from(widget.vaangunar!.oor);
+      _mugavari = Map<String, String>.from(widget.vaangunar!.mugavari);
     }
   }
 
-  bool get _isEditing => widget.vanigar != null;
+  bool get _isEditing => widget.vaangunar != null;
 
   void _handleSave() {
     final primaryLang = ref.read(primaryLanguageProvider);
@@ -46,27 +46,27 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
     if (primaryName.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(K.vanigarPeyarThaevai.tr(context, ref)),
+          content: Text(K.vaangunarPeyarThaevai.tr(context, ref)),
           behavior: SnackBarBehavior.floating,
         ),
       );
       return;
     }
 
-    final kalanjiyam = ref.read(vanigarKalanjiyamProvider);
+    final kalanjiyam = ref.read(vaangunarKalanjiyamProvider);
 
-    kalanjiyam.saveVanigar(
-      id: _isEditing ? widget.vanigar!.id : null,
+    kalanjiyam.saveVaangunar(
+      id: _isEditing ? widget.vaangunar!.id : null,
       seyaliVagai: 'coolie',
       peyar: _peyar,
       oor: _oor,
       mugavari: _mugavari,
     ).then((_) {
       if (mounted) {
-        ref.invalidate(vanigargalProvider);
+        ref.invalidate(vaangunargalProvider);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(K.vanigarChaemikkappattadhu.tr(context, ref)),
+            content: Text(K.vaangunarChaemikkappattadhu.tr(context, ref)),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -87,7 +87,7 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
         children: [
           // ── Section: Merchant Details ──
           Text(
-            K.vanigarTharavugal.tr(context, ref),
+            K.vaangunarTharavugal.tr(context, ref),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
@@ -96,7 +96,7 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
 
           // 1. Bilingual merchant name
           ElvanIrumozhiPulan(
-            label: K.vanigarPeyar.tr(context, ref),
+            label: K.vaangunarPeyar.tr(context, ref),
             value: _peyar,
             autofocus: !_isEditing,
             onChanged: (map) => setState(() => _peyar = map),

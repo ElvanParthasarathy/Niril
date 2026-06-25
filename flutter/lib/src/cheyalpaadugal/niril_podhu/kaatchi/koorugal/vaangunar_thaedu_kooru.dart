@@ -3,22 +3,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
-import '../../kalanjiyam/vanigar_nilaimai.dart';
+import '../../kalanjiyam/vaangunar_nilaimai.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // வணிகர் தேடு கூறு — Customer Picker Autocomplete
 // ─────────────────────────────────────────────────────────────────────────────
-// Reusable autocomplete widget that searches VanigarTable entries by bilingual
+// Reusable autocomplete widget that searches VaangunarTable entries by bilingual
 // name (Tamil & English). Used by both Silk and Coolie invoice editors.
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// Autocomplete search widget for selecting a [VanigarEntry].
+/// Autocomplete search widget for selecting a [VaangunarEntry].
 ///
-/// Watches [vanigargalProvider] and filters the list by matching the
+/// Watches [vaangunargalProvider] and filters the list by matching the
 /// query against both Tamil and English name fields from the `peyar` map.
-class VanigarThaeduKooru extends ConsumerStatefulWidget {
+class VaangunarThaeduKooru extends ConsumerStatefulWidget {
   /// Callback fired when the user picks a customer from the list.
-  final ValueChanged<VanigarEntry> onSelected;
+  final ValueChanged<VaangunarEntry> onSelected;
 
   /// Called when the user clears the current selection via the X button.
   final VoidCallback? onCleared;
@@ -32,7 +32,7 @@ class VanigarThaeduKooru extends ConsumerStatefulWidget {
   /// The app mode identifier ('silk' or 'coolie').
   final String seyaliVagai;
 
-  const VanigarThaeduKooru({
+  const VaangunarThaeduKooru({
     super.key,
     required this.onSelected,
     this.onCleared,
@@ -42,11 +42,11 @@ class VanigarThaeduKooru extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<VanigarThaeduKooru> createState() =>
-      _VanigarThaeduKooruState();
+  ConsumerState<VaangunarThaeduKooru> createState() =>
+      _VaangunarThaeduKooruState();
 }
 
-class _VanigarThaeduKooruState extends ConsumerState<VanigarThaeduKooru> {
+class _VaangunarThaeduKooruState extends ConsumerState<VaangunarThaeduKooru> {
   late TextEditingController _textController;
 
   @override
@@ -63,14 +63,14 @@ class _VanigarThaeduKooruState extends ConsumerState<VanigarThaeduKooru> {
 
   // ── Helpers ────────────────────────────────────────────────────────────────
 
-  /// Extracts the display name from a [VanigarEntry], preferring Tamil.
-  String _getDisplayName(VanigarEntry entry) {
+  /// Extracts the display name from a [VaangunarEntry], preferring Tamil.
+  String _getDisplayName(VaangunarEntry entry) {
     final peyar = entry.peyar; // Map<String, String>
     return peyar['Tamil'] ?? peyar['English'] ?? '';
   }
 
   /// Extracts the secondary (alternate-language) name, or empty string.
-  String _getSecondaryName(VanigarEntry entry) {
+  String _getSecondaryName(VaangunarEntry entry) {
     final peyar = entry.peyar;
     // If Tamil is the primary, show English as secondary (and vice versa).
     if (peyar.containsKey('Tamil') && peyar['Tamil']!.isNotEmpty) {
@@ -80,13 +80,13 @@ class _VanigarThaeduKooruState extends ConsumerState<VanigarThaeduKooru> {
   }
 
   /// Extracts the city display text from the bilingual `oor` map.
-  String _getOorDisplay(VanigarEntry entry) {
+  String _getOorDisplay(VaangunarEntry entry) {
     final oor = entry.oor;
     return oor['Tamil'] ?? oor['English'] ?? '';
   }
 
   /// Returns `true` if the entry matches the search [query] (case-insensitive).
-  bool _matchesQuery(VanigarEntry entry, String query) {
+  bool _matchesQuery(VaangunarEntry entry, String query) {
     final q = query.toLowerCase();
     final peyar = entry.peyar;
     final tamilMatch =
@@ -100,9 +100,9 @@ class _VanigarThaeduKooruState extends ConsumerState<VanigarThaeduKooru> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final vanigargalAsync = ref.watch(vanigargalProvider);
+    final vaangunargalAsync = ref.watch(vaangunargalProvider);
 
-    return vanigargalAsync.when(
+    return vaangunargalAsync.when(
       loading: () => _buildTextField(
         context,
         enabled: false,
@@ -113,10 +113,10 @@ class _VanigarThaeduKooruState extends ConsumerState<VanigarThaeduKooru> {
         enabled: false,
         hintText: K.pizhai.tr(context, ref), // Error
       ),
-      data: (vanigargal) {
+      data: (vaangunargal) {
         // Pre-fill text if selectedId is provided.
         if (widget.selectedId != null && _textController.text.isEmpty) {
-          final selected = vanigargal.cast<VanigarEntry?>().firstWhere(
+          final selected = vaangunargal.cast<VaangunarEntry?>().firstWhere(
                 (v) => v!.id == widget.selectedId,
                 orElse: () => null,
               );
@@ -125,12 +125,12 @@ class _VanigarThaeduKooruState extends ConsumerState<VanigarThaeduKooru> {
           }
         }
 
-        return Autocomplete<VanigarEntry>(
+        return Autocomplete<VaangunarEntry>(
           displayStringForOption: _getDisplayName,
           optionsBuilder: (textEditingValue) {
             final query = textEditingValue.text.trim();
             if (query.isEmpty) return const Iterable.empty();
-            return vanigargal.where((v) => _matchesQuery(v, query));
+            return vaangunargal.where((v) => _matchesQuery(v, query));
           },
           onSelected: (entry) {
             _textController.text = _getDisplayName(entry);
@@ -152,8 +152,8 @@ class _VanigarThaeduKooruState extends ConsumerState<VanigarThaeduKooru> {
               focusNode: focusNode,
               style: theme.textTheme.bodyLarge,
               decoration: InputDecoration(
-                labelText: K.vanigargal.tr(context, ref),
-                hintText: K.vanigargal.tr(context, ref),
+                labelText: K.vaangunargal.tr(context, ref),
+                hintText: K.vaangunargal.tr(context, ref),
                 prefixIcon: Icon(
                   Icons.person_search_rounded,
                   color: colorScheme.onSurfaceVariant,

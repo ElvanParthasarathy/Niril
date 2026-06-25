@@ -1465,12 +1465,12 @@ class NiruvanaTharavugalTableCompanion
   }
 }
 
-class $VanigarTableTable extends VanigarTable
-    with TableInfo<$VanigarTableTable, VanigarEntry> {
+class $VaangunarTableTable extends VaangunarTable
+    with TableInfo<$VaangunarTableTable, VaangunarEntry> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $VanigarTableTable(this.attachedDatabase, [this._alias]);
+  $VaangunarTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -1493,7 +1493,7 @@ class $VanigarTableTable extends VanigarTable
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $VanigarTableTable.$converterpeyar);
+              $VaangunarTableTable.$converterpeyar);
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
       mugavari = GeneratedColumn<String>('mugavari', aliasedName, false,
@@ -1501,14 +1501,15 @@ class $VanigarTableTable extends VanigarTable
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $VanigarTableTable.$convertermugavari);
+              $VaangunarTableTable.$convertermugavari);
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String> oor =
       GeneratedColumn<String>('oor', aliasedName, false,
               type: DriftSqlType.string,
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
-          .withConverter<Map<String, String>>($VanigarTableTable.$converteroor);
+          .withConverter<Map<String, String>>(
+              $VaangunarTableTable.$converteroor);
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
       maavattam = GeneratedColumn<String>('maavattam', aliasedName, false,
@@ -1516,7 +1517,7 @@ class $VanigarTableTable extends VanigarTable
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $VanigarTableTable.$convertermaavattam);
+              $VaangunarTableTable.$convertermaavattam);
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
       maanilam = GeneratedColumn<String>('maanilam', aliasedName, false,
@@ -1524,7 +1525,7 @@ class $VanigarTableTable extends VanigarTable
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $VanigarTableTable.$convertermaanilam);
+              $VaangunarTableTable.$convertermaanilam);
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
       naadu = GeneratedColumn<String>('naadu', aliasedName, false,
@@ -1532,7 +1533,7 @@ class $VanigarTableTable extends VanigarTable
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $VanigarTableTable.$converternaadu);
+              $VaangunarTableTable.$converternaadu);
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
       velinaadMugavari = GeneratedColumn<String>(
@@ -1541,7 +1542,7 @@ class $VanigarTableTable extends VanigarTable
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $VanigarTableTable.$convertervelinaadMugavari);
+              $VaangunarTableTable.$convertervelinaadMugavari);
   static const VerificationMeta _anjalKuriyeeduMeta =
       const VerificationMeta('anjalKuriyeedu');
   @override
@@ -1629,9 +1630,9 @@ class $VanigarTableTable extends VanigarTable
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'vanigar_table';
+  static const String $name = 'vaangunar_table';
   @override
-  VerificationContext validateIntegrity(Insertable<VanigarEntry> instance,
+  VerificationContext validateIntegrity(Insertable<VaangunarEntry> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -1688,31 +1689,32 @@ class $VanigarTableTable extends VanigarTable
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  VanigarEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+  VaangunarEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return VanigarEntry(
+    return VaangunarEntry(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       seyaliVagai: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}seyali_vagai'])!,
-      peyar: $VanigarTableTable.$converterpeyar.fromSql(attachedDatabase
+      peyar: $VaangunarTableTable.$converterpeyar.fromSql(attachedDatabase
           .typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}peyar'])!),
-      mugavari: $VanigarTableTable.$convertermugavari.fromSql(attachedDatabase
+      mugavari: $VaangunarTableTable.$convertermugavari.fromSql(attachedDatabase
           .typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}mugavari'])!),
-      oor: $VanigarTableTable.$converteroor.fromSql(attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}oor'])!),
-      maavattam: $VanigarTableTable.$convertermaavattam.fromSql(attachedDatabase
+      oor: $VaangunarTableTable.$converteroor.fromSql(attachedDatabase
           .typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}maavattam'])!),
-      maanilam: $VanigarTableTable.$convertermaanilam.fromSql(attachedDatabase
+          .read(DriftSqlType.string, data['${effectivePrefix}oor'])!),
+      maavattam: $VaangunarTableTable.$convertermaavattam.fromSql(
+          attachedDatabase.typeMapping
+              .read(DriftSqlType.string, data['${effectivePrefix}maavattam'])!),
+      maanilam: $VaangunarTableTable.$convertermaanilam.fromSql(attachedDatabase
           .typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}maanilam'])!),
-      naadu: $VanigarTableTable.$converternaadu.fromSql(attachedDatabase
+      naadu: $VaangunarTableTable.$converternaadu.fromSql(attachedDatabase
           .typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}naadu'])!),
-      velinaadMugavari: $VanigarTableTable.$convertervelinaadMugavari.fromSql(
+      velinaadMugavari: $VaangunarTableTable.$convertervelinaadMugavari.fromSql(
           attachedDatabase.typeMapping.read(DriftSqlType.string,
               data['${effectivePrefix}velinaad_mugavari'])!),
       anjalKuriyeedu: attachedDatabase.typeMapping.read(
@@ -1735,8 +1737,8 @@ class $VanigarTableTable extends VanigarTable
   }
 
   @override
-  $VanigarTableTable createAlias(String alias) {
-    return $VanigarTableTable(attachedDatabase, alias);
+  $VaangunarTableTable createAlias(String alias) {
+    return $VaangunarTableTable(attachedDatabase, alias);
   }
 
   static TypeConverter<Map<String, String>, String> $converterpeyar =
@@ -1755,7 +1757,7 @@ class $VanigarTableTable extends VanigarTable
       const MozhiMapConverter();
 }
 
-class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
+class VaangunarEntry extends DataClass implements Insertable<VaangunarEntry> {
   final int id;
   final String seyaliVagai;
   final Map<String, String> peyar;
@@ -1773,7 +1775,7 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
   final DateTime updatedAt;
   final bool isDeleted;
   final DateTime? deletedAt;
-  const VanigarEntry(
+  const VaangunarEntry(
       {required this.id,
       required this.seyaliVagai,
       required this.peyar,
@@ -1798,30 +1800,30 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
     map['seyali_vagai'] = Variable<String>(seyaliVagai);
     {
       map['peyar'] =
-          Variable<String>($VanigarTableTable.$converterpeyar.toSql(peyar));
+          Variable<String>($VaangunarTableTable.$converterpeyar.toSql(peyar));
     }
     {
       map['mugavari'] = Variable<String>(
-          $VanigarTableTable.$convertermugavari.toSql(mugavari));
+          $VaangunarTableTable.$convertermugavari.toSql(mugavari));
     }
     {
       map['oor'] =
-          Variable<String>($VanigarTableTable.$converteroor.toSql(oor));
+          Variable<String>($VaangunarTableTable.$converteroor.toSql(oor));
     }
     {
       map['maavattam'] = Variable<String>(
-          $VanigarTableTable.$convertermaavattam.toSql(maavattam));
+          $VaangunarTableTable.$convertermaavattam.toSql(maavattam));
     }
     {
       map['maanilam'] = Variable<String>(
-          $VanigarTableTable.$convertermaanilam.toSql(maanilam));
+          $VaangunarTableTable.$convertermaanilam.toSql(maanilam));
     }
     {
       map['naadu'] =
-          Variable<String>($VanigarTableTable.$converternaadu.toSql(naadu));
+          Variable<String>($VaangunarTableTable.$converternaadu.toSql(naadu));
     }
     {
-      map['velinaad_mugavari'] = Variable<String>($VanigarTableTable
+      map['velinaad_mugavari'] = Variable<String>($VaangunarTableTable
           .$convertervelinaadMugavari
           .toSql(velinaadMugavari));
     }
@@ -1838,8 +1840,8 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
     return map;
   }
 
-  VanigarTableCompanion toCompanion(bool nullToAbsent) {
-    return VanigarTableCompanion(
+  VaangunarTableCompanion toCompanion(bool nullToAbsent) {
+    return VaangunarTableCompanion(
       id: Value(id),
       seyaliVagai: Value(seyaliVagai),
       peyar: Value(peyar),
@@ -1862,10 +1864,10 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
     );
   }
 
-  factory VanigarEntry.fromJson(Map<String, dynamic> json,
+  factory VaangunarEntry.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return VanigarEntry(
+    return VaangunarEntry(
       id: serializer.fromJson<int>(json['id']),
       seyaliVagai: serializer.fromJson<String>(json['seyaliVagai']),
       peyar: serializer.fromJson<Map<String, String>>(json['peyar']),
@@ -1911,7 +1913,7 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
     };
   }
 
-  VanigarEntry copyWith(
+  VaangunarEntry copyWith(
           {int? id,
           String? seyaliVagai,
           Map<String, String>? peyar,
@@ -1929,7 +1931,7 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
           DateTime? updatedAt,
           bool? isDeleted,
           Value<DateTime?> deletedAt = const Value.absent()}) =>
-      VanigarEntry(
+      VaangunarEntry(
         id: id ?? this.id,
         seyaliVagai: seyaliVagai ?? this.seyaliVagai,
         peyar: peyar ?? this.peyar,
@@ -1948,8 +1950,8 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
         isDeleted: isDeleted ?? this.isDeleted,
         deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
       );
-  VanigarEntry copyWithCompanion(VanigarTableCompanion data) {
-    return VanigarEntry(
+  VaangunarEntry copyWithCompanion(VaangunarTableCompanion data) {
+    return VaangunarEntry(
       id: data.id.present ? data.id.value : this.id,
       seyaliVagai:
           data.seyaliVagai.present ? data.seyaliVagai.value : this.seyaliVagai,
@@ -1978,7 +1980,7 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
 
   @override
   String toString() {
-    return (StringBuffer('VanigarEntry(')
+    return (StringBuffer('VaangunarEntry(')
           ..write('id: $id, ')
           ..write('seyaliVagai: $seyaliVagai, ')
           ..write('peyar: $peyar, ')
@@ -2022,7 +2024,7 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is VanigarEntry &&
+      (other is VaangunarEntry &&
           other.id == this.id &&
           other.seyaliVagai == this.seyaliVagai &&
           other.peyar == this.peyar &&
@@ -2042,7 +2044,7 @@ class VanigarEntry extends DataClass implements Insertable<VanigarEntry> {
           other.deletedAt == this.deletedAt);
 }
 
-class VanigarTableCompanion extends UpdateCompanion<VanigarEntry> {
+class VaangunarTableCompanion extends UpdateCompanion<VaangunarEntry> {
   final Value<int> id;
   final Value<String> seyaliVagai;
   final Value<Map<String, String>> peyar;
@@ -2060,7 +2062,7 @@ class VanigarTableCompanion extends UpdateCompanion<VanigarEntry> {
   final Value<DateTime> updatedAt;
   final Value<bool> isDeleted;
   final Value<DateTime?> deletedAt;
-  const VanigarTableCompanion({
+  const VaangunarTableCompanion({
     this.id = const Value.absent(),
     this.seyaliVagai = const Value.absent(),
     this.peyar = const Value.absent(),
@@ -2079,7 +2081,7 @@ class VanigarTableCompanion extends UpdateCompanion<VanigarEntry> {
     this.isDeleted = const Value.absent(),
     this.deletedAt = const Value.absent(),
   });
-  VanigarTableCompanion.insert({
+  VaangunarTableCompanion.insert({
     this.id = const Value.absent(),
     required String seyaliVagai,
     this.peyar = const Value.absent(),
@@ -2098,7 +2100,7 @@ class VanigarTableCompanion extends UpdateCompanion<VanigarEntry> {
     this.isDeleted = const Value.absent(),
     this.deletedAt = const Value.absent(),
   }) : seyaliVagai = Value(seyaliVagai);
-  static Insertable<VanigarEntry> custom({
+  static Insertable<VaangunarEntry> custom({
     Expression<int>? id,
     Expression<String>? seyaliVagai,
     Expression<String>? peyar,
@@ -2138,7 +2140,7 @@ class VanigarTableCompanion extends UpdateCompanion<VanigarEntry> {
     });
   }
 
-  VanigarTableCompanion copyWith(
+  VaangunarTableCompanion copyWith(
       {Value<int>? id,
       Value<String>? seyaliVagai,
       Value<Map<String, String>>? peyar,
@@ -2156,7 +2158,7 @@ class VanigarTableCompanion extends UpdateCompanion<VanigarEntry> {
       Value<DateTime>? updatedAt,
       Value<bool>? isDeleted,
       Value<DateTime?>? deletedAt}) {
-    return VanigarTableCompanion(
+    return VaangunarTableCompanion(
       id: id ?? this.id,
       seyaliVagai: seyaliVagai ?? this.seyaliVagai,
       peyar: peyar ?? this.peyar,
@@ -2188,30 +2190,30 @@ class VanigarTableCompanion extends UpdateCompanion<VanigarEntry> {
     }
     if (peyar.present) {
       map['peyar'] = Variable<String>(
-          $VanigarTableTable.$converterpeyar.toSql(peyar.value));
+          $VaangunarTableTable.$converterpeyar.toSql(peyar.value));
     }
     if (mugavari.present) {
       map['mugavari'] = Variable<String>(
-          $VanigarTableTable.$convertermugavari.toSql(mugavari.value));
+          $VaangunarTableTable.$convertermugavari.toSql(mugavari.value));
     }
     if (oor.present) {
       map['oor'] =
-          Variable<String>($VanigarTableTable.$converteroor.toSql(oor.value));
+          Variable<String>($VaangunarTableTable.$converteroor.toSql(oor.value));
     }
     if (maavattam.present) {
       map['maavattam'] = Variable<String>(
-          $VanigarTableTable.$convertermaavattam.toSql(maavattam.value));
+          $VaangunarTableTable.$convertermaavattam.toSql(maavattam.value));
     }
     if (maanilam.present) {
       map['maanilam'] = Variable<String>(
-          $VanigarTableTable.$convertermaanilam.toSql(maanilam.value));
+          $VaangunarTableTable.$convertermaanilam.toSql(maanilam.value));
     }
     if (naadu.present) {
       map['naadu'] = Variable<String>(
-          $VanigarTableTable.$converternaadu.toSql(naadu.value));
+          $VaangunarTableTable.$converternaadu.toSql(naadu.value));
     }
     if (velinaadMugavari.present) {
-      map['velinaad_mugavari'] = Variable<String>($VanigarTableTable
+      map['velinaad_mugavari'] = Variable<String>($VaangunarTableTable
           .$convertervelinaadMugavari
           .toSql(velinaadMugavari.value));
     }
@@ -2244,7 +2246,7 @@ class VanigarTableCompanion extends UpdateCompanion<VanigarEntry> {
 
   @override
   String toString() {
-    return (StringBuffer('VanigarTableCompanion(')
+    return (StringBuffer('VaangunarTableCompanion(')
           ..write('id: $id, ')
           ..write('seyaliVagai: $seyaliVagai, ')
           ..write('peyar: $peyar, ')
@@ -2910,30 +2912,30 @@ class $PatrucheettuTableTable extends PatrucheettuTable
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultValue: const Constant('tax-invoice'));
-  static const VerificationMeta _vanigarIdMeta =
-      const VerificationMeta('vanigarId');
+  static const VerificationMeta _vaangunarIdMeta =
+      const VerificationMeta('vaangunarId');
   @override
-  late final GeneratedColumn<int> vanigarId = GeneratedColumn<int>(
-      'vanigar_id', aliasedName, true,
+  late final GeneratedColumn<int> vaangunarId = GeneratedColumn<int>(
+      'vaangunar_id', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
-      vanigarPeyar = GeneratedColumn<String>(
-              'vanigar_peyar', aliasedName, false,
+      vaangunarPeyar = GeneratedColumn<String>(
+              'vaangunar_peyar', aliasedName, false,
               type: DriftSqlType.string,
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $PatrucheettuTableTable.$convertervanigarPeyar);
+              $PatrucheettuTableTable.$convertervaangunarPeyar);
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
-      vanigarMunvari = GeneratedColumn<String>(
-              'vanigar_munvari', aliasedName, false,
+      vaangunarMunvari = GeneratedColumn<String>(
+              'vaangunar_munvari', aliasedName, false,
               type: DriftSqlType.string,
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $PatrucheettuTableTable.$convertervanigarMunvari);
+              $PatrucheettuTableTable.$convertervaangunarMunvari);
   static const VerificationMeta _pattiyalNaalMeta =
       const VerificationMeta('pattiyalNaal');
   @override
@@ -3095,9 +3097,9 @@ class $PatrucheettuTableTable extends PatrucheettuTable
         finYear,
         vanakkam,
         pattiyalVagai,
-        vanigarId,
-        vanigarPeyar,
-        vanigarMunvari,
+        vaangunarId,
+        vaangunarPeyar,
+        vaangunarMunvari,
         pattiyalNaal,
         tharavugal,
         mothaThogai,
@@ -3169,9 +3171,11 @@ class $PatrucheettuTableTable extends PatrucheettuTable
           pattiyalVagai.isAcceptableOrUnknown(
               data['pattiyal_vagai']!, _pattiyalVagaiMeta));
     }
-    if (data.containsKey('vanigar_id')) {
-      context.handle(_vanigarIdMeta,
-          vanigarId.isAcceptableOrUnknown(data['vanigar_id']!, _vanigarIdMeta));
+    if (data.containsKey('vaangunar_id')) {
+      context.handle(
+          _vaangunarIdMeta,
+          vaangunarId.isAcceptableOrUnknown(
+              data['vaangunar_id']!, _vaangunarIdMeta));
     }
     if (data.containsKey('pattiyal_naal')) {
       context.handle(
@@ -3300,14 +3304,14 @@ class $PatrucheettuTableTable extends PatrucheettuTable
           .read(DriftSqlType.int, data['${effectivePrefix}vanakkam'])!,
       pattiyalVagai: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}pattiyal_vagai'])!,
-      vanigarId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}vanigar_id']),
-      vanigarPeyar: $PatrucheettuTableTable.$convertervanigarPeyar.fromSql(
+      vaangunarId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}vaangunar_id']),
+      vaangunarPeyar: $PatrucheettuTableTable.$convertervaangunarPeyar.fromSql(
           attachedDatabase.typeMapping.read(
-              DriftSqlType.string, data['${effectivePrefix}vanigar_peyar'])!),
-      vanigarMunvari: $PatrucheettuTableTable.$convertervanigarMunvari.fromSql(
-          attachedDatabase.typeMapping.read(
-              DriftSqlType.string, data['${effectivePrefix}vanigar_munvari'])!),
+              DriftSqlType.string, data['${effectivePrefix}vaangunar_peyar'])!),
+      vaangunarMunvari: $PatrucheettuTableTable.$convertervaangunarMunvari
+          .fromSql(attachedDatabase.typeMapping.read(DriftSqlType.string,
+              data['${effectivePrefix}vaangunar_munvari'])!),
       pattiyalNaal: attachedDatabase.typeMapping.read(
           DriftSqlType.dateTime, data['${effectivePrefix}pattiyal_naal'])!,
       tharavugal: attachedDatabase.typeMapping
@@ -3354,9 +3358,9 @@ class $PatrucheettuTableTable extends PatrucheettuTable
     return $PatrucheettuTableTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<Map<String, String>, String> $convertervanigarPeyar =
+  static TypeConverter<Map<String, String>, String> $convertervaangunarPeyar =
       const MozhiMapConverter();
-  static TypeConverter<Map<String, String>, String> $convertervanigarMunvari =
+  static TypeConverter<Map<String, String>, String> $convertervaangunarMunvari =
       const MozhiMapConverter();
 }
 
@@ -3369,9 +3373,9 @@ class PatrucheettuEntry extends DataClass
   final int finYear;
   final int vanakkam;
   final String pattiyalVagai;
-  final int? vanigarId;
-  final Map<String, String> vanigarPeyar;
-  final Map<String, String> vanigarMunvari;
+  final int? vaangunarId;
+  final Map<String, String> vaangunarPeyar;
+  final Map<String, String> vaangunarMunvari;
   final DateTime pattiyalNaal;
   final String tharavugal;
   final double mothaThogai;
@@ -3399,9 +3403,9 @@ class PatrucheettuEntry extends DataClass
       required this.finYear,
       required this.vanakkam,
       required this.pattiyalVagai,
-      this.vanigarId,
-      required this.vanigarPeyar,
-      required this.vanigarMunvari,
+      this.vaangunarId,
+      required this.vaangunarPeyar,
+      required this.vaangunarMunvari,
       required this.pattiyalNaal,
       required this.tharavugal,
       required this.mothaThogai,
@@ -3433,17 +3437,18 @@ class PatrucheettuEntry extends DataClass
     map['fin_year'] = Variable<int>(finYear);
     map['vanakkam'] = Variable<int>(vanakkam);
     map['pattiyal_vagai'] = Variable<String>(pattiyalVagai);
-    if (!nullToAbsent || vanigarId != null) {
-      map['vanigar_id'] = Variable<int>(vanigarId);
+    if (!nullToAbsent || vaangunarId != null) {
+      map['vaangunar_id'] = Variable<int>(vaangunarId);
     }
     {
-      map['vanigar_peyar'] = Variable<String>(
-          $PatrucheettuTableTable.$convertervanigarPeyar.toSql(vanigarPeyar));
+      map['vaangunar_peyar'] = Variable<String>($PatrucheettuTableTable
+          .$convertervaangunarPeyar
+          .toSql(vaangunarPeyar));
     }
     {
-      map['vanigar_munvari'] = Variable<String>($PatrucheettuTableTable
-          .$convertervanigarMunvari
-          .toSql(vanigarMunvari));
+      map['vaangunar_munvari'] = Variable<String>($PatrucheettuTableTable
+          .$convertervaangunarMunvari
+          .toSql(vaangunarMunvari));
     }
     map['pattiyal_naal'] = Variable<DateTime>(pattiyalNaal);
     map['tharavugal'] = Variable<String>(tharavugal);
@@ -3480,11 +3485,11 @@ class PatrucheettuEntry extends DataClass
       finYear: Value(finYear),
       vanakkam: Value(vanakkam),
       pattiyalVagai: Value(pattiyalVagai),
-      vanigarId: vanigarId == null && nullToAbsent
+      vaangunarId: vaangunarId == null && nullToAbsent
           ? const Value.absent()
-          : Value(vanigarId),
-      vanigarPeyar: Value(vanigarPeyar),
-      vanigarMunvari: Value(vanigarMunvari),
+          : Value(vaangunarId),
+      vaangunarPeyar: Value(vaangunarPeyar),
+      vaangunarMunvari: Value(vaangunarMunvari),
       pattiyalNaal: Value(pattiyalNaal),
       tharavugal: Value(tharavugal),
       mothaThogai: Value(mothaThogai),
@@ -3520,11 +3525,11 @@ class PatrucheettuEntry extends DataClass
       finYear: serializer.fromJson<int>(json['finYear']),
       vanakkam: serializer.fromJson<int>(json['vanakkam']),
       pattiyalVagai: serializer.fromJson<String>(json['pattiyalVagai']),
-      vanigarId: serializer.fromJson<int?>(json['vanigarId']),
-      vanigarPeyar:
-          serializer.fromJson<Map<String, String>>(json['vanigarPeyar']),
-      vanigarMunvari:
-          serializer.fromJson<Map<String, String>>(json['vanigarMunvari']),
+      vaangunarId: serializer.fromJson<int?>(json['vaangunarId']),
+      vaangunarPeyar:
+          serializer.fromJson<Map<String, String>>(json['vaangunarPeyar']),
+      vaangunarMunvari:
+          serializer.fromJson<Map<String, String>>(json['vaangunarMunvari']),
       pattiyalNaal: serializer.fromJson<DateTime>(json['pattiyalNaal']),
       tharavugal: serializer.fromJson<String>(json['tharavugal']),
       mothaThogai: serializer.fromJson<double>(json['mothaThogai']),
@@ -3557,9 +3562,10 @@ class PatrucheettuEntry extends DataClass
       'finYear': serializer.toJson<int>(finYear),
       'vanakkam': serializer.toJson<int>(vanakkam),
       'pattiyalVagai': serializer.toJson<String>(pattiyalVagai),
-      'vanigarId': serializer.toJson<int?>(vanigarId),
-      'vanigarPeyar': serializer.toJson<Map<String, String>>(vanigarPeyar),
-      'vanigarMunvari': serializer.toJson<Map<String, String>>(vanigarMunvari),
+      'vaangunarId': serializer.toJson<int?>(vaangunarId),
+      'vaangunarPeyar': serializer.toJson<Map<String, String>>(vaangunarPeyar),
+      'vaangunarMunvari':
+          serializer.toJson<Map<String, String>>(vaangunarMunvari),
       'pattiyalNaal': serializer.toJson<DateTime>(pattiyalNaal),
       'tharavugal': serializer.toJson<String>(tharavugal),
       'mothaThogai': serializer.toJson<double>(mothaThogai),
@@ -3590,9 +3596,9 @@ class PatrucheettuEntry extends DataClass
           int? finYear,
           int? vanakkam,
           String? pattiyalVagai,
-          Value<int?> vanigarId = const Value.absent(),
-          Map<String, String>? vanigarPeyar,
-          Map<String, String>? vanigarMunvari,
+          Value<int?> vaangunarId = const Value.absent(),
+          Map<String, String>? vaangunarPeyar,
+          Map<String, String>? vaangunarMunvari,
           DateTime? pattiyalNaal,
           String? tharavugal,
           double? mothaThogai,
@@ -3620,9 +3626,9 @@ class PatrucheettuEntry extends DataClass
         finYear: finYear ?? this.finYear,
         vanakkam: vanakkam ?? this.vanakkam,
         pattiyalVagai: pattiyalVagai ?? this.pattiyalVagai,
-        vanigarId: vanigarId.present ? vanigarId.value : this.vanigarId,
-        vanigarPeyar: vanigarPeyar ?? this.vanigarPeyar,
-        vanigarMunvari: vanigarMunvari ?? this.vanigarMunvari,
+        vaangunarId: vaangunarId.present ? vaangunarId.value : this.vaangunarId,
+        vaangunarPeyar: vaangunarPeyar ?? this.vaangunarPeyar,
+        vaangunarMunvari: vaangunarMunvari ?? this.vaangunarMunvari,
         pattiyalNaal: pattiyalNaal ?? this.pattiyalNaal,
         tharavugal: tharavugal ?? this.tharavugal,
         mothaThogai: mothaThogai ?? this.mothaThogai,
@@ -3658,13 +3664,14 @@ class PatrucheettuEntry extends DataClass
       pattiyalVagai: data.pattiyalVagai.present
           ? data.pattiyalVagai.value
           : this.pattiyalVagai,
-      vanigarId: data.vanigarId.present ? data.vanigarId.value : this.vanigarId,
-      vanigarPeyar: data.vanigarPeyar.present
-          ? data.vanigarPeyar.value
-          : this.vanigarPeyar,
-      vanigarMunvari: data.vanigarMunvari.present
-          ? data.vanigarMunvari.value
-          : this.vanigarMunvari,
+      vaangunarId:
+          data.vaangunarId.present ? data.vaangunarId.value : this.vaangunarId,
+      vaangunarPeyar: data.vaangunarPeyar.present
+          ? data.vaangunarPeyar.value
+          : this.vaangunarPeyar,
+      vaangunarMunvari: data.vaangunarMunvari.present
+          ? data.vaangunarMunvari.value
+          : this.vaangunarMunvari,
       pattiyalNaal: data.pattiyalNaal.present
           ? data.pattiyalNaal.value
           : this.pattiyalNaal,
@@ -3720,9 +3727,9 @@ class PatrucheettuEntry extends DataClass
           ..write('finYear: $finYear, ')
           ..write('vanakkam: $vanakkam, ')
           ..write('pattiyalVagai: $pattiyalVagai, ')
-          ..write('vanigarId: $vanigarId, ')
-          ..write('vanigarPeyar: $vanigarPeyar, ')
-          ..write('vanigarMunvari: $vanigarMunvari, ')
+          ..write('vaangunarId: $vaangunarId, ')
+          ..write('vaangunarPeyar: $vaangunarPeyar, ')
+          ..write('vaangunarMunvari: $vaangunarMunvari, ')
           ..write('pattiyalNaal: $pattiyalNaal, ')
           ..write('tharavugal: $tharavugal, ')
           ..write('mothaThogai: $mothaThogai, ')
@@ -3755,9 +3762,9 @@ class PatrucheettuEntry extends DataClass
         finYear,
         vanakkam,
         pattiyalVagai,
-        vanigarId,
-        vanigarPeyar,
-        vanigarMunvari,
+        vaangunarId,
+        vaangunarPeyar,
+        vaangunarMunvari,
         pattiyalNaal,
         tharavugal,
         mothaThogai,
@@ -3789,9 +3796,9 @@ class PatrucheettuEntry extends DataClass
           other.finYear == this.finYear &&
           other.vanakkam == this.vanakkam &&
           other.pattiyalVagai == this.pattiyalVagai &&
-          other.vanigarId == this.vanigarId &&
-          other.vanigarPeyar == this.vanigarPeyar &&
-          other.vanigarMunvari == this.vanigarMunvari &&
+          other.vaangunarId == this.vaangunarId &&
+          other.vaangunarPeyar == this.vaangunarPeyar &&
+          other.vaangunarMunvari == this.vaangunarMunvari &&
           other.pattiyalNaal == this.pattiyalNaal &&
           other.tharavugal == this.tharavugal &&
           other.mothaThogai == this.mothaThogai &&
@@ -3821,9 +3828,9 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
   final Value<int> finYear;
   final Value<int> vanakkam;
   final Value<String> pattiyalVagai;
-  final Value<int?> vanigarId;
-  final Value<Map<String, String>> vanigarPeyar;
-  final Value<Map<String, String>> vanigarMunvari;
+  final Value<int?> vaangunarId;
+  final Value<Map<String, String>> vaangunarPeyar;
+  final Value<Map<String, String>> vaangunarMunvari;
   final Value<DateTime> pattiyalNaal;
   final Value<String> tharavugal;
   final Value<double> mothaThogai;
@@ -3851,9 +3858,9 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
     this.finYear = const Value.absent(),
     this.vanakkam = const Value.absent(),
     this.pattiyalVagai = const Value.absent(),
-    this.vanigarId = const Value.absent(),
-    this.vanigarPeyar = const Value.absent(),
-    this.vanigarMunvari = const Value.absent(),
+    this.vaangunarId = const Value.absent(),
+    this.vaangunarPeyar = const Value.absent(),
+    this.vaangunarMunvari = const Value.absent(),
     this.pattiyalNaal = const Value.absent(),
     this.tharavugal = const Value.absent(),
     this.mothaThogai = const Value.absent(),
@@ -3882,9 +3889,9 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
     required int finYear,
     this.vanakkam = const Value.absent(),
     this.pattiyalVagai = const Value.absent(),
-    this.vanigarId = const Value.absent(),
-    this.vanigarPeyar = const Value.absent(),
-    this.vanigarMunvari = const Value.absent(),
+    this.vaangunarId = const Value.absent(),
+    this.vaangunarPeyar = const Value.absent(),
+    this.vaangunarMunvari = const Value.absent(),
     this.pattiyalNaal = const Value.absent(),
     this.tharavugal = const Value.absent(),
     this.mothaThogai = const Value.absent(),
@@ -3915,9 +3922,9 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
     Expression<int>? finYear,
     Expression<int>? vanakkam,
     Expression<String>? pattiyalVagai,
-    Expression<int>? vanigarId,
-    Expression<String>? vanigarPeyar,
-    Expression<String>? vanigarMunvari,
+    Expression<int>? vaangunarId,
+    Expression<String>? vaangunarPeyar,
+    Expression<String>? vaangunarMunvari,
     Expression<DateTime>? pattiyalNaal,
     Expression<String>? tharavugal,
     Expression<double>? mothaThogai,
@@ -3946,9 +3953,9 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
       if (finYear != null) 'fin_year': finYear,
       if (vanakkam != null) 'vanakkam': vanakkam,
       if (pattiyalVagai != null) 'pattiyal_vagai': pattiyalVagai,
-      if (vanigarId != null) 'vanigar_id': vanigarId,
-      if (vanigarPeyar != null) 'vanigar_peyar': vanigarPeyar,
-      if (vanigarMunvari != null) 'vanigar_munvari': vanigarMunvari,
+      if (vaangunarId != null) 'vaangunar_id': vaangunarId,
+      if (vaangunarPeyar != null) 'vaangunar_peyar': vaangunarPeyar,
+      if (vaangunarMunvari != null) 'vaangunar_munvari': vaangunarMunvari,
       if (pattiyalNaal != null) 'pattiyal_naal': pattiyalNaal,
       if (tharavugal != null) 'tharavugal': tharavugal,
       if (mothaThogai != null) 'motha_thogai': mothaThogai,
@@ -3979,9 +3986,9 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
       Value<int>? finYear,
       Value<int>? vanakkam,
       Value<String>? pattiyalVagai,
-      Value<int?>? vanigarId,
-      Value<Map<String, String>>? vanigarPeyar,
-      Value<Map<String, String>>? vanigarMunvari,
+      Value<int?>? vaangunarId,
+      Value<Map<String, String>>? vaangunarPeyar,
+      Value<Map<String, String>>? vaangunarMunvari,
       Value<DateTime>? pattiyalNaal,
       Value<String>? tharavugal,
       Value<double>? mothaThogai,
@@ -4009,9 +4016,9 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
       finYear: finYear ?? this.finYear,
       vanakkam: vanakkam ?? this.vanakkam,
       pattiyalVagai: pattiyalVagai ?? this.pattiyalVagai,
-      vanigarId: vanigarId ?? this.vanigarId,
-      vanigarPeyar: vanigarPeyar ?? this.vanigarPeyar,
-      vanigarMunvari: vanigarMunvari ?? this.vanigarMunvari,
+      vaangunarId: vaangunarId ?? this.vaangunarId,
+      vaangunarPeyar: vaangunarPeyar ?? this.vaangunarPeyar,
+      vaangunarMunvari: vaangunarMunvari ?? this.vaangunarMunvari,
       pattiyalNaal: pattiyalNaal ?? this.pattiyalNaal,
       tharavugal: tharavugal ?? this.tharavugal,
       mothaThogai: mothaThogai ?? this.mothaThogai,
@@ -4058,18 +4065,18 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
     if (pattiyalVagai.present) {
       map['pattiyal_vagai'] = Variable<String>(pattiyalVagai.value);
     }
-    if (vanigarId.present) {
-      map['vanigar_id'] = Variable<int>(vanigarId.value);
+    if (vaangunarId.present) {
+      map['vaangunar_id'] = Variable<int>(vaangunarId.value);
     }
-    if (vanigarPeyar.present) {
-      map['vanigar_peyar'] = Variable<String>($PatrucheettuTableTable
-          .$convertervanigarPeyar
-          .toSql(vanigarPeyar.value));
+    if (vaangunarPeyar.present) {
+      map['vaangunar_peyar'] = Variable<String>($PatrucheettuTableTable
+          .$convertervaangunarPeyar
+          .toSql(vaangunarPeyar.value));
     }
-    if (vanigarMunvari.present) {
-      map['vanigar_munvari'] = Variable<String>($PatrucheettuTableTable
-          .$convertervanigarMunvari
-          .toSql(vanigarMunvari.value));
+    if (vaangunarMunvari.present) {
+      map['vaangunar_munvari'] = Variable<String>($PatrucheettuTableTable
+          .$convertervaangunarMunvari
+          .toSql(vaangunarMunvari.value));
     }
     if (pattiyalNaal.present) {
       map['pattiyal_naal'] = Variable<DateTime>(pattiyalNaal.value);
@@ -4141,9 +4148,9 @@ class PatrucheettuTableCompanion extends UpdateCompanion<PatrucheettuEntry> {
           ..write('finYear: $finYear, ')
           ..write('vanakkam: $vanakkam, ')
           ..write('pattiyalVagai: $pattiyalVagai, ')
-          ..write('vanigarId: $vanigarId, ')
-          ..write('vanigarPeyar: $vanigarPeyar, ')
-          ..write('vanigarMunvari: $vanigarMunvari, ')
+          ..write('vaangunarId: $vaangunarId, ')
+          ..write('vaangunarPeyar: $vaangunarPeyar, ')
+          ..write('vaangunarMunvari: $vaangunarMunvari, ')
           ..write('pattiyalNaal: $pattiyalNaal, ')
           ..write('tharavugal: $tharavugal, ')
           ..write('mothaThogai: $mothaThogai, ')
@@ -4209,30 +4216,30 @@ class $PatrugalTableTable extends PatrugalTable
       type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(1));
-  static const VerificationMeta _vanigarIdMeta =
-      const VerificationMeta('vanigarId');
+  static const VerificationMeta _vaangunarIdMeta =
+      const VerificationMeta('vaangunarId');
   @override
-  late final GeneratedColumn<int> vanigarId = GeneratedColumn<int>(
-      'vanigar_id', aliasedName, true,
+  late final GeneratedColumn<int> vaangunarId = GeneratedColumn<int>(
+      'vaangunar_id', aliasedName, true,
       type: DriftSqlType.int, requiredDuringInsert: false);
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
-      vanigarPeyar = GeneratedColumn<String>(
-              'vanigar_peyar', aliasedName, false,
+      vaangunarPeyar = GeneratedColumn<String>(
+              'vaangunar_peyar', aliasedName, false,
               type: DriftSqlType.string,
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $PatrugalTableTable.$convertervanigarPeyar);
+              $PatrugalTableTable.$convertervaangunarPeyar);
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
-      vanigarMunvari = GeneratedColumn<String>(
-              'vanigar_munvari', aliasedName, false,
+      vaangunarMunvari = GeneratedColumn<String>(
+              'vaangunar_munvari', aliasedName, false,
               type: DriftSqlType.string,
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $PatrugalTableTable.$convertervanigarMunvari);
+              $PatrugalTableTable.$convertervaangunarMunvari);
   static const VerificationMeta _patruNaalMeta =
       const VerificationMeta('patruNaal');
   @override
@@ -4305,9 +4312,9 @@ class $PatrugalTableTable extends PatrugalTable
         niruvanamId,
         patruEn,
         vanakkam,
-        vanigarId,
-        vanigarPeyar,
-        vanigarMunvari,
+        vaangunarId,
+        vaangunarPeyar,
+        vaangunarMunvari,
         patruNaal,
         thogai,
         seluthiVagai,
@@ -4354,9 +4361,11 @@ class $PatrugalTableTable extends PatrugalTable
       context.handle(_vanakkamMeta,
           vanakkam.isAcceptableOrUnknown(data['vanakkam']!, _vanakkamMeta));
     }
-    if (data.containsKey('vanigar_id')) {
-      context.handle(_vanigarIdMeta,
-          vanigarId.isAcceptableOrUnknown(data['vanigar_id']!, _vanigarIdMeta));
+    if (data.containsKey('vaangunar_id')) {
+      context.handle(
+          _vaangunarIdMeta,
+          vaangunarId.isAcceptableOrUnknown(
+              data['vaangunar_id']!, _vaangunarIdMeta));
     }
     if (data.containsKey('patru_naal')) {
       context.handle(_patruNaalMeta,
@@ -4413,14 +4422,14 @@ class $PatrugalTableTable extends PatrugalTable
           .read(DriftSqlType.string, data['${effectivePrefix}patru_en'])!,
       vanakkam: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}vanakkam'])!,
-      vanigarId: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}vanigar_id']),
-      vanigarPeyar: $PatrugalTableTable.$convertervanigarPeyar.fromSql(
+      vaangunarId: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}vaangunar_id']),
+      vaangunarPeyar: $PatrugalTableTable.$convertervaangunarPeyar.fromSql(
           attachedDatabase.typeMapping.read(
-              DriftSqlType.string, data['${effectivePrefix}vanigar_peyar'])!),
-      vanigarMunvari: $PatrugalTableTable.$convertervanigarMunvari.fromSql(
-          attachedDatabase.typeMapping.read(
-              DriftSqlType.string, data['${effectivePrefix}vanigar_munvari'])!),
+              DriftSqlType.string, data['${effectivePrefix}vaangunar_peyar'])!),
+      vaangunarMunvari: $PatrugalTableTable.$convertervaangunarMunvari.fromSql(
+          attachedDatabase.typeMapping.read(DriftSqlType.string,
+              data['${effectivePrefix}vaangunar_munvari'])!),
       patruNaal: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}patru_naal'])!,
       thogai: attachedDatabase.typeMapping
@@ -4445,9 +4454,9 @@ class $PatrugalTableTable extends PatrugalTable
     return $PatrugalTableTable(attachedDatabase, alias);
   }
 
-  static TypeConverter<Map<String, String>, String> $convertervanigarPeyar =
+  static TypeConverter<Map<String, String>, String> $convertervaangunarPeyar =
       const MozhiMapConverter();
-  static TypeConverter<Map<String, String>, String> $convertervanigarMunvari =
+  static TypeConverter<Map<String, String>, String> $convertervaangunarMunvari =
       const MozhiMapConverter();
 }
 
@@ -4457,9 +4466,9 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
   final int? niruvanamId;
   final String patruEn;
   final int vanakkam;
-  final int? vanigarId;
-  final Map<String, String> vanigarPeyar;
-  final Map<String, String> vanigarMunvari;
+  final int? vaangunarId;
+  final Map<String, String> vaangunarPeyar;
+  final Map<String, String> vaangunarMunvari;
   final DateTime patruNaal;
   final double thogai;
   final String seluthiVagai;
@@ -4474,9 +4483,9 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
       this.niruvanamId,
       required this.patruEn,
       required this.vanakkam,
-      this.vanigarId,
-      required this.vanigarPeyar,
-      required this.vanigarMunvari,
+      this.vaangunarId,
+      required this.vaangunarPeyar,
+      required this.vaangunarMunvari,
       required this.patruNaal,
       required this.thogai,
       required this.seluthiVagai,
@@ -4495,16 +4504,17 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
     }
     map['patru_en'] = Variable<String>(patruEn);
     map['vanakkam'] = Variable<int>(vanakkam);
-    if (!nullToAbsent || vanigarId != null) {
-      map['vanigar_id'] = Variable<int>(vanigarId);
+    if (!nullToAbsent || vaangunarId != null) {
+      map['vaangunar_id'] = Variable<int>(vaangunarId);
     }
     {
-      map['vanigar_peyar'] = Variable<String>(
-          $PatrugalTableTable.$convertervanigarPeyar.toSql(vanigarPeyar));
+      map['vaangunar_peyar'] = Variable<String>(
+          $PatrugalTableTable.$convertervaangunarPeyar.toSql(vaangunarPeyar));
     }
     {
-      map['vanigar_munvari'] = Variable<String>(
-          $PatrugalTableTable.$convertervanigarMunvari.toSql(vanigarMunvari));
+      map['vaangunar_munvari'] = Variable<String>($PatrugalTableTable
+          .$convertervaangunarMunvari
+          .toSql(vaangunarMunvari));
     }
     map['patru_naal'] = Variable<DateTime>(patruNaal);
     map['thogai'] = Variable<double>(thogai);
@@ -4526,11 +4536,11 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
           : Value(niruvanamId),
       patruEn: Value(patruEn),
       vanakkam: Value(vanakkam),
-      vanigarId: vanigarId == null && nullToAbsent
+      vaangunarId: vaangunarId == null && nullToAbsent
           ? const Value.absent()
-          : Value(vanigarId),
-      vanigarPeyar: Value(vanigarPeyar),
-      vanigarMunvari: Value(vanigarMunvari),
+          : Value(vaangunarId),
+      vaangunarPeyar: Value(vaangunarPeyar),
+      vaangunarMunvari: Value(vaangunarMunvari),
       patruNaal: Value(patruNaal),
       thogai: Value(thogai),
       seluthiVagai: Value(seluthiVagai),
@@ -4551,11 +4561,11 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
       niruvanamId: serializer.fromJson<int?>(json['niruvanamId']),
       patruEn: serializer.fromJson<String>(json['patruEn']),
       vanakkam: serializer.fromJson<int>(json['vanakkam']),
-      vanigarId: serializer.fromJson<int?>(json['vanigarId']),
-      vanigarPeyar:
-          serializer.fromJson<Map<String, String>>(json['vanigarPeyar']),
-      vanigarMunvari:
-          serializer.fromJson<Map<String, String>>(json['vanigarMunvari']),
+      vaangunarId: serializer.fromJson<int?>(json['vaangunarId']),
+      vaangunarPeyar:
+          serializer.fromJson<Map<String, String>>(json['vaangunarPeyar']),
+      vaangunarMunvari:
+          serializer.fromJson<Map<String, String>>(json['vaangunarMunvari']),
       patruNaal: serializer.fromJson<DateTime>(json['patruNaal']),
       thogai: serializer.fromJson<double>(json['thogai']),
       seluthiVagai: serializer.fromJson<String>(json['seluthiVagai']),
@@ -4575,9 +4585,10 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
       'niruvanamId': serializer.toJson<int?>(niruvanamId),
       'patruEn': serializer.toJson<String>(patruEn),
       'vanakkam': serializer.toJson<int>(vanakkam),
-      'vanigarId': serializer.toJson<int?>(vanigarId),
-      'vanigarPeyar': serializer.toJson<Map<String, String>>(vanigarPeyar),
-      'vanigarMunvari': serializer.toJson<Map<String, String>>(vanigarMunvari),
+      'vaangunarId': serializer.toJson<int?>(vaangunarId),
+      'vaangunarPeyar': serializer.toJson<Map<String, String>>(vaangunarPeyar),
+      'vaangunarMunvari':
+          serializer.toJson<Map<String, String>>(vaangunarMunvari),
       'patruNaal': serializer.toJson<DateTime>(patruNaal),
       'thogai': serializer.toJson<double>(thogai),
       'seluthiVagai': serializer.toJson<String>(seluthiVagai),
@@ -4595,9 +4606,9 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
           Value<int?> niruvanamId = const Value.absent(),
           String? patruEn,
           int? vanakkam,
-          Value<int?> vanigarId = const Value.absent(),
-          Map<String, String>? vanigarPeyar,
-          Map<String, String>? vanigarMunvari,
+          Value<int?> vaangunarId = const Value.absent(),
+          Map<String, String>? vaangunarPeyar,
+          Map<String, String>? vaangunarMunvari,
           DateTime? patruNaal,
           double? thogai,
           String? seluthiVagai,
@@ -4612,9 +4623,9 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
         niruvanamId: niruvanamId.present ? niruvanamId.value : this.niruvanamId,
         patruEn: patruEn ?? this.patruEn,
         vanakkam: vanakkam ?? this.vanakkam,
-        vanigarId: vanigarId.present ? vanigarId.value : this.vanigarId,
-        vanigarPeyar: vanigarPeyar ?? this.vanigarPeyar,
-        vanigarMunvari: vanigarMunvari ?? this.vanigarMunvari,
+        vaangunarId: vaangunarId.present ? vaangunarId.value : this.vaangunarId,
+        vaangunarPeyar: vaangunarPeyar ?? this.vaangunarPeyar,
+        vaangunarMunvari: vaangunarMunvari ?? this.vaangunarMunvari,
         patruNaal: patruNaal ?? this.patruNaal,
         thogai: thogai ?? this.thogai,
         seluthiVagai: seluthiVagai ?? this.seluthiVagai,
@@ -4633,13 +4644,14 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
           data.niruvanamId.present ? data.niruvanamId.value : this.niruvanamId,
       patruEn: data.patruEn.present ? data.patruEn.value : this.patruEn,
       vanakkam: data.vanakkam.present ? data.vanakkam.value : this.vanakkam,
-      vanigarId: data.vanigarId.present ? data.vanigarId.value : this.vanigarId,
-      vanigarPeyar: data.vanigarPeyar.present
-          ? data.vanigarPeyar.value
-          : this.vanigarPeyar,
-      vanigarMunvari: data.vanigarMunvari.present
-          ? data.vanigarMunvari.value
-          : this.vanigarMunvari,
+      vaangunarId:
+          data.vaangunarId.present ? data.vaangunarId.value : this.vaangunarId,
+      vaangunarPeyar: data.vaangunarPeyar.present
+          ? data.vaangunarPeyar.value
+          : this.vaangunarPeyar,
+      vaangunarMunvari: data.vaangunarMunvari.present
+          ? data.vaangunarMunvari.value
+          : this.vaangunarMunvari,
       patruNaal: data.patruNaal.present ? data.patruNaal.value : this.patruNaal,
       thogai: data.thogai.present ? data.thogai.value : this.thogai,
       seluthiVagai: data.seluthiVagai.present
@@ -4662,9 +4674,9 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
           ..write('niruvanamId: $niruvanamId, ')
           ..write('patruEn: $patruEn, ')
           ..write('vanakkam: $vanakkam, ')
-          ..write('vanigarId: $vanigarId, ')
-          ..write('vanigarPeyar: $vanigarPeyar, ')
-          ..write('vanigarMunvari: $vanigarMunvari, ')
+          ..write('vaangunarId: $vaangunarId, ')
+          ..write('vaangunarPeyar: $vaangunarPeyar, ')
+          ..write('vaangunarMunvari: $vaangunarMunvari, ')
           ..write('patruNaal: $patruNaal, ')
           ..write('thogai: $thogai, ')
           ..write('seluthiVagai: $seluthiVagai, ')
@@ -4684,9 +4696,9 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
       niruvanamId,
       patruEn,
       vanakkam,
-      vanigarId,
-      vanigarPeyar,
-      vanigarMunvari,
+      vaangunarId,
+      vaangunarPeyar,
+      vaangunarMunvari,
       patruNaal,
       thogai,
       seluthiVagai,
@@ -4704,9 +4716,9 @@ class PatrugalEntry extends DataClass implements Insertable<PatrugalEntry> {
           other.niruvanamId == this.niruvanamId &&
           other.patruEn == this.patruEn &&
           other.vanakkam == this.vanakkam &&
-          other.vanigarId == this.vanigarId &&
-          other.vanigarPeyar == this.vanigarPeyar &&
-          other.vanigarMunvari == this.vanigarMunvari &&
+          other.vaangunarId == this.vaangunarId &&
+          other.vaangunarPeyar == this.vaangunarPeyar &&
+          other.vaangunarMunvari == this.vaangunarMunvari &&
           other.patruNaal == this.patruNaal &&
           other.thogai == this.thogai &&
           other.seluthiVagai == this.seluthiVagai &&
@@ -4723,9 +4735,9 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
   final Value<int?> niruvanamId;
   final Value<String> patruEn;
   final Value<int> vanakkam;
-  final Value<int?> vanigarId;
-  final Value<Map<String, String>> vanigarPeyar;
-  final Value<Map<String, String>> vanigarMunvari;
+  final Value<int?> vaangunarId;
+  final Value<Map<String, String>> vaangunarPeyar;
+  final Value<Map<String, String>> vaangunarMunvari;
   final Value<DateTime> patruNaal;
   final Value<double> thogai;
   final Value<String> seluthiVagai;
@@ -4740,9 +4752,9 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
     this.niruvanamId = const Value.absent(),
     this.patruEn = const Value.absent(),
     this.vanakkam = const Value.absent(),
-    this.vanigarId = const Value.absent(),
-    this.vanigarPeyar = const Value.absent(),
-    this.vanigarMunvari = const Value.absent(),
+    this.vaangunarId = const Value.absent(),
+    this.vaangunarPeyar = const Value.absent(),
+    this.vaangunarMunvari = const Value.absent(),
     this.patruNaal = const Value.absent(),
     this.thogai = const Value.absent(),
     this.seluthiVagai = const Value.absent(),
@@ -4758,9 +4770,9 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
     this.niruvanamId = const Value.absent(),
     required String patruEn,
     this.vanakkam = const Value.absent(),
-    this.vanigarId = const Value.absent(),
-    this.vanigarPeyar = const Value.absent(),
-    this.vanigarMunvari = const Value.absent(),
+    this.vaangunarId = const Value.absent(),
+    this.vaangunarPeyar = const Value.absent(),
+    this.vaangunarMunvari = const Value.absent(),
     this.patruNaal = const Value.absent(),
     this.thogai = const Value.absent(),
     this.seluthiVagai = const Value.absent(),
@@ -4777,9 +4789,9 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
     Expression<int>? niruvanamId,
     Expression<String>? patruEn,
     Expression<int>? vanakkam,
-    Expression<int>? vanigarId,
-    Expression<String>? vanigarPeyar,
-    Expression<String>? vanigarMunvari,
+    Expression<int>? vaangunarId,
+    Expression<String>? vaangunarPeyar,
+    Expression<String>? vaangunarMunvari,
     Expression<DateTime>? patruNaal,
     Expression<double>? thogai,
     Expression<String>? seluthiVagai,
@@ -4795,9 +4807,9 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
       if (niruvanamId != null) 'niruvanam_id': niruvanamId,
       if (patruEn != null) 'patru_en': patruEn,
       if (vanakkam != null) 'vanakkam': vanakkam,
-      if (vanigarId != null) 'vanigar_id': vanigarId,
-      if (vanigarPeyar != null) 'vanigar_peyar': vanigarPeyar,
-      if (vanigarMunvari != null) 'vanigar_munvari': vanigarMunvari,
+      if (vaangunarId != null) 'vaangunar_id': vaangunarId,
+      if (vaangunarPeyar != null) 'vaangunar_peyar': vaangunarPeyar,
+      if (vaangunarMunvari != null) 'vaangunar_munvari': vaangunarMunvari,
       if (patruNaal != null) 'patru_naal': patruNaal,
       if (thogai != null) 'thogai': thogai,
       if (seluthiVagai != null) 'seluthi_vagai': seluthiVagai,
@@ -4815,9 +4827,9 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
       Value<int?>? niruvanamId,
       Value<String>? patruEn,
       Value<int>? vanakkam,
-      Value<int?>? vanigarId,
-      Value<Map<String, String>>? vanigarPeyar,
-      Value<Map<String, String>>? vanigarMunvari,
+      Value<int?>? vaangunarId,
+      Value<Map<String, String>>? vaangunarPeyar,
+      Value<Map<String, String>>? vaangunarMunvari,
       Value<DateTime>? patruNaal,
       Value<double>? thogai,
       Value<String>? seluthiVagai,
@@ -4832,9 +4844,9 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
       niruvanamId: niruvanamId ?? this.niruvanamId,
       patruEn: patruEn ?? this.patruEn,
       vanakkam: vanakkam ?? this.vanakkam,
-      vanigarId: vanigarId ?? this.vanigarId,
-      vanigarPeyar: vanigarPeyar ?? this.vanigarPeyar,
-      vanigarMunvari: vanigarMunvari ?? this.vanigarMunvari,
+      vaangunarId: vaangunarId ?? this.vaangunarId,
+      vaangunarPeyar: vaangunarPeyar ?? this.vaangunarPeyar,
+      vaangunarMunvari: vaangunarMunvari ?? this.vaangunarMunvari,
       patruNaal: patruNaal ?? this.patruNaal,
       thogai: thogai ?? this.thogai,
       seluthiVagai: seluthiVagai ?? this.seluthiVagai,
@@ -4864,17 +4876,18 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
     if (vanakkam.present) {
       map['vanakkam'] = Variable<int>(vanakkam.value);
     }
-    if (vanigarId.present) {
-      map['vanigar_id'] = Variable<int>(vanigarId.value);
+    if (vaangunarId.present) {
+      map['vaangunar_id'] = Variable<int>(vaangunarId.value);
     }
-    if (vanigarPeyar.present) {
-      map['vanigar_peyar'] = Variable<String>(
-          $PatrugalTableTable.$convertervanigarPeyar.toSql(vanigarPeyar.value));
+    if (vaangunarPeyar.present) {
+      map['vaangunar_peyar'] = Variable<String>($PatrugalTableTable
+          .$convertervaangunarPeyar
+          .toSql(vaangunarPeyar.value));
     }
-    if (vanigarMunvari.present) {
-      map['vanigar_munvari'] = Variable<String>($PatrugalTableTable
-          .$convertervanigarMunvari
-          .toSql(vanigarMunvari.value));
+    if (vaangunarMunvari.present) {
+      map['vaangunar_munvari'] = Variable<String>($PatrugalTableTable
+          .$convertervaangunarMunvari
+          .toSql(vaangunarMunvari.value));
     }
     if (patruNaal.present) {
       map['patru_naal'] = Variable<DateTime>(patruNaal.value);
@@ -4911,9 +4924,9 @@ class PatrugalTableCompanion extends UpdateCompanion<PatrugalEntry> {
           ..write('niruvanamId: $niruvanamId, ')
           ..write('patruEn: $patruEn, ')
           ..write('vanakkam: $vanakkam, ')
-          ..write('vanigarId: $vanigarId, ')
-          ..write('vanigarPeyar: $vanigarPeyar, ')
-          ..write('vanigarMunvari: $vanigarMunvari, ')
+          ..write('vaangunarId: $vaangunarId, ')
+          ..write('vaangunarPeyar: $vaangunarPeyar, ')
+          ..write('vaangunarMunvari: $vaangunarMunvari, ')
           ..write('patruNaal: $patruNaal, ')
           ..write('thogai: $thogai, ')
           ..write('seluthiVagai: $seluthiVagai, ')
@@ -5198,7 +5211,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $NiruvanaTharavugalTableTable niruvanaTharavugalTable =
       $NiruvanaTharavugalTableTable(this);
-  late final $VanigarTableTable vanigarTable = $VanigarTableTable(this);
+  late final $VaangunarTableTable vaangunarTable = $VaangunarTableTable(this);
   late final $PorulTableTable porulTable = $PorulTableTable(this);
   late final $PatrucheettuTableTable patrucheettuTable =
       $PatrucheettuTableTable(this);
@@ -5211,7 +5224,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
         niruvanaTharavugalTable,
-        vanigarTable,
+        vaangunarTable,
         porulTable,
         patrucheettuTable,
         patrugalTable,
@@ -5851,7 +5864,7 @@ typedef $$NiruvanaTharavugalTableTableProcessedTableManager
         ),
         NiruvanaTharavugalEntry,
         PrefetchHooks Function()>;
-typedef $$VanigarTableTableCreateCompanionBuilder = VanigarTableCompanion
+typedef $$VaangunarTableTableCreateCompanionBuilder = VaangunarTableCompanion
     Function({
   Value<int> id,
   required String seyaliVagai,
@@ -5871,7 +5884,7 @@ typedef $$VanigarTableTableCreateCompanionBuilder = VanigarTableCompanion
   Value<bool> isDeleted,
   Value<DateTime?> deletedAt,
 });
-typedef $$VanigarTableTableUpdateCompanionBuilder = VanigarTableCompanion
+typedef $$VaangunarTableTableUpdateCompanionBuilder = VaangunarTableCompanion
     Function({
   Value<int> id,
   Value<String> seyaliVagai,
@@ -5892,9 +5905,9 @@ typedef $$VanigarTableTableUpdateCompanionBuilder = VanigarTableCompanion
   Value<DateTime?> deletedAt,
 });
 
-class $$VanigarTableTableFilterComposer
-    extends Composer<_$AppDatabase, $VanigarTableTable> {
-  $$VanigarTableTableFilterComposer({
+class $$VaangunarTableTableFilterComposer
+    extends Composer<_$AppDatabase, $VaangunarTableTable> {
+  $$VaangunarTableTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -5975,9 +5988,9 @@ class $$VanigarTableTableFilterComposer
       column: $table.deletedAt, builder: (column) => ColumnFilters(column));
 }
 
-class $$VanigarTableTableOrderingComposer
-    extends Composer<_$AppDatabase, $VanigarTableTable> {
-  $$VanigarTableTableOrderingComposer({
+class $$VaangunarTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $VaangunarTableTable> {
+  $$VaangunarTableTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -6038,9 +6051,9 @@ class $$VanigarTableTableOrderingComposer
       column: $table.deletedAt, builder: (column) => ColumnOrderings(column));
 }
 
-class $$VanigarTableTableAnnotationComposer
-    extends Composer<_$AppDatabase, $VanigarTableTable> {
-  $$VanigarTableTableAnnotationComposer({
+class $$VaangunarTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $VaangunarTableTable> {
+  $$VaangunarTableTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -6100,31 +6113,32 @@ class $$VanigarTableTableAnnotationComposer
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
 }
 
-class $$VanigarTableTableTableManager extends RootTableManager<
+class $$VaangunarTableTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $VanigarTableTable,
-    VanigarEntry,
-    $$VanigarTableTableFilterComposer,
-    $$VanigarTableTableOrderingComposer,
-    $$VanigarTableTableAnnotationComposer,
-    $$VanigarTableTableCreateCompanionBuilder,
-    $$VanigarTableTableUpdateCompanionBuilder,
+    $VaangunarTableTable,
+    VaangunarEntry,
+    $$VaangunarTableTableFilterComposer,
+    $$VaangunarTableTableOrderingComposer,
+    $$VaangunarTableTableAnnotationComposer,
+    $$VaangunarTableTableCreateCompanionBuilder,
+    $$VaangunarTableTableUpdateCompanionBuilder,
     (
-      VanigarEntry,
-      BaseReferences<_$AppDatabase, $VanigarTableTable, VanigarEntry>
+      VaangunarEntry,
+      BaseReferences<_$AppDatabase, $VaangunarTableTable, VaangunarEntry>
     ),
-    VanigarEntry,
+    VaangunarEntry,
     PrefetchHooks Function()> {
-  $$VanigarTableTableTableManager(_$AppDatabase db, $VanigarTableTable table)
+  $$VaangunarTableTableTableManager(
+      _$AppDatabase db, $VaangunarTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$VanigarTableTableFilterComposer($db: db, $table: table),
+              $$VaangunarTableTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$VanigarTableTableOrderingComposer($db: db, $table: table),
+              $$VaangunarTableTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$VanigarTableTableAnnotationComposer($db: db, $table: table),
+              $$VaangunarTableTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
             Value<String> seyaliVagai = const Value.absent(),
@@ -6144,7 +6158,7 @@ class $$VanigarTableTableTableManager extends RootTableManager<
             Value<bool> isDeleted = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
           }) =>
-              VanigarTableCompanion(
+              VaangunarTableCompanion(
             id: id,
             seyaliVagai: seyaliVagai,
             peyar: peyar,
@@ -6182,7 +6196,7 @@ class $$VanigarTableTableTableManager extends RootTableManager<
             Value<bool> isDeleted = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
           }) =>
-              VanigarTableCompanion.insert(
+              VaangunarTableCompanion.insert(
             id: id,
             seyaliVagai: seyaliVagai,
             peyar: peyar,
@@ -6208,20 +6222,20 @@ class $$VanigarTableTableTableManager extends RootTableManager<
         ));
 }
 
-typedef $$VanigarTableTableProcessedTableManager = ProcessedTableManager<
+typedef $$VaangunarTableTableProcessedTableManager = ProcessedTableManager<
     _$AppDatabase,
-    $VanigarTableTable,
-    VanigarEntry,
-    $$VanigarTableTableFilterComposer,
-    $$VanigarTableTableOrderingComposer,
-    $$VanigarTableTableAnnotationComposer,
-    $$VanigarTableTableCreateCompanionBuilder,
-    $$VanigarTableTableUpdateCompanionBuilder,
+    $VaangunarTableTable,
+    VaangunarEntry,
+    $$VaangunarTableTableFilterComposer,
+    $$VaangunarTableTableOrderingComposer,
+    $$VaangunarTableTableAnnotationComposer,
+    $$VaangunarTableTableCreateCompanionBuilder,
+    $$VaangunarTableTableUpdateCompanionBuilder,
     (
-      VanigarEntry,
-      BaseReferences<_$AppDatabase, $VanigarTableTable, VanigarEntry>
+      VaangunarEntry,
+      BaseReferences<_$AppDatabase, $VaangunarTableTable, VaangunarEntry>
     ),
-    VanigarEntry,
+    VaangunarEntry,
     PrefetchHooks Function()>;
 typedef $$PorulTableTableCreateCompanionBuilder = PorulTableCompanion Function({
   Value<int> id,
@@ -6500,9 +6514,9 @@ typedef $$PatrucheettuTableTableCreateCompanionBuilder
   required int finYear,
   Value<int> vanakkam,
   Value<String> pattiyalVagai,
-  Value<int?> vanigarId,
-  Value<Map<String, String>> vanigarPeyar,
-  Value<Map<String, String>> vanigarMunvari,
+  Value<int?> vaangunarId,
+  Value<Map<String, String>> vaangunarPeyar,
+  Value<Map<String, String>> vaangunarMunvari,
   Value<DateTime> pattiyalNaal,
   Value<String> tharavugal,
   Value<double> mothaThogai,
@@ -6532,9 +6546,9 @@ typedef $$PatrucheettuTableTableUpdateCompanionBuilder
   Value<int> finYear,
   Value<int> vanakkam,
   Value<String> pattiyalVagai,
-  Value<int?> vanigarId,
-  Value<Map<String, String>> vanigarPeyar,
-  Value<Map<String, String>> vanigarMunvari,
+  Value<int?> vaangunarId,
+  Value<Map<String, String>> vaangunarPeyar,
+  Value<Map<String, String>> vaangunarMunvari,
   Value<DateTime> pattiyalNaal,
   Value<String> tharavugal,
   Value<double> mothaThogai,
@@ -6587,19 +6601,19 @@ class $$PatrucheettuTableTableFilterComposer
   ColumnFilters<String> get pattiyalVagai => $composableBuilder(
       column: $table.pattiyalVagai, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get vanigarId => $composableBuilder(
-      column: $table.vanigarId, builder: (column) => ColumnFilters(column));
+  ColumnFilters<int> get vaangunarId => $composableBuilder(
+      column: $table.vaangunarId, builder: (column) => ColumnFilters(column));
 
   ColumnWithTypeConverterFilters<Map<String, String>, Map<String, String>,
           String>
-      get vanigarPeyar => $composableBuilder(
-          column: $table.vanigarPeyar,
+      get vaangunarPeyar => $composableBuilder(
+          column: $table.vaangunarPeyar,
           builder: (column) => ColumnWithTypeConverterFilters(column));
 
   ColumnWithTypeConverterFilters<Map<String, String>, Map<String, String>,
           String>
-      get vanigarMunvari => $composableBuilder(
-          column: $table.vanigarMunvari,
+      get vaangunarMunvari => $composableBuilder(
+          column: $table.vaangunarMunvari,
           builder: (column) => ColumnWithTypeConverterFilters(column));
 
   ColumnFilters<DateTime> get pattiyalNaal => $composableBuilder(
@@ -6697,15 +6711,15 @@ class $$PatrucheettuTableTableOrderingComposer
       column: $table.pattiyalVagai,
       builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get vanigarId => $composableBuilder(
-      column: $table.vanigarId, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<int> get vaangunarId => $composableBuilder(
+      column: $table.vaangunarId, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get vanigarPeyar => $composableBuilder(
-      column: $table.vanigarPeyar,
+  ColumnOrderings<String> get vaangunarPeyar => $composableBuilder(
+      column: $table.vaangunarPeyar,
       builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get vanigarMunvari => $composableBuilder(
-      column: $table.vanigarMunvari,
+  ColumnOrderings<String> get vaangunarMunvari => $composableBuilder(
+      column: $table.vaangunarMunvari,
       builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<DateTime> get pattiyalNaal => $composableBuilder(
@@ -6805,16 +6819,16 @@ class $$PatrucheettuTableTableAnnotationComposer
   GeneratedColumn<String> get pattiyalVagai => $composableBuilder(
       column: $table.pattiyalVagai, builder: (column) => column);
 
-  GeneratedColumn<int> get vanigarId =>
-      $composableBuilder(column: $table.vanigarId, builder: (column) => column);
+  GeneratedColumn<int> get vaangunarId => $composableBuilder(
+      column: $table.vaangunarId, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<Map<String, String>, String>
-      get vanigarPeyar => $composableBuilder(
-          column: $table.vanigarPeyar, builder: (column) => column);
+      get vaangunarPeyar => $composableBuilder(
+          column: $table.vaangunarPeyar, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<Map<String, String>, String>
-      get vanigarMunvari => $composableBuilder(
-          column: $table.vanigarMunvari, builder: (column) => column);
+      get vaangunarMunvari => $composableBuilder(
+          column: $table.vaangunarMunvari, builder: (column) => column);
 
   GeneratedColumn<DateTime> get pattiyalNaal => $composableBuilder(
       column: $table.pattiyalNaal, builder: (column) => column);
@@ -6909,9 +6923,9 @@ class $$PatrucheettuTableTableTableManager extends RootTableManager<
             Value<int> finYear = const Value.absent(),
             Value<int> vanakkam = const Value.absent(),
             Value<String> pattiyalVagai = const Value.absent(),
-            Value<int?> vanigarId = const Value.absent(),
-            Value<Map<String, String>> vanigarPeyar = const Value.absent(),
-            Value<Map<String, String>> vanigarMunvari = const Value.absent(),
+            Value<int?> vaangunarId = const Value.absent(),
+            Value<Map<String, String>> vaangunarPeyar = const Value.absent(),
+            Value<Map<String, String>> vaangunarMunvari = const Value.absent(),
             Value<DateTime> pattiyalNaal = const Value.absent(),
             Value<String> tharavugal = const Value.absent(),
             Value<double> mothaThogai = const Value.absent(),
@@ -6940,9 +6954,9 @@ class $$PatrucheettuTableTableTableManager extends RootTableManager<
             finYear: finYear,
             vanakkam: vanakkam,
             pattiyalVagai: pattiyalVagai,
-            vanigarId: vanigarId,
-            vanigarPeyar: vanigarPeyar,
-            vanigarMunvari: vanigarMunvari,
+            vaangunarId: vaangunarId,
+            vaangunarPeyar: vaangunarPeyar,
+            vaangunarMunvari: vaangunarMunvari,
             pattiyalNaal: pattiyalNaal,
             tharavugal: tharavugal,
             mothaThogai: mothaThogai,
@@ -6971,9 +6985,9 @@ class $$PatrucheettuTableTableTableManager extends RootTableManager<
             required int finYear,
             Value<int> vanakkam = const Value.absent(),
             Value<String> pattiyalVagai = const Value.absent(),
-            Value<int?> vanigarId = const Value.absent(),
-            Value<Map<String, String>> vanigarPeyar = const Value.absent(),
-            Value<Map<String, String>> vanigarMunvari = const Value.absent(),
+            Value<int?> vaangunarId = const Value.absent(),
+            Value<Map<String, String>> vaangunarPeyar = const Value.absent(),
+            Value<Map<String, String>> vaangunarMunvari = const Value.absent(),
             Value<DateTime> pattiyalNaal = const Value.absent(),
             Value<String> tharavugal = const Value.absent(),
             Value<double> mothaThogai = const Value.absent(),
@@ -7002,9 +7016,9 @@ class $$PatrucheettuTableTableTableManager extends RootTableManager<
             finYear: finYear,
             vanakkam: vanakkam,
             pattiyalVagai: pattiyalVagai,
-            vanigarId: vanigarId,
-            vanigarPeyar: vanigarPeyar,
-            vanigarMunvari: vanigarMunvari,
+            vaangunarId: vaangunarId,
+            vaangunarPeyar: vaangunarPeyar,
+            vaangunarMunvari: vaangunarMunvari,
             pattiyalNaal: pattiyalNaal,
             tharavugal: tharavugal,
             mothaThogai: mothaThogai,
@@ -7054,9 +7068,9 @@ typedef $$PatrugalTableTableCreateCompanionBuilder = PatrugalTableCompanion
   Value<int?> niruvanamId,
   required String patruEn,
   Value<int> vanakkam,
-  Value<int?> vanigarId,
-  Value<Map<String, String>> vanigarPeyar,
-  Value<Map<String, String>> vanigarMunvari,
+  Value<int?> vaangunarId,
+  Value<Map<String, String>> vaangunarPeyar,
+  Value<Map<String, String>> vaangunarMunvari,
   Value<DateTime> patruNaal,
   Value<double> thogai,
   Value<String> seluthiVagai,
@@ -7073,9 +7087,9 @@ typedef $$PatrugalTableTableUpdateCompanionBuilder = PatrugalTableCompanion
   Value<int?> niruvanamId,
   Value<String> patruEn,
   Value<int> vanakkam,
-  Value<int?> vanigarId,
-  Value<Map<String, String>> vanigarPeyar,
-  Value<Map<String, String>> vanigarMunvari,
+  Value<int?> vaangunarId,
+  Value<Map<String, String>> vaangunarPeyar,
+  Value<Map<String, String>> vaangunarMunvari,
   Value<DateTime> patruNaal,
   Value<double> thogai,
   Value<String> seluthiVagai,
@@ -7110,19 +7124,19 @@ class $$PatrugalTableTableFilterComposer
   ColumnFilters<int> get vanakkam => $composableBuilder(
       column: $table.vanakkam, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get vanigarId => $composableBuilder(
-      column: $table.vanigarId, builder: (column) => ColumnFilters(column));
+  ColumnFilters<int> get vaangunarId => $composableBuilder(
+      column: $table.vaangunarId, builder: (column) => ColumnFilters(column));
 
   ColumnWithTypeConverterFilters<Map<String, String>, Map<String, String>,
           String>
-      get vanigarPeyar => $composableBuilder(
-          column: $table.vanigarPeyar,
+      get vaangunarPeyar => $composableBuilder(
+          column: $table.vaangunarPeyar,
           builder: (column) => ColumnWithTypeConverterFilters(column));
 
   ColumnWithTypeConverterFilters<Map<String, String>, Map<String, String>,
           String>
-      get vanigarMunvari => $composableBuilder(
-          column: $table.vanigarMunvari,
+      get vaangunarMunvari => $composableBuilder(
+          column: $table.vaangunarMunvari,
           builder: (column) => ColumnWithTypeConverterFilters(column));
 
   ColumnFilters<DateTime> get patruNaal => $composableBuilder(
@@ -7174,15 +7188,15 @@ class $$PatrugalTableTableOrderingComposer
   ColumnOrderings<int> get vanakkam => $composableBuilder(
       column: $table.vanakkam, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get vanigarId => $composableBuilder(
-      column: $table.vanigarId, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<int> get vaangunarId => $composableBuilder(
+      column: $table.vaangunarId, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get vanigarPeyar => $composableBuilder(
-      column: $table.vanigarPeyar,
+  ColumnOrderings<String> get vaangunarPeyar => $composableBuilder(
+      column: $table.vaangunarPeyar,
       builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get vanigarMunvari => $composableBuilder(
-      column: $table.vanigarMunvari,
+  ColumnOrderings<String> get vaangunarMunvari => $composableBuilder(
+      column: $table.vaangunarMunvari,
       builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<DateTime> get patruNaal => $composableBuilder(
@@ -7235,16 +7249,16 @@ class $$PatrugalTableTableAnnotationComposer
   GeneratedColumn<int> get vanakkam =>
       $composableBuilder(column: $table.vanakkam, builder: (column) => column);
 
-  GeneratedColumn<int> get vanigarId =>
-      $composableBuilder(column: $table.vanigarId, builder: (column) => column);
+  GeneratedColumn<int> get vaangunarId => $composableBuilder(
+      column: $table.vaangunarId, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<Map<String, String>, String>
-      get vanigarPeyar => $composableBuilder(
-          column: $table.vanigarPeyar, builder: (column) => column);
+      get vaangunarPeyar => $composableBuilder(
+          column: $table.vaangunarPeyar, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<Map<String, String>, String>
-      get vanigarMunvari => $composableBuilder(
-          column: $table.vanigarMunvari, builder: (column) => column);
+      get vaangunarMunvari => $composableBuilder(
+          column: $table.vaangunarMunvari, builder: (column) => column);
 
   GeneratedColumn<DateTime> get patruNaal =>
       $composableBuilder(column: $table.patruNaal, builder: (column) => column);
@@ -7302,9 +7316,9 @@ class $$PatrugalTableTableTableManager extends RootTableManager<
             Value<int?> niruvanamId = const Value.absent(),
             Value<String> patruEn = const Value.absent(),
             Value<int> vanakkam = const Value.absent(),
-            Value<int?> vanigarId = const Value.absent(),
-            Value<Map<String, String>> vanigarPeyar = const Value.absent(),
-            Value<Map<String, String>> vanigarMunvari = const Value.absent(),
+            Value<int?> vaangunarId = const Value.absent(),
+            Value<Map<String, String>> vaangunarPeyar = const Value.absent(),
+            Value<Map<String, String>> vaangunarMunvari = const Value.absent(),
             Value<DateTime> patruNaal = const Value.absent(),
             Value<double> thogai = const Value.absent(),
             Value<String> seluthiVagai = const Value.absent(),
@@ -7320,9 +7334,9 @@ class $$PatrugalTableTableTableManager extends RootTableManager<
             niruvanamId: niruvanamId,
             patruEn: patruEn,
             vanakkam: vanakkam,
-            vanigarId: vanigarId,
-            vanigarPeyar: vanigarPeyar,
-            vanigarMunvari: vanigarMunvari,
+            vaangunarId: vaangunarId,
+            vaangunarPeyar: vaangunarPeyar,
+            vaangunarMunvari: vaangunarMunvari,
             patruNaal: patruNaal,
             thogai: thogai,
             seluthiVagai: seluthiVagai,
@@ -7338,9 +7352,9 @@ class $$PatrugalTableTableTableManager extends RootTableManager<
             Value<int?> niruvanamId = const Value.absent(),
             required String patruEn,
             Value<int> vanakkam = const Value.absent(),
-            Value<int?> vanigarId = const Value.absent(),
-            Value<Map<String, String>> vanigarPeyar = const Value.absent(),
-            Value<Map<String, String>> vanigarMunvari = const Value.absent(),
+            Value<int?> vaangunarId = const Value.absent(),
+            Value<Map<String, String>> vaangunarPeyar = const Value.absent(),
+            Value<Map<String, String>> vaangunarMunvari = const Value.absent(),
             Value<DateTime> patruNaal = const Value.absent(),
             Value<double> thogai = const Value.absent(),
             Value<String> seluthiVagai = const Value.absent(),
@@ -7356,9 +7370,9 @@ class $$PatrugalTableTableTableManager extends RootTableManager<
             niruvanamId: niruvanamId,
             patruEn: patruEn,
             vanakkam: vanakkam,
-            vanigarId: vanigarId,
-            vanigarPeyar: vanigarPeyar,
-            vanigarMunvari: vanigarMunvari,
+            vaangunarId: vaangunarId,
+            vaangunarPeyar: vaangunarPeyar,
+            vaangunarMunvari: vaangunarMunvari,
             patruNaal: patruNaal,
             thogai: thogai,
             seluthiVagai: seluthiVagai,
@@ -7555,8 +7569,8 @@ class $AppDatabaseManager {
   $$NiruvanaTharavugalTableTableTableManager get niruvanaTharavugalTable =>
       $$NiruvanaTharavugalTableTableTableManager(
           _db, _db.niruvanaTharavugalTable);
-  $$VanigarTableTableTableManager get vanigarTable =>
-      $$VanigarTableTableTableManager(_db, _db.vanigarTable);
+  $$VaangunarTableTableTableManager get vaangunarTable =>
+      $$VaangunarTableTableTableManager(_db, _db.vaangunarTable);
   $$PorulTableTableTableManager get porulTable =>
       $$PorulTableTableTableManager(_db, _db.porulTable);
   $$PatrucheettuTableTableTableManager get patrucheettuTable =>

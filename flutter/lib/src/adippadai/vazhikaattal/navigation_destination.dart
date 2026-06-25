@@ -7,7 +7,7 @@ enum NirilDestination {
   mugappu, // Home / Dashboard
   pattiyal, // Invoices
   raseethu, // Receipts
-  vanigar, // Merchants
+  vaangunar, // Merchants
   porul, // Products / Inventory
   settings, // Settings (desktop state-driven only)
   reports, // Reports (desktop state-driven only)
@@ -34,7 +34,7 @@ extension NirilDestinationX on NirilDestination {
     NirilDestination.pattiyal,
     NirilDestination.raseethu,
     NirilDestination.porul,
-    NirilDestination.vanigar,
+    NirilDestination.vaangunar,
   ];
 
   /// Whether this destination is a primary tab (not settings/reports/gst).
@@ -51,7 +51,7 @@ extension NirilDestinationX on NirilDestination {
         NirilDestination.pattiyal => 1,
         NirilDestination.raseethu => 1,
         NirilDestination.porul => 2,
-        NirilDestination.vanigar => 3,
+        NirilDestination.vaangunar => 3,
         // Custom views don't have a tab — return 0 (home) as fallback
         _ => 0,
       };
@@ -62,7 +62,7 @@ extension NirilDestinationX on NirilDestination {
         NirilDestination.pattiyal => 1,
         NirilDestination.raseethu => 2,
         NirilDestination.porul => 3,
-        NirilDestination.vanigar => 4,
+        NirilDestination.vaangunar => 4,
         // Custom views don't have a sidebar item, return -1
         _ => -1,
       };

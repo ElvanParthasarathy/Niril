@@ -20,7 +20,7 @@ import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import 'koorugal/patru_pattiyal_theervu_maeladukku.dart';
 import 'koorugal/patru_thiruthi_paguthigal.dart';
 import '../koorugal/elvan_pattiyal_tharavugal_kooru.dart';
-import '../koorugal/vanigar_thaedu_kooru.dart';
+import '../koorugal/vaangunar_thaedu_kooru.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
@@ -46,9 +46,9 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   NiruvanaTharavugal? _selectedProfile;
 
   // ── Customer ──
-  int? _selectedVanigarId;
-  Map<String, String> _vanigarPeyarMap = {};
-  Map<String, String> _vanigarMunvariMap = {};
+  int? _selectedVaangunarId;
+  Map<String, String> _vaangunarPeyarMap = {};
+  Map<String, String> _vaangunarMunvariMap = {};
 
   // ── Receipt Data ──
   DateTime _patruNaal = DateTime.now();
@@ -86,9 +86,9 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     final entry = widget.editingEntry;
     if (entry != null) {
       _selectedNiruvanamId = entry.niruvanamId;
-      _selectedVanigarId = entry.vanigarId;
-      _vanigarPeyarMap = entry.vanigarPeyar;
-      _vanigarMunvariMap = entry.vanigarMunvari;
+      _selectedVaangunarId = entry.vaangunarId;
+      _vaangunarPeyarMap = entry.vaangunarPeyar;
+      _vaangunarMunvariMap = entry.vaangunarMunvari;
       _patruNaal = entry.patruNaal;
       _patruEn = entry.patruEn;
       _vanakkam = entry.vanakkam;
@@ -170,9 +170,9 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   // ── Save ──
   Future<void> _handleSave() async {
     // Validation
-    final peyarTamil = _vanigarPeyarMap['Tamil'] ?? '';
+    final peyarTamil = _vaangunarPeyarMap['Tamil'] ?? '';
     if (peyarTamil.trim().isEmpty) {
-      ElvanSnackbar.show(context, K.vanigarPeyarThaevai.tr(context, ref));
+      ElvanSnackbar.show(context, K.vaangunarPeyarThaevai.tr(context, ref));
       return;
     }
     if (_thogai <= 0) {
@@ -245,9 +245,9 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
         niruvanamId: Value(_selectedNiruvanamId),
         patruEn: Value(_patruEn),
         vanakkam: Value(_vanakkam),
-        vanigarId: Value(_selectedVanigarId),
-        vanigarPeyar: Value(_vanigarPeyarMap),
-        vanigarMunvari: Value(_vanigarMunvariMap),
+        vaangunarId: Value(_selectedVaangunarId),
+        vaangunarPeyar: Value(_vaangunarPeyarMap),
+        vaangunarMunvari: Value(_vaangunarMunvariMap),
         patruNaal: Value(_patruNaal),
         thogai: Value(_thogai),
         seluthiVagai: Value(_seluthiVagai!.storedValue),
@@ -455,7 +455,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
         // 2. Customer Selector / Info
         Text(
-          K.vanigar.tr(context, ref),
+          K.vaangunar.tr(context, ref),
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
@@ -485,7 +485,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      K.pattiyalThaervukkuPinVanigarTharavugalNirappappadum.tr(context, ref),
+                      K.pattiyalThaervukkuPinVaangunarTharavugalNirappappadum.tr(context, ref),
                       style: TextStyle(
                           color: isDark ? Colors.white70 : Colors.black87),
                     ),
@@ -495,14 +495,14 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
             )
         ] else ...[
           // Advance Mode — manual selection
-          if (_selectedVanigarId == null)
-            VanigarThaeduKooru(
+          if (_selectedVaangunarId == null)
+            VaangunarThaeduKooru(
               seyaliVagai: seyaliVagai,
-              selectedId: _selectedVanigarId,
+              selectedId: _selectedVaangunarId,
               onSelected: (v) {
                 setState(() {
-                  _selectedVanigarId = v.id;
-                  _vanigarPeyarMap = Map<String, String>.from(v.peyar);
+                  _selectedVaangunarId = v.id;
+                  _vaangunarPeyarMap = Map<String, String>.from(v.peyar);
 
                   final tamilAddr = [
                     if (v.oor['Tamil']?.isNotEmpty == true) v.oor['Tamil'],
@@ -516,7 +516,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                       v.maavattam['English'],
                   ].where((e) => e != null).join(', ');
 
-                  _vanigarMunvariMap = {
+                  _vaangunarMunvariMap = {
                     'Tamil': tamilAddr.isNotEmpty
                         ? tamilAddr
                         : (v.mugavari['Tamil'] ?? ''),
@@ -560,16 +560,16 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _vanigarPeyarMap['Tamil'] ?? '',
+                    _vaangunarPeyarMap['Tamil'] ?? '',
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),
                   ),
-                  if (_vanigarMunvariMap['Tamil']?.isNotEmpty == true) ...[
+                  if (_vaangunarMunvariMap['Tamil']?.isNotEmpty == true) ...[
                     const SizedBox(height: 4),
                     Text(
-                      _vanigarMunvariMap['Tamil'] ?? '',
+                      _vaangunarMunvariMap['Tamil'] ?? '',
                       style: TextStyle(
                         color: isDark ? Colors.white60 : Colors.black54,
                         fontSize: 13,
@@ -589,9 +589,9 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                 tooltip: K.maatru.tr(context, ref), // Change
                 onPressed: () {
                   setState(() {
-                    _selectedVanigarId = null;
-                    _vanigarPeyarMap.clear();
-                    _vanigarMunvariMap.clear();
+                    _selectedVaangunarId = null;
+                    _vaangunarPeyarMap.clear();
+                    _vaangunarMunvariMap.clear();
                   });
                 },
               ),
@@ -668,10 +668,10 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     final first = _selectedInvoices.first;
 
     // Auto-fill customer from first invoice (if not already set)
-    if (_selectedVanigarId == null && first.vanigarId != null) {
-      _selectedVanigarId = first.vanigarId;
-      _vanigarPeyarMap = first.vanigarPeyar;
-      _vanigarMunvariMap = first.vanigarMunvari;
+    if (_selectedVaangunarId == null && first.vaangunarId != null) {
+      _selectedVaangunarId = first.vaangunarId;
+      _vaangunarPeyarMap = first.vaangunarPeyar;
+      _vaangunarMunvariMap = first.vaangunarMunvari;
     }
   }
 

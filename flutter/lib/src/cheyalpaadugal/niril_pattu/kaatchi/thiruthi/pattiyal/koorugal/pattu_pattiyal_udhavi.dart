@@ -23,9 +23,9 @@ import '../../../thiraigal/amaippugal/pattu_mugavari_tharavu.dart';
 class PattuThiruththiNilaimai {
   const PattuThiruththiNilaimai({
     this.selectedNiruvanamId,
-    this.selectedVanigarId,
-    this.selectedVanigarPeyarMap = const {},
-    this.selectedVanigarMunvariMap = const {},
+    this.selectedVaangunarId,
+    this.selectedVaangunarPeyarMap = const {},
+    this.selectedVaangunarMunvariMap = const {},
     this.customerState = '',
     this.pattiyalVagai = 'tax-invoice',
     required this.pattiyalNaal,
@@ -38,9 +38,9 @@ class PattuThiruththiNilaimai {
   });
 
   final int? selectedNiruvanamId;
-  final int? selectedVanigarId;
-  final Map<String, String> selectedVanigarPeyarMap;
-  final Map<String, String> selectedVanigarMunvariMap;
+  final int? selectedVaangunarId;
+  final Map<String, String> selectedVaangunarPeyarMap;
+  final Map<String, String> selectedVaangunarMunvariMap;
   final String customerState;
   final String pattiyalVagai;
   final DateTime pattiyalNaal;
@@ -100,9 +100,9 @@ class PattuPattiyalUthavi {
 
     return PattuThiruththiNilaimai(
       selectedNiruvanamId: entry.niruvanamId,
-      selectedVanigarId: entry.vanigarId,
-      selectedVanigarPeyarMap: entry.vanigarPeyar,
-      selectedVanigarMunvariMap: entry.vanigarMunvari,
+      selectedVaangunarId: entry.vaangunarId,
+      selectedVaangunarPeyarMap: entry.vaangunarPeyar,
+      selectedVaangunarMunvariMap: entry.vaangunarMunvari,
       pattiyalVagai: entry.pattiyalVagai,
       pattiyalNaal: isDuplicate ? DateTime.now() : entry.pattiyalNaal,
       placeOfSupply: placeOfSupply,
@@ -177,9 +177,9 @@ class PattuPattiyalUthavi {
               ? Value(finalBillNumber)
               : const Value.absent(),
           niruvanamId: Value(state.selectedNiruvanamId),
-          vanigarId: Value(state.selectedVanigarId),
-          vanigarPeyar: Value(state.selectedVanigarPeyarMap),
-          vanigarMunvari: Value(state.selectedVanigarMunvariMap),
+          vaangunarId: Value(state.selectedVaangunarId),
+          vaangunarPeyar: Value(state.selectedVaangunarPeyarMap),
+          vaangunarMunvari: Value(state.selectedVaangunarMunvariMap),
           pattiyalVagai: Value(state.pattiyalVagai),
           pattiyalNaal: Value(state.pattiyalNaal),
           tharavugal: Value(PattiyalUthavigal.pattuListToJson(validItems)),
@@ -200,9 +200,9 @@ class PattuPattiyalUthavi {
           finYear: finYear,
           vanakkam: Value(vanakkam),
           niruvanamId: Value(state.selectedNiruvanamId),
-          vanigarPeyar: Value(state.selectedVanigarPeyarMap),
-          vanigarMunvari: Value(state.selectedVanigarMunvariMap),
-          vanigarId: Value(state.selectedVanigarId),
+          vaangunarPeyar: Value(state.selectedVaangunarPeyarMap),
+          vaangunarMunvari: Value(state.selectedVaangunarMunvariMap),
+          vaangunarId: Value(state.selectedVaangunarId),
           pattiyalVagai: Value(state.pattiyalVagai),
           pattiyalNaal: Value(state.pattiyalNaal),
           tharavugal: Value(PattiyalUthavigal.pattuListToJson(validItems)),
@@ -225,9 +225,9 @@ class PattuPattiyalUthavi {
     try {
       final prefs = await SharedPreferences.getInstance();
       final draft = jsonEncode({
-        'vanigarId': state.selectedVanigarId,
-        'vanigarPeyarMap': state.selectedVanigarPeyarMap,
-        'vanigarMunvariMap': state.selectedVanigarMunvariMap,
+        'vaangunarId': state.selectedVaangunarId,
+        'vaangunarPeyarMap': state.selectedVaangunarPeyarMap,
+        'vaangunarMunvariMap': state.selectedVaangunarMunvariMap,
         'customerState': state.customerState,
         'niruvanamId': state.selectedNiruvanamId,
         'pattiyalVagai': state.pattiyalVagai,
@@ -254,8 +254,8 @@ class PattuPattiyalUthavi {
 
       final draft = jsonDecode(draftJson) as Map<String, dynamic>;
       final items = draft['items'] as String? ?? '[]';
-      final nameMap = (draft['vanigarPeyarMap'] as Map?)?.cast<String, String>() ?? {};
-      final addrMap = (draft['vanigarMunvariMap'] as Map?)?.cast<String, String>() ?? {};
+      final nameMap = (draft['vaangunarPeyarMap'] as Map?)?.cast<String, String>() ?? {};
+      final addrMap = (draft['vaangunarMunvariMap'] as Map?)?.cast<String, String>() ?? {};
       if (items == '[]' && nameMap.isEmpty) {
         await prefs.remove(_draftKey);
         return null;
@@ -284,9 +284,9 @@ class PattuPattiyalUthavi {
       if (restore == true) {
         final parsedItems = PattiyalUthavigal.pattuListFromJson(items);
         return PattuThiruththiNilaimai(
-          selectedVanigarId: draft['vanigarId'] as int?,
-          selectedVanigarPeyarMap: nameMap,
-          selectedVanigarMunvariMap: addrMap,
+          selectedVaangunarId: draft['vaangunarId'] as int?,
+          selectedVaangunarPeyarMap: nameMap,
+          selectedVaangunarMunvariMap: addrMap,
           customerState: draft['customerState'] as String? ?? '',
           selectedNiruvanamId: draft['niruvanamId'] as int?,
           pattiyalVagai: draft['pattiyalVagai'] as String? ?? 'tax-invoice',

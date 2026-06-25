@@ -23,9 +23,9 @@ class KooliThiruththiNilaimai {
   const KooliThiruththiNilaimai({
     this.selectedNiruvanamId,
     this.selectedProfile,
-    this.selectedVanigarId,
-    this.selectedVanigarPeyarMap = const {},
-    this.selectedVanigarMunvariMap = const {},
+    this.selectedVaangunarId,
+    this.selectedVaangunarPeyarMap = const {},
+    this.selectedVaangunarMunvariMap = const {},
     required this.pattiyalNaal,
     this.items = const [],
     this.setharamGrams = 0,
@@ -38,9 +38,9 @@ class KooliThiruththiNilaimai {
 
   final int? selectedNiruvanamId;
   final NiruvanaTharavugal? selectedProfile;
-  final int? selectedVanigarId;
-  final Map<String, String> selectedVanigarPeyarMap;
-  final Map<String, String> selectedVanigarMunvariMap;
+  final int? selectedVaangunarId;
+  final Map<String, String> selectedVaangunarPeyarMap;
+  final Map<String, String> selectedVaangunarMunvariMap;
   final DateTime pattiyalNaal;
   final List<KooliUrupadi> items;
   final double setharamGrams;
@@ -76,9 +76,9 @@ class KooliPattiyalUthavi {
 
     return KooliThiruththiNilaimai(
       selectedNiruvanamId: entry.niruvanamId,
-      selectedVanigarId: entry.vanigarId,
-      selectedVanigarPeyarMap: entry.vanigarPeyar,
-      selectedVanigarMunvariMap: entry.vanigarMunvari,
+      selectedVaangunarId: entry.vaangunarId,
+      selectedVaangunarPeyarMap: entry.vaangunarPeyar,
+      selectedVaangunarMunvariMap: entry.vaangunarMunvari,
       pattiyalNaal: entry.pattiyalNaal,
       items: items,
       setharamGrams: entry.setharamGrams,
@@ -157,9 +157,9 @@ class KooliPattiyalUthavi {
           vanakkam: state.invoiceNumberOverride.isNotEmpty
               ? Value(vanakkam)
               : const Value.absent(),
-          vanigarId: Value(state.selectedVanigarId),
-          vanigarPeyar: Value(state.selectedVanigarPeyarMap),
-          vanigarMunvari: Value(state.selectedVanigarMunvariMap),
+          vaangunarId: Value(state.selectedVaangunarId),
+          vaangunarPeyar: Value(state.selectedVaangunarPeyarMap),
+          vaangunarMunvari: Value(state.selectedVaangunarMunvariMap),
           niruvanamId: Value(state.selectedNiruvanamId),
           pattiyalNaal: Value(state.pattiyalNaal),
           tharavugal: Value(PattiyalUthavigal.kooliListToJson(validItems)),
@@ -184,9 +184,9 @@ class KooliPattiyalUthavi {
           finYear: finYear,
           vanakkam: Value(vanakkam),
           niruvanamId: Value(state.selectedNiruvanamId),
-          vanigarPeyar: Value(state.selectedVanigarPeyarMap),
-          vanigarMunvari: Value(state.selectedVanigarMunvariMap),
-          vanigarId: Value(state.selectedVanigarId),
+          vaangunarPeyar: Value(state.selectedVaangunarPeyarMap),
+          vaangunarMunvari: Value(state.selectedVaangunarMunvariMap),
+          vaangunarId: Value(state.selectedVaangunarId),
           pattiyalNaal: Value(state.pattiyalNaal),
           tharavugal: Value(PattiyalUthavigal.kooliListToJson(validItems)),
           mothaThogai: Value(totals.perumMothangal),
@@ -211,9 +211,9 @@ class KooliPattiyalUthavi {
     try {
       final prefs = await SharedPreferences.getInstance();
       final draft = jsonEncode({
-        'vanigarId': state.selectedVanigarId,
-        'vanigarPeyarMap': state.selectedVanigarPeyarMap,
-        'vanigarMunvariMap': state.selectedVanigarMunvariMap,
+        'vaangunarId': state.selectedVaangunarId,
+        'vaangunarPeyarMap': state.selectedVaangunarPeyarMap,
+        'vaangunarMunvariMap': state.selectedVaangunarMunvariMap,
         'niruvanamId': state.selectedNiruvanamId,
         'pattiyalNaal': state.pattiyalNaal.toIso8601String(),
         'items': PattiyalUthavigal.kooliListToJson(state.items),
@@ -240,8 +240,8 @@ class KooliPattiyalUthavi {
 
       final draft = jsonDecode(draftJson) as Map<String, dynamic>;
       final items = draft['items'] as String? ?? '[]';
-      final nameMap = (draft['vanigarPeyarMap'] as Map?)?.cast<String, String>() ?? {};
-      final addrMap = (draft['vanigarMunvariMap'] as Map?)?.cast<String, String>() ?? {};
+      final nameMap = (draft['vaangunarPeyarMap'] as Map?)?.cast<String, String>() ?? {};
+      final addrMap = (draft['vaangunarMunvariMap'] as Map?)?.cast<String, String>() ?? {};
       if (items == '[]' && nameMap.isEmpty) {
         await prefs.remove(_draftKey);
         return null;
@@ -272,9 +272,9 @@ class KooliPattiyalUthavi {
         final piraVarivugal = PattiyalUthavigal.piraVarivuListFromJson(
             draft['piraVarivugal'] as String? ?? '[]');
         return KooliThiruththiNilaimai(
-          selectedVanigarId: draft['vanigarId'] as int?,
-          selectedVanigarPeyarMap: nameMap,
-          selectedVanigarMunvariMap: addrMap,
+          selectedVaangunarId: draft['vaangunarId'] as int?,
+          selectedVaangunarPeyarMap: nameMap,
+          selectedVaangunarMunvariMap: addrMap,
           selectedNiruvanamId: draft['niruvanamId'] as int?,
           pattiyalNaal: DateTime.tryParse(
                   draft['pattiyalNaal'] as String? ?? '') ??

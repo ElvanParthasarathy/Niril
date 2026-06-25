@@ -48,12 +48,12 @@ class PatruPattiyalTheervuMaeladukku {
                 ? invoices.where((inv) {
                     final sameNiruvanam = inv.niruvanamId == firstSelected!.niruvanamId;
                     
-                    final pName1 = inv.vanigarPeyar['Tamil'] ?? inv.vanigarPeyar['English'] ?? '';
-                    final pName2 = firstSelected.vanigarPeyar['Tamil'] ?? firstSelected.vanigarPeyar['English'] ?? '';
+                    final pName1 = inv.vaangunarPeyar['Tamil'] ?? inv.vaangunarPeyar['English'] ?? '';
+                    final pName2 = firstSelected.vaangunarPeyar['Tamil'] ?? firstSelected.vaangunarPeyar['English'] ?? '';
                     final sameName = pName1 == pName2;
 
-                    final pAddr1 = inv.vanigarMunvari['Tamil'] ?? inv.vanigarMunvari['English'] ?? '';
-                    final pAddr2 = firstSelected.vanigarMunvari['Tamil'] ?? firstSelected.vanigarMunvari['English'] ?? '';
+                    final pAddr1 = inv.vaangunarMunvari['Tamil'] ?? inv.vaangunarMunvari['English'] ?? '';
+                    final pAddr2 = firstSelected.vaangunarMunvari['Tamil'] ?? firstSelected.vaangunarMunvari['English'] ?? '';
                     final sameAddr = pAddr1 == pAddr2;
 
                     return sameNiruvanam && sameName && sameAddr;
@@ -64,7 +64,7 @@ class PatruPattiyalTheervuMaeladukku {
                 ? availableInvoices
                 : availableInvoices.where((inv) {
                     final q = searchQuery.toLowerCase();
-                    final pName = (inv.vanigarPeyar['Tamil'] ?? inv.vanigarPeyar['English'] ?? '').toLowerCase();
+                    final pName = (inv.vaangunarPeyar['Tamil'] ?? inv.vaangunarPeyar['English'] ?? '').toLowerCase();
                     return inv.patrucheettuEn.toLowerCase().contains(q) ||
                         pName.contains(q);
                   }).toList();
@@ -118,7 +118,7 @@ class PatruPattiyalTheervuMaeladukku {
                       child: TextField(
                         controller: searchCtrl,
                         decoration: InputDecoration(
-                          hintText: K.pattiyalEnVanigar.tr(context, ref),
+                          hintText: K.pattiyalEnVaangunar.tr(context, ref),
                           prefixIcon:
                               const Icon(CupertinoIcons.search, size: 18),
                           border: OutlineInputBorder(
@@ -185,16 +185,16 @@ class PatruPattiyalTheervuMaeladukku {
                                       ),
                                     ],
                                   ),
-                                  subtitle: (inv.vanigarPeyar['Tamil'] ?? inv.vanigarPeyar['English'] ?? '').isNotEmpty
+                                  subtitle: (inv.vaangunarPeyar['Tamil'] ?? inv.vaangunarPeyar['English'] ?? '').isNotEmpty
                                       ? Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Text(inv.vanigarPeyar['Tamil'] ?? inv.vanigarPeyar['English'] ?? '',
+                                            Text(inv.vaangunarPeyar['Tamil'] ?? inv.vaangunarPeyar['English'] ?? '',
                                                 style: const TextStyle(fontSize: 13),
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis),
-                                            if ((inv.vanigarMunvari['Tamil'] ?? inv.vanigarMunvari['English'] ?? '').isNotEmpty)
-                                              Text(inv.vanigarMunvari['Tamil'] ?? inv.vanigarMunvari['English'] ?? '',
+                                            if ((inv.vaangunarMunvari['Tamil'] ?? inv.vaangunarMunvari['English'] ?? '').isNotEmpty)
+                                              Text(inv.vaangunarMunvari['Tamil'] ?? inv.vaangunarMunvari['English'] ?? '',
                                                   style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
                                                   maxLines: 1,
                                                   overflow: TextOverflow.ellipsis),

@@ -8,7 +8,7 @@ import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../koorugal/maeladukkugal/elvan_cheyal_maeladukku.dart';
 import '../../kalanjiyam/porul_nilaimai.dart';
-import '../../kalanjiyam/vanigar_nilaimai.dart';
+import '../../kalanjiyam/vaangunar_nilaimai.dart';
 import 'koorugal/meetpagam_koorugal.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -16,7 +16,7 @@ import 'koorugal/meetpagam_koorugal.dart';
 // ─────────────────────────────────────────────────────────────────────────────
 // Mode-aware: shows deleted items for the current mode (Coolie / Silk).
 // Currently supports: Products (Porul).
-// Future: Merchants (Vanigar), Invoices (Pattiyal), Receipts (Patrucheettu).
+// Future: Merchants (Vaangunar), Invoices (Pattiyal), Receipts (Patrucheettu).
 
 class MeetpagamThirai extends ConsumerStatefulWidget {
   const MeetpagamThirai({super.key});
@@ -32,7 +32,7 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
     // Auto-purge items older than 30 days on screen open
     Future.microtask(() {
       ref.read(porulKalanjiyamProvider).purgeExpiredPorulgal(days: 30);
-      ref.read(vanigarKalanjiyamProvider).purgeExpiredVanigargal(days: 30);
+      ref.read(vaangunarKalanjiyamProvider).purgeExpiredVaangunargal(days: 30);
     });
   }
 
@@ -41,7 +41,7 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final deletedPorulgalAsync = ref.watch(deletedPorulgalProvider);
-    final deletedVanigargalAsync = ref.watch(deletedVanigargalProvider);
+    final deletedVaangunargalAsync = ref.watch(deletedVaangunargalProvider);
     final primaryLang = ref.watch(primaryLanguageProvider);
     final secondaryLang = ref.watch(secondaryLanguageProvider);
 
@@ -67,10 +67,10 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
         loading: () => const Center(child: CupertinoActivityIndicator()),
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (deletedPorulgal) {
-          final deletedVanigargal =
-              deletedVanigargalAsync.value ?? [];
+          final deletedVaangunargal =
+              deletedVaangunargalAsync.value ?? [];
 
-          if (deletedPorulgal.isEmpty && deletedVanigargal.isEmpty) {
+          if (deletedPorulgal.isEmpty && deletedVaangunargal.isEmpty) {
             return MeetpagamVeliNilai(isDark: isDark);
           }
 
@@ -106,24 +106,24 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
               ],
 
               // ── Section: Deleted Merchants ──
-              if (deletedVanigargal.isNotEmpty) ...[
+              if (deletedVaangunargal.isNotEmpty) ...[
                 MeetpagamPaguthiThalaipu(
-                  title: K.azhikkappattaVanigargal.tr(context, ref),
-                  count: deletedVanigargal.length,
+                  title: K.azhikkappattaVaangunargal.tr(context, ref),
+                  count: deletedVaangunargal.length,
                   isDark: isDark,
                 ),
                 const SizedBox(height: 8),
-                ...deletedVanigargal.map(
-                  (vanigar) => MeetpagamAzhippuAttai(
-                    primaryText: vanigar.peyar[primaryLang] ?? '',
-                    secondaryText: vanigar.peyar[secondaryLang] ?? '',
+                ...deletedVaangunargal.map(
+                  (vaangunar) => MeetpagamAzhippuAttai(
+                    primaryText: vaangunar.peyar[primaryLang] ?? '',
+                    secondaryText: vaangunar.peyar[secondaryLang] ?? '',
                     icon: CupertinoIcons.person,
-                    deletedAt: vanigar.deletedAt,
+                    deletedAt: vaangunar.deletedAt,
                     isDark: isDark,
                     onRestore: () =>
-                        _restoreVanigar(context, ref, vanigar),
+                        _restoreVaangunar(context, ref, vaangunar),
                     onPermanentDelete: () =>
-                        _permanentDeleteVanigar(context, ref, vanigar),
+                        _permanentDeleteVaangunar(context, ref, vaangunar),
                   ),
                 ),
               ],
@@ -165,11 +165,11 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
     );
   }
 
-  void _restoreVanigar(
-      BuildContext context, WidgetRef ref, VanigarEntry vanigar) {
-    ref.read(vanigarKalanjiyamProvider).restoreVanigar(vanigar.id);
-    ref.invalidate(vanigargalProvider);
-    ref.invalidate(deletedVanigargalProvider);
+  void _restoreVaangunar(
+      BuildContext context, WidgetRef ref, VaangunarEntry vaangunar) {
+    ref.read(vaangunarKalanjiyamProvider).restoreVaangunar(vaangunar.id);
+    ref.invalidate(vaangunargalProvider);
+    ref.invalidate(deletedVaangunargalProvider);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(K.meeteduppuVetri.tr(context, ref)),
@@ -179,8 +179,8 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
     );
   }
 
-  void _permanentDeleteVanigar(
-      BuildContext context, WidgetRef ref, VanigarEntry vanigar) {
+  void _permanentDeleteVaangunar(
+      BuildContext context, WidgetRef ref, VaangunarEntry vaangunar) {
     showElvanActionSheet(
       context: context,
       title: K.nirandharaAzhippuUrudhi.tr(context, ref),
@@ -188,8 +188,8 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
       confirmText: K.neekkuPtn.tr(context, ref),
       confirmColor: Colors.red,
       onConfirm: () {
-        ref.read(vanigarKalanjiyamProvider).permanentDeleteVanigar(vanigar.id);
-        ref.invalidate(deletedVanigargalProvider);
+        ref.read(vaangunarKalanjiyamProvider).permanentDeleteVaangunar(vaangunar.id);
+        ref.invalidate(deletedVaangunargalProvider);
       },
     );
   }

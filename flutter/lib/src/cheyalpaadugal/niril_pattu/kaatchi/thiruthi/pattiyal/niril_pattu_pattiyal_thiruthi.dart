@@ -14,10 +14,10 @@ import '../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_kanakku.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_kalanjiyam.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
-import '../../../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
+import '../../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
-import '../vanigar/niril_pattu_vanigar_thiruthi.dart';
+import '../vaangunar/niril_pattu_vaangunar_thiruthi.dart';
 import '../porul/niril_pattu_porul_thiruthi.dart';
 import 'koorugal/koorugal.dart';
 import '../../../../niril_podhu/kaatchi/koorugal/elvan_pattiyal_tharavugal_kooru.dart';
@@ -41,8 +41,8 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   NiruvanaTharavugal? _selectedProfile;
 
   // ── Customer ──
-  int? _selectedVanigarId;
-  String _selectedVanigarPeyar = '';
+  int? _selectedVaangunarId;
+  String _selectedVaangunarPeyar = '';
   String _customerState = '';
 
   // ── Metadata ──
@@ -105,8 +105,8 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   /// Applies a loaded snapshot to all state fields + controllers.
   void _applySnapshot(PattuThiruththiNilaimai s) {
     _selectedNiruvanamId = s.selectedNiruvanamId;
-    _selectedVanigarId = s.selectedVanigarId;
-    _selectedVanigarPeyar = s.selectedVanigarPeyarMap['Tamil'] ?? s.selectedVanigarPeyarMap['English'] ?? '';
+    _selectedVaangunarId = s.selectedVaangunarId;
+    _selectedVaangunarPeyar = s.selectedVaangunarPeyarMap['Tamil'] ?? s.selectedVaangunarPeyarMap['English'] ?? '';
     _customerState = s.customerState;
     _pattiyalVagai = s.pattiyalVagai;
     _pattiyalNaal = s.pattiyalNaal;
@@ -130,15 +130,15 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           profiles.where((p) => p.id == _selectedNiruvanamId).firstOrNull;
       if (match != null) setState(() => _selectedProfile = match);
     }
-    if (_selectedVanigarId != null) {
-      final vanigargalData = ref.read(vanigargalProvider);
-      final vanigargal =
-          vanigargalData.whenOrNull(data: (list) => list) ?? [];
-      final vanigar =
-          vanigargal.where((v) => v.id == _selectedVanigarId).firstOrNull;
-      if (vanigar != null) {
-        _customerState = (vanigar.maanilam['English'] ??
-                    vanigar.maanilam['Tamil'] ??
+    if (_selectedVaangunarId != null) {
+      final vaangunargalData = ref.read(vaangunargalProvider);
+      final vaangunargal =
+          vaangunargalData.whenOrNull(data: (list) => list) ?? [];
+      final vaangunar =
+          vaangunargal.where((v) => v.id == _selectedVaangunarId).firstOrNull;
+      if (vaangunar != null) {
+        _customerState = (vaangunar.maanilam['English'] ??
+                    vaangunar.maanilam['Tamil'] ??
                     '')
                 .trim()
                 .toLowerCase();
@@ -223,8 +223,8 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   /// Builds a snapshot from current state (for draft / save).
   PattuThiruththiNilaimai _currentSnapshot() => PattuThiruththiNilaimai(
         selectedNiruvanamId: _selectedNiruvanamId,
-        selectedVanigarId: _selectedVanigarId,
-        selectedVanigarPeyarMap: {'Tamil': _selectedVanigarPeyar, 'English': _selectedVanigarPeyar},
+        selectedVaangunarId: _selectedVaangunarId,
+        selectedVaangunarPeyarMap: {'Tamil': _selectedVaangunarPeyar, 'English': _selectedVaangunarPeyar},
         customerState: _customerState,
         pattiyalVagai: _pattiyalVagai,
         pattiyalNaal: _pattiyalNaal,
@@ -245,8 +245,8 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
     await Future.delayed(const Duration(milliseconds: 50));
     if (!mounted) return;
 
-    if (_selectedVanigarId == null && _selectedVanigarPeyar.isEmpty) {
-      ElvanSnackbar.show(context, K.vanigaraiThaerodhu.tr(context, ref));
+    if (_selectedVaangunarId == null && _selectedVaangunarPeyar.isEmpty) {
+      ElvanSnackbar.show(context, K.vaangunaraiThaerodhu.tr(context, ref));
       return;
     }
     final validItems =
@@ -294,11 +294,11 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
     final cs = Theme.of(context).colorScheme;
 
     // Resolve selected customer from stream for "Saved Details" card
-    final vanigargalAsync = ref.watch(vanigargalProvider);
-    final VanigarEntry? selectedVanigar = vanigargalAsync.whenOrNull(
-      data: (list) => _selectedVanigarId != null
-          ? list.cast<VanigarEntry?>().firstWhere(
-                (v) => v!.id == _selectedVanigarId,
+    final vaangunargalAsync = ref.watch(vaangunargalProvider);
+    final VaangunarEntry? selectedVaangunar = vaangunargalAsync.whenOrNull(
+      data: (list) => _selectedVaangunarId != null
+          ? list.cast<VaangunarEntry?>().firstWhere(
+                (v) => v!.id == _selectedVaangunarId,
                 orElse: () => null,
               )
           : null,
@@ -330,18 +330,18 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           // Section 1: ① Billed To
           // ───────────────────────────────────────────────────────────────
           ElvanPagudhiThalaipu(en: 1, thalaipu: K.perunar.tr(context, ref)),
-          PattuVanigargalKooru(
-            data: PattuVanigargalData(
-              selectedVanigarId: _selectedVanigarId,
-              selectedVanigarPeyarMap: {'Tamil': _selectedVanigarPeyar, 'English': _selectedVanigarPeyar},
+          PattuVaangunargalKooru(
+            data: PattuVaangunargalData(
+              selectedVaangunarId: _selectedVaangunarId,
+              selectedVaangunarPeyarMap: {'Tamil': _selectedVaangunarPeyar, 'English': _selectedVaangunarPeyar},
               placeOfSupply: _placeOfSupply,
               placeOfSupplyTa: _placeOfSupplyTa,
             ),
-            callbacks: PattuVanigargalCallbacks(
+            callbacks: PattuVaangunargalCallbacks(
               onCustomerSelected: (entry) {
                 setState(() {
-                  _selectedVanigarId = entry.id;
-                  _selectedVanigarPeyar =
+                  _selectedVaangunarId = entry.id;
+                  _selectedVaangunarPeyar =
                       entry.peyar['Tamil'] ?? entry.peyar['English'] ?? '';
                   _customerState = (entry.maanilam['English'] ??
                               entry.maanilam['Tamil'] ??
@@ -361,8 +361,8 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
               },
               onCustomerCleared: () {
                 setState(() {
-                  _selectedVanigarId = null;
-                  _selectedVanigarPeyar = '';
+                  _selectedVaangunarId = null;
+                  _selectedVaangunarPeyar = '';
                   _customerState = '';
                   _placeOfSupply = '';
                   _placeOfSupplyTa = '';
@@ -393,7 +393,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                 _recalculate();
               },
             ),
-            selectedVanigar: selectedVanigar,
+            selectedVaangunar: selectedVaangunar,
           ),
 
           const SizedBox(height: 24),

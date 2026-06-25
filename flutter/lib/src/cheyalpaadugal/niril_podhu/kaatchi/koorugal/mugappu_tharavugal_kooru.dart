@@ -293,9 +293,9 @@ class _ElvanRecentCardState extends ConsumerState<ElvanRecentCard> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  p.vanigarPeyar[primaryLang]?.isNotEmpty == true
-                                      ? p.vanigarPeyar[primaryLang]!
-                                      : p.vanigarPeyar[secondaryLang] ?? '-',
+                                  p.vaangunarPeyar[primaryLang]?.isNotEmpty == true
+                                      ? p.vaangunarPeyar[primaryLang]!
+                                      : p.vaangunarPeyar[secondaryLang] ?? '-',
                                   style: const TextStyle(
                                     fontSize: 15.2,
                                     fontWeight: FontWeight.w700,

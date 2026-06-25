@@ -97,8 +97,8 @@ class NiruvanaTharavugalTable extends Table {
 }
 
 // ── Table: வணிகர் (Customer / Merchant) ──
-@DataClassName('VanigarEntry')
-class VanigarTable extends Table {
+@DataClassName('VaangunarEntry')
+class VaangunarTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get seyaliVagai => text()(); // 'silk' or 'coolie'
 
@@ -175,10 +175,10 @@ class PatrucheettuTable extends Table {
       text().withDefault(const Constant('tax-invoice'))(); // Silk: tax-invoice / proforma
 
   // ── Customer (FK — not snapshot) ──
-  IntColumn get vanigarId => integer().nullable()(); // FK → VanigarTable
-  TextColumn get vanigarPeyar =>
+  IntColumn get vaangunarId => integer().nullable()(); // FK → VaangunarTable
+  TextColumn get vaangunarPeyar =>
       text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
-  TextColumn get vanigarMunvari =>
+  TextColumn get vaangunarMunvari =>
       text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
 
   // ── Date ──
@@ -249,11 +249,11 @@ class PatrugalTable extends Table {
       integer().withDefault(const Constant(1))(); // Seq # for auto-numbering
 
   // ── Customer (FK-first, fallback snapshot) ──
-  IntColumn get vanigarId =>
-      integer().nullable()(); // FK → VanigarTable
-  TextColumn get vanigarPeyar =>
+  IntColumn get vaangunarId =>
+      integer().nullable()(); // FK → VaangunarTable
+  TextColumn get vaangunarPeyar =>
       text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
-  TextColumn get vanigarMunvari =>
+  TextColumn get vaangunarMunvari =>
       text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
 
   // ── Receipt Data ──
@@ -296,7 +296,7 @@ class PatruPattiyalTable extends Table {
 // ── Database ──
 @DriftDatabase(tables: [
   NiruvanaTharavugalTable,
-  VanigarTable,
+  VaangunarTable,
   PorulTable,
   PatrucheettuTable,
   PatrugalTable,
@@ -322,7 +322,7 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(niruvanaTharavugalTable, niruvanaTharavugalTable.deletedAt);
             
             // Create new tables added in version 3
-            await m.createTable(vanigarTable);
+            await m.createTable(vaangunarTable);
             await m.createTable(porulTable);
             await m.createTable(patrucheettuTable);
           }
@@ -332,29 +332,29 @@ class AppDatabase extends _$AppDatabase {
             await m.addColumn(porulTable, porulTable.alagu);
           }
           if (from < 5) {
-            // v5: Expand VanigarTable — bilingual fields + new columns
+            // v5: Expand VaangunarTable — bilingual fields + new columns
             // peyar was plain text, now MozhiMap — migration: wrap old value
             // New columns with defaults:
-            await m.addColumn(vanigarTable, vanigarTable.oor);
-            await m.addColumn(vanigarTable, vanigarTable.maavattam);
-            await m.addColumn(vanigarTable, vanigarTable.maanilam);
-            await m.addColumn(vanigarTable, vanigarTable.naadu);
-            await m.addColumn(vanigarTable, vanigarTable.velinaadMugavari);
-            await m.addColumn(vanigarTable, vanigarTable.anjalKuriyeedu);
-            await m.addColumn(vanigarTable, vanigarTable.minnanjal);
+            await m.addColumn(vaangunarTable, vaangunarTable.oor);
+            await m.addColumn(vaangunarTable, vaangunarTable.maavattam);
+            await m.addColumn(vaangunarTable, vaangunarTable.maanilam);
+            await m.addColumn(vaangunarTable, vaangunarTable.naadu);
+            await m.addColumn(vaangunarTable, vaangunarTable.velinaadMugavari);
+            await m.addColumn(vaangunarTable, vaangunarTable.anjalKuriyeedu);
+            await m.addColumn(vaangunarTable, vaangunarTable.minnanjal);
 
             // Migrate old plain-text peyar & mugavari to JSON map format
             await customStatement(
-              "UPDATE vanigar_table SET peyar = '{\"en\":' || '\"' || peyar || '\"' || '}' "
+              "UPDATE vaangunar_table SET peyar = '{\"en\":' || '\"' || peyar || '\"' || '}' "
               "WHERE peyar NOT LIKE '{%}'",
             );
             await customStatement(
-              "UPDATE vanigar_table SET mugavari = '{\"en\":' || '\"' || mugavari || '\"' || '}' "
+              "UPDATE vaangunar_table SET mugavari = '{\"en\":' || '\"' || mugavari || '\"' || '}' "
               "WHERE mugavari NOT LIKE '{%}' AND mugavari != ''",
             );
             // Set empty mugavari to default JSON
             await customStatement(
-              "UPDATE vanigar_table SET mugavari = '{}' WHERE mugavari = ''",
+              "UPDATE vaangunar_table SET mugavari = '{}' WHERE mugavari = ''",
             );
           }
           if (from < 6) {
@@ -378,7 +378,7 @@ class AppDatabase extends _$AppDatabase {
 
             // Drop deprecated column
             await customStatement(
-              'ALTER TABLE patrucheettu_table DROP COLUMN IF EXISTS vanigar_tholaipaesi',
+              'ALTER TABLE patrucheettu_table DROP COLUMN IF EXISTS vaangunar_tholaipaesi',
             );
           }
           if (from < 7) {
@@ -395,55 +395,55 @@ class AppDatabase extends _$AppDatabase {
           if (from < 9) {
             // v9: Add English fallback snapshot fields to patrugal_table
             await customStatement(
-                'ALTER TABLE patrugal_table ADD COLUMN vanigar_peyar_en TEXT DEFAULT ""');
+                'ALTER TABLE patrugal_table ADD COLUMN vaangunar_peyar_en TEXT DEFAULT ""');
             await customStatement(
-                'ALTER TABLE patrugal_table ADD COLUMN vanigar_munvari_en TEXT DEFAULT ""');
+                'ALTER TABLE patrugal_table ADD COLUMN vaangunar_munvari_en TEXT DEFAULT ""');
           }
           if (from < 10) {
             await customStatement(
-                'ALTER TABLE patrucheettu_table ADD COLUMN vanigar_peyar_en TEXT DEFAULT ""');
-            await m.addColumn(patrucheettuTable, patrucheettuTable.vanigarMunvari);
+                'ALTER TABLE patrucheettu_table ADD COLUMN vaangunar_peyar_en TEXT DEFAULT ""');
+            await m.addColumn(patrucheettuTable, patrucheettuTable.vaangunarMunvari);
             await customStatement(
-                'ALTER TABLE patrucheettu_table ADD COLUMN vanigar_munvari_en TEXT DEFAULT ""');
+                'ALTER TABLE patrucheettu_table ADD COLUMN vaangunar_munvari_en TEXT DEFAULT ""');
           }
           if (from < 11) {
             // Drop _en columns
             await customStatement(
-              'ALTER TABLE patrucheettu_table DROP COLUMN IF EXISTS vanigar_peyar_en',
+              'ALTER TABLE patrucheettu_table DROP COLUMN IF EXISTS vaangunar_peyar_en',
             );
             await customStatement(
-              'ALTER TABLE patrucheettu_table DROP COLUMN IF EXISTS vanigar_munvari_en',
+              'ALTER TABLE patrucheettu_table DROP COLUMN IF EXISTS vaangunar_munvari_en',
             );
             await customStatement(
-              'ALTER TABLE patrugal_table DROP COLUMN IF EXISTS vanigar_peyar_en',
+              'ALTER TABLE patrugal_table DROP COLUMN IF EXISTS vaangunar_peyar_en',
             );
             await customStatement(
-              'ALTER TABLE patrugal_table DROP COLUMN IF EXISTS vanigar_munvari_en',
+              'ALTER TABLE patrugal_table DROP COLUMN IF EXISTS vaangunar_munvari_en',
             );
 
             // Migrate flat text to JSON map (e.g. {"Tamil":"..."})
             await customStatement(
-              "UPDATE patrucheettu_table SET vanigar_peyar = '{\"Tamil\":' || '\"' || vanigar_peyar || '\"' || '}' "
-              "WHERE vanigar_peyar NOT LIKE '{%}'",
+              "UPDATE patrucheettu_table SET vaangunar_peyar = '{\"Tamil\":' || '\"' || vaangunar_peyar || '\"' || '}' "
+              "WHERE vaangunar_peyar NOT LIKE '{%}'",
             );
             await customStatement(
-              "UPDATE patrucheettu_table SET vanigar_munvari = '{\"Tamil\":' || '\"' || vanigar_munvari || '\"' || '}' "
-              "WHERE vanigar_munvari NOT LIKE '{%}' AND vanigar_munvari != ''",
+              "UPDATE patrucheettu_table SET vaangunar_munvari = '{\"Tamil\":' || '\"' || vaangunar_munvari || '\"' || '}' "
+              "WHERE vaangunar_munvari NOT LIKE '{%}' AND vaangunar_munvari != ''",
             );
             await customStatement(
-              "UPDATE patrucheettu_table SET vanigar_munvari = '{}' WHERE vanigar_munvari = ''",
+              "UPDATE patrucheettu_table SET vaangunar_munvari = '{}' WHERE vaangunar_munvari = ''",
             );
 
             await customStatement(
-              "UPDATE patrugal_table SET vanigar_peyar = '{\"Tamil\":' || '\"' || vanigar_peyar || '\"' || '}' "
-              "WHERE vanigar_peyar NOT LIKE '{%}'",
+              "UPDATE patrugal_table SET vaangunar_peyar = '{\"Tamil\":' || '\"' || vaangunar_peyar || '\"' || '}' "
+              "WHERE vaangunar_peyar NOT LIKE '{%}'",
             );
             await customStatement(
-              "UPDATE patrugal_table SET vanigar_munvari = '{\"Tamil\":' || '\"' || vanigar_munvari || '\"' || '}' "
-              "WHERE vanigar_munvari NOT LIKE '{%}' AND vanigar_munvari != ''",
+              "UPDATE patrugal_table SET vaangunar_munvari = '{\"Tamil\":' || '\"' || vaangunar_munvari || '\"' || '}' "
+              "WHERE vaangunar_munvari NOT LIKE '{%}' AND vaangunar_munvari != ''",
             );
             await customStatement(
-              "UPDATE patrugal_table SET vanigar_munvari = '{}' WHERE vanigar_munvari = ''",
+              "UPDATE patrugal_table SET vaangunar_munvari = '{}' WHERE vaangunar_munvari = ''",
             );
           }
         },
@@ -478,7 +478,7 @@ class AppDatabase extends _$AppDatabase {
               tempDb.execute("DELETE FROM patrucheettu_table WHERE seyali_vagai != '$keepMode'");
               tempDb.execute("DELETE FROM patrugal_table WHERE seyali_vagai != '$keepMode'");
               tempDb.execute("DELETE FROM porul_table WHERE seyali_vagai != '$keepMode'");
-              tempDb.execute("DELETE FROM vanigar_table WHERE seyali_vagai != '$keepMode'");
+              tempDb.execute("DELETE FROM vaangunar_table WHERE seyali_vagai != '$keepMode'");
               tempDb.execute("DELETE FROM niruvana_tharavugal_table WHERE seyali_vagai != '$keepMode'");
             } catch (e) {
               // ignore if tables don't exist yet

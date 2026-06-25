@@ -39,7 +39,7 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
 
     await SodhanaiTharavuUruvakki.eraseData(ref);
     await SodhanaiTharavuUruvakki.seedData(ref, AppMode.silk);
-    await SodhanaiTharavuUruvakki.seedPorulAndVanigar(ref, mode: AppMode.silk);
+    await SodhanaiTharavuUruvakki.seedPorulAndVaangunar(ref, mode: AppMode.silk);
     await SodhanaiTharavuUruvakki.seedPattiyalgal(ref, mode: AppMode.silk);
     await SodhanaiTharavuUruvakki.seedPatrugal(ref, mode: AppMode.silk);
 
@@ -50,7 +50,7 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
 
     await SodhanaiTharavuUruvakki.eraseData(ref);
     await SodhanaiTharavuUruvakki.seedData(ref, AppMode.coolie);
-    await SodhanaiTharavuUruvakki.seedPorulAndVanigar(ref, mode: AppMode.coolie);
+    await SodhanaiTharavuUruvakki.seedPorulAndVaangunar(ref, mode: AppMode.coolie);
     await SodhanaiTharavuUruvakki.seedPattiyalgal(ref, mode: AppMode.coolie);
     await SodhanaiTharavuUruvakki.seedPatrugal(ref, mode: AppMode.coolie);
 

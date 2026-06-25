@@ -10,46 +10,42 @@ import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../adippadai/vazhikaattal/niril_nav.dart';
 import '../../../../koorugal/maeladukkugal/elvan_cheyal_maeladukku.dart';
 import '../../../chattagam/kaatchi/koorugal/elvan_uyir_valai.dart';
-import '../../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
-import '../thiruthi/vanigar/niril_pattu_vanigar_thiruthi.dart';
+import '../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
+import '../thiruthi/vaangunar/niril_kooli_vaangunar_thiruthi.dart';
 
-class SilkMerchantsPage extends ConsumerWidget {
-  const SilkMerchantsPage({super.key});
+class CoolieMerchantsPage extends ConsumerWidget {
+  const CoolieMerchantsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final query = ref.watch(silkMerchantsSearchQueryProvider).toLowerCase();
-    final vanigargalAsync = ref.watch(vanigargalProvider);
+    final query = ref.watch(coolieMerchantsSearchQueryProvider).toLowerCase();
+    final vaangunargalAsync = ref.watch(vaangunargalProvider);
     final primaryLang = ref.watch(primaryLanguageProvider);
     final secondaryLang = ref.watch(secondaryLanguageProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isSelecting = ref.watch(vanigarSelectionModeProvider);
-    final selectedIds = ref.watch(selectedVanigarIdsProvider);
+    final isSelecting = ref.watch(vaangunarSelectionModeProvider);
+    final selectedIds = ref.watch(selectedVaangunarIdsProvider);
 
-    return vanigargalAsync.when(
+    return vaangunargalAsync.when(
       loading: () => const SliverFillRemaining(
         child: Center(child: CupertinoActivityIndicator()),
       ),
       error: (e, _) => SliverFillRemaining(
         child: Center(child: Text('Error: $e')),
       ),
-      data: (vanigargal) {
-        // Filter by search query (name, city, gstin, phone, email)
+      data: (vaangunargal) {
+        // Filter by search query (name + city)
         final filtered = query.isEmpty
-            ? vanigargal
-            : vanigargal.where((v) {
+            ? vaangunargal
+            : vaangunargal.where((v) {
                 final pName = (v.peyar[primaryLang] ?? '').toLowerCase();
                 final sName = (v.peyar[secondaryLang] ?? '').toLowerCase();
                 final pCity = (v.oor[primaryLang] ?? '').toLowerCase();
-                final gstin = v.gstin.toLowerCase();
-                final phone = v.tholaipaesi.toLowerCase();
-                final email = v.minnanjal.toLowerCase();
+                final sCity = (v.oor[secondaryLang] ?? '').toLowerCase();
                 return pName.contains(query) ||
                     sName.contains(query) ||
                     pCity.contains(query) ||
-                    gstin.contains(query) ||
-                    phone.contains(query) ||
-                    email.contains(query);
+                    sCity.contains(query);
               }).toList();
 
         // Empty state
@@ -66,7 +62,7 @@ class SilkMerchantsPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    K.vanigargalIllai.tr(context, ref),
+                    K.vaangunargalIllai.tr(context, ref),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -75,7 +71,7 @@ class SilkMerchantsPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    K.vanigaraiChaerkkavum.tr(context, ref),
+                    K.vaangunaraiChaerkkavum.tr(context, ref),
                     style: TextStyle(
                       fontSize: 13,
                       color: isDark ? Colors.white24 : Colors.black26,
@@ -98,7 +94,7 @@ class SilkMerchantsPage extends ConsumerWidget {
                     selectedCount: selectedIds.length,
                     isDark: isDark,
                     onSelectAll: () {
-                      ref.read(selectedVanigarIdsProvider.notifier).state =
+                      ref.read(selectedVaangunarIdsProvider.notifier).state =
                           filtered.map((v) => v.id).toSet();
                     },
                     onDelete: () {
@@ -106,9 +102,9 @@ class SilkMerchantsPage extends ConsumerWidget {
                           context, ref, selectedIds.toList());
                     },
                     onCancel: () {
-                      ref.read(vanigarSelectionModeProvider.notifier).state =
+                      ref.read(vaangunarSelectionModeProvider.notifier).state =
                           false;
-                      ref.read(selectedVanigarIdsProvider.notifier).state = {};
+                      ref.read(selectedVaangunarIdsProvider.notifier).state = {};
                     },
                   ),
                 ),
@@ -117,15 +113,15 @@ class SilkMerchantsPage extends ConsumerWidget {
               ElvanResponsiveGrid(
                 itemCount: filtered.length,
                 desktopCrossAxisCount: 2,
-                childAspectRatio: 2.8,
-                mobileItemHeight: 100,
+                childAspectRatio: 3.5,
+                mobileItemHeight: 80,
                 itemBuilder: (context, index) {
-                  final vanigar = filtered[index];
-                  final isSelected = selectedIds.contains(vanigar.id);
+                  final vaangunar = filtered[index];
+                  final isSelected = selectedIds.contains(vaangunar.id);
 
-                  return _SilkVanigarCard(
+                  return _CoolieVaangunarCard(
                     index: index,
-                    vanigar: vanigar,
+                    vaangunar: vaangunar,
                     primaryLang: primaryLang,
                     secondaryLang: secondaryLang,
                     isDark: isDark,
@@ -133,20 +129,20 @@ class SilkMerchantsPage extends ConsumerWidget {
                     isSelected: isSelected,
                     onTap: () {
                       if (isSelecting) {
-                        _toggleSelection(ref, vanigar.id, selectedIds);
+                        _toggleSelection(ref, vaangunar.id, selectedIds);
                       } else {
                         NirilNav.push(
                           context,
-                          SilkMerchantEditor(vanigar: vanigar),
+                          CoolieMerchantEditor(vaangunar: vaangunar),
                         );
                       }
                     },
                     onLongPress: () {
                       if (!isSelecting) {
-                        ref.read(vanigarSelectionModeProvider.notifier).state =
+                        ref.read(vaangunarSelectionModeProvider.notifier).state =
                             true;
-                        ref.read(selectedVanigarIdsProvider.notifier).state = {
-                          vanigar.id
+                        ref.read(selectedVaangunarIdsProvider.notifier).state = {
+                          vaangunar.id
                         };
                       }
                     },
@@ -167,10 +163,10 @@ class SilkMerchantsPage extends ConsumerWidget {
     } else {
       updated.add(id);
     }
-    ref.read(selectedVanigarIdsProvider.notifier).state = updated;
+    ref.read(selectedVaangunarIdsProvider.notifier).state = updated;
 
     if (updated.isEmpty) {
-      ref.read(vanigarSelectionModeProvider.notifier).state = false;
+      ref.read(vaangunarSelectionModeProvider.notifier).state = false;
     }
   }
 
@@ -180,15 +176,15 @@ class SilkMerchantsPage extends ConsumerWidget {
 
     showElvanActionSheet(
       context: context,
-      title: '${ids.length} ${K.vanigarAzhikkappattadhu.tr(context, ref)}',
+      title: '${ids.length} ${K.vaangunarAzhikkappattadhu.tr(context, ref)}',
       cancelText: K.kaividuPtn.tr(context, ref),
       confirmText: K.neekkuPtn.tr(context, ref),
       confirmColor: Colors.red,
       onConfirm: () {
-        ref.read(vanigarKalanjiyamProvider).bulkDeleteVanigargal(ids);
-        ref.invalidate(vanigargalProvider);
-        ref.read(vanigarSelectionModeProvider.notifier).state = false;
-        ref.read(selectedVanigarIdsProvider.notifier).state = {};
+        ref.read(vaangunarKalanjiyamProvider).bulkDeleteVaangunargal(ids);
+        ref.invalidate(vaangunargalProvider);
+        ref.read(vaangunarSelectionModeProvider.notifier).state = false;
+        ref.read(selectedVaangunarIdsProvider.notifier).state = {};
       },
     );
   }
@@ -248,12 +244,12 @@ class _SelectionBar extends ConsumerWidget {
   }
 }
 
-// ── Silk Merchant Card ──────────────────────────────────────────────────────
+// ── Coolie Merchant Card ────────────────────────────────────────────────────
 
-class _SilkVanigarCard extends StatelessWidget {
-  const _SilkVanigarCard({
+class _CoolieVaangunarCard extends StatelessWidget {
+  const _CoolieVaangunarCard({
     required this.index,
-    required this.vanigar,
+    required this.vaangunar,
     required this.primaryLang,
     required this.secondaryLang,
     required this.isDark,
@@ -264,7 +260,7 @@ class _SilkVanigarCard extends StatelessWidget {
   });
 
   final int index;
-  final VanigarEntry vanigar;
+  final VaangunarEntry vaangunar;
   final String primaryLang;
   final String secondaryLang;
   final bool isDark;
@@ -275,12 +271,10 @@ class _SilkVanigarCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primaryName = vanigar.peyar[primaryLang] ?? '';
-    final secondaryName = vanigar.peyar[secondaryLang] ?? '';
-    final primaryCity = vanigar.oor[primaryLang] ?? '';
-    final secondaryCity = vanigar.oor[secondaryLang] ?? '';
-    final gstin = vanigar.gstin;
-    final phone = vanigar.tholaipaesi;
+    final primaryName = vaangunar.peyar[primaryLang] ?? '';
+    final secondaryName = vaangunar.peyar[secondaryLang] ?? '';
+    final primaryCity = vaangunar.oor[primaryLang] ?? '';
+    final secondaryCity = vaangunar.oor[secondaryLang] ?? '';
 
     return GestureDetector(
       onTap: onTap,
@@ -383,19 +377,6 @@ class _SilkVanigarCard extends StatelessWidget {
                         fontSize: 12.8,
                         color: (isDark ? Colors.white30 : Colors.black.withValues(alpha: 0.30))
                             .withValues(alpha: 0.8),
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                  if (gstin.isNotEmpty || phone.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      [if (gstin.isNotEmpty) gstin, if (phone.isNotEmpty) phone]
-                          .join(' · '),
-                      style: TextStyle(
-                        fontSize: 13.6,
-                        color: isDark ? Colors.white38 : Colors.black38,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

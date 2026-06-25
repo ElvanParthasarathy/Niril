@@ -6,24 +6,24 @@ import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 import '../../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
-import '../../../../../niril_podhu/kaatchi/koorugal/vanigar_thaedu_kooru.dart';
+import '../../../../../niril_podhu/kaatchi/koorugal/vaangunar_thaedu_kooru.dart';
 import '../../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 
 /// §1 Customer — client search + company dropdown + saved-details card.
-class KooliVanigarKooru extends ConsumerWidget {
-  final int? selectedVanigarId;
-  final Map<String, String> selectedVanigarPeyarMap;
-  final VanigarEntry? selectedVanigar;
-  final ValueChanged<VanigarEntry> onVanigarSelected;
-  final VoidCallback onVanigarCleared;
+class KooliVaangunarKooru extends ConsumerWidget {
+  final int? selectedVaangunarId;
+  final Map<String, String> selectedVaangunarPeyarMap;
+  final VaangunarEntry? selectedVaangunar;
+  final ValueChanged<VaangunarEntry> onVaangunarSelected;
+  final VoidCallback onVaangunarCleared;
 
-  const KooliVanigarKooru({
+  const KooliVaangunarKooru({
     super.key,
-    required this.selectedVanigarId,
-    required this.selectedVanigarPeyarMap,
-    required this.selectedVanigar,
-    required this.onVanigarSelected,
-    required this.onVanigarCleared,
+    required this.selectedVaangunarId,
+    required this.selectedVaangunarPeyarMap,
+    required this.selectedVaangunar,
+    required this.onVaangunarSelected,
+    required this.onVaangunarCleared,
   });
 
   @override
@@ -37,19 +37,19 @@ class KooliVanigarKooru extends ConsumerWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 12, bottom: 6),
-            child: Text(K.vanigarPeyarThaedu.tr(context, ref),
+            child: Text(K.vaangunarPeyarThaedu.tr(context, ref),
                 style: tt.bodySmall?.copyWith(
                   color: cs.onSurfaceVariant,
                   fontSize: 12,
                 )),
           ),
-          VanigarThaeduKooru(
+          VaangunarThaeduKooru(
             seyaliVagai: 'coolie',
-            selectedId: selectedVanigarId,
-            onSelected: onVanigarSelected,
-            onCleared: onVanigarCleared,
+            selectedId: selectedVaangunarId,
+            onSelected: onVaangunarSelected,
+            onCleared: onVaangunarCleared,
           ),
-          if (selectedVanigar != null) ...[
+          if (selectedVaangunar != null) ...[
             const SizedBox(height: 12),
             ElvanThiruthiAttai(
               borderRadius: 16,
@@ -65,23 +65,23 @@ class KooliVanigarKooru extends ConsumerWidget {
                   const SizedBox(height: 8),
                   // English name (bold)
                   Text(
-                    selectedVanigar!.peyar['English'] ??
-                        selectedVanigar!.peyar['Tamil'] ??
-                        (selectedVanigarPeyarMap['English']?.isNotEmpty == true ? selectedVanigarPeyarMap['English'] : selectedVanigarPeyarMap['Tamil']) ?? '',
+                    selectedVaangunar!.peyar['English'] ??
+                        selectedVaangunar!.peyar['Tamil'] ??
+                        (selectedVaangunarPeyarMap['English']?.isNotEmpty == true ? selectedVaangunarPeyarMap['English'] : selectedVaangunarPeyarMap['Tamil']) ?? '',
                     style: tt.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   // Tamil address
-                  ..._buildAddressLines(selectedVanigar!, 'Tamil', tt, cs),
+                  ..._buildAddressLines(selectedVaangunar!, 'Tamil', tt, cs),
                   // English address (subtitle)
-                  ..._buildAddressLines(selectedVanigar!, 'English', tt, cs,
+                  ..._buildAddressLines(selectedVaangunar!, 'English', tt, cs,
                       isSubtitle: true),
                   // GSTIN
-                  if (selectedVanigar!.gstin.trim().isNotEmpty) ...[
+                  if (selectedVaangunar!.gstin.trim().isNotEmpty) ...[
                     const SizedBox(height: 6),
                     Text(
-                      'GSTIN: ${selectedVanigar!.gstin.trim()}',
+                      'GSTIN: ${selectedVaangunar!.gstin.trim()}',
                       style: tt.bodySmall?.copyWith(
                         color: cs.primary,
                         fontWeight: FontWeight.w600,
@@ -102,7 +102,7 @@ class KooliVanigarKooru extends ConsumerWidget {
   /// Builds combined address lines for a given language key.
   /// Tamil: normal color. English (isSubtitle): lighter, italic.
   List<Widget> _buildAddressLines(
-    VanigarEntry v,
+    VaangunarEntry v,
     String key,
     TextTheme tt,
     ColorScheme cs, {

@@ -1,19 +1,19 @@
 import 'package:drift/drift.dart';
 import '../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 
-/// Repository for Vanigar (Merchant/Customer) CRUD operations.
+/// Repository for Vaangunar (Merchant/Customer) CRUD operations.
 /// Mode-aware: all queries filter by `seyaliVagai` to keep
 /// Coolie and Silk merchants completely isolated.
-class VanigarKalanjiyam {
+class VaangunarKalanjiyam {
   final AppDatabase _db;
 
-  VanigarKalanjiyam(this._db);
+  VaangunarKalanjiyam(this._db);
 
   // ── Read ──────────────────────────────────────────────────────────────
 
   /// Watch all non-deleted merchants for the given mode.
-  Stream<List<VanigarEntry>> watchAllVanigargal(String seyaliVagai) {
-    return (_db.select(_db.vanigarTable)
+  Stream<List<VaangunarEntry>> watchAllVaangunargal(String seyaliVagai) {
+    return (_db.select(_db.vaangunarTable)
           ..where((t) => t.seyaliVagai.equals(seyaliVagai))
           ..where((t) => t.isDeleted.equals(false))
           ..orderBy([
@@ -23,8 +23,8 @@ class VanigarKalanjiyam {
   }
 
   /// Get all non-deleted merchants for the given mode (one-shot).
-  Future<List<VanigarEntry>> getAllVanigargal(String seyaliVagai) {
-    return (_db.select(_db.vanigarTable)
+  Future<List<VaangunarEntry>> getAllVaangunargal(String seyaliVagai) {
+    return (_db.select(_db.vaangunarTable)
           ..where((t) => t.seyaliVagai.equals(seyaliVagai))
           ..where((t) => t.isDeleted.equals(false))
           ..orderBy([
@@ -34,8 +34,8 @@ class VanigarKalanjiyam {
   }
 
   /// Get a single merchant by ID.
-  Future<VanigarEntry?> getVanigarById(int id) {
-    return (_db.select(_db.vanigarTable)
+  Future<VaangunarEntry?> getVaangunarById(int id) {
+    return (_db.select(_db.vaangunarTable)
           ..where((t) => t.id.equals(id))
           ..where((t) => t.isDeleted.equals(false)))
         .getSingleOrNull();
@@ -46,7 +46,7 @@ class VanigarKalanjiyam {
   /// Insert or update a merchant.
   /// If [id] is provided, updates the existing row.
   /// Returns the saved entry's ID.
-  Future<int> saveVanigar({
+  Future<int> saveVaangunar({
     int? id,
     required String seyaliVagai,
     required Map<String, String> peyar,
@@ -63,9 +63,9 @@ class VanigarKalanjiyam {
   }) async {
     if (id != null) {
       // Update existing
-      await (_db.update(_db.vanigarTable)..where((t) => t.id.equals(id)))
+      await (_db.update(_db.vaangunarTable)..where((t) => t.id.equals(id)))
           .write(
-        VanigarTableCompanion(
+        VaangunarTableCompanion(
           peyar: Value(peyar),
           mugavari: Value(mugavari),
           oor: Value(oor),
@@ -83,8 +83,8 @@ class VanigarKalanjiyam {
       return id;
     } else {
       // Insert new
-      return _db.into(_db.vanigarTable).insert(
-        VanigarTableCompanion.insert(
+      return _db.into(_db.vaangunarTable).insert(
+        VaangunarTableCompanion.insert(
           seyaliVagai: seyaliVagai,
           peyar: Value(peyar),
           mugavari: Value(mugavari),
@@ -105,9 +105,9 @@ class VanigarKalanjiyam {
   // ── Delete ────────────────────────────────────────────────────────────
 
   /// Soft-delete a single merchant.
-  Future<void> deleteVanigar(int id) async {
-    await (_db.update(_db.vanigarTable)..where((t) => t.id.equals(id))).write(
-      VanigarTableCompanion(
+  Future<void> deleteVaangunar(int id) async {
+    await (_db.update(_db.vaangunarTable)..where((t) => t.id.equals(id))).write(
+      VaangunarTableCompanion(
         isDeleted: const Value(true),
         deletedAt: Value(DateTime.now()),
       ),
@@ -115,9 +115,9 @@ class VanigarKalanjiyam {
   }
 
   /// Bulk soft-delete multiple merchants.
-  Future<void> bulkDeleteVanigargal(List<int> ids) async {
-    await (_db.update(_db.vanigarTable)..where((t) => t.id.isIn(ids))).write(
-      VanigarTableCompanion(
+  Future<void> bulkDeleteVaangunargal(List<int> ids) async {
+    await (_db.update(_db.vaangunarTable)..where((t) => t.id.isIn(ids))).write(
+      VaangunarTableCompanion(
         isDeleted: const Value(true),
         deletedAt: Value(DateTime.now()),
       ),
@@ -125,9 +125,9 @@ class VanigarKalanjiyam {
   }
 
   /// Restore a soft-deleted merchant.
-  Future<void> restoreVanigar(int id) async {
-    await (_db.update(_db.vanigarTable)..where((t) => t.id.equals(id))).write(
-      const VanigarTableCompanion(
+  Future<void> restoreVaangunar(int id) async {
+    await (_db.update(_db.vaangunarTable)..where((t) => t.id.equals(id))).write(
+      const VaangunarTableCompanion(
         isDeleted: Value(false),
         deletedAt: Value(null),
       ),
@@ -135,9 +135,9 @@ class VanigarKalanjiyam {
   }
 
   /// Bulk restore soft-deleted merchants.
-  Future<void> bulkRestoreVanigargal(List<int> ids) async {
-    await (_db.update(_db.vanigarTable)..where((t) => t.id.isIn(ids))).write(
-      const VanigarTableCompanion(
+  Future<void> bulkRestoreVaangunargal(List<int> ids) async {
+    await (_db.update(_db.vaangunarTable)..where((t) => t.id.isIn(ids))).write(
+      const VaangunarTableCompanion(
         isDeleted: Value(false),
         deletedAt: Value(null),
       ),
@@ -145,13 +145,13 @@ class VanigarKalanjiyam {
   }
 
   /// Permanently delete a merchant (hard delete).
-  Future<void> permanentDeleteVanigar(int id) async {
-    await (_db.delete(_db.vanigarTable)..where((t) => t.id.equals(id))).go();
+  Future<void> permanentDeleteVaangunar(int id) async {
+    await (_db.delete(_db.vaangunarTable)..where((t) => t.id.equals(id))).go();
   }
 
   /// Watch all soft-deleted merchants for the given mode (recycle bin).
-  Stream<List<VanigarEntry>> watchDeletedVanigargal(String seyaliVagai) {
-    return (_db.select(_db.vanigarTable)
+  Stream<List<VaangunarEntry>> watchDeletedVaangunargal(String seyaliVagai) {
+    return (_db.select(_db.vaangunarTable)
           ..where((t) => t.seyaliVagai.equals(seyaliVagai))
           ..where((t) => t.isDeleted.equals(true))
           ..orderBy([
@@ -164,16 +164,16 @@ class VanigarKalanjiyam {
 
   /// Hard-delete all soft-deleted merchants older than [days] (default 30).
   /// Returns the number of rows permanently removed.
-  Future<int> purgeExpiredVanigargal({int days = 30}) async {
+  Future<int> purgeExpiredVaangunargal({int days = 30}) async {
     final cutoff = DateTime.now().subtract(Duration(days: days));
-    return (_db.delete(_db.vanigarTable)
+    return (_db.delete(_db.vaangunarTable)
           ..where((t) => t.isDeleted.equals(true))
           ..where((t) => t.deletedAt.isSmallerOrEqualValue(cutoff)))
         .go();
   }
 
   /// Permanently delete ALL merchants (hard wipe for erase data).
-  Future<void> deleteAllVanigargal() async {
-    await _db.delete(_db.vanigarTable).go();
+  Future<void> deleteAllVaangunargal() async {
+    await _db.delete(_db.vaangunarTable).go();
   }
 }

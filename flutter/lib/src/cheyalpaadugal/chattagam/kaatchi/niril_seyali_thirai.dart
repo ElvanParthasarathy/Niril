@@ -14,13 +14,13 @@ import '../../../adippadai/vazhikaattal/navigation_provider.dart';
 import 'mugappu_thirai.dart';
 import 'uruvakku_thirai.dart';
 import 'porul_thirai.dart';
-import 'vanigar_thirai.dart';
+import 'vaangunar_thirai.dart';
 
 import '../../niril_pattu/kaatchi/thiraigal/pattu_pattiyalgal_thirai.dart';
 import '../../niril_pattu/kaatchi/thiraigal/pattu_patrucheettugal_thirai.dart';
 import '../../niril_pattu/kaatchi/thiruthi/pattiyal/niril_pattu_pattiyal_thiruthi.dart';
 import '../../niril_pattu/kaatchi/thiruthi/patrucheettu/niril_pattu_patrucheettu_thiruthi.dart';
-import '../../niril_pattu/kaatchi/thiruthi/vanigar/niril_pattu_vanigar_thiruthi.dart';
+import '../../niril_pattu/kaatchi/thiruthi/vaangunar/niril_pattu_vaangunar_thiruthi.dart';
 import '../../niril_pattu/kaatchi/thiruthi/porul/niril_pattu_porul_thiruthi.dart';
 
 
@@ -28,11 +28,11 @@ import '../../niril_kooli/kaatchi/thiraigal/kooli_pattiyalgal_thirai.dart';
 import '../../niril_kooli/kaatchi/thiraigal/kooli_patrucheettugal_thirai.dart';
 import '../../niril_kooli/kaatchi/thiruthi/pattiyal/niril_kooli_pattiyal_thiruthi.dart';
 import '../../niril_kooli/kaatchi/thiruthi/patrucheettu/niril_kooli_patrucheettu_thiruthi.dart';
-import '../../niril_kooli/kaatchi/thiruthi/vanigar/niril_kooli_vanigar_thiruthi.dart';
+import '../../niril_kooli/kaatchi/thiruthi/vaangunar/niril_kooli_vaangunar_thiruthi.dart';
 import '../../niril_kooli/kaatchi/thiruthi/porul/niril_kooli_porul_thiruthi.dart';
 
 import '../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
-import '../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
+import '../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 
 import '../../amaippugal/kaatchi/amaippugal_thirai.dart';
 
@@ -74,7 +74,7 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
       editor = mode == AppMode.coolie
           ? const CoolieReceiptEditor()
           : const SilkReceiptEditor();
-    } else if (dest == NirilDestination.vanigar) {
+    } else if (dest == NirilDestination.vaangunar) {
       editor = mode == AppMode.coolie
           ? const CoolieMerchantEditor()
           : const SilkMerchantEditor();
@@ -91,9 +91,9 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
 
   void _onSelectTapped() {
     final dest = ref.read(nirilNavigationProvider).destination;
-    if (dest == NirilDestination.vanigar) {
-      ref.read(vanigarSelectionModeProvider.notifier).state = true;
-      ref.read(selectedVanigarIdsProvider.notifier).state = {};
+    if (dest == NirilDestination.vaangunar) {
+      ref.read(vaangunarSelectionModeProvider.notifier).state = true;
+      ref.read(selectedVaangunarIdsProvider.notifier).state = {};
     } else {
       ref.read(porulSelectionModeProvider.notifier).state = true;
       ref.read(selectedPorulIdsProvider.notifier).state = {};
@@ -128,8 +128,8 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
               '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"></path></svg>',
           activeSvgString:
               '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M164.47,195.63a8,8,0,0,1-6.7,12.37H10.23a8,8,0,0,1-6.7-12.37,95.83,95.83,0,0,1,47.22-37.71,60,60,0,1,1,66.5,0A95.83,95.83,0,0,1,164.47,195.63Zm87.91-.15a95.87,95.87,0,0,0-47.13-37.56A60,60,0,0,0,144.7,54.59a4,4,0,0,0-1.33,6A75.83,75.83,0,0,1,147,150.53a4,4,0,0,0,1.07,5.53,112.32,112.32,0,0,1,29.85,30.83,23.92,23.92,0,0,1,3.65,16.47,4,4,0,0,0,3.95,4.64h60.3a8,8,0,0,0,7.73-5.93A8.22,8.22,0,0,0,252.38,195.48Z"></path></svg>',
-          label: K.vanigar.tr(context, ref),
-          headerLabel: K.vanigargal.tr(context, ref),
+          label: K.vaangunar.tr(context, ref),
+          headerLabel: K.vaangunargal.tr(context, ref),
         ),
       ];
 
@@ -174,7 +174,7 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
           ref.read(silkReceiptsSearchQueryProvider.notifier).state = query;
         }
         break;
-      case NirilDestination.vanigar:
+      case NirilDestination.vaangunar:
         if (mode == AppMode.coolie) {
           ref.read(coolieMerchantsSearchQueryProvider.notifier).state = query;
         } else {
@@ -209,7 +209,7 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
         _routeSearchQuery(query, NirilDestination.porul);
         break;
       case 3:
-        _routeSearchQuery(query, NirilDestination.vanigar);
+        _routeSearchQuery(query, NirilDestination.vaangunar);
         break;
     }
   }
@@ -270,7 +270,7 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
       } else if (desktopIndex == 2) {
         btnText = K.pudhiyaPatrucheettuPtn.tr(context, ref);
       } else if (desktopIndex == 3) {
-        btnText = K.vanigaraichChaer.tr(context, ref);
+        btnText = K.vaangunaraichChaer.tr(context, ref);
       } else if (desktopIndex == 4) {
         btnText = K.porulaichChaerPtn.tr(context, ref);
       }
@@ -308,7 +308,7 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
           NirilDestination.pattiyal,
           NirilDestination.raseethu,
           NirilDestination.porul,
-          NirilDestination.vanigar,
+          NirilDestination.vaangunar,
         ];
         if (index >= 0 && index < destinations.length) {
           nav.goTo(destinations[index]);
@@ -339,7 +339,7 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
         ),
         SliverOffstage(
           offstage: desktopIndex != 3,
-          sliver: const VanigarPage(),
+          sliver: const VaangunarPage(),
         ),
         SliverOffstage(
           offstage: desktopIndex != 4,
@@ -381,7 +381,7 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
                             ? NirilDestination.raseethu
                             : NirilDestination.pattiyal,
                         NirilDestination.porul,
-                        NirilDestination.vanigar,
+                        NirilDestination.vaangunar,
                       ];
                       if (index >= 0 && index < destinations.length) {
                         nav.goTo(destinations[index]);
@@ -412,7 +412,7 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
                       if (i == 0) const MugappuPage(),
                       if (i == 1) const UruvakkuPage(),
                       if (i == 2) const PorulPage(),
-                      if (i == 3) const VanigarPage(),
+                      if (i == 3) const VaangunarPage(),
                     ],
                   ),
               ],

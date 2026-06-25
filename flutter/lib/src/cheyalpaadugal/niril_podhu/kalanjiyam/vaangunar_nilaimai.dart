@@ -5,49 +5,49 @@ import '../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
-import 'vanigar_kalanjiyam.dart';
+import 'vaangunar_kalanjiyam.dart';
 
 // ── Repository Provider ─────────────────────────────────────────────────────
 
-final vanigarKalanjiyamProvider = Provider<VanigarKalanjiyam>((ref) {
+final vaangunarKalanjiyamProvider = Provider<VaangunarKalanjiyam>((ref) {
   final db = ref.watch(appDatabaseProvider);
-  return VanigarKalanjiyam(db);
+  return VaangunarKalanjiyam(db);
 });
 
 // ── Mode-Aware Merchant List (one-shot, pull-to-refresh) ────────────────────
 
 /// Fetches all merchants once for the current app mode.
-/// Call `ref.invalidate(vanigargalProvider)` after any CRUD to refresh.
-final vanigargalProvider = FutureProvider<List<VanigarEntry>>((ref) {
-  final kalanjiyam = ref.watch(vanigarKalanjiyamProvider);
+/// Call `ref.invalidate(vaangunargalProvider)` after any CRUD to refresh.
+final vaangunargalProvider = FutureProvider<List<VaangunarEntry>>((ref) {
+  final kalanjiyam = ref.watch(vaangunarKalanjiyamProvider);
   final mode = ref.watch(appModeProvider);
 
   final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
-  return kalanjiyam.getAllVanigargal(seyaliVagai);
+  return kalanjiyam.getAllVaangunargal(seyaliVagai);
 });
 
 // ── Editing State ───────────────────────────────────────────────────────────
 
 /// Holds the merchant currently being edited (null = creating new).
-final editingVanigarProvider = StateProvider<VanigarEntry?>((ref) => null);
+final editingVaangunarProvider = StateProvider<VaangunarEntry?>((ref) => null);
 
 // ── Selection Mode ──────────────────────────────────────────────────────────
 
 /// Whether the merchant list is in selection mode.
-final vanigarSelectionModeProvider = StateProvider<bool>((ref) => false);
+final vaangunarSelectionModeProvider = StateProvider<bool>((ref) => false);
 
 /// Set of currently selected merchant IDs.
-final selectedVanigarIdsProvider = StateProvider<Set<int>>((ref) => {});
+final selectedVaangunarIdsProvider = StateProvider<Set<int>>((ref) => {});
 
 // ── Recycle Bin (Meetpagam) ──────────────────────────────────────────────────
 
 /// Fetches all soft-deleted merchants once for the current app mode.
-/// Call `ref.invalidate(deletedVanigargalProvider)` after restore/purge.
-final deletedVanigargalProvider =
-    FutureProvider<List<VanigarEntry>>((ref) {
-  final kalanjiyam = ref.watch(vanigarKalanjiyamProvider);
+/// Call `ref.invalidate(deletedVaangunargalProvider)` after restore/purge.
+final deletedVaangunargalProvider =
+    FutureProvider<List<VaangunarEntry>>((ref) {
+  final kalanjiyam = ref.watch(vaangunarKalanjiyamProvider);
   final mode = ref.watch(appModeProvider);
 
   final seyaliVagai = mode == AppMode.coolie ? 'coolie' : 'silk';
-  return kalanjiyam.watchDeletedVanigargal(seyaliVagai).first;
+  return kalanjiyam.watchDeletedVaangunargal(seyaliVagai).first;
 });

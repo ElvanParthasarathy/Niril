@@ -19,7 +19,7 @@ import '../../tharavu/niruvana_tharavugal_provider.dart';
 import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 import '../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
-import '../../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
+import '../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 
 class AccountSecuritySection extends ConsumerWidget {
   const AccountSecuritySection({super.key});
@@ -268,7 +268,7 @@ class AccountSecuritySection extends ConsumerWidget {
               var db = ref.read(appDatabaseProvider);
               await db.delete(db.niruvanaTharavugalTable).go();
               await db.delete(db.porulTable).go();
-              await db.delete(db.vanigarTable).go();
+              await db.delete(db.vaangunarTable).go();
               await db.delete(db.patrucheettuTable).go();
               await db.delete(db.patrugalTable).go();
               await db.delete(db.patruPattiyalTable).go();
@@ -279,7 +279,7 @@ class AccountSecuritySection extends ConsumerWidget {
               db = ref.read(appDatabaseProvider);
               await db.delete(db.niruvanaTharavugalTable).go();
               await db.delete(db.porulTable).go();
-              await db.delete(db.vanigarTable).go();
+              await db.delete(db.vaangunarTable).go();
               await db.delete(db.patrucheettuTable).go();
               await db.delete(db.patrugalTable).go();
               await db.delete(db.patruPattiyalTable).go();
@@ -325,7 +325,7 @@ class AccountSecuritySection extends ConsumerWidget {
     ref.invalidate(pattiyalgalProvider);
     ref.invalidate(patrugalProvider);
     ref.invalidate(porulgalProvider);
-    ref.invalidate(vanigargalProvider);
+    ref.invalidate(vaangunargalProvider);
     ref.invalidate(currentModeProfilesStreamProvider);
 
     // Small delay for UX so it doesn't flash instantly

@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 /// Section title with subtle styling — used in merchant editors.
-class VanigarThiruthiPaguthiThalaipu extends StatelessWidget {
-  const VanigarThiruthiPaguthiThalaipu({super.key, required this.label});
+class VaangunarThiruthiPaguthiThalaipu extends StatelessWidget {
+  const VaangunarThiruthiPaguthiThalaipu({super.key, required this.label});
   final String label;
 
   @override
@@ -19,8 +19,8 @@ class VanigarThiruthiPaguthiThalaipu extends StatelessWidget {
 
 /// A tappable dropdown-like field that shows current value + edit icon.
 /// Used for state/country pickers in merchant editors.
-class VanigarIzhivaruPulan extends StatelessWidget {
-  const VanigarIzhivaruPulan({
+class VaangunarIzhivaruPulan extends StatelessWidget {
+  const VaangunarIzhivaruPulan({
     super.key,
     required this.label,
     required this.primaryValue,

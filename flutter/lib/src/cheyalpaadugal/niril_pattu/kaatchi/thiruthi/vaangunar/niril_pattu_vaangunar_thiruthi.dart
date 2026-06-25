@@ -7,9 +7,9 @@ import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
-import '../../../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
+import '../../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 import '../../thiraigal/amaippugal/pattu_mugavari_tharavu.dart';
-import 'koorugal/vanigar_thiruthi_koorugal.dart';
+import 'koorugal/vaangunar_thiruthi_koorugal.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SILK / GST MERCHANT EDITOR
@@ -22,9 +22,9 @@ import 'koorugal/vanigar_thiruthi_koorugal.dart';
 // ─────────────────────────────────────────────────────────────────────────────
 
 class SilkMerchantEditor extends ConsumerStatefulWidget {
-  const SilkMerchantEditor({super.key, this.vanigar});
+  const SilkMerchantEditor({super.key, this.vaangunar});
 
-  final VanigarEntry? vanigar;
+  final VaangunarEntry? vaangunar;
 
   @override
   ConsumerState<SilkMerchantEditor> createState() =>
@@ -60,8 +60,8 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
   @override
   void initState() {
     super.initState();
-    if (widget.vanigar != null) {
-      final v = widget.vanigar!;
+    if (widget.vaangunar != null) {
+      final v = widget.vaangunar!;
       _peyar = Map<String, String>.from(v.peyar);
       _mugavari = Map<String, String>.from(v.mugavari);
       _oor = Map<String, String>.from(v.oor);
@@ -88,7 +88,7 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
     super.dispose();
   }
 
-  bool get _isEditing => widget.vanigar != null;
+  bool get _isEditing => widget.vaangunar != null;
 
   // ── GSTIN Validation ──────────────────────────────────────────────────
 
@@ -108,7 +108,7 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
     if (primaryName.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(K.vanigarPeyarThaevai.tr(context, ref)),
+          content: Text(K.vaangunarPeyarThaevai.tr(context, ref)),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -122,10 +122,10 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
       return;
     }
 
-    final kalanjiyam = ref.read(vanigarKalanjiyamProvider);
+    final kalanjiyam = ref.read(vaangunarKalanjiyamProvider);
 
-    kalanjiyam.saveVanigar(
-      id: _isEditing ? widget.vanigar!.id : null,
+    kalanjiyam.saveVaangunar(
+      id: _isEditing ? widget.vaangunar!.id : null,
       seyaliVagai: 'silk',
       peyar: _peyar,
       mugavari: _mugavari,
@@ -140,10 +140,10 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
       tholaipaesi: _tholaipaesiController.text.trim(),
     ).then((_) {
       if (mounted) {
-        ref.invalidate(vanigargalProvider);
+        ref.invalidate(vaangunargalProvider);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(K.vanigarChaemikkappattadhu.tr(context, ref)),
+            content: Text(K.vaangunarChaemikkappattadhu.tr(context, ref)),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -248,11 +248,11 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
           // ══════════════════════════════════════════════════════════════════
           // SECTION 1: Business Details
           // ══════════════════════════════════════════════════════════════════
-          VanigarThiruthiPaguthiThalaipu(label: K.vanigarTharavugal.tr(context, ref)),
+          VaangunarThiruthiPaguthiThalaipu(label: K.vaangunarTharavugal.tr(context, ref)),
           const SizedBox(height: 16),
 
           ElvanIrumozhiPulan(
-            label: K.vanigarPeyar.tr(context, ref),
+            label: K.vaangunarPeyar.tr(context, ref),
             value: _peyar,
             autofocus: !_isEditing,
             onChanged: (map) => setState(() => _peyar = map),
@@ -263,11 +263,11 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
           // ══════════════════════════════════════════════════════════════════
           // SECTION 2: Address
           // ══════════════════════════════════════════════════════════════════
-          VanigarThiruthiPaguthiThalaipu(label: K.mugavari.tr(context, ref)),
+          VaangunarThiruthiPaguthiThalaipu(label: K.mugavari.tr(context, ref)),
           const SizedBox(height: 16),
 
           // Country picker (always shown)
-          VanigarIzhivaruPulan(
+          VaangunarIzhivaruPulan(
             label: K.naadu.tr(context, ref),
             primaryValue: _naadu[primaryKey] ?? '',
             secondaryValue: isBilingual ? (_naadu[secondaryKey] ?? '') : null,
@@ -300,7 +300,7 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
             const SizedBox(height: 16),
 
             // State dropdown (India only)
-            VanigarIzhivaruPulan(
+            VaangunarIzhivaruPulan(
               label: K.maanilam.tr(context, ref),
               primaryValue: _maanilam[primaryKey] ?? '',
               secondaryValue:
@@ -343,7 +343,7 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
           // ══════════════════════════════════════════════════════════════════
           // SECTION 3: Contact & Tax
           // ══════════════════════════════════════════════════════════════════
-          VanigarThiruthiPaguthiThalaipu(label: K.thodarpuVari.tr(context, ref)),
+          VaangunarThiruthiPaguthiThalaipu(label: K.thodarpuVari.tr(context, ref)),
           const SizedBox(height: 16),
 
           // GSTIN

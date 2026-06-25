@@ -51,8 +51,8 @@ class SilkReceiptsPage extends ConsumerWidget {
             ? patrugal
             : patrugal.where((p) {
                 final en = p.patruEn.toLowerCase();
-                final peyarPrimary = (p.vanigarPeyar[primaryLang] ?? '').toLowerCase();
-                final peyarSecondary = (p.vanigarPeyar[secondaryLang] ?? '').toLowerCase();
+                final peyarPrimary = (p.vaangunarPeyar[primaryLang] ?? '').toLowerCase();
+                final peyarSecondary = (p.vaangunarPeyar[secondaryLang] ?? '').toLowerCase();
                 final vagai = p.seluthiVagai.toLowerCase();
                 return en.contains(query) ||
                     peyarPrimary.contains(query) ||
@@ -385,9 +385,9 @@ class _PatruCard extends ConsumerWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          patru.vanigarPeyar[primaryLang]?.isNotEmpty == true
-                              ? patru.vanigarPeyar[primaryLang]!
-                              : patru.vanigarPeyar[secondaryLang] ?? patru.patruEn,
+                          patru.vaangunarPeyar[primaryLang]?.isNotEmpty == true
+                              ? patru.vaangunarPeyar[primaryLang]!
+                              : patru.vaangunarPeyar[secondaryLang] ?? patru.patruEn,
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,

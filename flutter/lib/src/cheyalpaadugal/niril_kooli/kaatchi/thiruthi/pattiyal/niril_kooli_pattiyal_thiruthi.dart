@@ -16,7 +16,7 @@ import '../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_kanakku.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_kalanjiyam.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
-import '../../../../niril_podhu/kalanjiyam/vanigar_nilaimai.dart';
+import '../../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../porul/niril_kooli_porul_thiruthi.dart';
@@ -40,9 +40,9 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   NiruvanaTharavugal? _selectedProfile;
 
   // ── Customer ──
-  int? _selectedVanigarId;
-  Map<String, String> _selectedVanigarPeyarMap = const {};
-  Map<String, String> _selectedVanigarMunvariMap = const {};
+  int? _selectedVaangunarId;
+  Map<String, String> _selectedVaangunarPeyarMap = const {};
+  Map<String, String> _selectedVaangunarMunvariMap = const {};
 
   // ── Metadata ──
   DateTime _pattiyalNaal = DateTime.now();
@@ -95,9 +95,9 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
 
   void _loadEditingData() {
     final snapshot = KooliPattiyalUthavi.loadFromEntry(widget.editingEntry!);
-    _selectedVanigarId = snapshot.selectedVanigarId;
-    _selectedVanigarPeyarMap = snapshot.selectedVanigarPeyarMap;
-    _selectedVanigarMunvariMap = snapshot.selectedVanigarMunvariMap;
+    _selectedVaangunarId = snapshot.selectedVaangunarId;
+    _selectedVaangunarPeyarMap = snapshot.selectedVaangunarPeyarMap;
+    _selectedVaangunarMunvariMap = snapshot.selectedVaangunarMunvariMap;
     _selectedNiruvanamId = snapshot.selectedNiruvanamId;
     _pattiyalNaal = snapshot.pattiyalNaal;
     _items = snapshot.items.isNotEmpty ? snapshot.items : [const KooliUrupadi()];
@@ -173,9 +173,9 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     final snapshot = await KooliPattiyalUthavi.tryRestoreDraft(context, ref);
     if (snapshot != null && mounted) {
       setState(() {
-        _selectedVanigarId = snapshot.selectedVanigarId;
-        _selectedVanigarPeyarMap = snapshot.selectedVanigarPeyarMap;
-        _selectedVanigarMunvariMap = snapshot.selectedVanigarMunvariMap;
+        _selectedVaangunarId = snapshot.selectedVaangunarId;
+        _selectedVaangunarPeyarMap = snapshot.selectedVaangunarPeyarMap;
+        _selectedVaangunarMunvariMap = snapshot.selectedVaangunarMunvariMap;
         _selectedNiruvanamId = snapshot.selectedNiruvanamId;
         _pattiyalNaal = snapshot.pattiyalNaal;
         _items = snapshot.items.isNotEmpty
@@ -202,9 +202,9 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   KooliThiruththiNilaimai _currentSnapshot() => KooliThiruththiNilaimai(
         selectedNiruvanamId: _selectedNiruvanamId,
         selectedProfile: _selectedProfile,
-        selectedVanigarId: _selectedVanigarId,
-        selectedVanigarPeyarMap: _selectedVanigarPeyarMap,
-        selectedVanigarMunvariMap: _selectedVanigarMunvariMap,
+        selectedVaangunarId: _selectedVaangunarId,
+        selectedVaangunarPeyarMap: _selectedVaangunarPeyarMap,
+        selectedVaangunarMunvariMap: _selectedVaangunarMunvariMap,
         pattiyalNaal: _pattiyalNaal,
         items: _items,
         setharamGrams: _setharamGrams,
@@ -247,8 +247,8 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
       ElvanSnackbar.show(context, K.niruvanamThaerodhu.tr(context, ref));
       return;
     }
-    if (_selectedVanigarId == null && _selectedVanigarPeyarMap.isEmpty) {
-      ElvanSnackbar.show(context, K.vanigaraiThaerodhu.tr(context, ref));
+    if (_selectedVaangunarId == null && _selectedVaangunarPeyarMap.isEmpty) {
+      ElvanSnackbar.show(context, K.vaangunaraiThaerodhu.tr(context, ref));
       return;
     }
     final validItems = _items.where((i) => i.edai > 0 && i.vilai > 0).toList();
@@ -270,9 +270,9 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
         state: KooliThiruththiNilaimai(
           selectedNiruvanamId: _selectedNiruvanamId,
           selectedProfile: _selectedProfile,
-          selectedVanigarId: _selectedVanigarId,
-          selectedVanigarPeyarMap: _selectedVanigarPeyarMap,
-          selectedVanigarMunvariMap: _selectedVanigarMunvariMap,
+          selectedVaangunarId: _selectedVaangunarId,
+          selectedVaangunarPeyarMap: _selectedVaangunarPeyarMap,
+          selectedVaangunarMunvariMap: _selectedVaangunarMunvariMap,
           pattiyalNaal: _pattiyalNaal,
           items: validItems,
           setharamGrams: _setharamGrams,
@@ -311,11 +311,11 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   Widget build(BuildContext context) {
     final profiles = ref.watch(NiruvanaTharavugalListProvider);
     final formatter = NumberFormat('#,##0', 'en_IN');
-    final vanigargalAsync = ref.watch(vanigargalProvider);
-    final VanigarEntry? selectedVanigar = vanigargalAsync.whenOrNull(
-      data: (list) => _selectedVanigarId != null
-          ? list.cast<VanigarEntry?>().firstWhere(
-                (v) => v!.id == _selectedVanigarId, orElse: () => null)
+    final vaangunargalAsync = ref.watch(vaangunargalProvider);
+    final VaangunarEntry? selectedVaangunar = vaangunargalAsync.whenOrNull(
+      data: (list) => _selectedVaangunarId != null
+          ? list.cast<VaangunarEntry?>().firstWhere(
+                (v) => v!.id == _selectedVaangunarId, orElse: () => null)
           : null,
     );
 
@@ -345,24 +345,24 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Section 1: ① Customer ──
-            ElvanPagudhiThalaipu(en: 1, thalaipu: K.vanigar.tr(context, ref)),
-            KooliVanigarKooru(
-              selectedVanigarId: _selectedVanigarId,
-              selectedVanigarPeyarMap: _selectedVanigarPeyarMap,
-              selectedVanigar: selectedVanigar,
-              onVanigarSelected: (entry) {
+            ElvanPagudhiThalaipu(en: 1, thalaipu: K.vaangunar.tr(context, ref)),
+            KooliVaangunarKooru(
+              selectedVaangunarId: _selectedVaangunarId,
+              selectedVaangunarPeyarMap: _selectedVaangunarPeyarMap,
+              selectedVaangunar: selectedVaangunar,
+              onVaangunarSelected: (entry) {
                 setState(() {
-                  _selectedVanigarId = entry.id;
-                  _selectedVanigarPeyarMap = entry.peyar;
-                  _selectedVanigarMunvariMap = entry.mugavari;
+                  _selectedVaangunarId = entry.id;
+                  _selectedVaangunarPeyarMap = entry.peyar;
+                  _selectedVaangunarMunvariMap = entry.mugavari;
                   _hasUnsavedChanges = true;
                 });
               },
-              onVanigarCleared: () {
+              onVaangunarCleared: () {
                 setState(() {
-                  _selectedVanigarId = null;
-                  _selectedVanigarPeyarMap = const {};
-                  _selectedVanigarMunvariMap = const {};
+                  _selectedVaangunarId = null;
+                  _selectedVaangunarPeyarMap = const {};
+                  _selectedVaangunarMunvariMap = const {};
                   _hasUnsavedChanges = true;
                 });
               },

@@ -28,7 +28,7 @@ abstract final class K {
 
   // ── Core Navigation ──
   static const mugappu = 'mugappu';
-  static const vanigargal = 'vanigargal';
+  static const vaangunargal = 'vaangunargal';
   static const porutkal = 'porutkal';
   static const pattiyalgal = 'pattiyalgal';
   static const patrucheettugal = 'patrucheettugal';
@@ -97,8 +97,8 @@ abstract final class K {
   static const peyarEarkanavaeUlladhu = 'peyarEarkanavaeUlladhu';
 
   // ── Merchants & Customers ──
-  static const vanigar = 'vanigar';
-  static const vanigaraichChaer = 'vanigaraichChaer';
+  static const vaangunar = 'vaangunar';
+  static const vaangunaraichChaer = 'vaangunaraichChaer';
 
   // ── Products ──
   static const porul = 'porul';
@@ -270,15 +270,15 @@ abstract final class K {
   static const azhikkappattaPorulgal = 'azhikkappattaPorulgal';
   static const meetpagam30Naal = 'meetpagam30Naal';
 
-  // ── Vanigar (Merchant) CRUD ──
-  static const vanigarTharavugal = 'vanigarTharavugal';
-  static const vanigarPeyar = 'vanigarPeyar';
-  static const vanigarPeyarThaevai = 'vanigarPeyarThaevai';
-  static const vanigarChaemikkappattadhu = 'vanigarChaemikkappattadhu';
-  static const vanigarAzhikkappattadhu = 'vanigarAzhikkappattadhu';
-  static const vanigargalIllai = 'vanigargalIllai';
-  static const vanigaraiChaerkkavum = 'vanigaraiChaerkkavum';
-  static const azhikkappattaVanigargal = 'azhikkappattaVanigargal';
+  // ── Vaangunar (Merchant) CRUD ──
+  static const vaangunarTharavugal = 'vaangunarTharavugal';
+  static const vaangunarPeyar = 'vaangunarPeyar';
+  static const vaangunarPeyarThaevai = 'vaangunarPeyarThaevai';
+  static const vaangunarChaemikkappattadhu = 'vaangunarChaemikkappattadhu';
+  static const vaangunarAzhikkappattadhu = 'vaangunarAzhikkappattadhu';
+  static const vaangunargalIllai = 'vaangunargalIllai';
+  static const vaangunaraiChaerkkavum = 'vaangunaraiChaerkkavum';
+  static const azhikkappattaVaangunargal = 'azhikkappattaVaangunargal';
   static const thodarpuVari = 'thodarpuVari';
   static const velinaadMugavari = 'velinaadMugavari';
   static const gstinTavaru = 'gstinTavaru';
@@ -310,7 +310,7 @@ abstract final class K {
   static const pattiyalTharavugal = 'pattiyalTharavugal';
   static const pattiyalVagai = 'pattiyalVagai';
   static const mothangal = 'mothangal';
-  static const vanigarPeyarThaedu = 'vanigarPeyarThaedu';
+  static const vaangunarPeyarThaedu = 'vaangunarPeyarThaedu';
   static const chaemiththaTharavugal = 'chaemiththaTharavugal';
   static const niruvanaThannuru = 'niruvanaThannuru';
   static const maanilamThaerodhu = 'maanilamThaerodhu';
@@ -337,7 +337,7 @@ abstract final class K {
   static const varipPattiyal = 'varipPattiyal';
   static const munvaraivu = 'munvaraivu';
   static const piraVarivuChaer = 'piraVarivuChaer';
-  static const vanigaraiThaerodhu = 'vanigaraiThaerodhu';
+  static const vaangunaraiThaerodhu = 'vaangunaraiThaerodhu';
   static const niruvanamThaerodhu = 'niruvanamThaerodhu';
   static const maanilamThaedu = 'maanilamThaedu';
   static const kattanaPeyar = 'kattanaPeyar';
@@ -364,7 +364,7 @@ abstract final class K {
   static const pudhiyaAakkam = 'pudhiyaAakkam';
   static const patrucheettuEn = 'patrucheettuEn';
   static const patrucheettuNaal = 'patrucheettuNaal';
-  static const pattiyalThaervukkuPinVanigarTharavugalNirappappadum = 'pattiyalThaervukkuPinVanigarTharavugalNirappappadum';
+  static const pattiyalThaervukkuPinVaangunarTharavugalNirappappadum = 'pattiyalThaervukkuPinVaangunarTharavugalNirappappadum';
   static const maatru = 'maatru';
   static const pattiyalaiThaernhedu = 'pattiyalaiThaernhedu';
   static const thogaiVinmeen = 'thogaiVinmeen';
@@ -373,7 +373,7 @@ abstract final class K {
   static const kurippu = 'kurippu';
   static const pattiyalgalaiThaernhedu = 'pattiyalgalaiThaernhedu';
   static const mudindhadhu = 'mudindhadhu';
-  static const pattiyalEnVanigar = 'pattiyalEnVanigar';
+  static const pattiyalEnVaangunar = 'pattiyalEnVaangunar';
 
   // ── Subcomponents & Enums ──
   static const munthogai = 'munthogai';

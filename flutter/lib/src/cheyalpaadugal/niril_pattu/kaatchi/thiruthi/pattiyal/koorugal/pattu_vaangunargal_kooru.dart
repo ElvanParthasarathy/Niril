@@ -4,7 +4,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
-import '../../../../../niril_podhu/kaatchi/koorugal/vanigar_thaedu_kooru.dart';
+import '../../../../../niril_podhu/kaatchi/koorugal/vaangunar_thaedu_kooru.dart';
 import '../../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import 'maanila_thervu_maeladukku.dart';
@@ -14,23 +14,23 @@ import 'maanila_thervu_maeladukku.dart';
 // ─────────────────────────────────────────────────────────────────────────────
 
 /// Customer data from parent for display purposes.
-class PattuVanigargalData {
-  const PattuVanigargalData({
-    required this.selectedVanigarId,
-    required this.selectedVanigarPeyarMap,
+class PattuVaangunargalData {
+  const PattuVaangunargalData({
+    required this.selectedVaangunarId,
+    required this.selectedVaangunarPeyarMap,
     required this.placeOfSupply,
     required this.placeOfSupplyTa,
   });
 
-  final int? selectedVanigarId;
-  final Map<String, String> selectedVanigarPeyarMap;
+  final int? selectedVaangunarId;
+  final Map<String, String> selectedVaangunarPeyarMap;
   final String placeOfSupply;
   final String placeOfSupplyTa;
 }
 
 /// Callbacks from customer section back to parent orchestrator.
-class PattuVanigargalCallbacks {
-  const PattuVanigargalCallbacks({
+class PattuVaangunargalCallbacks {
+  const PattuVaangunargalCallbacks({
     required this.onCustomerSelected,
     required this.onCustomerCleared,
     required this.onRequestAddNewCustomer,
@@ -38,7 +38,7 @@ class PattuVanigargalCallbacks {
     required this.onPlaceOfSupplyCleared,
   });
 
-  final void Function(VanigarEntry entry) onCustomerSelected;
+  final void Function(VaangunarEntry entry) onCustomerSelected;
   final VoidCallback onCustomerCleared;
   final VoidCallback onRequestAddNewCustomer;
   final void Function(String en, String ta) onPlaceOfSupplyChanged;
@@ -47,17 +47,17 @@ class PattuVanigargalCallbacks {
 
 /// Section 1 + Place of Supply: Customer search, address card, profile dropdown,
 /// and Place of Supply pills. Pure UI — delegates all state changes via callbacks.
-class PattuVanigargalKooru extends ConsumerWidget {
-  const PattuVanigargalKooru({
+class PattuVaangunargalKooru extends ConsumerWidget {
+  const PattuVaangunargalKooru({
     super.key,
     required this.data,
     required this.callbacks,
-    required this.selectedVanigar,
+    required this.selectedVaangunar,
   });
 
-  final PattuVanigargalData data;
-  final PattuVanigargalCallbacks callbacks;
-  final VanigarEntry? selectedVanigar;
+  final PattuVaangunargalData data;
+  final PattuVaangunargalCallbacks callbacks;
+  final VaangunarEntry? selectedVaangunar;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -70,16 +70,16 @@ class PattuVanigargalKooru extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            K.vanigarPeyarThaedu.tr(context, ref),
+            K.vaangunarPeyarThaedu.tr(context, ref),
             style: tt.labelMedium?.copyWith(
               color: cs.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 6),
-          VanigarThaeduKooru(
+          VaangunarThaeduKooru(
             seyaliVagai: 'silk',
-            selectedId: data.selectedVanigarId,
+            selectedId: data.selectedVaangunarId,
             onSelected: callbacks.onCustomerSelected,
             onCleared: callbacks.onCustomerCleared,
             onRequestAddNew: callbacks.onRequestAddNewCustomer,
@@ -87,7 +87,7 @@ class PattuVanigargalKooru extends ConsumerWidget {
         ],
       );
 
-      final savedDetailsCard = selectedVanigar != null
+      final savedDetailsCard = selectedVaangunar != null
           ? Padding(
               padding: const EdgeInsets.only(top: 12),
               child: ElvanThiruthiAttai(
@@ -104,12 +104,12 @@ class PattuVanigargalKooru extends ConsumerWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      selectedVanigar!.peyar['Tamil'] ?? (data.selectedVanigarPeyarMap['Tamil']?.isNotEmpty == true ? data.selectedVanigarPeyarMap['Tamil'] : data.selectedVanigarPeyarMap['English']) ?? '',
+                      selectedVaangunar!.peyar['Tamil'] ?? (data.selectedVaangunarPeyarMap['Tamil']?.isNotEmpty == true ? data.selectedVaangunarPeyarMap['Tamil'] : data.selectedVaangunarPeyarMap['English']) ?? '',
                       style: tt.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    _buildAddressBlock(selectedVanigar!, cs, tt),
+                    _buildAddressBlock(selectedVaangunar!, cs, tt),
                   ],
                 ),
               ),
@@ -139,7 +139,7 @@ class PattuVanigargalKooru extends ConsumerWidget {
   }
 
   // ── Address Block ──
-  Widget _buildAddressBlock(VanigarEntry v, ColorScheme cs, TextTheme tt) {
+  Widget _buildAddressBlock(VaangunarEntry v, ColorScheme cs, TextTheme tt) {
     List<String> buildLines(String key) {
       final lines = <String>[];
       final mugavari = (v.mugavari[key] ?? '').trim();

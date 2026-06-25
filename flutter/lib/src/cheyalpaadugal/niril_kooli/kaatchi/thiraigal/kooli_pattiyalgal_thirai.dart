@@ -53,8 +53,8 @@ class CoolieInvoicesPage extends ConsumerWidget {
             ? pattiyalgal
             : pattiyalgal.where((p) {
                 final en = p.patrucheettuEn.toLowerCase();
-                final peyarPrimary = (p.vanigarPeyar[primaryLang] ?? '').toLowerCase();
-                final peyarSecondary = (p.vanigarPeyar[secondaryLang] ?? '').toLowerCase();
+                final peyarPrimary = (p.vaangunarPeyar[primaryLang] ?? '').toLowerCase();
+                final peyarSecondary = (p.vaangunarPeyar[secondaryLang] ?? '').toLowerCase();
                 return en.contains(query) || 
                        peyarPrimary.contains(query) || 
                        peyarSecondary.contains(query);
@@ -406,9 +406,9 @@ class _CooliePatrucheettuCard extends StatelessWidget {
                 children: [
                   // Row 1: Customer name (primary)
                   Text(
-                    pattiyal.vanigarPeyar[primaryLang]?.isNotEmpty == true
-                        ? pattiyal.vanigarPeyar[primaryLang]!
-                        : pattiyal.vanigarPeyar[secondaryLang] ?? '',
+                    pattiyal.vaangunarPeyar[primaryLang]?.isNotEmpty == true
+                        ? pattiyal.vaangunarPeyar[primaryLang]!
+                        : pattiyal.vaangunarPeyar[secondaryLang] ?? '',
                     style: const TextStyle(
                       fontSize: 15.2,
                       fontWeight: FontWeight.w700,
