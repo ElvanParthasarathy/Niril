@@ -1,3 +1,5 @@
+import '../../../amaippugal/tharavu/pattu_niruvana_tharavugal_provider.dart';
+import '../../../amaippugal/tharavu/kooli_niruvana_tharavugal_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,9 +10,6 @@ import '../../../../adippadai/panigal/niril_backup_service.dart';
 import '../../../../koorugal/maeladukkugal/elvan_aetrum_maeladukku.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../../../../adippadai/tharavuthalam/pattu_tharavuthalam.dart';
-import '../../../../adippadai/tharavuthalam/kooli_tharavuthalam.dart';
-import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../koorugal/ullnuzhaivu_koorugal.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────

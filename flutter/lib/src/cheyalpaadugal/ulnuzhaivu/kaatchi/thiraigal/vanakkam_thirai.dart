@@ -7,7 +7,7 @@ import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../adippadai/panigal/niril_backup_service.dart';
-import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
+
 import 'package:drift/drift.dart' hide Column;
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../koorugal/ullnuzhaivu_koorugal.dart';

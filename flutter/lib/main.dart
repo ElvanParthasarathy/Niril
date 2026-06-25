@@ -26,6 +26,9 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
+import 'src/adippadai/tharavuthalam/migration_udhavi.dart';
 
 void main() {
   // ── Global Error Safety Net ──
@@ -80,6 +83,41 @@ void main() {
       }
 
       final sharedPrefs = await SharedPreferences.getInstance();
+
+      // ── MIGRATION CHECK ──
+      // Check if we need to migrate the legacy unified database to the split databases.
+      final hasMigrated = sharedPrefs.getBool('has_migrated_v3') ?? false;
+      if (!hasMigrated) {
+        final supportDir = await getApplicationSupportDirectory();
+        final legacyFile = File(p.join(supportDir.path, 'elvan_niril.db'));
+        
+        if (await legacyFile.exists()) {
+          debugPrint('Legacy database found. Initiating migration to split databases...');
+          
+          // Create a temporary container just to run the migration
+          final container = ProviderContainer(
+            overrides: [
+              sharedPreferencesProvider.overrideWithValue(sharedPrefs),
+            ],
+          );
+          
+          try {
+            final migrationUdhavi = container.read(migrationUdhaviProvider);
+            await migrationUdhavi.runMigration();
+            await sharedPrefs.setBool('has_migrated_v3', true);
+            debugPrint('Migration completed and flagged in SharedPreferences.');
+          } catch (e, stack) {
+            debugPrint('Migration error during startup: $e\n$stack');
+            ElvanPizhaipadhivu.logError(e, stackTrace: stack, context: 'Database Migration');
+          } finally {
+            // Clean up the temporary container to release DB connections
+            container.dispose();
+          }
+        } else {
+          // If legacy doesn't exist, it's a fresh install. Mark as migrated so we don't check again.
+          await sharedPrefs.setBool('has_migrated_v3', true);
+        }
+      }
 
       // Initialize backup service (தரவு பாதுகாப்பு)
       final backupService = await NirilBackupService.initialize();

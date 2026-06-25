@@ -1,5 +1,9 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../tharavuthalam/seyali_tharavuthalam.dart';
+import '../tharavuthalam/pattu_tharavuthalam.dart';
+import '../tharavuthalam/kooli_tharavuthalam.dart';
+
 import '../tharavuru/seyali_murai.dart';
 import '../viruppangal_paniyagam.dart';
 import '../../cheyalpaadugal/amaippugal/tharavu/niruvana_tharavugal.dart';
@@ -241,3 +245,10 @@ class SkipRestoreNotifier extends Notifier<bool> {
 }
 
 final skipRestoreProvider = NotifierProvider<SkipRestoreNotifier, bool>(SkipRestoreNotifier.new);
+
+
+
+
+
+
+
