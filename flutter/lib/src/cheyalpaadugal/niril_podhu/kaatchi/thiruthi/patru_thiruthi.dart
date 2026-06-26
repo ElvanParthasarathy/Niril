@@ -257,7 +257,11 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       if (mounted) {
         ref.invalidate(patrugalProvider);
         ref.invalidate(pattiyalgalProvider);
-        ElvanSnackbar.show(context, K.patrucheettuChaemikkappattadhu.tr(context, ref));
+        ElvanSnackbar.show(
+          context,
+          K.patrucheettuChaemikkappattadhu.tr(context, ref),
+          showAboveNavbar: true,
+        );
         Navigator.of(context).pop();
       }
     } catch (e) {

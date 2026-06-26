@@ -180,11 +180,10 @@ class ElvanCollapsedBar extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(100),
                             clipBehavior: Clip
                                 .antiAlias, // Clips the beautiful circular ripples smoothly to the pill border!
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 4,
-                                  vertical:
-                                      12), // Tighter vertical padding for 50px pill
+                            child: Container(
+                              height: 50, // Force exact height to perfectly match the 50x50 back button
+                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              alignment: Alignment.center,
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: navActions,

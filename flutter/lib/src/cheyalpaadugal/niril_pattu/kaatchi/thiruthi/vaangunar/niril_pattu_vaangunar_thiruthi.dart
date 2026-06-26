@@ -146,7 +146,11 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
     )).then((_) {
       if (mounted) {
         ref.invalidate(vaangunargalProvider);
-        ElvanSnackbar.show(context, K.vaangunarChaemikkappattadhu.tr(context, ref));
+        ElvanSnackbar.show(
+          context,
+          K.vaangunarChaemikkappattadhu.tr(context, ref),
+          showAboveNavbar: true,
+        );
         Navigator.of(context).pop();
       }
     });

@@ -175,8 +175,12 @@ class ElvanIrumozhiPulan extends ConsumerWidget {
                   .onSurface
                   .withValues(alpha: 0.08);
             }),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            contentPadding: EdgeInsets.only(
+              left: 20,
+              right: maxLines > 1 ? 8 : 20,
+              top: 16,
+              bottom: 16,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(maxLines > 1 ? 16 : 100),
               borderSide: BorderSide.none,

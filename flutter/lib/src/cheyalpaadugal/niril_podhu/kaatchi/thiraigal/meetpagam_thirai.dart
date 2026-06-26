@@ -11,6 +11,7 @@ import '../../kalanjiyam/porul_nilaimai.dart';
 import '../../kalanjiyam/vaangunar_nilaimai.dart';
 import 'koorugal/meetpagam_koorugal.dart';
 import '../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
+import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MEETPAGAM — Recycle Bin Screen
@@ -133,12 +134,10 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
     ref.read(porulKalanjiyamProvider).restorePorul(porul.id);
     ref.invalidate(porulgalProvider);
     ref.invalidate(deletedPorulgalProvider);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(K.meeteduppuVetri.tr(context, ref)),
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 2),
-      ),
+    ElvanSnackbar.show(
+      context,
+      K.meeteduppuVetri.tr(context, ref),
+      showAboveNavbar: true,
     );
   }
 
@@ -162,12 +161,10 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
     ref.read(vaangunarKalanjiyamProvider).restoreVaangunar(vaangunar.id);
     ref.invalidate(vaangunargalProvider);
     ref.invalidate(deletedVaangunargalProvider);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(K.meeteduppuVetri.tr(context, ref)),
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 2),
-      ),
+    ElvanSnackbar.show(
+      context,
+      K.meeteduppuVetri.tr(context, ref),
+      showAboveNavbar: true,
     );
   }
 

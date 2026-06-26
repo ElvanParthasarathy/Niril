@@ -3,15 +3,20 @@ import 'package:flutter/material.dart';
 class ElvanSnackbar {
   static OverlayEntry? _overlayEntry;
 
-  static void show(BuildContext context, String message) {
+  static void show(
+    BuildContext context,
+    String message, {
+    bool showAboveNavbar = false,
+  }) {
     _overlayEntry?.remove();
     _overlayEntry = null;
 
     final overlay = Overlay.of(context);
+    final bottomOffset = showAboveNavbar ? 104.0 : 24.0;
 
     _overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
-        bottom: 24.0,
+        bottom: bottomOffset,
         left: 0,
         right: 0,
         child: IgnorePointer(

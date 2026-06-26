@@ -274,7 +274,11 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
       _hasUnsavedChanges = false;
       if (mounted) {
         ref.invalidate(pattiyalgalProvider);
-        ElvanSnackbar.show(context, K.porulChaemikkappattadhu.tr(context, ref));
+        ElvanSnackbar.show(
+          context,
+          K.porulChaemikkappattadhu.tr(context, ref),
+          showAboveNavbar: true,
+        );
         Navigator.of(context).pop();
       }
     } catch (e) {

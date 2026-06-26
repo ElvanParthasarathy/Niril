@@ -71,7 +71,11 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
     )).then((_) {
       if (mounted) {
         ref.invalidate(vaangunargalProvider);
-        ElvanSnackbar.show(context, K.vaangunarChaemikkappattadhu.tr(context, ref));
+        ElvanSnackbar.show(
+          context,
+          K.vaangunarChaemikkappattadhu.tr(context, ref),
+          showAboveNavbar: true,
+        );
         Navigator.of(context).pop();
       }
     });
@@ -102,9 +106,14 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
                 autofocus: !_isEditing,
                 onChanged: (map) => setState(() => _peyar = map),
               ),
+            ],
+          ),
 
-              const SizedBox(height: 20),
-
+          ElvanEditorSection(
+            index: 1,
+            title: K.mugavaritharavugal.tr(context, ref),
+            displayChild: Text(_oor[primaryLang]?.trim().isNotEmpty == true ? _oor[primaryLang]! : '-'),
+            children: [
               // 2. Bilingual city
               ElvanKooliIrumozhiPulan(
                 label: K.oor.tr(context, ref),
@@ -112,13 +121,14 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
                 onChanged: (map) => setState(() => _oor = map),
               ),
 
-              const SizedBox(height: 20),
-
               // 3. Bilingual address
-              ElvanKooliIrumozhiPulan(
-                label: K.mugavari.tr(context, ref),
-                value: _mugavari,
-                onChanged: (map) => setState(() => _mugavari = map),
+              ElvanFullWidth(
+                child: ElvanKooliIrumozhiPulan(
+                  label: K.mugavari.tr(context, ref),
+                  value: _mugavari,
+                  maxLines: 4,
+                  onChanged: (map) => setState(() => _mugavari = map),
+                ),
               ),
             ],
           ),

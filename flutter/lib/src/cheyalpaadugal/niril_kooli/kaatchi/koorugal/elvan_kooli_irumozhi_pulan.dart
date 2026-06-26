@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../adippadai/mozhiyaakkam/k.dart';
 
 /// A reusable bilingual text field widget.
 /// Renders 1 or 2 TextFields based on the app's bilingual setting.
@@ -17,6 +17,8 @@ class ElvanKooliIrumozhiPulan extends ConsumerWidget {
     this.secondaryController,
     this.autofocus = false,
     this.textCapitalization = TextCapitalization.words,
+    this.maxLines = 1,
+    this.forceStacked = false,
   });
 
   /// Label displayed above the fields (e.g. 'Product Name').
@@ -38,6 +40,12 @@ class ElvanKooliIrumozhiPulan extends ConsumerWidget {
   /// Text capitalization for both fields.
   final TextCapitalization textCapitalization;
 
+  /// Maximum number of lines for the text fields.
+  final int maxLines;
+
+  /// If true, the layout will always be stacked vertically even on Desktop.
+  final bool forceStacked;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Coolie mode is fixed to Tamil (primary) and English (secondary).
@@ -45,48 +53,62 @@ class ElvanKooliIrumozhiPulan extends ConsumerWidget {
     const primaryLang = 'ta';
     const secondaryLang = 'en';
 
-    final translatedPrimaryLang = primaryLang.toLowerCase().tr(context, ref);
-    final translatedSecondaryLang = secondaryLang.toLowerCase().tr(context, ref);
+    final translatedPrimaryLang = K.tamil.tr(context, ref);
+    final translatedSecondaryLang = K.english.tr(context, ref);
 
     final primaryValue = value[primaryLang] ?? '';
     final secondaryValue = value[secondaryLang] ?? '';
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final primaryWidget = _buildTextField(
+      context: context,
+      isDark: isDark,
+      label: '$label ($translatedPrimaryLang)',
+      initialValue: primaryValue,
+      controller: primaryController,
+      autofocus: autofocus,
+      maxLines: maxLines,
+      onChanged: (text) {
+        final updated = Map<String, String>.from(value);
+        updated[primaryLang] = text;
+        onChanged(updated);
+      },
+    );
+
+    final secondaryWidget = _buildTextField(
+      context: context,
+      isDark: isDark,
+      label: '$label ($translatedSecondaryLang)',
+      initialValue: secondaryValue,
+      controller: secondaryController,
+      maxLines: maxLines,
+      onChanged: (text) {
+        final updated = Map<String, String>.from(value);
+        updated[secondaryLang] = text;
+        onChanged(updated);
+      },
+    );
+
+    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+
+    if (isDesktop && !forceStacked) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: primaryWidget),
+          const SizedBox(width: 16),
+          Expanded(child: secondaryWidget),
+        ],
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Primary language field
-        _buildTextField(
-          context: context,
-          isDark: isDark,
-          label: '$label ($translatedPrimaryLang)',
-          initialValue: primaryValue,
-          controller: primaryController,
-          autofocus: autofocus,
-          onChanged: (text) {
-            final updated = Map<String, String>.from(value);
-            updated[primaryLang] = text;
-            onChanged(updated);
-          },
-        ),
-
-        // Secondary language field (only if bilingual)
-        
-          const SizedBox(height: 12),
-          _buildTextField(
-            context: context,
-            isDark: isDark,
-            label: '$label ($translatedSecondaryLang)',
-            initialValue: secondaryValue,
-            controller: secondaryController,
-            onChanged: (text) {
-              final updated = Map<String, String>.from(value);
-              updated[secondaryLang] = text;
-              onChanged(updated);
-            },
-          ),
-
+        primaryWidget,
+        const SizedBox(height: 12),
+        secondaryWidget,
       ],
     );
   }
@@ -98,8 +120,11 @@ class ElvanKooliIrumozhiPulan extends ConsumerWidget {
     required String initialValue,
     TextEditingController? controller,
     bool autofocus = false,
+    int maxLines = 1,
     required ValueChanged<String> onChanged,
   }) {
+    final radius = maxLines > 1 ? 24.0 : 100.0;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -123,6 +148,7 @@ class ElvanKooliIrumozhiPulan extends ConsumerWidget {
           initialValue: controller == null ? initialValue : null,
           autofocus: autofocus,
           textCapitalization: textCapitalization,
+          maxLines: maxLines,
           style: const TextStyle(fontSize: 14),
           decoration: InputDecoration(
             isDense: true,
@@ -139,18 +165,22 @@ class ElvanKooliIrumozhiPulan extends ConsumerWidget {
                   .onSurface
                   .withValues(alpha: 0.08);
             }),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            contentPadding: EdgeInsets.only(
+              left: 20,
+              right: maxLines > 1 ? 8 : 20,
+              top: 14,
+              bottom: 14,
+            ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
+              borderRadius: BorderRadius.circular(radius),
               borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
+              borderRadius: BorderRadius.circular(radius),
               borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
+              borderRadius: BorderRadius.circular(radius),
               borderSide: BorderSide.none,
             ),
           ),

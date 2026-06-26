@@ -83,7 +83,11 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
     )).then((_) {
       if (mounted) {
         ref.invalidate(porulgalProvider);
-        ElvanSnackbar.show(context, K.porulChaemikkappattadhu.tr(context, ref));
+        ElvanSnackbar.show(
+          context,
+          K.porulChaemikkappattadhu.tr(context, ref),
+          showAboveNavbar: true,
+        );
         Navigator.of(context).pop();
       }
     });

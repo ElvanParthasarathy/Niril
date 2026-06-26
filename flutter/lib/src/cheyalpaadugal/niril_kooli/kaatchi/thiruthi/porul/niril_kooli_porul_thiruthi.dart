@@ -63,7 +63,11 @@ class _CoolieItemEditorState extends ConsumerState<CoolieItemEditor> {
     kalanjiyam.savePorul(tharavuru).then((_) {
       if (mounted) {
         ref.invalidate(porulgalProvider);
-        ElvanSnackbar.show(context, K.porulChaemikkappattadhu.tr(context, ref));
+        ElvanSnackbar.show(
+          context,
+          K.porulChaemikkappattadhu.tr(context, ref),
+          showAboveNavbar: true,
+        );
         Navigator.of(context).pop();
       }
     });
