@@ -254,6 +254,7 @@ abstract final class K {
   static const alavuVagai = 'alavuVagai';
   static const alavu = 'alavu';
   static const edai = 'edai';
+  static const alaveeduMurai = 'alaveeduMurai';
   static const hsnSacKuriyeedu = 'hsnSacKuriyeedu';
   static const vilai = 'vilai';
   static const gstVeedham = 'gstVeedham';

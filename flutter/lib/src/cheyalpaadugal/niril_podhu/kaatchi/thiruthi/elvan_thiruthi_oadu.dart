@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
-import '../../../../koorugal/podhu_koorugal/elvan_mithakkum_pin_pothan.dart';
 
 /// The Universal Editor Shell — wraps all creator/editor forms.
 ///
@@ -103,7 +102,7 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
       },
       child: ElvanSubpageShell(
         title: widget.title,
-        maxWidth: 1200,
+        maxWidth: double.infinity,
         hideHeaderOnDesktop: true,
         navActions: [
           if (widget.onSave != null)
@@ -119,88 +118,75 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
         ],
         slivers: [
           SliverToBoxAdapter(
-            child: Center(
+            child: Align(
+              alignment: Alignment.topLeft,
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1200),
+                constraints: const BoxConstraints(maxWidth: 860),
                 child: Padding(
                   padding: EdgeInsets.only(
-                    left: isDesktop ? 32 : 16,
-                    right: isDesktop ? 32 : 16,
+                    left: 16,
+                    right: 16,
                     top: isDesktop ? 32 : 8,
                     bottom: isDesktop ? 16 : 32,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // ── Desktop React-Style Header ──
-                      if (isDesktop) ...[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              widget.title,
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            ElvanFloatingBackButton(onBack: _handleCancel),
-                          ],
+                  // ── Desktop React-Style Header ──
+                  if (isDesktop) ...[
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surface,
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.chevron_left_rounded),
+                            onPressed: _handleCancel,
+                          ),
                         ),
+                        const SizedBox(width: 16),
+                        Text(
+                          widget.title,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (widget.onSave != null) ...[
+                          const Spacer(),
+                          SizedBox(
+                            height: 40,
+                            child: FilledButton(
+                              onPressed: widget.onSave,
+                              style: FilledButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 24),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface,
+                                foregroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .surface,
+                              ),
+                              child: Text(K.chaemiPtn.tr(context, ref)),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
                         const SizedBox(height: 32),
                       ],
 
                       // ── Main Form Content ──
                       widget.child,
-
-                      // ── Desktop: Cancel + Save pills ──
-                      if (isDesktop && widget.onSave != null) ...[
-                        const SizedBox(height: 40),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            // Cancel pill
-                            SizedBox(
-                              height: 40,
-                              child: TextButton(
-                                onPressed: _handleCancel,
-                                style: TextButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 24),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  backgroundColor:
-                                      Theme.of(context).colorScheme.surface,
-                                  foregroundColor:
-                                      Theme.of(context).colorScheme.onSurface,
-                                ),
-                                child: Text(K.kaividuPtn.tr(context, ref)),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            // Save pill
-                            SizedBox(
-                              height: 40,
-                              child: FilledButton.icon(
-                                onPressed: widget.onSave,
-                                icon:
-                                    const Icon(Icons.save_outlined, size: 20),
-                                label: Text(K.chaemiPtn.tr(context, ref)),
-                                style: FilledButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 24),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 48),
-                      ],
+                      
+                      if (isDesktop) const SizedBox(height: 48),
                     ],
                   ),
                 ),

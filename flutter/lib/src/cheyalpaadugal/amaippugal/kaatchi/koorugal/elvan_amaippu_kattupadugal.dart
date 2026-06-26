@@ -240,7 +240,7 @@ class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
                           .withValues(alpha: 0.08);
                     }),
                     contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(100),
                       borderSide: BorderSide.none,

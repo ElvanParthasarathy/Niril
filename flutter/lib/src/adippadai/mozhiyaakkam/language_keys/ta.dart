@@ -190,6 +190,7 @@ const Map<String, String> ta = {
   'alavuVagai': 'அளவு வகை',
   'alavu': 'அளவு',
   'edai': 'எடை',
+  'alaveeduMurai': 'அளவீடு முறை',
   'hsnSacKuriyeedu': 'HSN/SAC குறியீடு',
   'vilai': 'விற்பனை விலை',
   'gstVeedham': 'GST வீதம் %',

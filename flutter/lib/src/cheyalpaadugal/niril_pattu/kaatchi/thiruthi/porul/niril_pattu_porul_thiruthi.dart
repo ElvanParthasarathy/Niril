@@ -10,7 +10,9 @@ import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
 import '../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
+import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_keezhvirivu.dart';
 import '../../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
+
 
 class SilkItemEditor extends ConsumerStatefulWidget {
   const SilkItemEditor({super.key, this.product});
@@ -117,6 +119,7 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
             title: K.porulTharavugal.tr(context, ref),
             displayChild: Text(peyarText),
             children: [
+
               // Bilingual product name
               ElvanIrumozhiPulan(
                 label: K.porul.tr(context, ref),
@@ -124,33 +127,17 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
                 autofocus: !_isEditing,
                 onChanged: (map) => setState(() => _porulPeyar = map),
               ),
-              const SizedBox(height: 16),
 
-              // Measure type toggle
-              Text(
-                K.alavuVagai.tr(context, ref),
-                style: TextStyle(
-                  fontSize: 14,
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.6)
-                      : Colors.black.withValues(alpha: 0.5),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  _MeasureToggle(
-                    label: K.alavu.tr(context, ref),
-                    isSelected: _alavuVagai == 'quantity',
-                    onTap: () => setState(() => _alavuVagai = 'quantity'),
-                  ),
-                  const SizedBox(width: 8),
-                  _MeasureToggle(
-                    label: K.edai.tr(context, ref),
-                    isSelected: _alavuVagai == 'weight',
-                    onTap: () => setState(() => _alavuVagai = 'weight'),
-                  ),
-                ],
+              // Measurement Method Dropdown
+              ElvanThiruthiKeezhvirivu(
+                label: K.alaveeduMurai.tr(context, ref),
+                value: _alavuVagai == 'weight' ? K.edai : K.alavu,
+                items: const [K.alavu, K.edai],
+                onChanged: (String newValue) {
+                  setState(() {
+                    _alavuVagai = newValue == K.edai ? 'weight' : 'quantity';
+                  });
+                },
               ),
             ],
           ),
@@ -272,7 +259,7 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
                   .withValues(alpha: 0.08);
             }),
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(100),
               borderSide: BorderSide.none,
@@ -290,53 +277,6 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
       ],
     );
   }
+
 }
 
-/// A pill-shaped toggle button for measure type selection.
-class _MeasureToggle extends StatelessWidget {
-  const _MeasureToggle({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primary = Theme.of(context).colorScheme.primary;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? primary.withValues(alpha: 0.15)
-              : (isDark
-                  ? Colors.white.withValues(alpha: 0.06)
-                  : Colors.black.withValues(alpha: 0.04)),
-          borderRadius: BorderRadius.circular(100),
-          border: Border.all(
-            color: isSelected ? primary : Colors.transparent,
-            width: 1.5,
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-            color: isSelected
-                ? primary
-                : (isDark ? Colors.white70 : Colors.black54),
-          ),
-        ),
-      ),
-    );
-  }
-}

@@ -120,8 +120,8 @@ class _ElvanDesktopSubpageShellState extends State<ElvanDesktopSubpageShell> {
                     sliver: SliverPadding(
                       padding: widget.contentPadding ??
                           ElvanSubpagePadding.of(context) ??
-                          EdgeInsets.symmetric(
-                              horizontal: isSplitView ? 24 : 0),
+                          const EdgeInsets.symmetric(
+                              horizontal: 24),
                       sliver: sliver,
                     ),
                   )),

@@ -17,7 +17,7 @@ class CustomNavItem {
     this.activeIcon,
     this.svgString,
     this.activeSvgString,
-  }) : assert(icon != null || svgString != null);
+  });
 
   /// Icon rendered when this tab is **not** selected.
   final IconData? icon;

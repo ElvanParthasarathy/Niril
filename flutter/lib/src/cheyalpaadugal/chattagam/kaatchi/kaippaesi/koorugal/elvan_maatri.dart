@@ -8,11 +8,15 @@ class ElvanPillShifter extends StatefulWidget {
     required this.items,
     required this.currentIndex,
     required this.onValueChanged,
+    this.isSmall = false,
+    this.isFullWidth = false,
   });
 
   final List<CustomNavItem> items;
   final int currentIndex;
   final ValueChanged<int> onValueChanged;
+  final bool isSmall;
+  final bool isFullWidth;
 
   @override
   State<ElvanPillShifter> createState() => _ElvanPillShifterState();
@@ -35,41 +39,49 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final int itemCount = widget.items.length;
-    final double layoutWidth =
-        140.0; // Wider to fit icon + long text like 'பற்றுச்சீட்டுகள்'
-    final double bgWidth =
-        148.0; // Slightly larger than layoutWidth for overlap
+        final int itemCount = widget.items.length;
+        
+        final double horizontalPadding = widget.isSmall ? 4.0 : 10.0;
+        final double verticalPadding = widget.isSmall ? 4.0 : 6.0;
 
-    const double horizontalPadding =
-        10.0; // 4px inner overlap + 6px gap = 10px total padding
-    const double verticalPadding = 6.0; // Tweaked for 50px total height
+        // Ensure we don't crash if placed in an infinite width container
+        final double safeMaxWidth = constraints.maxWidth.isFinite ? constraints.maxWidth : 400.0;
 
-    int activeVisualIndex = (_isInteracting && _hoverIndex != null)
-        ? _hoverIndex!
-        : (_localLockedIndex ?? widget.currentIndex);
+        final double layoutWidth = widget.isFullWidth 
+            ? (safeMaxWidth - (horizontalPadding * 2)) / itemCount
+            : (widget.isSmall ? 100.0 : 140.0);
+        
+        final double bgWidth = widget.isFullWidth 
+            ? layoutWidth
+            : (widget.isSmall ? 100.0 : 148.0);
 
-    double targetLeft;
-    if (_isInteracting && _dragOffset != null) {
-      targetLeft = _dragOffset! - (bgWidth / 2);
-    } else {
-      double overlap = (bgWidth - layoutWidth) / 2;
-      targetLeft = (activeVisualIndex * layoutWidth) - overlap;
-    }
+        int activeVisualIndex = (_isInteracting && _hoverIndex != null)
+            ? _hoverIndex!
+            : (_localLockedIndex ?? widget.currentIndex);
 
-    double maxLeft =
-        ((itemCount - 1) * layoutWidth) - ((bgWidth - layoutWidth) / 2);
-    double minLeft = -((bgWidth - layoutWidth) / 2);
-    targetLeft = targetLeft.clamp(minLeft, maxLeft);
+        double targetLeft;
+        if (_isInteracting && _dragOffset != null) {
+          targetLeft = _dragOffset! - (bgWidth / 2);
+        } else {
+          double overlap = (bgWidth - layoutWidth) / 2;
+          targetLeft = (activeVisualIndex * layoutWidth) - overlap;
+        }
 
-    return AnimatedScale(
+        double maxLeft =
+            ((itemCount - 1) * layoutWidth) - ((bgWidth - layoutWidth) / 2);
+        double minLeft = -((bgWidth - layoutWidth) / 2);
+        targetLeft = targetLeft.clamp(minLeft, maxLeft);
+
+        return AnimatedScale(
       scale: _isInteracting ? 1.02 : 1.0,
       duration: const Duration(milliseconds: 150),
       curve: Curves.easeOutCubic,
       child: Container(
-        height: 52, // Match comfortable touch target size
+        height: widget.isSmall ? 40 : 52, // Match comfortable touch target size
         decoration: BoxDecoration(
           color: isDark
               ? const Color(0xFF121212).withValues(alpha: 0.88)
@@ -83,7 +95,7 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
                 ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(
+          padding: EdgeInsets.symmetric(
               horizontal: horizontalPadding, vertical: verticalPadding),
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
@@ -252,5 +264,7 @@ class _ElvanPillShifterState extends State<ElvanPillShifter> {
         ),
       ),
     );
+    },
+  );
   }
 }

@@ -53,13 +53,13 @@ class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
     if (isDesktop) {
       // Desktop: Two-side grid layout, always expanded
       return Padding(
-        padding: const EdgeInsets.only(bottom: 24.0),
+        padding: const EdgeInsets.only(bottom: 48.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeader(isActive: true),
             Padding(
-              padding: const EdgeInsets.only(top: 16.0),
+              padding: const EdgeInsets.only(top: 4.0),
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   final itemWidth = (constraints.maxWidth - 16) / 2;

@@ -192,6 +192,7 @@ const Map<String, String> taLatn = {
   'alavuVagai': 'Alavu Vagai',
   'alavu': 'Alavu',
   'edai': 'Edai',
+  'alaveeduMurai': 'Alaveedu Murai',
   'hsnSacKuriyeedu': 'HSN/SAC Kuriyeedu',
   'vilai': 'Vilai',
   'gstVeedham': 'GST Veedham %',

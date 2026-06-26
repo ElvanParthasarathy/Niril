@@ -191,6 +191,7 @@ const Map<String, String> en = {
   'alavuVagai': 'Measure Type',
   'alavu': 'Quantity',
   'edai': 'Weight',
+  'alaveeduMurai': 'Measurement Method',
   'hsnSacKuriyeedu': 'HSN/SAC Code',
   'vilai': 'Selling Rate',
   'gstVeedham': 'GST Rate %',
