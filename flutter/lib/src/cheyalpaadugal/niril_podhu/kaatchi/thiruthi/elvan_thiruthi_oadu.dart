@@ -169,10 +169,10 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
                                 ),
                                 backgroundColor: Theme.of(context)
                                     .colorScheme
-                                    .onSurface,
+                                    .surface,
                                 foregroundColor: Theme.of(context)
                                     .colorScheme
-                                    .surface,
+                                    .onSurface,
                               ),
                               child: Text(K.chaemiPtn.tr(context, ref)),
                             ),

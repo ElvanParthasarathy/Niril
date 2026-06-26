@@ -40,8 +40,10 @@ class ElvanKooliIrumozhiPulan extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final primaryLang = ref.watch(primaryLanguageProvider);
-    final secondaryLang = ref.watch(secondaryLanguageProvider);
+    // Coolie mode is fixed to Tamil (primary) and English (secondary).
+    // It intentionally ignores the global hot-swap state.
+    const primaryLang = 'ta';
+    const secondaryLang = 'en';
 
     final translatedPrimaryLang = primaryLang.toLowerCase().tr(context, ref);
     final translatedSecondaryLang = secondaryLang.toLowerCase().tr(context, ref);

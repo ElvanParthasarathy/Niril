@@ -345,13 +345,6 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
                                 color: Colors.orange,
                                 onTap: _toggleBilingual,
                               ),
-                              Divider(height: 1, thickness: 1, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)),
-                              _buildCompactAction(
-                                label: 'Swap Data Langs',
-                                icon: Icons.swap_vert,
-                                color: Colors.purpleAccent,
-                                onTap: _swapDataLanguages,
-                              ),
                             ],
                           ),
                         ),

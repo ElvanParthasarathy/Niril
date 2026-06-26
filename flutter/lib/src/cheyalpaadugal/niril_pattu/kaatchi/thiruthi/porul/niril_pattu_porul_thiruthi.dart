@@ -1,3 +1,4 @@
+import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
@@ -61,12 +62,7 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
 
     // Validation: primary name required
     if (primaryName.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(K.porulPeyarThaevai.tr(context, ref)),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      ElvanSnackbar.show(context, K.porulPeyarThaevai.tr(context, ref));
       return;
     }
 
@@ -87,12 +83,7 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
     )).then((_) {
       if (mounted) {
         ref.invalidate(porulgalProvider);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(K.porulChaemikkappattadhu.tr(context, ref)),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        ElvanSnackbar.show(context, K.porulChaemikkappattadhu.tr(context, ref));
         Navigator.of(context).pop();
       }
     });
@@ -158,40 +149,29 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
                 inputFormatters: ElvanVadivamaippigal.enngalMattum,
                 maxLength: 8,
               ),
-              const SizedBox(height: 12),
 
-              // Rate + Tax in a row
-              Row(
-                children: [
-                  // Selling Rate
-                  Expanded(
-                    child: _buildTextField(
-                      context: context,
-                      isDark: isDark,
-                      label: K.vilai.tr(context, ref),
-                      controller: _vilaiController,
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      prefixText: '₹ ',
-                      inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  // GST %
-                  SizedBox(
-                    width: 120,
-                    child: _buildTextField(
-                      context: context,
-                      isDark: isDark,
-                      label: K.gstVeedham.tr(context, ref),
-                      controller: _variController,
-                      keyboardType: TextInputType.number,
-                      suffixText: '%',
-                      inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
-                      maxLength: 5,
-                    ),
-                  ),
-                ],
+              // Selling Rate
+              _buildTextField(
+                context: context,
+                isDark: isDark,
+                label: K.vilai.tr(context, ref),
+                controller: _vilaiController,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                prefixText: '₹ ',
+                inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
+              ),
+
+              // GST %
+              _buildTextField(
+                context: context,
+                isDark: isDark,
+                label: K.gstVeedham.tr(context, ref),
+                controller: _variController,
+                keyboardType: TextInputType.number,
+                suffixText: '%',
+                inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
+                maxLength: 5,
               ),
             ],
           ),

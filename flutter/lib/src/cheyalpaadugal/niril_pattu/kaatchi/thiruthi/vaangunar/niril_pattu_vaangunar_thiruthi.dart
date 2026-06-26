@@ -1,3 +1,4 @@
+import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
@@ -113,12 +114,7 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
     final primaryName = _peyar[primaryLang]?.trim() ?? '';
 
     if (primaryName.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(K.vaangunarPeyarThaevai.tr(context, ref)),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      ElvanSnackbar.show(context, K.vaangunarPeyarThaevai.tr(context, ref));
       return;
     }
 
@@ -150,12 +146,7 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
     )).then((_) {
       if (mounted) {
         ref.invalidate(vaangunargalProvider);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(K.vaangunarChaemikkappattadhu.tr(context, ref)),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        ElvanSnackbar.show(context, K.vaangunarChaemikkappattadhu.tr(context, ref));
         Navigator.of(context).pop();
       }
     });

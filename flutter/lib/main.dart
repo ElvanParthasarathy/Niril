@@ -192,10 +192,20 @@ class ElvanNirilApp extends ConsumerWidget {
         ),
         snackBarTheme: SnackBarThemeData(
           behavior: SnackBarBehavior.floating,
+          width: (Platform.isWindows || Platform.isMacOS || Platform.isLinux) ? 400.0 : null,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(100),
           ),
         ),
+        pageTransitionsTheme: Platform.isWindows || Platform.isMacOS || Platform.isLinux
+            ? const PageTransitionsTheme(
+                builders: {
+                  TargetPlatform.windows: MinimalDesktopFadeTransitionBuilder(),
+                  TargetPlatform.macOS: MinimalDesktopFadeTransitionBuilder(),
+                  TargetPlatform.linux: MinimalDesktopFadeTransitionBuilder(),
+                },
+              )
+            : null,
       ),
       darkTheme: ThemeData(
         fontFamily: 'ElvanSans',
@@ -216,10 +226,20 @@ class ElvanNirilApp extends ConsumerWidget {
         ),
         snackBarTheme: SnackBarThemeData(
           behavior: SnackBarBehavior.floating,
+          width: (Platform.isWindows || Platform.isMacOS || Platform.isLinux) ? 400.0 : null,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(100),
           ),
         ),
+        pageTransitionsTheme: Platform.isWindows || Platform.isMacOS || Platform.isLinux
+            ? const PageTransitionsTheme(
+                builders: {
+                  TargetPlatform.windows: MinimalDesktopFadeTransitionBuilder(),
+                  TargetPlatform.macOS: MinimalDesktopFadeTransitionBuilder(),
+                  TargetPlatform.linux: MinimalDesktopFadeTransitionBuilder(),
+                },
+              )
+            : null,
       ),
       home: PermissionGuardScreen(
         child: Consumer(
@@ -285,7 +305,34 @@ class ElvanNirilApp extends ConsumerWidget {
             );
           },
         ),
+
       ),
+    );
+  }
+}
+
+/// A minimal, fast cross-fade transition typical of professional desktop apps.
+/// Uses a custom curve to accelerate the default 300ms duration down to ~150ms.
+class MinimalDesktopFadeTransitionBuilder extends PageTransitionsBuilder {
+  const MinimalDesktopFadeTransitionBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    // Accelerate the fade to finish in the first half of the transition (150ms)
+    final fastFade = CurvedAnimation(
+      parent: animation,
+      curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+    );
+
+    return FadeTransition(
+      opacity: fastFade,
+      child: child,
     );
   }
 }

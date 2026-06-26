@@ -1,3 +1,4 @@
+import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -40,12 +41,7 @@ class _CoolieItemEditorState extends ConsumerState<CoolieItemEditor> {
 
     // Validation: primary name required
     if (primaryName.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(K.porulPeyarThaevai.tr(context, ref)),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      ElvanSnackbar.show(context, K.porulPeyarThaevai.tr(context, ref));
       return;
     }
 
@@ -67,12 +63,7 @@ class _CoolieItemEditorState extends ConsumerState<CoolieItemEditor> {
     kalanjiyam.savePorul(tharavuru).then((_) {
       if (mounted) {
         ref.invalidate(porulgalProvider);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(K.porulChaemikkappattadhu.tr(context, ref)),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+        ElvanSnackbar.show(context, K.porulChaemikkappattadhu.tr(context, ref));
         Navigator.of(context).pop();
       }
     });
