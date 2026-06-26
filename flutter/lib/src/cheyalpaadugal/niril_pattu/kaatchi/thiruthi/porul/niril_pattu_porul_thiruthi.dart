@@ -9,6 +9,7 @@ import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
 import '../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
+import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
 import '../../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 
 class SilkItemEditor extends ConsumerStatefulWidget {
@@ -98,6 +99,10 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryLang = ref.watch(primaryLanguageProvider);
+    final peyarText = _porulPeyar[primaryLang]?.isNotEmpty == true
+        ? _porulPeyar[primaryLang]!
+        : '';
 
     return ElvanEditorShell(
       title: _isEditing
@@ -107,104 +112,99 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Section 1: Product Details ──
-          Text(
-            K.porulTharavugal.tr(context, ref),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
-          const SizedBox(height: 16),
-
-          // Bilingual product name
-          ElvanIrumozhiPulan(
-            label: K.porul.tr(context, ref),
-            value: _porulPeyar,
-            autofocus: !_isEditing,
-            onChanged: (map) => setState(() => _porulPeyar = map),
-          ),
-          const SizedBox(height: 16),
-
-          // Measure type toggle
-          Text(
-            K.alavuVagai.tr(context, ref),
-            style: TextStyle(
-              fontSize: 14,
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.6)
-                  : Colors.black.withValues(alpha: 0.5),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Row(
+          ElvanEditorSection(
+            index: 0,
+            title: K.porulTharavugal.tr(context, ref),
+            displayChild: Text(peyarText),
             children: [
-              _MeasureToggle(
-                label: K.alavu.tr(context, ref),
-                isSelected: _alavuVagai == 'quantity',
-                onTap: () => setState(() => _alavuVagai = 'quantity'),
+              // Bilingual product name
+              ElvanIrumozhiPulan(
+                label: K.porul.tr(context, ref),
+                value: _porulPeyar,
+                autofocus: !_isEditing,
+                onChanged: (map) => setState(() => _porulPeyar = map),
               ),
-              const SizedBox(width: 8),
-              _MeasureToggle(
-                label: K.edai.tr(context, ref),
-                isSelected: _alavuVagai == 'weight',
-                onTap: () => setState(() => _alavuVagai = 'weight'),
+              const SizedBox(height: 16),
+
+              // Measure type toggle
+              Text(
+                K.alavuVagai.tr(context, ref),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.6)
+                      : Colors.black.withValues(alpha: 0.5),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  _MeasureToggle(
+                    label: K.alavu.tr(context, ref),
+                    isSelected: _alavuVagai == 'quantity',
+                    onTap: () => setState(() => _alavuVagai = 'quantity'),
+                  ),
+                  const SizedBox(width: 8),
+                  _MeasureToggle(
+                    label: K.edai.tr(context, ref),
+                    isSelected: _alavuVagai == 'weight',
+                    onTap: () => setState(() => _alavuVagai = 'weight'),
+                  ),
+                ],
               ),
             ],
           ),
-
-          const SizedBox(height: 32),
-
-          // ── Section 2: Pricing & Tax ──
-          Text(
-            K.vilaiMatrumVari.tr(context, ref),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
-          const SizedBox(height: 16),
-
-          // HSN Code
-          _buildTextField(
-            context: context,
-            isDark: isDark,
-            label: K.hsnSacKuriyeedu.tr(context, ref),
-            controller: _hsnController,
-            keyboardType: TextInputType.number,
-            inputFormatters: ElvanVadivamaippigal.enngalMattum,
-            maxLength: 8,
-          ),
-          const SizedBox(height: 12),
-
-          // Rate + Tax in a row
-          Row(
+          ElvanEditorSection(
+            index: 1,
+            title: K.vilaiMatrumVari.tr(context, ref),
+            displayChild: Text(
+              '₹ ${_vilaiController.text.isNotEmpty ? _vilaiController.text : '0'} / ${_variController.text}%',
+            ),
             children: [
-              // Selling Rate
-              Expanded(
-                child: _buildTextField(
-                  context: context,
-                  isDark: isDark,
-                  label: K.vilai.tr(context, ref),
-                  controller: _vilaiController,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  prefixText: '₹ ',
-                  inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
-                ),
+              // HSN Code
+              _buildTextField(
+                context: context,
+                isDark: isDark,
+                label: K.hsnSacKuriyeedu.tr(context, ref),
+                controller: _hsnController,
+                keyboardType: TextInputType.number,
+                inputFormatters: ElvanVadivamaippigal.enngalMattum,
+                maxLength: 8,
               ),
-              const SizedBox(width: 12),
-              // GST %
-              SizedBox(
-                width: 120,
-                child: _buildTextField(
-                  context: context,
-                  isDark: isDark,
-                  label: K.gstVeedham.tr(context, ref),
-                  controller: _variController,
-                  keyboardType: TextInputType.number,
-                  suffixText: '%',
-                  inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
-                  maxLength: 5,
-                ),
+              const SizedBox(height: 12),
+
+              // Rate + Tax in a row
+              Row(
+                children: [
+                  // Selling Rate
+                  Expanded(
+                    child: _buildTextField(
+                      context: context,
+                      isDark: isDark,
+                      label: K.vilai.tr(context, ref),
+                      controller: _vilaiController,
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      prefixText: '₹ ',
+                      inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // GST %
+                  SizedBox(
+                    width: 120,
+                    child: _buildTextField(
+                      context: context,
+                      isDark: isDark,
+                      label: K.gstVeedham.tr(context, ref),
+                      controller: _variController,
+                      keyboardType: TextInputType.number,
+                      suffixText: '%',
+                      inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
+                      maxLength: 5,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -221,47 +221,73 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
     TextInputType? keyboardType,
     String? prefixText,
     String? suffixText,
+    String? errorText,
+    TextCapitalization textCapitalization = TextCapitalization.none,
+    ValueChanged<String>? onChanged,
     List<TextInputFormatter>? inputFormatters,
     int? maxLength,
   }) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      inputFormatters: inputFormatters,
-      maxLength: maxLength,
-      style: const TextStyle(fontSize: 16),
-      decoration: InputDecoration(
-        labelText: label,
-        prefixText: prefixText,
-        suffixText: suffixText,
-        labelStyle: TextStyle(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.6)
-              : Colors.black.withValues(alpha: 0.5),
-          fontSize: 14,
-        ),
-        filled: true,
-        fillColor: isDark
-            ? Colors.white.withValues(alpha: 0.06)
-            : Colors.black.withValues(alpha: 0.04),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.primary,
-            width: 1.5,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 16, bottom: 8),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              letterSpacing: 0.3,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.5),
+            ),
           ),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      ),
+        TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          textCapitalization: textCapitalization,
+          onChanged: onChanged,
+          inputFormatters: inputFormatters,
+          maxLength: maxLength,
+          style: const TextStyle(fontSize: 14),
+          decoration: InputDecoration(
+            isDense: true,
+            prefixText: prefixText,
+            suffixText: suffixText,
+            errorText: errorText,
+            filled: true,
+            fillColor: WidgetStateColor.resolveWith((states) {
+              if (states.contains(WidgetState.focused)) {
+                return Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.12);
+              }
+              return Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.08);
+            }),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(100),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(100),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(100),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

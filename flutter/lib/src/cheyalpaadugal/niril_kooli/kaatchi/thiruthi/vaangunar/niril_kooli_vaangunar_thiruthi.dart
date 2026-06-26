@@ -7,6 +7,7 @@ import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../koorugal/elvan_kooli_irumozhi_pulan.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
+import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
 import '../../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 
 class CoolieMerchantEditor extends ConsumerStatefulWidget {
@@ -87,6 +88,9 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
 
   @override
   Widget build(BuildContext context) {
+    final primaryLang = ref.watch(primaryLanguageProvider);
+    final peyarText = _peyar[primaryLang]?.trim().isNotEmpty == true ? _peyar[primaryLang]! : '-';
+
     return ElvanEditorShell(
       title: _isEditing
           ? K.maatriyamai.tr(context, ref)
@@ -95,39 +99,37 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Section: Merchant Details ──
-          Text(
-            K.vaangunarTharavugal.tr(context, ref),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
-          const SizedBox(height: 16),
+          ElvanEditorSection(
+            index: 0,
+            title: K.vaangunarTharavugal.tr(context, ref),
+            displayChild: Text(peyarText),
+            children: [
+              // 1. Bilingual merchant name
+              ElvanKooliIrumozhiPulan(
+                label: K.vaangunarPeyar.tr(context, ref),
+                value: _peyar,
+                autofocus: !_isEditing,
+                onChanged: (map) => setState(() => _peyar = map),
+              ),
 
-          // 1. Bilingual merchant name
-          ElvanKooliIrumozhiPulan(
-            label: K.vaangunarPeyar.tr(context, ref),
-            value: _peyar,
-            autofocus: !_isEditing,
-            onChanged: (map) => setState(() => _peyar = map),
-          ),
+              const SizedBox(height: 20),
 
-          const SizedBox(height: 20),
+              // 2. Bilingual city
+              ElvanKooliIrumozhiPulan(
+                label: K.oor.tr(context, ref),
+                value: _oor,
+                onChanged: (map) => setState(() => _oor = map),
+              ),
 
-          // 2. Bilingual city
-          ElvanKooliIrumozhiPulan(
-            label: K.oor.tr(context, ref),
-            value: _oor,
-            onChanged: (map) => setState(() => _oor = map),
-          ),
+              const SizedBox(height: 20),
 
-          const SizedBox(height: 20),
-
-          // 3. Bilingual address
-          ElvanKooliIrumozhiPulan(
-            label: K.mugavari.tr(context, ref),
-            value: _mugavari,
-            onChanged: (map) => setState(() => _mugavari = map),
+              // 3. Bilingual address
+              ElvanKooliIrumozhiPulan(
+                label: K.mugavari.tr(context, ref),
+                value: _mugavari,
+                onChanged: (map) => setState(() => _mugavari = map),
+              ),
+            ],
           ),
         ],
       ),

@@ -216,7 +216,7 @@ class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
                   onEditingComplete: onEditingComplete,
                   enabled: widget.enabled,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 14,
                     color: widget.enabled
                         ? Theme.of(context).colorScheme.onSurface
                         : Theme.of(context)
@@ -225,6 +225,7 @@ class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
                             .withValues(alpha: 0.5),
                   ),
                   decoration: InputDecoration(
+                    isDense: true,
                     filled: true,
                     fillColor: WidgetStateColor.resolveWith((states) {
                       if (states.contains(WidgetState.focused)) {
@@ -239,9 +240,9 @@ class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
                           .withValues(alpha: 0.08);
                     }),
                     contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(100),
                       borderSide: BorderSide.none,
                     ),
                     suffixIcon: widget.enabled

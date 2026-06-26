@@ -25,6 +25,7 @@ class ElvanDesktopSubpageShell extends StatefulWidget {
     this.backgroundColor,
     this.hideHeaderOnDesktop = false,
     this.contentPadding,
+    this.maxWidth = 680,
   });
 
   final String title;
@@ -32,6 +33,7 @@ class ElvanDesktopSubpageShell extends StatefulWidget {
   final Color? backgroundColor;
   final bool hideHeaderOnDesktop;
   final EdgeInsetsGeometry? contentPadding;
+  final double maxWidth;
 
   @override
   State<ElvanDesktopSubpageShell> createState() =>
@@ -72,7 +74,7 @@ class _ElvanDesktopSubpageShellState extends State<ElvanDesktopSubpageShell> {
         final double availableWidth = constraints.maxWidth;
         final double horizontalPadding = isSplitView
             ? 0.0
-            : ((availableWidth > 680) ? (availableWidth - 680) / 2 : 0.0);
+            : ((availableWidth > widget.maxWidth) ? (availableWidth - widget.maxWidth) / 2 : 0.0);
 
         return ElvanSmoothScroll(
           controller: _scrollController,
@@ -111,7 +113,7 @@ class _ElvanDesktopSubpageShellState extends State<ElvanDesktopSubpageShell> {
                   ),
                 )
               else
-                const SliverToBoxAdapter(child: SizedBox(height: 56)),
+                const SliverToBoxAdapter(child: SizedBox.shrink()),
               ...widget.slivers.map((sliver) => SliverPadding(
                     padding:
                         EdgeInsets.symmetric(horizontal: horizontalPadding),

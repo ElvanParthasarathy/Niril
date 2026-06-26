@@ -17,6 +17,8 @@ class ElvanIrumozhiPulan extends ConsumerWidget {
     this.secondaryController,
     this.autofocus = false,
     this.textCapitalization = TextCapitalization.words,
+    this.enabled = true,
+    this.maxLines = 1,
   });
 
   /// Label displayed above the fields (e.g. 'Product Name').
@@ -38,6 +40,12 @@ class ElvanIrumozhiPulan extends ConsumerWidget {
   /// Text capitalization for both fields.
   final TextCapitalization textCapitalization;
 
+  /// Whether the fields are enabled.
+  final bool enabled;
+
+  /// The maximum number of lines for the text fields.
+  final int maxLines;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isBilingual = ref.watch(bilingualProvider);
@@ -52,54 +60,80 @@ class ElvanIrumozhiPulan extends ConsumerWidget {
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+
+    final primaryWidget = _buildTextField(
+      key: ValueKey(primaryLang),
+      context: context,
+      isDark: isDark,
+      label: '$label ($translatedPrimaryLang)',
+      initialValue: primaryValue,
+      controller: primaryController,
+      autofocus: autofocus,
+      enabled: enabled,
+      maxLines: maxLines,
+      onChanged: (text) {
+        final updated = Map<String, String>.from(value);
+        updated[primaryLang] = text;
+        onChanged(updated);
+      },
+    );
+
+    if (!isBilingual) {
+      return primaryWidget;
+    }
+
+    final secondaryWidget = _buildTextField(
+      key: ValueKey(secondaryLang),
+      context: context,
+      isDark: isDark,
+      label: '$label ($translatedSecondaryLang)',
+      initialValue: secondaryValue,
+      controller: secondaryController,
+      enabled: enabled,
+      maxLines: maxLines,
+      onChanged: (text) {
+        final updated = Map<String, String>.from(value);
+        updated[secondaryLang] = text;
+        onChanged(updated);
+      },
+    );
+
+    if (isDesktop) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: primaryWidget),
+          const SizedBox(width: 16),
+          Expanded(child: secondaryWidget),
+        ],
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Primary language field
-        _buildTextField(
-          context: context,
-          isDark: isDark,
-          label: '$label ($translatedPrimaryLang)',
-          initialValue: primaryValue,
-          controller: primaryController,
-          autofocus: autofocus,
-          onChanged: (text) {
-            final updated = Map<String, String>.from(value);
-            updated[primaryLang] = text;
-            onChanged(updated);
-          },
-        ),
-
-        // Secondary language field (only if bilingual)
-        if (isBilingual) ...[
-          const SizedBox(height: 12),
-          _buildTextField(
-            context: context,
-            isDark: isDark,
-            label: '$label ($translatedSecondaryLang)',
-            initialValue: secondaryValue,
-            controller: secondaryController,
-            onChanged: (text) {
-              final updated = Map<String, String>.from(value);
-              updated[secondaryLang] = text;
-              onChanged(updated);
-            },
-          ),
-        ],
+        primaryWidget,
+        const SizedBox(height: 12),
+        secondaryWidget,
       ],
     );
   }
 
   Widget _buildTextField({
+    Key? key,
     required BuildContext context,
     required bool isDark,
     required String label,
     required String initialValue,
     TextEditingController? controller,
     bool autofocus = false,
+    bool enabled = true,
+    int maxLines = 1,
     required ValueChanged<String> onChanged,
   }) {
     return Column(
+      key: key,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
@@ -121,8 +155,11 @@ class ElvanIrumozhiPulan extends ConsumerWidget {
           controller: controller,
           initialValue: controller == null ? initialValue : null,
           autofocus: autofocus,
+          enabled: enabled,
           textCapitalization: textCapitalization,
           style: const TextStyle(fontSize: 14),
+          maxLines: maxLines,
+          minLines: maxLines > 1 ? 2 : 1,
           decoration: InputDecoration(
             isDense: true,
             filled: true,
@@ -141,15 +178,15 @@ class ElvanIrumozhiPulan extends ConsumerWidget {
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
+              borderRadius: BorderRadius.circular(maxLines > 1 ? 16 : 100),
               borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
+              borderRadius: BorderRadius.circular(maxLines > 1 ? 16 : 100),
               borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
+              borderRadius: BorderRadius.circular(maxLines > 1 ? 16 : 100),
               borderSide: BorderSide.none,
             ),
           ),

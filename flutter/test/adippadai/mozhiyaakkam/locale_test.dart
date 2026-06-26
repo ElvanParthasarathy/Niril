@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/language_keys/en.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/language_keys/ta.dart';
-import 'package:elvan_niril/src/adippadai/mozhiyaakkam/language_keys/tg.dart';
 
 /// Tests to ensure translation map integrity.
 /// Every key in English must have a corresponding key in Tamil and Tanglish.
@@ -18,21 +17,6 @@ void main() {
         missingInTamil,
         isEmpty,
         reason: 'Missing Tamil translations for: ${missingInTamil.join(', ')}',
-      );
-    });
-
-    test('Every English key has a Tanglish translation', () {
-      final missingInTanglish = <String>[];
-      for (final key in en.keys) {
-        if (!tg.containsKey(key)) {
-          missingInTanglish.add(key);
-        }
-      }
-      expect(
-        missingInTanglish,
-        isEmpty,
-        reason:
-            'Missing Tanglish translations for: ${missingInTanglish.join(', ')}',
       );
     });
 

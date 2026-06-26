@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
-import '../../../../koorugal/podhu_koorugal/elvan_pagudhi_thalaipu_kooru.dart';
+import 'koorugal/elvan_thiruthi_paguthi.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_niruvanam_oadu.dart';
@@ -341,34 +341,51 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
             // ── Section 1: Against Invoice ──
             if (_mode == PatruMode.againstInvoice) ...[
-              ElvanPagudhiThalaipu(
-                  en: 1, thalaipu: K.endhapPattiyalukku.tr(context, ref)),
-              ElvanThiruthiAttai(
-                child: _buildInvoicePickerSection(invoicesAsync, isDark),
+              ElvanEditorSection(
+                index: 0,
+                title: K.endhapPattiyalukku.tr(context, ref),
+                displayChild: const SizedBox(),
+                initiallyExpanded: true,
+                children: [
+                  ElvanFullWidth(
+                    child: ElvanThiruthiAttai(
+                      child: _buildInvoicePickerSection(invoicesAsync, isDark),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 24),
             ],
 
             // ── Section 2: Receipt Data ──
-            ElvanPagudhiThalaipu(
-              en: _mode == PatruMode.againstInvoice ? 2 : 1,
-              thalaipu: K.patrucheettuTharavugal.tr(context, ref),
+            ElvanEditorSection(
+              index: _mode == PatruMode.againstInvoice ? 1 : 0,
+              title: K.patrucheettuTharavugal.tr(context, ref),
+              displayChild: const SizedBox(),
+              initiallyExpanded: true,
+              children: [
+                ElvanFullWidth(
+                  child: ElvanThiruthiAttai(
+                    padding: const EdgeInsets.all(24),
+                    child: _buildReceiptDataSection(isDark),
+                  ),
+                ),
+              ],
             ),
-            ElvanThiruthiAttai(
-              padding: const EdgeInsets.all(24),
-              child: _buildReceiptDataSection(isDark),
-            ),
-            const SizedBox(height: 24),
 
             // ── Section 3: Payment Details ──
-            ElvanPagudhiThalaipu(
-              en: _mode == PatruMode.againstInvoice ? 3 : 2,
-              thalaipu: K.cheluthiyaTharavu.tr(context, ref),
+            ElvanEditorSection(
+              index: _mode == PatruMode.againstInvoice ? 2 : 1,
+              title: K.cheluthiyaTharavu.tr(context, ref),
+              displayChild: const SizedBox(),
+              initiallyExpanded: true,
+              children: [
+                ElvanFullWidth(
+                  child: ElvanThiruthiAttai(
+                    child: _buildPaymentSection(isDark),
+                  ),
+                ),
+              ],
             ),
-            ElvanThiruthiAttai(
-              child: _buildPaymentSection(isDark),
-            ),
-            const SizedBox(height: 40),
           ],
         ),
       ),

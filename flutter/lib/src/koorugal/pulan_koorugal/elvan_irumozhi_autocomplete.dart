@@ -12,12 +12,14 @@ class ElvanIrumozhiAutocomplete extends ConsumerStatefulWidget {
     required this.value,
     required this.onChanged,
     required this.options,
+    this.enabled = true,
   });
 
   final String label;
   final Map<String, String> value;
   final ValueChanged<Map<String, String>> onChanged;
   final List<Map<String, String>> options;
+  final bool enabled;
 
   @override
   ConsumerState<ElvanIrumozhiAutocomplete> createState() => _ElvanIrumozhiAutocompleteState();
@@ -128,67 +130,96 @@ class _ElvanIrumozhiAutocompleteState extends ConsumerState<ElvanIrumozhiAutocom
     final primaryLang = ref.watch(primaryLanguageProvider);
     final secondaryLang = ref.watch(secondaryLanguageProvider);
 
+    ref.listen(primaryLanguageProvider, (previous, next) {
+      if (previous != next) {
+        _primaryController.text = widget.value[next] ?? '';
+      }
+    });
+    ref.listen(secondaryLanguageProvider, (previous, next) {
+      if (previous != next) {
+        _secondaryController.text = widget.value[next] ?? '';
+      }
+    });
+
     final translatedPrimaryLang = primaryLang.toLowerCase().tr(context, ref);
     final translatedSecondaryLang = secondaryLang.toLowerCase().tr(context, ref);
+
+    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+
+    final primaryAutocomplete = ElvanSettingsAutocomplete(
+      label: '${widget.label} ($translatedPrimaryLang)',
+      controller: _primaryController,
+      enabled: widget.enabled,
+      options: widget.options.map((d) => d[_mapLangToKey(primaryLang)] ?? '').where((s) => s.isNotEmpty).toList(),
+      onChanged: (val) {
+        if (val.isEmpty && isBilingual) {
+          _secondaryController.clear();
+          _updateValue(primaryLang, secondaryLang, pVal: '', sVal: '');
+        } else {
+          _updateValue(primaryLang, secondaryLang, pVal: val);
+        }
+      },
+      onSelected: (val) => _handleAutoFill(val, true, primaryLang, secondaryLang),
+      searchMatch: (option, query) {
+        final match = widget.options.firstWhere(
+            (d) => d[_mapLangToKey(primaryLang)] == option,
+            orElse: () => {});
+        if (match.isEmpty) return false;
+        final q = query.toLowerCase();
+        return (match['ta']?.toLowerCase().contains(q) ?? false) ||
+               (match['en']?.toLowerCase().contains(q) ?? false);
+      },
+      subtitleBuilder: isBilingual ? (option) {
+        final match = widget.options.firstWhere(
+            (d) => d[_mapLangToKey(primaryLang)] == option,
+            orElse: () => {});
+        return match[_mapLangToKey(secondaryLang)] ?? '';
+      } : null,
+    );
+
+    final secondaryAutocomplete = ElvanSettingsAutocomplete(
+      label: '${widget.label} ($translatedSecondaryLang)',
+      controller: _secondaryController,
+      options: widget.options.map((d) => d[_mapLangToKey(secondaryLang)] ?? '').where((s) => s.isNotEmpty).toList(),
+      onChanged: (val) => _updateValue(primaryLang, secondaryLang, sVal: val),
+      onSelected: (val) => _handleAutoFill(val, false, primaryLang, secondaryLang),
+      enabled: widget.enabled && _isCustomMode,
+      searchMatch: (option, query) {
+        final match = widget.options.firstWhere(
+            (d) => d[_mapLangToKey(secondaryLang)] == option,
+            orElse: () => {});
+        if (match.isEmpty) return false;
+        final q = query.toLowerCase();
+        return (match['ta']?.toLowerCase().contains(q) ?? false) ||
+               (match['en']?.toLowerCase().contains(q) ?? false);
+      },
+      subtitleBuilder: isBilingual ? (option) {
+        final match = widget.options.firstWhere(
+            (d) => d[_mapLangToKey(secondaryLang)] == option,
+            orElse: () => {});
+        return match[_mapLangToKey(primaryLang)] ?? '';
+      } : null,
+    );
+
+    if (!isBilingual) return primaryAutocomplete;
+
+    if (isDesktop) {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: primaryAutocomplete),
+          const SizedBox(width: 16),
+          Expanded(child: secondaryAutocomplete),
+        ],
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ElvanSettingsAutocomplete(
-          label: '${widget.label} ($translatedPrimaryLang)',
-          controller: _primaryController,
-          options: widget.options.map((d) => d[_mapLangToKey(primaryLang)] ?? '').where((s) => s.isNotEmpty).toList(),
-          onChanged: (val) {
-            if (val.isEmpty && isBilingual) {
-              _secondaryController.clear();
-              _updateValue(primaryLang, secondaryLang, pVal: '', sVal: '');
-            } else {
-              _updateValue(primaryLang, secondaryLang, pVal: val);
-            }
-          },
-          onSelected: (val) => _handleAutoFill(val, true, primaryLang, secondaryLang),
-          searchMatch: (option, query) {
-            final match = widget.options.firstWhere(
-                (d) => d[_mapLangToKey(primaryLang)] == option,
-                orElse: () => {});
-            if (match.isEmpty) return false;
-            final q = query.toLowerCase();
-            return (match['ta']?.toLowerCase().contains(q) ?? false) ||
-                   (match['en']?.toLowerCase().contains(q) ?? false);
-          },
-          subtitleBuilder: isBilingual ? (option) {
-            final match = widget.options.firstWhere(
-                (d) => d[_mapLangToKey(primaryLang)] == option,
-                orElse: () => {});
-            return match[_mapLangToKey(secondaryLang)] ?? '';
-          } : null,
-        ),
-        if (isBilingual) ...[
-          const SizedBox(height: 12),
-          ElvanSettingsAutocomplete(
-            label: '${widget.label} ($translatedSecondaryLang)',
-            controller: _secondaryController,
-            options: widget.options.map((d) => d[_mapLangToKey(secondaryLang)] ?? '').where((s) => s.isNotEmpty).toList(),
-            onChanged: (val) => _updateValue(primaryLang, secondaryLang, sVal: val),
-            onSelected: (val) => _handleAutoFill(val, false, primaryLang, secondaryLang),
-            enabled: _isCustomMode,
-            searchMatch: (option, query) {
-              final match = widget.options.firstWhere(
-                  (d) => d[_mapLangToKey(secondaryLang)] == option,
-                  orElse: () => {});
-              if (match.isEmpty) return false;
-              final q = query.toLowerCase();
-              return (match['ta']?.toLowerCase().contains(q) ?? false) ||
-                     (match['en']?.toLowerCase().contains(q) ?? false);
-            },
-            subtitleBuilder: isBilingual ? (option) {
-              final match = widget.options.firstWhere(
-                  (d) => d[_mapLangToKey(secondaryLang)] == option,
-                  orElse: () => {});
-              return match[_mapLangToKey(primaryLang)] ?? '';
-            } : null,
-          ),
-        ],
+        primaryAutocomplete,
+        const SizedBox(height: 12),
+        secondaryAutocomplete,
       ],
     );
   }

@@ -11,6 +11,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_pagudhi_thalaipu_kooru.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
+import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_niruvanam_oadu.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
@@ -345,30 +346,37 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Section 1: ① Customer ──
-            ElvanPagudhiThalaipu(en: 1, thalaipu: K.vaangunar.tr(context, ref)),
-            KooliVaangunarKooru(
-              selectedVaangunarId: _selectedVaangunarId,
-              selectedVaangunarPeyarMap: _selectedVaangunarPeyarMap,
-              selectedVaangunar: selectedVaangunar,
-              onVaangunarSelected: (entry) {
-                setState(() {
-                  _selectedVaangunarId = entry.id;
-                  _selectedVaangunarPeyarMap = entry.peyar.cast<String, String>();
-                  _selectedVaangunarMunvariMap = entry.mugavari.cast<String, String>();
-                  _hasUnsavedChanges = true;
-                });
-              },
-              onVaangunarCleared: () {
-                setState(() {
-                  _selectedVaangunarId = null;
-                  _selectedVaangunarPeyarMap = const {};
-                  _selectedVaangunarMunvariMap = const {};
-                  _hasUnsavedChanges = true;
-                });
-              },
+            ElvanEditorSection(
+              index: 0,
+              title: K.vaangunar.tr(context, ref),
+              displayChild: const SizedBox(),
+              initiallyExpanded: true,
+              children: [
+                ElvanFullWidth(
+                  child: KooliVaangunarKooru(
+                    selectedVaangunarId: _selectedVaangunarId,
+                    selectedVaangunarPeyarMap: _selectedVaangunarPeyarMap,
+                    selectedVaangunar: selectedVaangunar,
+                    onVaangunarSelected: (entry) {
+                      setState(() {
+                        _selectedVaangunarId = entry.id;
+                        _selectedVaangunarPeyarMap = entry.peyar.cast<String, String>();
+                        _selectedVaangunarMunvariMap = entry.mugavari.cast<String, String>();
+                        _hasUnsavedChanges = true;
+                      });
+                    },
+                    onVaangunarCleared: () {
+                      setState(() {
+                        _selectedVaangunarId = null;
+                        _selectedVaangunarPeyarMap = const {};
+                        _selectedVaangunarMunvariMap = const {};
+                        _hasUnsavedChanges = true;
+                      });
+                    },
+                  ),
+                ),
+              ],
             ),
-
-            const SizedBox(height: 24),
 
             // ── Disabled wrapper when no company selected ──
             Opacity(
@@ -379,164 +387,198 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // ── Section 2: ② Invoice Details ──
-                    ElvanPagudhiThalaipu(en: 2, thalaipu: K.pattiyalTharavugal.tr(context, ref)),
-                    ElvanPattiyalTharavugalKooru(
-                      isEditing: _isEditing,
-                      invoiceNumberOverride: _invoiceNumberOverride,
-                      previewInvoiceNumber: _previewBillNumber,
-                      isInvNumberEditing: _isInvNumberEditing,
-                      invNumberController: _invNumberController,
-                      profilePrefix: _profilePrefix,
-                      pattiyalNaal: _pattiyalNaal,
-                      onToggleEditInvNumber: () {
-                        setState(() {
-                          if (_isInvNumberEditing) {
-                            // Finishing edit → build full override string
-                            final numPart = _invNumberController.text.trim();
-                            if (numPart.isNotEmpty) {
-                              final prefix = _profilePrefix.isNotEmpty
-                                  ? _profilePrefix
-                                  : 'CB-';
-                              _invoiceNumberOverride = '$prefix$numPart';
-                            }
-                          } else {
-                            // Starting edit → extract number part
-                            final current = _invoiceNumberOverride.isNotEmpty
-                                ? _invoiceNumberOverride
-                                : _previewBillNumber;
-                            final parts = current.split('-');
-                            _invNumberController.text =
-                                parts.length > 1 ? parts.last : current;
-                          }
-                          _isInvNumberEditing = !_isInvNumberEditing;
-                          _hasUnsavedChanges = true;
-                        });
-                      },
-                      onInvNumberChanged: (v) {
-                        setState(() => _hasUnsavedChanges = true);
-                      },
-                      onDateChanged: (d) => setState(() {
-                        _pattiyalNaal = d;
-                        _hasUnsavedChanges = true;
-                      }),
-                      onDirty: () => setState(() => _hasUnsavedChanges = true),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // ── Section 3: ③ Items ──
-                    ElvanPagudhiThalaipu(en: 3, thalaipu: K.porutkal.tr(context, ref)),
-                    ...List.generate(_items.length, (i) => KooliUrupadiKooru(
-                      index: i,
-                      item: _items[i],
-                      itemCount: _items.length,
-                      formatter: formatter,
-                      onUpdated: (updated) {
-                        setState(() {
-                          _items = List.from(_items)..[i] = updated;
-                          _hasUnsavedChanges = true;
-                        });
-                        _recalculate();
-                      },
-                      onDeleted: () {
-                        setState(() {
-                          _items = List.from(_items)..removeAt(i);
-                          _hasUnsavedChanges = true;
-                        });
-                        _recalculate();
-                      },
-                      onRequestAddNewProduct: () async {
-                        await Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const CoolieItemEditor()),
-                        );
-                      },
-                    )),
-
-                    // Other charges item cards
-                    ...List.generate(_piraVarivugal.length, (i) => KooliPiraVarivuKooru(
-                      index: i,
-                      charge: _piraVarivugal[i],
-                      onUpdated: (updated) {
-                        setState(() {
-                          _piraVarivugal = List.from(_piraVarivugal)..[i] = updated;
-                          _hasUnsavedChanges = true;
-                        });
-                      },
-                      onDeleted: () {
-                        setState(() {
-                          _piraVarivugal = List.from(_piraVarivugal)..removeAt(i);
-                          _hasUnsavedChanges = true;
-                        });
-                        _recalculate();
-                      },
-                      onRecalculate: _recalculate,
-                    )),
-
-                    const SizedBox(height: 12),
-
-                    // Pill buttons row
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 8,
+                    ElvanEditorSection(
+                      index: 1,
+                      title: K.pattiyalTharavugal.tr(context, ref),
+                      displayChild: const SizedBox(),
+                      initiallyExpanded: true,
                       children: [
-                        kooliPillButton(context,
-                          icon: Icons.add_rounded,
-                          label: K.porulaichChaerPtn.tr(context, ref),
-                          onPressed: () => setState(() {
-                            _items = [..._items, const KooliUrupadi()];
-                            _hasUnsavedChanges = true;
-                          }),
-                        ),
-                        // Always show the Add Other Charges button (not just when empty)
-                        kooliPillButton(context,
-                            icon: Icons.add_rounded,
-                            label: K.piraVarivuChaer.tr(context, ref),
-                            onPressed: () => setState(() {
-                              _piraVarivugal = [
-                                ..._piraVarivugal,
-                                const PiraVarivu(),
-                              ];
+                        ElvanFullWidth(
+                          child: ElvanPattiyalTharavugalKooru(
+                            isEditing: _isEditing,
+                            invoiceNumberOverride: _invoiceNumberOverride,
+                            previewInvoiceNumber: _previewBillNumber,
+                            isInvNumberEditing: _isInvNumberEditing,
+                            invNumberController: _invNumberController,
+                            profilePrefix: _profilePrefix,
+                            pattiyalNaal: _pattiyalNaal,
+                            onToggleEditInvNumber: () {
+                              setState(() {
+                                if (_isInvNumberEditing) {
+                                  // Finishing edit → build full override string
+                                  final numPart = _invNumberController.text.trim();
+                                  if (numPart.isNotEmpty) {
+                                    final prefix = _profilePrefix.isNotEmpty
+                                        ? _profilePrefix
+                                        : 'CB-';
+                                    _invoiceNumberOverride = '$prefix$numPart';
+                                  }
+                                } else {
+                                  // Starting edit → extract number part
+                                  final current = _invoiceNumberOverride.isNotEmpty
+                                      ? _invoiceNumberOverride
+                                      : _previewBillNumber;
+                                  final parts = current.split('-');
+                                  _invNumberController.text =
+                                      parts.length > 1 ? parts.last : current;
+                                }
+                                _isInvNumberEditing = !_isInvNumberEditing;
+                                _hasUnsavedChanges = true;
+                              });
+                            },
+                            onInvNumberChanged: (v) {
+                              setState(() => _hasUnsavedChanges = true);
+                            },
+                            onDateChanged: (d) => setState(() {
+                              _pattiyalNaal = d;
                               _hasUnsavedChanges = true;
                             }),
+                            onDirty: () => setState(() => _hasUnsavedChanges = true),
                           ),
+                        ),
                       ],
                     ),
 
-                    const SizedBox(height: 24),
+                    // ── Section 3: ③ Items ──
+                    ElvanEditorSection(
+                      index: 2,
+                      title: K.porutkal.tr(context, ref),
+                      displayChild: const SizedBox(),
+                      initiallyExpanded: true,
+                      children: [
+                        ElvanFullWidth(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              ...List.generate(_items.length, (i) => KooliUrupadiKooru(
+                                index: i,
+                                item: _items[i],
+                                itemCount: _items.length,
+                                formatter: formatter,
+                                onUpdated: (updated) {
+                                  setState(() {
+                                    _items = List.from(_items).. [i] = updated;
+                                    _hasUnsavedChanges = true;
+                                  });
+                                  _recalculate();
+                                },
+                                onDeleted: () {
+                                  setState(() {
+                                    _items = List.from(_items)..removeAt(i);
+                                    _hasUnsavedChanges = true;
+                                  });
+                                  _recalculate();
+                                },
+                                onRequestAddNewProduct: () async {
+                                  await Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (_) => const CoolieItemEditor()),
+                                  );
+                                },
+                              )),
 
-                    // ── Extra Charges Bento Grid ──
-                    KooliMelthogaiKooru(
-                      setharamCtrl: _setharamCtrl,
-                      ahimsaCtrl: _ahimsaCtrl,
-                      thabaalCtrl: _thabaalCtrl,
-                      onSetharamChanged: (v) {
-                        _setharamGrams = double.tryParse(v) ?? 0;
-                        _hasUnsavedChanges = true;
-                        _recalculate();
-                      },
-                      onAhimsaChanged: (v) {
-                        _ahimsaPattuThogai = double.tryParse(v) ?? 0;
-                        _hasUnsavedChanges = true;
-                        _recalculate();
-                      },
-                      onThabaalChanged: (v) {
-                        _thabaalThogai = double.tryParse(v) ?? 0;
-                        _hasUnsavedChanges = true;
-                        _recalculate();
-                      },
+                              // Other charges item cards
+                              ...List.generate(_piraVarivugal.length, (i) => KooliPiraVarivuKooru(
+                                index: i,
+                                charge: _piraVarivugal[i],
+                                onUpdated: (updated) {
+                                  setState(() {
+                                    _piraVarivugal = List.from(_piraVarivugal).. [i] = updated;
+                                    _hasUnsavedChanges = true;
+                                  });
+                                },
+                                onDeleted: () {
+                                  setState(() {
+                                    _piraVarivugal = List.from(_piraVarivugal)..removeAt(i);
+                                    _hasUnsavedChanges = true;
+                                  });
+                                  _recalculate();
+                                },
+                                onRecalculate: _recalculate,
+                              )),
+
+                              const SizedBox(height: 12),
+
+                              // Pill buttons row
+                              Wrap(
+                                spacing: 12,
+                                runSpacing: 8,
+                                children: [
+                                  kooliPillButton(context,
+                                    icon: Icons.add_rounded,
+                                    label: K.porulaichChaerPtn.tr(context, ref),
+                                    onPressed: () => setState(() {
+                                      _items = [..._items, const KooliUrupadi()];
+                                      _hasUnsavedChanges = true;
+                                    }),
+                                  ),
+                                  // Always show the Add Other Charges button (not just when empty)
+                                  kooliPillButton(context,
+                                      icon: Icons.add_rounded,
+                                      label: K.piraVarivuChaer.tr(context, ref),
+                                      onPressed: () => setState(() {
+                                        _piraVarivugal = [
+                                          ..._piraVarivugal,
+                                          const PiraVarivu(),
+                                        ];
+                                        _hasUnsavedChanges = true;
+                                      }),
+                                    ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
 
+                    // ── Section 4: ④ Totals ──
+                    ElvanEditorSection(
+                      index: 3,
+                      title: K.mothangal.tr(context, ref),
+                      displayChild: const SizedBox(),
+                      initiallyExpanded: true,
+                      children: [
+                        ElvanFullWidth(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              // ── Extra Charges Bento Grid ──
+                              KooliMelthogaiKooru(
+                                setharamCtrl: _setharamCtrl,
+                                ahimsaCtrl: _ahimsaCtrl,
+                                thabaalCtrl: _thabaalCtrl,
+                                onSetharamChanged: (v) {
+                                  _setharamGrams = double.tryParse(v) ?? 0;
+                                  _hasUnsavedChanges = true;
+                                  _recalculate();
+                                },
+                                onAhimsaChanged: (v) {
+                                  _ahimsaPattuThogai = double.tryParse(v) ?? 0;
+                                  _hasUnsavedChanges = true;
+                                  _recalculate();
+                                },
+                                onThabaalChanged: (v) {
+                                  _thabaalThogai = double.tryParse(v) ?? 0;
+                                  _hasUnsavedChanges = true;
+                                  _recalculate();
+                                },
+                              ),
 
-                    const SizedBox(height: 24),
+                              const SizedBox(height: 24),
 
-                    // ── Totals Card ──
-                    KooliMothangalKooru(
-                      totals: _totals,
-                      setharamGrams: _setharamGrams,
-                      ahimsaPattuThogai: _ahimsaPattuThogai,
-                      thabaalThogai: _thabaalThogai,
-                      piraVarivugal: _piraVarivugal,
-                      formatter: formatter,
+                              // ── Totals Card ──
+                              KooliMothangalKooru(
+                                totals: _totals,
+                                setharamGrams: _setharamGrams,
+                                ahimsaPattuThogai: _ahimsaPattuThogai,
+                                thabaalThogai: _thabaalThogai,
+                                piraVarivugal: _piraVarivugal,
+                                formatter: formatter,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

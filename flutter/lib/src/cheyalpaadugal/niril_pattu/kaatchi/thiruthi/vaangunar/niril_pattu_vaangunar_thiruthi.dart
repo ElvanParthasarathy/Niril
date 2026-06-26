@@ -10,9 +10,9 @@ import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
 import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_autocomplete.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
+import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
 import '../../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 import '../../../../../adippadai/idangal_kalanjiyam/idangal_kalanjiyam.dart';
-import 'koorugal/vaangunar_thiruthi_koorugal.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SILK / GST MERCHANT EDITOR
@@ -35,7 +35,6 @@ class SilkMerchantEditor extends ConsumerStatefulWidget {
 }
 
 class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
-  int _expandedIndex = 0;
 
   // ── Bilingual fields ──
   Map<String, String> _peyar = {};
@@ -59,14 +58,14 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
     // Check both key systems ('en'/'ta' from picker, 'Tamil'/'English' from DB)
     final enName = (_naadu['en'] ?? _naadu['English'] ?? '').trim().toLowerCase();
     final taName = (_naadu['ta'] ?? _naadu['Tamil'] ?? '').trim();
-    return enName == 'india' || taName == K.india.tr(context, ref) || enName.isEmpty;
+    
+    if (enName.isEmpty && taName.isEmpty) return true;
+    return enName == 'india' || taName == K.india.tr(context, ref);
   }
 
   @override
   void initState() {
     super.initState();
-    _expandedIndex = widget.vaangunar != null ? -1 : 0;
-    _expandedIndex = widget.vaangunar != null ? -1 : 0;
     if (widget.vaangunar != null) {
       final v = widget.vaangunar!;
       _peyar = Map<String, String>.from(v.peyar);
@@ -81,8 +80,9 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
       _minnanjalController.text = v.minnanjal;
       _tholaipaesiController.text = v.tholaipaesi;
     } else {
-      // Default country: India (bilingual)
-      _naadu = {'en': 'India', 'ta': K.india.tr(context, ref)};
+      final pLang = ref.read(primaryLanguageProvider);
+      final sLang = ref.read(secondaryLanguageProvider);
+      _naadu = {sLang: 'India', pLang: K.india.tr(context, ref)};
     }
   }
 
@@ -196,7 +196,7 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-          _buildAccordionSection(
+          ElvanEditorSection(
             index: 0,
             title: K.vaangunarTharavugal.tr(context, ref),
             displayChild: Text(peyarText),
@@ -210,7 +210,7 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
             ],
           ),
 
-          _buildAccordionSection(
+          ElvanEditorSection(
             index: 1,
             title: K.mugavari.tr(context, ref),
             displayChild: Text(mugavariText.isNotEmpty ? mugavariText : '-'),
@@ -221,19 +221,19 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
                 onChanged: (map) => setState(() => _naadu = map),
                 options: ulagaNaadugal,
               ),
-              const SizedBox(height: 16),
               if (_isIndia) ...[
                 ElvanIrumozhiAutocomplete(
                   label: K.maanilam.tr(context, ref),
                   value: _maanilam,
+                  enabled: _naadu.values.any((v) => v.trim().isNotEmpty),
                   onChanged: (map) => setState(() => _maanilam = map),
                   options: indhiyaMaanilangal,
                 ),
-                const SizedBox(height: 16),
-                if (_maanilam['en'] == 'Tamil Nadu' || _maanilam['ta'] == 'தமிழ்நாடு')
+                if (((_maanilam['en'] ?? _maanilam['English'] ?? '').trim() == 'Tamil Nadu') || ((_maanilam['ta'] ?? _maanilam['Tamil'] ?? '').trim() == 'தமிழ்நாடு'))
                   ElvanIrumozhiAutocomplete(
                     label: K.maavattam.tr(context, ref),
                     value: _maavattam,
+                    enabled: _maanilam.values.any((v) => v.trim().isNotEmpty),
                     onChanged: (map) => setState(() => _maavattam = map),
                     options: tamizhnaattuMaavattangal,
                   )
@@ -241,21 +241,19 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
                   ElvanIrumozhiPulan(
                     label: K.maavattam.tr(context, ref),
                     value: _maavattam,
+                    enabled: _maanilam.values.any((v) => v.trim().isNotEmpty),
                     onChanged: (map) => setState(() => _maavattam = map),
                   ),
-                const SizedBox(height: 16),
                 ElvanIrumozhiPulan(
                   label: K.oor.tr(context, ref),
                   value: _oor,
                   onChanged: (map) => setState(() => _oor = map),
                 ),
-                const SizedBox(height: 16),
                 ElvanIrumozhiPulan(
                   label: K.mugavari.tr(context, ref),
                   value: _mugavari,
                   onChanged: (map) => setState(() => _mugavari = map),
                 ),
-                const SizedBox(height: 16),
                 _buildTextField(
                   context: context,
                   isDark: isDark,
@@ -269,13 +267,14 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
                 ElvanIrumozhiPulan(
                   label: K.velinaadMugavari.tr(context, ref),
                   value: _velinaadMugavari,
+                  maxLines: 4,
                   onChanged: (map) => setState(() => _velinaadMugavari = map),
                 ),
               ],
             ],
           ),
 
-          _buildAccordionSection(
+          ElvanEditorSection(
             index: 2,
             title: K.thodarpuVari.tr(context, ref),
             displayChild: Text(thodarpuParts.isNotEmpty ? thodarpuParts : '-'),
@@ -293,7 +292,6 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
                 inputFormatters: ElvanVadivamaippigal.periyaEzhuthuEnngal,
                 maxLength: 15,
               ),
-              const SizedBox(height: 16),
               _buildTextField(
                 context: context,
                 isDark: isDark,
@@ -301,7 +299,6 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
                 controller: _minnanjalController,
                 keyboardType: TextInputType.emailAddress,
               ),
-              const SizedBox(height: 16),
               _buildTextField(
                 context: context,
                 isDark: isDark,
@@ -315,56 +312,6 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
           ),
         ],
       ),
-    );
-  }
-
-
-  Widget _buildAccordionSection({
-    required int index,
-    required String title,
-    required Widget displayChild,
-    required List<Widget> children,
-  }) {
-    final isActive = _expandedIndex == index;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        GestureDetector(
-          onTap: () => setState(() => _expandedIndex = isActive ? -1 : index),
-          behavior: HitTestBehavior.opaque,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: VaangunarThiruthiPaguthiThalaipu(
-              label: title,
-              stepNumber: index + 1,
-              isActive: isActive,
-            ),
-          ),
-        ),
-        AnimatedCrossFade(
-          firstChild: Padding(
-            padding: const EdgeInsets.only(top: 4.0, bottom: 20.0, left: 40),
-            child: DefaultTextStyle(
-              style: TextStyle(
-                color: isDark ? Colors.white54 : Colors.black54,
-                fontSize: 15,
-              ),
-              child: displayChild,
-            ),
-          ),
-          secondChild: Padding(
-            padding: const EdgeInsets.only(top: 16.0, bottom: 24.0, left: 40),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: children,
-            ),
-          ),
-          crossFadeState: isActive ? CrossFadeState.showSecond : CrossFadeState.showFirst,
-          duration: const Duration(milliseconds: 300),
-          sizeCurve: Curves.easeInOut,
-        ),
-      ],
     );
   }
 
@@ -384,47 +331,67 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
     List<TextInputFormatter>? inputFormatters,
     int? maxLength,
   }) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      textCapitalization: textCapitalization,
-      onChanged: onChanged,
-      inputFormatters: inputFormatters,
-      maxLength: maxLength,
-      style: const TextStyle(fontSize: 16),
-      decoration: InputDecoration(
-        labelText: label,
-        prefixText: prefixText,
-        suffixText: suffixText,
-        errorText: errorText,
-        labelStyle: TextStyle(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.6)
-              : Colors.black.withValues(alpha: 0.5),
-          fontSize: 14,
-        ),
-        filled: true,
-        fillColor: isDark
-            ? Colors.white.withValues(alpha: 0.06)
-            : Colors.black.withValues(alpha: 0.04),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.primary,
-            width: 1.5,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 16, bottom: 8),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              letterSpacing: 0.3,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.5),
+            ),
           ),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      ),
+        TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          textCapitalization: textCapitalization,
+          onChanged: onChanged,
+          inputFormatters: inputFormatters,
+          maxLength: maxLength,
+          style: const TextStyle(fontSize: 14),
+          decoration: InputDecoration(
+            isDense: true,
+            prefixText: prefixText,
+            suffixText: suffixText,
+            errorText: errorText,
+            filled: true,
+            fillColor: WidgetStateColor.resolveWith((states) {
+              if (states.contains(WidgetState.focused)) {
+                return Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.12);
+              }
+              return Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.08);
+            }),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(100),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(100),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(100),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -7,6 +7,7 @@ import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../../adippadai/tharavuru/uruvugal.dart';
 import '../../koorugal/elvan_kooli_irumozhi_pulan.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
+import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
 import '../../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 
 class CoolieItemEditor extends ConsumerStatefulWidget {
@@ -79,6 +80,11 @@ class _CoolieItemEditorState extends ConsumerState<CoolieItemEditor> {
 
   @override
   Widget build(BuildContext context) {
+    final primaryLang = ref.watch(primaryLanguageProvider);
+    final peyarText = _porulPeyar[primaryLang]?.isNotEmpty == true
+        ? _porulPeyar[primaryLang]!
+        : '';
+
     return ElvanEditorShell(
       title: _isEditing
           ? K.maatriyamai.tr(context, ref)
@@ -87,21 +93,19 @@ class _CoolieItemEditorState extends ConsumerState<CoolieItemEditor> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Section: Product Details ──
-          Text(
-            K.porulTharavugal.tr(context, ref),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
-          const SizedBox(height: 16),
-
-          // Bilingual product name
-          ElvanKooliIrumozhiPulan(
-            label: K.porul.tr(context, ref),
-            value: _porulPeyar,
-            autofocus: !_isEditing,
-            onChanged: (map) => setState(() => _porulPeyar = map),
+          ElvanEditorSection(
+            index: 0,
+            title: K.porulTharavugal.tr(context, ref),
+            displayChild: Text(peyarText),
+            children: [
+              // Bilingual product name
+              ElvanKooliIrumozhiPulan(
+                label: K.porul.tr(context, ref),
+                value: _porulPeyar,
+                autofocus: !_isEditing,
+                onChanged: (map) => setState(() => _porulPeyar = map),
+              ),
+            ],
           ),
         ],
       ),

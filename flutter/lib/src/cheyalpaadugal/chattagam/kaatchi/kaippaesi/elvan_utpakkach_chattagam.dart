@@ -8,6 +8,15 @@ import 'koorugal/elvan_pin_pothan.dart';
 /// It inherently injects the [ElvanBackButton] into the shell's physics engine
 /// and disables the bottom navigation bar.
 class ElvanSubpageShell extends StatefulWidget {
+  final String title;
+  final List<Widget> slivers;
+  final List<Widget> navActions;
+  final bool startCollapsed;
+  final Color? backgroundColor;
+  final bool hideHeaderOnDesktop;
+  final EdgeInsetsGeometry? contentPadding;
+  final double maxWidth;
+
   const ElvanSubpageShell({
     super.key,
     required this.title,
@@ -17,15 +26,8 @@ class ElvanSubpageShell extends StatefulWidget {
     this.backgroundColor,
     this.hideHeaderOnDesktop = false,
     this.contentPadding,
+    this.maxWidth = 680,
   });
-
-  final String title;
-  final List<Widget> slivers;
-  final List<Widget> navActions;
-  final bool startCollapsed;
-  final Color? backgroundColor;
-  final bool hideHeaderOnDesktop;
-  final EdgeInsetsGeometry? contentPadding;
 
   @override
   State<ElvanSubpageShell> createState() => _ElvanSubpageShellState();
@@ -45,6 +47,7 @@ class _ElvanSubpageShellState extends State<ElvanSubpageShell> {
         backgroundColor: widget.backgroundColor,
         hideHeaderOnDesktop: widget.hideHeaderOnDesktop,
         contentPadding: widget.contentPadding,
+        maxWidth: widget.maxWidth,
       );
     }
 

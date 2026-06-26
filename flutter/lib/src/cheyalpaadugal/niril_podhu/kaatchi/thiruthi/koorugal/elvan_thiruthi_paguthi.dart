@@ -1,0 +1,172 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:elvan_niril/src/adippadai/nilaimai/seyali_nilaimai.dart';
+import 'package:elvan_niril/src/koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
+import 'package:elvan_niril/src/koorugal/pulan_koorugal/elvan_irumozhi_autocomplete.dart';
+
+class ElvanFullWidth extends StatelessWidget {
+  const ElvanFullWidth({super.key, required this.child});
+  final Widget child;
+  @override
+  Widget build(BuildContext context) => child;
+}
+
+class ElvanEditorSection extends ConsumerStatefulWidget {
+  const ElvanEditorSection({
+    super.key,
+    required this.index,
+    required this.title,
+    required this.displayChild,
+    required this.children,
+    this.initiallyExpanded = false,
+  });
+
+  final int index;
+  final String title;
+  final Widget displayChild;
+  final List<Widget> children;
+  final bool initiallyExpanded;
+
+  @override
+  ConsumerState<ElvanEditorSection> createState() => _ElvanEditorSectionState();
+}
+
+class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
+  late bool _isExpanded;
+
+  @override
+  void initState() {
+    super.initState();
+    _isExpanded = widget.initiallyExpanded || widget.index == 0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+    final isBilingual = ref.watch(bilingualProvider);
+
+    // Filter out SizedBox spacing which is unnecessary in desktop grid
+    final filteredChildren = isDesktop
+        ? widget.children.where((c) => c is! SizedBox).toList()
+        : widget.children;
+
+    if (isDesktop) {
+      // Desktop: Two-side grid layout, always expanded
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader(isActive: true),
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final itemWidth = (constraints.maxWidth - 16) / 2;
+                  return Wrap(
+                    spacing: 16,
+                    runSpacing: 16,
+                    children: filteredChildren.map((child) {
+                      final isBilingualField = isBilingual && 
+                          (child is ElvanIrumozhiPulan || child is ElvanIrumozhiAutocomplete);
+                      final isFull = child is ElvanFullWidth || isBilingualField;
+                      
+                      return SizedBox(
+                        width: isFull ? constraints.maxWidth : itemWidth,
+                        child: child,
+                      );
+                    }).toList(),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Mobile: Accordion
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () => setState(() => _isExpanded = !_isExpanded),
+          behavior: HitTestBehavior.opaque,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: _buildHeader(isActive: _isExpanded),
+          ),
+        ),
+        AnimatedCrossFade(
+          firstChild: Padding(
+            padding: const EdgeInsets.only(top: 4.0, bottom: 20.0, left: 40),
+            child: DefaultTextStyle(
+              style: TextStyle(
+                color: isDark ? Colors.white54 : Colors.black54,
+                fontSize: 15,
+              ),
+              child: widget.displayChild,
+            ),
+          ),
+          secondChild: Padding(
+            padding: const EdgeInsets.only(top: 16.0, bottom: 24.0, left: 40),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: widget.children,
+            ),
+          ),
+          crossFadeState: _isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+          duration: const Duration(milliseconds: 300),
+          sizeCurve: Curves.easeInOut,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHeader({required bool isActive}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Padding(
+      padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
+      child: Row(
+        children: [
+          Container(
+          width: 24,
+          height: 24,
+          decoration: BoxDecoration(
+            color: isActive
+                ? (isDark ? Colors.white : Colors.black)
+                : (isDark ? Colors.white10 : Colors.black12),
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Text(
+              '${widget.index + 1}',
+              style: TextStyle(
+                color: isActive
+                    ? (isDark ? Colors.black : Colors.white)
+                    : (isDark ? Colors.white54 : Colors.black54),
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          widget.title,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: isActive
+                ? (isDark ? Colors.white : Colors.black)
+                : (isDark ? Colors.white54 : Colors.black54),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+}

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
+import '../../../../koorugal/podhu_koorugal/elvan_mithakkum_pin_pothan.dart';
 
 /// The Universal Editor Shell — wraps all creator/editor forms.
 ///
@@ -102,6 +103,8 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
       },
       child: ElvanSubpageShell(
         title: widget.title,
+        maxWidth: 1200,
+        hideHeaderOnDesktop: true,
         navActions: [
           if (widget.onSave != null)
             Padding(
@@ -123,12 +126,31 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
                   padding: EdgeInsets.only(
                     left: isDesktop ? 32 : 16,
                     right: isDesktop ? 32 : 16,
-                    top: 8,
+                    top: isDesktop ? 32 : 8,
                     bottom: isDesktop ? 16 : 32,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      // ── Desktop React-Style Header ──
+                      if (isDesktop) ...[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              widget.title,
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            ElvanFloatingBackButton(onBack: _handleCancel),
+                          ],
+                        ),
+                        const SizedBox(height: 32),
+                      ],
+
                       // ── Main Form Content ──
                       widget.child,
 

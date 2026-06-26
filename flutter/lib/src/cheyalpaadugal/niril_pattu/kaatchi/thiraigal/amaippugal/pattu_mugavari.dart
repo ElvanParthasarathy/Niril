@@ -285,7 +285,7 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
                       inputFields: [
                         if (maanilamPrimary == 'Tamil Nadu' || maanilamPrimary == 'தமிழ்நாடு' || maanilamSecondary == 'Tamil Nadu' || maanilamSecondary == 'தமிழ்நாடு')
                           ElvanIrumozhiAutocomplete(
-                            label: K.naadu.tr(context, ref),
+                            label: K.maavattam.tr(context, ref),
                             value: {
                               ref.read(primaryLanguageProvider): _tempPrimary,
                               ref.read(secondaryLanguageProvider): _tempSecondary
