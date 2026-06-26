@@ -1,10 +1,12 @@
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 
 import '../../../../niril_podhu/tharavuru/seluthi_vagai.dart';
 
@@ -131,6 +133,7 @@ class PatruSeluthiPagudhi extends ConsumerWidget {
                 ),
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
                 onChanged: onThogaiChanged,
               ),
             ),

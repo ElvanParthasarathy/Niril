@@ -12,7 +12,7 @@ import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../../../niril_podhu/kalanjiyam/pattiyal_kalanjiyam.dart';
-import '../../../thiraigal/amaippugal/pattu_mugavari_tharavu.dart';
+import '../../../../../../adippadai/idangal_kalanjiyam/idangal_kalanjiyam.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // பட்டு பட்டியல் உதவி — Helper for load / save / draft logic
@@ -92,7 +92,7 @@ class PattuPattiyalUthavi {
 
     // Resolve Tamil for Place of Supply if missing
     if (placeOfSupply.isNotEmpty && placeOfSupplyTa.isEmpty) {
-      final match = silkIndianStates.where(
+      final match = indhiyaMaanilangal.where(
         (s) => (s['en'] ?? '').toLowerCase() == placeOfSupply.toLowerCase(),
       ).firstOrNull;
       if (match != null) placeOfSupplyTa = match['ta'] ?? '';

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
+import '../../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 
 /// கழிவு கூறு — Global Discount row with a text field and
 /// percentage / amount toggle (SegmentedButton).
@@ -38,6 +40,7 @@ class PattuKazhivuKooru extends ConsumerWidget {
               controller: controller,
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
               decoration: InputDecoration(
                 labelText: K.muzhuThallupadi.tr(context, ref),
                 border: InputBorder.none,

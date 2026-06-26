@@ -66,6 +66,10 @@ class PreferencesService {
     if (localeString == null || localeString.isEmpty) {
       return null;
     }
+    final parts = localeString.split('-');
+    if (parts.length == 2) {
+      return Locale.fromSubtags(languageCode: parts[0], scriptCode: parts[1]);
+    }
     return Locale(localeString);
   }
 
@@ -73,7 +77,7 @@ class PreferencesService {
     if (locale == null) {
       await _prefs.remove(_localeKey);
     } else {
-      await _prefs.setString(_localeKey, locale.languageCode);
+      await _prefs.setString(_localeKey, locale.toLanguageTag());
     }
   }
 

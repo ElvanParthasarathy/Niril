@@ -179,7 +179,7 @@ class PrimaryLanguageNotifier extends Notifier<String> {
   @override
   String build() {
     final profile = ref.watch(NiruvanaTharavugalProvider);
-    return profile?.mudhanMozhi ?? 'Tamil';
+    return profile?.mudhanMozhi ?? 'ta';
   }
 
   @override
@@ -201,7 +201,7 @@ class SecondaryLanguageNotifier extends Notifier<String> {
   @override
   String build() {
     final profile = ref.watch(NiruvanaTharavugalProvider);
-    return profile?.thunaiMozhi ?? 'English';
+    return profile?.thunaiMozhi ?? 'en';
   }
 
   @override

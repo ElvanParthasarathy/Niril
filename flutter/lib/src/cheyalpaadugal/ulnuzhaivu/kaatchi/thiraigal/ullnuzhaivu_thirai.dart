@@ -23,7 +23,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   void _handleLogin() async {
     if (_email.isEmpty || _password.isEmpty) {
       setState(() {
-        _error = K.tharavugalaiUllidu.tr(context, ref);
+        _error = K.vidupattaPulangalaiNirappavum.tr(context, ref);
       });
       return;
     }

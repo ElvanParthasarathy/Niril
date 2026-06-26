@@ -35,7 +35,7 @@ import '../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 import '../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 
 import '../../amaippugal/kaatchi/amaippugal_thirai.dart';
-import '../../amaippugal/kaatchi/koorugal/thaekkagam_pagudhi.dart';
+import '../../amaippugal/kaatchi/koorugal/chaemippu_matrum_kaappu_pagudhi.dart';
 
 import 'kaippaesi/elvan_chattagam.dart';
 import 'kaippaesi/koorugal/elvan_maeladukku_pattiyal.dart';
@@ -350,11 +350,11 @@ class _NirilSeyaliThiraiState extends ConsumerState<NirilSeyaliThirai> {
         ),
         SliverOffstage(
           offstage: desktopIndex != 3,
-          sliver: const VaangunarPage(),
+          sliver: const PorulPage(),
         ),
         SliverOffstage(
           offstage: desktopIndex != 4,
-          sliver: const PorulPage(),
+          sliver: const VaangunarPage(),
         ),
       ],
     );

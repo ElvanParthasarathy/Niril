@@ -189,66 +189,6 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
       ),
     );
 
-    // ── Dev-only language switcher strip ──
-    if (!kDebugMode) return shell;
-
-    final currentLocale = ref.watch(localeProvider);
-    final langCode = currentLocale?.languageCode ?? 'ta';
-    final cs = Theme.of(context).colorScheme;
-
-    Widget langChip(String code, String label) {
-      final isActive = langCode == code;
-      return GestureDetector(
-        onTap: () => ref.read(localeProvider.notifier).setLocale(Locale(code)),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: isActive ? cs.primary : cs.tertiaryContainer,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: isActive ? cs.onPrimary : cs.onTertiaryContainer,
-              )),
-        ),
-      );
-    }
-
-    return Stack(
-      children: [
-        shell,
-        Positioned(
-          left: 12,
-          bottom: 20,
-          child: Container(
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: cs.surfaceContainerHighest.withValues(alpha: 0.92),
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: cs.shadow.withValues(alpha: 0.15),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                langChip('ta', K.thamizh.tr(context, ref)),
-                const SizedBox(width: 4),
-                langChip('en', 'EN'),
-                const SizedBox(width: 4),
-                langChip('tg', 'Tg'),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
+    return shell;
   }
 }

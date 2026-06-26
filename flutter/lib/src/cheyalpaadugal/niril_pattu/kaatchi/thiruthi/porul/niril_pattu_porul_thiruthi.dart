@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -6,6 +7,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
+import '../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 
@@ -168,6 +170,8 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
             label: K.hsnSacKuriyeedu.tr(context, ref),
             controller: _hsnController,
             keyboardType: TextInputType.number,
+            inputFormatters: ElvanVadivamaippigal.enngalMattum,
+            maxLength: 8,
           ),
           const SizedBox(height: 12),
 
@@ -184,6 +188,7 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
                   prefixText: '₹ ',
+                  inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
                 ),
               ),
               const SizedBox(width: 12),
@@ -197,6 +202,8 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
                   controller: _variController,
                   keyboardType: TextInputType.number,
                   suffixText: '%',
+                  inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
+                  maxLength: 5,
                 ),
               ),
             ],
@@ -214,10 +221,14 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
     TextInputType? keyboardType,
     String? prefixText,
     String? suffixText,
+    List<TextInputFormatter>? inputFormatters,
+    int? maxLength,
   }) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      maxLength: maxLength,
       style: const TextStyle(fontSize: 16),
       decoration: InputDecoration(
         labelText: label,

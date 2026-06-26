@@ -148,6 +148,15 @@ class $NiruvanaTharavugalTableTable extends NiruvanaTharavugalTable
       defaultValue: const Constant(''));
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
+      velinaadMugavari = GeneratedColumn<String>(
+              'velinaad_mugavari', aliasedName, false,
+              type: DriftSqlType.string,
+              requiredDuringInsert: false,
+              defaultValue: const Constant('{}'))
+          .withConverter<Map<String, String>>(
+              $NiruvanaTharavugalTableTable.$convertervelinaadMugavari);
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
       vangiPeyar = GeneratedColumn<String>('vangi_peyar', aliasedName, false,
               type: DriftSqlType.string,
               requiredDuringInsert: false,
@@ -290,6 +299,7 @@ class $NiruvanaTharavugalTableTable extends NiruvanaTharavugalTable
         maanilam,
         naadu,
         anjalKuriyeedu,
+        velinaadMugavari,
         vangiPeyar,
         kilai,
         vangiKanakku,
@@ -490,6 +500,9 @@ class $NiruvanaTharavugalTableTable extends NiruvanaTharavugalTable
               .read(DriftSqlType.string, data['${effectivePrefix}naadu'])!),
       anjalKuriyeedu: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}anjal_kuriyeedu'])!,
+      velinaadMugavari: $NiruvanaTharavugalTableTable.$convertervelinaadMugavari
+          .fromSql(attachedDatabase.typeMapping.read(DriftSqlType.string,
+              data['${effectivePrefix}velinaad_mugavari'])!),
       vangiPeyar: $NiruvanaTharavugalTableTable.$convertervangiPeyar.fromSql(
           attachedDatabase.typeMapping.read(
               DriftSqlType.string, data['${effectivePrefix}vangi_peyar'])!),
@@ -545,6 +558,8 @@ class $NiruvanaTharavugalTableTable extends NiruvanaTharavugalTable
       const MozhiMapConverter();
   static TypeConverter<Map<String, String>, String> $converternaadu =
       const MozhiMapConverter();
+  static TypeConverter<Map<String, String>, String> $convertervelinaadMugavari =
+      const MozhiMapConverter();
   static TypeConverter<Map<String, String>, String> $convertervangiPeyar =
       const MozhiMapConverter();
   static TypeConverter<Map<String, String>, String> $converterkilai =
@@ -572,6 +587,7 @@ class NiruvanaTharavugalEntry extends DataClass
   final Map<String, String> maanilam;
   final Map<String, String> naadu;
   final String anjalKuriyeedu;
+  final Map<String, String> velinaadMugavari;
   final Map<String, String> vangiPeyar;
   final Map<String, String> kilai;
   final String vangiKanakku;
@@ -606,6 +622,7 @@ class NiruvanaTharavugalEntry extends DataClass
       required this.maanilam,
       required this.naadu,
       required this.anjalKuriyeedu,
+      required this.velinaadMugavari,
       required this.vangiPeyar,
       required this.kilai,
       required this.vangiKanakku,
@@ -662,6 +679,11 @@ class NiruvanaTharavugalEntry extends DataClass
     }
     map['anjal_kuriyeedu'] = Variable<String>(anjalKuriyeedu);
     {
+      map['velinaad_mugavari'] = Variable<String>($NiruvanaTharavugalTableTable
+          .$convertervelinaadMugavari
+          .toSql(velinaadMugavari));
+    }
+    {
       map['vangi_peyar'] = Variable<String>(
           $NiruvanaTharavugalTableTable.$convertervangiPeyar.toSql(vangiPeyar));
     }
@@ -710,6 +732,7 @@ class NiruvanaTharavugalEntry extends DataClass
       maanilam: Value(maanilam),
       naadu: Value(naadu),
       anjalKuriyeedu: Value(anjalKuriyeedu),
+      velinaadMugavari: Value(velinaadMugavari),
       vangiPeyar: Value(vangiPeyar),
       kilai: Value(kilai),
       vangiKanakku: Value(vangiKanakku),
@@ -753,6 +776,8 @@ class NiruvanaTharavugalEntry extends DataClass
       maanilam: serializer.fromJson<Map<String, String>>(json['maanilam']),
       naadu: serializer.fromJson<Map<String, String>>(json['naadu']),
       anjalKuriyeedu: serializer.fromJson<String>(json['anjalKuriyeedu']),
+      velinaadMugavari:
+          serializer.fromJson<Map<String, String>>(json['velinaadMugavari']),
       vangiPeyar: serializer.fromJson<Map<String, String>>(json['vangiPeyar']),
       kilai: serializer.fromJson<Map<String, String>>(json['kilai']),
       vangiKanakku: serializer.fromJson<String>(json['vangiKanakku']),
@@ -793,6 +818,8 @@ class NiruvanaTharavugalEntry extends DataClass
       'maanilam': serializer.toJson<Map<String, String>>(maanilam),
       'naadu': serializer.toJson<Map<String, String>>(naadu),
       'anjalKuriyeedu': serializer.toJson<String>(anjalKuriyeedu),
+      'velinaadMugavari':
+          serializer.toJson<Map<String, String>>(velinaadMugavari),
       'vangiPeyar': serializer.toJson<Map<String, String>>(vangiPeyar),
       'kilai': serializer.toJson<Map<String, String>>(kilai),
       'vangiKanakku': serializer.toJson<String>(vangiKanakku),
@@ -830,6 +857,7 @@ class NiruvanaTharavugalEntry extends DataClass
           Map<String, String>? maanilam,
           Map<String, String>? naadu,
           String? anjalKuriyeedu,
+          Map<String, String>? velinaadMugavari,
           Map<String, String>? vangiPeyar,
           Map<String, String>? kilai,
           String? vangiKanakku,
@@ -864,6 +892,7 @@ class NiruvanaTharavugalEntry extends DataClass
         maanilam: maanilam ?? this.maanilam,
         naadu: naadu ?? this.naadu,
         anjalKuriyeedu: anjalKuriyeedu ?? this.anjalKuriyeedu,
+        velinaadMugavari: velinaadMugavari ?? this.velinaadMugavari,
         vangiPeyar: vangiPeyar ?? this.vangiPeyar,
         kilai: kilai ?? this.kilai,
         vangiKanakku: vangiKanakku ?? this.vangiKanakku,
@@ -913,6 +942,9 @@ class NiruvanaTharavugalEntry extends DataClass
       anjalKuriyeedu: data.anjalKuriyeedu.present
           ? data.anjalKuriyeedu.value
           : this.anjalKuriyeedu,
+      velinaadMugavari: data.velinaadMugavari.present
+          ? data.velinaadMugavari.value
+          : this.velinaadMugavari,
       vangiPeyar:
           data.vangiPeyar.present ? data.vangiPeyar.value : this.vangiPeyar,
       kilai: data.kilai.present ? data.kilai.value : this.kilai,
@@ -961,6 +993,7 @@ class NiruvanaTharavugalEntry extends DataClass
           ..write('maanilam: $maanilam, ')
           ..write('naadu: $naadu, ')
           ..write('anjalKuriyeedu: $anjalKuriyeedu, ')
+          ..write('velinaadMugavari: $velinaadMugavari, ')
           ..write('vangiPeyar: $vangiPeyar, ')
           ..write('kilai: $kilai, ')
           ..write('vangiKanakku: $vangiKanakku, ')
@@ -1000,6 +1033,7 @@ class NiruvanaTharavugalEntry extends DataClass
         maanilam,
         naadu,
         anjalKuriyeedu,
+        velinaadMugavari,
         vangiPeyar,
         kilai,
         vangiKanakku,
@@ -1038,6 +1072,7 @@ class NiruvanaTharavugalEntry extends DataClass
           other.maanilam == this.maanilam &&
           other.naadu == this.naadu &&
           other.anjalKuriyeedu == this.anjalKuriyeedu &&
+          other.velinaadMugavari == this.velinaadMugavari &&
           other.vangiPeyar == this.vangiPeyar &&
           other.kilai == this.kilai &&
           other.vangiKanakku == this.vangiKanakku &&
@@ -1075,6 +1110,7 @@ class NiruvanaTharavugalTableCompanion
   final Value<Map<String, String>> maanilam;
   final Value<Map<String, String>> naadu;
   final Value<String> anjalKuriyeedu;
+  final Value<Map<String, String>> velinaadMugavari;
   final Value<Map<String, String>> vangiPeyar;
   final Value<Map<String, String>> kilai;
   final Value<String> vangiKanakku;
@@ -1109,6 +1145,7 @@ class NiruvanaTharavugalTableCompanion
     this.maanilam = const Value.absent(),
     this.naadu = const Value.absent(),
     this.anjalKuriyeedu = const Value.absent(),
+    this.velinaadMugavari = const Value.absent(),
     this.vangiPeyar = const Value.absent(),
     this.kilai = const Value.absent(),
     this.vangiKanakku = const Value.absent(),
@@ -1144,6 +1181,7 @@ class NiruvanaTharavugalTableCompanion
     this.maanilam = const Value.absent(),
     this.naadu = const Value.absent(),
     this.anjalKuriyeedu = const Value.absent(),
+    this.velinaadMugavari = const Value.absent(),
     this.vangiPeyar = const Value.absent(),
     this.kilai = const Value.absent(),
     this.vangiKanakku = const Value.absent(),
@@ -1179,6 +1217,7 @@ class NiruvanaTharavugalTableCompanion
     Expression<String>? maanilam,
     Expression<String>? naadu,
     Expression<String>? anjalKuriyeedu,
+    Expression<String>? velinaadMugavari,
     Expression<String>? vangiPeyar,
     Expression<String>? kilai,
     Expression<String>? vangiKanakku,
@@ -1214,6 +1253,7 @@ class NiruvanaTharavugalTableCompanion
       if (maanilam != null) 'maanilam': maanilam,
       if (naadu != null) 'naadu': naadu,
       if (anjalKuriyeedu != null) 'anjal_kuriyeedu': anjalKuriyeedu,
+      if (velinaadMugavari != null) 'velinaad_mugavari': velinaadMugavari,
       if (vangiPeyar != null) 'vangi_peyar': vangiPeyar,
       if (kilai != null) 'kilai': kilai,
       if (vangiKanakku != null) 'vangi_kanakku': vangiKanakku,
@@ -1251,6 +1291,7 @@ class NiruvanaTharavugalTableCompanion
       Value<Map<String, String>>? maanilam,
       Value<Map<String, String>>? naadu,
       Value<String>? anjalKuriyeedu,
+      Value<Map<String, String>>? velinaadMugavari,
       Value<Map<String, String>>? vangiPeyar,
       Value<Map<String, String>>? kilai,
       Value<String>? vangiKanakku,
@@ -1285,6 +1326,7 @@ class NiruvanaTharavugalTableCompanion
       maanilam: maanilam ?? this.maanilam,
       naadu: naadu ?? this.naadu,
       anjalKuriyeedu: anjalKuriyeedu ?? this.anjalKuriyeedu,
+      velinaadMugavari: velinaadMugavari ?? this.velinaadMugavari,
       vangiPeyar: vangiPeyar ?? this.vangiPeyar,
       kilai: kilai ?? this.kilai,
       vangiKanakku: vangiKanakku ?? this.vangiKanakku,
@@ -1368,6 +1410,11 @@ class NiruvanaTharavugalTableCompanion
     if (anjalKuriyeedu.present) {
       map['anjal_kuriyeedu'] = Variable<String>(anjalKuriyeedu.value);
     }
+    if (velinaadMugavari.present) {
+      map['velinaad_mugavari'] = Variable<String>($NiruvanaTharavugalTableTable
+          .$convertervelinaadMugavari
+          .toSql(velinaadMugavari.value));
+    }
     if (vangiPeyar.present) {
       map['vangi_peyar'] = Variable<String>($NiruvanaTharavugalTableTable
           .$convertervangiPeyar
@@ -1444,6 +1491,7 @@ class NiruvanaTharavugalTableCompanion
           ..write('maanilam: $maanilam, ')
           ..write('naadu: $naadu, ')
           ..write('anjalKuriyeedu: $anjalKuriyeedu, ')
+          ..write('velinaadMugavari: $velinaadMugavari, ')
           ..write('vangiPeyar: $vangiPeyar, ')
           ..write('kilai: $kilai, ')
           ..write('vangiKanakku: $vangiKanakku, ')
@@ -5251,6 +5299,7 @@ typedef $$NiruvanaTharavugalTableTableCreateCompanionBuilder
   Value<Map<String, String>> maanilam,
   Value<Map<String, String>> naadu,
   Value<String> anjalKuriyeedu,
+  Value<Map<String, String>> velinaadMugavari,
   Value<Map<String, String>> vangiPeyar,
   Value<Map<String, String>> kilai,
   Value<String> vangiKanakku,
@@ -5287,6 +5336,7 @@ typedef $$NiruvanaTharavugalTableTableUpdateCompanionBuilder
   Value<Map<String, String>> maanilam,
   Value<Map<String, String>> naadu,
   Value<String> anjalKuriyeedu,
+  Value<Map<String, String>> velinaadMugavari,
   Value<Map<String, String>> vangiPeyar,
   Value<Map<String, String>> kilai,
   Value<String> vangiKanakku,
@@ -5383,6 +5433,12 @@ class $$NiruvanaTharavugalTableTableFilterComposer
   ColumnFilters<String> get anjalKuriyeedu => $composableBuilder(
       column: $table.anjalKuriyeedu,
       builder: (column) => ColumnFilters(column));
+
+  ColumnWithTypeConverterFilters<Map<String, String>, Map<String, String>,
+          String>
+      get velinaadMugavari => $composableBuilder(
+          column: $table.velinaadMugavari,
+          builder: (column) => ColumnWithTypeConverterFilters(column));
 
   ColumnWithTypeConverterFilters<Map<String, String>, Map<String, String>,
           String>
@@ -5507,6 +5563,10 @@ class $$NiruvanaTharavugalTableTableOrderingComposer
       column: $table.anjalKuriyeedu,
       builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get velinaadMugavari => $composableBuilder(
+      column: $table.velinaadMugavari,
+      builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get vangiPeyar => $composableBuilder(
       column: $table.vangiPeyar, builder: (column) => ColumnOrderings(column));
 
@@ -5621,6 +5681,10 @@ class $$NiruvanaTharavugalTableTableAnnotationComposer
       column: $table.anjalKuriyeedu, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<Map<String, String>, String>
+      get velinaadMugavari => $composableBuilder(
+          column: $table.velinaadMugavari, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<Map<String, String>, String>
       get vangiPeyar => $composableBuilder(
           column: $table.vangiPeyar, builder: (column) => column);
 
@@ -5718,6 +5782,7 @@ class $$NiruvanaTharavugalTableTableTableManager extends RootTableManager<
             Value<Map<String, String>> maanilam = const Value.absent(),
             Value<Map<String, String>> naadu = const Value.absent(),
             Value<String> anjalKuriyeedu = const Value.absent(),
+            Value<Map<String, String>> velinaadMugavari = const Value.absent(),
             Value<Map<String, String>> vangiPeyar = const Value.absent(),
             Value<Map<String, String>> kilai = const Value.absent(),
             Value<String> vangiKanakku = const Value.absent(),
@@ -5753,6 +5818,7 @@ class $$NiruvanaTharavugalTableTableTableManager extends RootTableManager<
             maanilam: maanilam,
             naadu: naadu,
             anjalKuriyeedu: anjalKuriyeedu,
+            velinaadMugavari: velinaadMugavari,
             vangiPeyar: vangiPeyar,
             kilai: kilai,
             vangiKanakku: vangiKanakku,
@@ -5788,6 +5854,7 @@ class $$NiruvanaTharavugalTableTableTableManager extends RootTableManager<
             Value<Map<String, String>> maanilam = const Value.absent(),
             Value<Map<String, String>> naadu = const Value.absent(),
             Value<String> anjalKuriyeedu = const Value.absent(),
+            Value<Map<String, String>> velinaadMugavari = const Value.absent(),
             Value<Map<String, String>> vangiPeyar = const Value.absent(),
             Value<Map<String, String>> kilai = const Value.absent(),
             Value<String> vangiKanakku = const Value.absent(),
@@ -5823,6 +5890,7 @@ class $$NiruvanaTharavugalTableTableTableManager extends RootTableManager<
             maanilam: maanilam,
             naadu: naadu,
             anjalKuriyeedu: anjalKuriyeedu,
+            velinaadMugavari: velinaadMugavari,
             vangiPeyar: vangiPeyar,
             kilai: kilai,
             vangiKanakku: vangiKanakku,

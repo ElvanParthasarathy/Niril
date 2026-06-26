@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -82,6 +83,8 @@ class ElvanSettingsTextField extends StatelessWidget {
   final int maxLines;
   final TextInputType? keyboardType;
   final Widget? suffixIcon;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLength;
 
   const ElvanSettingsTextField({
     super.key,
@@ -91,6 +94,8 @@ class ElvanSettingsTextField extends StatelessWidget {
     this.maxLines = 1,
     this.keyboardType,
     this.suffixIcon,
+    this.inputFormatters,
+    this.maxLength,
   });
 
   @override
@@ -117,6 +122,8 @@ class ElvanSettingsTextField extends StatelessWidget {
           initialValue: initialValue,
           onChanged: onChanged,
           keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
+          maxLength: maxLength,
           style: const TextStyle(fontSize: 14),
           maxLines: maxLines,
           minLines: maxLines,
@@ -183,7 +190,7 @@ class ElvanSettingsDisplayRow extends StatelessWidget {
   final String title;
   final String primaryValue;
   final String? secondaryValue;
-  final VoidCallback onEdit;
+  final VoidCallback? onEdit;
   final VoidCallback? onTap;
   final IconData icon;
   final Color? iconColor;
@@ -194,7 +201,7 @@ class ElvanSettingsDisplayRow extends StatelessWidget {
     required this.title,
     required this.primaryValue,
     this.secondaryValue,
-    required this.onEdit,
+    this.onEdit,
     this.onTap,
     this.icon = Icons.edit_rounded,
     this.iconColor,
@@ -262,8 +269,9 @@ class ElvanSettingsDisplayRow extends StatelessWidget {
                 ],
               ),
             ),
-            IconButton(
-              onPressed: onEdit,
+            if (onEdit != null)
+              IconButton(
+                onPressed: onEdit,
               style: IconButton.styleFrom(
                 backgroundColor: iconColor != null
                     ? iconColor!.withValues(alpha: 0.1)

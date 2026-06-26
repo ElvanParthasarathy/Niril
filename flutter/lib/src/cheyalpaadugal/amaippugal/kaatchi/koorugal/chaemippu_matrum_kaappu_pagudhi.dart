@@ -14,6 +14,7 @@ import 'elvan_amaippu_pagudhi.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/thoatra_vazhanguthi.dart';
+import '../../../../adippadai/panigal/elvan_naatkaatti.dart';
 
 
 import '../../../../adippadai/mozhiyaakkam/k.dart';
@@ -63,10 +64,10 @@ final storageStatsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   };
 });
 
-class StorageManagerSection extends ConsumerWidget {
-  const StorageManagerSection({super.key});
+class ChaemippuMatrumKaappuPagudhi extends ConsumerWidget {
+  const ChaemippuMatrumKaappuPagudhi({super.key});
 
-  Widget _buildDataGrid(BuildContext context, int invoices, int receipts, int customers, int products, bool isLoading) {
+  Widget _buildDataGrid(BuildContext context, WidgetRef ref, int invoices, int receipts, int customers, int products, bool isLoading) {
     final color = Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5);
     final style = TextStyle(fontSize: 12, color: color);
     
@@ -80,21 +81,23 @@ class StorageManagerSection extends ConsumerWidget {
       children: [
         Row(
           children: [
-            Expanded(child: Text('$invStr Invoices', style: style)),
-            Expanded(child: Text('$recStr Receipts', style: style)),
+            Expanded(child: Text('$invStr ${K.pattiyalgal.tr(context, ref)}', style: style)),
+            Expanded(child: Text('$recStr ${K.patrucheettugal.tr(context, ref)}', style: style)),
           ],
         ),
         const SizedBox(height: 6),
         Row(
           children: [
-            Expanded(child: Text('$cusStr Customers', style: style)),
-            Expanded(child: Text('$proStr Products', style: style)),
+            Expanded(child: Text('$cusStr ${K.vaangunargal.tr(context, ref)}', style: style)),
+            Expanded(child: Text('$proStr ${K.porutkal.tr(context, ref)}', style: style)),
           ],
         ),
       ],
     );
   }
 
+
+  
   String _formatBytes(int bytes) {
     if (bytes <= 0) return "0 B";
     const suffixes = ["B", "KB", "MB", "GB", "TB"];
@@ -130,14 +133,14 @@ class StorageManagerSection extends ConsumerWidget {
 
     final DateTime? lastBackup = stats['lastBackup'];
     final backupDateStr = isLoading 
-        ? 'Loading...' 
+        ? K.aetrugiradhu.tr(context, ref) 
         : (lastBackup != null 
-            ? DateFormat('MMM d, yyyy - h:mm a').format(lastBackup)
-            : 'No Backup Yet');
+            ? ElvanNaatkaatti.formatDateTime(context, ref, lastBackup)
+            : K.idhuvuraiKaappuIllai.tr(context, ref));
             
     final storageUsedStr = isLoading 
-        ? 'Loading...' 
-        : '${_formatBytes(stats['totalDbSize'])} Database  •  ${_formatBytes(stats['backupSize'])} Backup';
+        ? K.aetrugiradhu.tr(context, ref) 
+        : '${_formatBytes(stats['totalDbSize'])} ${K.tharavuthalam.tr(context, ref)}\n${_formatBytes(stats['backupSize'])} ${K.kaappu.tr(context, ref)}';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,8 +155,9 @@ class StorageManagerSection extends ConsumerWidget {
                 size: 20,
               ),
               iconBgColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
-              title: 'Storage Used',
+              title: K.payanpaduthiyaChaemippu.tr(context, ref),
               description: storageUsedStr,
+              crossAxisAlignment: CrossAxisAlignment.start,
               onTap: () {},
             ),
             ElvanSettingsRow(
@@ -163,7 +167,7 @@ class StorageManagerSection extends ConsumerWidget {
                 size: 20,
               ),
               iconBgColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
-              title: 'Last Auto-Backup',
+              title: K.kadaisiThaaniyakkaKaappu.tr(context, ref),
               description: backupDateStr,
               onTap: () {},
             ),
@@ -193,9 +197,9 @@ class StorageManagerSection extends ConsumerWidget {
                 colorFilter: ColorFilter.mode(theme.colorScheme.onSurface, BlendMode.srcIn),
               ),
               iconBgColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
-              title: 'Coolie Data',
+              title: K.kooliTharavugal.tr(context, ref),
               crossAxisAlignment: CrossAxisAlignment.start,
-              customDescription: _buildDataGrid(context, stats['kooliInvoices'], stats['kooliReceipts'], stats['kooliCustomers'], stats['kooliProducts'], isLoading),
+              customDescription: _buildDataGrid(context, ref, stats['kooliInvoices'], stats['kooliReceipts'], stats['kooliCustomers'], stats['kooliProducts'], isLoading),
               onTap: () {},
             ),
             ElvanSettingsRow(
@@ -206,9 +210,9 @@ class StorageManagerSection extends ConsumerWidget {
                 colorFilter: ColorFilter.mode(theme.colorScheme.onSurface, BlendMode.srcIn),
               ),
               iconBgColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
-              title: 'Silk Data',
+              title: K.pattuTharavugal.tr(context, ref),
               crossAxisAlignment: CrossAxisAlignment.start,
-              customDescription: _buildDataGrid(context, stats['silkInvoices'], stats['silkReceipts'], stats['silkCustomers'], stats['silkProducts'], isLoading),
+              customDescription: _buildDataGrid(context, ref, stats['silkInvoices'], stats['silkReceipts'], stats['silkCustomers'], stats['silkProducts'], isLoading),
               onTap: () {},
             ),
           ],
@@ -305,7 +309,7 @@ class StorageProjectionPill extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'Database',
+                  K.tharavuthalam.tr(context, ref),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -325,7 +329,7 @@ class StorageProjectionPill extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 8),
           ClipRRect(
             borderRadius: BorderRadius.circular(100),
             child: TweenAnimationBuilder<double>(

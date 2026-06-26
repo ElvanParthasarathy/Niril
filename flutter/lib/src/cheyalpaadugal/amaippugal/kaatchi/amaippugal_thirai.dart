@@ -22,7 +22,7 @@ import 'thiraigal/kaatchi_amaippugal_thirai.dart';
 import 'thiraigal/mozhi_amaippugal_thirai.dart';
 import 'koorugal/elvan_amaippu_pagudhi.dart';
 import 'thiraigal/paadhugaappu_amaippugal_thirai.dart';
-import 'thiraigal/thaekkagam_amaippugal_thirai.dart';
+import 'thiraigal/chaemippu_matrum_kaappu_thirai.dart';
 import 'thiraigal/seyali_patri_thirai.dart';
 import 'thiraigal/payanar_amaippugal_thirai.dart';
 
@@ -335,10 +335,10 @@ class SettingsHubScreen extends ConsumerWidget {
                                     ElvanSettingsRow(
                     icon: CupertinoIcons.folder_solid,
                     iconBgColor: iconBgColor,
-                    title: 'Storage & Backup',
-                    description: 'Manage databases and auto-backups',
+                    title: K.chaemippuMatrumKaappu.tr(context, ref),
+                    description: K.tharavuthalangalKaappaikKaiyaalu.tr(context, ref),
                     onTap: () =>
-                        _navigateTo(context, const ThaekkagamAmaippugalPage()),
+                        _navigateTo(context, const ChaemippuMatrumKaappuThirai()),
                   ),
 ElvanSettingsRow(
                     icon: CupertinoIcons.lock_fill,

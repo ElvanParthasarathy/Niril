@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
+import '../../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 
 /// Extra-charge field wrapped in an ElvanThiruthiAttai (borderRadius 16).
 Widget kooliChargeField(
@@ -11,6 +13,7 @@ Widget kooliChargeField(
     child: TextField(
       controller: ctrl,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
       decoration: InputDecoration(
         labelText: label,
         border: InputBorder.none,

@@ -39,7 +39,7 @@ class PattuNiruvanaTharavugalTable extends Table {
   TextColumn get maanilam =>
       text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
   TextColumn get naadu =>
-      text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
+      text().map(const MozhiMapConverter()).withDefault(const Constant('{"en": "India", "ta": "இந்தியா"}'))();
   TextColumn get anjalKuriyeedu => text().withDefault(const Constant(''))();
 
   // ── வங்கி (Bank Details) ──
@@ -87,7 +87,7 @@ class PattuVaangunarTable extends Table {
   TextColumn get maanilam =>
       text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
   TextColumn get naadu =>
-      text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
+      text().map(const MozhiMapConverter()).withDefault(const Constant('{"en": "India", "ta": "இந்தியா"}'))();
 
   // ── Non-India: single multiline bilingual address ──
   TextColumn get velinaadMugavari =>

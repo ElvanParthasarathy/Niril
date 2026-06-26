@@ -88,7 +88,7 @@ void showManageProfilesModal({
                 final hasProfiles = profiles.isNotEmpty;
 
                 return ElvanFullscreenPopup(
-                  title: K.neriyuga.tr(context, ref),
+                  title: K.kaiyaalu.tr(context, ref),
                   slivers: [
                     SliverPadding(
                       padding: const EdgeInsets.all(16),

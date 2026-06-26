@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+import '../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
@@ -381,6 +383,8 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                           keyboardType: TextInputType.phone,
+                          inputFormatters: ElvanVadivamaippigal.tholaippaesi,
+                          maxLength: 13,
                         ),
                         if (_showExtraPhone) const SizedBox(height: 16),
                         if (_showExtraPhone)
@@ -389,6 +393,8 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
                             initialValue: _tempSecondary,
                             onChanged: (val) => _tempSecondary = val,
                             keyboardType: TextInputType.phone,
+                            inputFormatters: ElvanVadivamaippigal.tholaippaesi,
+                            maxLength: 13,
                             suffixIcon: IconButton(
                               icon: const Icon(CupertinoIcons.clear, size: 18),
                               onPressed: () {
@@ -465,6 +471,8 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
                           label: K.gstinVariAdaiyaalaEn.tr(context, ref),
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
+                          inputFormatters: ElvanVadivamaippigal.periyaEzhuthuEnngal,
+                          maxLength: 15,
                         ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),

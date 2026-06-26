@@ -57,7 +57,7 @@ class LanguageSettingsPage extends ConsumerWidget {
                   ),
                   ElvanRadioSettingsRow<Locale?>(
                     title: K.tamilLatin.tr(context, ref),
-                    value: const Locale('tg'),
+                    value: const Locale.fromSubtags(languageCode: 'ta', scriptCode: 'Latn'),
                     groupValue: currentLocale,
                     onChanged: (val) {
                       ref.read(localeProvider.notifier).setLocale(val);

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'language_keys/ta.dart';
 import 'language_keys/en.dart';
-import 'language_keys/tg.dart';
+import 'language_keys/ta_latn.dart';
 import '../viruppangal_paniyagam.dart';
 
 class LocaleNotifier extends Notifier<Locale?> {
@@ -35,10 +35,10 @@ extension StringLocalization on String {
 
     // Our keys in translations.dart are mainly English strings, mapped to Tamil in `ta`.
     if (effectiveLocale.languageCode == 'ta') {
+      if (effectiveLocale.scriptCode == 'Latn') {
+        return taLatn[this] ?? this;
+      }
       return ta[this] ?? this;
-    }
-    if (effectiveLocale.languageCode == 'tg') {
-      return tg[this] ?? this;
     }
 
     // Fallback to english map if it exists, otherwise just return the key.
@@ -50,8 +50,8 @@ extension StringLocalization on String {
     if (langCode == 'ta') {
       return ta[this] ?? this;
     }
-    if (langCode == 'tg') {
-      return tg[this] ?? this;
+    if (langCode == 'ta-Latn') {
+      return taLatn[this] ?? this;
     }
     return en[this] ?? this;
   }

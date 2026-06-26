@@ -67,6 +67,8 @@ class NiruvanaTharavugalTable extends Table {
   TextColumn get naadu =>
       text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
   TextColumn get anjalKuriyeedu => text().withDefault(const Constant(''))();
+  TextColumn get velinaadMugavari =>
+      text().map(const MozhiMapConverter()).withDefault(const Constant('{}'))();
 
   // ── வங்கி (Bank Details) ──
   TextColumn get vangiPeyar =>

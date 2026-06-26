@@ -387,8 +387,8 @@ class MugappuEmptyState extends StatelessWidget {
               CupertinoIcons.doc_text,
               size: 48,
               color: isDark
-                  ? const Color(0xFF475569)
-                  : const Color(0xFFCBD5E1),
+                  ? Colors.white24
+                  : Colors.black26,
             ),
             const SizedBox(height: 16),
             Consumer(

@@ -6,7 +6,7 @@
 // Usage:  K.amaippugal.tr(context, ref)
 // Typos:  K.amaipugal  → COMPILE ERROR ✅
 //
-// To add new keys: add to en.dart, ta.dart, tg.dart, then add here.
+// To add new keys: add to en.dart, ta.dart, ta_latn.dart, then add here.
 // Run `flutter test test/adippadai/mozhiyaakkam/` to verify coverage.
 
 /// Compile-safe translation key constants.
@@ -32,6 +32,7 @@ abstract final class K {
   static const porutkal = 'porutkal';
   static const pattiyalgal = 'pattiyalgal';
   static const patrucheettugal = 'patrucheettugal';
+  static const patrucheettugalIllai = 'patrucheettugalIllai';
   static const arikkai = 'arikkai';
   static const variArikkai = 'variArikkai';
   static const arikkaigal = 'arikkaigal';
@@ -79,6 +80,8 @@ abstract final class K {
   static const pattiyalMudhanmozhi = 'pattiyalMudhanmozhi';
   static const pattiyalmozhi = 'pattiyalmozhi';
   static const thamizh = 'thamizh';
+  static const ta = 'ta';
+  static const en = 'en';
   static const aangilam = 'aangilam';
   static const tamil = 'tamil';
   static const english = 'english';
@@ -194,13 +197,13 @@ abstract final class K {
   static const uruvaakkuPtn = 'uruvaakkuPtn';
   static const illai = 'illai';
   static const thaerndhedu = 'thaerndhedu';
-  static const neriyuga = 'neriyuga';
+  static const kaiyaalu = 'kaiyaalu';
   static const meendumThaedu = 'meendumThaedu';
 
   // ── Feedback Messages ──
   static const chaemippuvetri = 'chaemippuvetri';
   static const tharavugalChaemippuVetri = 'tharavugalChaemippuVetri';
-  static const tharavugalaiUllidu = 'tharavugalaiUllidu';
+  static const vidupattaPulangalaiNirappavum = 'vidupattaPulangalaiNirappavum';
   static const tharavugalaiUlliduga = 'tharavugalaiUlliduga';
   static const peyaraiUlliduga = 'peyaraiUlliduga';
   static const niruvanapeyaraiullidu = 'niruvanapeyaraiullidu';
@@ -302,6 +305,7 @@ abstract final class K {
 
   // ── Sync ──
   static const orunginaiCheyaliPtn = 'orunginaiCheyaliPtn';
+  static const orunginaiCheyaliVilakkam = 'orunginaiCheyaliVilakkam';
   static const orunginaikkiRadhu = 'orunginaikkiRadhu';
   static const orunginaikkappattadhu = 'orunginaikkappattadhu';
 
@@ -348,8 +352,7 @@ abstract final class K {
   static const meetkavum = 'meetkavum';
 
   // ── Patrucheettu Mode ──
-  static const pattiyalTheervu = 'pattiyalTheervu';
-  static const munpanam = 'munpanam';
+
   static const endhapPattiyalukku = 'endhapPattiyalukku';
   static const patrucheettuTharavugal = 'patrucheettuTharavugal';
   static const cheluthiyaTharavu = 'cheluthiyaTharavu';
@@ -399,4 +402,29 @@ abstract final class K {
   static const kanakkuKuriyeedu = 'kanakkuKuriyeedu';
   static const ifscKaattu = 'ifscKaattu';
   static const india = 'india';
+  static const String aetrugiradhu = 'aetrugiradhu';
+  static const String idhuvuraiKaappuIllai = 'idhuvuraiKaappuIllai';
+  static const String payanpaduthiyaChaemippu = 'payanpaduthiyaChaemippu';
+  static const String kadaisiThaaniyakkaKaappu = 'kadaisiThaaniyakkaKaappu';
+  static const String kooliTharavugal = 'kooliTharavugal';
+  static const String pattuTharavugal = 'pattuTharavugal';
+  static const String chaemippu = 'chaemippu';
+  static const String kaappu = 'kaappu';
+  static const String chaemippuMatrumKaappu = 'chaemippuMatrumKaappu';
+  static const String tharavuthalam = 'tharavuthalam';
+  static const String janavari = 'janavari';
+  static const String fibravari = 'fibravari';
+  static const String maarch = 'maarch';
+  static const String aepral = 'aepral';
+  static const String mae = 'mae';
+  static const String joon = 'joon';
+  static const String joolai = 'joolai';
+  static const String aagast = 'aagast';
+  static const String septambar = 'septambar';
+  static const String aktobar = 'aktobar';
+  static const String navambar = 'navambar';
+  static const String disambar = 'disambar';
+  static const String murpagal = 'murpagal';
+  static const String pirpagal = 'pirpagal';
+  static const String tharavuthalangalKaappaikKaiyaalu = 'tharavuthalangalKaappaikKaiyaalu';
 }

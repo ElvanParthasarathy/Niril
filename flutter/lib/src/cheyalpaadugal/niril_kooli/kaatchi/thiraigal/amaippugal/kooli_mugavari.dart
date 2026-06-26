@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
@@ -255,6 +257,8 @@ class _CoolieMugavariPageState extends ConsumerState<CoolieMugavariPage> {
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                           keyboardType: TextInputType.number,
+                          inputFormatters: ElvanVadivamaippigal.enngalMattum,
+                          maxLength: 6,
                         ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),

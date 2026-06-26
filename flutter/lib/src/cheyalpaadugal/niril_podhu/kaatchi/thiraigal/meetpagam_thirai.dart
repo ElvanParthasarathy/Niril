@@ -10,6 +10,7 @@ import '../../../../koorugal/maeladukkugal/elvan_cheyal_maeladukku.dart';
 import '../../kalanjiyam/porul_nilaimai.dart';
 import '../../kalanjiyam/vaangunar_nilaimai.dart';
 import 'koorugal/meetpagam_koorugal.dart';
+import '../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MEETPAGAM — Recycle Bin Screen
@@ -45,38 +46,27 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
     final primaryLang = ref.watch(primaryLanguageProvider);
     final secondaryLang = ref.watch(secondaryLanguageProvider);
 
-    return Scaffold(
+    return ElvanSubpageShell(
+      title: K.meetpagam.tr(context, ref),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Text(
-          K.meetpagam.tr(context, ref),
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(CupertinoIcons.back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: deletedPorulgalAsync.when(
-        loading: () => const Center(child: CupertinoActivityIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
-        data: (deletedPorulgal) {
-          final deletedVaangunargal =
-              deletedVaangunargalAsync.value ?? [];
+      slivers: [
+        deletedPorulgalAsync.when(
+          loading: () => const SliverFillRemaining(child: Center(child: CupertinoActivityIndicator())),
+          error: (e, _) => SliverFillRemaining(child: Center(child: Text('Error: $e'))),
+          data: (deletedPorulgal) {
+            final deletedVaangunargal = deletedVaangunargalAsync.value ?? [];
 
-          if (deletedPorulgal.isEmpty && deletedVaangunargal.isEmpty) {
-            return MeetpagamVeliNilai(isDark: isDark);
-          }
+            if (deletedPorulgal.isEmpty && deletedVaangunargal.isEmpty) {
+              return SliverFillRemaining(
+                hasScrollBody: false,
+                child: MeetpagamVeliNilai(isDark: isDark)
+              );
+            }
 
-          return ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            children: [
+            return SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              sliver: SliverList.list(
+                children: [
               // ── 30-day auto-delete info ──
               MeetpagamThanniyakkaNaattam(isDark: isDark),
               const SizedBox(height: 12),
@@ -129,10 +119,12 @@ class _MeetpagamThiraiState extends ConsumerState<MeetpagamThirai> {
               ],
 
               const SizedBox(height: 100),
-            ],
-          );
-        },
-      ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 

@@ -3,16 +3,62 @@ import 'package:flutter/material.dart';
 
 /// Section title with subtle styling — used in merchant editors.
 class VaangunarThiruthiPaguthiThalaipu extends StatelessWidget {
-  const VaangunarThiruthiPaguthiThalaipu({super.key, required this.label});
+  const VaangunarThiruthiPaguthiThalaipu({
+    super.key,
+    required this.label,
+    this.stepNumber,
+    this.isActive = false,
+  });
+
   final String label;
+  final int? stepNumber;
+  final bool isActive;
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      label,
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    // Using a subtle transition to show active state
+    final textColor = isActive 
+        ? (isDark ? Colors.white : Colors.black)
+        : (isDark ? Colors.white70 : Colors.black87);
+
+    return Row(
+      children: [
+        if (stepNumber != null) ...[
+          Container(
+            width: 28,
+            height: 28,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isActive 
+                  ? (isDark ? Colors.white : Colors.black) 
+                  : (isDark ? Colors.white24 : Colors.black12),
+            ),
+            child: Text(
+              '$stepNumber',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isActive 
+                    ? (isDark ? Colors.black : Colors.white)
+                    : (isDark ? Colors.white : Colors.black),
+                fontSize: 14,
+              ),
+            ),
           ),
+          const SizedBox(width: 12),
+        ],
+        Expanded(
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
+          ),
+        ),
+      ],
     );
   }
 }

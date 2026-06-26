@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
-import '../../../thiraigal/amaippugal/pattu_mugavari_tharavu.dart';
+import '../../../../../../adippadai/idangal_kalanjiyam/idangal_kalanjiyam.dart';
 
-/// Bottom sheet state picker for Place of Supply — reuses silkIndianStates data.
+/// Bottom sheet state picker for Place of Supply — reuses indhiyaMaanilangal data.
 class MaanilaThervuMeladukku extends ConsumerStatefulWidget {
   const MaanilaThervuMeladukku({
     super.key,
@@ -25,9 +25,9 @@ class _MaanilaThervuMeladukkuState extends ConsumerState<MaanilaThervuMeladukku>
   String _searchQuery = '';
 
   List<Map<String, String>> get _filtered {
-    if (_searchQuery.isEmpty) return silkIndianStates;
+    if (_searchQuery.isEmpty) return indhiyaMaanilangal;
     final q = _searchQuery.toLowerCase();
-    return silkIndianStates.where((s) =>
+    return indhiyaMaanilangal.where((s) =>
         (s['en']?.toLowerCase().contains(q) ?? false) ||
         (s['ta']?.toLowerCase().contains(q) ?? false)).toList();
   }

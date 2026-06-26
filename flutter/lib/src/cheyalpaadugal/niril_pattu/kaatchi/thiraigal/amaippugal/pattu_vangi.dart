@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
@@ -220,8 +222,8 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
                   ),
                   // --- ACCOUNT NUMBER ---
                   ElvanSettingsAnimatedExpand(
-                    isEditing: _editingSection == 'kanakkuEn',
-                    keyPrefix: 'kanakkuEn',
+                    isEditing: _editingSection == 'vangiKanakku',
+                    keyPrefix: 'vangiKanakku',
                     editChild: _buildEditContainer(
                       title: K.kanakkuEn.tr(context, ref),
                       inputFields: [
@@ -229,6 +231,9 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
                           label: K.kanakkuEn.tr(context, ref),
                           initialValue: _tempPrimary,
                           onChanged: (v) => _tempPrimary = v,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: ElvanVadivamaippigal.enngalMattum,
+                          maxLength: 18,
                         ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
@@ -244,8 +249,8 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
                   ),
                   // --- IFSC CODE ---
                   ElvanSettingsAnimatedExpand(
-                    isEditing: _editingSection == 'ifscKuriyeedu',
-                    keyPrefix: 'ifscKuriyeedu',
+                    isEditing: _editingSection == 'ifsc',
+                    keyPrefix: 'ifsc',
                     editChild: _buildEditContainer(
                       title: K.ifscKuriyeedu.tr(context, ref),
                       inputFields: [
@@ -253,6 +258,8 @@ class _SilkVangiPageState extends ConsumerState<SilkVangiPage> {
                           label: K.ifscKuriyeedu.tr(context, ref),
                           initialValue: _tempPrimary,
                           onChanged: (v) => _tempPrimary = v,
+                          inputFormatters: ElvanVadivamaippigal.periyaEzhuthuEnngal,
+                          maxLength: 11,
                         ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),

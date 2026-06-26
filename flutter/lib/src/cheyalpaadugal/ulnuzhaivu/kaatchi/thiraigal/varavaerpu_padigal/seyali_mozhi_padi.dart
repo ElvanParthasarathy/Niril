@@ -89,12 +89,12 @@ class AppLanguageStep extends ConsumerWidget {
                       endIndent: 24),
                   LanguageTile(
                     title: 'Thamizh Latin',
-                    isSelected: currentLang == 'tg',
+                    isSelected: currentLang == 'ta-Latn',
                     textColor: textColor,
                     onTap: () {
                       ref
                           .read(localeProvider.notifier)
-                          .setLocale(const Locale('tg'));
+                          .setLocale(const Locale.fromSubtags(languageCode: 'ta', scriptCode: 'Latn'));
                     },
                   ),
                 ],

@@ -11,7 +11,7 @@ import '../../../../koorugal/maeladukkugal/elvan_cheyal_maeladukku.dart';
 import '../../../../koorugal/maeladukkugal/elvan_aetrum_maeladukku.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
-import 'thaekkagam_pagudhi.dart';
+import 'chaemippu_matrum_kaappu_pagudhi.dart';
 import '../../../../adippadai/viruppangal_paniyagam.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/tharavuru/seyali_murai.dart';
@@ -48,6 +48,7 @@ class AccountSecuritySection extends ConsumerWidget {
           ),
           iconBgColor: iconBgColor,
           title: K.orunginaiCheyaliPtn.tr(context, ref),
+          description: K.orunginaiCheyaliVilakkam.tr(context, ref),
           onTap: () {
             _showSyncFlow(context, ref);
           },

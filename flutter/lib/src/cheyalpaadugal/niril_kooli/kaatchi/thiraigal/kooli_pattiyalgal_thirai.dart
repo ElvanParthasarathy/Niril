@@ -77,7 +77,7 @@ class CoolieInvoicesPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'பற்றுச்சீட்டுகள் இல்லை',
+                    K.pattiyalgalIllai.tr(context, ref),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -86,7 +86,7 @@ class CoolieInvoicesPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'புதிய பற்றுச்சீட்டை உருவாக்கவும்',
+                    K.pudhiyaPattiyalPtn.tr(context, ref),
                     style: TextStyle(
                       fontSize: 13,
                       color: isDark ? Colors.white24 : Colors.black26,

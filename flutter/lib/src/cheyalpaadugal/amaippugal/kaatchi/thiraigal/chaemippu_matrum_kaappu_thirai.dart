@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
-import '../koorugal/thaekkagam_pagudhi.dart';
+import '../koorugal/chaemippu_matrum_kaappu_pagudhi.dart';
+import '../../../../adippadai/mozhiyaakkam/k.dart';
+import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
-class ThaekkagamAmaippugalPage extends ConsumerWidget {
-  const ThaekkagamAmaippugalPage({super.key});
+class ChaemippuMatrumKaappuThirai extends ConsumerWidget {
+  const ChaemippuMatrumKaappuThirai({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return ElvanSubpageShell(
-      title: 'Storage & Backup',
+      title: K.chaemippuMatrumKaappu.tr(context, ref),
       backgroundColor:
           isDark ? const Color(0xFF000000) : const Color(0xFFF3F4F6),
       slivers: [
@@ -25,7 +27,7 @@ class ThaekkagamAmaippugalPage extends ConsumerWidget {
           ),
           sliver: SliverList.list(
             children: const [
-              StorageManagerSection(),
+              ChaemippuMatrumKaappuPagudhi(),
             ],
           ),
         ),

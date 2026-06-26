@@ -103,11 +103,11 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
 
   void _toggleLanguage() {
     final currentLocale = ref.read(localeProvider);
-    if (currentLocale?.languageCode == 'ta') {
+    if (currentLocale?.languageCode == 'ta' && currentLocale?.scriptCode != 'Latn') {
       ref.read(localeProvider.notifier).setLocale(const Locale('en'));
       if (mounted) ElvanSnackbar.show(context, 'Language: English');
     } else if (currentLocale?.languageCode == 'en') {
-      ref.read(localeProvider.notifier).setLocale(const Locale('tg'));
+      ref.read(localeProvider.notifier).setLocale(const Locale.fromSubtags(languageCode: 'ta', scriptCode: 'Latn'));
       if (mounted) ElvanSnackbar.show(context, 'Language: Tanglish');
     } else {
       ref.read(localeProvider.notifier).setLocale(const Locale('ta'));
@@ -124,11 +124,18 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
   }
 
   void _swapDataLanguages() {
-    final currentPrimary = ref.read(primaryLanguageProvider);
-    final currentSecondary = ref.read(secondaryLanguageProvider);
+    final profile = ref.read(NiruvanaTharavugalProvider);
+    if (profile == null) return;
 
-    ref.read(primaryLanguageProvider.notifier).state = currentSecondary;
-    ref.read(secondaryLanguageProvider.notifier).state = currentPrimary;
+    final currentPrimary = profile.mudhanMozhi;
+    final currentSecondary = profile.thunaiMozhi;
+
+    final newProfile = profile.copyWith(
+      mudhanMozhi: currentSecondary,
+      thunaiMozhi: currentPrimary,
+    );
+
+    ref.read(niruvanaTharavugalNotifierProvider).updateProfile(newProfile);
 
     if (mounted) {
       ElvanSnackbar.show(
@@ -177,22 +184,22 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
       thunaiMozhi: d['thunaiMozhi'] ?? 'English',
       iruMozhi: d['iruMozhi'] ?? true,
       niruvanathinPeyar: {
-        'Tamil': d['niruvanathinPeyar_Tamil'] ?? '',
-        'English': d['niruvanathinPeyar_English'] ?? '',
+        'ta': d['niruvanathinPeyar_Tamil'] ?? '',
+        'en': d['niruvanathinPeyar_English'] ?? '',
       },
       kurumPeyar: d['kurumPeyar'] ?? '',
       tholaipaesi1: d['tholaipesi_1'] ?? '',
       tholaipaesi2: d['tholaipesi_2'] ?? '',
       minnanjal: d['minnanjal'] ?? '',
       gstin: d['gstin'] ?? '',
-      mugavari: {'Tamil': d['mugavari_Tamil'] ?? '', 'English': d['mugavari_English'] ?? ''},
-      oor: {'Tamil': d['oor_Tamil'] ?? '', 'English': d['oor_English'] ?? ''},
-      maavattam: {'Tamil': d['maavattam_Tamil'] ?? '', 'English': d['maavattam_English'] ?? ''},
-      maanilam: {'Tamil': d['maanilam_Tamil'] ?? '', 'English': d['maanilam_English'] ?? ''},
-      naadu: {'Tamil': d['naadu_Tamil'] ?? '', 'English': d['naadu_English'] ?? ''},
+      mugavari: {'ta': d['mugavari_Tamil'] ?? '', 'en': d['mugavari_English'] ?? ''},
+      oor: {'ta': d['oor_Tamil'] ?? '', 'en': d['oor_English'] ?? ''},
+      maavattam: {'ta': d['maavattam_Tamil'] ?? '', 'en': d['maavattam_English'] ?? ''},
+      maanilam: {'ta': d['maanilam_Tamil'] ?? '', 'en': d['maanilam_English'] ?? ''},
+      naadu: {'ta': d['naadu_Tamil'] ?? '', 'en': d['naadu_English'] ?? ''},
       anjalKuriyeedu: d['anjalKuriyeedu'] ?? '',
-      vangiPeyar: {'Tamil': d['vangiPeyar_Tamil'] ?? '', 'English': d['vangiPeyar_English'] ?? ''},
-      kilai: {'Tamil': d['kilai_Tamil'] ?? '', 'English': d['kilai_English'] ?? ''},
+      vangiPeyar: {'ta': d['vangiPeyar_Tamil'] ?? '', 'en': d['vangiPeyar_English'] ?? ''},
+      kilai: {'ta': d['kilai_Tamil'] ?? '', 'en': d['kilai_English'] ?? ''},
       vangiKanakku: d['vangiKanakku'] ?? '',
       ifsc: d['ifsc'] ?? '',
       oavuru: d['oavuru'] ?? '',
@@ -200,7 +207,7 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
       thalaippuVadivu: d['thalaippuVadivu'] ?? 'small',
       kaiyoppam: d['kaiyoppam'] ?? '',
       oppamPeyar: d['oppamPeyar'] ?? '',
-      adaimozhi: {'Tamil': d['adaimozhi_Tamil'] ?? '', 'English': d['adaimozhi_English'] ?? ''},
+      adaimozhi: {'ta': d['adaimozhi_Tamil'] ?? '', 'en': d['adaimozhi_English'] ?? ''},
       upiId: d['upiId'] ?? '',
       thoatraNiram: d['thoatraNiram'] ?? '',
     );

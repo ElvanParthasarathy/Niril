@@ -120,13 +120,14 @@ class ElvanSettingsDropdown extends ConsumerWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 // ElvanSettingsAutocomplete — A text field that supports autocomplete
 // ─────────────────────────────────────────────────────────────────────────────
-class ElvanSettingsAutocomplete extends StatelessWidget {
+class ElvanSettingsAutocomplete extends StatefulWidget {
   final String label;
   final TextEditingController controller;
   final List<String> options;
   final ValueChanged<String> onChanged;
   final void Function(String)? onSelected;
   final bool Function(String option, String query)? searchMatch;
+  final String Function(String option)? subtitleBuilder;
   final bool enabled;
 
   const ElvanSettingsAutocomplete({
@@ -137,8 +138,28 @@ class ElvanSettingsAutocomplete extends StatelessWidget {
     required this.onChanged,
     this.onSelected,
     this.searchMatch,
+    this.subtitleBuilder,
     this.enabled = true,
   });
+
+  @override
+  State<ElvanSettingsAutocomplete> createState() => _ElvanSettingsAutocompleteState();
+}
+
+class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
+  late FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +169,7 @@ class ElvanSettingsAutocomplete extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 16, bottom: 8),
           child: Text(
-            label,
+            widget.label,
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w400,
@@ -163,16 +184,16 @@ class ElvanSettingsAutocomplete extends StatelessWidget {
         LayoutBuilder(
           builder: (context, constraints) {
             return RawAutocomplete<String>(
-              textEditingController: controller,
-              focusNode: FocusNode(),
+              textEditingController: widget.controller,
+              focusNode: _focusNode,
               optionsBuilder: (TextEditingValue textEditingValue) {
-                if (!enabled) return const Iterable<String>.empty();
+                if (!widget.enabled) return const Iterable<String>.empty();
                 if (textEditingValue.text.isEmpty) {
-                  return options;
+                  return widget.options;
                 }
-                return options.where((String option) {
-                  if (searchMatch != null) {
-                    return searchMatch!(option, textEditingValue.text);
+                return widget.options.where((String option) {
+                  if (widget.searchMatch != null) {
+                    return widget.searchMatch!(option, textEditingValue.text);
                   }
                   return option
                       .toLowerCase()
@@ -180,10 +201,10 @@ class ElvanSettingsAutocomplete extends StatelessWidget {
                 });
               },
               onSelected: (String selection) {
-                if (!enabled) return;
-                onChanged(selection);
-                if (onSelected != null) {
-                  onSelected!(selection);
+                if (!widget.enabled) return;
+                widget.onChanged(selection);
+                if (widget.onSelected != null) {
+                  widget.onSelected!(selection);
                 }
               },
               fieldViewBuilder:
@@ -191,12 +212,12 @@ class ElvanSettingsAutocomplete extends StatelessWidget {
                 return ElvanTextField(
                   controller: fieldController,
                   focusNode: focusNode,
-                  onChanged: enabled ? onChanged : null,
+                  onChanged: widget.enabled ? widget.onChanged : null,
                   onEditingComplete: onEditingComplete,
-                  enabled: enabled,
+                  enabled: widget.enabled,
                   style: TextStyle(
                     fontSize: 16,
-                    color: enabled
+                    color: widget.enabled
                         ? Theme.of(context).colorScheme.onSurface
                         : Theme.of(context)
                             .colorScheme
@@ -223,7 +244,7 @@ class ElvanSettingsAutocomplete extends StatelessWidget {
                       borderRadius: BorderRadius.circular(24),
                       borderSide: BorderSide.none,
                     ),
-                    suffixIcon: enabled
+                    suffixIcon: widget.enabled
                         ? ValueListenableBuilder<TextEditingValue>(
                             valueListenable: fieldController,
                             builder: (context, value, child) {
@@ -236,17 +257,24 @@ class ElvanSettingsAutocomplete extends StatelessWidget {
                                       .withValues(alpha: 0.5),
                                   onPressed: () {
                                     fieldController.clear();
-                                    onChanged('');
+                                    widget.onChanged('');
                                     // Close keyboard when clearing if they want, but usually leave it open
                                   },
                                 );
                               }
-                              return Icon(
-                                Icons.arrow_drop_down,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurface
-                                    .withValues(alpha: 0.5),
+                              return IconButton(
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.5),
+                                ),
+                                onPressed: () {
+                                  if (!focusNode.hasFocus) {
+                                    focusNode.requestFocus();
+                                  }
+                                },
                               );
                             },
                           )
@@ -271,30 +299,46 @@ class ElvanSettingsAutocomplete extends StatelessWidget {
                         maxHeight: 200,
                         maxWidth: constraints.maxWidth, // Use text field width
                       ),
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    shrinkWrap: true,
-                    itemCount: options.length,
-                    itemBuilder: (context, index) {
-                      final option = options.elementAt(index);
-                      return InkWell(
-                        onTap: () => onSelected(option),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
-                          child: Text(
-                            option,
-                            style: TextStyle(
-                              color: textColor,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        shrinkWrap: true,
+                        itemCount: options.length,
+                        itemBuilder: (context, index) {
+                          final option = options.elementAt(index);
+                          final subtitle = widget.subtitleBuilder?.call(option);
+                          
+                          return InkWell(
+                            onTap: () => onSelected(option),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    option,
+                                    style: TextStyle(
+                                        fontSize: 16, color: textColor),
+                                  ),
+                                  if (subtitle != null && subtitle.isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 2),
+                                      child: Text(
+                                        subtitle,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: textColor.withValues(alpha: 0.6)),
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ),
-                      );
-                    },
+                          );
+                        },
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            );
+                );
               },
             );
           },

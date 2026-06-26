@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
@@ -9,9 +11,11 @@ import '../../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_pagudhi.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_kattupadugal.dart';
-import 'pattu_mugavari_tharavu.dart';
+import '../../../../../adippadai/idangal_kalanjiyam/idangal_kalanjiyam.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
+import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_autocomplete.dart';
+import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
 
 class SilkMugavariPage extends ConsumerStatefulWidget {
   const SilkMugavariPage({super.key});
@@ -177,6 +181,12 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
     final maanilamSecondary = currentProfile.getSecondary('maanilam');
     final naaduPrimary = currentProfile.getPrimary('naadu');
     final naaduSecondary = currentProfile.getSecondary('naadu');
+    final velinaadMugavariPrimary = currentProfile.getPrimary('velinaadMugavari');
+    final velinaadMugavariSecondary = currentProfile.getSecondary('velinaadMugavari');
+
+    final enName = naaduPrimary.trim().toLowerCase();
+    final taName = naaduSecondary.trim();
+    final isIndia = true; // Country is permanently locked to India
 
     return ElvanSubpageShell(
       title: title,
@@ -193,40 +203,121 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
               ElvanSettingsSection(
                 dividerIndent: 16.0,
                 children: [
-                  // 1. Address (Mugavari)
-                  ElvanSettingsAnimatedExpand(
-                    keyPrefix: 'mugavari',
-                    isEditing: _editingSection == 'mugavari',
-                    editChild: _buildEditContainer(
-                      title: K.mugavari.tr(context, ref),
-                      inputFields: [
-                        ElvanSettingsTextField(
-                          label:
-                              '${K.mugavari.tr(context, ref)} (${primaryLang.tr(context, ref)})',
-                          initialValue: _tempPrimary,
-                          onChanged: (val) => _tempPrimary = val,
-                          maxLines: 2,
-                        ),
-                        if (isBilingual) const SizedBox(height: 16),
-                        if (isBilingual)
+                  // 5. Country (Locked to India)
+                  ElvanSettingsDisplayRow(
+                    title: K.naadu.tr(context, ref),
+                    primaryValue: naaduPrimary,
+                    secondaryValue: isBilingual ? naaduSecondary : null,
+                    onEdit: null,
+                  ),
+
+                  if (!isIndia)
+                    // Foreign Address
+                    ElvanSettingsAnimatedExpand(
+                      keyPrefix: 'velinaadMugavari',
+                      isEditing: _editingSection == 'velinaadMugavari',
+                      editChild: _buildEditContainer(
+                        title: K.velinaadMugavari.tr(context, ref),
+                        inputFields: [
                           ElvanSettingsTextField(
-                            label:
-                                '${K.mugavari.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
-                            initialValue: _tempSecondary,
-                            onChanged: (val) => _tempSecondary = val,
-                            maxLines: 2,
+                            label: '${K.velinaadMugavari.tr(context, ref)} (${primaryLang.tr(context, ref)})',
+                            initialValue: _tempPrimary,
+                            onChanged: (val) => _tempPrimary = val,
+                            maxLines: 4,
+                          ),
+                          if (isBilingual) const SizedBox(height: 16),
+                          if (isBilingual)
+                            ElvanSettingsTextField(
+                              label: '${K.velinaadMugavari.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
+                              initialValue: _tempSecondary,
+                              onChanged: (val) => _tempSecondary = val,
+                              maxLines: 4,
+                            ),
+                        ],
+                        onCancel: () => setState(() => _editingSection = null),
+                        onSave: () => _saveBilingualField(currentProfile, 'velinaadMugavari'),
+                      ),
+                      displayChild: ElvanSettingsDisplayRow(
+                        title: K.velinaadMugavari.tr(context, ref),
+                        primaryValue: velinaadMugavariPrimary,
+                        secondaryValue: isBilingual ? velinaadMugavariSecondary : null,
+                        onEdit: () => _beginEditPrimarySecondary('velinaadMugavari', velinaadMugavariPrimary, velinaadMugavariSecondary),
+                      ),
+                    ),
+
+                  if (isIndia) ...[
+                                    // 4. State (Maanilam)
+                  ElvanSettingsAnimatedExpand(
+                    keyPrefix: 'maanilam',
+                    isEditing: _editingSection == 'maanilam',
+                    editChild: _buildEditContainer(
+                      title: K.maanilam.tr(context, ref),
+                      inputFields: [
+                        ElvanIrumozhiAutocomplete(
+                          label: K.maanilam.tr(context, ref),
+                          value: {ref.read(primaryLanguageProvider): _tempPrimary, ref.read(secondaryLanguageProvider): _tempSecondary},
+                          onChanged: (map) {
+                            setState(() {
+                              _tempPrimary = map[ref.read(primaryLanguageProvider)] ?? '';
+                              _tempSecondary = map[ref.read(secondaryLanguageProvider)] ?? '';
+                            });
+                          },
+                          options: indhiyaMaanilangal,
+                        ),
+                      ],
+                      onCancel: () => setState(() => _editingSection = null),
+                      onSave: () => _saveBilingualField(currentProfile, 'maanilam'),
+                    ),
+                    displayChild: ElvanSettingsDisplayRow(
+                      title: K.maanilam.tr(context, ref),
+                      primaryValue: maanilamPrimary,
+                      secondaryValue: isBilingual ? maanilamSecondary : null,
+                      onEdit: () => _beginEditPrimarySecondary('maanilam', maanilamPrimary, maanilamSecondary),
+                    ),
+                  ),
+
+                                    // 3. District (Maavattam)
+                  ElvanSettingsAnimatedExpand(
+                    keyPrefix: 'maavattam',
+                    isEditing: _editingSection == 'maavattam',
+                    editChild: _buildEditContainer(
+                      title: K.maavattam.tr(context, ref),
+                      inputFields: [
+                        if (maanilamPrimary == 'Tamil Nadu' || maanilamPrimary == 'தமிழ்நாடு' || maanilamSecondary == 'Tamil Nadu' || maanilamSecondary == 'தமிழ்நாடு')
+                          ElvanIrumozhiAutocomplete(
+                            label: K.naadu.tr(context, ref),
+                            value: {
+                              ref.read(primaryLanguageProvider): _tempPrimary,
+                              ref.read(secondaryLanguageProvider): _tempSecondary
+                            },
+                            onChanged: (map) {
+                              setState(() {
+                                _tempPrimary = map[ref.read(primaryLanguageProvider)] ?? '';
+                                _tempSecondary = map[ref.read(secondaryLanguageProvider)] ?? '';
+                              });
+                            },
+                            options: tamizhnaattuMaavattangal,
+                          )
+                        else
+                          ElvanIrumozhiPulan(
+                            label: K.maavattam.tr(context, ref),
+                            value: {ref.read(primaryLanguageProvider): _tempPrimary, ref.read(secondaryLanguageProvider): _tempSecondary},
+                            onChanged: (map) {
+                              setState(() {
+                                _tempPrimary = map[ref.read(primaryLanguageProvider)] ?? '';
+                                _tempSecondary = map[ref.read(secondaryLanguageProvider)] ?? '';
+                              });
+                            },
                           ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
-                      onSave: () =>
-                          _saveBilingualField(currentProfile, 'mugavari'),
+                      onSave: () => _saveBilingualField(currentProfile, 'maavattam'),
                     ),
                     displayChild: ElvanSettingsDisplayRow(
-                      title: K.mugavari.tr(context, ref),
-                      primaryValue: mugavariPrimary,
-                      secondaryValue: isBilingual ? mugavariSecondary : null,
-                      onEdit: () => _beginEditPrimarySecondary(
-                          'mugavari', mugavariPrimary, mugavariSecondary),
+                      title: K.maavattam.tr(context, ref),
+                      primaryValue: maavattamPrimary,
+                      secondaryValue: isBilingual ? maavattamSecondary : null,
+                      onEdit: () => _beginEditPrimarySecondary('maavattam', maavattamPrimary, maavattamSecondary),
                     ),
                   ),
 
@@ -264,174 +355,38 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
                     ),
                   ),
 
-                  // 3. District (Maavattam)
-                  ElvanSettingsAnimatedExpand(
-                    keyPrefix: 'maavattam',
-                    isEditing: _editingSection == 'maavattam',
-                    editChild: _buildEditContainer(
-                      title: K.maavattam.tr(context, ref),
-                      inputFields: [
-                        ElvanSettingsTextField(
-                          label:
-                              '${K.maavattam.tr(context, ref)} (${primaryLang.tr(context, ref)})',
-                          initialValue: _tempPrimary,
-                          onChanged: (val) => _tempPrimary = val,
-                        ),
-                        if (isBilingual) const SizedBox(height: 16),
-                        if (isBilingual)
+                    // 1. Address (Mugavari)
+                    ElvanSettingsAnimatedExpand(
+                      keyPrefix: 'mugavari',
+                      isEditing: _editingSection == 'mugavari',
+                      editChild: _buildEditContainer(
+                        title: K.mugavari.tr(context, ref),
+                        inputFields: [
                           ElvanSettingsTextField(
-                            label:
-                                '${K.maavattam.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
-                            initialValue: _tempSecondary,
-                            onChanged: (val) => _tempSecondary = val,
+                            label: '${K.mugavari.tr(context, ref)} (${primaryLang.tr(context, ref)})',
+                            initialValue: _tempPrimary,
+                            onChanged: (val) => _tempPrimary = val,
+                            maxLines: 2,
                           ),
-                      ],
-                      onCancel: () => setState(() => _editingSection = null),
-                      onSave: () =>
-                          _saveBilingualField(currentProfile, 'maavattam'),
+                          if (isBilingual) const SizedBox(height: 16),
+                          if (isBilingual)
+                            ElvanSettingsTextField(
+                              label: '${K.mugavari.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
+                              initialValue: _tempSecondary,
+                              onChanged: (val) => _tempSecondary = val,
+                              maxLines: 2,
+                            ),
+                        ],
+                        onCancel: () => setState(() => _editingSection = null),
+                        onSave: () => _saveBilingualField(currentProfile, 'mugavari'),
+                      ),
+                      displayChild: ElvanSettingsDisplayRow(
+                        title: K.mugavari.tr(context, ref),
+                        primaryValue: mugavariPrimary,
+                        secondaryValue: isBilingual ? mugavariSecondary : null,
+                        onEdit: () => _beginEditPrimarySecondary('mugavari', mugavariPrimary, mugavariSecondary),
+                      ),
                     ),
-                    displayChild: ElvanSettingsDisplayRow(
-                      title: K.maavattam.tr(context, ref),
-                      primaryValue: maavattamPrimary,
-                      secondaryValue: isBilingual ? maavattamSecondary : null,
-                      onEdit: () => _beginEditPrimarySecondary(
-                          'maavattam', maavattamPrimary, maavattamSecondary),
-                    ),
-                  ),
-
-                  // 4. State (Maanilam)
-                  ElvanSettingsAnimatedExpand(
-                    keyPrefix: 'maanilam',
-                    isEditing: _editingSection == 'maanilam',
-                    editChild: _buildEditContainer(
-                      title: K.maanilam.tr(context, ref),
-                      inputFields: [
-                        ElvanSettingsAutocomplete(
-                          label:
-                              '${K.maanilam.tr(context, ref)} (${primaryLang.tr(context, ref)})',
-                          controller: _primaryController,
-                          options: silkIndianStates
-                              .map((d) => d[primaryKey]!)
-                              .toList(),
-                          onChanged: (val) {
-                            _tempPrimary = val;
-                            if (val.isEmpty && isBilingual) {
-                              _tempSecondary = '';
-                              _secondaryController.clear();
-                            }
-                          },
-                          onSelected: (val) => _handleAutoFill(val, true,
-                              silkIndianStates, primaryKey, secondaryKey),
-                          searchMatch: (option, query) {
-                            final match = silkIndianStates.firstWhere(
-                                (d) => d[primaryKey] == option,
-                                orElse: () => {});
-                            if (match.isEmpty) return false;
-                            final q = query.toLowerCase();
-                            return match['ta']!.toLowerCase().contains(q) ||
-                                match['en']!.toLowerCase().contains(q);
-                          },
-                        ),
-                        if (isBilingual) const SizedBox(height: 16),
-                        if (isBilingual)
-                          ElvanSettingsAutocomplete(
-                            label:
-                                '${K.maanilam.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
-                            controller: _secondaryController,
-                            options: silkIndianStates
-                                .map((d) => d[secondaryKey]!)
-                                .toList(),
-                            onChanged: (val) => _tempSecondary = val,
-                            onSelected: (val) => _handleAutoFill(val, false,
-                                silkIndianStates, primaryKey, secondaryKey),
-                            enabled: false,
-                            searchMatch: (option, query) {
-                              final match = silkIndianStates.firstWhere(
-                                  (d) => d[secondaryKey] == option,
-                                  orElse: () => {});
-                              if (match.isEmpty) return false;
-                              final q = query.toLowerCase();
-                              return match['ta']!.toLowerCase().contains(q) ||
-                                  match['en']!.toLowerCase().contains(q);
-                            },
-                          ),
-                      ],
-                      onCancel: () => setState(() => _editingSection = null),
-                      onSave: () =>
-                          _saveBilingualField(currentProfile, 'maanilam'),
-                    ),
-                    displayChild: ElvanSettingsDisplayRow(
-                      title: K.maanilam.tr(context, ref),
-                      primaryValue: maanilamPrimary,
-                      secondaryValue: isBilingual ? maanilamSecondary : null,
-                      onEdit: () => _beginEditPrimarySecondary(
-                          'maanilam', maanilamPrimary, maanilamSecondary),
-                    ),
-                  ),
-
-                  // 5. Country
-                  ElvanSettingsAnimatedExpand(
-                    keyPrefix: 'naadu',
-                    isEditing: _editingSection == 'naadu',
-                    editChild: _buildEditContainer(
-                      title: K.naadu.tr(context, ref),
-                      inputFields: [
-                        ElvanSettingsAutocomplete(
-                          label:
-                              '${K.naadu.tr(context, ref)} (${primaryLang.tr(context, ref)})',
-                          controller: _primaryController,
-                          options:
-                              silkCountries.map((d) => d[primaryKey]!).toList(),
-                          onChanged: (val) => _tempPrimary = val,
-                          onSelected: (val) => _handleAutoFill(val, true,
-                              silkCountries, primaryKey, secondaryKey),
-                          enabled: false,
-                          searchMatch: (option, query) {
-                            final match = silkCountries.firstWhere(
-                                (d) => d[primaryKey] == option,
-                                orElse: () => {});
-                            if (match.isEmpty) return false;
-                            final q = query.toLowerCase();
-                            return match['ta']!.toLowerCase().contains(q) ||
-                                match['en']!.toLowerCase().contains(q);
-                          },
-                        ),
-                        if (isBilingual) const SizedBox(height: 16),
-                        if (isBilingual)
-                          ElvanSettingsAutocomplete(
-                            label:
-                                '${K.naadu.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
-                            controller: _secondaryController,
-                            options: silkCountries
-                                .map((d) => d[secondaryKey]!)
-                                .toList(),
-                            onChanged: (val) => _tempSecondary = val,
-                            onSelected: (val) => _handleAutoFill(val, false,
-                                silkCountries, primaryKey, secondaryKey),
-                            enabled: false,
-                            searchMatch: (option, query) {
-                              final match = silkCountries.firstWhere(
-                                  (d) => d[secondaryKey] == option,
-                                  orElse: () => {});
-                              if (match.isEmpty) return false;
-                              final q = query.toLowerCase();
-                              return match['ta']!.toLowerCase().contains(q) ||
-                                  match['en']!.toLowerCase().contains(q);
-                            },
-                          ),
-                      ],
-                      onCancel: () => setState(() => _editingSection = null),
-                      onSave: () =>
-                          _saveBilingualField(currentProfile, 'naadu'),
-                    ),
-                    displayChild: ElvanSettingsDisplayRow(
-                      title: K.naadu.tr(context, ref),
-                      primaryValue: naaduPrimary,
-                      secondaryValue: isBilingual ? naaduSecondary : null,
-                      onEdit: () => _beginEditPrimarySecondary(
-                          'naadu', naaduPrimary, naaduSecondary),
-                    ),
-                  ),
 
                   // 6. Pincode
                   ElvanSettingsAnimatedExpand(
@@ -445,6 +400,8 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                           keyboardType: TextInputType.number,
+                          inputFormatters: ElvanVadivamaippigal.enngalMattum,
+                          maxLength: 6,
                         ),
                       ],
                       onCancel: () => setState(() => _editingSection = null),
@@ -458,6 +415,10 @@ class _SilkMugavariPageState extends ConsumerState<SilkMugavariPage> {
                           'anjalKuriyeedu', currentProfile.anjalKuriyeedu),
                     ),
                   ),
+
+
+
+                  ], // End isIndia block
                 ],
               ),
             ],

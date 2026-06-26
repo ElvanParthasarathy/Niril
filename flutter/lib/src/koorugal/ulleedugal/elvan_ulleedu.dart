@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../adippadai/panigal/urai_thervu_karuvi.dart';
 
 class ElvanTextField extends StatelessWidget {
@@ -15,6 +16,8 @@ class ElvanTextField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final VoidCallback? onEditingComplete;
   final bool? enabled;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLength;
 
   const ElvanTextField({
     super.key,
@@ -31,6 +34,8 @@ class ElvanTextField extends StatelessWidget {
     this.onChanged,
     this.onEditingComplete,
     this.enabled,
+    this.inputFormatters,
+    this.maxLength,
   });
 
   @override
@@ -50,6 +55,9 @@ class ElvanTextField extends StatelessWidget {
       onChanged: onChanged,
       onEditingComplete: onEditingComplete,
       enabled: enabled,
+      inputFormatters: inputFormatters,
+      maxLength: maxLength,
+      maxLengthEnforcement: maxLength != null ? MaxLengthEnforcement.enforced : null,
     );
   }
 }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
+import '../../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 
 /// Builds a dynamic "other charge" row inside an ElvanUrupadiAttai.
@@ -75,6 +77,7 @@ class KooliPiraVarivuKooru extends ConsumerWidget {
                         charge.thogai > 0 ? charge.thogai.toString() : '',
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
                     decoration: const InputDecoration(
                       hintText: '₹',
                       border: InputBorder.none,

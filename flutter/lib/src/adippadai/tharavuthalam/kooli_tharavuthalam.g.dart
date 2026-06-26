@@ -105,7 +105,8 @@ class $KooliNiruvanaTharavugalTableTable extends KooliNiruvanaTharavugalTable
       naadu = GeneratedColumn<String>('naadu', aliasedName, false,
               type: DriftSqlType.string,
               requiredDuringInsert: false,
-              defaultValue: const Constant('{}'))
+              defaultValue:
+                  const Constant('{\"en\": \"India\", \"ta\": \"இந்தியா\"}'))
           .withConverter<Map<String, String>>(
               $KooliNiruvanaTharavugalTableTable.$converternaadu);
   static const VerificationMeta _anjalKuriyeeduMeta =
@@ -1371,7 +1372,8 @@ class $KooliVaangunarTableTable extends KooliVaangunarTable
       naadu = GeneratedColumn<String>('naadu', aliasedName, false,
               type: DriftSqlType.string,
               requiredDuringInsert: false,
-              defaultValue: const Constant('{}'))
+              defaultValue:
+                  const Constant('{\"en\": \"India\", \"ta\": \"இந்தியா\"}'))
           .withConverter<Map<String, String>>(
               $KooliVaangunarTableTable.$converternaadu);
   @override

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -6,9 +8,10 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
+import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_autocomplete.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
-import '../../thiraigal/amaippugal/pattu_mugavari_tharavu.dart';
+import '../../../../../adippadai/idangal_kalanjiyam/idangal_kalanjiyam.dart';
 import 'koorugal/vaangunar_thiruthi_koorugal.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -32,6 +35,8 @@ class SilkMerchantEditor extends ConsumerStatefulWidget {
 }
 
 class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
+  int _expandedIndex = 0;
+
   // ── Bilingual fields ──
   Map<String, String> _peyar = {};
   Map<String, String> _mugavari = {};
@@ -60,6 +65,8 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
   @override
   void initState() {
     super.initState();
+    _expandedIndex = widget.vaangunar != null ? -1 : 0;
+    _expandedIndex = widget.vaangunar != null ? -1 : 0;
     if (widget.vaangunar != null) {
       final v = widget.vaangunar!;
       _peyar = Map<String, String>.from(v.peyar);
@@ -154,90 +161,32 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
     });
   }
 
-  // ── State Dropdown Helper ─────────────────────────────────────────────
-
-  void _selectState(String primaryKey, String secondaryKey) {
-    // Build the list: Indian states + "Custom" at the end
-    final states = [
-      ...silkIndianStates,
-      {primaryKey: K.thanipPayanPtn.tr(context, ref), 'custom': 'true'},
-    ];
-
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => NilaiyamThaeraviPattai(
-        states: states,
-        primaryKey: primaryKey,
-        secondaryKey: secondaryKey,
-        onSelected: (primary, secondary) {
-          setState(() {
-            _maanilam = {
-              if (primary.isNotEmpty) primaryKey: primary,
-              if (secondary.isNotEmpty) secondaryKey: secondary,
-            };
-          });
-          Navigator.pop(ctx);
-        },
-        onCustom: () {
-          Navigator.pop(ctx);
-          // Allow free-form typing
-          setState(() {
-            _maanilam = {};
-          });
-        },
-      ),
-    );
-  }
-
-  // ── Country Dropdown Helper ───────────────────────────────────────────
-
-  void _selectCountry(String primaryKey, String secondaryKey) {
-    final countries = [
-      ...silkCountries,
-      {primaryKey: K.thanipPayanPtn.tr(context, ref), 'custom': 'true'},
-    ];
-
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => NilaiyamThaeraviPattai(
-        states: countries,
-        primaryKey: primaryKey,
-        secondaryKey: secondaryKey,
-        onSelected: (primary, secondary) {
-          setState(() {
-            _naadu = {
-              if (primary.isNotEmpty) primaryKey: primary,
-              if (secondary.isNotEmpty) secondaryKey: secondary,
-            };
-            // Clear India-specific fields when switching to non-India
-            if (!_isIndia) {
-              _maanilam = {};
-              _maavattam = {};
-              _oor = {};
-              _mugavari = {};
-              _anjalKuriyeeduController.clear();
-            }
-          });
-          Navigator.pop(ctx);
-        },
-        onCustom: () {
-          Navigator.pop(ctx);
-          setState(() => _naadu = {});
-        },
-      ),
-    );
-  }
-
   // ── Build ──────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
-    final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
-    final primaryKey = primaryLang == 'aangilam' ? 'en' : 'ta';
-    final secondaryKey = secondaryLang == 'aangilam' ? 'en' : 'ta';
-    final isBilingual = ref.watch(bilingualProvider);
+
+    final primaryLang = ref.watch(primaryLanguageProvider);
+    
+    final peyarText = _peyar[primaryLang]?.trim().isNotEmpty == true ? _peyar[primaryLang]! : '-';
+    
+    final mugavariParts = _isIndia ? [
+      _maanilam[primaryLang],
+      _maavattam[primaryLang],
+      _oor[primaryLang],
+      _mugavari[primaryLang],
+      _anjalKuriyeeduController.text,
+    ] : [
+      _velinaadMugavari[primaryLang],
+    ];
+    final mugavariText = mugavariParts.where((e) => e != null && e.toString().trim().isNotEmpty).join(', ');
+    
+    final thodarpuParts = [
+      _gstinController.text.isNotEmpty ? 'GSTIN: ${_gstinController.text}' : null,
+      _minnanjalController.text,
+      _tholaipaesiController.text,
+    ].where((e) => e != null && e.toString().trim().isNotEmpty).join(' | ');
 
     return ElvanEditorShell(
       title: _isEditing
@@ -246,142 +195,176 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
       onSave: _handleSave,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // ══════════════════════════════════════════════════════════════════
-          // SECTION 1: Business Details
-          // ══════════════════════════════════════════════════════════════════
-          VaangunarThiruthiPaguthiThalaipu(label: K.vaangunarTharavugal.tr(context, ref)),
-          const SizedBox(height: 16),
-
-          ElvanIrumozhiPulan(
-            label: K.vaangunarPeyar.tr(context, ref),
-            value: _peyar,
-            autofocus: !_isEditing,
-            onChanged: (map) => setState(() => _peyar = map),
-          ),
-
-          const SizedBox(height: 28),
-
-          // ══════════════════════════════════════════════════════════════════
-          // SECTION 2: Address
-          // ══════════════════════════════════════════════════════════════════
-          VaangunarThiruthiPaguthiThalaipu(label: K.mugavari.tr(context, ref)),
-          const SizedBox(height: 16),
-
-          // Country picker (always shown)
-          VaangunarIzhivaruPulan(
-            label: K.naadu.tr(context, ref),
-            primaryValue: _naadu[primaryKey] ?? '',
-            secondaryValue: isBilingual ? (_naadu[secondaryKey] ?? '') : null,
-            isDark: isDark,
-            onTap: () => _selectCountry(primaryKey, secondaryKey),
-          ),
-          const SizedBox(height: 16),
-
-          if (_isIndia) ...[
-            // ── India address fields ──
-            ElvanIrumozhiPulan(
-              label: K.mugavari.tr(context, ref),
-              value: _mugavari,
-              onChanged: (map) => setState(() => _mugavari = map),
-            ),
-            const SizedBox(height: 16),
-
-            ElvanIrumozhiPulan(
-              label: K.oor.tr(context, ref),
-              value: _oor,
-              onChanged: (map) => setState(() => _oor = map),
-            ),
-            const SizedBox(height: 16),
-
-            ElvanIrumozhiPulan(
-              label: K.maavattam.tr(context, ref),
-              value: _maavattam,
-              onChanged: (map) => setState(() => _maavattam = map),
-            ),
-            const SizedBox(height: 16),
-
-            // State dropdown (India only)
-            VaangunarIzhivaruPulan(
-              label: K.maanilam.tr(context, ref),
-              primaryValue: _maanilam[primaryKey] ?? '',
-              secondaryValue:
-                  isBilingual ? (_maanilam[secondaryKey] ?? '') : null,
-              isDark: isDark,
-              onTap: () => _selectState(primaryKey, secondaryKey),
-            ),
-
-            // If custom was selected (empty map), show text inputs
-            if (_maanilam.isEmpty) ...[
-              const SizedBox(height: 16),
+                children: [
+          _buildAccordionSection(
+            index: 0,
+            title: K.vaangunarTharavugal.tr(context, ref),
+            displayChild: Text(peyarText),
+            children: [
               ElvanIrumozhiPulan(
-                label: K.maanilam.tr(context, ref),
-                value: _maanilam,
-                onChanged: (map) => setState(() => _maanilam = map),
+                label: K.vaangunarPeyar.tr(context, ref),
+                value: _peyar,
+                autofocus: !_isEditing,
+                onChanged: (map) => setState(() => _peyar = map),
               ),
             ],
-
-            const SizedBox(height: 16),
-
-            // PIN Code (number)
-            _buildTextField(
-              context: context,
-              isDark: isDark,
-              label: K.anjalKuriyeedu.tr(context, ref),
-              controller: _anjalKuriyeeduController,
-              keyboardType: TextInputType.number,
-            ),
-          ] else ...[
-            // ── Non-India: single multiline bilingual address ──
-            ElvanIrumozhiPulan(
-              label: K.velinaadMugavari.tr(context, ref),
-              value: _velinaadMugavari,
-              onChanged: (map) => setState(() => _velinaadMugavari = map),
-            ),
-          ],
-
-          const SizedBox(height: 28),
-
-          // ══════════════════════════════════════════════════════════════════
-          // SECTION 3: Contact & Tax
-          // ══════════════════════════════════════════════════════════════════
-          VaangunarThiruthiPaguthiThalaipu(label: K.thodarpuVari.tr(context, ref)),
-          const SizedBox(height: 16),
-
-          // GSTIN
-          _buildTextField(
-            context: context,
-            isDark: isDark,
-            label: 'GSTIN',
-            controller: _gstinController,
-            textCapitalization: TextCapitalization.characters,
-            errorText: _gstinError,
-            onChanged: (_) {
-              if (_gstinError != null) setState(() => _gstinError = null);
-            },
           ),
-          const SizedBox(height: 16),
 
-          // Email
-          _buildTextField(
-            context: context,
-            isDark: isDark,
-            label: K.minnanjal.tr(context, ref),
-            controller: _minnanjalController,
-            keyboardType: TextInputType.emailAddress,
+          _buildAccordionSection(
+            index: 1,
+            title: K.mugavari.tr(context, ref),
+            displayChild: Text(mugavariText.isNotEmpty ? mugavariText : '-'),
+            children: [
+              ElvanIrumozhiAutocomplete(
+                label: K.naadu.tr(context, ref),
+                value: _naadu,
+                onChanged: (map) => setState(() => _naadu = map),
+                options: ulagaNaadugal,
+              ),
+              const SizedBox(height: 16),
+              if (_isIndia) ...[
+                ElvanIrumozhiAutocomplete(
+                  label: K.maanilam.tr(context, ref),
+                  value: _maanilam,
+                  onChanged: (map) => setState(() => _maanilam = map),
+                  options: indhiyaMaanilangal,
+                ),
+                const SizedBox(height: 16),
+                if (_maanilam['en'] == 'Tamil Nadu' || _maanilam['ta'] == 'தமிழ்நாடு')
+                  ElvanIrumozhiAutocomplete(
+                    label: K.maavattam.tr(context, ref),
+                    value: _maavattam,
+                    onChanged: (map) => setState(() => _maavattam = map),
+                    options: tamizhnaattuMaavattangal,
+                  )
+                else
+                  ElvanIrumozhiPulan(
+                    label: K.maavattam.tr(context, ref),
+                    value: _maavattam,
+                    onChanged: (map) => setState(() => _maavattam = map),
+                  ),
+                const SizedBox(height: 16),
+                ElvanIrumozhiPulan(
+                  label: K.oor.tr(context, ref),
+                  value: _oor,
+                  onChanged: (map) => setState(() => _oor = map),
+                ),
+                const SizedBox(height: 16),
+                ElvanIrumozhiPulan(
+                  label: K.mugavari.tr(context, ref),
+                  value: _mugavari,
+                  onChanged: (map) => setState(() => _mugavari = map),
+                ),
+                const SizedBox(height: 16),
+                _buildTextField(
+                  context: context,
+                  isDark: isDark,
+                  label: K.anjalKuriyeedu.tr(context, ref),
+                  controller: _anjalKuriyeeduController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: ElvanVadivamaippigal.enngalMattum,
+                  maxLength: 6,
+                ),
+              ] else ...[
+                ElvanIrumozhiPulan(
+                  label: K.velinaadMugavari.tr(context, ref),
+                  value: _velinaadMugavari,
+                  onChanged: (map) => setState(() => _velinaadMugavari = map),
+                ),
+              ],
+            ],
           ),
-          const SizedBox(height: 16),
 
-          // Phone
-          _buildTextField(
-            context: context,
-            isDark: isDark,
-            label: K.tholaipaesi.tr(context, ref),
-            controller: _tholaipaesiController,
-            keyboardType: TextInputType.phone,
+          _buildAccordionSection(
+            index: 2,
+            title: K.thodarpuVari.tr(context, ref),
+            displayChild: Text(thodarpuParts.isNotEmpty ? thodarpuParts : '-'),
+            children: [
+              _buildTextField(
+                context: context,
+                isDark: isDark,
+                label: 'GSTIN',
+                controller: _gstinController,
+                textCapitalization: TextCapitalization.characters,
+                errorText: _gstinError,
+                onChanged: (_) {
+                  if (_gstinError != null) setState(() => _gstinError = null);
+                },
+                inputFormatters: ElvanVadivamaippigal.periyaEzhuthuEnngal,
+                maxLength: 15,
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                context: context,
+                isDark: isDark,
+                label: K.minnanjal.tr(context, ref),
+                controller: _minnanjalController,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 16),
+              _buildTextField(
+                context: context,
+                isDark: isDark,
+                label: K.tholaipaesi.tr(context, ref),
+                controller: _tholaipaesiController,
+                keyboardType: TextInputType.phone,
+                inputFormatters: ElvanVadivamaippigal.tholaippaesi,
+                maxLength: 13,
+              ),
+            ],
           ),
         ],
       ),
+    );
+  }
+
+
+  Widget _buildAccordionSection({
+    required int index,
+    required String title,
+    required Widget displayChild,
+    required List<Widget> children,
+  }) {
+    final isActive = _expandedIndex == index;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GestureDetector(
+          onTap: () => setState(() => _expandedIndex = isActive ? -1 : index),
+          behavior: HitTestBehavior.opaque,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: VaangunarThiruthiPaguthiThalaipu(
+              label: title,
+              stepNumber: index + 1,
+              isActive: isActive,
+            ),
+          ),
+        ),
+        AnimatedCrossFade(
+          firstChild: Padding(
+            padding: const EdgeInsets.only(top: 4.0, bottom: 20.0, left: 40),
+            child: DefaultTextStyle(
+              style: TextStyle(
+                color: isDark ? Colors.white54 : Colors.black54,
+                fontSize: 15,
+              ),
+              child: displayChild,
+            ),
+          ),
+          secondChild: Padding(
+            padding: const EdgeInsets.only(top: 16.0, bottom: 24.0, left: 40),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: children,
+            ),
+          ),
+          crossFadeState: isActive ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+          duration: const Duration(milliseconds: 300),
+          sizeCurve: Curves.easeInOut,
+        ),
+      ],
     );
   }
 
@@ -398,12 +381,16 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
     String? errorText,
     TextCapitalization textCapitalization = TextCapitalization.none,
     ValueChanged<String>? onChanged,
+    List<TextInputFormatter>? inputFormatters,
+    int? maxLength,
   }) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
       textCapitalization: textCapitalization,
       onChanged: onChanged,
+      inputFormatters: inputFormatters,
+      maxLength: maxLength,
       style: const TextStyle(fontSize: 16),
       decoration: InputDecoration(
         labelText: label,
