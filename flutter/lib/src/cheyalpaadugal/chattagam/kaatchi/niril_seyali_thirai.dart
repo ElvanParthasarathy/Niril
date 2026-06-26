@@ -35,6 +35,7 @@ import '../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 import '../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 
 import '../../amaippugal/kaatchi/amaippugal_thirai.dart';
+import '../../amaippugal/kaatchi/koorugal/thaekkagam_pagudhi.dart';
 
 import 'kaippaesi/elvan_chattagam.dart';
 import 'kaippaesi/koorugal/elvan_maeladukku_pattiyal.dart';
@@ -49,14 +50,14 @@ import '../../../adippadai/vazhikaattal/niril_nav.dart';
 // Uses [NirilNavigationNotifier] as the single source of truth.
 // Both mobile and desktop layouts read from the same state.
 
-class NirilAppScreen extends ConsumerStatefulWidget {
-  const NirilAppScreen({super.key});
+class NirilSeyaliThirai extends ConsumerStatefulWidget {
+  const NirilSeyaliThirai({super.key});
 
   @override
-  ConsumerState<NirilAppScreen> createState() => _NirilAppScreenState();
+  ConsumerState<NirilSeyaliThirai> createState() => _NirilSeyaliThiraiState();
 }
 
-class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
+class _NirilSeyaliThiraiState extends ConsumerState<NirilSeyaliThirai> {
   // ── Navigation helpers ─────────────────────────────────────────────
 
   void _onAddPressed() {
@@ -133,10 +134,17 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
         ),
       ];
 
-  // ── Desktop nav items (5 items — Uruvakku splits) ──────────────────
+  // ── Desktop nav items (6 tabs) ─────────────────────────────────────
 
   List<CustomNavItem> _desktopNavItems(BuildContext context) => [
-        _mobileNavItems[0], // Home
+        CustomNavItem(
+          svgString:
+              '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M219.31,108.68l-80-80a16,16,0,0,0-22.62,0l-80,80A15.87,15.87,0,0,0,32,120v96a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V160h32v56a8,8,0,0,0,8,8h64a8,8,0,0,0,8-8V120A15.87,15.87,0,0,0,219.31,108.68ZM208,208H160V152a8,8,0,0,0-8-8H104a8,8,0,0,0-8,8v56H48V120l80-80,80,80Z"></path></svg>',
+          activeSvgString:
+              '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#000000" viewBox="0 0 256 256"><path d="M224,120v96a8,8,0,0,1-8,8H160a8,8,0,0,1-8-8V164a4,4,0,0,0-4-4H108a4,4,0,0,0-4,4v52a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V120a16,16,0,0,1,4.69-11.31l80-80a16,16,0,0,1,22.62,0l80,80A16,16,0,0,1,224,120Z"></path></svg>',
+          label: K.mugappu.tr(context, ref),
+          headerLabel: K.niril.tr(context, ref),
+        ),
         CustomNavItem(
           icon: CupertinoIcons.doc_text,
           activeIcon: CupertinoIcons.doc_text_fill,
@@ -218,6 +226,9 @@ class _NirilAppScreenState extends ConsumerState<NirilAppScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Eagerly load storageStatsProvider in the background so it's instantly ready in Settings -> Storage
+    ref.listen(storageStatsProvider, (_, __) {});
+
     final navState = ref.watch(nirilNavigationProvider);
     final nav = ref.read(nirilNavigationProvider.notifier);
     final mode = ref.watch(appModeProvider);

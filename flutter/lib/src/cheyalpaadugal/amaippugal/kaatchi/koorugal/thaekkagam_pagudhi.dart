@@ -30,7 +30,7 @@ import '../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 import '../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 
 
-final storageStatsProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+final storageStatsProvider = FutureProvider<Map<String, dynamic>>((ref) async {
   final backupService = ref.watch(backupServiceProvider);
   final kooliDb = ref.watch(kooliDatabaseProvider);
   final pattuDb = ref.watch(pattuDatabaseProvider);
@@ -66,23 +66,29 @@ final storageStatsProvider = FutureProvider.autoDispose<Map<String, dynamic>>((r
 class StorageManagerSection extends ConsumerWidget {
   const StorageManagerSection({super.key});
 
-  Widget _buildDataGrid(BuildContext context, int invoices, int receipts, int customers, int products) {
+  Widget _buildDataGrid(BuildContext context, int invoices, int receipts, int customers, int products, bool isLoading) {
     final color = Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5);
     final style = TextStyle(fontSize: 12, color: color);
+    
+    final invStr = isLoading ? '--' : '$invoices';
+    final recStr = isLoading ? '--' : '$receipts';
+    final cusStr = isLoading ? '--' : '$customers';
+    final proStr = isLoading ? '--' : '$products';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Expanded(child: Text('$invoices Invoices', style: style)),
-            Expanded(child: Text('$receipts Receipts', style: style)),
+            Expanded(child: Text('$invStr Invoices', style: style)),
+            Expanded(child: Text('$recStr Receipts', style: style)),
           ],
         ),
         const SizedBox(height: 6),
         Row(
           children: [
-            Expanded(child: Text('$customers Customers', style: style)),
-            Expanded(child: Text('$products Products', style: style)),
+            Expanded(child: Text('$cusStr Customers', style: style)),
+            Expanded(child: Text('$proStr Products', style: style)),
           ],
         ),
       ],
@@ -106,97 +112,106 @@ class StorageManagerSection extends ConsumerWidget {
     final theme = Theme.of(context);
     final statsAsync = ref.watch(storageStatsProvider);
 
+    final stats = statsAsync.value ?? {
+      'lastBackup': null,
+      'backupSize': 0,
+      'totalDbSize': 0,
+      'kooliInvoices': 0,
+      'kooliReceipts': 0,
+      'kooliProducts': 0,
+      'kooliCustomers': 0,
+      'silkInvoices': 0,
+      'silkReceipts': 0,
+      'silkProducts': 0,
+      'silkCustomers': 0,
+    };
+
+    final isLoading = statsAsync.isLoading && statsAsync.value == null;
+
+    final DateTime? lastBackup = stats['lastBackup'];
+    final backupDateStr = isLoading 
+        ? 'Loading...' 
+        : (lastBackup != null 
+            ? DateFormat('MMM d, yyyy - h:mm a').format(lastBackup)
+            : 'No Backup Yet');
+            
+    final storageUsedStr = isLoading 
+        ? 'Loading...' 
+        : '${_formatBytes(stats['totalDbSize'])} Database  •  ${_formatBytes(stats['backupSize'])} Backup';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        statsAsync.when(
-          data: (stats) {
-            final DateTime? lastBackup = stats['lastBackup'];
-            final backupDateStr = lastBackup != null 
-                ? DateFormat('MMM d, yyyy - h:mm a').format(lastBackup)
-                : 'No Backup Yet';
-
-            return Column(
-              children: [
-                StorageProjectionPill(stats: stats),
-                ElvanSettingsSection(
-                  children: [
-                    ElvanSettingsRow(
-                      iconWidget: Icon(
-                        CupertinoIcons.folder_solid,
-                        color: theme.colorScheme.onSurface,
-                        size: 20,
-                      ),
-                      iconBgColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
-                      title: 'Storage Used',
-                      description: '${_formatBytes(stats['totalDbSize'])} Database  •  ${_formatBytes(stats['backupSize'])} Backup',
-                      onTap: () {},
-                    ),
-                    ElvanSettingsRow(
-                      iconWidget: Icon(
-                        CupertinoIcons.time,
-                        color: theme.colorScheme.onSurface,
-                        size: 20,
-                      ),
-                      iconBgColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
-                      title: 'Last Auto-Backup',
-                      description: backupDateStr,
-                      onTap: () {},
-                    ),
-                    ElvanSettingsRow(
-                      iconWidget: Icon(
-                        CupertinoIcons.cloud_upload_fill,
-                        color: theme.colorScheme.onSurface,
-                        size: 20,
-                      ),
-                      iconBgColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
-                      title: K.tharavuKaappuChei.tr(context, ref),
-                      description: K.ungalTharavaiChaemikkavum.tr(context, ref),
-                      onTap: () {
-                        _showBackupFlow(context, ref);
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                ElvanSettingsSection(
-                  children: [
-                    ElvanSettingsRow(
-                      iconWidget: SvgPicture.string(
-                        AppSvgs.coolieMode,
-                        width: 20,
-                        height: 20,
-                        colorFilter: ColorFilter.mode(theme.colorScheme.onSurface, BlendMode.srcIn),
-                      ),
-                      iconBgColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
-                      title: 'Coolie Data',
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      customDescription: _buildDataGrid(context, stats['kooliInvoices'], stats['kooliReceipts'], stats['kooliCustomers'], stats['kooliProducts']),
-                      onTap: () {},
-                    ),
-                    ElvanSettingsRow(
-                      iconWidget: SvgPicture.string(
-                        AppSvgs.silkMode,
-                        width: 20,
-                        height: 20,
-                        colorFilter: ColorFilter.mode(theme.colorScheme.onSurface, BlendMode.srcIn),
-                      ),
-                      iconBgColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
-                      title: 'Silk Data',
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      customDescription: _buildDataGrid(context, stats['silkInvoices'], stats['silkReceipts'], stats['silkCustomers'], stats['silkProducts']),
-                      onTap: () {},
-                    ),
-                  ],
-                ),
-              ],
-            );
-          },
-          loading: () => const Padding(
-            padding: EdgeInsets.all(32),
-            child: Center(child: CupertinoActivityIndicator()),
-          ),
-          error: (e, s) => Center(child: Text('Error loading stats: $e')),
+        StorageProjectionPill(stats: stats, isLoading: isLoading),
+        ElvanSettingsSection(
+          children: [
+            ElvanSettingsRow(
+              iconWidget: Icon(
+                CupertinoIcons.folder_solid,
+                color: theme.colorScheme.onSurface,
+                size: 20,
+              ),
+              iconBgColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+              title: 'Storage Used',
+              description: storageUsedStr,
+              onTap: () {},
+            ),
+            ElvanSettingsRow(
+              iconWidget: Icon(
+                CupertinoIcons.time,
+                color: theme.colorScheme.onSurface,
+                size: 20,
+              ),
+              iconBgColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+              title: 'Last Auto-Backup',
+              description: backupDateStr,
+              onTap: () {},
+            ),
+            ElvanSettingsRow(
+              iconWidget: Icon(
+                CupertinoIcons.cloud_upload_fill,
+                color: theme.colorScheme.onSurface,
+                size: 20,
+              ),
+              iconBgColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+              title: K.tharavuKaappuChei.tr(context, ref),
+              description: K.ungalTharavaiChaemikkavum.tr(context, ref),
+              onTap: () {
+                _showBackupFlow(context, ref);
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        ElvanSettingsSection(
+          children: [
+            ElvanSettingsRow(
+              iconWidget: SvgPicture.string(
+                AppSvgs.coolieMode,
+                width: 20,
+                height: 20,
+                colorFilter: ColorFilter.mode(theme.colorScheme.onSurface, BlendMode.srcIn),
+              ),
+              iconBgColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+              title: 'Coolie Data',
+              crossAxisAlignment: CrossAxisAlignment.start,
+              customDescription: _buildDataGrid(context, stats['kooliInvoices'], stats['kooliReceipts'], stats['kooliCustomers'], stats['kooliProducts'], isLoading),
+              onTap: () {},
+            ),
+            ElvanSettingsRow(
+              iconWidget: SvgPicture.string(
+                AppSvgs.silkMode,
+                width: 20,
+                height: 20,
+                colorFilter: ColorFilter.mode(theme.colorScheme.onSurface, BlendMode.srcIn),
+              ),
+              iconBgColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+              title: 'Silk Data',
+              crossAxisAlignment: CrossAxisAlignment.start,
+              customDescription: _buildDataGrid(context, stats['silkInvoices'], stats['silkReceipts'], stats['silkCustomers'], stats['silkProducts'], isLoading),
+              onTap: () {},
+            ),
+          ],
         ),
       ],
     );
@@ -232,11 +247,20 @@ class StorageManagerSection extends ConsumerWidget {
 
 class StorageProjectionPill extends ConsumerWidget {
   final Map<String, dynamic> stats;
-  const StorageProjectionPill({super.key, required this.stats});
+  final bool isLoading;
+  
+  const StorageProjectionPill({
+    super.key, 
+    required this.stats, 
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final cardColor = isDark ? const Color(0xFF111111) : Colors.white;
+
     final dbSize = stats['totalDbSize'] as int;
     final totalItems = (stats['kooliInvoices'] as int) + 
                        (stats['kooliReceipts'] as int) + 
@@ -249,8 +273,6 @@ class StorageProjectionPill extends ConsumerWidget {
     
     final avgSize = totalItems > 0 ? (dbSize / totalItems) : 4096.0;
     final maxSpace = 1024.0 * 1024.0 * 1024.0; // 1 GB
-    final maxItems = (maxSpace / avgSize).floor();
-    final remainingItems = (maxItems - totalItems).clamp(0, maxItems);
     final percent = dbSize / maxSpace;
 
     // Formatting sizes
@@ -270,53 +292,54 @@ class StorageProjectionPill extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 24),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: theme.cardColor,
+        color: cardColor,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
-        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Cloud Storage (1GB Limit)',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: theme.colorScheme.onSurface,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  'Database',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: theme.colorScheme.onSurface,
+                  ),
                 ),
-              ),
-              Text(
-                '${(percent * 100).toStringAsFixed(4)}%',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                Text(
+                  isLoading 
+                      ? '--- / 1 GB' 
+                      : '${formatBytes(dbSize.toDouble())} / 1 GB',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(100),
-            child: LinearProgressIndicator(
-              value: percent,
-              minHeight: 28,
-              backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
-              valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.onSurface),
+              ],
             ),
           ),
-          const SizedBox(height: 16),
-          Text(
-            '${formatBytes(dbSize.toDouble())} used. At your current usage rate, you can store approximately ${NumberFormat.decimalPattern().format(remainingItems)} more items before hitting the free cloud limit.',
-            style: TextStyle(
-              fontSize: 12,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              height: 1.4,
+          const SizedBox(height: 14),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(100),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 0.0, end: isLoading ? 0.0 : percent),
+              duration: const Duration(milliseconds: 1200),
+              curve: Curves.easeOutCubic,
+              builder: (context, value, _) {
+                return LinearProgressIndicator(
+                  value: value,
+                  minHeight: 28,
+                  backgroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+                  valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.onSurface),
+                );
+              },
             ),
           ),
         ],

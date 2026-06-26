@@ -20,7 +20,7 @@ class ThaekkagamAmaippugalPage extends ConsumerWidget {
           padding: const EdgeInsets.only(
             left: 16,
             right: 16,
-            top: 24,
+            top: 0,
             bottom: 32,
           ),
           sliver: SliverList.list(

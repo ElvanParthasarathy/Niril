@@ -263,7 +263,7 @@ class ElvanNirilApp extends ConsumerWidget {
                       // 4. Main App Dashboard (Deferred to guarantee smooth 60fps mode transition)
                       child = const DeferredShellLoader(
                         key: ValueKey('shell_demo'),
-                        child: NirilAppScreen(),
+                        child: NirilSeyaliThirai(),
                       );
                     }
                   }

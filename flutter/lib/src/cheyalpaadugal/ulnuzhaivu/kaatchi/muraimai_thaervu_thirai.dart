@@ -36,19 +36,6 @@ class ModeSelectorScreen extends ConsumerWidget {
               runSpacing: 32,
               children: [
                 _NetflixProfileCard(
-                  title: K.nirilPattu.tr(context, ref),
-                  iconBuilder: (color, size) => SvgPicture.string(
-                    AppSvgs.silkMode,
-                    width: size,
-                    height: size,
-                    colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-                  ),
-                  boxColor: isDark ? const Color(0xFF222222) : Colors.white,
-                  iconColor: isDark ? Colors.white : const Color(0xFF111111),
-                  isDark: isDark,
-                  onTap: () => onModeSelected(AppMode.silk),
-                ),
-                _NetflixProfileCard(
                   title: K.nirilKooli.tr(context, ref),
                   iconBuilder: (color, size) => SvgPicture.string(
                     AppSvgs.coolieMode,
@@ -60,6 +47,19 @@ class ModeSelectorScreen extends ConsumerWidget {
                   iconColor: isDark ? Colors.white : const Color(0xFF111111),
                   isDark: isDark,
                   onTap: () => onModeSelected(AppMode.coolie),
+                ),
+                _NetflixProfileCard(
+                  title: K.nirilPattu.tr(context, ref),
+                  iconBuilder: (color, size) => SvgPicture.string(
+                    AppSvgs.silkMode,
+                    width: size,
+                    height: size,
+                    colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                  ),
+                  boxColor: isDark ? const Color(0xFF222222) : Colors.white,
+                  iconColor: isDark ? Colors.white : const Color(0xFF111111),
+                  isDark: isDark,
+                  onTap: () => onModeSelected(AppMode.silk),
                 ),
               ],
             ),
