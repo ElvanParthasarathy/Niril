@@ -27,7 +27,8 @@ final pattiyalKalanjiyamProvider = Provider<PattiyalKalanjiyam>((ref) {
 
 /// Fetches all invoices once for the current app mode.
 /// Call `ref.invalidate(pattiyalgalProvider)` after any CRUD to refresh.
-final pattiyalgalProvider = FutureProvider<List<PattiyalTharavuru>>((ref) {
+final pattiyalgalProvider = FutureProvider<List<PattiyalTharavuru>>((ref) async {
+  await Future.delayed(Duration.zero);
   final kalanjiyam = ref.watch(pattiyalKalanjiyamProvider);
   return kalanjiyam.getPattiyalgal();
 });
@@ -49,7 +50,8 @@ final selectedPattiyalIdsProvider = StateProvider<Set<int>>((ref) => {});
 
 /// Fetches all soft-deleted invoices once for the current app mode.
 /// Call `ref.invalidate(deletedPattiyalgalProvider)` after restore/purge.
-final deletedPattiyalgalProvider = FutureProvider<List<PattiyalTharavuru>>((ref) {
+final deletedPattiyalgalProvider = FutureProvider<List<PattiyalTharavuru>>((ref) async {
+  await Future.delayed(Duration.zero);
   final kalanjiyam = ref.watch(pattiyalKalanjiyamProvider);
   return kalanjiyam.getDeletedPattiyalgal();
 });

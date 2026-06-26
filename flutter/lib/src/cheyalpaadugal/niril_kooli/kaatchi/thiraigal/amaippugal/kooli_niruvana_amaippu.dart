@@ -265,7 +265,6 @@ class _CoolieNiruvanaAmaippuPageState
   @override
   Widget build(BuildContext context) {
     final title = K.niruvanam.tr(context, ref);
-    final isBilingual = ref.watch(bilingualProvider);
     final primaryLang = 'thamizh';
     final secondaryLang = 'aangilam';
 
@@ -305,9 +304,8 @@ class _CoolieNiruvanaAmaippuPageState
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                         ),
-                        if (isBilingual) const SizedBox(height: 16),
-                        if (isBilingual)
-                          ElvanSettingsTextField(
+                        const SizedBox(height: 16),
+                        ElvanSettingsTextField(
                             label:
                                 '${K.niruvanathinPeyar.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                             initialValue: _tempSecondary,
@@ -321,8 +319,7 @@ class _CoolieNiruvanaAmaippuPageState
                     displayChild: ElvanSettingsDisplayRow(
                       title: K.niruvanathinPeyar.tr(context, ref),
                       primaryValue: niruvanathinPeyarPrimary,
-                      secondaryValue:
-                          isBilingual ? niruvanathinPeyarSecondary : null,
+                      secondaryValue: niruvanathinPeyarSecondary ,
                       onEdit: () => _beginEditPrimarySecondary(
                           'niruvanathinPeyar',
                           niruvanathinPeyarPrimary,
@@ -363,15 +360,12 @@ class _CoolieNiruvanaAmaippuPageState
                       title: K.adaimozhi.tr(context, ref),
                       inputFields: [
                         ElvanSettingsTextField(
-                          label: isBilingual
-                              ? '${K.adaimozhi.tr(context, ref)} (${primaryLang.tr(context, ref)})'
-                              : K.adaimozhi.tr(context, ref),
+                          label: K.adaimozhi.tr(context, ref),
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                         ),
-                        if (isBilingual) const SizedBox(height: 16),
-                        if (isBilingual)
-                          ElvanSettingsTextField(
+                        const SizedBox(height: 16),
+                        ElvanSettingsTextField(
                             label:
                                 '${K.adaimozhi.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                             initialValue: _tempSecondary,
@@ -385,7 +379,7 @@ class _CoolieNiruvanaAmaippuPageState
                     displayChild: ElvanSettingsDisplayRow(
                       title: K.adaimozhi.tr(context, ref),
                       primaryValue: adaimozhiPrimary,
-                      secondaryValue: isBilingual ? adaimozhiSecondary : null,
+                      secondaryValue: adaimozhiSecondary ,
                       onEdit: () => _beginEditPrimarySecondary(
                           'adaimozhi', adaimozhiPrimary, adaimozhiSecondary),
                     ),

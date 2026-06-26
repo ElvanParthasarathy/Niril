@@ -5,10 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
+import '../../../amaippugal/tharavu/pattu_niruvana_tharavugal_provider.dart';
+import '../../../amaippugal/tharavu/kooli_niruvana_tharavugal_provider.dart';
 import '../../../../adippadai/panigal/niril_backup_service.dart';
+import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 
-import 'package:drift/drift.dart' hide Column;
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../koorugal/ullnuzhaivu_koorugal.dart';
 
@@ -46,35 +47,62 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
       // Insert Silk profile if needed
       if (needsSilk) {
         debugPrint('STEP 2: Inserting silk...');
-        final silkDb = AppDatabase(AppDatabase.openConnection('elvan_niril_silk.db', keepMode: 'silk'));
-        await silkDb.into(silkDb.niruvanaTharavugalTable).insert(
-              NiruvanaTharavugalTableCompanion.insert(
-                seyaliVagai: 'silk',
-                niruvanathinPeyar:
-                    Value({widget.billingLanguage: _gstBusinessName}),
-                mudhanMozhi: Value(widget.billingLanguage),
-                thunaiMozhi: Value(
-                    widget.billingLanguage == 'English' ? 'Tamil' : 'English'),
-                iruMozhi: const Value(true), // default bilingual on for silk
-              ),
-            );
-        await silkDb.close();
+        final silkNotifier = ref.read(pattuNiruvanaTharavugalListProvider.notifier);
+        await silkNotifier.createProfile(
+          NiruvanaTharavugal(
+            niruvanathinPeyar: {widget.billingLanguage: _gstBusinessName},
+            mudhanMozhi: widget.billingLanguage,
+            thunaiMozhi: widget.billingLanguage == 'English' ? 'Tamil' : 'English',
+            iruMozhi: true,
+            kurumPeyar: '',
+            tholaipaesi1: '',
+            tholaipaesi2: '',
+            minnanjal: '',
+            gstin: '',
+            mugavari: {},
+            oor: {},
+            maavattam: {},
+            maanilam: {},
+            naadu: {},
+            anjalKuriyeedu: '',
+            vangiPeyar: {},
+            kilai: {},
+            vangiKanakku: '',
+            ifsc: '',
+            upiId: '',
+          )
+        );
         debugPrint('STEP 2: Silk inserted OK');
       }
 
       // Insert Coolie profile if needed
       if (needsCoolie) {
         debugPrint('STEP 3: Inserting coolie...');
-        final coolieDb = AppDatabase(AppDatabase.openConnection('elvan_niril_coolie.db', keepMode: 'coolie'));
-        await coolieDb.into(coolieDb.niruvanaTharavugalTable).insert(
-              NiruvanaTharavugalTableCompanion.insert(
-                seyaliVagai: 'coolie',
-                niruvanathinPeyar:
-                    Value({widget.billingLanguage: _coolieBusinessName}),
-                mudhanMozhi: Value(widget.billingLanguage),
-              ),
-            );
-        await coolieDb.close();
+        final coolieNotifier = ref.read(kooliNiruvanaTharavugalListProvider.notifier);
+        await coolieNotifier.createProfile(
+          NiruvanaTharavugal(
+            niruvanathinPeyar: {widget.billingLanguage: _coolieBusinessName},
+            mudhanMozhi: widget.billingLanguage,
+            thunaiMozhi: widget.billingLanguage == 'English' ? 'Tamil' : 'English',
+            iruMozhi: false,
+            kurumPeyar: '',
+            tholaipaesi1: '',
+            tholaipaesi2: '',
+            minnanjal: '',
+            gstin: '',
+            mugavari: {},
+            oor: {},
+            maavattam: {},
+            maanilam: {},
+            naadu: {},
+            anjalKuriyeedu: '',
+            vangiPeyar: {},
+            kilai: {},
+            vangiKanakku: '',
+            ifsc: '',
+            upiId: '',
+          )
+        );
         debugPrint('STEP 3: Coolie inserted OK');
       }
 
@@ -88,6 +116,8 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
       // (NativeDatabase.createInBackground uses a separate isolate — stream
       // notifications travel via SendPort and are asynchronous)
       ref.invalidate(profilesStreamProvider);
+      ref.invalidate(pattuNiruvanaTharavugalListProvider);
+      ref.invalidate(kooliNiruvanaTharavugalListProvider);
       
       // Wait until the router can see the inserted profiles
       for (int i = 0; i < 20; i++) {
@@ -116,7 +146,6 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
 
   @override
   Widget build(BuildContext context) {
-    final language = ref.watch(localeProvider)?.languageCode ?? 'en';
     final needsSilk = ref.watch(missingProfilesProvider).contains('silk');
     final needsCoolie = ref.watch(missingProfilesProvider).contains('coolie');
 

@@ -116,7 +116,6 @@ class _CoolieMugavariPageState extends ConsumerState<CoolieMugavariPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isBilingual = ref.watch(bilingualProvider);
     final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
     final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
 
@@ -155,9 +154,8 @@ class _CoolieMugavariPageState extends ConsumerState<CoolieMugavariPage> {
                           onChanged: (val) => _tempPrimary = val,
                           maxLines: 2,
                         ),
-                        if (isBilingual) const SizedBox(height: 16),
-                        if (isBilingual)
-                          ElvanSettingsTextField(
+                        const SizedBox(height: 16),
+                        ElvanSettingsTextField(
                             label:
                                 '${K.mugavari.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                             initialValue: _tempSecondary,
@@ -172,7 +170,7 @@ class _CoolieMugavariPageState extends ConsumerState<CoolieMugavariPage> {
                     displayChild: ElvanSettingsDisplayRow(
                       title: K.mugavari.tr(context, ref),
                       primaryValue: mugavariPrimary,
-                      secondaryValue: isBilingual ? mugavariSecondary : null,
+                      secondaryValue: mugavariSecondary ,
                       onEdit: () => _beginEditPrimarySecondary(
                           'mugavari', mugavariPrimary, mugavariSecondary),
                     ),
@@ -191,9 +189,8 @@ class _CoolieMugavariPageState extends ConsumerState<CoolieMugavariPage> {
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                         ),
-                        if (isBilingual) const SizedBox(height: 16),
-                        if (isBilingual)
-                          ElvanSettingsTextField(
+                        const SizedBox(height: 16),
+                        ElvanSettingsTextField(
                             label:
                                 '${K.oor.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                             initialValue: _tempSecondary,
@@ -206,7 +203,7 @@ class _CoolieMugavariPageState extends ConsumerState<CoolieMugavariPage> {
                     displayChild: ElvanSettingsDisplayRow(
                       title: K.oor.tr(context, ref),
                       primaryValue: oorPrimary,
-                      secondaryValue: isBilingual ? oorSecondary : null,
+                      secondaryValue: oorSecondary ,
                       onEdit: () => _beginEditPrimarySecondary(
                           'oor', oorPrimary, oorSecondary),
                     ),
@@ -225,9 +222,8 @@ class _CoolieMugavariPageState extends ConsumerState<CoolieMugavariPage> {
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                         ),
-                        if (isBilingual) const SizedBox(height: 16),
-                        if (isBilingual)
-                          ElvanSettingsTextField(
+                        const SizedBox(height: 16),
+                        ElvanSettingsTextField(
                             label:
                                 '${K.maavattam.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                             initialValue: _tempSecondary,
@@ -241,7 +237,7 @@ class _CoolieMugavariPageState extends ConsumerState<CoolieMugavariPage> {
                     displayChild: ElvanSettingsDisplayRow(
                       title: K.maavattam.tr(context, ref),
                       primaryValue: maavattamPrimary,
-                      secondaryValue: isBilingual ? maavattamSecondary : null,
+                      secondaryValue: maavattamSecondary ,
                       onEdit: () => _beginEditPrimarySecondary(
                           'maavattam', maavattamPrimary, maavattamSecondary),
                     ),

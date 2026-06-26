@@ -27,7 +27,8 @@ final patruKalanjiyamProvider = Provider<PatruKalanjiyam>((ref) {
 
 /// Fetches all receipts once for the current app mode.
 /// Call `ref.invalidate(patrugalProvider)` after any CRUD to refresh.
-final patrugalProvider = FutureProvider<List<PatrugalTharavuru>>((ref) {
+final patrugalProvider = FutureProvider<List<PatrugalTharavuru>>((ref) async {
+  await Future.delayed(Duration.zero);
   final kalanjiyam = ref.watch(patruKalanjiyamProvider);
   return kalanjiyam.getPatrugal();
 });
@@ -35,9 +36,10 @@ final patrugalProvider = FutureProvider<List<PatrugalTharavuru>>((ref) {
 // ── Unpaid Invoices Stream ──────────────────────────────────────────────────
 
 /// Provides a live stream of unpaid invoices for the current mode.
-final unpaidInvoicesProvider = StreamProvider<List<PattiyalTharavuru>>((ref) {
+final unpaidInvoicesProvider = StreamProvider<List<PattiyalTharavuru>>((ref) async* {
+  await Future.delayed(Duration.zero);
   final kalanjiyam = ref.watch(patruKalanjiyamProvider);
-  return kalanjiyam.watchUnpaidInvoices();
+  yield* kalanjiyam.watchUnpaidInvoices();
 });
 
 // ── Editing State ───────────────────────────────────────────────────────────

@@ -4,12 +4,17 @@ import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import 'package:sqlite3/sqlite3.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // NIRIL BACKUP SERVICE — தரவு பாதுகாப்பு (Data Safety)
 // ─────────────────────────────────────────────────────────────────────────────
 // Keeps a raw copy of the SQLite database in a safe location outside the app's
 // internal data directory. This backup survives app uninstall + reinstall.
+
+import '../../cheyalpaadugal/amaippugal/tharavu/kooli_niruvana_tharavugal_provider.dart';
+import '../../cheyalpaadugal/amaippugal/tharavu/pattu_niruvana_tharavugal_provider.dart';
+import 'dart:async';
 
 final backupServiceProvider = Provider<NirilBackupService>((ref) {
   throw UnimplementedError('backupServiceProvider must be overridden in ProviderScope');
@@ -18,6 +23,30 @@ final backupServiceProvider = Provider<NirilBackupService>((ref) {
 final hasBackupProvider = FutureProvider<bool>((ref) async {
   final backupService = ref.watch(backupServiceProvider);
   return backupService.hasBackup();
+});
+
+/// Listens to all database table updates and triggers a debounced auto-backup.
+final autoBackupProvider = Provider<void>((ref) {
+  final backupService = ref.watch(backupServiceProvider);
+  final coolieDb = ref.watch(kooliDatabaseProvider);
+  final pattuDb = ref.watch(pattuDatabaseProvider);
+
+  Timer? debounceTimer;
+  void triggerAutoBackup() {
+    debounceTimer?.cancel();
+    debounceTimer = Timer(const Duration(seconds: 2), () {
+      backupService.createBackup();
+    });
+  }
+
+  final sub1 = coolieDb.tableUpdates().listen((_) => triggerAutoBackup());
+  final sub2 = pattuDb.tableUpdates().listen((_) => triggerAutoBackup());
+
+  ref.onDispose(() {
+    sub1.cancel();
+    sub2.cancel();
+    debounceTimer?.cancel();
+  });
 });
 
 class NirilBackupService {
@@ -66,6 +95,23 @@ class NirilBackupService {
 
   Future<void> createBackup() async {
     try {
+      // Safely flush WAL to the main DB before copying
+      try {
+        final cDb = sqlite3.open(_coolieDbPath);
+        cDb.execute('PRAGMA wal_checkpoint(TRUNCATE)');
+        cDb.dispose();
+      } catch (e) {
+        print('Coolie checkpoint failed: $e');
+      }
+      
+      try {
+        final sDb = sqlite3.open(_silkDbPath);
+        sDb.execute('PRAGMA wal_checkpoint(TRUNCATE)');
+        sDb.dispose();
+      } catch (e) {
+        print('Silk checkpoint failed: $e');
+      }
+
       final backupFile = File(_backupDbPath);
       final sink = backupFile.openWrite();
 
@@ -170,4 +216,44 @@ class NirilBackupService {
       print('Delete backup failed: $e');
     }
   }
+
+  Future<Map<String, dynamic>?> getBackupStats() async {
+    try {
+      final backupFile = File(_backupDbPath);
+      if (await backupFile.exists()) {
+        final stat = await backupFile.stat();
+        return {
+          'lastModified': stat.modified,
+          'sizeBytes': stat.size,
+        };
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<int> getTotalDatabaseSize() async {
+    try {
+      int totalSize = 0;
+      final filesToCheck = [
+        _coolieDbPath,
+        '$_coolieDbPath-wal',
+        '$_coolieDbPath-shm',
+        _silkDbPath,
+        '$_silkDbPath-wal',
+        '$_silkDbPath-shm',
+      ];
+      for (final path in filesToCheck) {
+        final file = File(path);
+        if (await file.exists()) {
+          totalSize += await file.length();
+        }
+      }
+      return totalSize;
+    } catch (e) {
+      return 0;
+    }
+  }
 }
+

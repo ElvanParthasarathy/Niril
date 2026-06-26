@@ -27,7 +27,8 @@ final porulKalanjiyamProvider = Provider<PorulKalanjiyam>((ref) {
 
 /// Fetches all items once for the current app mode.
 /// Call `ref.invalidate(porulgalProvider)` after any CRUD to refresh.
-final porulgalProvider = FutureProvider<List<PorulTharavuru>>((ref) {
+final porulgalProvider = FutureProvider<List<PorulTharavuru>>((ref) async {
+  await Future.delayed(Duration.zero);
   final kalanjiyam = ref.watch(porulKalanjiyamProvider);
   return kalanjiyam.getAllPorulgal();
 });
@@ -50,6 +51,7 @@ final selectedPorulIdsProvider = StateProvider<Set<int>>((ref) => {});
 /// Fetches all soft-deleted items once for the current app mode.
 /// Call `ref.invalidate(deletedPorulgalProvider)` after restore/purge.
 final deletedPorulgalProvider = FutureProvider<List<PorulTharavuru>>((ref) async {
+  await Future.delayed(Duration.zero);
   final kalanjiyam = ref.watch(porulKalanjiyamProvider);
   return kalanjiyam.watchDeletedPorulgal().first;
 });

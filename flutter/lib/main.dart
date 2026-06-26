@@ -149,6 +149,9 @@ class ElvanNirilApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Keep auto backup alive
+    ref.watch(autoBackupProvider);
+
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeProvider);
 

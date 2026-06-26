@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import 'elvan_amaippu_pagudhi.dart';
@@ -9,6 +10,8 @@ import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
 import '../../../../koorugal/maeladukkugal/elvan_cheyal_maeladukku.dart';
 import '../../../../koorugal/maeladukkugal/elvan_aetrum_maeladukku.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
+import '../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
+import 'thaekkagam_pagudhi.dart';
 import '../../../../adippadai/viruppangal_paniyagam.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/tharavuru/seyali_murai.dart';
@@ -34,19 +37,9 @@ class AccountSecuritySection extends ConsumerWidget {
 
     return ElvanSettingsSection(
       children: [
-        ElvanSettingsRow(
-          iconWidget: Icon(
-            CupertinoIcons.cloud_upload_fill,
-            color: theme.colorScheme.onSurface,
-            size: 20,
-          ),
-          iconBgColor: iconBgColor,
-          title: K.tharavuKaappuChei.tr(context, ref),
-          description: K.ungalTharavaiChaemikkavum.tr(context, ref),
-          onTap: () {
-            _showBackupFlow(context, ref);
-          },
-        ),
+
+
+
         ElvanSettingsRow(
           iconWidget: Icon(
             CupertinoIcons.arrow_2_circlepath,
@@ -75,44 +68,22 @@ class AccountSecuritySection extends ConsumerWidget {
         ElvanSettingsRow(
           iconWidget: Icon(
             CupertinoIcons.delete_solid,
-            color: theme.colorScheme.error,
+            color: theme.colorScheme.onSurface,
             size: 20,
           ),
-          iconBgColor: theme.colorScheme.error.withValues(alpha: 0.1),
+          iconBgColor: iconBgColor,
           title: K.cheyalithTharavaiAzhi.tr(context, ref),
           description: K.tharavaiazhi.tr(context, ref),
           onTap: () {
             _showEraseDataFlow(context, ref);
           },
         ),
+
       ],
     );
   }
 
-  void _showBackupFlow(BuildContext context, WidgetRef ref) {
-    showElvanActionSheet(
-      context: context,
-      title: K.tharavuKaappu.tr(context, ref),
-      cancelText: K.kaividuPtn.tr(context, ref),
-      confirmText: K.kaappuCheiPtn.tr(context, ref),
-      onConfirm: () async {
-        showElvanLoadingOverlay(
-            context: context, text: K.chaemikkappadugiradhu.tr(context, ref));
-            
-        // Wait a small amount of time for UX purposes so it doesn't flash instantly
-        await Future.delayed(const Duration(milliseconds: 800));
-        
-        final backupService = ref.read(backupServiceProvider);
-        await backupService.createBackup();
 
-        if (context.mounted) {
-          // Pop the loading dialog
-          Navigator.of(context, rootNavigator: true).pop();
-          ElvanSnackbar.show(context, K.tharavuchaemippuvetri.tr(context, ref));
-        }
-      },
-    );
-  }
 
   void _showSignOutFlow(BuildContext context, WidgetRef ref) {
     showElvanActionSheet(
@@ -148,6 +119,17 @@ class AccountSecuritySection extends ConsumerWidget {
       },
     );
   }
+
+
+
+
+
+
+
+
+
+
+
 
   void _showEraseDataFlow(BuildContext context, WidgetRef ref) {
     // Step 1: Email Confirmation
@@ -298,6 +280,8 @@ class AccountSecuritySection extends ConsumerWidget {
                 ref.read(isLoggedInProvider.notifier).setLoggedIn(false);
 
                 // Instantly wipe in-memory settings so UI snaps back to default
+                ref.invalidate(pattuNiruvanaTharavugalListProvider);
+                ref.invalidate(kooliNiruvanaTharavugalListProvider);
                 ref.invalidate(themeModeProvider);
                 ref.invalidate(localeProvider);
                 ref.invalidate(skipRestoreProvider);
@@ -338,4 +322,5 @@ class AccountSecuritySection extends ConsumerWidget {
       }
     });
   }
+
 }

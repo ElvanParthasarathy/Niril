@@ -27,7 +27,8 @@ final vaangunarKalanjiyamProvider = Provider<VaangunarKalanjiyam>((ref) {
 
 /// Fetches all merchants once for the current app mode.
 /// Call `ref.invalidate(vaangunargalProvider)` after any CRUD to refresh.
-final vaangunargalProvider = FutureProvider<List<VaangunarTharavuru>>((ref) {
+final vaangunargalProvider = FutureProvider<List<VaangunarTharavuru>>((ref) async {
+  await Future.delayed(Duration.zero);
   final kalanjiyam = ref.watch(vaangunarKalanjiyamProvider);
   return kalanjiyam.getAllVaangunargal();
 });
@@ -51,6 +52,7 @@ final selectedVaangunarIdsProvider = StateProvider<Set<int>>((ref) => {});
 /// Call `ref.invalidate(deletedVaangunargalProvider)` after restore/purge.
 final deletedVaangunargalProvider =
     FutureProvider<List<VaangunarTharavuru>>((ref) async {
+  await Future.delayed(Duration.zero);
   final kalanjiyam = ref.watch(vaangunarKalanjiyamProvider);
   return kalanjiyam.watchDeletedVaangunargal().first;
 });

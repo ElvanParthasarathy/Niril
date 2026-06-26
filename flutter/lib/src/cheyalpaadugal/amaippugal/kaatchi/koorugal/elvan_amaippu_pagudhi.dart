@@ -85,6 +85,8 @@ class ElvanSettingsRow extends StatelessWidget {
     required this.iconBgColor,
     required this.title,
     this.description,
+    this.customDescription,
+    this.crossAxisAlignment,
     this.onTap,
   }) : assert(icon != null || iconWidget != null);
 
@@ -93,6 +95,8 @@ class ElvanSettingsRow extends StatelessWidget {
   final Color iconBgColor;
   final String title;
   final String? description;
+  final Widget? customDescription;
+  final CrossAxisAlignment? crossAxisAlignment;
   final VoidCallback? onTap;
 
   @override
@@ -102,6 +106,7 @@ class ElvanSettingsRow extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
+          crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
           children: [
             // Circular icon container — 36px, monochrome background
             Container(
@@ -145,6 +150,11 @@ class ElvanSettingsRow extends StatelessWidget {
                               .withValues(alpha: 0.5),
                         ),
                       ),
+                    ),
+                  if (customDescription != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: customDescription!,
                     ),
                 ],
               ),

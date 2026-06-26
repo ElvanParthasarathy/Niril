@@ -121,7 +121,6 @@ class _CoolieVangiPageState extends ConsumerState<CoolieVangiPage> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isBilingual = ref.watch(bilingualProvider);
     final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
     final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
 
@@ -163,9 +162,8 @@ class _CoolieVangiPageState extends ConsumerState<CoolieVangiPage> {
                           initialValue: _tempPrimary,
                           onChanged: (v) => _tempPrimary = v,
                         ),
-                        if (isBilingual) const SizedBox(height: 16),
-                        if (isBilingual)
-                          ElvanSettingsTextField(
+                        const SizedBox(height: 16),
+                        ElvanSettingsTextField(
                             label:
                                 '${K.vangiyinPeyar.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                             initialValue: _tempSecondary,
@@ -179,7 +177,7 @@ class _CoolieVangiPageState extends ConsumerState<CoolieVangiPage> {
                     displayChild: ElvanSettingsDisplayRow(
                       title: K.vangiyinPeyar.tr(context, ref),
                       primaryValue: vangiPeyarPrimary,
-                      secondaryValue: isBilingual ? vangiPeyarSecondary : null,
+                      secondaryValue: vangiPeyarSecondary ,
                       onEdit: () => _beginEditPrimarySecondary(
                           'vangiPeyar', vangiPeyarPrimary, vangiPeyarSecondary),
                     ),
@@ -197,9 +195,8 @@ class _CoolieVangiPageState extends ConsumerState<CoolieVangiPage> {
                           initialValue: _tempPrimary,
                           onChanged: (v) => _tempPrimary = v,
                         ),
-                        if (isBilingual) const SizedBox(height: 16),
-                        if (isBilingual)
-                          ElvanSettingsTextField(
+                        const SizedBox(height: 16),
+                        ElvanSettingsTextField(
                             label:
                                 '${K.kilaipPeyar.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
                             initialValue: _tempSecondary,
@@ -213,7 +210,7 @@ class _CoolieVangiPageState extends ConsumerState<CoolieVangiPage> {
                     displayChild: ElvanSettingsDisplayRow(
                       title: K.kilaipPeyar.tr(context, ref),
                       primaryValue: vangiKilaiPrimary,
-                      secondaryValue: isBilingual ? vangiKilaiSecondary : null,
+                      secondaryValue: vangiKilaiSecondary ,
                       onEdit: () => _beginEditPrimarySecondary(
                           'vangiKilai', vangiKilaiPrimary, vangiKilaiSecondary),
                     ),

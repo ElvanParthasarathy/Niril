@@ -34,8 +34,8 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
                 dividerIndent: 16.0,
                 children: [
                   ElvanRadioSettingsRow<AppMode>(
-                    title: K.nirilPattu.tr(context, ref),
-                    value: AppMode.silk,
+                    title: K.nirilKooli.tr(context, ref),
+                    value: AppMode.coolie,
                     groupValue: currentAppMode ?? AppMode.silk,
                     onChanged: (val) {
                       if (val != null) {
@@ -44,8 +44,8 @@ class SeyaliAmaippugalPage extends ConsumerWidget {
                     },
                   ),
                   ElvanRadioSettingsRow<AppMode>(
-                    title: K.nirilKooli.tr(context, ref),
-                    value: AppMode.coolie,
+                    title: K.nirilPattu.tr(context, ref),
+                    value: AppMode.silk,
                     groupValue: currentAppMode ?? AppMode.silk,
                     onChanged: (val) {
                       if (val != null) {
