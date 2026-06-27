@@ -21,7 +21,7 @@ class ElvanMaeladukkuUrupadi extends StatelessWidget {
       child: Container(
         color: Colors.transparent,
         padding: const EdgeInsets.symmetric(
-          horizontal: 16,
+          horizontal: 32,
           vertical: 12,
         ),
         child: Row(

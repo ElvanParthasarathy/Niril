@@ -25,13 +25,13 @@ class ElvanMaeladukkuPudhiyaPothan extends ConsumerWidget {
           onTap: onTap,
           child: Container(
             padding: const EdgeInsets.symmetric(
-              horizontal: 16,
+              horizontal: 32,
               vertical: 16,
             ),
             width: double.infinity,
-            alignment: Alignment.center,
+            alignment: Alignment.centerLeft,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Icon(
                   CupertinoIcons.add_circled_solid,
