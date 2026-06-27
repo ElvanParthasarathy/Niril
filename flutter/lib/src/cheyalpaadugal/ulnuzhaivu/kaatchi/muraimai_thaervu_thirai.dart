@@ -24,7 +24,7 @@ class ModeSelectorScreen extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           AuthHeader(
-            title: K.indruEndhakKanakku.tr(context, ref),
+            title: K.indruEndhachCheyalmurai.tr(context, ref),
             subtitle: K.kanakkuppagudhi.tr(context, ref),
           ),
           const SizedBox(height: 60),
