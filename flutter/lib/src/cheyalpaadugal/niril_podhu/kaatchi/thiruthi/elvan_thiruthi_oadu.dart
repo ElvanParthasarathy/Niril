@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
+import '../../../chattagam/kaatchi/kaippaesi/koorugal/elvan_cheyal_pothan.dart';
 
 /// The Universal Editor Shell — wraps all creator/editor forms.
 ///
@@ -106,14 +106,9 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
         hideHeaderOnDesktop: true,
         navActions: [
           if (widget.onSave != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: CupertinoButton(
-                padding: EdgeInsets.zero,
-                onPressed: widget.onSave,
-                child: Text(K.chaemiPtn.tr(context, ref),
-                    style: const TextStyle(fontWeight: FontWeight.bold)),
-              ),
+            ElvanCheyalPothan(
+              label: K.chaemiPtn.tr(context, ref),
+              onPressed: widget.onSave,
             ),
         ],
         slivers: [

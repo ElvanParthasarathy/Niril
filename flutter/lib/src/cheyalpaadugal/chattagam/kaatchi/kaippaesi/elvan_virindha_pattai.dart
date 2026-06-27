@@ -231,8 +231,9 @@ class ElvanExpandedBarDelegate extends SliverPersistentHeaderDelegate {
                                     ? 0.0
                                     : 1.0, // Hand off to Collapsed Bar when pinned!
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 4, vertical: 12),
+                                  height: 50, // Must match ElvanCollapsedBar's 50px exactly!
+                                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                                  alignment: Alignment.center,
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: navActions,
