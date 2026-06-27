@@ -9,7 +9,7 @@ import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dar
 import '../../../../../niril_podhu/kaatchi/koorugal/porul_thaedu_kooru.dart';
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../../../niril_pattu/kaatchi/thiruthi/pattiyal/koorugal/pattu_urupadi_attai.dart';
-import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
+import '../../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 
 /// Builds a single coolie line-item row: header label + delete + ElvanUrupadiAttai.
 class KooliUrupadiKooru extends ConsumerWidget {

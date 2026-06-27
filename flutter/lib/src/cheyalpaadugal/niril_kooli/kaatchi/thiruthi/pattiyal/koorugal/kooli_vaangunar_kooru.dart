@@ -5,8 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
-import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../../../../koorugal/podhu_koorugal/elvan_thiruthi_keezhvirivu.dart';
+import '../../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
+import '../../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_keezhvirivu.dart';
+import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../niril_podhu/kaatchi/koorugal/vaangunar_thaedu_kooru.dart';
 
 /// §1 Customer — client search + company dropdown + saved-details card.

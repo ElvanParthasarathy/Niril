@@ -91,7 +91,7 @@ class _CoolieNiruvanaAmaippuPageState
     );
   }
 
-  Widget _buildProfileSwitcher() {
+  Widget _buildProfileSwitcher(NiruvanaTharavugal? profile) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? const Color(0xFF111111) : Colors.white;
     final kooliAchuMozhi = ref.watch(kooliAchuMozhiProvider);
@@ -288,7 +288,7 @@ class _CoolieNiruvanaAmaippuPageState
               const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 32),
           sliver: SliverList.list(
             children: [
-              _buildProfileSwitcher(),
+              _buildProfileSwitcher(profile),
               ElvanSettingsSection(
                 dividerIndent: 16.0,
                 children: [
