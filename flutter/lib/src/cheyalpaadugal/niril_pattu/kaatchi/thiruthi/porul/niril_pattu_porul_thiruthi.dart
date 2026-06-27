@@ -9,6 +9,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
+import '../../../../../koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 import '../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 import '../../../../../koorugal/ulleedugal/elvan_parindhurai_ulleedu.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
@@ -157,9 +158,7 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
               ),
 
               // Selling Rate
-              _buildTextField(
-                context: context,
-                isDark: isDark,
+              ElvanThiruthiUlleedu(
                 label: K.vilai.tr(context, ref),
                 controller: _vilaiController,
                 keyboardType:
@@ -182,84 +181,6 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildTextField({
-    required BuildContext context,
-    required bool isDark,
-    required String label,
-    required TextEditingController controller,
-    TextInputType? keyboardType,
-    String? prefixText,
-    String? suffixText,
-    String? errorText,
-    TextCapitalization textCapitalization = TextCapitalization.none,
-    ValueChanged<String>? onChanged,
-    List<TextInputFormatter>? inputFormatters,
-    int? maxLength,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16, bottom: 8),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              letterSpacing: 0.3,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.5),
-            ),
-          ),
-        ),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          textCapitalization: textCapitalization,
-          onChanged: onChanged,
-          inputFormatters: inputFormatters,
-          maxLength: maxLength,
-          style: const TextStyle(fontSize: 14),
-          decoration: InputDecoration(
-            isDense: true,
-            prefixText: prefixText,
-            suffixText: suffixText,
-            errorText: errorText,
-            filled: true,
-            fillColor: WidgetStateColor.resolveWith((states) {
-              if (states.contains(WidgetState.focused)) {
-                return Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.12);
-              }
-              return Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.08);
-            }),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
-              borderSide: BorderSide.none,
-            ),
-          ),
-        ),
-      ],
     );
   }
 

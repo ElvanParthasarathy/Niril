@@ -5,6 +5,7 @@ class ElvanMaeladukkuUrupadi extends StatelessWidget {
   final String? subtitle;
   final bool isSelected;
   final VoidCallback onTap;
+  final Widget? leading;
 
   const ElvanMaeladukkuUrupadi({
     super.key,
@@ -12,6 +13,7 @@ class ElvanMaeladukkuUrupadi extends StatelessWidget {
     this.subtitle,
     required this.isSelected,
     required this.onTap,
+    this.leading,
   });
 
   @override
@@ -26,6 +28,10 @@ class ElvanMaeladukkuUrupadi extends StatelessWidget {
         ),
         child: Row(
           children: [
+            if (leading != null) ...[
+              leading!,
+              const SizedBox(width: 16),
+            ],
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
+import '../../../../../koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 
 import '../../../../niril_podhu/tharavuru/seluthi_vagai.dart';
 import 'elvan_thiruthi_keezhvirivu.dart';
@@ -124,15 +125,10 @@ class PatruSeluthiPagudhi extends ConsumerWidget {
             // Amount field
             SizedBox(
               width: isDesktop ? 280 : double.infinity,
-              child: TextField(
+              child: ElvanThiruthiUlleedu(
                 controller: thogaiCtrl,
-                decoration: InputDecoration(
-                  labelText: K.thogaiVinmeen.tr(context, ref),
-                  prefixText: '₹ ',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                label: K.thogaiVinmeen.tr(context, ref),
+                prefixText: '₹ ',
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
@@ -147,6 +143,7 @@ class PatruSeluthiPagudhi extends ConsumerWidget {
                 value: seluthiVagai,
                 items: SeluthiVagai.values,
                 itemLabelBuilder: (ctx, ref, mode) => mode.label(ctx, ref),
+                leadingBuilder: (ctx, ref, mode) => Icon(mode.icon, size: 18, color: Theme.of(ctx).colorScheme.onSurface.withValues(alpha: 0.7)),
                 onChanged: (val) {
                   if (onSeluthiVagaiChanged != null) {
                     onSeluthiVagaiChanged!(val);
@@ -162,14 +159,9 @@ class PatruSeluthiPagudhi extends ConsumerWidget {
           const SizedBox(height: 16),
           SizedBox(
             width: isDesktop ? 380 : double.infinity,
-            child: TextField(
+            child: ElvanThiruthiUlleedu(
               controller: suttruEnCtrl,
-              decoration: InputDecoration(
-                labelText: K.kurippuEnParimaatraEn.tr(context, ref),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+              label: K.kurippuEnParimaatraEn.tr(context, ref),
               onChanged: onSuttruEnChanged,
             ),
           ),
@@ -177,14 +169,9 @@ class PatruSeluthiPagudhi extends ConsumerWidget {
 
         // Note
         const SizedBox(height: 16),
-        TextField(
+        ElvanThiruthiUlleedu(
           controller: ullkurippuCtrl,
-          decoration: InputDecoration(
-            labelText: K.kurippu.tr(context, ref),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
+          label: K.kurippu.tr(context, ref),
           maxLines: 3,
           onChanged: onUllkurippuChanged,
         ),

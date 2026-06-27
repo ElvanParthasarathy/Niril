@@ -7,6 +7,7 @@ import 'koorugal/elvan_maeladukku_thalaipu.dart';
 import 'koorugal/elvan_maeladukku_urupadi.dart';
 import '../elvan_kizh_maeladukku.dart' as legacy;
 import 'package:elvan_niril/src/adippadai/vazhikaattal/niril_nav.dart';
+
 Future<void> showElvanSelectionBottomSheet<T>({
   required BuildContext context,
   required String title,
@@ -15,6 +16,7 @@ Future<void> showElvanSelectionBottomSheet<T>({
   required ValueChanged<T> onSelected,
   required String Function(BuildContext, WidgetRef, T) itemLabelBuilder,
   String Function(BuildContext, WidgetRef, T)? subtitleBuilder,
+  Widget Function(BuildContext, WidgetRef, T)? leadingBuilder,
   bool showSearch = false,
   bool Function(T, String)? searchFilter,
   VoidCallback? onRequestAddNew,
@@ -32,6 +34,7 @@ Future<void> showElvanSelectionBottomSheet<T>({
         },
         itemLabelBuilder: itemLabelBuilder,
         subtitleBuilder: subtitleBuilder,
+        leadingBuilder: leadingBuilder,
         showSearch: showSearch,
         searchFilter: searchFilter,
         onRequestAddNew: onRequestAddNew,
@@ -47,6 +50,7 @@ class ElvanSelectionBottomSheet<T> extends ConsumerStatefulWidget {
   final ValueChanged<T> onSelected;
   final String Function(BuildContext, WidgetRef, T) itemLabelBuilder;
   final String Function(BuildContext, WidgetRef, T)? subtitleBuilder;
+  final Widget Function(BuildContext, WidgetRef, T)? leadingBuilder;
   final bool showSearch;
   final bool Function(T, String)? searchFilter;
   final VoidCallback? onRequestAddNew;
@@ -59,6 +63,7 @@ class ElvanSelectionBottomSheet<T> extends ConsumerStatefulWidget {
     required this.onSelected,
     required this.itemLabelBuilder,
     this.subtitleBuilder,
+    this.leadingBuilder,
     this.showSearch = false,
     this.searchFilter,
     this.onRequestAddNew,
@@ -140,11 +145,14 @@ class _ElvanSelectionBottomSheetState<T>
                 final title = widget.itemLabelBuilder(context, ref, item);
                 final subtitle =
                     widget.subtitleBuilder?.call(context, ref, item);
+                final leading =
+                    widget.leadingBuilder?.call(context, ref, item);
                 final isSelected = widget.currentValue == item;
 
                 return ElvanMaeladukkuUrupadi(
                   title: title,
                   subtitle: subtitle,
+                  leading: leading,
                   isSelected: isSelected,
                   onTap: () => widget.onSelected(item),
                 );
@@ -209,11 +217,14 @@ class _ElvanSelectionBottomSheetState<T>
                   final title = widget.itemLabelBuilder(context, ref, item);
                   final subtitle =
                       widget.subtitleBuilder?.call(context, ref, item);
+                  final leading =
+                      widget.leadingBuilder?.call(context, ref, item);
                   final isSelected = widget.currentValue == item;
 
                   return ElvanMaeladukkuUrupadi(
                     title: title,
                     subtitle: subtitle,
+                    leading: leading,
                     isSelected: isSelected,
                     onTap: () => widget.onSelected(item),
                   );

@@ -13,6 +13,7 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
   final ValueChanged<T> onChanged;
   final VoidCallback? onClear;
   final String Function(BuildContext, WidgetRef, T)? subtitleBuilder;
+  final Widget Function(BuildContext, WidgetRef, T)? leadingBuilder;
   final String Function(BuildContext, WidgetRef, T) itemLabelBuilder;
   
   // Optional features for the bottom sheet
@@ -30,6 +31,7 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
     required this.itemLabelBuilder,
     this.onClear,
     this.subtitleBuilder,
+    this.leadingBuilder,
     this.showSearch = false,
     this.searchFilter,
     this.onRequestAddNew,
@@ -66,6 +68,7 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
               onSelected: onChanged,
               itemLabelBuilder: itemLabelBuilder,
               subtitleBuilder: subtitleBuilder,
+              leadingBuilder: leadingBuilder,
               showSearch: showSearch,
               searchFilter: searchFilter,
               onRequestAddNew: onRequestAddNew,
@@ -110,6 +113,10 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
             ),
             child: Row(
               children: [
+                if (value != null && leadingBuilder != null) ...[
+                  leadingBuilder!(context, ref, value as T),
+                  const SizedBox(width: 8),
+                ],
                 Expanded(
                   child: Text(
                     value == null

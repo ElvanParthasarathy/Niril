@@ -92,7 +92,7 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = isDesktopLayoutContext(context);
+    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
 
     final shell = PopScope(
       canPop: !widget.hasUnsavedChanges,
