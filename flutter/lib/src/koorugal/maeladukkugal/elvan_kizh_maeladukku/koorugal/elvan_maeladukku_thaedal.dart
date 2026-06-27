@@ -17,7 +17,7 @@ class ElvanMaeladukkuThaedal extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: CupertinoSearchTextField(
         controller: controller,
         onChanged: onChanged,
@@ -32,7 +32,8 @@ class ElvanMaeladukkuThaedal extends ConsumerWidget {
           ),
         ),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+          color:
+              Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(100),
         ),
         style: TextStyle(

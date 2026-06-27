@@ -23,8 +23,8 @@ class ElvanMaeladukkuUrupadi extends StatelessWidget {
             ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
             : Colors.transparent,
         padding: const EdgeInsets.symmetric(
-          horizontal: 24,
-          vertical: 16,
+          horizontal: 16,
+          vertical: 12,
         ),
         child: Row(
           children: [
@@ -35,7 +35,7 @@ class ElvanMaeladukkuUrupadi extends StatelessWidget {
                   Text(
                     title,
                     style: TextStyle(
-                      fontSize: 18, // Premium size
+                      fontSize: 16,
                       fontWeight:
                           isSelected ? FontWeight.w600 : FontWeight.w400,
                       color: isSelected

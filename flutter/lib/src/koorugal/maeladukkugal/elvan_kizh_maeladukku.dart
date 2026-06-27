@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:elvan_niril/src/adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -36,10 +35,17 @@ Future<T?> showElvanBottomSheet<T>({
     context: context,
     useRootNavigator: true,
     showDragHandle: true,
+    isScrollControlled: true,
+    useSafeArea: true,
     backgroundColor: Theme.of(context).brightness == Brightness.dark
         ? const Color(0xFF111111)
         : Colors.white,
-    builder: builder,
+    builder: (context) => Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: builder(context),
+    ),
   );
 }
 

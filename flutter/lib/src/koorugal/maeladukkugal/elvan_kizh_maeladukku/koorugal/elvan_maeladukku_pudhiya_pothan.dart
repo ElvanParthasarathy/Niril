@@ -24,7 +24,10 @@ class ElvanMaeladukkuPudhiyaPothan extends ConsumerWidget {
         InkWell(
           onTap: onTap,
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
             width: double.infinity,
             alignment: Alignment.center,
             child: Row(

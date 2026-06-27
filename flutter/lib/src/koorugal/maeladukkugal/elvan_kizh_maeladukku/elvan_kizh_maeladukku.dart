@@ -108,7 +108,8 @@ class _ElvanSelectionBottomSheetState<T>
         } else {
           // Fallback: search by title
           _filteredItems = widget.items.where((item) {
-            final title = widget.itemLabelBuilder(context, ref, item).toLowerCase();
+            final title =
+                widget.itemLabelBuilder(context, ref, item).toLowerCase();
             return title.contains(query.toLowerCase());
           }).toList();
         }
@@ -123,15 +124,14 @@ class _ElvanSelectionBottomSheetState<T>
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ElvanMaeladukkuThalaipu(
-            title: widget.title,
-            onClose: () => Navigator.pop(context),
-          ),
           if (widget.showSearch)
             ElvanMaeladukkuThaedal(
               controller: _searchController,
               onChanged: _filterItems,
             ),
+          ElvanMaeladukkuThalaipu(
+            title: widget.title,
+          ),
           const SizedBox(height: 8),
           Flexible(
             child: ListView.builder(
@@ -140,7 +140,8 @@ class _ElvanSelectionBottomSheetState<T>
               itemBuilder: (context, index) {
                 final item = _filteredItems[index];
                 final title = widget.itemLabelBuilder(context, ref, item);
-                final subtitle = widget.subtitleBuilder?.call(context, ref, item);
+                final subtitle =
+                    widget.subtitleBuilder?.call(context, ref, item);
                 final isSelected = widget.currentValue == item;
 
                 return ElvanMaeladukkuUrupadi(
