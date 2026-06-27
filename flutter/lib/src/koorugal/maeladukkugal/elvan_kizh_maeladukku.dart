@@ -37,6 +37,11 @@ Future<T?> showElvanBottomSheet<T>({
     showDragHandle: true,
     isScrollControlled: true,
     useSafeArea: true,
+    constraints: BoxConstraints(
+      maxHeight: MediaQuery.of(context).size.height -
+          MediaQuery.of(context).padding.top -
+          24,
+    ),
     backgroundColor: Theme.of(context).brightness == Brightness.dark
         ? const Color(0xFF111111)
         : Colors.white,
