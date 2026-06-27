@@ -82,7 +82,7 @@ const Map<String, String> taLatn = {
   'illai': 'Illai',
   'thaerndhedu': 'Thaerndhedu',
   'tharavugalChaemippuVetri': 'Tharavugal Vetrigaramaaga Chaemikkappattana',
-  'kanakkuppagudhi': 'Ungal Kanakkup Pagudhiyaith Thaerndhedukkavum',
+  'ungalCheyalmuraiyaitThaerndhedukkavum': 'Ungal Cheyalmuraiyait Thaerndhedukkavum',
   'veliyaeruPtn': 'Veliyaeru',
   'tharavaiAzhiPtn': 'Tharavai Azhi',
   'veliyaeraVaendumaa': 'Veliyaera Vaendumaa?',

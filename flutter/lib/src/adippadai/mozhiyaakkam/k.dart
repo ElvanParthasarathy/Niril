@@ -218,7 +218,7 @@ abstract final class K {
   static const cheyaliPatriMaadhiri = 'cheyaliPatriMaadhiri';
   static const menporulVadivaalarPatriMaadhiri = 'menporulVadivaalarPatriMaadhiri';
   static const elvanParthasarathy = 'elvanParthasarathy';
-  static const kanakkuppagudhi = 'kanakkuppagudhi';
+  static const ungalCheyalmuraiyaitThaerndhedukkavum = 'ungalCheyalmuraiyaitThaerndhedukkavum';
 
   // ── Image Selection ──
   static const pugaippadakKaruvi = 'pugaippadakKaruvi';

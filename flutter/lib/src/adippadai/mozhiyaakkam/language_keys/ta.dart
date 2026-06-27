@@ -80,7 +80,7 @@ const Map<String, String> ta = {
   'illai': 'இல்லை',
   'thaerndhedu': 'தேர்ந்தெடு',
   'tharavugalChaemippuVetri': 'தரவுகள் வெற்றிகரமாக சேமிக்கப்பட்டன',
-  'kanakkuppagudhi': 'உங்கள் கணக்குப் பகுதியைத் தேர்ந்தெடுக்கவும்',
+  'ungalCheyalmuraiyaitThaerndhedukkavum': 'உங்கள் செயல்முறையைத் தேர்ந்தெடுக்கவும்',
   'veliyaeruPtn': 'வெளியேறு',
   'tharavaiAzhiPtn': 'தரவை அழி',
   'veliyaeraVaendumaa': 'வெளியேற வேண்டுமா?',

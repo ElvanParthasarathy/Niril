@@ -25,7 +25,7 @@ class ModeSelectorScreen extends ConsumerWidget {
         children: [
           AuthHeader(
             title: K.endhachCheyalmurai.tr(context, ref),
-            subtitle: K.kanakkuppagudhi.tr(context, ref),
+            subtitle: K.ungalCheyalmuraiyaitThaerndhedukkavum.tr(context, ref),
           ),
           const SizedBox(height: 60),
           AuthAnimatedElement(
