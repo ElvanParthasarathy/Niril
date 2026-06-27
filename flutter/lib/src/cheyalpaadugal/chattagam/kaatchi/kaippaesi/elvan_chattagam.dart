@@ -450,6 +450,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
         widget.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: GestureDetector(
         onTap: () {
           if (_isSearchActiveNotifier.value) {
