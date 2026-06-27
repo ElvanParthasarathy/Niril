@@ -121,18 +121,15 @@ class PatruPattiyalTheervuMaeladukku {
                       },
                     ),
                     const SizedBox(height: 8),
-                    const Divider(height: 1),
                     // Invoice list
                     Flexible(
                       child: filtered.isEmpty
                           ? Center(
                               child: Text(K.pattiyalgalIllai.tr(context, ref),
                                   style: const TextStyle(color: Colors.grey)))
-                          : ListView.separated(
+                          : ListView.builder(
                               shrinkWrap: true,
                               itemCount: filtered.length,
-                              separatorBuilder: (_, __) =>
-                                  const Divider(height: 1, indent: 56),
                               itemBuilder: (_, index) {
                                 final inv = filtered[index];
                                 final isSelected = selectedIds.contains(inv.id);
