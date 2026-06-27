@@ -29,9 +29,9 @@ class ElvanMaeladukkuPudhiyaPothan extends ConsumerWidget {
               vertical: 16,
             ),
             width: double.infinity,
-            alignment: Alignment.centerLeft,
+            alignment: Alignment.center,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
                   CupertinoIcons.add_circled_solid,
