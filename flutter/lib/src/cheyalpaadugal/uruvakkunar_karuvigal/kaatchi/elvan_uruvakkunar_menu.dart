@@ -116,10 +116,14 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
   }
 
   void _toggleBilingual() {
-    final currentState = ref.read(bilingualProvider);
-    ref.read(bilingualProvider.notifier).state = !currentState;
+    final profile = ref.read(NiruvanaTharavugalProvider);
+    if (profile == null) return;
+    
+    final newProfile = profile.copyWith(iruMozhi: !profile.iruMozhi);
+    ref.read(niruvanaTharavugalNotifierProvider).updateProfile(newProfile);
+    
     if (mounted) {
-      ElvanSnackbar.show(context, !currentState ? 'Bilingual Mode: ON ✓' : 'Bilingual Mode: OFF ✗');
+      ElvanSnackbar.show(context, newProfile.iruMozhi ? 'Bilingual Mode: ON ✓' : 'Bilingual Mode: OFF ✗');
     }
   }
 
@@ -344,6 +348,13 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
                                 icon: Icons.translate,
                                 color: Colors.orange,
                                 onTap: _toggleBilingual,
+                              ),
+                              Divider(height: 1, thickness: 1, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)),
+                              _buildCompactAction(
+                                label: 'Swap Data Langs',
+                                icon: CupertinoIcons.arrow_right_arrow_left,
+                                color: Colors.pink,
+                                onTap: _swapDataLanguages,
                               ),
                             ],
                           ),
