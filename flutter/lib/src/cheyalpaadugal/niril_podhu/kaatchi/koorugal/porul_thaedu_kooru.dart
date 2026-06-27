@@ -6,7 +6,8 @@ import 'package:intl/intl.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../kalanjiyam/porul_nilaimai.dart';
 import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku/elvan_kizh_maeladukku.dart';
-import '../../../../adippadai/iru_mozhi/niril_iru_mozhi_niruvanam_udhavi.dart';
+import '../../../../adippadai/nilaimai/achu_mozhi_facade.dart';
+import '../../../../adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -106,7 +107,7 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
   bool get _isSilk => widget.seyaliVagai == 'silk';
 
   void _openSelectionSheet(List<PorulTharavuru> items) {
-    final isBilingual = ref.read(bilingualModeProvider);
+    final isBilingual = ref.read(bilingualProvider);
 
     showElvanSelectionBottomSheet<PorulTharavuru>(
       context: context,
@@ -125,14 +126,12 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
       },
       itemLabelBuilder: (ctx, ref, item) => _getDisplayName(ctx, ref, item),
       subtitleBuilder: (ctx, ref, item) {
-        if (!_isSilk)
-          return null; // Coolie mode has no price/secondary name logic in UI list
-
+        if (!_isSilk) return ''; // Coolie mode has no price/secondary name logic in UI list
+        
         final secondary = isBilingual ? _getSecondaryName(ctx, ref, item) : '';
         final parts = <String>[];
-
-        if (secondary.isNotEmpty &&
-            secondary != _getDisplayName(ctx, ref, item)) {
+        
+        if (secondary.isNotEmpty && secondary != _getDisplayName(ctx, ref, item)) {
           parts.add(secondary);
         }
         if (item.hsnCode.isNotEmpty) {
@@ -141,8 +140,8 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
         if (item.vilai > 0) {
           parts.add(_inrFormat.format(item.vilai));
         }
-
-        if (parts.isEmpty) return null;
+        
+        if (parts.isEmpty) return '';
         return parts.join('  •  ');
       },
     );
