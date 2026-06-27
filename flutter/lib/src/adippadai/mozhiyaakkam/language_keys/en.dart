@@ -80,7 +80,7 @@ const Map<String, String> en = {
   'illai': 'None',
   'thaerndhedu': 'Select',
   'tharavugalChaemippuVetri': 'Details saved successfully',
-  'ungalCheyalmuraiyaitThaerndhedukkavum': 'Select your workspace',
+  'ungalCheyalmuraiyaithThaerndhedukkavum': 'Select your workspace',
   'veliyaeruPtn': 'Sign Out',
   'tharavaiAzhiPtn': 'Erase Data',
   'veliyaeraVaendumaa': 'Sign Out?',
