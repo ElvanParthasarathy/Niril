@@ -5,6 +5,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../niril_podhu/kaatchi/koorugal/vaangunar_thaedu_kooru.dart';
+import '../../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import 'maanila_thervu_maeladukku.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -102,12 +103,12 @@ class PattuVaangunargalKooru extends ConsumerWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      selectedVaangunar!.peyar['Tamil'] ?? (data.selectedVaangunarPeyarMap['Tamil']?.isNotEmpty == true ? data.selectedVaangunarPeyarMap['Tamil'] : data.selectedVaangunarPeyarMap['English']) ?? '',
+                      selectedVaangunar!.peyar[ref.watch(silkMudhanmaiMozhiProvider)] ?? (data.selectedVaangunarPeyarMap[ref.watch(silkMudhanmaiMozhiProvider)]?.isNotEmpty == true ? data.selectedVaangunarPeyarMap[ref.watch(silkMudhanmaiMozhiProvider)] : data.selectedVaangunarPeyarMap[ref.watch(silkIrandaamMozhiProvider)]) ?? '',
                       style: tt.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    _buildAddressBlock(selectedVaangunar!, cs, tt),
+                    _buildAddressBlock(selectedVaangunar!, cs, tt, ref),
                   ],
                 ),
               ),
@@ -137,7 +138,10 @@ class PattuVaangunargalKooru extends ConsumerWidget {
   }
 
   // ── Address Block ──
-  Widget _buildAddressBlock(VaangunarTharavuru v, ColorScheme cs, TextTheme tt) {
+  Widget _buildAddressBlock(VaangunarTharavuru v, ColorScheme cs, TextTheme tt, WidgetRef ref) {
+    final silkMudhanmaiMozhi = ref.watch(silkMudhanmaiMozhiProvider);
+    final silkIrandaamMozhi = ref.watch(silkIrandaamMozhiProvider);
+
     List<String> buildLines(String key) {
       final lines = <String>[];
       final mugavari = (v.mugavari[key] ?? '').trim();
@@ -156,15 +160,16 @@ class PattuVaangunargalKooru extends ConsumerWidget {
       return lines;
     }
 
-    final tamilLines = buildLines('Tamil');
-    final englishLines = buildLines('English');
-    final gstin = v.gstin.trim();
+    final tamilLines = buildLines(silkMudhanmaiMozhi);
+    final englishLines = buildLines(silkIrandaamMozhi);
+    final showEnglish = englishLines.isNotEmpty &&
+        englishLines.join() != tamilLines.join();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: 4),
         if (tamilLines.isNotEmpty) ...[
-          const SizedBox(height: 8),
           ...tamilLines.map((line) => Text(
                 line,
                 style: tt.bodySmall?.copyWith(
@@ -173,8 +178,7 @@ class PattuVaangunargalKooru extends ConsumerWidget {
                 ),
               )),
         ],
-        if (englishLines.isNotEmpty &&
-            englishLines.join() != tamilLines.join()) ...[
+        if (showEnglish) ...[
           const SizedBox(height: 6),
           ...englishLines.map((line) => Text(
                 line,
@@ -185,10 +189,10 @@ class PattuVaangunargalKooru extends ConsumerWidget {
                 ),
               )),
         ],
-        if (gstin.isNotEmpty) ...[
+        if (v.gstin.trim().isNotEmpty) ...[
           const SizedBox(height: 6),
           Text(
-            'GSTIN: $gstin',
+            'GSTIN: ${v.gstin.trim()}',
             style: tt.bodySmall?.copyWith(
               color: cs.primary,
               fontWeight: FontWeight.w600,

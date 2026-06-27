@@ -10,6 +10,8 @@ class ElvanThiruthiKeezhvirivu extends ConsumerWidget {
   final String value;
   final List<String> items;
   final ValueChanged<String> onChanged;
+  final VoidCallback? onClear;
+  final Map<String, String>? subtitles;
 
   const ElvanThiruthiKeezhvirivu({
     super.key,
@@ -17,6 +19,8 @@ class ElvanThiruthiKeezhvirivu extends ConsumerWidget {
     required this.value,
     required this.items,
     required this.onChanged,
+    this.onClear,
+    this.subtitles,
   });
 
   @override
@@ -24,21 +28,22 @@ class ElvanThiruthiKeezhvirivu extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16, bottom: 8),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              letterSpacing: 0.3,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.5),
+        if (label.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 8),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                letterSpacing: 0.3,
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.5),
+              ),
             ),
           ),
-        ),
         InkWell(
           onTap: () {
             showElvanSelectionBottomSheet(
@@ -47,6 +52,7 @@ class ElvanThiruthiKeezhvirivu extends ConsumerWidget {
               items: items,
               currentValue: value,
               onSelected: onChanged,
+              subtitles: subtitles,
             );
           },
           borderRadius: BorderRadius.circular(100),
@@ -62,14 +68,32 @@ class ElvanThiruthiKeezhvirivu extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  value.toLowerCase().tr(context, ref),
-                  style: TextStyle(
-                    fontSize: 14, // Matches text fields
-                    fontWeight: FontWeight.w400,
-                    color: Theme.of(context).colorScheme.onSurface,
+                Expanded(
+                  child: Text(
+                    value.toLowerCase().tr(context, ref),
+                    style: TextStyle(
+                      fontSize: 14, // Matches text fields
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                if (onClear != null)
+                  GestureDetector(
+                    onTap: onClear,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                      child: Icon(
+                        Icons.clear,
+                        size: 20,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.5),
+                      ),
+                    ),
+                  ),
                 Icon(
                   Icons.keyboard_arrow_down_rounded,
                   color: Theme.of(context)

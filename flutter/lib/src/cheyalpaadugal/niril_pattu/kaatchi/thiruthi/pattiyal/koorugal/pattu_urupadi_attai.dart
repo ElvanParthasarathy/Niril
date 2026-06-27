@@ -8,6 +8,7 @@ import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dar
 import '../../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 import '../../../../../niril_podhu/kaatchi/koorugal/porul_thaedu_kooru.dart';
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
+import '../../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // பட்டு உருபடி அட்டை — Single Line Item Card for Silk Invoice
@@ -101,8 +102,8 @@ class PattuUrupadiAttai extends ConsumerWidget {
                   final updated = item.copyWith(
                     porulId: p.id.toString(),
                     porulPeyar:
-                        p.porulPeyar['Tamil'] ?? p.porulPeyar['English'] ?? '',
-                    porulPeyarEn: p.porulPeyar['English'] ?? '',
+                        p.porulPeyar[ref.read(silkMudhanmaiMozhiProvider)] ?? p.porulPeyar[ref.read(silkIrandaamMozhiProvider)] ?? '',
+                    porulPeyarEn: p.porulPeyar[ref.read(silkIrandaamMozhiProvider)] ?? '',
                     hsnKuriyeedu: p.hsnCode,
                     vilai: p.vilai,
                     variVizhukkaadu: p.variVeetham,

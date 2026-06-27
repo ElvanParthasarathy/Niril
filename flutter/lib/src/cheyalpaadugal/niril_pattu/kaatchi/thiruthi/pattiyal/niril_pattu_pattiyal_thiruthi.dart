@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
@@ -107,7 +108,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   void _applySnapshot(PattuThiruththiNilaimai s) {
     _selectedNiruvanamId = s.selectedNiruvanamId;
     _selectedVaangunarId = s.selectedVaangunarId;
-    _selectedVaangunarPeyar = s.selectedVaangunarPeyarMap['Tamil'] ?? s.selectedVaangunarPeyarMap['English'] ?? '';
+    _selectedVaangunarPeyar = s.selectedVaangunarPeyarMap[ref.read(silkMudhanmaiMozhiProvider)] ?? s.selectedVaangunarPeyarMap[ref.read(silkIrandaamMozhiProvider)] ?? s.selectedVaangunarPeyarMap.values.firstOrNull ?? '';
     _customerState = s.customerState;
     _pattiyalVagai = s.pattiyalVagai;
     _pattiyalNaal = s.pattiyalNaal;
@@ -139,7 +140,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           vaangunargal.where((v) => v.id == _selectedVaangunarId).firstOrNull;
       if (vaangunar != null) {
         _customerState = (vaangunar.maanilam['English'] ??
-                    vaangunar.maanilam['Tamil'] ??
+                    vaangunar.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ??
                     '')
                 .trim()
                 .toLowerCase();
@@ -179,7 +180,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
     String businessState = '';
     if (_selectedProfile != null) {
       businessState = (_selectedProfile!.maanilam['English'] ??
-              _selectedProfile!.maanilam['Tamil'] ??
+              _selectedProfile!.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ??
               '')
           .trim()
           .toLowerCase();
@@ -223,7 +224,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   PattuThiruththiNilaimai _currentSnapshot() => PattuThiruththiNilaimai(
         selectedNiruvanamId: _selectedNiruvanamId,
         selectedVaangunarId: _selectedVaangunarId,
-        selectedVaangunarPeyarMap: {'Tamil': _selectedVaangunarPeyar, 'English': _selectedVaangunarPeyar},
+        selectedVaangunarPeyarMap: {ref.read(silkMudhanmaiMozhiProvider): _selectedVaangunarPeyar, ref.read(silkIrandaamMozhiProvider): _selectedVaangunarPeyar},
         customerState: _customerState,
         pattiyalVagai: _pattiyalVagai,
         pattiyalNaal: _pattiyalNaal,
@@ -342,7 +343,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                 child: PattuVaangunargalKooru(
                   data: PattuVaangunargalData(
                     selectedVaangunarId: _selectedVaangunarId,
-                    selectedVaangunarPeyarMap: {'Tamil': _selectedVaangunarPeyar, 'English': _selectedVaangunarPeyar},
+                    selectedVaangunarPeyarMap: {ref.watch(silkMudhanmaiMozhiProvider): _selectedVaangunarPeyar, ref.watch(silkIrandaamMozhiProvider): _selectedVaangunarPeyar},
                     placeOfSupply: _placeOfSupply,
                     placeOfSupplyTa: _placeOfSupplyTa,
                   ),
@@ -351,18 +352,18 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                       setState(() {
                         _selectedVaangunarId = entry.id;
                         _selectedVaangunarPeyar =
-                            entry.peyar['Tamil'] ?? entry.peyar['English'] ?? '';
+                            entry.peyar[ref.read(silkMudhanmaiMozhiProvider)] ?? entry.peyar[ref.read(silkIrandaamMozhiProvider)] ?? entry.peyar.values.firstOrNull ?? '';
                         _customerState = (entry.maanilam['English'] ??
-                                    entry.maanilam['Tamil'] ??
+                                    entry.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ??
                                     '')
                                 .trim()
                                 .toLowerCase();
                         if (_placeOfSupply.isEmpty) {
                           _placeOfSupply = (entry.maanilam['English'] ??
-                                      entry.maanilam['Tamil'] ??
+                                      entry.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ??
                                       '')
                                   .trim();
-                          _placeOfSupplyTa = (entry.maanilam['Tamil'] ?? '').trim();
+                          _placeOfSupplyTa = (entry.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ?? '').trim();
                         }
                       });
                       _hasUnsavedChanges = true;

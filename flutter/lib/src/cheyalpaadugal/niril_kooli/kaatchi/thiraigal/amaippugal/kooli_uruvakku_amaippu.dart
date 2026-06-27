@@ -11,6 +11,7 @@ import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_pagudhi.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_kattupadugal.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
+import '../../../../../adippadai/mozhiyaakkam/achu_mozhigal.dart';
 
 class CoolieUruvakkuAmaippuPage extends ConsumerStatefulWidget {
   const CoolieUruvakkuAmaippuPage({super.key});
@@ -23,7 +24,7 @@ class CoolieUruvakkuAmaippuPage extends ConsumerStatefulWidget {
 class _CoolieUruvakkuAmaippuPageState
     extends ConsumerState<CoolieUruvakkuAmaippuPage> {
   bool _isEditingLanguages = false;
-  String _tempPrimaryLanguage = 'Tamil';
+  String _tempPrimaryLanguage = KooliAchuMozhigal.iyalbuMozhi;
 
   bool _isEditingTheme = false;
   String _tempThemeColor = '#388e3c';
@@ -42,7 +43,7 @@ class _CoolieUruvakkuAmaippuPageState
           ElvanSettingsDropdown(
             label: K.pattiyalPatrucheettuMozhi.tr(context, ref),
             value: _tempPrimaryLanguage,
-            items: const ['Tamil', 'English'],
+            items: KooliAchuMozhigal.aadharikkappadumMozhigal,
             onChanged: (val) {
               setState(() => _tempPrimaryLanguage = val);
             },
@@ -369,14 +370,14 @@ class _CoolieUruvakkuAmaippuPageState
                     displayChild: ElvanSimpleSettingsRow(
                       title: K.pattiyalPatrucheettuMozhi.tr(context, ref),
                       description: ref
-                          .watch(primaryLanguageProvider)
+                          .watch(kooliAchuMozhiProvider)
                           .toLowerCase()
                           .tr(context, ref),
                       trailing: IconButton(
                         onPressed: () {
                           setState(() {
                             _tempPrimaryLanguage =
-                                ref.read(primaryLanguageProvider);
+                                ref.read(kooliAchuMozhiProvider);
                             _isEditingLanguages = true;
                           });
                         },

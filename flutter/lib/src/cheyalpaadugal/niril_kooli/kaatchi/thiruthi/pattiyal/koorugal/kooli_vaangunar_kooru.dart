@@ -5,7 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
-import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
+import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
+import '../../../../koorugal/podhu_koorugal/elvan_thiruthi_keezhvirivu.dart';
 import '../../../../../niril_podhu/kaatchi/koorugal/vaangunar_thaedu_kooru.dart';
 
 /// §1 Customer — client search + company dropdown + saved-details card.
@@ -61,20 +62,27 @@ class KooliVaangunarKooru extends ConsumerWidget {
                         letterSpacing: 1.2,
                       )),
                   const SizedBox(height: 8),
-                  // English name (bold)
-                  Text(
-                    selectedVaangunar!.peyar['English'] ??
-                        selectedVaangunar!.peyar['Tamil'] ??
-                        (selectedVaangunarPeyarMap['English']?.isNotEmpty == true ? selectedVaangunarPeyarMap['English'] : selectedVaangunarPeyarMap['Tamil']) ?? '',
-                    style: tt.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                  Builder(
+                    builder: (context) {
+                      final kooliLang = ref.watch(kooliAchuMozhiProvider);
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            selectedVaangunar!.peyar[kooliLang] ??
+                                selectedVaangunar!.peyar['Tamil'] ??
+                                selectedVaangunarPeyarMap[kooliLang] ??
+                                selectedVaangunarPeyarMap['Tamil'] ??
+                                '',
+                            style: tt.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          ..._buildAddressLines(selectedVaangunar!, kooliLang, tt, cs),
+                        ],
+                      );
+                    },
                   ),
-                  // Tamil address
-                  ..._buildAddressLines(selectedVaangunar!, 'Tamil', tt, cs),
-                  // English address (subtitle)
-                  ..._buildAddressLines(selectedVaangunar!, 'English', tt, cs,
-                      isSubtitle: true),
                   // GSTIN
                   if (selectedVaangunar!.gstin.trim().isNotEmpty) ...[
                     const SizedBox(height: 6),
@@ -98,50 +106,31 @@ class KooliVaangunarKooru extends ConsumerWidget {
   }
 
   /// Builds combined address lines for a given language key.
-  /// Tamil: normal color. English (isSubtitle): lighter, italic.
   List<Widget> _buildAddressLines(
     VaangunarTharavuru v,
     String key,
     TextTheme tt,
-    ColorScheme cs, {
-    bool isSubtitle = false,
-  }) {
+    ColorScheme cs,
+  ) {
     final parts = <String>[];
-    final oor = (v.oor[key] ?? '').trim();
-    final maavattam = (v.maavattam[key] ?? '').trim();
+    // Fallback to Tamil if requested key is empty
+    final oor = (v.oor[key]?.isNotEmpty == true ? v.oor[key] : v.oor['Tamil'] ?? '').trim();
+    final maavattam = (v.maavattam[key]?.isNotEmpty == true ? v.maavattam[key] : v.maavattam['Tamil'] ?? '').trim();
     final combined = [
       if (oor.isNotEmpty) oor,
       if (maavattam.isNotEmpty) maavattam,
     ].join(', ');
     if (combined.isNotEmpty) parts.add(combined);
 
-    final maanilam = (v.maanilam[key] ?? '').trim();
+    final maanilam = (v.maanilam[key]?.isNotEmpty == true ? v.maanilam[key] : v.maanilam['Tamil'] ?? '').trim();
     if (maanilam.isNotEmpty) parts.add(maanilam);
 
     if (parts.isEmpty) return [];
 
-    // Skip English if identical to Tamil
-    if (isSubtitle) {
-      final tamilParts = <String>[];
-      final tOor = (v.oor['Tamil'] ?? '').trim();
-      final tMaav = (v.maavattam['Tamil'] ?? '').trim();
-      final tCombined = [if (tOor.isNotEmpty) tOor, if (tMaav.isNotEmpty) tMaav].join(', ');
-      if (tCombined.isNotEmpty) tamilParts.add(tCombined);
-      final tMaan = (v.maanilam['Tamil'] ?? '').trim();
-      if (tMaan.isNotEmpty) tamilParts.add(tMaan);
-      if (parts.join() == tamilParts.join()) return [];
-    }
-
-    final style = isSubtitle
-        ? tt.bodySmall?.copyWith(
-            color: cs.onSurfaceVariant.withValues(alpha: 0.7),
-            height: 1.5,
-            fontStyle: FontStyle.italic,
-          )
-        : tt.bodySmall?.copyWith(
-            color: cs.onSurfaceVariant,
-            height: 1.5,
-          );
+    final style = tt.bodySmall?.copyWith(
+      color: cs.onSurfaceVariant,
+      height: 1.5,
+    );
 
     return [
       const SizedBox(height: 6),

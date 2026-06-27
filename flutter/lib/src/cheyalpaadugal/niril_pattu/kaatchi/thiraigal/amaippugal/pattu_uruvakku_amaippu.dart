@@ -7,6 +7,7 @@ import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
+import '../../../../../adippadai/mozhiyaakkam/achu_mozhigal.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_pagudhi.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_kattupadugal.dart';
@@ -24,8 +25,8 @@ class _SilkUruvakkuAmaippuPageState
   bool _showGstSplits = false;
 
   bool _isEditingLanguages = false;
-  String _tempPrimaryLanguage = 'Tamil';
-  String _tempSecondaryLanguage = 'English';
+  String _tempPrimaryLanguage = SilkAchuMozhigal.iyalbuMudhanmaiMozhi;
+  String _tempSecondaryLanguage = SilkAchuMozhigal.iyalbuIrandaamMozhi;
 
   Widget _buildEditState() {
     return ElvanSettingsEditContainer(
@@ -35,34 +36,20 @@ class _SilkUruvakkuAmaippuPageState
           ElvanSettingsDropdown(
             label: K.mudhanmaiMozhi.tr(context, ref),
             value: _tempPrimaryLanguage,
-            items: const ['Tamil', 'English'],
+            items: SilkAchuMozhigal.aadharikkappadumMozhigal,
             onChanged: (val) {
-              setState(() {
-                _tempPrimaryLanguage = val;
-                if (_tempPrimaryLanguage == _tempSecondaryLanguage) {
-                  _tempSecondaryLanguage =
-                      val == 'English' ? 'Tamil' : 'English';
-                }
-              });
+              setState(() => _tempPrimaryLanguage = val);
             },
           ),
-          if (ref.watch(bilingualProvider)) ...[
-            const SizedBox(height: 20),
-            ElvanSettingsDropdown(
-              label: K.irandaamMozhi.tr(context, ref),
-              value: _tempSecondaryLanguage,
-              items: const ['Tamil', 'English'],
-              onChanged: (val) {
-                setState(() {
-                  _tempSecondaryLanguage = val;
-                  if (_tempSecondaryLanguage == _tempPrimaryLanguage) {
-                    _tempPrimaryLanguage =
-                        val == 'English' ? 'Tamil' : 'English';
-                  }
-                });
-              },
-            ),
-          ],
+          const SizedBox(height: 16),
+          ElvanSettingsDropdown(
+            label: K.irandaamMozhi.tr(context, ref),
+            value: _tempSecondaryLanguage,
+            items: SilkAchuMozhigal.aadharikkappadumMozhigal,
+            onChanged: (val) {
+              setState(() => _tempSecondaryLanguage = val);
+            },
+          ),
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -122,6 +109,7 @@ class _SilkUruvakkuAmaippuPageState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isBilingual = ref.watch(bilingualProvider);
 
     return ElvanSubpageShell(
       title: K.uruvaakkuPtn.tr(context, ref),
@@ -149,16 +137,16 @@ class _SilkUruvakkuAmaippuPageState
                         ElvanSimpleSettingsRow(
                           title: K.mudhanmaiMozhi.tr(context, ref),
                           description: ref
-                              .watch(primaryLanguageProvider)
+                              .watch(silkMudhanmaiMozhiProvider)
                               .toLowerCase()
                               .tr(context, ref),
                           trailing: IconButton(
                             onPressed: () {
                               setState(() {
                                 _tempPrimaryLanguage =
-                                    ref.read(primaryLanguageProvider);
+                                    ref.read(silkMudhanmaiMozhiProvider);
                                 _tempSecondaryLanguage =
-                                    ref.read(secondaryLanguageProvider);
+                                    ref.read(silkIrandaamMozhiProvider);
                                 _isEditingLanguages = true;
                               });
                             },
@@ -194,7 +182,7 @@ class _SilkUruvakkuAmaippuPageState
                           ElvanSimpleSettingsRow(
                             title: K.irandaamMozhi.tr(context, ref),
                             description: ref
-                                .watch(secondaryLanguageProvider)
+                                .watch(silkIrandaamMozhiProvider)
                                 .toLowerCase()
                                 .tr(context, ref),
                           ),

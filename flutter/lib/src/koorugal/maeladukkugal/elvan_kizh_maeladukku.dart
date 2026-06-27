@@ -49,6 +49,7 @@ Future<void> showElvanSelectionBottomSheet({
   required List<String> items,
   required String currentValue,
   required ValueChanged<String> onSelected,
+  Map<String, String>? subtitles,
 }) {
   return showElvanBottomSheet(
     context: context,
@@ -61,6 +62,7 @@ Future<void> showElvanSelectionBottomSheet({
           Navigator.pop(context);
           onSelected(val);
         },
+        subtitles: subtitles,
       );
     },
   );
@@ -71,6 +73,7 @@ class ElvanSelectionBottomSheet extends ConsumerWidget {
   final List<String> items;
   final String currentValue;
   final ValueChanged<String> onSelected;
+  final Map<String, String>? subtitles;
 
   const ElvanSelectionBottomSheet({
     super.key,
@@ -78,6 +81,7 @@ class ElvanSelectionBottomSheet extends ConsumerWidget {
     required this.items,
     required this.currentValue,
     required this.onSelected,
+    this.subtitles,
   });
 
   @override
@@ -104,6 +108,8 @@ class ElvanSelectionBottomSheet extends ConsumerWidget {
           ),
           ...items.map((item) {
             final isSelected = item == currentValue;
+            final subtitle = subtitles?[item];
+            
             return InkWell(
               onTap: () {
                 onSelected(item);
@@ -113,21 +119,42 @@ class ElvanSelectionBottomSheet extends ConsumerWidget {
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 child: Row(
                   children: [
-                    Text(
-                      item.toLowerCase().tr(context, ref),
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.w400,
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.onSurface
-                            : Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.7),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.toLowerCase().tr(context, ref),
+                            style: TextStyle(
+                              fontSize: 18, // Fixed: larger and more premium font size
+                              fontWeight:
+                                  isSelected ? FontWeight.w600 : FontWeight.w400,
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.onSurface
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.8),
+                            ),
+                          ),
+                          if (subtitle != null && subtitle.isNotEmpty) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              subtitle,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.5),
+                              ),
+                            ),
+                          ]
+                        ],
                       ),
                     ),
-                    const Spacer(),
+                    const SizedBox(width: 16),
                     if (isSelected)
                       Icon(
                         Icons.check,

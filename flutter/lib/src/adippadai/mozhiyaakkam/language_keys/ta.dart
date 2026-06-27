@@ -291,6 +291,7 @@ const Map<String, String> ta = {
   'pattiyalEnVaangunar': 'பட்டியல் எண் / வாங்குநர்...',
   'pattiyal': 'பட்டியல்',
   'munthogai': 'முன்தொகை',
+  'patrucheettuVagai': 'பற்றுச்சீட்டு வகை',
   'endhapPattiyalukku': 'எந்தப் பட்டியலுக்கு',
   'kaasu': 'காசு',
   'vangiParimaatram': 'வங்கிப் பரிமாற்றம்',

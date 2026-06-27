@@ -292,6 +292,7 @@ const Map<String, String> en = {
   'pattiyalEnVaangunar': 'Invoice No / Customer...',
   'pattiyal': 'Invoice',
   'munthogai': 'Advance',
+  'patrucheettuVagai': 'Receipt Type',
   'endhapPattiyalukku': 'For which invoice?',
   'kaasu': 'Cash',
   'vangiParimaatram': 'Bank Transfer',

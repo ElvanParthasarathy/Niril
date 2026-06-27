@@ -381,6 +381,7 @@ abstract final class K {
 
   // ── Subcomponents & Enums ──
   static const munthogai = 'munthogai';
+  static const patrucheettuVagai = 'patrucheettuVagai';
   static const kaasu = 'kaasu';
   static const vangiParimaatram = 'vangiParimaatram';
   static const kaasoalai = 'kaasoalai';

@@ -9,6 +9,7 @@ import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dar
 import '../../../../../niril_podhu/kaatchi/koorugal/porul_thaedu_kooru.dart';
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../../../niril_pattu/kaatchi/thiruthi/pattiyal/koorugal/pattu_urupadi_attai.dart';
+import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 
 /// Builds a single coolie line-item row: header label + delete + ElvanUrupadiAttai.
 class KooliUrupadiKooru extends ConsumerWidget {
@@ -83,10 +84,15 @@ class KooliUrupadiKooru extends ConsumerWidget {
                     // Product search — wider
                     SizedBox(
                       width: 280,
-                      child: PorulThaeduKooru(
-                        seyaliVagai: 'coolie',
-                        initialText: item.porulPeyar,
-                        onSelected: (p) {
+                      child: Builder(
+                        builder: (context) {
+                          final kooliLang = ref.watch(kooliAchuMozhiProvider);
+                          return PorulThaeduKooru(
+                            seyaliVagai: 'coolie',
+                            initialText: kooliLang == 'English' && item.porulPeyarEn.isNotEmpty
+                                ? item.porulPeyarEn
+                                : item.porulPeyar,
+                            onSelected: (p) {
                           final tamilName = p.porulPeyar['Tamil'] ?? '';
                           final englishName = p.porulPeyar['English'] ?? '';
                           onUpdated(item.copyWith(
@@ -98,11 +104,13 @@ class KooliUrupadiKooru extends ConsumerWidget {
                                 ? englishName
                                 : '',
                           ));
-                        },
-                        onRequestAddNew: onRequestAddNewProduct,
-                        onCleared: () {
-                          onUpdated(const KooliUrupadi());
-                        },
+                            },
+                            onRequestAddNew: onRequestAddNewProduct,
+                            onCleared: () {
+                              onUpdated(const KooliUrupadi());
+                            },
+                          );
+                        }
                       ),
                     ),
                     // Weight (kg) — instant math, 3-decimal on blur

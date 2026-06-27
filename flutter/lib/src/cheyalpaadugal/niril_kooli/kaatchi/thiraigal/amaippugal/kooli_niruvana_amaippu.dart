@@ -94,8 +94,9 @@ class _CoolieNiruvanaAmaippuPageState
   Widget _buildProfileSwitcher() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? const Color(0xFF111111) : Colors.white;
-    final profile = ref.watch(NiruvanaTharavugalProvider);
-    final primaryName = profile?.niruvanathinPeyar['Tamil'] ?? '';
+    final kooliAchuMozhi = ref.watch(kooliAchuMozhiProvider);
+    
+    final primaryName = profile?.niruvanathinPeyar[kooliAchuMozhi] ?? profile?.niruvanathinPeyar['Tamil'] ?? profile?.niruvanathinPeyar.values.firstOrNull ?? '';
     final displayName =
         primaryName.isEmpty ? K.tharpoadhaiyaNiruvanam.tr(context, ref) : primaryName;
 
@@ -272,11 +273,9 @@ class _CoolieNiruvanaAmaippuPageState
 
     final profile = ref.watch(NiruvanaTharavugalProvider);
     final currentProfile = profile ?? NiruvanaTharavugal();
-
-    final niruvanathinPeyarPrimary =
-        currentProfile.niruvanathinPeyar['Tamil'] ?? '';
-    final niruvanathinPeyarSecondary =
-        currentProfile.niruvanathinPeyar['English'] ?? '';
+    
+    final niruvanathinPeyarPrimary = currentProfile.niruvanathinPeyar['Tamil'] ?? '';
+    final niruvanathinPeyarSecondary = currentProfile.niruvanathinPeyar['English'] ?? '';
 
     final adaimozhiPrimary = currentProfile.adaimozhi['Tamil'] ?? '';
     final adaimozhiSecondary = currentProfile.adaimozhi['English'] ?? '';

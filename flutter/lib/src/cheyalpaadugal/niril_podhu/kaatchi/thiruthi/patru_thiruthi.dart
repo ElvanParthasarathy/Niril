@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import 'koorugal/elvan_thiruthi_paguthi.dart';
+import 'koorugal/elvan_thiruthi_keezhvirivu.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_niruvanam_oadu.dart';
@@ -305,43 +306,29 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // ── Mode Switcher ──
+            // ── Mode Dropdown ──
             const SizedBox(height: 16),
-            Center(
-              child: CupertinoSlidingSegmentedControl<PatruMode>(
-                groupValue: _mode,
-                backgroundColor: isDark
-                    ? Colors.white10
-                    : Colors.black.withValues(alpha: 0.05),
-                thumbColor: isDark ? const Color(0xFF3B3B3D) : Colors.white,
-                children: {
-                  PatruMode.againstInvoice: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 10),
-                    child: Text(K.pattiyal.tr(context, ref),
-                        style: const TextStyle(fontWeight: FontWeight.w600)),
-                  ),
-                  PatruMode.advance: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 10),
-                    child: Text(K.munthogai.tr(context, ref),
-                        style: const TextStyle(fontWeight: FontWeight.w600)),
-                  ),
-                },
-                onValueChanged: (val) {
-                  if (val != null) {
-                    setState(() {
-                      _mode = val;
-                      if (_mode == PatruMode.advance) {
-                        _selectedInvoices.clear();
-                        _recalculateAmount();
-                      }
-                    });
+            ElvanThiruthiKeezhvirivu(
+              label: K.patrucheettuVagai.tr(context, ref),
+              value: _mode == PatruMode.advance
+                  ? K.munthogai.tr(context, ref)
+                  : K.pattiyal.tr(context, ref),
+              items: [
+                K.pattiyal.tr(context, ref),
+                K.munthogai.tr(context, ref),
+              ],
+              onChanged: (String newValue) {
+                setState(() {
+                  _mode = newValue == K.munthogai.tr(context, ref)
+                      ? PatruMode.advance
+                      : PatruMode.againstInvoice;
+                  if (_mode == PatruMode.advance) {
+                    _selectedInvoices.clear();
+                    _recalculateAmount();
                   }
-                },
-              ),
+                });
+              },
             ),
-            const SizedBox(height: 32),
 
             // ── Section 1: Against Invoice ──
             if (_mode == PatruMode.againstInvoice) ...[

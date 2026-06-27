@@ -293,6 +293,7 @@ const Map<String, String> taLatn = {
   'pattiyalEnVaangunar': 'Pattiyal en / Vaangunar...',
   'pattiyal': 'Pattiyal',
   'munthogai': 'Munthogai',
+  'patrucheettuVagai': 'Patrucheettu Vagai',
   'endhapPattiyalukku': 'Endhap Pattiyalukku?',
   'kaasu': 'Kaasu',
   'vangiParimaatram': 'Vangip Parimaatram',
