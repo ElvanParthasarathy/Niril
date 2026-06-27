@@ -10,6 +10,7 @@ import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
 import '../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
+import '../../../../../koorugal/ulleedugal/elvan_parindhurai_ulleedu.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_keezhvirivu.dart';
@@ -29,9 +30,9 @@ class SilkItemEditor extends ConsumerStatefulWidget {
 class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
   Map<String, String> _porulPeyar = {};
   String _alavuVagai = 'quantity';
-  final _hsnController = TextEditingController(text: '50072010');
+  final _hsnController = TextEditingController();
   final _vilaiController = TextEditingController();
-  final _variController = TextEditingController(text: '5');
+  final _variController = TextEditingController();
 
   @override
   void initState() {
@@ -146,11 +147,10 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
             ),
             children: [
               // HSN Code
-              _buildTextField(
-                context: context,
-                isDark: isDark,
+              ElvanParindhuraiUlleedu(
                 label: K.hsnSacKuriyeedu.tr(context, ref),
                 controller: _hsnController,
+                suggestions: const ['50020010', '50040010', '50072010'],
                 keyboardType: TextInputType.number,
                 inputFormatters: ElvanVadivamaippigal.enngalMattum,
                 maxLength: 8,
@@ -169,11 +169,10 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
               ),
 
               // GST %
-              _buildTextField(
-                context: context,
-                isDark: isDark,
+              ElvanParindhuraiUlleedu(
                 label: K.gstVeedham.tr(context, ref),
                 controller: _variController,
+                suggestions: const ['0', '5', '12', '18'],
                 keyboardType: TextInputType.number,
                 suffixText: '%',
                 inputFormatters: ElvanVadivamaippigal.thasamamEnngal,

@@ -49,8 +49,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isWideDesktop = constraints.maxWidth >=
-            800; // Keep 800 for consistency with Flutter layout
+        final isWideDesktop = constraints.maxWidth >= 800;
 
         if (isWideDesktop) {
           final isDark = Theme.of(context).brightness == Brightness.dark;

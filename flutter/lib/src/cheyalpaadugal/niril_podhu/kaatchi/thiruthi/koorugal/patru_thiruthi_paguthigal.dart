@@ -1,3 +1,4 @@
+import 'package:elvan_niril/src/adippadai/vazhikaattal/niril_nav.dart';
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,7 @@ import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 
 import '../../../../niril_podhu/tharavuru/seluthi_vagai.dart';
+import 'elvan_thiruthi_keezhvirivu.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // RECEIPT EDITOR — EXTRACTED SECTION BUILDERS
@@ -140,28 +142,16 @@ class PatruSeluthiPagudhi extends ConsumerWidget {
             // Payment mode dropdown
             SizedBox(
               width: isDesktop ? 280 : double.infinity,
-              child: DropdownButtonFormField<SeluthiVagai>(
-                initialValue: seluthiVagai,
-                decoration: InputDecoration(
-                  labelText: K.cheluthumMuraiVinmeen.tr(context, ref),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                items: SeluthiVagai.values.map((mode) {
-                  final isUpi = mode == SeluthiVagai.upi;
-                  return DropdownMenuItem(
-                    value: mode,
-                    child: Row(
-                      children: [
-                        Icon(mode.icon, size: 18, color: mode.badgeColor(isDark)),
-                        const SizedBox(width: 10),
-                        Text(mode.label(context, ref), style: const TextStyle(height: 1.2)),
-                      ],
-                    ),
-                  );
-                }).toList(),
-                onChanged: onSeluthiVagaiChanged,
+              child: ElvanThiruthiKeezhvirivu<SeluthiVagai>(
+                label: K.cheluthumMuraiVinmeen.tr(context, ref),
+                value: seluthiVagai,
+                items: SeluthiVagai.values,
+                itemLabelBuilder: (ctx, ref, mode) => mode.label(ctx, ref),
+                onChanged: (val) {
+                  if (onSeluthiVagaiChanged != null) {
+                    onSeluthiVagaiChanged!(val);
+                  }
+                },
               ),
             ),
           ],

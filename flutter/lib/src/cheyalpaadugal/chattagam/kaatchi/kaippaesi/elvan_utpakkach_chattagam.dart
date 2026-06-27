@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../adippadai/vazhikaattal/niril_nav.dart';
 
 import 'elvan_chattagam.dart';
 import '../kanini/elvan_kanini_utpakkach_chattagam.dart';
@@ -36,9 +37,9 @@ class ElvanSubpageShell extends StatefulWidget {
 class _ElvanSubpageShellState extends State<ElvanSubpageShell> {
   @override
   Widget build(BuildContext context) {
-    // Use width-based detection instead of Platform checks so that resizing
-    // the window on desktop correctly switches between mobile and desktop shells.
-    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+    // Use width-based detection combined with OS checks so that resizing
+    // the window on desktop correctly locks to the desktop shell.
+    final isDesktop = isDesktopLayoutContext(context);
 
     if (isDesktop) {
       return ElvanDesktopSubpageShell(

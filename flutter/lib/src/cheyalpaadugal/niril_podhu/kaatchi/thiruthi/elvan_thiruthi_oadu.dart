@@ -1,3 +1,4 @@
+import 'package:elvan_niril/src/adippadai/vazhikaattal/niril_nav.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -91,7 +92,7 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
 
   @override
   Widget build(BuildContext context) {
-    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+    final isDesktop = isDesktopLayoutContext(context);
 
     final shell = PopScope(
       canPop: !widget.hasUnsavedChanges,
@@ -116,7 +117,7 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
             child: Align(
               alignment: Alignment.topLeft,
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 860),
+                constraints: const BoxConstraints(maxWidth: double.infinity),
                 child: Padding(
                   padding: EdgeInsets.only(
                     left: 16,

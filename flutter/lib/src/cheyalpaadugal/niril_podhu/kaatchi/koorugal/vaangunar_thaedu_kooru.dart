@@ -151,6 +151,7 @@ class _VaangunarThaeduKooruState extends ConsumerState<VaangunarThaeduKooru> {
               focusNode: focusNode,
               style: theme.textTheme.bodyLarge,
               decoration: InputDecoration(
+                isDense: true,
                 labelText: K.vaangunargal.tr(context, ref),
                 hintText: K.vaangunargal.tr(context, ref),
                 prefixIcon: Icon(
@@ -171,24 +172,32 @@ class _VaangunarThaeduKooruState extends ConsumerState<VaangunarThaeduKooru> {
                         },
                       )
                     : null,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: colorScheme.outline,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: colorScheme.primary,
-                    width: 2,
-                  ),
+                contentPadding: const EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  top: 16,
+                  bottom: 16,
                 ),
                 filled: true,
-                fillColor: colorScheme.surfaceContainerLowest,
+                fillColor: WidgetStateColor.resolveWith((states) {
+                  if (states.contains(WidgetState.focused) ||
+                      states.contains(WidgetState.hovered)) {
+                    return colorScheme.onSurface.withValues(alpha: 0.12);
+                  }
+                  return colorScheme.onSurface.withValues(alpha: 0.08);
+                }),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(100),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(100),
+                  borderSide: BorderSide.none,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(100),
+                  borderSide: BorderSide.none,
+                ),
               ),
             );
           },
@@ -313,16 +322,38 @@ class _VaangunarThaeduKooruState extends ConsumerState<VaangunarThaeduKooru> {
     return TextField(
       enabled: enabled,
       decoration: InputDecoration(
+        isDense: true,
         hintText: hintText,
         prefixIcon: Icon(
           Icons.person_search_rounded,
           color: colorScheme.onSurfaceVariant,
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+        contentPadding: const EdgeInsets.only(
+          left: 20,
+          right: 20,
+          top: 16,
+          bottom: 16,
         ),
         filled: true,
-        fillColor: colorScheme.surfaceContainerLowest,
+        fillColor: WidgetStateColor.resolveWith((states) {
+          if (states.contains(WidgetState.focused) ||
+              states.contains(WidgetState.hovered)) {
+            return colorScheme.onSurface.withValues(alpha: 0.12);
+          }
+          return colorScheme.onSurface.withValues(alpha: 0.08);
+        }),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(100),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(100),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(100),
+          borderSide: BorderSide.none,
+        ),
       ),
     );
   }

@@ -68,6 +68,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
   bool _isSaving = false;
   bool _isInitialized = false;
+  bool _isLoadingInvoices = false;
   bool _isPatruEnEditing = false;
   String _previewPatruEn = '';
 
@@ -115,21 +116,22 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     if (widget.editingEntry == null || _isInitialized) return;
     _isInitialized = true;
 
+    if (mounted) setState(() => _isLoadingInvoices = true);
+
     final kalanjiyam = ref.read(patruKalanjiyamProvider);
     final links = await kalanjiyam.getLinksForPatru(widget.editingEntry!.id);
     final pattiyalKal = ref.read(pattiyalKalanjiyamProvider);
 
-    final invoices = <PattiyalTharavuru>[];
-    for (final link in links) {
-      final inv = await pattiyalKal.getById(link.pattiyalId);
-      if (inv != null) invoices.add(inv);
-    }
+    final futures = links.map((link) => pattiyalKal.getById(link.pattiyalId));
+    final results = await Future.wait(futures);
+    final invoices = results.whereType<PattiyalTharavuru>().toList();
 
     if (mounted) {
       setState(() {
         _selectedInvoices = invoices;
         _mode =
             invoices.isNotEmpty ? PatruMode.againstInvoice : PatruMode.advance;
+        _isLoadingInvoices = false;
       });
       _autoFillFromInvoices();
     }
@@ -341,7 +343,12 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                 children: [
                   ElvanFullWidth(
                     child: ElvanThiruthiAttai(
-                      child: _buildInvoicePickerSection(invoicesAsync, isDark),
+                      child: _isLoadingInvoices 
+                          ? const Padding(
+                              padding: EdgeInsets.all(32.0),
+                              child: Center(child: CircularProgressIndicator()),
+                            )
+                          : _buildInvoicePickerSection(invoicesAsync, isDark),
                     ),
                   ),
                 ],

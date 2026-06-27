@@ -243,9 +243,7 @@ class _NirilSeyaliThiraiState extends ConsumerState<NirilSeyaliThirai> {
         builder: (context, constraints) {
           // On desktop OS, always use desktop layout.
           // LayoutBuilder breakpoint only matters for tablets.
-          final isDesktopOS =
-              Platform.isWindows || Platform.isMacOS || Platform.isLinux;
-          final isDesktop = isDesktopOS || constraints.maxWidth >= 800;
+          final isDesktop = isDesktopLayout(constraints.maxWidth);
 
           if (isDesktop) {
             return _buildDesktopLayout(context, navState, mode);
@@ -281,9 +279,9 @@ class _NirilSeyaliThiraiState extends ConsumerState<NirilSeyaliThirai> {
       } else if (desktopIndex == 2) {
         btnText = K.pudhiyaPatrucheettuPtn.tr(context, ref);
       } else if (desktopIndex == 3) {
-        btnText = K.vaangunaraichChaer.tr(context, ref);
-      } else if (desktopIndex == 4) {
         btnText = K.porulaichChaerPtn.tr(context, ref);
+      } else if (desktopIndex == 4) {
+        btnText = K.vaangunaraichChaer.tr(context, ref);
       }
 
       desktopToolbar = ElvanDesktopToolbar(

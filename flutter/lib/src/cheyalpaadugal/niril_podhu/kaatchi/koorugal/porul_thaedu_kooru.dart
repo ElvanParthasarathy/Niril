@@ -194,20 +194,41 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    return Material(
-      color: colorScheme.surfaceContainerLowest,
-      borderRadius: BorderRadius.circular(12),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: enabled ? onTap : null,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: colorScheme.outline),
+    return InkWell(
+      onTap: enabled ? onTap : null,
+      borderRadius: BorderRadius.circular(100),
+      child: InputDecorator(
+        decoration: InputDecoration(
+          isDense: true,
+          filled: true,
+          fillColor: WidgetStateColor.resolveWith((states) {
+            if (states.contains(WidgetState.focused) ||
+                states.contains(WidgetState.hovered)) {
+              return colorScheme.onSurface.withValues(alpha: 0.12);
+            }
+            return colorScheme.onSurface.withValues(alpha: 0.08);
+          }),
+          contentPadding: const EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 16,
+            bottom: 16,
           ),
-          child: Row(
-            children: [
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(100),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(100),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(100),
+            borderSide: BorderSide.none,
+          ),
+        ),
+        child: Row(
+          children: [
               Icon(
                 Icons.inventory_2_rounded,
                 color: colorScheme.onSurfaceVariant,
@@ -239,7 +260,6 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }

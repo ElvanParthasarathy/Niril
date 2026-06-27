@@ -72,22 +72,51 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
             );
           },
           borderRadius: BorderRadius.circular(100),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(100),
+          child: InputDecorator(
+            decoration: InputDecoration(
+              isDense: true,
+              filled: true,
+              fillColor: WidgetStateColor.resolveWith((states) {
+                if (states.contains(WidgetState.focused) ||
+                    states.contains(WidgetState.hovered)) {
+                  return Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.12);
+                }
+                return Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.08);
+              }),
+              contentPadding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 16,
+                bottom: 16,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(100),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(100),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(100),
+                borderSide: BorderSide.none,
+              ),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
             child: Row(
               children: [
                 Expanded(
                   child: Text(
-                    value == null ? '' : itemLabelBuilder(context, ref, value as T),
+                    value == null
+                        ? ''
+                        : itemLabelBuilder(context, ref, value as T),
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: Theme.of(context).colorScheme.onSurface,
                     ),

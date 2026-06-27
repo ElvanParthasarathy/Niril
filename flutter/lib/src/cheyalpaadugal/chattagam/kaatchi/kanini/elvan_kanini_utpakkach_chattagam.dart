@@ -92,9 +92,15 @@ class _ElvanDesktopSubpageShellState extends State<ElvanDesktopSubpageShell> {
                     child: Row(
                       children: [
                         if (showBackButton) ...[
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back),
-                            onPressed: () => Navigator.maybePop(context),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface,
+                              shape: BoxShape.circle,
+                            ),
+                            child: IconButton(
+                              icon: const Icon(Icons.chevron_left_rounded),
+                              onPressed: () => Navigator.maybePop(context),
+                            ),
                           ),
                           const SizedBox(width: 16),
                         ] else if (isSplitView) ...[
@@ -113,7 +119,9 @@ class _ElvanDesktopSubpageShellState extends State<ElvanDesktopSubpageShell> {
                   ),
                 )
               else
-                const SliverToBoxAdapter(child: SizedBox.shrink()),
+                SliverToBoxAdapter(
+                  child: SizedBox(height: isSplitView ? 56 : 32),
+                ),
               ...widget.slivers.map((sliver) => SliverPadding(
                     padding:
                         EdgeInsets.symmetric(horizontal: horizontalPadding),

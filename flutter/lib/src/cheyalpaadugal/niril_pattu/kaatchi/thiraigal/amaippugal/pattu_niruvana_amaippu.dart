@@ -82,40 +82,47 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 24.0),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: _showManageProfilesModal,
-            icon: Icon(
-              CupertinoIcons.briefcase_fill,
-              size: 24,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.7),
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AspectRatio(
+              aspectRatio: 1.0,
+              child: IconButton(
+                onPressed: _showManageProfilesModal,
+                padding: EdgeInsets.zero,
+                icon: Icon(
+                  CupertinoIcons.briefcase_fill,
+                  size: 24,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7),
+                ),
+                style: IconButton.styleFrom(
+                  backgroundColor: cardColor,
+                  foregroundColor: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.7),
+                  shape: const CircleBorder(),
+                ),
+              ),
             ),
-            style: IconButton.styleFrom(
-              backgroundColor: cardColor,
-              foregroundColor: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.7),
-              fixedSize: const Size(48, 48),
+            const SizedBox(width: 8),
+            Expanded(
+              child: ElvanNiruvanamKeezhvirivuKooru(
+                selectedNiruvanamId: profile?.id,
+                hideLabel: true,
+                onChanged: (p) {
+                  if (p != null && p.id != null) {
+                    ref.read(niruvanaTharavugalNotifierProvider).setActiveProfile(p.id!);
+                  }
+                },
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: ElvanNiruvanamKeezhvirivuKooru(
-              selectedNiruvanamId: profile?.id,
-              hideLabel: true,
-              onChanged: (p) {
-                if (p != null && p.id != null) {
-                  ref.read(niruvanaTharavugalNotifierProvider).setActiveProfile(p.id!);
-                }
-              },
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

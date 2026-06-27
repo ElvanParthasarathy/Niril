@@ -6,7 +6,7 @@ import 'koorugal/elvan_maeladukku_thaedal.dart';
 import 'koorugal/elvan_maeladukku_thalaipu.dart';
 import 'koorugal/elvan_maeladukku_urupadi.dart';
 import '../elvan_kizh_maeladukku.dart' as legacy;
-
+import 'package:elvan_niril/src/adippadai/vazhikaattal/niril_nav.dart';
 Future<void> showElvanSelectionBottomSheet<T>({
   required BuildContext context,
   required String title,
@@ -117,56 +117,128 @@ class _ElvanSelectionBottomSheetState<T>
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.5,
-        ),
-        child: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (widget.showSearch)
-                ElvanMaeladukkuThaedal(
-                  controller: _searchController,
-                  onChanged: _filterItems,
-                ),
-              // ElvanMaeladukkuThalaipu(
-              //   title: widget.title,
-              // ),
-              const SizedBox(height: 8),
-              Flexible(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: _filteredItems.length,
-                  itemBuilder: (context, index) {
-                    final item = _filteredItems[index];
-                    final title = widget.itemLabelBuilder(context, ref, item);
-                    final subtitle =
-                        widget.subtitleBuilder?.call(context, ref, item);
-                    final isSelected = widget.currentValue == item;
+  Widget _buildDesktop(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 24.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (widget.showSearch) ...[
+            ElvanMaeladukkuThaedal(
+              controller: _searchController,
+              onChanged: _filterItems,
+            ),
+            const SizedBox(height: 16),
+          ],
+          Flexible(
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: _filteredItems.length,
+              itemBuilder: (context, index) {
+                final item = _filteredItems[index];
+                final title = widget.itemLabelBuilder(context, ref, item);
+                final subtitle =
+                    widget.subtitleBuilder?.call(context, ref, item);
+                final isSelected = widget.currentValue == item;
 
-                    return ElvanMaeladukkuUrupadi(
-                      title: title,
-                      subtitle: subtitle,
-                      isSelected: isSelected,
-                      onTap: () => widget.onSelected(item),
-                    );
-                  },
+                return ElvanMaeladukkuUrupadi(
+                  title: title,
+                  subtitle: subtitle,
+                  isSelected: isSelected,
+                  onTap: () => widget.onSelected(item),
+                );
+              },
+            ),
+          ),
+          if (widget.onRequestAddNew != null) ...[
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: SizedBox(
+                  height: 40,
+                  child: FilledButton.icon(
+                    icon: const Icon(Icons.add_circle, size: 18),
+                    label: Text('புதிய சேர்க்கை', style: const TextStyle(fontSize: 14)), // Hardcoded for now, or we can use K.pudhiyaChaerkkai.tr(context, ref)
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.onSurface,
+                      foregroundColor: Theme.of(context).colorScheme.surface,
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                      widget.onRequestAddNew!();
+                    },
+                  ),
                 ),
               ),
-              if (widget.onRequestAddNew != null)
-                ElvanMaeladukkuPudhiyaPothan(
-                  onTap: () {
-                    Navigator.pop(context);
-                    widget.onRequestAddNew!();
-                  },
-                ),
-              const SizedBox(height: 16),
-            ],
-          ),
-        ));
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMobile(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.5,
+      ),
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (widget.showSearch)
+              ElvanMaeladukkuThaedal(
+                controller: _searchController,
+                onChanged: _filterItems,
+              ),
+            const SizedBox(height: 8),
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: _filteredItems.length,
+                itemBuilder: (context, index) {
+                  final item = _filteredItems[index];
+                  final title = widget.itemLabelBuilder(context, ref, item);
+                  final subtitle =
+                      widget.subtitleBuilder?.call(context, ref, item);
+                  final isSelected = widget.currentValue == item;
+
+                  return ElvanMaeladukkuUrupadi(
+                    title: title,
+                    subtitle: subtitle,
+                    isSelected: isSelected,
+                    onTap: () => widget.onSelected(item),
+                  );
+                },
+              ),
+            ),
+            if (widget.onRequestAddNew != null)
+              ElvanMaeladukkuPudhiyaPothan(
+                onTap: () {
+                  Navigator.pop(context);
+                  widget.onRequestAddNew!();
+                },
+              ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isDesktopLayoutContext(context)) {
+      return _buildDesktop(context);
+    }
+    return _buildMobile(context);
   }
 }

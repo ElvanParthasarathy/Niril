@@ -1,6 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../../cheyalpaadugal/chattagam/kaatchi/kanini/elvan_kanini_chattagam.dart';
 import '../../cheyalpaadugal/chattagam/kaatchi/kaippaesi/koorugal/elvan_thirai_vazhi.dart';
+
+/// True if the current operating system is a desktop OS (Windows, macOS, Linux).
+bool get isDesktopOS {
+  if (kIsWeb) return false;
+  return defaultTargetPlatform == TargetPlatform.windows ||
+         defaultTargetPlatform == TargetPlatform.macOS ||
+         defaultTargetPlatform == TargetPlatform.linux;
+}
+
+/// True if we should render the Desktop layout (either because it's a Desktop OS, 
+/// or because the given width is >= 800).
+bool isDesktopLayout(double width) {
+  return isDesktopOS || width >= 800;
+}
+
+/// True if we should render the Desktop layout using the given context's width.
+bool isDesktopLayoutContext(BuildContext context) {
+  return isDesktopLayout(MediaQuery.sizeOf(context).width);
+}
 
 /// Industry-standard navigation helper that automatically routes page pushes
 /// through the correct navigator based on the current layout.
@@ -25,7 +45,7 @@ class NirilNav {
   static Future<T?> push<T>(BuildContext context, Widget page) {
     final width = MediaQuery.sizeOf(context).width;
 
-    if (width >= 800 && desktopNavigatorKey.currentState != null) {
+    if (isDesktopLayout(width) && desktopNavigatorKey.currentState != null) {
       // Desktop: push into the nested navigator (content area only)
       return desktopNavigatorKey.currentState!.push<T>(
         MaterialPageRoute(builder: (_) => page),

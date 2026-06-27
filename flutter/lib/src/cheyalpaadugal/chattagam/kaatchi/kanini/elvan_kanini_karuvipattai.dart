@@ -53,12 +53,16 @@ class _ElvanDesktopToolbarState extends State<ElvanDesktopToolbar> {
     // React: py: 4 (32px), px: 4 (32px), maxWidth: 1200, mx: auto
     // Then inner Box: mb: 4 (32px)
     // The row: display: flex, gap: 2 (16px), alignItems: center
-    return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 32),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // ── Search Pill ──────────────────────────────────────────────
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final bool showLabel = constraints.maxWidth >= 550;
+
+        return Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 32),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // ── Search Pill ──────────────────────────────────────────────
           // React: flex: 1, minWidth: 0, maxWidth: 400, height: 48,
           //        borderRadius: 100, px: 2.5 (20px), gap: 1.25 (10px),
           //        bgcolor: isDark ? rgba(255,255,255,0.03) : #FFFFFF
@@ -139,6 +143,8 @@ class _ElvanDesktopToolbarState extends State<ElvanDesktopToolbar> {
               ),
             ),
           ),
+          
+          const SizedBox(width: 16),
 
           // ── Right Side Controls ──────────────────────────────────────────────
           Row(
@@ -193,7 +199,7 @@ class _ElvanDesktopToolbarState extends State<ElvanDesktopToolbar> {
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       height: 48,
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      padding: EdgeInsets.symmetric(horizontal: showLabel ? 24 : 14),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(999),
                         color: _isHoveredAdd
@@ -219,15 +225,17 @@ class _ElvanDesktopToolbarState extends State<ElvanDesktopToolbar> {
                             size: 18,
                             color: isDark ? Colors.black : Colors.white,
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            widget.addButtonText,
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              color: isDark ? Colors.black : Colors.white,
+                          if (showLabel) ...[
+                            const SizedBox(width: 8),
+                            Text(
+                              widget.addButtonText,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: isDark ? Colors.black : Colors.white,
+                              ),
                             ),
-                          ),
+                          ],
                         ],
                       ),
                     ),
@@ -238,5 +246,6 @@ class _ElvanDesktopToolbarState extends State<ElvanDesktopToolbar> {
         ],
       ),
     );
-  }
+  });
+ }
 }
