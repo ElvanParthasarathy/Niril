@@ -60,7 +60,7 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
                     };
                     final subtitlesMap = {
                       for (final p in profiles)
-                        '${(p.niruvanathinPeyar[mudhanmaiMozhi]?.isNotEmpty == true ? p.niruvanathinPeyar[mudhanmaiMozhi] : p.niruvanathinPeyar[irandaamMozhi]) ?? p.niruvanathinPeyar['Tamil'] ?? p.niruvanathinPeyar.values.firstOrNull ?? ''}': p.iruMozhi ? (p.niruvanathinPeyar[irandaamMozhi] ?? p.niruvanathinPeyar['English'] ?? '') : ''
+                        '${(p.niruvanathinPeyar[mudhanmaiMozhi]?.isNotEmpty == true ? p.niruvanathinPeyar[mudhanmaiMozhi] : p.niruvanathinPeyar[irandaamMozhi]) ?? p.niruvanathinPeyar['Tamil'] ?? p.niruvanathinPeyar.values.firstOrNull ?? ''}': (p.iruMozhi && isSilk) ? (p.niruvanathinPeyar[irandaamMozhi] ?? p.niruvanathinPeyar['English'] ?? '') : ''
                     };
 
                     final placeholder =

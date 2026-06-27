@@ -72,7 +72,7 @@ class ElvanThiruthiKeezhvirivu extends ConsumerWidget {
               children: [
                 Expanded(
                   child: Text(
-                    value.toLowerCase().tr(context, ref),
+                    value,
                     style: TextStyle(
                       fontSize: 14, // Matches text fields
                       fontWeight: FontWeight.w400,

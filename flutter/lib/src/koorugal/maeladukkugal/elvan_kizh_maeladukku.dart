@@ -124,7 +124,7 @@ class ElvanSelectionBottomSheet extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            item.toLowerCase().tr(context, ref),
+                            item,
                             style: TextStyle(
                               fontSize: 18, // Fixed: larger and more premium font size
                               fontWeight:
