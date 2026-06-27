@@ -6,6 +6,7 @@ import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/nilaimai/achu_mozhi_facade.dart';
 import '../../../../adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
 import '../../../../adippadai/iru_mozhi/iru_mozhi_niruvanam_udhavi.dart';
+import '../../../../adippadai/oru_mozhi/oru_mozhi_vazhanguthigal.dart';
 import '../../../../adippadai/oru_mozhi/oru_mozhi_niruvanam_udhavi.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';

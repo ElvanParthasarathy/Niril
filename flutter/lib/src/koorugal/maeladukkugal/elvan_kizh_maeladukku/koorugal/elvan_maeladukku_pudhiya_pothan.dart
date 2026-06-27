@@ -37,7 +37,7 @@ class ElvanMaeladukkuPudhiyaPothan extends ConsumerWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  K.pudhiyadhaiSerkka.tr(context, ref),
+                  K.pudhiyaChaerkkai.tr(context, ref),
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
