@@ -134,9 +134,6 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
         if (secondary.isNotEmpty && secondary != _getDisplayName(ctx, ref, item)) {
           parts.add(secondary);
         }
-        if (item.hsnCode.isNotEmpty) {
-          parts.add('HSN: ${item.hsnCode}');
-        }
         if (item.vilai > 0) {
           parts.add(_inrFormat.format(item.vilai));
         }
