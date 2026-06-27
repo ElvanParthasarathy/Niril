@@ -87,32 +87,7 @@ class PatruPattiyalTheervuMaeladukku {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Header
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          Text(
-                            K.pattiyalgalaiThaernhedu.tr(context, ref),
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w600),
-                          ),
-                          const Spacer(),
-                          TextButton(
-                            onPressed: () {
-                              final selected = invoices
-                                  .where((i) => selectedIds.contains(i.id))
-                                  .toList();
-                              onConfirmed(selected);
-                              Navigator.of(ctx).pop();
-                            },
-                            child: Text(K.mudindhadhu.tr(context, ref),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600)),
-                          ),
-                        ],
-                      ),
-                    ),
+                    const SizedBox(height: 8),
                     // Search
                     ElvanMaeladukkuThaedal(
                       controller: searchCtrl,
@@ -233,6 +208,60 @@ class PatruPattiyalTheervuMaeladukku {
                                 );
                               },
                             ),
+                    ),
+                    Column(
+                      children: [
+                        Divider(
+                          height: 1,
+                          thickness: 1,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .outline
+                              .withValues(alpha: 0.1),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            final selected = invoices
+                                .where((i) => selectedIds.contains(i.id))
+                                .toList();
+                            onConfirmed(selected);
+                            Navigator.of(ctx).pop();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 32,
+                              vertical: 16,
+                            ),
+                            width: double.infinity,
+                            alignment: Alignment.center,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  CupertinoIcons.checkmark_alt_circle_fill,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.8),
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  K.mudindhadhu.tr(context, ref),
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.8),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
