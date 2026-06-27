@@ -181,21 +181,23 @@ class PatruPattiyalTheervuMaeladukku {
                                                   maxLines: 1,
                                                   overflow:
                                                       TextOverflow.ellipsis),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              currFmt.format(inv.mothaThogai),
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey.shade600,
+                                              ),
+                                            ),
                                           ],
                                         )
-                                      : null,
-                                  trailing: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        currFmt.format(inv.mothaThogai),
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 13),
-                                      ),
-                                    ],
-                                  ),
+                                      : Text(
+                                          currFmt.format(inv.mothaThogai),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
                                   onTap: () {
                                     setDialogState(() {
                                       if (isSelected) {
