@@ -7,6 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku.dart'
+    as legacy_sheet;
+import '../../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku/koorugal/elvan_maeladukku_thaedal.dart';
 
 /// Bottom-sheet dialog for picking one or more invoices.
 /// Returns the selected list via [onConfirmed].
@@ -22,13 +25,8 @@ class PatruPattiyalTheervuMaeladukku {
     var searchQuery = '';
     final selectedIds = Set<int>.from(initialSelectedIds);
 
-    showModalBottomSheet(
+    legacy_sheet.showElvanBottomSheet(
       context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setDialogState) {
@@ -46,14 +44,23 @@ class PatruPattiyalTheervuMaeladukku {
 
             final availableInvoices = firstSelected != null
                 ? invoices.where((inv) {
-                    final sameNiruvanam = inv.niruvanamId == firstSelected!.niruvanamId;
-                    
-                    final pName1 = inv.vaangunarPeyar['Tamil'] ?? inv.vaangunarPeyar['English'] ?? '';
-                    final pName2 = firstSelected.vaangunarPeyar['Tamil'] ?? firstSelected.vaangunarPeyar['English'] ?? '';
+                    final sameNiruvanam =
+                        inv.niruvanamId == firstSelected!.niruvanamId;
+
+                    final pName1 = inv.vaangunarPeyar['Tamil'] ??
+                        inv.vaangunarPeyar['English'] ??
+                        '';
+                    final pName2 = firstSelected.vaangunarPeyar['Tamil'] ??
+                        firstSelected.vaangunarPeyar['English'] ??
+                        '';
                     final sameName = pName1 == pName2;
 
-                    final pAddr1 = inv.vaangunarMunvari['Tamil'] ?? inv.vaangunarMunvari['English'] ?? '';
-                    final pAddr2 = firstSelected.vaangunarMunvari['Tamil'] ?? firstSelected.vaangunarMunvari['English'] ?? '';
+                    final pAddr1 = inv.vaangunarMunvari['Tamil'] ??
+                        inv.vaangunarMunvari['English'] ??
+                        '';
+                    final pAddr2 = firstSelected.vaangunarMunvari['Tamil'] ??
+                        firstSelected.vaangunarMunvari['English'] ??
+                        '';
                     final sameAddr = pAddr1 == pAddr2;
 
                     return sameNiruvanam && sameName && sameAddr;
@@ -64,29 +71,22 @@ class PatruPattiyalTheervuMaeladukku {
                 ? availableInvoices
                 : availableInvoices.where((inv) {
                     final q = searchQuery.toLowerCase();
-                    final pName = (inv.vaangunarPeyar['Tamil'] ?? inv.vaangunarPeyar['English'] ?? '').toLowerCase();
+                    final pName = (inv.vaangunarPeyar['Tamil'] ??
+                            inv.vaangunarPeyar['English'] ??
+                            '')
+                        .toLowerCase();
                     return inv.patrucheettuEn.toLowerCase().contains(q) ||
                         pName.contains(q);
                   }).toList();
 
-            return DraggableScrollableSheet(
-              initialChildSize: 0.7,
-              maxChildSize: 0.95,
-              minChildSize: 0.4,
-              expand: false,
-              builder: (_, scrollController) {
-                return Column(
+            return ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.5,
+              ),
+              child: SafeArea(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Handle bar
-                    Container(
-                      margin: const EdgeInsets.only(top: 12),
-                      width: 36,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade400,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
                     // Header
                     Padding(
                       padding: const EdgeInsets.all(16),
@@ -107,49 +107,35 @@ class PatruPattiyalTheervuMaeladukku {
                               Navigator.of(ctx).pop();
                             },
                             child: Text(K.mudindhadhu.tr(context, ref),
-                                style: const TextStyle(fontWeight: FontWeight.w600)),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600)),
                           ),
                         ],
                       ),
                     ),
                     // Search
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: TextField(
-                        controller: searchCtrl,
-                        decoration: InputDecoration(
-                          hintText: K.pattiyalEnVaangunar.tr(context, ref),
-                          prefixIcon:
-                              const Icon(CupertinoIcons.search, size: 18),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          contentPadding:
-                              const EdgeInsets.symmetric(horizontal: 16),
-                          isDense: true,
-                        ),
-                        onChanged: (val) {
-                          setDialogState(() => searchQuery = val);
-                        },
-                      ),
+                    ElvanMaeladukkuThaedal(
+                      controller: searchCtrl,
+                      onChanged: (val) {
+                        setDialogState(() => searchQuery = val);
+                      },
                     ),
                     const SizedBox(height: 8),
                     const Divider(height: 1),
                     // Invoice list
-                    Expanded(
+                    Flexible(
                       child: filtered.isEmpty
                           ? Center(
                               child: Text(K.pattiyalgalIllai.tr(context, ref),
                                   style: const TextStyle(color: Colors.grey)))
                           : ListView.separated(
-                              controller: scrollController,
+                              shrinkWrap: true,
                               itemCount: filtered.length,
                               separatorBuilder: (_, __) =>
                                   const Divider(height: 1, indent: 56),
                               itemBuilder: (_, index) {
                                 final inv = filtered[index];
-                                final isSelected =
-                                    selectedIds.contains(inv.id);
+                                final isSelected = selectedIds.contains(inv.id);
                                 final currFmt = NumberFormat.currency(
                                     locale: 'en_IN', symbol: '₹');
                                 final dateFmt = DateFormat('dd/MM/yyyy');
@@ -157,6 +143,7 @@ class PatruPattiyalTheervuMaeladukku {
                                 return ListTile(
                                   leading: Checkbox(
                                     value: isSelected,
+                                    shape: const CircleBorder(),
                                     onChanged: (val) {
                                       setDialogState(() {
                                         if (val == true) {
@@ -185,19 +172,43 @@ class PatruPattiyalTheervuMaeladukku {
                                       ),
                                     ],
                                   ),
-                                  subtitle: (inv.vaangunarPeyar['Tamil'] ?? inv.vaangunarPeyar['English'] ?? '').isNotEmpty
+                                  subtitle: (inv.vaangunarPeyar['Tamil'] ??
+                                              inv.vaangunarPeyar['English'] ??
+                                              '')
+                                          .isNotEmpty
                                       ? Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text(inv.vaangunarPeyar['Tamil'] ?? inv.vaangunarPeyar['English'] ?? '',
-                                                style: const TextStyle(fontSize: 13),
+                                            Text(
+                                                inv.vaangunarPeyar['Tamil'] ??
+                                                    inv.vaangunarPeyar[
+                                                        'English'] ??
+                                                    '',
+                                                style: const TextStyle(
+                                                    fontSize: 13),
                                                 maxLines: 1,
-                                                overflow: TextOverflow.ellipsis),
-                                            if ((inv.vaangunarMunvari['Tamil'] ?? inv.vaangunarMunvari['English'] ?? '').isNotEmpty)
-                                              Text(inv.vaangunarMunvari['Tamil'] ?? inv.vaangunarMunvari['English'] ?? '',
-                                                  style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                                                overflow:
+                                                    TextOverflow.ellipsis),
+                                            if ((inv.vaangunarMunvari[
+                                                        'Tamil'] ??
+                                                    inv.vaangunarMunvari[
+                                                        'English'] ??
+                                                    '')
+                                                .isNotEmpty)
+                                              Text(
+                                                  inv.vaangunarMunvari[
+                                                          'Tamil'] ??
+                                                      inv.vaangunarMunvari[
+                                                          'English'] ??
+                                                      '',
+                                                  style: TextStyle(
+                                                      fontSize: 11,
+                                                      color:
+                                                          Colors.grey.shade500),
                                                   maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis),
+                                                  overflow:
+                                                      TextOverflow.ellipsis),
                                           ],
                                         )
                                       : null,
@@ -227,8 +238,8 @@ class PatruPattiyalTheervuMaeladukku {
                             ),
                     ),
                   ],
-                );
-              },
+                ),
+              ),
             );
           },
         );
