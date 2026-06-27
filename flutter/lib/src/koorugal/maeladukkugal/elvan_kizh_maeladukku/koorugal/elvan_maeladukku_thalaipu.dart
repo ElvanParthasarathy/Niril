@@ -11,7 +11,7 @@ class ElvanMaeladukkuThalaipu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 32, right: 32, bottom: 8, top: 12),
+      padding: const EdgeInsets.only(left: 32, right: 32, bottom: 8, top: 0),
       child: Text(
         title,
         style: TextStyle(
