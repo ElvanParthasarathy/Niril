@@ -5,7 +5,10 @@ import 'package:flutter/services.dart';
 /// It visually matches the standard Keezhvirivu (Dropdown) and other editor components.
 class ElvanThiruthiUlleedu extends StatelessWidget {
   final String label;
-  final TextEditingController controller;
+  final TextEditingController? controller;
+  final String? initialValue;
+  final bool enabled;
+  final bool autofocus;
   final TextInputType? keyboardType;
   final String? prefixText;
   final String? suffixText;
@@ -16,11 +19,17 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
   final int? maxLength;
   final int? maxLines;
   final Widget? prefixIcon;
+  final Widget? suffixIcon;
+  final FocusNode? focusNode;
+  final String? hintText;
 
   const ElvanThiruthiUlleedu({
     super.key,
     required this.label,
-    required this.controller,
+    this.controller,
+    this.initialValue,
+    this.enabled = true,
+    this.autofocus = false,
     this.keyboardType,
     this.prefixText,
     this.suffixText,
@@ -31,6 +40,9 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
     this.maxLength,
     this.maxLines = 1,
     this.prefixIcon,
+    this.suffixIcon,
+    this.focusNode,
+    this.hintText,
   });
 
   @override
@@ -56,6 +68,10 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
           ),
         TextFormField(
           controller: controller,
+          initialValue: controller == null ? initialValue : null,
+          focusNode: focusNode,
+          enabled: enabled,
+          autofocus: autofocus,
           keyboardType: keyboardType,
           textCapitalization: textCapitalization,
           onChanged: onChanged,
@@ -69,6 +85,8 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
             suffixText: suffixText,
             errorText: errorText,
             prefixIcon: prefixIcon,
+            suffixIcon: suffixIcon,
+            hintText: hintText,
             filled: true,
             fillColor: WidgetStateColor.resolveWith((states) {
               if (states.contains(WidgetState.focused)) {

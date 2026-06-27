@@ -15,6 +15,7 @@ import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
 import '../../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 import '../../../../../adippadai/idangal_kalanjiyam/idangal_kalanjiyam.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SILK / GST MERCHANT EDITOR
@@ -327,67 +328,17 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
     List<TextInputFormatter>? inputFormatters,
     int? maxLength,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16, bottom: 8),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              letterSpacing: 0.3,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.5),
-            ),
-          ),
-        ),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          textCapitalization: textCapitalization,
-          onChanged: onChanged,
-          inputFormatters: inputFormatters,
-          maxLength: maxLength,
-          style: const TextStyle(fontSize: 14),
-          decoration: InputDecoration(
-            isDense: true,
-            prefixText: prefixText,
-            suffixText: suffixText,
-            errorText: errorText,
-            filled: true,
-            fillColor: WidgetStateColor.resolveWith((states) {
-              if (states.contains(WidgetState.focused)) {
-                return Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.12);
-              }
-              return Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.08);
-            }),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
-              borderSide: BorderSide.none,
-            ),
-          ),
-        ),
-      ],
+    return ElvanThiruthiUlleedu(
+      label: label,
+      controller: controller,
+      keyboardType: keyboardType,
+      prefixText: prefixText,
+      suffixText: suffixText,
+      errorText: errorText,
+      textCapitalization: textCapitalization,
+      onChanged: onChanged,
+      inputFormatters: inputFormatters,
+      maxLength: maxLength,
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../kalanjiyam/vaangunar_nilaimai.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // வணிகர் தேடு கூறு — Customer Picker Autocomplete
@@ -316,44 +317,14 @@ class _VaangunarThaeduKooruState extends ConsumerState<VaangunarThaeduKooru> {
     required bool enabled,
     required String hintText,
   }) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return TextField(
+    return ElvanThiruthiUlleedu(
+      label: '',
+      hintText: hintText,
+      controller: _textController,
       enabled: enabled,
-      decoration: InputDecoration(
-        isDense: true,
-        hintText: hintText,
-        prefixIcon: Icon(
-          Icons.person_search_rounded,
-          color: colorScheme.onSurfaceVariant,
-        ),
-        contentPadding: const EdgeInsets.only(
-          left: 20,
-          right: 20,
-          top: 16,
-          bottom: 16,
-        ),
-        filled: true,
-        fillColor: WidgetStateColor.resolveWith((states) {
-          if (states.contains(WidgetState.focused) ||
-              states.contains(WidgetState.hovered)) {
-            return colorScheme.onSurface.withValues(alpha: 0.12);
-          }
-          return colorScheme.onSurface.withValues(alpha: 0.08);
-        }),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(100),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(100),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(100),
-          borderSide: BorderSide.none,
-        ),
+      prefixIcon: Icon(
+        Icons.person_search_rounded,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
       ),
     );
   }

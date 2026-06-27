@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 
 /// A reusable bilingual text field widget.
 /// Renders 1 or 2 TextFields based on the app's bilingual setting.
@@ -135,71 +136,16 @@ class ElvanIrumozhiPulan extends ConsumerWidget {
     int maxLines = 1,
     required ValueChanged<String> onChanged,
   }) {
-    return Column(
+    return ElvanThiruthiUlleedu(
       key: key,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16, bottom: 8),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              letterSpacing: 0.3,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.5),
-            ),
-          ),
-        ),
-        TextFormField(
-          controller: controller,
-          initialValue: controller == null ? initialValue : null,
-          autofocus: autofocus,
-          enabled: enabled,
-          textCapitalization: textCapitalization,
-          style: const TextStyle(fontSize: 14),
-          maxLines: maxLines,
-          minLines: maxLines > 1 ? 2 : 1,
-          decoration: InputDecoration(
-            isDense: true,
-            filled: true,
-            fillColor: WidgetStateColor.resolveWith((states) {
-              if (states.contains(WidgetState.focused)) {
-                return Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.12);
-              }
-              return Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.08);
-            }),
-            contentPadding: EdgeInsets.only(
-              left: 20,
-              right: maxLines > 1 ? 8 : 20,
-              top: 16,
-              bottom: 16,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(maxLines > 1 ? 16 : 100),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(maxLines > 1 ? 16 : 100),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(maxLines > 1 ? 16 : 100),
-              borderSide: BorderSide.none,
-            ),
-          ),
-          onChanged: onChanged,
-        ),
-      ],
+      label: label,
+      initialValue: initialValue,
+      controller: controller,
+      autofocus: autofocus,
+      enabled: enabled,
+      maxLines: maxLines,
+      textCapitalization: textCapitalization,
+      onChanged: onChanged,
     );
   }
 }

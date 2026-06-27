@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/mozhiyaakkam/k.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 
 /// A reusable bilingual text field widget.
 /// Renders 1 or 2 TextFields based on the app's bilingual setting.
@@ -124,70 +125,14 @@ class ElvanKooliIrumozhiPulan extends ConsumerWidget {
     int maxLines = 1,
     required ValueChanged<String> onChanged,
   }) {
-    final radius = maxLines > 1 ? 24.0 : 100.0;
-    
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16, bottom: 8),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              letterSpacing: 0.3,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.5),
-            ),
-          ),
-        ),
-        TextFormField(
-          controller: controller,
-          initialValue: controller == null ? initialValue : null,
-          autofocus: autofocus,
-          textCapitalization: textCapitalization,
-          maxLines: maxLines,
-          style: const TextStyle(fontSize: 14),
-          decoration: InputDecoration(
-            isDense: true,
-            filled: true,
-            fillColor: WidgetStateColor.resolveWith((states) {
-              if (states.contains(WidgetState.focused)) {
-                return Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.12);
-              }
-              return Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.08);
-            }),
-            contentPadding: EdgeInsets.only(
-              left: 20,
-              right: maxLines > 1 ? 8 : 20,
-              top: 14,
-              bottom: 14,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(radius),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(radius),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(radius),
-              borderSide: BorderSide.none,
-            ),
-          ),
-          onChanged: onChanged,
-        ),
-      ],
+    return ElvanThiruthiUlleedu(
+      label: label,
+      initialValue: initialValue,
+      controller: controller,
+      autofocus: autofocus,
+      maxLines: maxLines,
+      textCapitalization: textCapitalization,
+      onChanged: onChanged,
     );
   }
 }
