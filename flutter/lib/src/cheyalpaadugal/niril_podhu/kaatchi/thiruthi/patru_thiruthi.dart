@@ -308,7 +308,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
           children: [
             // ── Mode Dropdown ──
             const SizedBox(height: 16),
-            ElvanThiruthiKeezhvirivu(
+            ElvanThiruthiKeezhvirivu<String>(
               label: K.patrucheettuVagai.tr(context, ref),
               value: _mode == PatruMode.advance
                   ? K.munthogai.tr(context, ref)
@@ -317,6 +317,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                 K.pattiyal.tr(context, ref),
                 K.munthogai.tr(context, ref),
               ],
+              itemLabelBuilder: (ctx, ref, item) => item,
               onChanged: (String newValue) {
                 setState(() {
                   _mode = newValue == K.munthogai.tr(context, ref)

@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku.dart';
+import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku/elvan_kizh_maeladukku.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
@@ -104,11 +105,12 @@ class _SilkNiruvanaAdaiyalangalPageState
     final smallLabel = K.chiriyaOavuruPeyar.tr(context, ref);
     final wideLabel = K.agalamaanaOavuruMattum.tr(context, ref);
 
-    showElvanSelectionBottomSheet(
+    showElvanSelectionBottomSheet<String>(
       context: context,
       title: K.chinnathinVadivam.tr(context, ref),
       items: [smallLabel, wideLabel],
       currentValue: _tempHeaderStyle == 'wide' ? wideLabel : smallLabel,
+      itemLabelBuilder: (ctx, ref, item) => item,
       onSelected: (val) {
         setState(() {
           _tempHeaderStyle = val == wideLabel ? 'wide' : 'small';

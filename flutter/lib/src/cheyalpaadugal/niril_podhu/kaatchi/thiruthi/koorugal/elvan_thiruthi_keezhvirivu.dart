@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import 'package:elvan_niril/src/koorugal/maeladukkugal/elvan_kizh_maeladukku.dart';
+import 'package:elvan_niril/src/koorugal/maeladukkugal/elvan_kizh_maeladukku/elvan_kizh_maeladukku.dart';
 
 /// A dropdown component designed specifically for the Elvan Editors (Thiruthi).
 /// It visually matches the standard text fields (same padding and background alpha).
-class ElvanThiruthiKeezhvirivu extends ConsumerWidget {
+class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
   final String label;
   final bool hideLabel;
-  final String value;
-  final List<String> items;
-  final ValueChanged<String> onChanged;
+  final T? value;
+  final List<T> items;
+  final ValueChanged<T> onChanged;
   final VoidCallback? onClear;
-  final Map<String, String>? subtitles;
+  final String Function(BuildContext, WidgetRef, T)? subtitleBuilder;
+  final String Function(BuildContext, WidgetRef, T) itemLabelBuilder;
+  
+  // Optional features for the bottom sheet
+  final bool showSearch;
+  final bool Function(T, String)? searchFilter;
+  final VoidCallback? onRequestAddNew;
 
   const ElvanThiruthiKeezhvirivu({
     super.key,
@@ -21,8 +27,12 @@ class ElvanThiruthiKeezhvirivu extends ConsumerWidget {
     required this.value,
     required this.items,
     required this.onChanged,
+    required this.itemLabelBuilder,
     this.onClear,
-    this.subtitles,
+    this.subtitleBuilder,
+    this.showSearch = false,
+    this.searchFilter,
+    this.onRequestAddNew,
   });
 
   @override
@@ -48,13 +58,17 @@ class ElvanThiruthiKeezhvirivu extends ConsumerWidget {
           ),
         InkWell(
           onTap: () {
-            showElvanSelectionBottomSheet(
+            showElvanSelectionBottomSheet<T>(
               context: context,
               title: label,
               items: items,
               currentValue: value,
               onSelected: onChanged,
-              subtitles: subtitles,
+              itemLabelBuilder: itemLabelBuilder,
+              subtitleBuilder: subtitleBuilder,
+              showSearch: showSearch,
+              searchFilter: searchFilter,
+              onRequestAddNew: onRequestAddNew,
             );
           },
           borderRadius: BorderRadius.circular(100),
@@ -63,31 +77,29 @@ class ElvanThiruthiKeezhvirivu extends ConsumerWidget {
               color: Theme.of(context)
                   .colorScheme
                   .onSurface
-                  .withValues(alpha: 0.08), // Editor pill color
+                  .withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(100),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), // Matches editor text fields
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: Text(
-                    value,
+                    value == null ? '' : itemLabelBuilder(context, ref, value as T),
                     style: TextStyle(
-                      fontSize: 14, // Matches text fields
-                      fontWeight: FontWeight.w400,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                if (onClear != null)
-                  GestureDetector(
+                if (onClear != null && value != null)
+                  InkWell(
                     onTap: onClear,
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                      padding: const EdgeInsets.only(right: 8),
                       child: Icon(
-                        Icons.clear,
+                        Icons.close_rounded,
                         size: 20,
                         color: Theme.of(context)
                             .colorScheme
@@ -98,6 +110,7 @@ class ElvanThiruthiKeezhvirivu extends ConsumerWidget {
                   ),
                 Icon(
                   Icons.keyboard_arrow_down_rounded,
+                  size: 24,
                   color: Theme.of(context)
                       .colorScheme
                       .onSurface

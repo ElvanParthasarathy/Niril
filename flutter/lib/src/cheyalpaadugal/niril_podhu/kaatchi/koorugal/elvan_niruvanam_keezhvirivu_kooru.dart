@@ -6,7 +6,6 @@ import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/nilaimai/achu_mozhi_facade.dart';
 import '../../../../adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
 import '../../../../adippadai/iru_mozhi/iru_mozhi_niruvanam_udhavi.dart';
-import '../../../../adippadai/oru_mozhi/oru_mozhi_vazhanguthigal.dart';
 import '../../../../adippadai/oru_mozhi/oru_mozhi_niruvanam_udhavi.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
@@ -56,33 +55,24 @@ class ElvanNiruvanamKeezhvirivuKooru extends ConsumerWidget {
       }
     }
 
-    // We append zero-width spaces (\u200B) based on the profile ID to ensure uniqueness.
-    // If multiple businesses have the exact same primary name, they won't overwrite each other in the map.
-    final profilesMap = {
-      for (final p in profiles) '${getPrimary(p)}${'\u200B' * (p.id ?? 0)}': p
-    };
-    final subtitlesMap = {
-      for (final p in profiles) '${getPrimary(p)}${'\u200B' * (p.id ?? 0)}': getSecondary(p)
-    };
-
     final placeholder = K.niruvanaththaithThaernhedu.tr(context, ref);
     final currentValue = selectedNiruvanamId == null
-        ? placeholder
-        : profilesMap.entries
-            .firstWhere(
-              (e) => e.value.id == selectedNiruvanamId,
-              orElse: () => profilesMap.entries.first,
-            )
-            .key;
+        ? null
+        : profiles.firstWhere(
+            (p) => p.id == selectedNiruvanamId,
+            orElse: () => profiles.first,
+          );
 
-    return ElvanThiruthiKeezhvirivu(
+    return ElvanThiruthiKeezhvirivu<NiruvanaTharavugal>(
       label: placeholder,
       hideLabel: hideLabel,
       value: currentValue,
-      items: profilesMap.keys.toList(),
-      subtitles: subtitlesMap,
-      onChanged: (String newValue) {
-        onChanged(profilesMap[newValue]);
+      items: profiles,
+      itemLabelBuilder: (ctx, ref, item) => getPrimary(item),
+      subtitleBuilder: (ctx, ref, item) => getSecondary(item),
+      showSearch: false,
+      onChanged: (NiruvanaTharavugal newValue) {
+        onChanged(newValue);
       },
       onClear: (showClearButton && selectedNiruvanamId != null) ? () => onChanged(null) : null,
     );

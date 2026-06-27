@@ -9,7 +9,7 @@ import '../../../../adippadai/oru_mozhi/oru_mozhi_vazhanguthigal.dart';
 import '../../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../../adippadai/tharavuru/uruvugal.dart';
 import '../../kalanjiyam/vaangunar_nilaimai.dart';
-import 'elvan_vaangunar_thearvu_maeladukku.dart';
+import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku/elvan_kizh_maeladukku.dart';
 
 class ElvanVaangunarKeezhvirivuKooru extends ConsumerWidget {
   final int? selectedVaangunarId;
@@ -111,15 +111,16 @@ class ElvanVaangunarKeezhvirivuKooru extends ConsumerWidget {
 
         return InkWell(
           onTap: () {
-            showElvanVaangunarSelectionBottomSheet(
+            showElvanSelectionBottomSheet<VaangunarTharavuru>(
               context: context,
               title: placeholder,
               items: vaangunargal,
-              currentValueId: selectedVaangunarId,
+              currentValue: selectedVaangunar,
               onSelected: (val) => onChanged(val),
-              titleBuilder: getPrimaryName,
-              subtitleBuilder: getSubtitle,
+              itemLabelBuilder: (ctx, ref, item) => getPrimaryName(item),
+              subtitleBuilder: (ctx, ref, item) => getSubtitle(item),
               searchFilter: filterSearch,
+              showSearch: true,
               onRequestAddNew: onRequestAddNew,
             );
           },

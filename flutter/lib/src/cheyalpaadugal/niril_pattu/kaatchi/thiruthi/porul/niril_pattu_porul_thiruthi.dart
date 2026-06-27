@@ -1,18 +1,16 @@
-import 'package:elvan_niril/src/adippadai/nilaimai/achu_mozhi_facade.dart';
-import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
-import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
-import '../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
-import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
-import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
-import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_keezhvirivu.dart';
+import '../../../../adippadai/mozhiyaakkam/k.dart';
+import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
+import '../../../../koorugal/podhu_koorugal/elvan_vadivamaippigal.dart';
+import '../../../../koorugal/ulleedugal/elvan_irumozhi_pulan.dart';
+import '../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
+import '../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_keezhvirivu.dart';
+import '../../kalanjiyam/porul_kalanjiyam.dart';
+import '../../tharavuru/porul_tharavuru.dart';
 import '../../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 
 
@@ -125,10 +123,11 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
               ),
 
               // Measurement Method Dropdown
-              ElvanThiruthiKeezhvirivu(
+              ElvanThiruthiKeezhvirivu<String>(
                 label: K.alaveeduMurai.tr(context, ref),
                 value: _alavuVagai == 'weight' ? K.edai : K.alavu,
                 items: const [K.alavu, K.edai],
+                itemLabelBuilder: (ctx, ref, item) => item.tr(ctx, ref),
                 onChanged: (String newValue) {
                   setState(() {
                     _alavuVagai = newValue == K.edai ? 'weight' : 'quantity';
@@ -264,4 +263,3 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
   }
 
 }
-
