@@ -5,13 +5,12 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:intl/intl.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../kalanjiyam/porul_nilaimai.dart';
+import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku/elvan_kizh_maeladukku.dart';
+import '../../../../adippadai/iru_mozhi/niril_iru_mozhi_niruvanam_udhavi.dart';
+import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// பொருள் தேடு கூறு — Product Picker Autocomplete
-// ─────────────────────────────────────────────────────────────────────────────
-// Reusable autocomplete widget that searches PorulTable entries by bilingual
-// product name. Displays HSN code (for Silk mode) and rate alongside each
-// option. Used by both Silk and Coolie invoice editors.
+// பொருள் தேடு கூறு — Product Picker Selection
 // ─────────────────────────────────────────────────────────────────────────────
 
 /// Indian currency formatter: ₹1,23,456.00
@@ -21,10 +20,7 @@ final _inrFormat = NumberFormat.currency(
   decimalDigits: 2,
 );
 
-/// Autocomplete search widget for selecting a [PorulTharavuru].
-///
-/// Watches [porulgalProvider] and filters the list by matching the
-/// query against both Tamil and English name fields from the `porulPeyar` map.
+/// Selection widget for picking a [PorulTharavuru].
 class PorulThaeduKooru extends ConsumerStatefulWidget {
   /// Callback fired when the user picks a product from the list.
   final ValueChanged<PorulTharavuru> onSelected;
@@ -55,52 +51,102 @@ class PorulThaeduKooru extends ConsumerStatefulWidget {
 }
 
 class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
-  late TextEditingController _textController;
+  late String _currentText;
+  PorulTharavuru? _selectedItem;
 
   @override
   void initState() {
     super.initState();
-    _textController = TextEditingController(text: widget.initialText);
+    _currentText = widget.initialText ?? '';
   }
 
   @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
+  void didUpdateWidget(covariant PorulThaeduKooru oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialText != oldWidget.initialText) {
+      _currentText = widget.initialText ?? '';
+    }
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
 
-  /// Extracts the display name from a [PorulTharavuru], preferring Tamil.
-  String _getDisplayName(PorulTharavuru entry) {
-    final peyar = entry.porulPeyar; // Map<String, String>
+  String _getDisplayName(
+      BuildContext context, WidgetRef ref, PorulTharavuru entry) {
+    // We use NiruvanaTharavugal helper technically, but we can't because it takes NiruvanaTharavugal.
+    // We'll write our own logic respecting the current primary language:
+    final primaryLang = ref.watch(primaryLanguageProvider);
+    final peyar = entry.porulPeyar;
+
+    if (peyar[primaryLang] != null && peyar[primaryLang]!.isNotEmpty) {
+      return peyar[primaryLang]!;
+    }
     return peyar['Tamil'] ?? peyar['English'] ?? '';
   }
 
-  /// Extracts the secondary (alternate-language) name, or empty string.
-  String _getSecondaryName(PorulTharavuru entry) {
+  String _getSecondaryName(
+      BuildContext context, WidgetRef ref, PorulTharavuru entry) {
+    final secondaryLang = ref.watch(secondaryLanguageProvider);
     final peyar = entry.porulPeyar;
-    if (peyar.containsKey('Tamil') && peyar['Tamil']!.isNotEmpty) {
-      return peyar['English'] ?? '';
+
+    if (peyar[secondaryLang] != null && peyar[secondaryLang]!.isNotEmpty) {
+      return peyar[secondaryLang]!;
     }
-    return peyar['Tamil'] ?? '';
+    return peyar['English'] ?? peyar['Tamil'] ?? '';
   }
 
-  /// Returns `true` if the entry matches the search [query] (case-insensitive).
   bool _matchesQuery(PorulTharavuru entry, String query) {
     final q = query.toLowerCase();
     final peyar = entry.porulPeyar;
-    final tamilMatch =
-        (peyar['Tamil'] ?? '').toLowerCase().contains(q);
-    final englishMatch =
-        (peyar['English'] ?? '').toLowerCase().contains(q);
-    // Also search HSN code.
+    final tamilMatch = (peyar['Tamil'] ?? '').toLowerCase().contains(q);
+    final englishMatch = (peyar['English'] ?? '').toLowerCase().contains(q);
     final hsnMatch = entry.hsnCode.toLowerCase().contains(q);
     return tamilMatch || englishMatch || hsnMatch;
   }
 
-  /// Whether this is silk mode (shows HSN code).
   bool get _isSilk => widget.seyaliVagai == 'silk';
+
+  void _openSelectionSheet(List<PorulTharavuru> items) {
+    final isBilingual = ref.read(bilingualModeProvider);
+
+    showElvanSelectionBottomSheet<PorulTharavuru>(
+      context: context,
+      title: K.porutkal.tr(context, ref),
+      items: items,
+      currentValue: _selectedItem,
+      showSearch: true,
+      searchFilter: _matchesQuery,
+      onRequestAddNew: widget.onRequestAddNew,
+      onSelected: (val) {
+        setState(() {
+          _selectedItem = val;
+          _currentText = _getDisplayName(context, ref, val);
+        });
+        widget.onSelected(val);
+      },
+      itemLabelBuilder: (ctx, ref, item) => _getDisplayName(ctx, ref, item),
+      subtitleBuilder: (ctx, ref, item) {
+        if (!_isSilk)
+          return null; // Coolie mode has no price/secondary name logic in UI list
+
+        final secondary = isBilingual ? _getSecondaryName(ctx, ref, item) : '';
+        final parts = <String>[];
+
+        if (secondary.isNotEmpty &&
+            secondary != _getDisplayName(ctx, ref, item)) {
+          parts.add(secondary);
+        }
+        if (item.hsnCode.isNotEmpty) {
+          parts.add('HSN: ${item.hsnCode}');
+        }
+        if (item.vilai > 0) {
+          parts.add(_inrFormat.format(item.vilai));
+        }
+
+        if (parts.isEmpty) return null;
+        return parts.join('  •  ');
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,218 +155,94 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
     final porulgalAsync = ref.watch(porulgalProvider);
 
     return porulgalAsync.when(
-      loading: () => _buildTextField(
-        context,
+      loading: () => _buildFakeField(
+        context: context,
+        text: '...',
         enabled: false,
-        hintText: '...',
       ),
-      error: (err, _) => _buildTextField(
-        context,
+      error: (err, _) => _buildFakeField(
+        context: context,
+        text: K.pizhai.tr(context, ref),
         enabled: false,
-        hintText: K.pizhai.tr(context, ref),
       ),
       data: (porulgal) {
-        return Autocomplete<PorulTharavuru>(
-          displayStringForOption: _getDisplayName,
-          initialValue: widget.initialText != null
-              ? TextEditingValue(text: widget.initialText!)
+        return _buildFakeField(
+          context: context,
+          text:
+              _currentText.isEmpty ? K.porutkal.tr(context, ref) : _currentText,
+          isHint: _currentText.isEmpty,
+          enabled: true,
+          onTap: () => _openSelectionSheet(porulgal),
+          onClear: _currentText.isNotEmpty
+              ? () {
+                  setState(() {
+                    _currentText = '';
+                    _selectedItem = null;
+                  });
+                  widget.onCleared?.call();
+                }
               : null,
-          optionsBuilder: (textEditingValue) {
-            final query = textEditingValue.text.trim();
-            if (query.isEmpty) return const Iterable.empty();
-            return porulgal.where((p) => _matchesQuery(p, query));
-          },
-          onSelected: (entry) {
-            _textController.text = _getDisplayName(entry);
-            widget.onSelected(entry);
-          },
-          fieldViewBuilder: (
-            context,
-            fieldController,
-            focusNode,
-            onFieldSubmitted,
-          ) {
-            return TextField(
-              controller: fieldController,
-              focusNode: focusNode,
-              style: theme.textTheme.bodyLarge,
-              decoration: InputDecoration(
-                labelText: K.porutkal.tr(context, ref),
-                hintText: K.porutkal.tr(context, ref),
-                prefixIcon: Icon(
-                  Icons.inventory_2_rounded,
-                  color: colorScheme.onSurfaceVariant,
-                ),
-                suffixIcon: fieldController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear_rounded, size: 20),
-                        onPressed: () {
-                          fieldController.clear();
-                          _textController.clear();
-                          widget.onCleared?.call();
-                        },
-                      )
-                    : null,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: colorScheme.outline),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: colorScheme.primary,
-                    width: 2,
-                  ),
-                ),
-                filled: true,
-                fillColor: colorScheme.surfaceContainerLowest,
-              ),
-            );
-          },
-          optionsViewBuilder: (context, onSelected, options) {
-            return Align(
-              alignment: Alignment.topLeft,
-              child: Material(
-                elevation: 4,
-                borderRadius: BorderRadius.circular(12),
-                clipBehavior: Clip.antiAlias,
-                surfaceTintColor: colorScheme.surfaceTint,
-                color: colorScheme.surfaceContainerLow,
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxHeight: 280,
-                    maxWidth: 420,
-                  ),
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    shrinkWrap: true,
-                    itemCount: options.length +
-                        (widget.onRequestAddNew != null ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      // ── "Add New Product" action tile ──
-                      if (index == options.length) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Divider(
-                              height: 1,
-                              color: colorScheme.outlineVariant,
-                            ),
-                            ListTile(
-                              dense: true,
-                              leading: Icon(
-                                Icons.add_circle_outline,
-                                color: colorScheme.primary,
-                              ),
-                              title: Text(
-                                K.pudhiyaChaerkkai.tr(context, ref),
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: colorScheme.primary,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              onTap: () {
-                                widget.onRequestAddNew?.call();
-                                FocusScope.of(context).unfocus();
-                              },
-                            ),
-                          ],
-                        );
-                      }
-
-                      // ── Regular product option tile ──
-                      final entry = options.elementAt(index);
-                      final primary = _getDisplayName(entry);
-                      final secondary = _getSecondaryName(entry);
-
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          if (index > 0)
-                            Divider(
-                              height: 1,
-                              color: colorScheme.outlineVariant,
-                            ),
-                          ListTile(
-                            dense: true,
-                            title: Text(
-                              primary,
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (secondary.isNotEmpty)
-                                  Text(
-                                    secondary,
-                                    style:
-                                        theme.textTheme.bodySmall?.copyWith(
-                                      color: colorScheme.onSurfaceVariant,
-                                    ),
-                                  ),
-                                if (_isSilk && entry.hsnCode.isNotEmpty)
-                                  Text(
-                                    'HSN: ${entry.hsnCode}',
-                                    style:
-                                        theme.textTheme.labelSmall?.copyWith(
-                                      color: colorScheme.outline,
-                                      fontFamily: 'monospace',
-                                    ),
-                                  ),
-                              ],
-                            ),
-                            trailing: (_isSilk || entry.vilai > 0)
-                                ? Text(
-                                    _inrFormat.format(entry.vilai),
-                                    style:
-                                        theme.textTheme.labelLarge?.copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      color: colorScheme.primary,
-                                    ),
-                                  )
-                                : null,
-                            onTap: () => onSelected(entry),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ),
-            );
-          },
         );
       },
     );
   }
 
-  /// Builds a disabled text field for loading / error states.
-  Widget _buildTextField(
-    BuildContext context, {
+  Widget _buildFakeField({
+    required BuildContext context,
+    required String text,
+    bool isHint = false,
     required bool enabled,
-    required String hintText,
+    VoidCallback? onTap,
+    VoidCallback? onClear,
   }) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
-    return TextField(
-      enabled: enabled,
-      decoration: InputDecoration(
-        hintText: hintText,
-        prefixIcon: Icon(
-          Icons.inventory_2_rounded,
-          color: colorScheme.onSurfaceVariant,
+    return Material(
+      color: colorScheme.surfaceContainerLowest,
+      borderRadius: BorderRadius.circular(12),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: enabled ? onTap : null,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: colorScheme.outline),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.inventory_2_rounded,
+                color: colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  text,
+                  style: isHint
+                      ? textTheme.bodyLarge?.copyWith(
+                          color: colorScheme.onSurfaceVariant
+                              .withValues(alpha: 0.7),
+                        )
+                      : textTheme.bodyLarge,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (onClear != null)
+                GestureDetector(
+                  onTap: onClear,
+                  child: const Icon(Icons.clear_rounded, size: 20),
+                )
+              else
+                Icon(
+                  Icons.arrow_drop_down,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+            ],
+          ),
         ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        filled: true,
-        fillColor: colorScheme.surfaceContainerLowest,
       ),
     );
   }
