@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'src/koorugal/podhu_koorugal/elvan_nagarvu_panbu.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -157,7 +158,10 @@ class ElvanNirilApp extends ConsumerWidget {
 
     return MaterialApp(
       builder: (context, child) {
-        return ElvanUruvakkunarMenu(child: child!);
+        if (kDebugMode) {
+          return ElvanUruvakkunarMenu(child: child!);
+        }
+        return child!;
       },
       onGenerateTitle: (context) => K.elvanNiril.tr(context, ref),
       debugShowCheckedModeBanner: false,
