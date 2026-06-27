@@ -101,15 +101,7 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
     }
   }
 
-  void _closeDropdowns() {
-    // Pop any open bottom sheets so the user sees the updated state when reopening
-    if (Navigator.of(context, rootNavigator: true).canPop()) {
-      Navigator.of(context, rootNavigator: true).pop();
-    }
-  }
-
   void _toggleLanguage() {
-    _closeDropdowns();
     final currentLocale = ref.read(localeProvider);
     if (currentLocale?.languageCode == 'ta' && currentLocale?.scriptCode != 'Latn') {
       ref.read(localeProvider.notifier).setLocale(const Locale('en'));
@@ -124,7 +116,6 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
   }
 
   void _toggleBilingual() {
-    _closeDropdowns();
     final profile = ref.read(NiruvanaTharavugalProvider);
     if (profile == null) return;
     
@@ -137,7 +128,6 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
   }
 
   void _swapDataLanguages() {
-    _closeDropdowns();
     final profile = ref.read(NiruvanaTharavugalProvider);
     if (profile == null) return;
 

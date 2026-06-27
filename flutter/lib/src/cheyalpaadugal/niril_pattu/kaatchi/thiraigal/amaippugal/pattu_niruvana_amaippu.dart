@@ -4,6 +4,9 @@ import 'package:flutter/services.dart';
 import '../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
+import 'package:elvan_niril/src/adippadai/nilaimai/achu_mozhi_facade.dart';
+import 'package:elvan_niril/src/adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
+import 'package:elvan_niril/src/adippadai/iru_mozhi/iru_mozhi_niruvanam_udhavi.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
@@ -64,7 +67,9 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? const Color(0xFF111111) : Colors.white;
     final profile = ref.watch(NiruvanaTharavugalProvider);
-    final primaryName = profile?.getPrimary('niruvanathinPeyar') ?? '';
+    final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
+    final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
+    final primaryName = profile != null ? IruMozhiNiruvanamUdhavi.mudhanmaiPeyar(profile, primaryLang, secondaryLang) : '';
     final displayName =
         primaryName.isEmpty ? K.tharpoadhaiyaNiruvanam.tr(context, ref) : primaryName;
 
@@ -248,10 +253,8 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
     final profile = ref.watch(NiruvanaTharavugalProvider);
     final currentProfile = profile ?? NiruvanaTharavugal();
 
-    final niruvanathinPeyarPrimary =
-        currentProfile.getPrimary('niruvanathinPeyar');
-    final niruvanathinPeyarSecondary =
-        currentProfile.getSecondary('niruvanathinPeyar');
+    final niruvanathinPeyarPrimary = IruMozhiNiruvanamUdhavi.mudhanmaiPeyar(currentProfile, primaryLang, secondaryLang);
+    final niruvanathinPeyarSecondary = IruMozhiNiruvanamUdhavi.thunaiPeyar(currentProfile, isBilingual, true, secondaryLang);
 
     final adaimozhiPrimary = currentProfile.getPrimary('adaimozhi');
     final adaimozhiSecondary = currentProfile.getSecondary('adaimozhi');

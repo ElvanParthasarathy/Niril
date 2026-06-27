@@ -13,6 +13,9 @@ import '../../../../amaippugal/kaatchi/koorugal/elvan_azhippu_urudhi_maeladukku.
 import '../../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
+import '../../../../../adippadai/nilaimai/achu_mozhi_facade.dart';
+import '../../../../../adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
+import '../../../../../adippadai/iru_mozhi/iru_mozhi_niruvanam_udhavi.dart';
 import '../../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku.dart';
 
 /// Maximum number of business profiles allowed.
@@ -26,16 +29,27 @@ void showBusinessSelectorModal({
   final profiles = ref.read(NiruvanaTharavugalListProvider);
   final activeProfile = ref.read(NiruvanaTharavugalProvider);
 
+  final isSilk = ref.read(appModeProvider) == AppMode.silk;
+  final isBilingual = ref.read(bilingualProvider);
+  final primaryLang = ref.read(primaryLanguageProvider).toLowerCase();
+  final secondaryLang = ref.read(secondaryLanguageProvider).toLowerCase();
+
   final items = profiles.map((p) {
-    final name = p.getPrimary('niruvanathinPeyar');
-    return name.isEmpty ? K.tharpoadhaiyaNiruvanam.tr(context, ref) : name;
+    final name = IruMozhiNiruvanamUdhavi.mudhanmaiPeyar(p, primaryLang, secondaryLang);
+    final subtitle = IruMozhiNiruvanamUdhavi.thunaiPeyar(p, isBilingual, isSilk, secondaryLang);
+    final display = subtitle.isNotEmpty ? '$name ($subtitle)' : name;
+    return name.isEmpty ? K.tharpoadhaiyaNiruvanam.tr(context, ref) : display;
   }).toList();
 
-  final activeName = activeProfile != null
-      ? (activeProfile.getPrimary('niruvanathinPeyar').isEmpty
-          ? K.tharpoadhaiyaNiruvanam.tr(context, ref)
-          : activeProfile.getPrimary('niruvanathinPeyar'))
+  final activeNamePrimary = activeProfile != null
+      ? IruMozhiNiruvanamUdhavi.mudhanmaiPeyar(activeProfile, primaryLang, secondaryLang)
       : '';
+  final activeSubtitle = activeProfile != null
+      ? IruMozhiNiruvanamUdhavi.thunaiPeyar(activeProfile, isBilingual, isSilk, secondaryLang)
+      : '';
+  final activeName = activeNamePrimary.isEmpty
+      ? K.tharpoadhaiyaNiruvanam.tr(context, ref)
+      : (activeSubtitle.isNotEmpty ? '$activeNamePrimary ($activeSubtitle)' : activeNamePrimary);
 
   showElvanSelectionBottomSheet(
     context: context,
@@ -86,6 +100,10 @@ void showManageProfilesModal({
                 final profiles = ref.watch(NiruvanaTharavugalListProvider);
                 final activeProfile = ref.watch(NiruvanaTharavugalProvider);
                 final hasProfiles = profiles.isNotEmpty;
+                final isSilk = ref.watch(appModeProvider) == AppMode.silk;
+                final isBilingual = ref.watch(bilingualProvider);
+                final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
+                final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
 
                 return ElvanFullscreenPopup(
                   title: K.kaiyaalu.tr(context, ref),
@@ -117,13 +135,10 @@ void showManageProfilesModal({
                                           title: profile.id == activeProfile?.id
                                               ? K.tharpoadhaiyaNiruvanam.tr(context, ref)
                                               : '',
-                                          primaryValue: profile
-                                                  .getPrimary(
-                                                      'niruvanathinPeyar')
-                                                  .isEmpty
+                                          primaryValue: IruMozhiNiruvanamUdhavi.mudhanmaiPeyar(profile, primaryLang, secondaryLang).isEmpty
                                               ? K.tharpoadhaiyaNiruvanam.tr(context, ref)
-                                              : profile.getPrimary(
-                                                  'niruvanathinPeyar'),
+                                              : IruMozhiNiruvanamUdhavi.mudhanmaiPeyar(profile, primaryLang, secondaryLang),
+                                          secondaryValue: IruMozhiNiruvanamUdhavi.thunaiPeyar(profile, isBilingual, isSilk, secondaryLang).isEmpty ? null : IruMozhiNiruvanamUdhavi.thunaiPeyar(profile, isBilingual, isSilk, secondaryLang),
                                           icon: CupertinoIcons.delete_solid,
                                           onTap: profile.id != activeProfile?.id
                                               ? () {

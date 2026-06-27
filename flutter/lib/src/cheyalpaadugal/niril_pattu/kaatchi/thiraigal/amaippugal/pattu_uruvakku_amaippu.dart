@@ -1,3 +1,5 @@
+import 'package:elvan_niril/src/adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
+import 'package:elvan_niril/src/adippadai/iru_mozhi/iru_mozhi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
@@ -7,7 +9,6 @@ import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
-import '../../../../../adippadai/mozhiyaakkam/achu_mozhigal.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_pagudhi.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_kattupadugal.dart';
@@ -25,8 +26,8 @@ class _SilkUruvakkuAmaippuPageState
   bool _showGstSplits = false;
 
   bool _isEditingLanguages = false;
-  String _tempPrimaryLanguage = SilkAchuMozhigal.iyalbuMudhanmaiMozhi;
-  String _tempSecondaryLanguage = SilkAchuMozhigal.iyalbuIrandaamMozhi;
+  String _tempPrimaryLanguage = IruMozhi.iyalbuMudhanmaiMozhi;
+  String _tempSecondaryLanguage = IruMozhi.iyalbuIrandaamMozhi;
 
   Widget _buildEditState() {
     return ElvanSettingsEditContainer(
@@ -36,7 +37,7 @@ class _SilkUruvakkuAmaippuPageState
           ElvanSettingsDropdown(
             label: K.mudhanmaiMozhi.tr(context, ref),
             value: _tempPrimaryLanguage,
-            items: SilkAchuMozhigal.aadharikkappadumMozhigal,
+            items: IruMozhi.aadharikkappadumMozhigal,
             onChanged: (val) {
               setState(() {
                 if (val == _tempSecondaryLanguage) {
@@ -50,7 +51,7 @@ class _SilkUruvakkuAmaippuPageState
           ElvanSettingsDropdown(
             label: K.irandaamMozhi.tr(context, ref),
             value: _tempSecondaryLanguage,
-            items: SilkAchuMozhigal.aadharikkappadumMozhigal,
+            items: IruMozhi.aadharikkappadumMozhigal,
             onChanged: (val) {
               setState(() {
                 if (val == _tempPrimaryLanguage) {

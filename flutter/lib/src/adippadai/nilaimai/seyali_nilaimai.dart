@@ -7,7 +7,6 @@ import '../../cheyalpaadugal/amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../../cheyalpaadugal/amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../cheyalpaadugal/amaippugal/tharavu/pattu_niruvana_tharavugal_provider.dart';
 import '../../cheyalpaadugal/amaippugal/tharavu/kooli_niruvana_tharavugal_provider.dart';
-import '../mozhiyaakkam/achu_mozhigal.dart';
 
 class AppStateNotifier extends Notifier<AppMode?> {
   @override
@@ -155,109 +154,6 @@ final uruvakkuSegmentProvider =
   return UruvakkuSegmentNotifier();
 });
 
-class BilingualNotifier extends Notifier<bool> {
-  @override
-  bool build() {
-    final profile = ref.watch(NiruvanaTharavugalProvider);
-    return profile?.iruMozhi ?? false;
-  }
-
-  @override
-  set state(bool value) {
-    final profile = ref.read(NiruvanaTharavugalProvider);
-    if (profile != null) {
-      final newProfile = profile.copyWith(iruMozhi: value);
-      ref.read(niruvanaTharavugalNotifierProvider).updateProfile(newProfile);
-    }
-  }
-}
-
-final bilingualProvider = NotifierProvider<BilingualNotifier, bool>(() {
-  return BilingualNotifier();
-});
-
-class SilkMudhanmaiMozhiNotifier extends Notifier<String> {
-  @override
-  String build() {
-    final profile = ref.watch(NiruvanaTharavugalProvider);
-    return profile?.mudhanMozhi ?? SilkAchuMozhigal.iyalbuMudhanmaiMozhi;
-  }
-
-  @override
-  set state(String value) {
-    final profile = ref.read(NiruvanaTharavugalProvider);
-    if (profile != null) {
-      final newProfile = profile.copyWith(mudhanMozhi: value);
-      ref.read(niruvanaTharavugalNotifierProvider).updateProfile(newProfile);
-    }
-  }
-}
-
-final silkMudhanmaiMozhiProvider =
-    NotifierProvider<SilkMudhanmaiMozhiNotifier, String>(() {
-  return SilkMudhanmaiMozhiNotifier();
-});
-
-class SilkIrandaamMozhiNotifier extends Notifier<String> {
-  @override
-  String build() {
-    final profile = ref.watch(NiruvanaTharavugalProvider);
-    return profile?.thunaiMozhi ?? SilkAchuMozhigal.iyalbuIrandaamMozhi;
-  }
-
-  @override
-  set state(String value) {
-    final profile = ref.read(NiruvanaTharavugalProvider);
-    if (profile != null) {
-      final newProfile = profile.copyWith(thunaiMozhi: value);
-      ref.read(niruvanaTharavugalNotifierProvider).updateProfile(newProfile);
-    }
-  }
-}
-
-final silkIrandaamMozhiProvider =
-    NotifierProvider<SilkIrandaamMozhiNotifier, String>(() {
-  return SilkIrandaamMozhiNotifier();
-});
-
-class KooliAchuMozhiNotifier extends Notifier<String> {
-  @override
-  String build() {
-    final profile = ref.watch(NiruvanaTharavugalProvider);
-    return profile?.mudhanMozhi ?? KooliAchuMozhigal.iyalbuMozhi;
-  }
-
-  @override
-  set state(String value) {
-    final profile = ref.read(NiruvanaTharavugalProvider);
-    if (profile != null) {
-      final newProfile = profile.copyWith(mudhanMozhi: value);
-      ref.read(niruvanaTharavugalNotifierProvider).updateProfile(newProfile);
-    }
-  }
-}
-
-final kooliAchuMozhiProvider =
-    NotifierProvider<KooliAchuMozhiNotifier, String>(() {
-  return KooliAchuMozhiNotifier();
-});
-
-final primaryLanguageProvider = Provider<String>((ref) {
-  final mode = ref.watch(appModeProvider);
-  if (mode == AppMode.coolie) {
-    return ref.watch(kooliAchuMozhiProvider);
-  }
-  return ref.watch(silkMudhanmaiMozhiProvider);
-});
-
-final secondaryLanguageProvider = Provider<String>((ref) {
-  final mode = ref.watch(appModeProvider);
-  if (mode == AppMode.coolie) {
-    final kooliLang = ref.watch(kooliAchuMozhiProvider);
-    return kooliLang == 'Tamil' ? 'English' : 'Tamil';
-  }
-  return ref.watch(silkIrandaamMozhiProvider);
-});
 
 class IsLoggedInNotifier extends Notifier<bool> {
   @override

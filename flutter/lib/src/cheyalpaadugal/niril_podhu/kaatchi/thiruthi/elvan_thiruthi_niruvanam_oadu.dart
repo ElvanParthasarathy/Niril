@@ -6,6 +6,10 @@ import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_pagudhi_thalaipu_kooru.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
+import '../../../../adippadai/nilaimai/achu_mozhi_facade.dart';
+import '../../../../adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
+import '../../../../adippadai/iru_mozhi/iru_mozhi_niruvanam_udhavi.dart';
+import '../../../../adippadai/oru_mozhi/oru_mozhi_vazhanguthigal.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import 'koorugal/elvan_thiruthi_keezhvirivu.dart';
@@ -33,8 +37,9 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profiles = ref.watch(NiruvanaTharavugalListProvider);
     final isSilk = ref.watch(appModeProvider) != AppMode.coolie;
-    final mudhanmaiMozhi = isSilk ? ref.watch(silkMudhanmaiMozhiProvider) : ref.watch(kooliAchuMozhiProvider);
-    final irandaamMozhi = isSilk ? ref.watch(silkIrandaamMozhiProvider) : 'English';
+    final isBilingual = ref.watch(bilingualProvider);
+    final mudhanmaiMozhi = ref.watch(primaryLanguageProvider);
+    final irandaamMozhi = ref.watch(secondaryLanguageProvider);
 
     // Auto-select if only one profile exists
     if (profiles.length == 1 && selectedNiruvanamId == null) {
@@ -56,11 +61,11 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
                   child: Builder(builder: (context) {
                     final profilesMap = {
                       for (final p in profiles)
-                        '${(p.niruvanathinPeyar[mudhanmaiMozhi]?.isNotEmpty == true ? p.niruvanathinPeyar[mudhanmaiMozhi] : p.niruvanathinPeyar[irandaamMozhi]) ?? p.niruvanathinPeyar['Tamil'] ?? p.niruvanathinPeyar.values.firstOrNull ?? ''}': p
+                        IruMozhiNiruvanamUdhavi.mudhanmaiPeyar(p, mudhanmaiMozhi, irandaamMozhi): p
                     };
                     final subtitlesMap = {
                       for (final p in profiles)
-                        '${(p.niruvanathinPeyar[mudhanmaiMozhi]?.isNotEmpty == true ? p.niruvanathinPeyar[mudhanmaiMozhi] : p.niruvanathinPeyar[irandaamMozhi]) ?? p.niruvanathinPeyar['Tamil'] ?? p.niruvanathinPeyar.values.firstOrNull ?? ''}': (p.iruMozhi && isSilk) ? (p.niruvanathinPeyar[irandaamMozhi] ?? p.niruvanathinPeyar['English'] ?? '') : ''
+                        IruMozhiNiruvanamUdhavi.mudhanmaiPeyar(p, mudhanmaiMozhi, irandaamMozhi): IruMozhiNiruvanamUdhavi.thunaiPeyar(p, isBilingual, isSilk, irandaamMozhi)
                     };
 
                     final placeholder =

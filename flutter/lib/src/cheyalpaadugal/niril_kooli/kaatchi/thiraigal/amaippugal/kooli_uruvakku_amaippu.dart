@@ -1,3 +1,5 @@
+import 'package:elvan_niril/src/adippadai/oru_mozhi/oru_mozhi_vazhanguthigal.dart';
+import 'package:elvan_niril/src/adippadai/oru_mozhi/oru_mozhi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,7 +13,6 @@ import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_pagudhi.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dart';
 import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_kattupadugal.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
-import '../../../../../adippadai/mozhiyaakkam/achu_mozhigal.dart';
 
 class CoolieUruvakkuAmaippuPage extends ConsumerStatefulWidget {
   const CoolieUruvakkuAmaippuPage({super.key});
@@ -24,7 +25,7 @@ class CoolieUruvakkuAmaippuPage extends ConsumerStatefulWidget {
 class _CoolieUruvakkuAmaippuPageState
     extends ConsumerState<CoolieUruvakkuAmaippuPage> {
   bool _isEditingLanguages = false;
-  String _tempPrimaryLanguage = KooliAchuMozhigal.iyalbuMozhi;
+  String _tempPrimaryLanguage = OruMozhi.iyalbuMozhi;
 
   bool _isEditingTheme = false;
   String _tempThemeColor = '#388e3c';
@@ -43,7 +44,7 @@ class _CoolieUruvakkuAmaippuPageState
           ElvanSettingsDropdown(
             label: K.pattiyalPatrucheettuMozhi.tr(context, ref),
             value: _tempPrimaryLanguage,
-            items: KooliAchuMozhigal.aadharikkappadumMozhigal,
+            items: OruMozhi.aadharikkappadumMozhigal,
             onChanged: (val) {
               setState(() => _tempPrimaryLanguage = val);
             },
