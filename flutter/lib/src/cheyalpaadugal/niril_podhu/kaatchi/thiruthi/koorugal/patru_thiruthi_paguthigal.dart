@@ -19,7 +19,7 @@ import 'elvan_thiruthi_keezhvirivu.dart';
 
 
 /// Invoice picker button + selected invoice chips.
-class PatruPattiyalTheervuPagudhi extends ConsumerWidget {
+class PatruPattiyalTheervuPagudhi extends ConsumerStatefulWidget {
   const PatruPattiyalTheervuPagudhi({
     super.key,
     required this.selectedInvoices,
@@ -34,7 +34,52 @@ class PatruPattiyalTheervuPagudhi extends ConsumerWidget {
   final void Function(PattiyalTharavuru invoice) onRemoveInvoice;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PatruPattiyalTheervuPagudhi> createState() => _PatruPattiyalTheervuPagudhiState();
+}
+
+class _PatruPattiyalTheervuPagudhiState extends ConsumerState<PatruPattiyalTheervuPagudhi> {
+  final ScrollController _scrollController = ScrollController();
+  bool _showLeftFade = false;
+  bool _showRightFade = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _onScroll());
+  }
+
+  @override
+  void didUpdateWidget(covariant PatruPattiyalTheervuPagudhi oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedInvoices.length != oldWidget.selectedInvoices.length) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _onScroll());
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final pos = _scrollController.position;
+    final isAtStart = pos.pixels <= 0;
+    final isAtEnd = pos.pixels >= pos.maxScrollExtent - 1;
+
+    if (_showLeftFade == !isAtStart && _showRightFade == !isAtEnd) return;
+
+    setState(() {
+      _showLeftFade = !isAtStart && pos.maxScrollExtent > 0;
+      _showRightFade = !isAtEnd && pos.maxScrollExtent > 0;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -42,12 +87,12 @@ class PatruPattiyalTheervuPagudhi extends ConsumerWidget {
         SizedBox(
           width: double.infinity,
           child: ElevatedButton.icon(
-            onPressed: onPickInvoices,
+            onPressed: widget.onPickInvoices,
             icon: const Icon(CupertinoIcons.doc_text, size: 18),
             label: Text(
-              selectedInvoices.isEmpty
+              widget.selectedInvoices.isEmpty
                   ? K.pattiyalgalaiThaernhedu.tr(context, ref)
-                  : '${selectedInvoices.length} ${K.pattiyalgal.tr(context, ref)}',
+                  : '${widget.selectedInvoices.length} ${K.pattiyalgal.tr(context, ref)}',
             ),
             style: ElevatedButton.styleFrom(
               padding:
@@ -55,30 +100,58 @@ class PatruPattiyalTheervuPagudhi extends ConsumerWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
               ),
-              backgroundColor: isDark
+              backgroundColor: widget.isDark
                   ? Colors.white.withValues(alpha: 0.08)
                   : Colors.black.withValues(alpha: 0.05),
-              foregroundColor: isDark ? Colors.white : Colors.black87,
+              foregroundColor: widget.isDark ? Colors.white : Colors.black87,
               elevation: 0,
             ),
           ),
         ),
 
         // Selected invoice chips
-        if (selectedInvoices.isNotEmpty) ...[
+        if (widget.selectedInvoices.isNotEmpty) ...[
           const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: selectedInvoices.map((inv) {
-              return Chip(
-                label: Text(inv.patrucheettuEn,
-                    style: const TextStyle(fontWeight: FontWeight.w600)),
-                deleteIcon:
-                    const Icon(CupertinoIcons.xmark, size: 14),
-                onDeleted: () => onRemoveInvoice(inv),
-              );
-            }).toList(),
+          ShaderMask(
+            shaderCallback: (Rect bounds) {
+              if (!_showLeftFade && !_showRightFade) {
+                return const LinearGradient(colors: [Colors.black, Colors.black]).createShader(bounds);
+              }
+              return LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  _showLeftFade ? Colors.transparent : Colors.black,
+                  Colors.black,
+                  Colors.black,
+                  _showRightFade ? Colors.transparent : Colors.black,
+                ],
+                stops: const [0.0, 0.05, 0.95, 1.0],
+              ).createShader(bounds);
+            },
+            blendMode: BlendMode.dstIn,
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 8.0, top: 4.0),
+                child: Row(
+                  children: widget.selectedInvoices.map((inv) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Chip(
+                        label: Text(inv.patrucheettuEn,
+                            style: const TextStyle(fontWeight: FontWeight.w600)),
+                        deleteIcon:
+                            const Icon(CupertinoIcons.xmark, size: 14),
+                        onDeleted: () => widget.onRemoveInvoice(inv),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
           ),
         ],
       ],

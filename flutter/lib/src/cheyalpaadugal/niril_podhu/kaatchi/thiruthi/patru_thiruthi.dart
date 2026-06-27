@@ -143,12 +143,17 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
     final kalanjiyam = ref.read(patruKalanjiyamProvider);
     
-    final bizShort = (_selectedProfile?.kurumPeyar.isNotEmpty == true
-            ? _selectedProfile!.kurumPeyar
-            : 'BIZ')
-        .toUpperCase();
-    _vanakkam =
-        await kalanjiyam.getNextVanakkam(_selectedNiruvanamId);
+    String bizShort = '';
+    if (_selectedProfile?.kurumPeyar.isNotEmpty == true) {
+      bizShort = _selectedProfile!.kurumPeyar;
+    } else {
+      final bizName = _selectedProfile?.niruvanathinPeyar['English'] ?? _selectedProfile?.niruvanathinPeyar['Tamil'] ?? 'BIZ';
+      bizShort = bizName.split(' ').where((w) => w.trim().isNotEmpty).map((w) => w[0]).join('').toUpperCase();
+      if (bizShort.length > 4) bizShort = bizShort.substring(0, 4);
+      if (bizShort.isEmpty) bizShort = 'BIZ';
+    }
+
+    _vanakkam = await kalanjiyam.getNextVanakkam(_selectedNiruvanamId);
 
     // Format is RCP/bizShort/01
     final formatted = kalanjiyam.formatPatruEn(bizShort, _vanakkam);
@@ -165,6 +170,11 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   // ── Save ──
   Future<void> _handleSave() async {
     // Validation
+    if (_selectedProfile == null || _selectedProfile!.kurumPeyar.trim().isEmpty) {
+      ElvanSnackbar.show(context, '${K.amaippugal.tr(context, ref)} - Kurum Peyar is required to save receipts.');
+      return;
+    }
+
     final peyarTamil = _vaangunarPeyarMap['Tamil'] ?? '';
     if (peyarTamil.trim().isEmpty) {
       ElvanSnackbar.show(context, K.vaangunarPeyarThaevai.tr(context, ref));
@@ -177,6 +187,10 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     if (_seluthiVagai == null) {
       ElvanSnackbar.show(context, K.cheluthumMuraiThaernhedu.tr(context, ref));
       return;
+    }
+
+    if (_seluthiVagai == SeluthiVagai.panam) {
+      _suttruEn = ''; // Cash logic: clear reference number
     }
 
     setState(() => _isSaving = true);
