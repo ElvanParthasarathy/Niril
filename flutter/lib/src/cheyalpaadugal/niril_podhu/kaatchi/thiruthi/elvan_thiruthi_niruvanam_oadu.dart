@@ -75,16 +75,13 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
                             .key;
 
                     return ElvanThiruthiKeezhvirivu(
-                      label: '', // Empty label since PagudhiThalaipu handles it
+                      label: placeholder, // Properly set the label so it shows in bottom sheet
+                      hideLabel: true, // Hide it on the editor form
                       value: currentValue,
-                      items: [placeholder, ...profilesMap.keys],
+                      items: profilesMap.keys.toList(),
                       subtitles: subtitlesMap,
                       onChanged: (String newValue) {
-                        if (newValue == placeholder) {
-                          onChanged(null);
-                        } else {
-                          onChanged(profilesMap[newValue]);
-                        }
+                        onChanged(profilesMap[newValue]);
                       },
                       onClear: selectedNiruvanamId != null
                           ? () => onChanged(null)

@@ -7,6 +7,7 @@ import 'package:elvan_niril/src/koorugal/maeladukkugal/elvan_kizh_maeladukku.dar
 /// It visually matches the standard text fields (same padding and background alpha).
 class ElvanThiruthiKeezhvirivu extends ConsumerWidget {
   final String label;
+  final bool hideLabel;
   final String value;
   final List<String> items;
   final ValueChanged<String> onChanged;
@@ -16,6 +17,7 @@ class ElvanThiruthiKeezhvirivu extends ConsumerWidget {
   const ElvanThiruthiKeezhvirivu({
     super.key,
     required this.label,
+    this.hideLabel = false,
     required this.value,
     required this.items,
     required this.onChanged,
@@ -28,7 +30,7 @@ class ElvanThiruthiKeezhvirivu extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (label.isNotEmpty)
+        if (label.isNotEmpty && !hideLabel)
           Padding(
             padding: const EdgeInsets.only(left: 16, bottom: 8),
             child: Text(
