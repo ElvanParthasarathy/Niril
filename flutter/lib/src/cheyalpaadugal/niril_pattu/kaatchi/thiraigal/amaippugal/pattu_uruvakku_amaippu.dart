@@ -38,7 +38,12 @@ class _SilkUruvakkuAmaippuPageState
             value: _tempPrimaryLanguage,
             items: SilkAchuMozhigal.aadharikkappadumMozhigal,
             onChanged: (val) {
-              setState(() => _tempPrimaryLanguage = val);
+              setState(() {
+                if (val == _tempSecondaryLanguage) {
+                  _tempSecondaryLanguage = _tempPrimaryLanguage;
+                }
+                _tempPrimaryLanguage = val;
+              });
             },
           ),
           const SizedBox(height: 16),
@@ -47,7 +52,12 @@ class _SilkUruvakkuAmaippuPageState
             value: _tempSecondaryLanguage,
             items: SilkAchuMozhigal.aadharikkappadumMozhigal,
             onChanged: (val) {
-              setState(() => _tempSecondaryLanguage = val);
+              setState(() {
+                if (val == _tempPrimaryLanguage) {
+                  _tempPrimaryLanguage = _tempSecondaryLanguage;
+                }
+                _tempSecondaryLanguage = val;
+              });
             },
           ),
           const SizedBox(height: 24),
