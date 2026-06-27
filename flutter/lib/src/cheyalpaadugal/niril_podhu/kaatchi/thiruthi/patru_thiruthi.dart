@@ -357,7 +357,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                 children: [
                   ElvanFullWidth(
                     child: Padding(
-                      padding: const EdgeInsets.all(24.0),
+                      padding: const EdgeInsets.symmetric(vertical: 24.0),
                       child: _isLoadingInvoices 
                           ? const Padding(
                               padding: EdgeInsets.all(32.0),
@@ -379,7 +379,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
               children: [
                 ElvanFullWidth(
                   child: Padding(
-                    padding: const EdgeInsets.all(24.0),
+                    padding: const EdgeInsets.symmetric(vertical: 24.0),
                     child: _buildReceiptDataSection(isDark),
                   ),
                 ),
@@ -395,7 +395,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
               children: [
                 ElvanFullWidth(
                   child: Padding(
-                    padding: const EdgeInsets.all(24.0),
+                    padding: const EdgeInsets.symmetric(vertical: 24.0),
                     child: _buildPaymentSection(isDark),
                   ),
                 ),
