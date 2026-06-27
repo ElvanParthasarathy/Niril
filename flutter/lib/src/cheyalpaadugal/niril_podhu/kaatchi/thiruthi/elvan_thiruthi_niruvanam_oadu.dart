@@ -56,11 +56,11 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
                   child: Builder(builder: (context) {
                     final profilesMap = {
                       for (final p in profiles)
-                        '${(p.niruvanathinPeyar[mudhanmaiMozhi]?.isNotEmpty == true ? p.niruvanathinPeyar[mudhanmaiMozhi] : p.niruvanathinPeyar[irandaamMozhi]) ?? p.niruvanathinPeyar['Tamil'] ?? p.niruvanathinPeyar.values.firstOrNull ?? ''} (${p.kurumPeyar})': p
+                        '${(p.niruvanathinPeyar[mudhanmaiMozhi]?.isNotEmpty == true ? p.niruvanathinPeyar[mudhanmaiMozhi] : p.niruvanathinPeyar[irandaamMozhi]) ?? p.niruvanathinPeyar['Tamil'] ?? p.niruvanathinPeyar.values.firstOrNull ?? ''}': p
                     };
                     final subtitlesMap = {
                       for (final p in profiles)
-                        '${(p.niruvanathinPeyar[mudhanmaiMozhi]?.isNotEmpty == true ? p.niruvanathinPeyar[mudhanmaiMozhi] : p.niruvanathinPeyar[irandaamMozhi]) ?? p.niruvanathinPeyar['Tamil'] ?? p.niruvanathinPeyar.values.firstOrNull ?? ''} (${p.kurumPeyar})': p.niruvanathinPeyar[irandaamMozhi] ?? p.niruvanathinPeyar['English'] ?? ''
+                        '${(p.niruvanathinPeyar[mudhanmaiMozhi]?.isNotEmpty == true ? p.niruvanathinPeyar[mudhanmaiMozhi] : p.niruvanathinPeyar[irandaamMozhi]) ?? p.niruvanathinPeyar['Tamil'] ?? p.niruvanathinPeyar.values.firstOrNull ?? ''}': p.niruvanathinPeyar[irandaamMozhi] ?? p.niruvanathinPeyar['English'] ?? ''
                     };
 
                     final placeholder =
