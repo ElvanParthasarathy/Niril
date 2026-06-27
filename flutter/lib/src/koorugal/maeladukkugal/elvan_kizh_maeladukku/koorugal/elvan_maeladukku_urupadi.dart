@@ -19,9 +19,7 @@ class ElvanMaeladukkuUrupadi extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        color: isSelected
-            ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
-            : Colors.transparent,
+        color: Colors.transparent,
         padding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 12,
@@ -36,14 +34,11 @@ class ElvanMaeladukkuUrupadi extends StatelessWidget {
                     title,
                     style: TextStyle(
                       fontSize: 16,
-                      fontWeight:
-                          isSelected ? FontWeight.w600 : FontWeight.w400,
-                      color: isSelected
-                          ? Theme.of(context).colorScheme.primary
-                          : Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.8),
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.8),
                     ),
                   ),
                   if (subtitle != null && subtitle!.isNotEmpty) ...[
@@ -67,7 +62,7 @@ class ElvanMaeladukkuUrupadi extends StatelessWidget {
             if (isSelected)
               Icon(
                 Icons.check,
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.onSurface,
                 size: 20,
               ),
           ],

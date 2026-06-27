@@ -35,7 +35,7 @@ class ElvanMaeladukkuPudhiyaPothan extends ConsumerWidget {
               children: [
                 Icon(
                   CupertinoIcons.add_circled_solid,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
                   size: 20,
                 ),
                 const SizedBox(width: 8),
@@ -43,8 +43,8 @@ class ElvanMaeladukkuPudhiyaPothan extends ConsumerWidget {
                   K.pudhiyaChaerkkai.tr(context, ref),
                   style: TextStyle(
                     fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
                   ),
                 ),
               ],
