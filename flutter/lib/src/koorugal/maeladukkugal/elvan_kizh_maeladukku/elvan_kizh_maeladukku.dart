@@ -119,10 +119,8 @@ class _ElvanSelectionBottomSheetState<T>
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.6,
-        ),
+    return SizedBox(
+        height: MediaQuery.of(context).size.height * 0.5,
         child: SafeArea(
           child: Column(
             mainAxisSize: MainAxisSize.min,
