@@ -16,6 +16,7 @@ import '../../../../amaippugal/kaatchi/koorugal/elvan_amaippu_thirutha_attai.dar
 import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../../../../niril_podhu/kaatchi/koorugal/maeladukkugal/thannuru_maeladukkugal.dart';
+import '../../../../niril_podhu/kaatchi/koorugal/elvan_niruvanam_keezhvirivu_kooru.dart';
 
 class SilkNiruvanaAmaippuPage extends ConsumerStatefulWidget {
   const SilkNiruvanaAmaippuPage({super.key});
@@ -47,10 +48,6 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
     ElvanSnackbar.show(context, K.thannuruChaemikkappattadhu.tr(context, ref));
   }
 
-  void _showBusinessSelectorModal() {
-    showBusinessSelectorModal(context: context, ref: ref);
-  }
-
   void _showManageProfilesModal() {
     showManageProfilesModal(
       context: context,
@@ -60,6 +57,16 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
         ref: ref,
         onSuccess: _showSuccessToast,
       ),
+      primaryNameBuilder: (p, innerRef) {
+        final primaryLang = innerRef.watch(primaryLanguageProvider);
+        final secondaryLang = innerRef.watch(secondaryLanguageProvider);
+        return IruMozhiNiruvanamUdhavi.mudhanmaiPeyar(p, primaryLang, secondaryLang);
+      },
+      secondaryNameBuilder: (p, innerRef) {
+        final isBilingual = innerRef.watch(bilingualProvider);
+        final secondaryLang = innerRef.watch(secondaryLanguageProvider);
+        return IruMozhiNiruvanamUdhavi.thunaiPeyar(p, isBilingual, true, secondaryLang);
+      },
     );
   }
 
@@ -67,8 +74,8 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardColor = isDark ? const Color(0xFF111111) : Colors.white;
     final profile = ref.watch(NiruvanaTharavugalProvider);
-    final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
-    final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
+    final primaryLang = ref.watch(primaryLanguageProvider);
+    final secondaryLang = ref.watch(secondaryLanguageProvider);
     final primaryName = profile != null ? IruMozhiNiruvanamUdhavi.mudhanmaiPeyar(profile, primaryLang, secondaryLang) : '';
     final displayName =
         primaryName.isEmpty ? K.tharpoadhaiyaNiruvanam.tr(context, ref) : primaryName;
@@ -98,42 +105,14 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: TextButton(
-              onPressed: _showBusinessSelectorModal,
-              style: TextButton.styleFrom(
-                backgroundColor: cardColor,
-                foregroundColor: Theme.of(context).colorScheme.onSurface,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20),
-                fixedSize: const Size.fromHeight(48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(100),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      displayName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Icon(
-                    Icons.arrow_drop_down,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.7),
-                  ),
-                ],
-              ),
+            child: ElvanNiruvanamKeezhvirivuKooru(
+              selectedNiruvanamId: profile?.id,
+              hideLabel: true,
+              onChanged: (p) {
+                if (p != null && p.id != null) {
+                  ref.read(niruvanaTharavugalNotifierProvider).setActiveProfile(p.id!);
+                }
+              },
             ),
           ),
         ],
@@ -247,8 +226,8 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
   Widget build(BuildContext context) {
     final title = K.niruvanam.tr(context, ref);
     final isBilingual = ref.watch(bilingualProvider);
-    final primaryLang = ref.watch(primaryLanguageProvider).toLowerCase();
-    final secondaryLang = ref.watch(secondaryLanguageProvider).toLowerCase();
+    final primaryLang = ref.watch(primaryLanguageProvider);
+    final secondaryLang = ref.watch(secondaryLanguageProvider);
 
     final profile = ref.watch(NiruvanaTharavugalProvider);
     final currentProfile = profile ?? NiruvanaTharavugal();
@@ -284,7 +263,7 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
                       inputFields: [
                         ElvanSettingsTextField(
                           label:
-                              '${K.niruvanathinPeyar.tr(context, ref)} (${primaryLang.tr(context, ref)})',
+                              '${K.niruvanathinPeyar.tr(context, ref)} (${primaryLang.toLowerCase().tr(context, ref)})',
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
                         ),
@@ -292,7 +271,7 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
                         if (isBilingual)
                           ElvanSettingsTextField(
                             label:
-                                '${K.niruvanathinPeyar.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
+                                '${K.niruvanathinPeyar.tr(context, ref)} (${secondaryLang.toLowerCase().tr(context, ref)})',
                             initialValue: _tempSecondary,
                             onChanged: (val) => _tempSecondary = val,
                           ),
@@ -347,7 +326,7 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
                       inputFields: [
                         ElvanSettingsTextField(
                           label: isBilingual
-                              ? '${K.adaimozhi.tr(context, ref)} (${primaryLang.tr(context, ref)})'
+                              ? '${K.adaimozhi.tr(context, ref)} (${primaryLang.toLowerCase().tr(context, ref)})'
                               : K.adaimozhi.tr(context, ref),
                           initialValue: _tempPrimary,
                           onChanged: (val) => _tempPrimary = val,
@@ -356,7 +335,7 @@ class _SilkNiruvanaAmaippuPageState extends ConsumerState<SilkNiruvanaAmaippuPag
                         if (isBilingual)
                           ElvanSettingsTextField(
                             label:
-                                '${K.adaimozhi.tr(context, ref)} (${secondaryLang.tr(context, ref)})',
+                                '${K.adaimozhi.tr(context, ref)} (${secondaryLang.toLowerCase().tr(context, ref)})',
                             initialValue: _tempSecondary,
                             onChanged: (val) => _tempSecondary = val,
                           ),

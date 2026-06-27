@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
-import '../../../../../niril_podhu/kaatchi/koorugal/vaangunar_thaedu_kooru.dart';
+import '../../../../../niril_podhu/kaatchi/koorugal/elvan_vaangunar_keezhvirivu_kooru.dart';
 import '../../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import 'maanila_thervu_maeladukku.dart';
 
@@ -76,12 +76,17 @@ class PattuVaangunargalKooru extends ConsumerWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 6),
-          VaangunarThaeduKooru(
-            
-            selectedId: data.selectedVaangunarId,
-            onSelected: callbacks.onCustomerSelected,
-            onCleared: callbacks.onCustomerCleared,
+          ElvanVaangunarKeezhvirivuKooru(
+            selectedVaangunarId: data.selectedVaangunarId,
+            hideLabel: true,
+            showClearButton: true,
+            onChanged: (vaangunar) {
+              if (vaangunar == null) {
+                callbacks.onCustomerCleared();
+              } else {
+                callbacks.onCustomerSelected(vaangunar);
+              }
+            },
             onRequestAddNew: callbacks.onRequestAddNewCustomer,
           ),
         ],

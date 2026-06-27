@@ -1,3 +1,4 @@
+import 'package:elvan_niril/src/adippadai/oru_mozhi/oru_mozhi_niruvanam_udhavi.dart';
 import 'package:elvan_niril/src/adippadai/oru_mozhi/oru_mozhi_vazhanguthigal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,6 +16,7 @@ import '../../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../../../../niril_podhu/kaatchi/koorugal/maeladukkugal/thannuru_maeladukkugal.dart';
+import '../../../../niril_podhu/kaatchi/koorugal/elvan_niruvanam_keezhvirivu_kooru.dart';
 
 class CoolieNiruvanaAmaippuPage extends ConsumerStatefulWidget {
   const CoolieNiruvanaAmaippuPage({super.key});
@@ -47,40 +49,15 @@ class _CoolieNiruvanaAmaippuPageState
     ElvanSnackbar.show(context, K.thannuruChaemikkappattadhu.tr(context, ref));
   }
 
-  void _showBusinessSelectorModal() {
-    final profiles = ref.read(NiruvanaTharavugalListProvider);
-    final activeProfile = ref.read(NiruvanaTharavugalProvider);
-
-    final items = profiles.map((p) {
-      final name = p.getPrimary('niruvanathinPeyar');
-      return name.isEmpty ? K.tharpoadhaiyaNiruvanam.tr(context, ref) : name;
-    }).toList();
-
-    final activeName = activeProfile != null
-        ? (activeProfile.getPrimary('niruvanathinPeyar').isEmpty
-            ? K.tharpoadhaiyaNiruvanam.tr(context, ref)
-            : activeProfile.getPrimary('niruvanathinPeyar'))
-        : '';
-
-    showElvanSelectionBottomSheet(
-      context: context,
-      title: K.tharpoadhaiyaNiruvanam.tr(context, ref),
-      items: items,
-      currentValue: activeName,
-      onSelected: (val) {
-        final idx = items.indexOf(val);
-        if (idx >= 0 && profiles[idx].id != null) {
-          ref.read(niruvanaTharavugalNotifierProvider).setActiveProfile(profiles[idx].id!);
-        }
-      },
-    );
-  }
-
   void _showManageProfilesModal() {
     showManageProfilesModal(
       context: context,
       ref: ref,
       onNewProfile: () => _showNewProfileModal(),
+      primaryNameBuilder: (p, innerRef) {
+        final kooliAchuMozhi = innerRef.watch(kooliAchuMozhiProvider);
+        return OruMozhiNiruvanamUdhavi.mudhanmaiPeyar(p, kooliAchuMozhi);
+      },
     );
   }
 
@@ -97,7 +74,7 @@ class _CoolieNiruvanaAmaippuPageState
     final cardColor = isDark ? const Color(0xFF111111) : Colors.white;
     final kooliAchuMozhi = ref.watch(kooliAchuMozhiProvider);
     
-    final primaryName = profile?.niruvanathinPeyar[kooliAchuMozhi] ?? profile?.niruvanathinPeyar['Tamil'] ?? profile?.niruvanathinPeyar.values.firstOrNull ?? '';
+    final primaryName = profile != null ? OruMozhiNiruvanamUdhavi.mudhanmaiPeyar(profile, kooliAchuMozhi) : '';
     final displayName =
         primaryName.isEmpty ? K.tharpoadhaiyaNiruvanam.tr(context, ref) : primaryName;
 
@@ -126,40 +103,14 @@ class _CoolieNiruvanaAmaippuPageState
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: TextButton(
-              onPressed: _showBusinessSelectorModal,
-              style: TextButton.styleFrom(
-                backgroundColor: cardColor,
-                foregroundColor: Theme.of(context).colorScheme.onSurface,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20),
-                fixedSize: const Size.fromHeight(48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(100),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      displayName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Icon(
-                    Icons.arrow_drop_down,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.7),
-                  ),
-                ],
-              ),
+            child: ElvanNiruvanamKeezhvirivuKooru(
+              selectedNiruvanamId: profile?.id,
+              hideLabel: true,
+              onChanged: (p) {
+                if (p != null && p.id != null) {
+                  ref.read(niruvanaTharavugalNotifierProvider).setActiveProfile(p.id!);
+                }
+              },
             ),
           ),
         ],

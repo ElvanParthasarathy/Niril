@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
+import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ElvanSettingsSwitch — A standard switch with Elvan's monochrome styling
@@ -36,6 +37,13 @@ class ElvanSettingsSwitch extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 // ElvanSettingsDropdown — A pill-shaped row that triggers a bottom sheet
 // ─────────────────────────────────────────────────────────────────────────────
+
+String _getLocalizedSettingsValue(BuildContext context, WidgetRef ref, String val) {
+  if (val == 'Tamil' || val == 'tamil') return K.tamil.tr(context, ref);
+  if (val == 'English' || val == 'english') return K.english.tr(context, ref);
+  return val;
+}
+
 class ElvanSettingsDropdown extends ConsumerWidget {
   final String label;
   final String value;
@@ -78,6 +86,7 @@ class ElvanSettingsDropdown extends ConsumerWidget {
               items: items,
               currentValue: value,
               onSelected: onChanged,
+              itemLabelBuilder: (ctx, innerRef, item) => _getLocalizedSettingsValue(ctx, innerRef, item),
             );
           },
           borderRadius: BorderRadius.circular(100),
@@ -94,7 +103,7 @@ class ElvanSettingsDropdown extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  value.toLowerCase().tr(context, ref),
+                  _getLocalizedSettingsValue(context, ref, value),
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w400,

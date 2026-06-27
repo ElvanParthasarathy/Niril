@@ -6,13 +6,9 @@ import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_pagudhi_thalaipu_kooru.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../../../../adippadai/nilaimai/achu_mozhi_facade.dart';
-import '../../../../adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
-import '../../../../adippadai/iru_mozhi/iru_mozhi_niruvanam_udhavi.dart';
-import '../../../../adippadai/oru_mozhi/oru_mozhi_vazhanguthigal.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
-import 'koorugal/elvan_thiruthi_keezhvirivu.dart';
+import '../koorugal/elvan_niruvanam_keezhvirivu_kooru.dart';
 
 /// A shared wrapper that enforces Business Profile selection before 
 /// allowing interaction with the editor form.
@@ -36,10 +32,6 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profiles = ref.watch(NiruvanaTharavugalListProvider);
-    final isSilk = ref.watch(appModeProvider) != AppMode.coolie;
-    final isBilingual = ref.watch(bilingualProvider);
-    final mudhanmaiMozhi = ref.watch(primaryLanguageProvider);
-    final irandaamMozhi = ref.watch(secondaryLanguageProvider);
 
     // Auto-select if only one profile exists
     if (profiles.length == 1 && selectedNiruvanamId == null) {
@@ -59,38 +51,11 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
               children: [
                 Expanded(
                   child: Builder(builder: (context) {
-                    final profilesMap = {
-                      for (final p in profiles)
-                        IruMozhiNiruvanamUdhavi.mudhanmaiPeyar(p, mudhanmaiMozhi, irandaamMozhi): p
-                    };
-                    final subtitlesMap = {
-                      for (final p in profiles)
-                        IruMozhiNiruvanamUdhavi.mudhanmaiPeyar(p, mudhanmaiMozhi, irandaamMozhi): IruMozhiNiruvanamUdhavi.thunaiPeyar(p, isBilingual, isSilk, irandaamMozhi)
-                    };
-
-                    final placeholder =
-                        K.niruvanaththaithThaernhedu.tr(context, ref);
-                    final currentValue = selectedNiruvanamId == null
-                        ? placeholder
-                        : profilesMap.entries
-                            .firstWhere(
-                              (e) => e.value.id == selectedNiruvanamId,
-                              orElse: () => profilesMap.entries.first,
-                            )
-                            .key;
-
-                    return ElvanThiruthiKeezhvirivu(
-                      label: placeholder, // Properly set the label so it shows in bottom sheet
-                      hideLabel: true, // Hide it on the editor form
-                      value: currentValue,
-                      items: profilesMap.keys.toList(),
-                      subtitles: subtitlesMap,
-                      onChanged: (String newValue) {
-                        onChanged(profilesMap[newValue]);
-                      },
-                      onClear: selectedNiruvanamId != null
-                          ? () => onChanged(null)
-                          : null,
+                    return ElvanNiruvanamKeezhvirivuKooru(
+                      selectedNiruvanamId: selectedNiruvanamId,
+                      hideLabel: true,
+                      showClearButton: true,
+                      onChanged: (p) => onChanged(p),
                     );
                   }),
                 ),

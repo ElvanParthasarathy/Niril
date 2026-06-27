@@ -11,7 +11,9 @@ class ElvanSnackbar {
     _overlayEntry?.remove();
     _overlayEntry = null;
 
-    final overlay = Overlay.of(context);
+    final overlay = Overlay.maybeOf(context, rootOverlay: true);
+    if (overlay == null) return;
+    
     final bottomOffset = showAboveNavbar ? 104.0 : 24.0;
 
     _overlayEntry = OverlayEntry(

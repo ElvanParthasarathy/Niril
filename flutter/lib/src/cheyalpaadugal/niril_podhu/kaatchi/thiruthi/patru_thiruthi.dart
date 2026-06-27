@@ -16,7 +16,7 @@ import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import 'koorugal/patru_pattiyal_theervu_maeladukku.dart';
 import 'koorugal/patru_thiruthi_paguthigal.dart';
 import '../koorugal/elvan_pattiyal_tharavugal_kooru.dart';
-import '../koorugal/vaangunar_thaedu_kooru.dart';
+import '../koorugal/elvan_vaangunar_keezhvirivu_kooru.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
@@ -494,13 +494,21 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
         ] else ...[
           // Advance Mode — manual selection
           if (_selectedVaangunarId == null)
-            VaangunarThaeduKooru(
-              
-              selectedId: _selectedVaangunarId,
-              onSelected: (v) {
-                setState(() {
-                  _selectedVaangunarId = v.id;
-                  _vaangunarPeyarMap = Map<String, String>.from(v.peyar);
+            ElvanVaangunarKeezhvirivuKooru(
+              selectedVaangunarId: _selectedVaangunarId,
+              hideLabel: true,
+              showClearButton: true,
+              onChanged: (v) {
+                if (v == null) {
+                  setState(() {
+                    _selectedVaangunarId = null;
+                    _vaangunarPeyarMap = {};
+                    _vaangunarMunvariMap = {};
+                  });
+                } else {
+                  setState(() {
+                    _selectedVaangunarId = v.id;
+                    _vaangunarPeyarMap = Map<String, String>.from(v.peyar);
 
                   final tamilAddr = [
                     if (v.oor['Tamil']?.isNotEmpty == true) v.oor['Tamil'],
@@ -523,6 +531,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                         : (v.mugavari['English'] ?? ''),
                   };
                 });
+                }
               },
             )
           else

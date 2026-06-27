@@ -9,7 +9,7 @@ import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_keezhvirivu.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
-import '../../../../../niril_podhu/kaatchi/koorugal/vaangunar_thaedu_kooru.dart';
+import '../../../../../niril_podhu/kaatchi/koorugal/elvan_vaangunar_keezhvirivu_kooru.dart';
 
 /// §1 Customer — client search + company dropdown + saved-details card.
 class KooliVaangunarKooru extends ConsumerWidget {
@@ -37,18 +37,17 @@ class KooliVaangunarKooru extends ConsumerWidget {
       final customerColumn = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 12, bottom: 6),
-            child: Text(K.vaangunarPeyarThaedu.tr(context, ref),
-                style: tt.bodySmall?.copyWith(
-                  color: cs.onSurfaceVariant,
-                  fontSize: 12,
-                )),
-          ),
-          VaangunarThaeduKooru(
-            selectedId: selectedVaangunarId,
-            onSelected: onVaangunarSelected,
-            onCleared: onVaangunarCleared,
+          ElvanVaangunarKeezhvirivuKooru(
+            selectedVaangunarId: selectedVaangunarId,
+            hideLabel: true,
+            showClearButton: true,
+            onChanged: (vaangunar) {
+              if (vaangunar == null) {
+                onVaangunarCleared();
+              } else {
+                onVaangunarSelected(vaangunar);
+              }
+            },
           ),
           if (selectedVaangunar != null) ...[
             const SizedBox(height: 12),

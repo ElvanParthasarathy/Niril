@@ -50,6 +50,7 @@ Future<void> showElvanSelectionBottomSheet({
   required String currentValue,
   required ValueChanged<String> onSelected,
   Map<String, String>? subtitles,
+  String Function(BuildContext, WidgetRef, String)? itemLabelBuilder,
 }) {
   return showElvanBottomSheet(
     context: context,
@@ -63,6 +64,7 @@ Future<void> showElvanSelectionBottomSheet({
           onSelected(val);
         },
         subtitles: subtitles,
+        itemLabelBuilder: itemLabelBuilder,
       );
     },
   );
@@ -74,6 +76,7 @@ class ElvanSelectionBottomSheet extends ConsumerWidget {
   final String currentValue;
   final ValueChanged<String> onSelected;
   final Map<String, String>? subtitles;
+  final String Function(BuildContext, WidgetRef, String)? itemLabelBuilder;
 
   const ElvanSelectionBottomSheet({
     super.key,
@@ -82,6 +85,7 @@ class ElvanSelectionBottomSheet extends ConsumerWidget {
     required this.currentValue,
     required this.onSelected,
     this.subtitles,
+    this.itemLabelBuilder,
   });
 
   @override
@@ -110,6 +114,11 @@ class ElvanSelectionBottomSheet extends ConsumerWidget {
             final isSelected = item == currentValue;
             final subtitle = subtitles?[item];
             
+            String labelText = item;
+            if (itemLabelBuilder != null) {
+              labelText = itemLabelBuilder!(context, ref, item);
+            }
+            
             return InkWell(
               onTap: () {
                 onSelected(item);
@@ -124,7 +133,7 @@ class ElvanSelectionBottomSheet extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            item,
+                            labelText,
                             style: TextStyle(
                               fontSize: 18, // Fixed: larger and more premium font size
                               fontWeight:
