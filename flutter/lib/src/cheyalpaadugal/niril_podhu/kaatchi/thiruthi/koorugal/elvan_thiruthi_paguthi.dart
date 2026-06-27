@@ -51,7 +51,7 @@ class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(isActive: true),
+            // _buildHeader(isActive: true), // Removed to reduce clutter
             Padding(
               padding: const EdgeInsets.only(top: 4.0),
               child: LayoutBuilder(
@@ -61,15 +61,17 @@ class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
                     spacing: 16,
                     runSpacing: 16,
                     children: filteredChildren.map((child) {
-                      bool isBilingualField = isBilingual && 
-                          (child is ElvanIrumozhiPulan || child is ElvanIrumozhiAutocomplete);
-                      
+                      bool isBilingualField = isBilingual &&
+                          (child is ElvanIrumozhiPulan ||
+                              child is ElvanIrumozhiAutocomplete);
+
                       if (child is ElvanKooliIrumozhiPulan) {
                         isBilingualField = !child.forceStacked;
                       }
-                      
-                      final isFull = child is ElvanFullWidth || isBilingualField;
-                      
+
+                      final isFull =
+                          child is ElvanFullWidth || isBilingualField;
+
                       return SizedBox(
                         width: isFull ? constraints.maxWidth : itemWidth,
                         child: child,
@@ -90,7 +92,7 @@ class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeader(isActive: true),
+          // _buildHeader(isActive: true), // Removed to reduce clutter
           Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: Column(
@@ -98,7 +100,8 @@ class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
               children: [
                 for (int i = 0; i < widget.children.length; i++) ...[
                   widget.children[i],
-                  if (i < widget.children.length - 1) const SizedBox(height: 24),
+                  if (i < widget.children.length - 1)
+                    const SizedBox(height: 24),
                 ],
               ],
             ),
@@ -110,7 +113,7 @@ class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
 
   Widget _buildHeader({required bool isActive}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
       child: Row(
