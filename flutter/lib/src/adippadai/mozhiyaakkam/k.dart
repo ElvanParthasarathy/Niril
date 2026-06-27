@@ -20,7 +20,7 @@ abstract final class K {
   static const mozhiThaervu = 'mozhiThaervu';
   static const viruppaMozhiThaervu = 'viruppaMozhiThaervu';
   static const vanakkam = 'vanakkam';
-  static const indruEndhachCheyalmurai = 'indruEndhachCheyalmurai';
+  static const endhachCheyalmurai = 'endhachCheyalmurai';
   static const thodangugaPtn = 'thodangugaPtn';
   static const thodaravum = 'thodaravum';
   static const cheyaliyaiAnugaUlnuzhaiyavum = 'cheyaliyaiAnugaUlnuzhaiyavum';

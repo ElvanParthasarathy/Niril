@@ -121,7 +121,7 @@ const Map<String, String> ta = {
   'oodhaa': 'ஊதா',
   'azhikkiradhu': 'அழிக்கிறது...',
   'vanakkam': 'வணக்கம்!',
-  'indruEndhachCheyalmurai': 'இன்று எந்தச் செயல்முறை?',
+  'endhachCheyalmurai': 'எந்தச் செயல்முறை?',
   'cheyaliyaiAnugaUlnuzhaiyavum': 'செயலியை அணுக உள்நுழையவும்',
   'ulnuzhaiga': 'உள்நுழைக',
   'patrucheettuTharavugal': 'பற்றுச்சீட்டு தரவுகள்',

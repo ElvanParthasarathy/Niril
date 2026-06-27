@@ -108,7 +108,7 @@ const Map<String, String> en = {
   'nirilPattu': 'Niril Silk',
   'meendumThaedu': 'Scan Again',
   'vanakkam': 'Vanakkam!',
-  'indruEndhachCheyalmurai': 'Which workspace today?',
+  'endhachCheyalmurai': 'Which workspace?',
   'veliyaerugiradhu': 'Signing out...',
   'aluvalkaiyoppam': 'Authorized Signatory Name',
   'kaiyaalu': 'Manage',

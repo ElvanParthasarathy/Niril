@@ -124,7 +124,7 @@ const Map<String, String> taLatn = {
   'oodhaa': 'Oodhaa',
   'azhikkiradhu': 'Azhikkiradhu...',
   'vanakkam': 'Vanakkam!',
-  'indruEndhachCheyalmurai': 'Indru Endhach Cheyalmurai?',
+  'endhachCheyalmurai': 'Endhach Cheyalmurai?',
   'cheyaliyaiAnugaUlnuzhaiyavum': 'Cheyaliyai Anuga Ulnuzhaiyavum',
   'ulnuzhaiga': 'Ulnuzhaiga',
   'vidupattaPulangalaiNirappavum': 'Vidupatta pulangalai nirappavum.',
