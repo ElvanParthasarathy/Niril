@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
@@ -25,9 +26,10 @@ class PattuPattiyalVagaiKooru extends ConsumerWidget {
         initialValue: pattiyalVagai,
         decoration: InputDecoration(
           border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(24)),
-          contentPadding: const EdgeInsets.symmetric(
-              horizontal: 20, vertical: 14),
+              borderRadius: BorderRadius.circular(ElvanThiruthiMarabu.borderRadius),
+              borderSide: BorderSide.none),
+          contentPadding: ElvanThiruthiMarabu.contentPadding,
+          constraints: ElvanThiruthiMarabu.singleLineConstraints,
         ),
         items: [
           DropdownMenuItem(

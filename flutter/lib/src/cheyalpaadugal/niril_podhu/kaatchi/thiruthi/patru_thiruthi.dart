@@ -1,4 +1,5 @@
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -494,6 +495,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
             else
               InputDecorator(
                 decoration: InputDecoration(
+                  constraints: ElvanThiruthiMarabu.singleLineConstraints,
                   isDense: true,
                   filled: true,
                   fillColor: Theme.of(context)
@@ -661,6 +663,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                     inputFormatters: ElvanVadivamaippigal.enngalMattum,
                     autofocus: true,
                     decoration: InputDecoration(
+                      constraints: ElvanThiruthiMarabu.singleLineConstraints,
                       hintText: '01',
                       border: OutlineInputBorder(
                         borderRadius: const BorderRadius.horizontal(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -144,7 +145,7 @@ class AccountSecuritySection extends ConsumerWidget {
         decoration: InputDecoration(
           hintText: K.minnanjalaiUrudhiseiga.tr(context, ref),
           hintStyle: TextStyle(
-            fontSize: 13,
+            fontSize: ElvanThiruthiMarabu.fontSize,
             color:
                 Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
           ),
@@ -161,8 +162,8 @@ class AccountSecuritySection extends ConsumerWidget {
                 .onSurface
                 .withValues(alpha: 0.08);
           }),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: ElvanThiruthiMarabu.contentPadding,
+          constraints: ElvanThiruthiMarabu.singleLineConstraints,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(100),
             borderSide: BorderSide.none,
@@ -177,7 +178,7 @@ class AccountSecuritySection extends ConsumerWidget {
           ),
         ),
         style: TextStyle(
-          fontSize: 13,
+          fontSize: ElvanThiruthiMarabu.fontSize,
           color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
@@ -194,7 +195,7 @@ class AccountSecuritySection extends ConsumerWidget {
             decoration: InputDecoration(
               hintText: K.kadavuchol.tr(context, ref),
               hintStyle: TextStyle(
-                fontSize: 13,
+                fontSize: ElvanThiruthiMarabu.fontSize,
                 color: Theme.of(context)
                     .colorScheme
                     .onSurface
@@ -213,8 +214,8 @@ class AccountSecuritySection extends ConsumerWidget {
                     .onSurface
                     .withValues(alpha: 0.08);
               }),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              contentPadding: ElvanThiruthiMarabu.contentPadding,
+              constraints: ElvanThiruthiMarabu.singleLineConstraints,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(100),
                 borderSide: BorderSide.none,
@@ -229,7 +230,7 @@ class AccountSecuritySection extends ConsumerWidget {
               ),
             ),
             style: TextStyle(
-              fontSize: 13,
+              fontSize: ElvanThiruthiMarabu.fontSize,
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),

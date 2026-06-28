@@ -4,6 +4,7 @@ import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku/elvan_kizh_maeladukku.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ElvanSettingsSwitch — A standard switch with Elvan's monochrome styling
@@ -235,6 +236,7 @@ class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
                   ),
                   decoration: InputDecoration(
                     isDense: true,
+                    constraints: ElvanThiruthiMarabu.singleLineConstraints,
                     filled: true,
                     fillColor: WidgetStateColor.resolveWith((states) {
                       if (states.contains(WidgetState.focused)) {
@@ -260,7 +262,7 @@ class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
                             builder: (context, value, child) {
                               if (value.text.isNotEmpty) {
                                 return IconButton(
-                                  icon: const Icon(Icons.close, size: 20),
+                                  icon: Icon(Icons.close, size: ElvanThiruthiMarabu.iconSize),
                                   color: Theme.of(context)
                                       .colorScheme
                                       .onSurface

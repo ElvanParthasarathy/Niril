@@ -1,4 +1,5 @@
 import 'package:elvan_niril/src/adippadai/vazhikaattal/niril_nav.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -90,6 +91,7 @@ class _PatruPattiyalTheervuPagudhiState
           borderRadius: BorderRadius.circular(100),
           child: InputDecorator(
             decoration: InputDecoration(
+              constraints: ElvanThiruthiMarabu.singleLineConstraints,
               isDense: true,
               filled: true,
               fillColor: WidgetStateColor.resolveWith((states) {

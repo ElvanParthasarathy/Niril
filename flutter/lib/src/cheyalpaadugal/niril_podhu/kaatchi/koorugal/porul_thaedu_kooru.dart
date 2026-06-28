@@ -1,4 +1,5 @@
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
@@ -199,6 +200,7 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
       borderRadius: BorderRadius.circular(100),
       child: InputDecorator(
         decoration: InputDecoration(
+          constraints: ElvanThiruthiMarabu.singleLineConstraints,
           isDense: true,
           filled: true,
           fillColor: WidgetStateColor.resolveWith((states) {
@@ -231,6 +233,7 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
           children: [
               Icon(
                 Icons.inventory_2_rounded,
+                size: ElvanThiruthiMarabu.iconSize,
                 color: colorScheme.onSurfaceVariant,
               ),
               const SizedBox(width: 12),
@@ -238,11 +241,12 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
                 child: Text(
                   text,
                   style: isHint
-                      ? textTheme.bodyLarge?.copyWith(
+                      ? TextStyle(
+                          fontSize: ElvanThiruthiMarabu.fontSize,
                           color: colorScheme.onSurfaceVariant
                               .withValues(alpha: 0.7),
                         )
-                      : textTheme.bodyLarge,
+                      : TextStyle(fontSize: ElvanThiruthiMarabu.fontSize),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -250,11 +254,12 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
               if (onClear != null)
                 GestureDetector(
                   onTap: onClear,
-                  child: const Icon(Icons.clear_rounded, size: 20),
+                  child: Icon(Icons.clear_rounded, size: ElvanThiruthiMarabu.iconSize),
                 )
               else
                 Icon(
                   Icons.arrow_drop_down,
+                  size: ElvanThiruthiMarabu.iconSize,
                   color: colorScheme.onSurfaceVariant,
                 ),
             ],

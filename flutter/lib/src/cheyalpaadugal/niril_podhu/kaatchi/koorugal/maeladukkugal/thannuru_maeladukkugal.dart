@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -183,8 +184,8 @@ void showNewProfileModal({
                   .onSurface
                   .withValues(alpha: 0.08);
             }),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: ElvanThiruthiMarabu.contentPadding,
+            constraints: ElvanThiruthiMarabu.singleLineConstraints,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(100),
               borderSide: BorderSide.none,
@@ -230,8 +231,8 @@ void showNewProfileModal({
                   .onSurface
                   .withValues(alpha: 0.08);
             }),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: ElvanThiruthiMarabu.contentPadding,
+            constraints: ElvanThiruthiMarabu.singleLineConstraints,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(100),
               borderSide: BorderSide.none,

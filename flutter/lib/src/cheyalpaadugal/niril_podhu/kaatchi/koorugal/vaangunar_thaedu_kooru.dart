@@ -5,6 +5,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../kalanjiyam/vaangunar_nilaimai.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // வணிகர் தேடு கூறு — Customer Picker Autocomplete
@@ -153,17 +154,19 @@ class _VaangunarThaeduKooruState extends ConsumerState<VaangunarThaeduKooru> {
               style: theme.textTheme.bodyLarge,
               decoration: InputDecoration(
                 isDense: true,
+                constraints: ElvanThiruthiMarabu.singleLineConstraints,
                 labelText: K.vaangunargal.tr(context, ref),
                 hintText: K.vaangunargal.tr(context, ref),
                 prefixIcon: Icon(
                   Icons.person_search_rounded,
+                  size: ElvanThiruthiMarabu.iconSize,
                   color: colorScheme.onSurfaceVariant,
                 ),
                 suffixIcon: fieldController.text.isNotEmpty
                     ? IconButton(
                         icon: Icon(
                           Icons.close,
-                          size: 18,
+                          size: ElvanThiruthiMarabu.iconSize,
                           color: colorScheme.onSurfaceVariant,
                         ),
                         onPressed: () {

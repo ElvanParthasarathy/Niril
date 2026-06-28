@@ -2,6 +2,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
@@ -423,7 +424,7 @@ class _AuthInputState extends State<AuthInput> {
                 onChanged: widget.onChange,
                 textAlignVertical: TextAlignVertical.center,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: ElvanThiruthiMarabu.fontSize,
                   fontWeight: FontWeight.w500,
                   color: textColor,
                 ),
@@ -447,7 +448,7 @@ class _AuthInputState extends State<AuthInput> {
                                 : Icons.visibility,
                             color:
                                 isDark ? Colors.white : const Color(0xFF111111),
-                            size: 20,
+                            size: ElvanThiruthiMarabu.iconSize,
                           ),
                           onPressed: () {
                             setState(() {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 
 /// A standard pill-shaped text field component designed specifically for Elvan Editors (Thiruthi).
 /// It visually matches the standard Keezhvirivu (Dropdown) and other editor components.
@@ -80,6 +81,9 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
           maxLines: maxLines,
           style: const TextStyle(fontSize: 14),
           decoration: InputDecoration(
+            constraints: (maxLines == null || maxLines! > 1) 
+                ? ElvanThiruthiMarabu.multiLineConstraints 
+                : ElvanThiruthiMarabu.singleLineConstraints,
             isDense: true,
             prefixText: prefixText,
             suffixText: suffixText,
@@ -88,30 +92,18 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
             suffixIcon: suffixIcon,
             hintText: hintText,
             filled: true,
-            fillColor: WidgetStateColor.resolveWith((states) {
-              if (states.contains(WidgetState.focused)) {
-                return Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.12);
-              }
-              return Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.08);
-            }),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            fillColor: ElvanThiruthiMarabu.buildFillColor(context),
+            contentPadding: ElvanThiruthiMarabu.contentPadding,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
+              borderRadius: BorderRadius.circular(ElvanThiruthiMarabu.borderRadius),
               borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
+              borderRadius: BorderRadius.circular(ElvanThiruthiMarabu.borderRadius),
               borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(100),
+              borderRadius: BorderRadius.circular(ElvanThiruthiMarabu.borderRadius),
               borderSide: BorderSide.none,
             ),
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import 'package:elvan_niril/src/koorugal/maeladukkugal/elvan_kizh_maeladukku/elvan_kizh_maeladukku.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 
 /// A dropdown component designed specifically for the Elvan Editors (Thiruthi).
 /// It visually matches the standard text fields (same padding and background alpha).
@@ -77,37 +78,21 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
           borderRadius: BorderRadius.circular(100),
           child: InputDecorator(
             decoration: InputDecoration(
+              constraints: ElvanThiruthiMarabu.singleLineConstraints,
               isDense: true,
               filled: true,
-              fillColor: WidgetStateColor.resolveWith((states) {
-                if (states.contains(WidgetState.focused) ||
-                    states.contains(WidgetState.hovered)) {
-                  return Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.12);
-                }
-                return Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.08);
-              }),
-              contentPadding: const EdgeInsets.only(
-                left: 20,
-                right: 20,
-                top: 16,
-                bottom: 16,
-              ),
+              fillColor: ElvanThiruthiMarabu.buildFillColor(context),
+              contentPadding: ElvanThiruthiMarabu.contentPadding,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(ElvanThiruthiMarabu.borderRadius),
                 borderSide: BorderSide.none,
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(ElvanThiruthiMarabu.borderRadius),
                 borderSide: BorderSide.none,
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(ElvanThiruthiMarabu.borderRadius),
                 borderSide: BorderSide.none,
               ),
             ),
@@ -136,7 +121,7 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
                       padding: const EdgeInsets.only(right: 8),
                       child: Icon(
                         Icons.close_rounded,
-                        size: 20,
+                        size: ElvanThiruthiMarabu.iconSize,
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
@@ -146,7 +131,7 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
                   ),
                 Icon(
                   Icons.keyboard_arrow_down_rounded,
-                  size: 24,
+                  size: ElvanThiruthiMarabu.iconSize,
                   color: Theme.of(context)
                       .colorScheme
                       .onSurface

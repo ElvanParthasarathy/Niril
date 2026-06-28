@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // பட்டியல் நாள் கூறு — Date Picker Widget
@@ -91,31 +92,21 @@ class PattiyalNaalKooru extends StatelessWidget {
           onTap: () => _openDatePicker(context),
           child: InputDecorator(
             decoration: InputDecoration(
+              constraints: ElvanThiruthiMarabu.singleLineConstraints,
               isDense: true,
               filled: true,
-              fillColor: WidgetStateColor.resolveWith((states) {
-                if (states.contains(WidgetState.focused) ||
-                    states.contains(WidgetState.hovered)) {
-                  return colorScheme.onSurface.withValues(alpha: 0.12);
-                }
-                return colorScheme.onSurface.withValues(alpha: 0.08);
-              }),
-              contentPadding: const EdgeInsets.only(
-                left: 20,
-                right: 20,
-                top: 16,
-                bottom: 16,
-              ),
+              fillColor: ElvanThiruthiMarabu.buildFillColor(context),
+              contentPadding: ElvanThiruthiMarabu.contentPadding,
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(ElvanThiruthiMarabu.borderRadius),
                 borderSide: BorderSide.none,
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(ElvanThiruthiMarabu.borderRadius),
                 borderSide: BorderSide.none,
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(ElvanThiruthiMarabu.borderRadius),
                 borderSide: BorderSide.none,
               ),
             ),
@@ -124,13 +115,14 @@ class PattiyalNaalKooru extends StatelessWidget {
               children: [
                 Icon(
                   Icons.calendar_today_rounded,
-                  size: 20,
+                  size: ElvanThiruthiMarabu.iconSize,
                   color: colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(width: 10),
                 Text(
                   _dateFormat.format(selectedDate),
-                  style: theme.textTheme.bodyLarge?.copyWith(
+                  style: TextStyle(
+                    fontSize: ElvanThiruthiMarabu.fontSize,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0.5,
                   ),
@@ -138,7 +130,7 @@ class PattiyalNaalKooru extends StatelessWidget {
                 const SizedBox(width: 6),
                 Icon(
                   Icons.arrow_drop_down_rounded,
-                  size: 22,
+                  size: ElvanThiruthiMarabu.iconSize,
                   color: colorScheme.onSurfaceVariant,
                 ),
               ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 
 class ElvanParindhuraiUlleedu extends StatefulWidget {
   final TextEditingController controller;
@@ -149,6 +150,7 @@ class _ElvanParindhuraiUlleeduState extends State<ElvanParindhuraiUlleedu> {
                 isDense: true,
                 suffixText: widget.suffixText,
                 filled: true,
+                constraints: ElvanThiruthiMarabu.singleLineConstraints,
                 fillColor: WidgetStateColor.resolveWith((states) {
                   if (states.contains(WidgetState.focused)) {
                     return Theme.of(context)
@@ -167,7 +169,7 @@ class _ElvanParindhuraiUlleeduState extends State<ElvanParindhuraiUlleedu> {
                   borderRadius: BorderRadius.circular(100),
                   borderSide: BorderSide.none,
                 ),
-                suffixIcon: const Icon(Icons.arrow_drop_down),
+                suffixIcon: Icon(Icons.arrow_drop_down, size: ElvanThiruthiMarabu.iconSize),
               ),
             ),
           ),
