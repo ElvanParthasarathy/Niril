@@ -638,11 +638,21 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
         ),
 
       // Note
-      ElvanThiruthiUlleedu(
-        controller: _ullkurippuCtrl,
-        label: K.kurippu.tr(context, ref),
-        maxLines: 3,
-        onChanged: (val) => _ullkurippu = val,
+      ElvanFullWidth(
+        child: Row(
+          children: [
+            Expanded(
+              child: ElvanThiruthiUlleedu(
+                controller: _ullkurippuCtrl,
+                label: K.kurippu.tr(context, ref),
+                maxLines: 3,
+                onChanged: (val) => _ullkurippu = val,
+              ),
+            ),
+            const SizedBox(width: 16),
+            const Expanded(child: SizedBox()),
+          ],
+        ),
       ),
     ];
   }

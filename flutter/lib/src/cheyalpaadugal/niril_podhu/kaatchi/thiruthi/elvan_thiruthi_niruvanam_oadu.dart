@@ -45,7 +45,7 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (profiles.length > 1) ...[
-          ElvanPagudhiThalaipu(en: 1, thalaipu: K.niruvanam.tr(context, ref)),
+          ElvanPagudhiThalaipu(en: 1, thalaipu: K.niruvanathTharavu.tr(context, ref)),
           ElvanThiruthiThalaippu(label: K.niruvanam.tr(context, ref)),
           LayoutBuilder(
             builder: (context, constraints) {

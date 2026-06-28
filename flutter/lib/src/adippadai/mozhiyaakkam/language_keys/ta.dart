@@ -90,6 +90,7 @@ const Map<String, String> ta = {
   'niril': 'நிறிள்',
   'nirilthodanga': 'நிறிளை தொடங்க கீழ் உள்ள பொத்தானை தட்டவும்',
   'niruvanam': 'நிறுவனம்',
+  'niruvanathTharavu': 'நிறுவனத் தரவு',
   'niruvanangal': 'நிறுவனங்கள்',
   'niruvanathinOavuru': 'நிறுவனத்தின் ஓவுரு',
   'niruvanathinPeyar': 'நிறுவனத்தின் பெயர்',
@@ -311,9 +312,9 @@ const Map<String, String> ta = {
   'varipPattiyal': 'வரிப் பட்டியல்',
 
   // ── Receipts & Payments (Patrucheettu) ──
-  'cheluthiyaTharavu': 'செலுத்திய தரவு',
-  'cheluthumMuraiThaernhedu': 'செலுத்தும் முறையைத் தேர்ந்தெடு',
-  'cheluthumMuraiVinmeen': 'செலுத்தும் முறை *',
+  'cheluthiyaTharavu': 'கட்டணத் தரவு',
+  'cheluthumMuraiThaernhedu': 'கட்டண முறையைத் தேர்ந்தெடு',
+  'cheluthumMuraiVinmeen': 'கட்டண முறை *',
   'kaasu': 'காசு',
   'kanakkuEnIfsc': 'வங்கித் தரவுகள்',
   'koolipPatrucheettuThiruthi': 'கூலிப் பற்றுச்சீட்டு திருத்தி',

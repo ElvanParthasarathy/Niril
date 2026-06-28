@@ -92,6 +92,7 @@ class K {
   static const String niril = 'niril';
   static const String nirilthodanga = 'nirilthodanga';
   static const String niruvanam = 'niruvanam';
+  static const String niruvanathTharavu = 'niruvanathTharavu';
   static const String niruvanangal = 'niruvanangal';
   static const String niruvanathinOavuru = 'niruvanathinOavuru';
   static const String niruvanathinPeyar = 'niruvanathinPeyar';

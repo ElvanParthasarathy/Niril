@@ -90,6 +90,7 @@ const Map<String, String> en = {
   'niril': 'Niril',
   'nirilthodanga': 'Tap "Get Started" to continue with Niril.',
   'niruvanam': 'Company',
+  'niruvanathTharavu': 'Company Detail',
   'niruvanangal': 'Companies',
   'niruvanathinOavuru': 'Company Logo',
   'niruvanathinPeyar': 'Company Name',

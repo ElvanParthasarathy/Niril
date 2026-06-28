@@ -90,6 +90,7 @@ const Map<String, String> taLatn = {
   'niril': 'Niril',
   'nirilthodanga': 'Nirilai Thodanga Keezh Ulla Pothaanai Thattavum',
   'niruvanam': 'Niruvanam',
+  'niruvanathTharavu': 'Niruvanath Tharavu',
   'niruvanangal': 'Niruvanangal',
   'niruvanathinOavuru': 'Niruvanathin Oavuru',
   'niruvanathinPeyar': 'Niruvanathin Peyar',
@@ -311,9 +312,9 @@ const Map<String, String> taLatn = {
   'varipPattiyal': 'Varip Pattiyal',
 
   // ── Receipts & Payments (Patrucheettu) ──
-  'cheluthiyaTharavu': 'Cheluthiya Tharavu',
-  'cheluthumMuraiThaernhedu': 'Cheluthum Muraiyai Thaerndhedu',
-  'cheluthumMuraiVinmeen': 'Cheluthum Murai *',
+  'cheluthiyaTharavu': 'Kattanath Tharavu',
+  'cheluthumMuraiThaernhedu': 'Kattana Muraiyai Thaerndhedu',
+  'cheluthumMuraiVinmeen': 'Kattana Murai *',
   'kaasu': 'Kaasu',
   'kanakkuEnIfsc': 'Vangi Tharavugal',
   'koolipPatrucheettuThiruthi': 'Koolip Patrucheettu Thiruthi',
