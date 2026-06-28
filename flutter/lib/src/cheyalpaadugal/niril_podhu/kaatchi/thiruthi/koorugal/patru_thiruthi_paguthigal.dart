@@ -147,8 +147,8 @@ class _PatruPattiyalTheervuPagudhiState extends ConsumerState<PatruPattiyalTheer
                               color: widget.isDark ? Colors.white : Colors.black87,
                             )),
                         backgroundColor: widget.isDark
-                            ? Colors.white.withValues(alpha: 0.12)
-                            : Colors.black.withValues(alpha: 0.08),
+                            ? Colors.white.withValues(alpha: 0.08)
+                            : Colors.black.withValues(alpha: 0.05),
                         deleteIconColor: widget.isDark ? Colors.white70 : Colors.black54,
                         shape: const StadiumBorder(),
                         side: BorderSide.none,
