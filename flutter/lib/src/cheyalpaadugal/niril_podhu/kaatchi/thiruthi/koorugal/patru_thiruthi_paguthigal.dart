@@ -177,9 +177,10 @@ class _PatruPattiyalTheervuPagudhiState
                             horizontal: 10.0, vertical: 6.0),
                         decoration: ShapeDecoration(
                           shape: const StadiumBorder(),
-                          color: widget.isDark
-                              ? Colors.white.withValues(alpha: 0.08)
-                              : Colors.black.withValues(alpha: 0.05),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.08),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,

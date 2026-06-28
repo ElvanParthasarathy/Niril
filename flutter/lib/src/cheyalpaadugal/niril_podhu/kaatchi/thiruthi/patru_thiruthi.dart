@@ -687,7 +687,10 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: cs.onSurface.withValues(alpha: 0.03),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(100),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -721,14 +724,10 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     return Card(
       elevation: 0,
       margin: EdgeInsets.zero,
-      color: isDark
-          ? Colors.white.withValues(alpha: 0.05)
-          : Colors.black.withValues(alpha: 0.03),
+      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(100),
-        side: BorderSide(
-          color: isDark ? Colors.white12 : Colors.black12,
-        ),
+        side: BorderSide.none,
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
