@@ -145,13 +145,20 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     if (widget.editingEntry != null) return; // Don't regenerate for edits
 
     final kalanjiyam = ref.read(patruKalanjiyamProvider);
-    
+
     String bizShort = '';
     if (_selectedProfile?.kurumPeyar.isNotEmpty == true) {
       bizShort = _selectedProfile!.kurumPeyar;
     } else {
-      final bizName = _selectedProfile?.niruvanathinPeyar['English'] ?? _selectedProfile?.niruvanathinPeyar['Tamil'] ?? 'BIZ';
-      bizShort = bizName.split(' ').where((w) => w.trim().isNotEmpty).map((w) => w[0]).join('').toUpperCase();
+      final bizName = _selectedProfile?.niruvanathinPeyar['English'] ??
+          _selectedProfile?.niruvanathinPeyar['Tamil'] ??
+          'BIZ';
+      bizShort = bizName
+          .split(' ')
+          .where((w) => w.trim().isNotEmpty)
+          .map((w) => w[0])
+          .join('')
+          .toUpperCase();
       if (bizShort.length > 4) bizShort = bizShort.substring(0, 4);
       if (bizShort.isEmpty) bizShort = 'BIZ';
     }
@@ -173,8 +180,10 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   // ── Save ──
   Future<void> _handleSave() async {
     // Validation
-    if (_selectedProfile == null || _selectedProfile!.kurumPeyar.trim().isEmpty) {
-      ElvanSnackbar.show(context, '${K.amaippugal.tr(context, ref)} - Kurum Peyar is required to save receipts.');
+    if (_selectedProfile == null ||
+        _selectedProfile!.kurumPeyar.trim().isEmpty) {
+      ElvanSnackbar.show(context,
+          '${K.amaippugal.tr(context, ref)} - Kurum Peyar is required to save receipts.');
       return;
     }
 
@@ -184,7 +193,8 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       return;
     }
     if (_thogai <= 0) {
-      ElvanSnackbar.show(context, K.thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum.tr(context, ref));
+      ElvanSnackbar.show(context,
+          K.thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum.tr(context, ref));
       return;
     }
     if (_seluthiVagai == null) {
@@ -200,7 +210,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
     try {
       final kalanjiyam = ref.read(patruKalanjiyamProvider);
-      
+
       // Build junction links — distribute amount across invoices (oldest first)
       final links = <PatruPattiyalInaippuTharavuru>[];
       double remaining = _thogai;
@@ -241,8 +251,8 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
       if (isDuplicate) {
         if (mounted) {
-          ElvanSnackbar.show(
-              context, '$_patruEn - ${K.patrucheettuEnYaerkanavaeUlladhu.tr(context, ref)}');
+          ElvanSnackbar.show(context,
+              '$_patruEn - ${K.patrucheettuEnYaerkanavaeUlladhu.tr(context, ref)}');
           setState(() => _isSaving = false);
         }
         return;
@@ -286,7 +296,8 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       }
     } catch (e) {
       if (mounted) {
-        ElvanSnackbar.show(context, '${K.chaemikkaIyalavillai.tr(context, ref)} $e');
+        ElvanSnackbar.show(
+            context, '${K.chaemikkaIyalavillai.tr(context, ref)} $e');
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -297,7 +308,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   Widget build(BuildContext context) {
     final invoicesAsync = ref.watch(pattiyalgalProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     if (widget.editingEntry == null &&
         _patruEn.isEmpty &&
         _selectedNiruvanamId != null) {
@@ -305,9 +316,10 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     }
 
     final isEditing = widget.editingEntry != null;
-    final title =
-        isEditing ? K.maatriyamai.tr(context, ref) : K.pudhiyaAakkam.tr(context, ref);
-    
+    final title = isEditing
+        ? K.maatriyamai.tr(context, ref)
+        : K.pudhiyaAakkam.tr(context, ref);
+
     final profiles = ref.watch(NiruvanaTharavugalListProvider);
     final baseIndex = profiles.length > 1 ? 1 : 0;
 
@@ -331,40 +343,40 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
             // ── Mode Dropdown ──
             Padding(
               padding: const EdgeInsets.only(bottom: 24.0),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final isDesktop = MediaQuery.sizeOf(context).width >= 800;
-                  final width = isDesktop ? (constraints.maxWidth - 16) / 2 : constraints.maxWidth;
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: SizedBox(
-                      width: width,
-                      child: ElvanThiruthiKeezhvirivu<String>(
-                        label: K.patrucheettuVagai.tr(context, ref),
-                        value: _mode == PatruMode.advance
-                            ? K.munthogai.tr(context, ref)
-                            : K.pattiyal.tr(context, ref),
-                        items: [
-                          K.pattiyal.tr(context, ref),
-                          K.munthogai.tr(context, ref),
-                        ],
-                        itemLabelBuilder: (ctx, ref, item) => item,
-                        onChanged: (String newValue) {
-                          setState(() {
-                            _mode = newValue == K.munthogai.tr(context, ref)
-                                ? PatruMode.advance
-                                : PatruMode.againstInvoice;
-                            if (_mode == PatruMode.advance) {
-                              _selectedInvoices.clear();
-                              _recalculateAmount();
-                            }
-                          });
-                        },
-                      ),
+              child: LayoutBuilder(builder: (context, constraints) {
+                final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+                final width = isDesktop
+                    ? (constraints.maxWidth - 16) / 2
+                    : constraints.maxWidth;
+                return Align(
+                  alignment: Alignment.centerLeft,
+                  child: SizedBox(
+                    width: width,
+                    child: ElvanThiruthiKeezhvirivu<String>(
+                      label: K.patrucheettuVagai.tr(context, ref),
+                      value: _mode == PatruMode.advance
+                          ? K.munthogai.tr(context, ref)
+                          : K.pattiyal.tr(context, ref),
+                      items: [
+                        K.pattiyal.tr(context, ref),
+                        K.munthogai.tr(context, ref),
+                      ],
+                      itemLabelBuilder: (ctx, ref, item) => item,
+                      onChanged: (String newValue) {
+                        setState(() {
+                          _mode = newValue == K.munthogai.tr(context, ref)
+                              ? PatruMode.advance
+                              : PatruMode.againstInvoice;
+                          if (_mode == PatruMode.advance) {
+                            _selectedInvoices.clear();
+                            _recalculateAmount();
+                          }
+                        });
+                      },
                     ),
-                  );
-                }
-              ),
+                  ),
+                );
+              }),
             ),
 
             // ── Section 1: Against Invoice ──
@@ -377,7 +389,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 24.0),
-                    child: _isLoadingInvoices 
+                    child: _isLoadingInvoices
                         ? const Padding(
                             padding: EdgeInsets.all(32.0),
                             child: Center(child: CircularProgressIndicator()),
@@ -476,32 +488,48 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
               ),
             ),
           ),
-
           if (_mode == PatruMode.againstInvoice) ...[
             if (_selectedInvoices.isNotEmpty)
               _buildCustomerCard(isDark, isLocked: true)
             else
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                decoration: BoxDecoration(
-                  color: isDark
+              InputDecorator(
+                decoration: InputDecoration(
+                  isDense: true,
+                  filled: true,
+                  fillColor: isDark
                       ? Colors.white.withValues(alpha: 0.05)
                       : Colors.black.withValues(alpha: 0.03),
-                  borderRadius: BorderRadius.circular(100),
-                  border: Border.all(
-                      color: isDark ? Colors.white12 : Colors.black12),
+                  contentPadding: const EdgeInsets.only(
+                    left: 20,
+                    right: 20,
+                    top: 16,
+                    bottom: 16,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(100),
+                    borderSide: BorderSide(
+                      color: isDark ? Colors.white12 : Colors.black12,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(100),
+                    borderSide: BorderSide(
+                      color: isDark ? Colors.white12 : Colors.black12,
+                    ),
+                  ),
                 ),
                 child: Row(
                   children: [
                     Icon(CupertinoIcons.info_circle_fill,
-                        size: 24,
+                        size: 18,
                         color: isDark ? Colors.white54 : Colors.black45),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         K.pattiyalThaervukkuPinVaangunarTharavugalNirappappadum
                             .tr(context, ref),
                         style: TextStyle(
+                            fontSize: 14,
                             color: isDark ? Colors.white70 : Colors.black87),
                       ),
                     ),
@@ -578,33 +606,33 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                 const SizedBox(width: 8),
                 InkWell(
                   borderRadius: BorderRadius.circular(100),
-                onTap: () {
-                  setState(() {
-                    if (_isPatruEnEditing) {
-                      final numPart = _patruEnCtrl.text.trim();
-                      if (numPart.isNotEmpty) {
-                        _patruEn = '$profilePrefix$numPart';
+                  onTap: () {
+                    setState(() {
+                      if (_isPatruEnEditing) {
+                        final numPart = _patruEnCtrl.text.trim();
+                        if (numPart.isNotEmpty) {
+                          _patruEn = '$profilePrefix$numPart';
+                        } else {
+                          _patruEn = '';
+                        }
+                        _isPatruEnEditing = false;
                       } else {
-                        _patruEn = '';
+                        _isPatruEnEditing = true;
+                        _patruEnCtrl.text = '';
                       }
-                      _isPatruEnEditing = false;
-                    } else {
-                      _isPatruEnEditing = true;
-                      _patruEnCtrl.text = '';
-                    }
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
-                  child: Icon(
-                    _isPatruEnEditing ? Icons.check : Icons.edit_outlined,
-                    size: 16,
-                    color: cs.primary,
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(4),
+                    child: Icon(
+                      _isPatruEnEditing ? Icons.check : Icons.edit_outlined,
+                      size: 16,
+                      color: cs.primary,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
           ),
           const SizedBox(height: 6),
           if (_isPatruEnEditing)
@@ -666,7 +694,9 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                 borderRadius: BorderRadius.circular(100),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: _patruEnCtrl.text.isNotEmpty || (_patruEn.isNotEmpty ? _patruEn : _previewPatruEn).isNotEmpty
+              child: _patruEnCtrl.text.isNotEmpty ||
+                      (_patruEn.isNotEmpty ? _patruEn : _previewPatruEn)
+                          .isNotEmpty
                   ? Text(
                       _patruEnCtrl.text.isNotEmpty
                           ? _patruEnCtrl.text
@@ -764,8 +794,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
         controller: _thogaiCtrl,
         label: K.thogaiVinmeen.tr(context, ref),
         prefixText: '₹ ',
-        keyboardType:
-            const TextInputType.numberWithOptions(decimal: true),
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
         inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
         onChanged: (val) {
           _thogai = double.tryParse(val) ?? 0.0;
@@ -778,7 +807,9 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
         value: _seluthiVagai,
         items: SeluthiVagai.values,
         itemLabelBuilder: (ctx, ref, mode) => mode.label(ctx, ref),
-        leadingBuilder: (ctx, ref, mode) => Icon(mode.icon, size: 18, color: Theme.of(ctx).colorScheme.onSurface.withValues(alpha: 0.7)),
+        leadingBuilder: (ctx, ref, mode) => Icon(mode.icon,
+            size: 18,
+            color: Theme.of(ctx).colorScheme.onSurface.withValues(alpha: 0.7)),
         onChanged: (val) {
           setState(() => _seluthiVagai = val);
         },
@@ -813,9 +844,9 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
         : allInvoices;
 
     PatruPattiyalTheervuMaeladukku.show(
-        context: context,
-        ref: ref,
-        invoices: filteredByBusiness,
+      context: context,
+      ref: ref,
+      invoices: filteredByBusiness,
       initialSelectedIds: Set<int>.from(_selectedInvoices.map((i) => i.id)),
       onConfirmed: (selected) {
         setState(() {
@@ -860,5 +891,4 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       _vaangunarMunvariMap = first.vaangunarMunvari.cast<String, String>();
     }
   }
-
 }
