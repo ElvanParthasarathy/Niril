@@ -494,6 +494,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
             else
               InputDecorator(
                 decoration: InputDecoration(
+                  constraints: const BoxConstraints(minHeight: 48),
                   isDense: true,
                   filled: true,
                   fillColor: Theme.of(context)
@@ -686,6 +687,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
           else
             InputDecorator(
               decoration: InputDecoration(
+                constraints: const BoxConstraints(minHeight: 48),
                 isDense: true,
                 filled: true,
                 fillColor: Theme.of(context)
