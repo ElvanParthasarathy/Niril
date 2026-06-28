@@ -85,26 +85,36 @@ class _PatruPattiyalTheervuPagudhiState
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // "Select Invoices" button
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton.icon(
-            onPressed: widget.onPickInvoices,
-            icon: const Icon(CupertinoIcons.doc_text, size: 18),
-            label: Text(
-              widget.selectedInvoices.isEmpty
-                  ? K.pattiyalgalaiThaernhedu.tr(context, ref)
-                  : '${widget.selectedInvoices.length} ${K.pattiyalgal.tr(context, ref)}',
-            ),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50),
+        Material(
+          color:
+              Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(100),
+          child: InkWell(
+            onTap: widget.onPickInvoices,
+            borderRadius: BorderRadius.circular(100),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    CupertinoIcons.doc_text,
+                    size: 18,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    widget.selectedInvoices.isEmpty
+                        ? K.pattiyalgalaiThaernhedu.tr(context, ref)
+                        : '${widget.selectedInvoices.length} ${K.pattiyalgal.tr(context, ref)}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                ],
               ),
-              backgroundColor: widget.isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.black.withValues(alpha: 0.05),
-              foregroundColor: widget.isDark ? Colors.white : Colors.black87,
-              elevation: 0,
             ),
           ),
         ),
