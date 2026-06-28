@@ -142,9 +142,18 @@ class _PatruPattiyalTheervuPagudhiState extends ConsumerState<PatruPattiyalTheer
                       padding: const EdgeInsets.only(right: 8.0),
                       child: Chip(
                         label: Text(inv.patrucheettuEn,
-                            style: const TextStyle(fontWeight: FontWeight.w600)),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: widget.isDark ? Colors.white : Colors.black87,
+                            )),
+                        backgroundColor: widget.isDark
+                            ? Colors.white.withValues(alpha: 0.12)
+                            : Colors.black.withValues(alpha: 0.08),
+                        deleteIconColor: widget.isDark ? Colors.white70 : Colors.black54,
+                        shape: const StadiumBorder(),
+                        side: BorderSide.none,
                         deleteIcon:
-                            const Icon(CupertinoIcons.xmark, size: 14),
+                            const Icon(CupertinoIcons.clear_thick_circled, size: 18),
                         onDeleted: () => widget.onRemoveInvoice(inv),
                       ),
                     );
