@@ -11,6 +11,7 @@ import 'src/adippadai/viruppangal_paniyagam.dart';
 import 'src/adippadai/thoatra_vazhanguthi.dart';
 import 'src/adippadai/nilaimai/seyali_nilaimai.dart';
 import 'src/adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import 'src/adippadai/mozhiyaakkam/elvan_material_localizations.dart';
 import 'src/cheyalpaadugal/ulnuzhaivu/kaatchi/muraimai_thaervu_thirai.dart';
 import 'src/cheyalpaadugal/ulnuzhaivu/kaatchi/thiraigal/nalvaravu_thirai.dart';
 import 'src/cheyalpaadugal/ulnuzhaivu/kaatchi/thiraigal/nalvaravu_thirai_amaippu.dart';
@@ -163,6 +164,43 @@ void main() {
     },
   );
 }
+DatePickerThemeData _buildMonochromeDatePickerTheme(ColorScheme cs) {
+  return DatePickerThemeData(
+    backgroundColor: cs.surface,
+    headerBackgroundColor: cs.surface,
+    headerForegroundColor: cs.onSurface,
+    // Reduce font size slightly so it fits on a single line horizontally
+    headerHeadlineStyle: const TextStyle(
+      fontSize: 22, // Reduced slightly from default displaySmall to prevent wrapping
+      fontWeight: FontWeight.w500,
+    ),
+    surfaceTintColor: Colors.transparent,
+    dayStyle: const TextStyle(fontWeight: FontWeight.w500),
+    todayForegroundColor: WidgetStateProperty.all(cs.onSurface),
+    todayBackgroundColor: WidgetStateProperty.all(cs.onSurface.withValues(alpha: 0.1)),
+    dayForegroundColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) return cs.surface;
+      if (states.contains(WidgetState.disabled)) return cs.onSurface.withValues(alpha: 0.38);
+      return cs.onSurface;
+    }),
+    dayBackgroundColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) return cs.onSurface;
+      return Colors.transparent;
+    }),
+    yearForegroundColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) return cs.surface;
+      if (states.contains(WidgetState.disabled)) return cs.onSurface.withValues(alpha: 0.38);
+      return cs.onSurface;
+    }),
+    yearBackgroundColor: WidgetStateProperty.resolveWith((states) {
+      if (states.contains(WidgetState.selected)) return cs.onSurface;
+      return Colors.transparent;
+    }),
+    cancelButtonStyle: TextButton.styleFrom(foregroundColor: cs.onSurface),
+    confirmButtonStyle: TextButton.styleFrom(foregroundColor: cs.onSurface),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+  );
+}
 
 class ElvanNirilApp extends ConsumerWidget {
   const ElvanNirilApp({super.key});
@@ -190,8 +228,10 @@ class ElvanNirilApp extends ConsumerWidget {
       supportedLocales: const [
         Locale('en'),
         Locale('ta'),
+        Locale.fromSubtags(languageCode: 'ta', scriptCode: 'Latn'),
       ],
       localizationsDelegates: const [
+        ElvanMaterialLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
@@ -204,6 +244,7 @@ class ElvanNirilApp extends ConsumerWidget {
         ),
         scaffoldBackgroundColor: const Color(0xFFF7F7F7),
         inputDecorationTheme: _buildInputTheme(ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.light)),
+        datePickerTheme: _buildMonochromeDatePickerTheme(ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.light)),
         useMaterial3: true,
         textTheme: ThemeData.light().textTheme.apply(fontFamily: 'ElvanSans'),
         cupertinoOverrideTheme: CupertinoThemeData(
@@ -239,6 +280,7 @@ class ElvanNirilApp extends ConsumerWidget {
         ),
         scaffoldBackgroundColor: Colors.black, // AMOLED Black
         inputDecorationTheme: _buildInputTheme(ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.dark)),
+        datePickerTheme: _buildMonochromeDatePickerTheme(ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.dark)),
         useMaterial3: true,
         textTheme: ThemeData.dark().textTheme.apply(fontFamily: 'ElvanSans'),
         cupertinoOverrideTheme: CupertinoThemeData(
@@ -330,7 +372,6 @@ class ElvanNirilApp extends ConsumerWidget {
             );
           },
         ),
-
       ),
     );
   }

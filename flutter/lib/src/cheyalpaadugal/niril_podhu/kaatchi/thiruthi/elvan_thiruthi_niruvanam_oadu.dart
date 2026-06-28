@@ -52,7 +52,7 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
               final isDesktop = MediaQuery.sizeOf(context).width >= 800;
               final width = isDesktop ? (constraints.maxWidth - 16) / 2 : constraints.maxWidth;
               return Padding(
-                padding: const EdgeInsets.only(top: 4.0, bottom: 16.0),
+                padding: const EdgeInsets.only(bottom: 32.0),
                 child: SizedBox(
                   width: width,
                   child: ElvanNiruvanamKeezhvirivuKooru(

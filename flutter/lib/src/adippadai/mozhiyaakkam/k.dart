@@ -1,432 +1,389 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// AUTO-GENERATED TRANSLATION KEY CONSTANTS — DO NOT EDIT MANUALLY
-// ─────────────────────────────────────────────────────────────────────────────
-// Generated from: lib/src/adippadai/mozhiyaakkam/language_keys/en.dart
-//
-// Usage:  K.amaippugal.tr(context, ref)
-// Typos:  K.amaipugal  → COMPILE ERROR ✅
-//
-// To add new keys: add to en.dart, ta.dart, ta_latn.dart, then add here.
-// Run `flutter test test/adippadai/mozhiyaakkam/` to verify coverage.
+class K {
+  K._();
 
-/// Compile-safe translation key constants.
-/// Use with `.tr(context, ref)` extension method.
-abstract final class K {
-  // ── Welcome & Onboarding ──
-  static const nirilirkuNalvaravu = 'nirilirkuNalvaravu';
-  static const pattiyalgstelidhu = 'pattiyalgstelidhu';
-  static const nirilthodanga = 'nirilthodanga';
-  static const pudhiyadhaagaThodanguPtn = 'pudhiyadhaagaThodanguPtn';
-  static const mozhiThaervu = 'mozhiThaervu';
-  static const viruppaMozhiThaervu = 'viruppaMozhiThaervu';
-  static const vanakkam = 'vanakkam';
-  static const endhachCheyalmurai = 'endhachCheyalmurai';
-  static const thodangugaPtn = 'thodangugaPtn';
-  static const thodaravum = 'thodaravum';
-  static const cheyaliyaiAnugaUlnuzhaiyavum = 'cheyaliyaiAnugaUlnuzhaiyavum';
-  static const ulnuzhaiga = 'ulnuzhaiga';
-
-  // ── Core Navigation ──
-  static const mugappu = 'mugappu';
-  static const vaangunargal = 'vaangunargal';
-  static const porutkal = 'porutkal';
-  static const pattiyalgal = 'pattiyalgal';
-  static const patrucheettugal = 'patrucheettugal';
-  static const patrucheettugalIllai = 'patrucheettugalIllai';
-  static const arikkai = 'arikkai';
-  static const variArikkai = 'variArikkai';
-  static const arikkaigal = 'arikkaigal';
-  static const variArikkaigal = 'variArikkaigal';
-  static const niril = 'niril';
-  static const appPeyar = 'appPeyar';
-  static const elvanNiril = 'elvanNiril';
-
-  // ── Business Details (நிறுவனம்) ──
-  static const niruvanathinPeyar = 'niruvanathinPeyar';
-  static const kurugiyaNiruvanaPeyar = 'kurugiyaNiruvanaPeyar';
-  static const niruvanam = 'niruvanam';
-  static const niruvanaAmaippugal = 'niruvanaAmaippugal';
-  static const kooliNiruvanaPeyar = 'kooliNiruvanaPeyar';
-  static const adaimozhi = 'adaimozhi';
-  static const nirilKooli = 'nirilKooli';
-  static const nirilPattu = 'nirilPattu';
-  static const adaiyaalam = 'adaiyaalam';
-  static const kooliNiruvanaAdaiyaalangal = 'kooliNiruvanaAdaiyaalangal';
-  static const pattuNiruvanaAdaiyaalangal = 'pattuNiruvanaAdaiyaalangal';
-
-  // ── Settings & Preferences ──
-  static const amaippugal = 'amaippugal';
-  static const cheyaliMozhi = 'cheyaliMozhi';
-  static const cheyaliAmaippugal = 'cheyaliAmaippugal';
-  static const thirai = 'thirai';
-  static const paadhugaappu = 'paadhugaappu';
-  static const irulNilai = 'irulNilai';
-  static const oliNilai = 'oliNilai';
-  static const thaaniyangiAmaippu = 'thaaniyangiAmaippu';
-  static const olirIrulThaaniyangu = 'olirIrulThaaniyangu';
-  static const irumozhiMurai = 'irumozhiMurai';
-  static const pdfThoatram = 'pdfThoatram';
-  static const chinnathinVadivam = 'chinnathinVadivam';
-  static const pilVadivamaippuViruppangal = 'pilVadivamaippuViruppangal';
-  static const agalamaanaoavuru = 'agalamaanaoavuru';
-  static const chiriyaOavuruPeyar = 'chiriyaOavuruPeyar';
-  static const agalamaanaOavuruMattum = 'agalamaanaOavuruMattum';
-
-  // ── Language ──
-  static const mudhanmaiMozhi = 'mudhanmaiMozhi';
-  static const irandaamMozhi = 'irandaamMozhi';
-  static const pattiyalPatrucheettuMozhi = 'pattiyalPatrucheettuMozhi';
-  static const thamizhAangilamThaaniyangu = 'thamizhAangilamThaaniyangu';
-  static const pattiyalMudhanmozhi = 'pattiyalMudhanmozhi';
-  static const pattiyalmozhi = 'pattiyalmozhi';
-  static const thamizh = 'thamizh';
-  static const ta = 'ta';
-  static const en = 'en';
-  static const aangilam = 'aangilam';
-  static const tamil = 'tamil';
-  static const english = 'english';
-  static const tamilLatin = 'tamilLatin';
-  static const language = 'language';
-
-  // ── Profiles (நிறுவனம்) ──
-  static const tharpoadhaiyaNiruvanam = 'tharpoadhaiyaNiruvanam';
-  static const pudhiyaThannuruvaiUruvaakku = 'pudhiyaThannuruvaiUruvaakku';
-  static const pudhiyaThannuruChaer = 'pudhiyaThannuruChaer';
-  static const thannuruChaemikkappattadhu = 'thannuruChaemikkappattadhu';
-  static const thannuruNeekkappattadhu = 'thannuruNeekkappattadhu';
-  static const thannuruvaiMutrilumNeekkavaa = 'thannuruvaiMutrilumNeekkavaa';
-  static const thannurukkalIllai = 'thannurukkalIllai';
-  static const perumalavu5thannuru = 'perumalavu5thannuru';
-  static const peyarEarkanavaeUlladhu = 'peyarEarkanavaeUlladhu';
-
-  // ── Merchants & Customers ──
-  static const vaangunar = 'vaangunar';
-  static const vaangunaraichChaer = 'vaangunaraichChaer';
-
-  // ── Products ──
-  static const porul = 'porul';
-  static const porulaichChaerPtn = 'porulaichChaerPtn';
-  static const gstpirippugal = 'gstpirippugal';
-
-  // ── Invoices & Receipts ──
-  static const pattiyal = 'pattiyal';
-  static const pudhiyaPattiyal = 'pudhiyaPattiyal';
-  static const pudhiyaPattiyalPtn = 'pudhiyaPattiyalPtn';
-  static const patrucheettu = 'patrucheettu';
-  static const pudhiyaPatrucheettuPtn = 'pudhiyaPatrucheettuPtn';
-
-  // ── Contact Details ──
-  static const minnanjal = 'minnanjal';
-  static const minnanjalMugavari = 'minnanjalMugavari';
-  static const minnanjalaiUllidavum = 'minnanjalaiUllidavum';
-  static const minnanjalaiUrudhiseiga = 'minnanjalaiUrudhiseiga';
-  static const paesiEn = 'paesiEn';
-  static const maatruPaesiEn = 'maatruPaesiEn';
-  static const paesiEnkal = 'paesiEnkal';
-
-  // ── Address ──
-  static const mugavari = 'mugavari';
-  static const mugavaritharavugal = 'mugavaritharavugal';
-  static const oor = 'oor';
-  static const maavattam = 'maavattam';
-  static const maanilam = 'maanilam';
-  static const naadu = 'naadu';
-  static const anjalKuriyeedu = 'anjalKuriyeedu';
-
-  // ── Bank ──
-  static const vangiyinPeyar = 'vangiyinPeyar';
-  static const kanakkuEn = 'kanakkuEn';
-  static const kanakkuEnIfsc = 'kanakkuEnIfsc';
-  static const ifscKuriyeedu = 'ifscKuriyeedu';
-  static const kilaipPeyar = 'kilaipPeyar';
-
-  // ── Branding ──
-  static const niruvanathinOavuru = 'niruvanathinOavuru';
-  static const kaiyoppam = 'kaiyoppam';
-  static const oavuruIllai = 'oavuruIllai';
-  static const kaiyoppamIllai = 'kaiyoppamIllai';
-  static const aluvalkaiyoppam = 'aluvalkaiyoppam';
-  static const padhivaetru = 'padhivaetru';
-
-  // ── GST ──
-  static const gstin = 'gstin';
-  static const gstinVariAdaiyaalaEn = 'gstinVariAdaiyaalaEn';
-  static const gstpattiyalukku = 'gstpattiyalukku';
-  static const koolipattiyalukku = 'koolipattiyalukku';
-
-  // ── Auth & Security ──
-  static const kadavuchol = 'kadavuchol';
-  static const kadavuchollaiUllidavum = 'kadavuchollaiUllidavum';
-  static const veliyaeru = 'veliyaeru';
-  static const veliyaeruPtn = 'veliyaeruPtn';
-  static const veliyaeraVaendumaa = 'veliyaeraVaendumaa';
-  static const veliyaerugiradhu = 'veliyaerugiradhu';
-  static const veliyaetramvetri = 'veliyaetramvetri';
-
-  // ── Backup & Restore ──
-  static const tharavuKaappuChei = 'tharavuKaappuChei';
-  static const tharavuKaappu = 'tharavuKaappu';
-  static const ungalTharavaiChaemikkavum = 'ungalTharavaiChaemikkavum';
-  static const kaappuCheiPtn = 'kaappuCheiPtn';
-  static const tharavuchaemippuvetri = 'tharavuchaemippuvetri';
-  static const chaemikkappadugiradhu = 'chaemikkappadugiradhu';
-  static const meetteduPtn = 'meetteduPtn';
-  static const meetteduppuvetri = 'meetteduppuvetri';
-  static const tharavaiMeettedukkiradhu = 'tharavaiMeettedukkiradhu';
-  static const pazhaiyaTharavuKidaikkiradhu = 'pazhaiyaTharavuKidaikkiradhu';
-  static const pazhaiyaTharavaiMeettedukkavaa = 'pazhaiyaTharavaiMeettedukkavaa';
-  static const kaapputhTharavuKidaithadhu = 'kaapputhTharavuKidaithadhu';
-  static const kaapputhTharavuThaedal = 'kaapputhTharavuThaedal';
-  static const kaapputhTharavuIllai = 'kaapputhTharavuIllai';
-
-  // ── Data Management ──
-  static const cheyalithTharavaiAzhi = 'cheyalithTharavaiAzhi';
-  static const tharavaiAzhiPtn = 'tharavaiAzhiPtn';
-  static const tharavaiazhi = 'tharavaiazhi';
-  static const azhippuvetri = 'azhippuvetri';
-  static const azhikkiradhu = 'azhikkiradhu';
-  static const thaekkagathaiazhi = 'thaekkagathaiazhi';
-
-  // ── Common Actions ──
-  static const chaer = 'chaer';
-  static const thaeduga = 'thaeduga';
-  static const kaividuPtn = 'kaividuPtn';
-  static const neekkuPtn = 'neekkuPtn';
-  static const chaemiPtn = 'chaemiPtn';
-  static const aakku = 'aakku';
-  static const uruvaakkuPtn = 'uruvaakkuPtn';
-  static const illai = 'illai';
-  static const thaerndhedu = 'thaerndhedu';
-  static const kaiyaalu = 'kaiyaalu';
-  static const meendumThaedu = 'meendumThaedu';
-
-  // ── Feedback Messages ──
-  static const chaemippuvetri = 'chaemippuvetri';
-  static const tharavugalChaemippuVetri = 'tharavugalChaemippuVetri';
-  static const vidupattaPulangalaiNirappavum = 'vidupattaPulangalaiNirappavum';
-  static const tharavugalaiUlliduga = 'tharavugalaiUlliduga';
-  static const peyaraiUlliduga = 'peyaraiUlliduga';
-  static const niruvanapeyaraiullidu = 'niruvanapeyaraiullidu';
-
-  // ── About & Info ──
-  static const cheyaliPatri = 'cheyaliPatri';
-  static const cheyalipadhippu = 'cheyalipadhippu';
-  static const cheyaliyilirundhuVeliyaeravum = 'cheyaliyilirundhuVeliyaeravum';
-  static const elvanPatriMaelumAriga = 'elvanPatriMaelumAriga';
-  static const menporulVadivaalar = 'menporulVadivaalar';
-  static const menporulVadivaalarPatri = 'menporulVadivaalarPatri';
-  static const cheyaliPatriMaadhiri = 'cheyaliPatriMaadhiri';
-  static const menporulVadivaalarPatriMaadhiri = 'menporulVadivaalarPatriMaadhiri';
-  static const elvanParthasarathy = 'elvanParthasarathy';
-  static const ungalCheyalmuraiyaithThaerndhedukkavum = 'ungalCheyalmuraiyaithThaerndhedukkavum';
-
-  // ── Image Selection ──
-  static const pugaippadakKaruvi = 'pugaippadakKaruvi';
-  static const pugaippadathThoguppu = 'pugaippadathThoguppu';
-  static const padammoolam = 'padammoolam';
-
-  // ── Colors ──
-  static const pachai = 'pachai';
-  static const oodhaa = 'oodhaa';
-
-  // ── Mode-Specific Screens ──
-  static const kooliMugappupPakkam = 'kooliMugappupPakkam';
-  static const koolipPatrucheettuThiruthi = 'koolipPatrucheettuThiruthi';
-  static const pudhiyaKoolipPatrucheettu = 'pudhiyaKoolipPatrucheettu';
-  static const pattuMugappupPakkam = 'pattuMugappupPakkam';
-  static const pattupPatrucheettuThiruthi = 'pattupPatrucheettuThiruthi';
-  static const pudhiyaPattupPatrucheettu = 'pudhiyaPattupPatrucheettu';
-
-  // ── Dashboard (Mugappu) ──
-  static const mothaKanakku = 'mothaKanakku';
-  static const niruvanangal = 'niruvanangal';
-  static const mothaPattiyalgal = 'mothaPattiyalgal';
-  static const variThirattiyavai = 'variThirattiyavai';
-  static const pattiyalEnnikai = 'pattiyalEnnikai';
-  static const patrucheettuEnnikai = 'patrucheettuEnnikai';
-  static const arugilSeyalgal = 'arugilSeyalgal';
-  static const anaiththaiyumPaarPtn = 'anaiththaiyumPaarPtn';
-  static const pattiyalgalIllai = 'pattiyalgalIllai';
-
-  // ── Porul (Product) ──
-  static const porulTharavugal = 'porulTharavugal';
-  static const vilaiMatrumVari = 'vilaiMatrumVari';
-  static const alavuVagai = 'alavuVagai';
-  static const alavu = 'alavu';
-  static const edai = 'edai';
-  static const alaveeduMurai = 'alaveeduMurai';
-  static const hsnSacKuriyeedu = 'hsnSacKuriyeedu';
-  static const vilai = 'vilai';
-  static const gstVeedham = 'gstVeedham';
-  static const porulPeyarThaevai = 'porulPeyarThaevai';
-  static const porulChaemikkappattadhu = 'porulChaemikkappattadhu';
-  static const porulAzhikkappattadhu = 'porulAzhikkappattadhu';
-  static const porulgalIllai = 'porulgalIllai';
-  static const porulaiChaerkkavum = 'porulaiChaerkkavum';
-
-  // ── Meetpagam (Recycle Bin) ──
-  static const meetpagam = 'meetpagam';
-  static const meetpagamKaaliyanadhu = 'meetpagamKaaliyanadhu';
-  static const meeteduppuVetri = 'meeteduppuVetri';
-  static const meeteduppuCheiPtn = 'meeteduppuCheiPtn';
-  static const nirandharaAzhippu = 'nirandharaAzhippu';
-  static const nirandharaAzhippuUrudhi = 'nirandharaAzhippuUrudhi';
-  static const azhikkappattaPorulgal = 'azhikkappattaPorulgal';
-  static const meetpagam30Naal = 'meetpagam30Naal';
-
-  // ── Vaangunar (Merchant) CRUD ──
-  static const vaangunarTharavugal = 'vaangunarTharavugal';
-  static const vaangunarPeyar = 'vaangunarPeyar';
-  static const vaangunarPeyarThaevai = 'vaangunarPeyarThaevai';
-  static const vaangunarChaemikkappattadhu = 'vaangunarChaemikkappattadhu';
-  static const vaangunarAzhikkappattadhu = 'vaangunarAzhikkappattadhu';
-  static const vaangunargalIllai = 'vaangunargalIllai';
-  static const vaangunaraiChaerkkavum = 'vaangunaraiChaerkkavum';
-  static const azhikkappattaVaangunargal = 'azhikkappattaVaangunargal';
-  static const thodarpuVari = 'thodarpuVari';
-  static const velinaadMugavari = 'velinaadMugavari';
-  static const gstinTavaru = 'gstinTavaru';
-  static const thanipPayanPtn = 'thanipPayanPtn';
-  static const tholaipaesi = 'tholaipaesi';
-  static const anaithaiyumTheriPtn = 'anaithaiyumTheriPtn';
-
-  // ── Dev Tools ──
-  static const uruvaakkunarTharavugalaiAzhi = 'uruvaakkunarTharavugalaiAzhi';
-  static const uruvaakkunarTharavugalaiUruvaakku = 'uruvaakkunarTharavugalaiUruvaakku';
-  static const tharavugalaiUruvaakkuUruvaakkunar = 'tharavugalaiUruvaakkuUruvaakkunar';
-
-  // ── Payanar (User Profile) ──
-  static const payanar = 'payanar';
-  static const payanarAmaippugal = 'payanarAmaippugal';
-  static const mudhalPeyar = 'mudhalPeyar';
-  static const irudhiPeyar = 'irudhiPeyar';
-  static const pirandhaThaedhi = 'pirandhaThaedhi';
-  static const payanarTharavugalaiMaetriduPtn = 'payanarTharavugalaiMaetriduPtn';
-  static const payanarVilakkam = 'payanarVilakkam';
-
-  // ── Sync ──
-  static const orunginaiCheyaliPtn = 'orunginaiCheyaliPtn';
-  static const orunginaiCheyaliVilakkam = 'orunginaiCheyaliVilakkam';
-  static const orunginaikkiRadhu = 'orunginaikkiRadhu';
-  static const orunginaikkappattadhu = 'orunginaikkappattadhu';
-
-  // ── Invoice Editor (Pattiyal Thiruthi) ──
-  static const perunar = 'perunar';
-  static const pattiyalTharavugal = 'pattiyalTharavugal';
-  static const pattiyalVagai = 'pattiyalVagai';
-  static const mothangal = 'mothangal';
-  static const vaangunarPeyarThaedu = 'vaangunarPeyarThaedu';
-  static const chaemiththaTharavugal = 'chaemiththaTharavugal';
-  static const niruvanaThannuru = 'niruvanaThannuru';
-  static const maanilamThaerodhu = 'maanilamThaerodhu';
-  static const vazhangalIdam = 'vazhangalIdam';
-  static const pattiyalEn = 'pattiyalEn';
-  static const naal = 'naal';
-  static const thaaniyangkiUruvaam = 'thaaniyangkiUruvaam';
-  static const thaaniyangki = 'thaaniyangki';
-  static const vilaiVeedham = 'vilaiVeedham';
-  static const thallupadi = 'thallupadi';
-  static const thallupadiChurukkam = 'thallupadiChurukkam';
-  static const motham = 'motham';
-  static const muzhuThallupadi = 'muzhuThallupadi';
-  static const pattiyalKuriyeedu = 'pattiyalKuriyeedu';
-  static const ulmotham = 'ulmotham';
-  static const chuttruOppu = 'chuttruOppu';
-  static const perumMotham = 'perumMotham';
-  static const ahimsaiPattu = 'ahimsaiPattu';
-  static const pira = 'pira';
-  static const mothaEdai = 'mothaEdai';
-  static const chaedhaaram = 'chaedhaaram';
-  static const chaedhaaramGiraam = 'chaedhaaramGiraam';
-  static const ahimsaiPattuThogai = 'ahimsaiPattuThogai';
-  static const varipPattiyal = 'varipPattiyal';
-  static const munvaraivu = 'munvaraivu';
-  static const piraVarivuChaer = 'piraVarivuChaer';
-  static const vaangunaraiThaerodhu = 'vaangunaraiThaerodhu';
-  static const niruvanamThaerodhu = 'niruvanamThaerodhu';
-  static const maanilamThaedu = 'maanilamThaedu';
-  static const kattanaPeyar = 'kattanaPeyar';
-  static const varaivu = 'varaivu';
-  static const varaivuMeetka = 'varaivuMeetka';
-  static const chaemikkaadhaVaraivu = 'chaemikkaadhaVaraivu';
-  static const niraagari = 'niraagari';
-  static const meetkavum = 'meetkavum';
-
-  // ── Patrucheettu Mode ──
-
-  static const endhapPattiyalukku = 'endhapPattiyalukku';
-  static const patrucheettuTharavugal = 'patrucheettuTharavugal';
-  static const cheluthiyaTharavu = 'cheluthiyaTharavu';
-
-  // ── Receipt Editor (Patrucheettu Thiruthi) ──
-  static const thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum = 'thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum';
-  static const cheluthumMuraiThaernhedu = 'cheluthumMuraiThaernhedu';
-  static const patrucheettuEnYaerkanavaeUlladhu = 'patrucheettuEnYaerkanavaeUlladhu';
-  static const patrucheettuChaemikkappattadhu = 'patrucheettuChaemikkappattadhu';
-  static const chaemikkaIyalavillai = 'chaemikkaIyalavillai';
-  static const maatriyamai = 'maatriyamai';
-  static const pudhiyaAakkam = 'pudhiyaAakkam';
-  static const patrucheettuEn = 'patrucheettuEn';
-  static const patrucheettuNaal = 'patrucheettuNaal';
-  static const pattiyalThaervukkuPinVaangunarTharavugalNirappappadum = 'pattiyalThaervukkuPinVaangunarTharavugalNirappappadum';
-  static const maatru = 'maatru';
-  static const pattiyalaiThaernhedu = 'pattiyalaiThaernhedu';
-  static const thogaiVinmeen = 'thogaiVinmeen';
-  static const cheluthumMuraiVinmeen = 'cheluthumMuraiVinmeen';
-  static const kurippuEnParimaatraEn = 'kurippuEnParimaatraEn';
-  static const kurippu = 'kurippu';
-  static const pattiyalgalaiThaernhedu = 'pattiyalgalaiThaernhedu';
-  static const mudindhadhu = 'mudindhadhu';
-  static const pattiyalEnVaangunar = 'pattiyalEnVaangunar';
-
-  // ── Subcomponents & Enums ──
-  static const munthogai = 'munthogai';
-  static const patrucheettuVagai = 'patrucheettuVagai';
-  static const kaasu = 'kaasu';
-  static const vangiParimaatram = 'vangiParimaatram';
-  static const kaasoalai = 'kaasoalai';
-  static const attai = 'attai';
-  static const pizhai = 'pizhai';
-  static const pudhiyaChaerkkai = 'pudhiyaChaerkkai';
-  static const niruvanaththaithThaernhedu = 'niruvanaththaithThaernhedu';
-  static const azhikka = 'azhikka';
-  static const chaemippuNiluvai = 'chaemippuNiluvai';
-  static const thodarPtn = 'thodarPtn';
-  static const purakkaniPtn = 'purakkaniPtn';
-
-  static const kuriaindhOruPorul = 'kuriaindhOruPorul';
-  static const koriyar = 'koriyar';
-  static const koriyarKattanam = 'koriyarKattanam';
-
-  static const vangiTharavuKaattu = 'vangiTharavuKaattu';
-  static const vangi = 'vangi';
-  static const kilai = 'kilai';
-  static const kanakkuKuriyeedu = 'kanakkuKuriyeedu';
-  static const ifscKaattu = 'ifscKaattu';
-  static const india = 'india';
+  // ── Core / Common ──
+  static const String aakku = 'aakku';
+  static const String aangilam = 'aangilam';
+  static const String adaiyaalam = 'adaiyaalam';
   static const String aetrugiradhu = 'aetrugiradhu';
-  static const String idhuvuraiKaappuIllai = 'idhuvuraiKaappuIllai';
+  static const String agalamaanaOavuruMattum = 'agalamaanaOavuruMattum';
+  static const String agalamaanaoavuru = 'agalamaanaoavuru';
+  static const String alaveeduMurai = 'alaveeduMurai';
+  static const String alavu = 'alavu';
+  static const String alavuVagai = 'alavuVagai';
+  static const String aluvalkaiyoppam = 'aluvalkaiyoppam';
+  static const String anjalKuriyeedu = 'anjalKuriyeedu';
+  static const String appPeyar = 'appPeyar';
+  static const String arikkai = 'arikkai';
+  static const String arikkaigal = 'arikkaigal';
+  static const String arugilSeyalgal = 'arugilSeyalgal';
+  static const String attai = 'attai';
+  static const String azhikkiradhu = 'azhikkiradhu';
+  static const String azhippuvetri = 'azhippuvetri';
+  static const String chaedhaaram = 'chaedhaaram';
+  static const String chaedhaaramGiraam = 'chaedhaaramGiraam';
+  static const String chaemikkaadhaVaraivu = 'chaemikkaadhaVaraivu';
+  static const String chaemikkappadugiradhu = 'chaemikkappadugiradhu';
+  static const String chaemippuNiluvai = 'chaemippuNiluvai';
+  static const String chaemippuvetri = 'chaemippuvetri';
+  static const String chaemiththaTharavugal = 'chaemiththaTharavugal';
+  static const String cheyaliPatri = 'cheyaliPatri';
+  static const String cheyaliPatriMaadhiri = 'cheyaliPatriMaadhiri';
+  static const String cheyalipadhippu = 'cheyalipadhippu';
+  static const String cheyalithTharavaiAzhi = 'cheyalithTharavaiAzhi';
+  static const String cheyaliyilirundhuVeliyaeravum = 'cheyaliyilirundhuVeliyaeravum';
+  static const String chinnathinVadivam = 'chinnathinVadivam';
+  static const String chiriyaOavuruPeyar = 'chiriyaOavuruPeyar';
+  static const String chuttruOppu = 'chuttruOppu';
+  static const String edai = 'edai';
+  static const String elvanNiril = 'elvanNiril';
+  static const String elvanParthasarathy = 'elvanParthasarathy';
+  static const String elvanPatriMaelumAriga = 'elvanPatriMaelumAriga';
+  static const String en = 'en';
+  static const String endhachCheyalmurai = 'endhachCheyalmurai';
+  static const String english = 'english';
+  static const String ifscKaattu = 'ifscKaattu';
+  static const String ifscKuriyeedu = 'ifscKuriyeedu';
+  static const String india = 'india';
+  static const String irudhiPeyar = 'irudhiPeyar';
+  static const String irulNilai = 'irulNilai';
+  static const String kaasoalai = 'kaasoalai';
+  static const String kaiyaalu = 'kaiyaalu';
+  static const String kaiyoppam = 'kaiyoppam';
+  static const String kanakkuEn = 'kanakkuEn';
+  static const String kanakkuKuriyeedu = 'kanakkuKuriyeedu';
+  static const String kattanaPeyar = 'kattanaPeyar';
+  static const String kilai = 'kilai';
+  static const String kilaipPeyar = 'kilaipPeyar';
+  static const String koriyar = 'koriyar';
+  static const String koriyarKattanam = 'koriyarKattanam';
+  static const String kurippu = 'kurippu';
+  static const String kurugiyaNiruvanaPeyar = 'kurugiyaNiruvanaPeyar';
+  static const String maanilam = 'maanilam';
+  static const String maanilamThaedu = 'maanilamThaedu';
+  static const String maanilamThaerodhu = 'maanilamThaerodhu';
+  static const String maatru = 'maatru';
+  static const String maatruPaesiEn = 'maatruPaesiEn';
+  static const String maavattam = 'maavattam';
+  static const String meendumThaedu = 'meendumThaedu';
+  static const String meeteduppuVetri = 'meeteduppuVetri';
+  static const String meetkavum = 'meetkavum';
+  static const String meetpagam = 'meetpagam';
+  static const String meetpagam30Naal = 'meetpagam30Naal';
+  static const String meetpagamKaaliyanadhu = 'meetpagamKaaliyanadhu';
+  static const String meetteduppuvetri = 'meetteduppuvetri';
+  static const String minnanjal = 'minnanjal';
+  static const String minnanjalMugavari = 'minnanjalMugavari';
+  static const String minnanjalaiUllidavum = 'minnanjalaiUllidavum';
+  static const String minnanjalaiUrudhiseiga = 'minnanjalaiUrudhiseiga';
+  static const String mothaEdai = 'mothaEdai';
+  static const String motham = 'motham';
+  static const String mothangal = 'mothangal';
+  static const String mudhalPeyar = 'mudhalPeyar';
+  static const String mudindhadhu = 'mudindhadhu';
+  static const String mugappu = 'mugappu';
+  static const String mugavari = 'mugavari';
+  static const String mugavaritharavugal = 'mugavaritharavugal';
+  static const String munthogai = 'munthogai';
+  static const String munvaraivu = 'munvaraivu';
+  static const String naadu = 'naadu';
+  static const String niraagari = 'niraagari';
+  static const String nirandharaAzhippu = 'nirandharaAzhippu';
+  static const String niril = 'niril';
+  static const String nirilthodanga = 'nirilthodanga';
+  static const String niruvanam = 'niruvanam';
+  static const String niruvanangal = 'niruvanangal';
+  static const String niruvanathinOavuru = 'niruvanathinOavuru';
+  static const String niruvanathinPeyar = 'niruvanathinPeyar';
+  static const String niruvanaththaithThaernhedu = 'niruvanaththaithThaernhedu';
+  static const String oliNilai = 'oliNilai';
+  static const String olirIrulThaaniyangu = 'olirIrulThaaniyangu';
+  static const String oodhaa = 'oodhaa';
+  static const String oor = 'oor';
+  static const String paadhugaappu = 'paadhugaappu';
+  static const String pachai = 'pachai';
+  static const String padammoolam = 'padammoolam';
+  static const String padhivaetru = 'padhivaetru';
+  static const String paesiEn = 'paesiEn';
+  static const String paesiEnkal = 'paesiEnkal';
+  static const String payanar = 'payanar';
+  static const String payanarVilakkam = 'payanarVilakkam';
   static const String payanpaduthiyaChaemippu = 'payanpaduthiyaChaemippu';
-  static const String kadaisiThaaniyakkaKaappu = 'kadaisiThaaniyakkaKaappu';
-  static const String kooliTharavugal = 'kooliTharavugal';
-  static const String pattuTharavugal = 'pattuTharavugal';
+  static const String pazhaiyaTharavaiMeettedukkavaa = 'pazhaiyaTharavaiMeettedukkavaa';
+  static const String pazhaiyaTharavuKidaikkiradhu = 'pazhaiyaTharavuKidaikkiradhu';
+  static const String pdfThoatram = 'pdfThoatram';
+  static const String perumMotham = 'perumMotham';
+  static const String perunar = 'perunar';
+  static const String peyarEarkanavaeUlladhu = 'peyarEarkanavaeUlladhu';
+  static const String peyaraiUlliduga = 'peyaraiUlliduga';
+  static const String pira = 'pira';
+  static const String piraVarivuChaer = 'piraVarivuChaer';
+  static const String pirandhaThaedhi = 'pirandhaThaedhi';
+  static const String pudhiyaAakkam = 'pudhiyaAakkam';
+  static const String pudhiyaChaerkkai = 'pudhiyaChaerkkai';
+  static const String pugaippadakKaruvi = 'pugaippadakKaruvi';
+  static const String pugaippadathThoguppu = 'pugaippadathThoguppu';
+  static const String ta = 'ta';
+  static const String tamil = 'tamil';
+  static const String tamilLatin = 'tamilLatin';
+  static const String thaaniyangki = 'thaaniyangki';
+  static const String thaaniyangkiUruvaam = 'thaaniyangkiUruvaam';
+  static const String thaeduga = 'thaeduga';
+  static const String thaerndhedu = 'thaerndhedu';
+  static const String thallupadiChurukkam = 'thallupadiChurukkam';
+  static const String thamizh = 'thamizh';
+  static const String thamizhAangilamThaaniyangu = 'thamizhAangilamThaaniyangu';
+  static const String tharavaiMeettedukkiradhu = 'tharavaiMeettedukkiradhu';
+  static const String tharavaiazhi = 'tharavaiazhi';
+  static const String tharavugalChaemippuVetri = 'tharavugalChaemippuVetri';
+  static const String tharavugalaiUlliduga = 'tharavugalaiUlliduga';
+  static const String tharavugalaiUruvaakkuUruvaakkunar = 'tharavugalaiUruvaakkuUruvaakkunar';
+  static const String tharpoadhaiyaNiruvanam = 'tharpoadhaiyaNiruvanam';
+  static const String thirai = 'thirai';
+  static const String thodarpuVari = 'thodarpuVari';
+  static const String thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum = 'thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum';
+  static const String thogaiVinmeen = 'thogaiVinmeen';
+  static const String tholaipaesi = 'tholaipaesi';
+  static const String ulmotham = 'ulmotham';
+  static const String ungalCheyalmuraiyaithThaerndhedukkavum = 'ungalCheyalmuraiyaithThaerndhedukkavum';
+  static const String uruvaakkunarTharavugalaiAzhi = 'uruvaakkunarTharavugalaiAzhi';
+  static const String uruvaakkunarTharavugalaiUruvaakku = 'uruvaakkunarTharavugalaiUruvaakku';
+  static const String vaangunarPeyarThaedu = 'vaangunarPeyarThaedu';
+  static const String vaangunarTharavugal = 'vaangunarTharavugal';
+  static const String vanakkam = 'vanakkam';
+  static const String varaivu = 'varaivu';
+  static const String varaivuMeetka = 'varaivuMeetka';
+  static const String variThirattiyavai = 'variThirattiyavai';
+  static const String vazhangalIdam = 'vazhangalIdam';
+  static const String velinaadMugavari = 'velinaadMugavari';
+  static const String veliyaeraVaendumaa = 'veliyaeraVaendumaa';
+  static const String veliyaeru = 'veliyaeru';
+  static const String veliyaerugiradhu = 'veliyaerugiradhu';
+  static const String veliyaetramvetri = 'veliyaetramvetri';
+  static const String vidupattaPulangalaiNirappavum = 'vidupattaPulangalaiNirappavum';
+  static const String vilai = 'vilai';
+  static const String vilaiMatrumVari = 'vilaiMatrumVari';
+  static const String vilaiVeedham = 'vilaiVeedham';
+
+  // ── Authentication & Onboarding ──
+  static const String cheyaliyaiAnugaUlnuzhaiyavum = 'cheyaliyaiAnugaUlnuzhaiyavum';
+  static const String kadavuchol = 'kadavuchol';
+  static const String kadavuchollaiUllidavum = 'kadavuchollaiUllidavum';
+  static const String nirilirkuNalvaravu = 'nirilirkuNalvaravu';
+  static const String niruvanaThannuru = 'niruvanaThannuru';
+  static const String niruvanamThaerodhu = 'niruvanamThaerodhu';
+  static const String perumalavu5thannuru = 'perumalavu5thannuru';
+  static const String pudhiyaThannuruChaer = 'pudhiyaThannuruChaer';
+  static const String pudhiyaThannuruvaiUruvaakku = 'pudhiyaThannuruvaiUruvaakku';
+  static const String thannuruChaemikkappattadhu = 'thannuruChaemikkappattadhu';
+  static const String thannuruNeekkappattadhu = 'thannuruNeekkappattadhu';
+  static const String thannurukkalIllai = 'thannurukkalIllai';
+  static const String thannuruvaiMutrilumNeekkavaa = 'thannuruvaiMutrilumNeekkavaa';
+  static const String ulnuzhaiga = 'ulnuzhaiga';
+
+  // ── Navigation & Actions (Buttons) ──
+  static const String anaithaiyumTheriPtn = 'anaithaiyumTheriPtn';
+  static const String anaiththaiyumPaarPtn = 'anaiththaiyumPaarPtn';
+  static const String azhikka = 'azhikka';
+  static const String chaemiPtn = 'chaemiPtn';
+  static const String chaer = 'chaer';
+  static const String chariPtn = 'chariPtn';
+  static const String kaappuCheiPtn = 'kaappuCheiPtn';
+  static const String kaividuPtn = 'kaividuPtn';
+  static const String maatriyamai = 'maatriyamai';
+  static const String meeteduppuCheiPtn = 'meeteduppuCheiPtn';
+  static const String meetteduPtn = 'meetteduPtn';
+  static const String neekkuPtn = 'neekkuPtn';
+  static const String orunginaiCheyaliPtn = 'orunginaiCheyaliPtn';
+  static const String payanarTharavugalaiMaetriduPtn = 'payanarTharavugalaiMaetriduPtn';
+  static const String porulaichChaerPtn = 'porulaichChaerPtn';
+  static const String pudhiyaPatrucheettuPtn = 'pudhiyaPatrucheettuPtn';
+  static const String pudhiyaPattiyalPtn = 'pudhiyaPattiyalPtn';
+  static const String pudhiyadhaagaThodanguPtn = 'pudhiyadhaagaThodanguPtn';
+  static const String purakkaniPtn = 'purakkaniPtn';
+  static const String thanipPayanPtn = 'thanipPayanPtn';
+  static const String tharavaiAzhiPtn = 'tharavaiAzhiPtn';
+  static const String thodangugaPtn = 'thodangugaPtn';
+  static const String thodarPtn = 'thodarPtn';
+  static const String thodaravum = 'thodaravum';
+  static const String uruvaakkuPtn = 'uruvaakkuPtn';
+  static const String veliyaeruPtn = 'veliyaeruPtn';
+
+  // ── Settings & Backup ──
+  static const String adaimozhi = 'adaimozhi';
+  static const String amaippugal = 'amaippugal';
   static const String chaemippu = 'chaemippu';
-  static const String kaappu = 'kaappu';
   static const String chaemippuMatrumKaappu = 'chaemippuMatrumKaappu';
+  static const String cheyaliAmaippugal = 'cheyaliAmaippugal';
+  static const String cheyaliMozhi = 'cheyaliMozhi';
+  static const String idhuvuraiKaappuIllai = 'idhuvuraiKaappuIllai';
+  static const String irandaamMozhi = 'irandaamMozhi';
+  static const String irumozhiMurai = 'irumozhiMurai';
+  static const String kaappu = 'kaappu';
+  static const String kaapputhTharavuIllai = 'kaapputhTharavuIllai';
+  static const String kaapputhTharavuKidaithadhu = 'kaapputhTharavuKidaithadhu';
+  static const String kaapputhTharavuThaedal = 'kaapputhTharavuThaedal';
+  static const String kadaisiThaaniyakkaKaappu = 'kadaisiThaaniyakkaKaappu';
+  static const String language = 'language';
+  static const String mozhiThaervu = 'mozhiThaervu';
+  static const String mudhanmaiMozhi = 'mudhanmaiMozhi';
+  static const String niruvanaAmaippugal = 'niruvanaAmaippugal';
+  static const String orunginaiCheyaliVilakkam = 'orunginaiCheyaliVilakkam';
+  static const String orunginaikkappattadhu = 'orunginaikkappattadhu';
+  static const String orunginaikkiRadhu = 'orunginaikkiRadhu';
+  static const String payanarAmaippugal = 'payanarAmaippugal';
+  static const String pilVadivamaippuViruppangal = 'pilVadivamaippuViruppangal';
+  static const String thaaniyangiAmaippu = 'thaaniyangiAmaippu';
+  static const String thaekkagathaiazhi = 'thaekkagathaiazhi';
+  static const String tharavuKaappu = 'tharavuKaappu';
+  static const String tharavuKaappuChei = 'tharavuKaappuChei';
+  static const String tharavuchaemippuvetri = 'tharavuchaemippuvetri';
   static const String tharavuthalam = 'tharavuthalam';
-  static const String janavari = 'janavari';
-  static const String fibravari = 'fibravari';
-  static const String maarch = 'maarch';
-  static const String aepral = 'aepral';
-  static const String mae = 'mae';
-  static const String joon = 'joon';
-  static const String joolai = 'joolai';
-  static const String aagast = 'aagast';
-  static const String septambar = 'septambar';
-  static const String aktobar = 'aktobar';
-  static const String navambar = 'navambar';
-  static const String disambar = 'disambar';
-  static const String murpagal = 'murpagal';
-  static const String pirpagal = 'pirpagal';
   static const String tharavuthalangalKaappaikKaiyaalu = 'tharavuthalangalKaappaikKaiyaalu';
+  static const String ungalTharavaiChaemikkavum = 'ungalTharavaiChaemikkavum';
+  static const String viruppaMozhiThaervu = 'viruppaMozhiThaervu';
+
+  // ── Entities (Customer, Product) ──
+  static const String azhikkappattaPorulgal = 'azhikkappattaPorulgal';
+  static const String azhikkappattaVaangunargal = 'azhikkappattaVaangunargal';
+  static const String hsnSacKuriyeedu = 'hsnSacKuriyeedu';
+  static const String kuriaindhOruPorul = 'kuriaindhOruPorul';
+  static const String menporulVadivaalar = 'menporulVadivaalar';
+  static const String menporulVadivaalarPatri = 'menporulVadivaalarPatri';
+  static const String menporulVadivaalarPatriMaadhiri = 'menporulVadivaalarPatriMaadhiri';
+  static const String pattiyalEnVaangunar = 'pattiyalEnVaangunar';
+  static const String porul = 'porul';
+  static const String porulAzhikkappattadhu = 'porulAzhikkappattadhu';
+  static const String porulChaemikkappattadhu = 'porulChaemikkappattadhu';
+  static const String porulPeyarThaevai = 'porulPeyarThaevai';
+  static const String porulTharavugal = 'porulTharavugal';
+  static const String porulaiChaerkkavum = 'porulaiChaerkkavum';
+  static const String porulgalIllai = 'porulgalIllai';
+  static const String porutkal = 'porutkal';
+  static const String vaangunar = 'vaangunar';
+  static const String vaangunarAzhikkappattadhu = 'vaangunarAzhikkappattadhu';
+  static const String vaangunarChaemikkappattadhu = 'vaangunarChaemikkappattadhu';
+  static const String vaangunarPeyar = 'vaangunarPeyar';
+  static const String vaangunarPeyarThaevai = 'vaangunarPeyarThaevai';
+  static const String vaangunaraiChaerkkavum = 'vaangunaraiChaerkkavum';
+  static const String vaangunaraiThaerodhu = 'vaangunaraiThaerodhu';
+  static const String vaangunaraichChaer = 'vaangunaraichChaer';
+  static const String vaangunargal = 'vaangunargal';
+  static const String vaangunargalIllai = 'vaangunargalIllai';
+
+  // ── Invoicing & Billing (Pattiyal) ──
+  static const String ahimsaiPattu = 'ahimsaiPattu';
+  static const String ahimsaiPattuThogai = 'ahimsaiPattuThogai';
+  static const String endhapPattiyalukku = 'endhapPattiyalukku';
+  static const String gstVeedham = 'gstVeedham';
+  static const String gstin = 'gstin';
+  static const String gstinTavaru = 'gstinTavaru';
+  static const String gstinVariAdaiyaalaEn = 'gstinVariAdaiyaalaEn';
+  static const String gstpattiyalukku = 'gstpattiyalukku';
+  static const String gstpirippugal = 'gstpirippugal';
+  static const String kooliMugappupPakkam = 'kooliMugappupPakkam';
+  static const String kooliNiruvanaAdaiyaalangal = 'kooliNiruvanaAdaiyaalangal';
+  static const String kooliNiruvanaPeyar = 'kooliNiruvanaPeyar';
+  static const String kooliTharavugal = 'kooliTharavugal';
+  static const String mothaKanakku = 'mothaKanakku';
+  static const String mothaPattiyalgal = 'mothaPattiyalgal';
+  static const String muzhuThallupadi = 'muzhuThallupadi';
+  static const String nirilKooli = 'nirilKooli';
+  static const String nirilPattu = 'nirilPattu';
+  static const String pattiyal = 'pattiyal';
+  static const String pattiyalEn = 'pattiyalEn';
+  static const String pattiyalEnnikai = 'pattiyalEnnikai';
+  static const String pattiyalKuriyeedu = 'pattiyalKuriyeedu';
+  static const String pattiyalMudhanmozhi = 'pattiyalMudhanmozhi';
+  static const String pattiyalThaervukkuPinVaangunarTharavugalNirappappadum = 'pattiyalThaervukkuPinVaangunarTharavugalNirappappadum';
+  static const String pattiyalTharavugal = 'pattiyalTharavugal';
+  static const String pattiyalVagai = 'pattiyalVagai';
+  static const String pattiyalaiThaernhedu = 'pattiyalaiThaernhedu';
+  static const String pattiyalgal = 'pattiyalgal';
+  static const String pattiyalgalaiThaernhedu = 'pattiyalgalaiThaernhedu';
+  static const String pattiyalgstelidhu = 'pattiyalgstelidhu';
+  static const String pattiyalmozhi = 'pattiyalmozhi';
+  static const String pattuMugappupPakkam = 'pattuMugappupPakkam';
+  static const String pattuNiruvanaAdaiyaalangal = 'pattuNiruvanaAdaiyaalangal';
+  static const String pattuTharavugal = 'pattuTharavugal';
+  static const String pudhiyaPattiyal = 'pudhiyaPattiyal';
+  static const String thallupadi = 'thallupadi';
+  static const String variArikkai = 'variArikkai';
+  static const String variArikkaigal = 'variArikkaigal';
+  static const String varipPattiyal = 'varipPattiyal';
+
+  // ── Receipts & Payments (Patrucheettu) ──
+  static const String cheluthiyaTharavu = 'cheluthiyaTharavu';
+  static const String cheluthumMuraiThaernhedu = 'cheluthumMuraiThaernhedu';
+  static const String cheluthumMuraiVinmeen = 'cheluthumMuraiVinmeen';
+  static const String kaasu = 'kaasu';
+  static const String kanakkuEnIfsc = 'kanakkuEnIfsc';
+  static const String koolipPatrucheettuThiruthi = 'koolipPatrucheettuThiruthi';
+  static const String koolipattiyalukku = 'koolipattiyalukku';
+  static const String patrucheettu = 'patrucheettu';
+  static const String patrucheettuChaemikkappattadhu = 'patrucheettuChaemikkappattadhu';
+  static const String patrucheettuEn = 'patrucheettuEn';
+  static const String patrucheettuEnYaerkanavaeUlladhu = 'patrucheettuEnYaerkanavaeUlladhu';
+  static const String patrucheettuEnnikai = 'patrucheettuEnnikai';
+  static const String patrucheettuNaal = 'patrucheettuNaal';
+  static const String patrucheettuTharavugal = 'patrucheettuTharavugal';
+  static const String patrucheettuVagai = 'patrucheettuVagai';
+  static const String patrucheettugal = 'patrucheettugal';
+  static const String pattiyalPatrucheettuMozhi = 'pattiyalPatrucheettuMozhi';
+  static const String pattupPatrucheettuThiruthi = 'pattupPatrucheettuThiruthi';
+  static const String pudhiyaKoolipPatrucheettu = 'pudhiyaKoolipPatrucheettu';
+  static const String pudhiyaPattupPatrucheettu = 'pudhiyaPattupPatrucheettu';
+  static const String vangi = 'vangi';
+  static const String vangiParimaatram = 'vangiParimaatram';
+  static const String vangiTharavuKaattu = 'vangiTharavuKaattu';
+  static const String vangiyinPeyar = 'vangiyinPeyar';
+
+  // ── Calendar & Dates ──
+  static const String aagast = 'aagast';
+  static const String aepral = 'aepral';
+  static const String aktobar = 'aktobar';
+  static const String arivan = 'arivan';
+  static const String chevvaay = 'chevvaay';
+  static const String disambar = 'disambar';
+  static const String janKurugiya = 'janKurugiya';
+  static const String fibKurugiya = 'fibKurugiya';
+  static const String maarKurugiya = 'maarKurugiya';
+  static const String aepKurugiya = 'aepKurugiya';
+  static const String maeKurugiya = 'maeKurugiya';
+  static const String joonKurugiya = 'joonKurugiya';
+  static const String joolKurugiya = 'joolKurugiya';
+  static const String aagKurugiya = 'aagKurugiya';
+  static const String sepKurugiya = 'sepKurugiya';
+  static const String akKurugiya = 'akKurugiya';
+  static const String navKurugiya = 'navKurugiya';
+  static const String disKurugiya = 'disKurugiya';
+  static const String fibravari = 'fibravari';
+  static const String janavari = 'janavari';
+  static const String joolai = 'joolai';
+  static const String joon = 'joon';
+  static const String kaari = 'kaari';
+  static const String maarch = 'maarch';
+  static const String mae = 'mae';
+  static const String murpagal = 'murpagal';
+  static const String naal = 'naal';
+  static const String navambar = 'navambar';
+  static const String nyaayiru = 'nyaayiru';
+  static const String pirpagal = 'pirpagal';
+  static const String septambar = 'septambar';
+  static const String thingal = 'thingal';
+  static const String velli = 'velli';
+  static const String viyaazhan = 'viyaazhan';
+
+  // ── Errors & Alerts ──
+  static const String chaemikkaIyalavillai = 'chaemikkaIyalavillai';
+  static const String illai = 'illai';
+  static const String kaiyoppamIllai = 'kaiyoppamIllai';
+  static const String kurippuEnParimaatraEn = 'kurippuEnParimaatraEn';
+  static const String nirandharaAzhippuUrudhi = 'nirandharaAzhippuUrudhi';
+  static const String niruvanapeyaraiullidu = 'niruvanapeyaraiullidu';
+  static const String oavuruIllai = 'oavuruIllai';
+  static const String patrucheettugalIllai = 'patrucheettugalIllai';
+  static const String pattiyalgalIllai = 'pattiyalgalIllai';
+  static const String pizhai = 'pizhai';
+
 }

@@ -41,46 +41,6 @@ class PatruPattiyalTheervuPagudhi extends ConsumerStatefulWidget {
 
 class _PatruPattiyalTheervuPagudhiState
     extends ConsumerState<PatruPattiyalTheervuPagudhi> {
-  final ScrollController _scrollController = ScrollController();
-  bool _showLeftFade = false;
-  bool _showRightFade = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _onScroll());
-  }
-
-  @override
-  void didUpdateWidget(covariant PatruPattiyalTheervuPagudhi oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.selectedInvoices.length != oldWidget.selectedInvoices.length) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _onScroll());
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _onScroll() {
-    if (!_scrollController.hasClients) return;
-    final pos = _scrollController.position;
-    final isAtStart = pos.pixels <= 0;
-    final isAtEnd = pos.pixels >= pos.maxScrollExtent - 1;
-
-    if (_showLeftFade == !isAtStart && _showRightFade == !isAtEnd) return;
-
-    setState(() {
-      _showLeftFade = !isAtStart && pos.maxScrollExtent > 0;
-      _showRightFade = !isAtEnd && pos.maxScrollExtent > 0;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -116,38 +76,13 @@ class _PatruPattiyalTheervuPagudhiState
         // Selected invoice chips
         if (widget.selectedInvoices.isNotEmpty) ...[
           const SizedBox(height: 12),
-          ShaderMask(
-            shaderCallback: (Rect bounds) {
-              if (!_showLeftFade && !_showRightFade) {
-                return const LinearGradient(
-                    colors: [Colors.black, Colors.black]).createShader(bounds);
-              }
-              return LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  _showLeftFade ? Colors.transparent : Colors.black,
-                  Colors.black,
-                  Colors.black,
-                  _showRightFade ? Colors.transparent : Colors.black,
-                ],
-                stops: const [0.0, 0.05, 0.95, 1.0],
-              ).createShader(bounds);
-            },
-            blendMode: BlendMode.dstIn,
-            child: SingleChildScrollView(
-              controller: _scrollController,
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 8.0, top: 4.0),
-                child: Row(
-                  children: widget.selectedInvoices.map((inv) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10.0, vertical: 6.0),
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 8.0,
+            children: widget.selectedInvoices.map((inv) {
+              return Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10.0, vertical: 6.0),
                         decoration: ShapeDecoration(
                           shape: const StadiumBorder(),
                           color: Theme.of(context)
@@ -186,12 +121,8 @@ class _PatruPattiyalTheervuPagudhiState
                             ),
                           ],
                         ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
+              );
+            }).toList(),
           ),
         ],
       ],

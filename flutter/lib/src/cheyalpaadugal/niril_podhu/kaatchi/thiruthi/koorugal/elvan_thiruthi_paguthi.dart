@@ -48,7 +48,7 @@ class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
     if (isDesktop) {
       // Desktop: Two-side grid layout, always expanded
       return Padding(
-        padding: const EdgeInsets.only(bottom: 48.0),
+        padding: const EdgeInsets.only(bottom: 32.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

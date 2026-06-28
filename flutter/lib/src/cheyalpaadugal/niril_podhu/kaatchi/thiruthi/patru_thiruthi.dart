@@ -490,43 +490,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 8),
-            child: Row(
-              children: [
-                ElvanThiruthiThalaippu(label: K.patrucheettuEn.tr(context, ref)),
-                const SizedBox(width: 4),
-                InkWell(
-                  borderRadius: BorderRadius.circular(100),
-                  onTap: () {
-                    setState(() {
-                      if (_isPatruEnEditing) {
-                        // Confirm: save the edited number
-                        final numPart = _patruEnCtrl.text.trim();
-                        if (numPart.isNotEmpty) {
-                          _patruEn = '$profilePrefix$numPart';
-                        }
-                        _isPatruEnEditing = false;
-                      } else {
-                        // Unlock: extract just the number part for editing
-                        _isPatruEnEditing = true;
-                        final currentNum = _patruEn.replaceFirst(profilePrefix, '');
-                        _patruEnCtrl.text = currentNum;
-                      }
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: Icon(
-                      _isPatruEnEditing ? Icons.check : Icons.edit_outlined,
-                      size: 16,
-                      color: cs.primary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          ElvanThiruthiThalaippu(label: K.patrucheettuEn.tr(context, ref)),
           if (_isPatruEnEditing)
             // Editing mode: text field with locked prefix
             ElvanThiruthiUlleedu(
@@ -540,22 +504,57 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                   _previewPatruEn = val.isEmpty ? '' : '$profilePrefix$val';
                 });
               },
+              suffixIcon: IconButton(
+                icon: Icon(Icons.check, size: 20, color: cs.primary),
+                onPressed: () {
+                  setState(() {
+                    final numPart = _patruEnCtrl.text.trim();
+                    if (numPart.isNotEmpty) {
+                      _patruEn = '$profilePrefix$numPart';
+                    }
+                    _isPatruEnEditing = false;
+                  });
+                },
+              ),
             )
           else
             // Locked mode: read-only pill showing full receipt number
             ElvanThiruthiPothan(
               onTap: null,
-              child: Text(
-                _patruEn.isNotEmpty
-                    ? _patruEn
-                    : K.thaaniyangkiUruvaam.tr(context, ref),
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: _patruEn.isNotEmpty
-                      ? cs.onSurface
-                      : cs.onSurfaceVariant,
-                ),
+              padding: const EdgeInsets.only(left: 20, right: 6),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _patruEn.isNotEmpty
+                          ? _patruEn
+                          : K.thaaniyangkiUruvaam.tr(context, ref),
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: _patruEn.isNotEmpty
+                            ? cs.onSurface
+                            : cs.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.edit_outlined),
+                    iconSize: 16,
+                    color: cs.onSurface,
+                    style: IconButton.styleFrom(
+                      padding: const EdgeInsets.all(8),
+                      minimumSize: const Size(0, 0),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPatruEnEditing = true;
+                        final currentNum = _patruEn.replaceFirst(profilePrefix, '');
+                        _patruEnCtrl.text = currentNum;
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
         ],
@@ -652,16 +651,15 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   void _showInvoicePickerDialog(
       AsyncValue<List<PattiyalTharavuru>> invoicesAsync) {
     final allInvoices = invoicesAsync.value ?? [];
-    final filteredByBusiness = _selectedNiruvanamId != null
-        ? allInvoices
-            .where((i) => i.niruvanamId == _selectedNiruvanamId)
-            .toList()
-        : allInvoices;
+    var filtered = allInvoices;
+    if (_selectedNiruvanamId != null) {
+      filtered = filtered.where((i) => i.niruvanamId == _selectedNiruvanamId).toList();
+    }
 
     PatruPattiyalTheervuMaeladukku.show(
       context: context,
       ref: ref,
-      invoices: filteredByBusiness,
+      invoices: filtered,
       initialSelectedIds: Set<int>.from(_selectedInvoices.map((i) => i.id)),
       onConfirmed: (selected) {
         setState(() {

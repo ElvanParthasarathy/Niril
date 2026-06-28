@@ -47,26 +47,8 @@ class PatruPattiyalTheervuMaeladukku {
 
             final availableInvoices = firstSelected != null
                 ? invoices.where((inv) {
-                    final sameNiruvanam =
-                        inv.niruvanamId == firstSelected!.niruvanamId;
-
-                    final pName1 = inv.vaangunarPeyar['Tamil'] ??
-                        inv.vaangunarPeyar['English'] ??
-                        '';
-                    final pName2 = firstSelected.vaangunarPeyar['Tamil'] ??
-                        firstSelected.vaangunarPeyar['English'] ??
-                        '';
-                    final sameName = pName1 == pName2;
-
-                    final pAddr1 = inv.vaangunarMunvari['Tamil'] ??
-                        inv.vaangunarMunvari['English'] ??
-                        '';
-                    final pAddr2 = firstSelected.vaangunarMunvari['Tamil'] ??
-                        firstSelected.vaangunarMunvari['English'] ??
-                        '';
-                    final sameAddr = pAddr1 == pAddr2;
-
-                    return sameNiruvanam && sameName && sameAddr;
+                    return inv.niruvanamId == firstSelected!.niruvanamId &&
+                           inv.vaangunarId == firstSelected.vaangunarId;
                   }).toList()
                 : invoices;
 

@@ -72,7 +72,10 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
           maxLength: maxLength,
           maxLines: maxLines,
           style: const TextStyle(fontSize: 14),
-          decoration: ElvanThiruthiPillVadivu.getDecoration(context).copyWith(
+          decoration: ElvanThiruthiPillVadivu.getDecoration(
+            context,
+            borderRadius: maxLines != 1 ? 16 : 100,
+          ).copyWith(
             prefixText: prefixText,
             suffixText: suffixText,
             errorText: errorText,

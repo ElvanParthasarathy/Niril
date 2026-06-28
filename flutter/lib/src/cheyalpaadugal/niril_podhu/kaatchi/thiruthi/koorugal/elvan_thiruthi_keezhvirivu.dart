@@ -62,6 +62,7 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
               onRequestAddNew: onRequestAddNew,
             );
           },
+          padding: const EdgeInsets.only(left: 20, right: 6),
           child: Row(
             children: [
               if (value != null && leadingBuilder != null) ...[
@@ -78,36 +79,27 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              if (onClear != null && value != null) ...[
-                Material(
-                  color: Colors.transparent,
-                  shape: const CircleBorder(),
-                  clipBehavior: Clip.antiAlias,
-                  child: InkWell(
-                    onTap: onClear,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Icon(
-                        Icons.close_rounded,
-                        size: 20.0,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.5),
-                      ),
+              if (value != null) ...[
+                if (onClear != null)
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded),
+                    iconSize: 16,
+                    color: Theme.of(context).colorScheme.onSurface,
+                    style: IconButton.styleFrom(
+                      padding: const EdgeInsets.all(8),
+                      minimumSize: const Size(0, 0),
                     ),
+                    onPressed: onClear,
                   ),
+              ] else
+                Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  size: 20.0,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.5),
                 ),
-                const SizedBox(width: 8),
-              ],
-              Icon(
-                Icons.keyboard_arrow_down_rounded,
-                size: 20.0,
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.5),
-              ),
             ],
           ),
         ),

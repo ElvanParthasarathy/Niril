@@ -37,26 +37,13 @@ class PattiyalNaalKooru extends StatelessWidget {
   });
 
   Future<void> _openDatePicker(BuildContext context) async {
-    final colorScheme = Theme.of(context).colorScheme;
-
     final picked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(2020),
       lastDate: DateTime(2100),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: colorScheme,
-            datePickerTheme: DatePickerThemeData(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
+      helpText: '', // Removes the unnecessary 'Select date' text
+      fieldLabelText: '', // Removes the 'Enter Date' label in input mode
     );
 
     if (picked != null) {
@@ -78,28 +65,29 @@ class PattiyalNaalKooru extends StatelessWidget {
         // Tappable date container
         ElvanThiruthiPothan(
           onTap: () => _openDatePicker(context),
+          padding: const EdgeInsets.only(left: 20, right: 6),
           child: Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.calendar_today_rounded,
-                size: 20.0,
-                color: colorScheme.onSurfaceVariant,
-              ),
-              const SizedBox(width: 10),
-              Text(
-                _dateFormat.format(selectedDate),
-                style: TextStyle(
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 0.5,
+              Expanded(
+                child: Text(
+                  _dateFormat.format(selectedDate),
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.5,
+                    color: colorScheme.onSurface,
+                  ),
                 ),
               ),
-              const SizedBox(width: 6),
-              Icon(
-                Icons.arrow_drop_down_rounded,
-                size: 20.0,
-                color: colorScheme.onSurfaceVariant,
+              IconButton(
+                icon: const Icon(Icons.calendar_today_rounded),
+                iconSize: 16,
+                color: colorScheme.onSurface,
+                style: IconButton.styleFrom(
+                  padding: const EdgeInsets.all(8),
+                  minimumSize: const Size(0, 0),
+                ),
+                onPressed: () => _openDatePicker(context),
               ),
             ],
           ),
