@@ -31,7 +31,26 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'src/adippadai/tharavuthalam/migration_udhavi.dart';
 
+InputDecorationTheme _buildInputTheme(ColorScheme cs) {
+  return InputDecorationTheme(
+    constraints: const BoxConstraints(minHeight: 48),
+    isDense: true,
+    filled: true,
+    fillColor: cs.onSurface.withValues(alpha: 0.08),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(100),
+      borderSide: BorderSide.none,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(100),
+      borderSide: BorderSide.none,
+    ),
+  );
+}
+
 void main() {
+
   // ── Global Error Safety Net ──
   // Everything runs inside runZonedGuarded so ensureInitialized() and runApp()
   // share the same zone (prevents Flutter's "Zone mismatch" error).
@@ -184,6 +203,7 @@ class ElvanNirilApp extends ConsumerWidget {
           brightness: Brightness.light,
         ),
         scaffoldBackgroundColor: const Color(0xFFF7F7F7),
+        inputDecorationTheme: _buildInputTheme(ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.light)),
         useMaterial3: true,
         textTheme: ThemeData.light().textTheme.apply(fontFamily: 'ElvanSans'),
         cupertinoOverrideTheme: CupertinoThemeData(
@@ -218,6 +238,7 @@ class ElvanNirilApp extends ConsumerWidget {
           brightness: Brightness.dark,
         ),
         scaffoldBackgroundColor: Colors.black, // AMOLED Black
+        inputDecorationTheme: _buildInputTheme(ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.dark)),
         useMaterial3: true,
         textTheme: ThemeData.dark().textTheme.apply(fontFamily: 'ElvanSans'),
         cupertinoOverrideTheme: CupertinoThemeData(

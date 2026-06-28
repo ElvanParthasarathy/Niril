@@ -15,7 +15,7 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
   final String Function(BuildContext, WidgetRef, T)? subtitleBuilder;
   final Widget Function(BuildContext, WidgetRef, T)? leadingBuilder;
   final String Function(BuildContext, WidgetRef, T) itemLabelBuilder;
-
+  
   // Optional features for the bottom sheet
   final bool showSearch;
   final bool Function(T, String)? searchFilter;
@@ -77,7 +77,6 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
           borderRadius: BorderRadius.circular(100),
           child: InputDecorator(
             decoration: InputDecoration(
-              constraints: const BoxConstraints(minHeight: 48),
               isDense: true,
               filled: true,
               fillColor: WidgetStateColor.resolveWith((states) {
@@ -96,8 +95,8 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
               contentPadding: const EdgeInsets.only(
                 left: 20,
                 right: 20,
-                top: 12,
-                bottom: 12,
+                top: 16,
+                bottom: 16,
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(100),
@@ -137,7 +136,7 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
                       padding: const EdgeInsets.only(right: 8),
                       child: Icon(
                         Icons.close_rounded,
-                        size: 14,
+                        size: 20,
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
@@ -147,7 +146,7 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
                   ),
                 Icon(
                   Icons.keyboard_arrow_down_rounded,
-                  size: 14,
+                  size: 24,
                   color: Theme.of(context)
                       .colorScheme
                       .onSurface

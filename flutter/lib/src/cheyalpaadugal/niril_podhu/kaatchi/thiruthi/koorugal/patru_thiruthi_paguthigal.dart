@@ -90,7 +90,6 @@ class _PatruPattiyalTheervuPagudhiState
           borderRadius: BorderRadius.circular(100),
           child: InputDecorator(
             decoration: InputDecoration(
-              constraints: const BoxConstraints(minHeight: 48),
               isDense: true,
               filled: true,
               fillColor: WidgetStateColor.resolveWith((states) {

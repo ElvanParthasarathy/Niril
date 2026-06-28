@@ -494,7 +494,6 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
             else
               InputDecorator(
                 decoration: InputDecoration(
-                  constraints: const BoxConstraints(minHeight: 48),
                   isDense: true,
                   filled: true,
                   fillColor: Theme.of(context)
@@ -504,8 +503,8 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                   contentPadding: const EdgeInsets.only(
                     left: 20,
                     right: 20,
-                    top: 12,
-                    bottom: 12,
+                    top: 16,
+                    bottom: 16,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(100),
@@ -685,30 +684,16 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
               ],
             )
           else
-            InputDecorator(
-              decoration: InputDecoration(
-                constraints: const BoxConstraints(minHeight: 48),
-                isDense: true,
-                filled: true,
-                fillColor: Theme.of(context)
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Theme.of(context)
                     .colorScheme
                     .onSurface
                     .withValues(alpha: 0.08),
-                contentPadding: const EdgeInsets.only(
-                  left: 20,
-                  right: 20,
-                  top: 12,
-                  bottom: 12,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(100),
-                  borderSide: BorderSide.none,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(100),
-                  borderSide: BorderSide.none,
-                ),
+                borderRadius: BorderRadius.circular(100),
               ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: _patruEnCtrl.text.isNotEmpty ||
                       (_patruEn.isNotEmpty ? _patruEn : _previewPatruEn)
                           .isNotEmpty
@@ -716,16 +701,14 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                       _patruEnCtrl.text.isNotEmpty
                           ? _patruEnCtrl.text
                           : (_patruEn.isNotEmpty ? _patruEn : _previewPatruEn),
-                      style: TextStyle(
-                        fontSize: 14,
+                      style: tt.bodyLarge?.copyWith(
                         color: cs.onSurface,
                         fontWeight: FontWeight.w600,
                       ),
                     )
                   : Text(
                       K.thaaniyangkiUruvaam.tr(context, ref),
-                      style: TextStyle(
-                        fontSize: 14,
+                      style: tt.bodyLarge?.copyWith(
                         color: cs.onSurfaceVariant,
                         fontWeight: FontWeight.w500,
                       ),
@@ -821,7 +804,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
         items: SeluthiVagai.values,
         itemLabelBuilder: (ctx, ref, mode) => mode.label(ctx, ref),
         leadingBuilder: (ctx, ref, mode) => Icon(mode.icon,
-            size: 14,
+            size: 18,
             color: Theme.of(ctx).colorScheme.onSurface.withValues(alpha: 0.7)),
         onChanged: (val) {
           setState(() => _seluthiVagai = val);

@@ -91,7 +91,6 @@ class PattiyalNaalKooru extends StatelessWidget {
           onTap: () => _openDatePicker(context),
           child: InputDecorator(
             decoration: InputDecoration(
-              constraints: const BoxConstraints(minHeight: 48),
               isDense: true,
               filled: true,
               fillColor: WidgetStateColor.resolveWith((states) {
@@ -104,8 +103,8 @@ class PattiyalNaalKooru extends StatelessWidget {
               contentPadding: const EdgeInsets.only(
                 left: 20,
                 right: 20,
-                top: 12,
-                bottom: 12,
+                top: 16,
+                bottom: 16,
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(100),
@@ -125,7 +124,7 @@ class PattiyalNaalKooru extends StatelessWidget {
               children: [
                 Icon(
                   Icons.calendar_today_rounded,
-                  size: 14,
+                  size: 20,
                   color: colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(width: 10),
@@ -139,7 +138,7 @@ class PattiyalNaalKooru extends StatelessWidget {
                 const SizedBox(width: 6),
                 Icon(
                   Icons.arrow_drop_down_rounded,
-                  size: 14,
+                  size: 22,
                   color: colorScheme.onSurfaceVariant,
                 ),
               ],
