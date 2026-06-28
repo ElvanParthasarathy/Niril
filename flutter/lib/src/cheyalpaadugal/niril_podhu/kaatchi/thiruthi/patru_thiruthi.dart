@@ -684,16 +684,29 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
               ],
             )
           else
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Theme.of(context)
+            InputDecorator(
+              decoration: InputDecoration(
+                isDense: true,
+                filled: true,
+                fillColor: Theme.of(context)
                     .colorScheme
                     .onSurface
                     .withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(100),
+                contentPadding: const EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  top: 16,
+                  bottom: 16,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(100),
+                  borderSide: BorderSide.none,
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(100),
+                  borderSide: BorderSide.none,
+                ),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: _patruEnCtrl.text.isNotEmpty ||
                       (_patruEn.isNotEmpty ? _patruEn : _previewPatruEn)
                           .isNotEmpty
@@ -701,14 +714,16 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                       _patruEnCtrl.text.isNotEmpty
                           ? _patruEnCtrl.text
                           : (_patruEn.isNotEmpty ? _patruEn : _previewPatruEn),
-                      style: tt.bodyLarge?.copyWith(
+                      style: TextStyle(
+                        fontSize: 14,
                         color: cs.onSurface,
                         fontWeight: FontWeight.w600,
                       ),
                     )
                   : Text(
                       K.thaaniyangkiUruvaam.tr(context, ref),
-                      style: tt.bodyLarge?.copyWith(
+                      style: TextStyle(
+                        fontSize: 14,
                         color: cs.onSurfaceVariant,
                         fontWeight: FontWeight.w500,
                       ),
