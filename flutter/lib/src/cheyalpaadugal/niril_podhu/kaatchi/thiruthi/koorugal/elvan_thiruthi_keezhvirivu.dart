@@ -15,7 +15,7 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
   final String Function(BuildContext, WidgetRef, T)? subtitleBuilder;
   final Widget Function(BuildContext, WidgetRef, T)? leadingBuilder;
   final String Function(BuildContext, WidgetRef, T) itemLabelBuilder;
-  
+
   // Optional features for the bottom sheet
   final bool showSearch;
   final bool Function(T, String)? searchFilter;
@@ -136,7 +136,7 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
                       padding: const EdgeInsets.only(right: 8),
                       child: Icon(
                         Icons.close_rounded,
-                        size: 20,
+                        size: 14,
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
@@ -146,7 +146,7 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
                   ),
                 Icon(
                   Icons.keyboard_arrow_down_rounded,
-                  size: 24,
+                  size: 14,
                   color: Theme.of(context)
                       .colorScheme
                       .onSurface

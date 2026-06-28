@@ -124,7 +124,7 @@ class PattiyalNaalKooru extends StatelessWidget {
               children: [
                 Icon(
                   Icons.calendar_today_rounded,
-                  size: 20,
+                  size: 14,
                   color: colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(width: 10),
@@ -138,7 +138,7 @@ class PattiyalNaalKooru extends StatelessWidget {
                 const SizedBox(width: 6),
                 Icon(
                   Icons.arrow_drop_down_rounded,
-                  size: 22,
+                  size: 14,
                   color: colorScheme.onSurfaceVariant,
                 ),
               ],

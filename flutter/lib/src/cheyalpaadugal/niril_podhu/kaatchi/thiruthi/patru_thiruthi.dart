@@ -819,7 +819,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
         items: SeluthiVagai.values,
         itemLabelBuilder: (ctx, ref, mode) => mode.label(ctx, ref),
         leadingBuilder: (ctx, ref, mode) => Icon(mode.icon,
-            size: 18,
+            size: 14,
             color: Theme.of(ctx).colorScheme.onSurface.withValues(alpha: 0.7)),
         onChanged: (val) {
           setState(() => _seluthiVagai = val);
