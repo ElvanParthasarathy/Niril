@@ -80,6 +80,7 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
           maxLines: maxLines,
           style: const TextStyle(fontSize: 14),
           decoration: InputDecoration(
+            constraints: const BoxConstraints(minHeight: 48),
             isDense: true,
             prefixText: prefixText,
             suffixText: suffixText,
