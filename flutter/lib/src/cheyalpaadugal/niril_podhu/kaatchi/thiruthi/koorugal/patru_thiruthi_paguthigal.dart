@@ -101,10 +101,11 @@ class _PatruPattiyalTheervuPagudhiState
                 borderRadius: BorderRadius.circular(50),
               ),
               backgroundColor: widget.isDark
-                  ? Colors.white.withValues(alpha: 0.08)
+                  ? Colors.white.withValues(alpha: 0.10)
                   : Colors.black.withValues(alpha: 0.05),
               foregroundColor: widget.isDark ? Colors.white : Colors.black87,
               elevation: 0,
+              surfaceTintColor: Colors.transparent,
             ),
           ),
         ),
@@ -147,7 +148,7 @@ class _PatruPattiyalTheervuPagudhiState
                         decoration: ShapeDecoration(
                           shape: const StadiumBorder(),
                           color: widget.isDark
-                              ? Colors.white.withValues(alpha: 0.08)
+                              ? Colors.white.withValues(alpha: 0.10)
                               : Colors.black.withValues(alpha: 0.05),
                         ),
                         child: Row(
