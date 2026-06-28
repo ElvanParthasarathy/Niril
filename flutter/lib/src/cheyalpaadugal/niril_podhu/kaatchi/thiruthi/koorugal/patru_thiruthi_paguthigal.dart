@@ -146,10 +146,10 @@ class _PatruPattiyalTheervuPagudhiState
                             horizontal: 10.0, vertical: 6.0),
                         decoration: ShapeDecoration(
                           shape: const StadiumBorder(),
-                          color: Theme.of(context).chipTheme.backgroundColor ??
-                              Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerHighest,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.08),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
