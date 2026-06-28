@@ -10,6 +10,7 @@ import '../../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../../adippadai/tharavuru/uruvugal.dart';
 import '../../kalanjiyam/vaangunar_nilaimai.dart';
 import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku/elvan_kizh_maeladukku.dart';
+import '../thiruthi/koorugal/elvan_thiruthi_keezhvirivu.dart';
 
 class ElvanVaangunarKeezhvirivuKooru extends ConsumerWidget {
   final int? selectedVaangunarId;
@@ -109,86 +110,20 @@ class ElvanVaangunarKeezhvirivuKooru extends ConsumerWidget {
         final selectedVaangunar = vaangunargal.where((v) => v.id == selectedVaangunarId).firstOrNull;
         final currentValue = selectedVaangunar != null ? getPrimaryName(selectedVaangunar) : placeholder;
 
-        return InkWell(
-          onTap: () {
-            showElvanSelectionBottomSheet<VaangunarTharavuru>(
-              context: context,
-              title: placeholder,
-              items: vaangunargal,
-              currentValue: selectedVaangunar,
-              onSelected: (val) => onChanged(val),
-              itemLabelBuilder: (ctx, ref, item) => getPrimaryName(item),
-              subtitleBuilder: (ctx, ref, item) => getSubtitle(item),
-              searchFilter: filterSearch,
-              showSearch: true,
-              onRequestAddNew: onRequestAddNew,
-            );
+        return ElvanThiruthiKeezhvirivu<VaangunarTharavuru>(
+          label: placeholder,
+          hideLabel: hideLabel,
+          value: selectedVaangunar,
+          items: vaangunargal,
+          itemLabelBuilder: (ctx, ref, item) => getPrimaryName(item),
+          subtitleBuilder: (ctx, ref, item) => getSubtitle(item),
+          searchFilter: filterSearch,
+          showSearch: true,
+          onRequestAddNew: onRequestAddNew,
+          onChanged: (VaangunarTharavuru newValue) {
+            onChanged(newValue);
           },
-          borderRadius: BorderRadius.circular(100),
-          child: Container(
-            padding: EdgeInsets.zero,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (!hideLabel) ...[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16, bottom: 8),
-                          child: Text(
-                            placeholder,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 0.3,
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-                            ),
-                          ),
-                        ),
-                      ],
-                      Text(
-                        currentValue,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: selectedVaangunarId == null ? FontWeight.w400 : FontWeight.w600,
-                          color: Theme.of(context).colorScheme.onSurface.withValues(
-                                alpha: selectedVaangunarId == null ? 0.3 : 1.0,
-                              ),
-                        ),
-                      ),
-                      if (selectedVaangunar != null && getSubtitle(selectedVaangunar).isNotEmpty) ...[
-                        const SizedBox(height: 2),
-                        Text(
-                          getSubtitle(selectedVaangunar),
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w400,
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-                          ),
-                        ),
-                      ]
-                    ],
-                  ),
-                ),
-                Row(
-                  children: [
-                    if (showClearButton && selectedVaangunarId != null)
-                      IconButton(
-                        onPressed: () => onChanged(null),
-                        icon: const Icon(Icons.close_rounded, size: 20),
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-                      ),
-                    Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          onClear: (showClearButton && selectedVaangunarId != null) ? () => onChanged(null) : null,
         );
       },
       loading: () => Container(

@@ -75,6 +75,7 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
           decoration: ElvanThiruthiPillVadivu.getDecoration(
             context,
             borderRadius: maxLines != 1 ? 16 : 100,
+            isMultiline: maxLines != 1,
           ).copyWith(
             prefixText: prefixText,
             suffixText: suffixText,

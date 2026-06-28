@@ -41,29 +41,43 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
       });
     }
 
+    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (profiles.length > 1) ...[
-          ElvanPagudhiThalaipu(en: 1, thalaipu: K.niruvanathTharavu.tr(context, ref)),
-          ElvanThiruthiThalaippu(label: K.niruvanam.tr(context, ref)),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isDesktop = MediaQuery.sizeOf(context).width >= 800;
-              final width = isDesktop ? (constraints.maxWidth - 16) / 2 : constraints.maxWidth;
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 32.0),
-                child: SizedBox(
-                  width: width,
-                  child: ElvanNiruvanamKeezhvirivuKooru(
-                    selectedNiruvanamId: selectedNiruvanamId,
-                    hideLabel: true,
-                    showClearButton: true,
-                    onChanged: (p) => onChanged(p),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 32.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ElvanPagudhiThalaipu(en: 1, thalaipu: K.niruvanathTharavu.tr(context, ref)),
+                Padding(
+                  padding: EdgeInsets.only(top: isDesktop ? 4.0 : 16.0),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final width = isDesktop ? (constraints.maxWidth - 16) / 2 : constraints.maxWidth;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ElvanThiruthiThalaippu(label: K.niruvanam.tr(context, ref)),
+                          SizedBox(
+                            width: width,
+                            child: ElvanNiruvanamKeezhvirivuKooru(
+                              selectedNiruvanamId: selectedNiruvanamId,
+                              hideLabel: true,
+                              showClearButton: true,
+                              onChanged: (p) => onChanged(p),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
                   ),
                 ),
-              );
-            }
+              ],
+            ),
           ),
         ],
 

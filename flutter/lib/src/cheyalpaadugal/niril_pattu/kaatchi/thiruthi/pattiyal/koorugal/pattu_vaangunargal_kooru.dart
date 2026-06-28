@@ -7,6 +7,7 @@ import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../niril_podhu/kaatchi/koorugal/elvan_vaangunar_keezhvirivu_kooru.dart';
 import '../../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_thalaippu.dart';
 import 'maanila_thervu_maeladukku.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -65,17 +66,12 @@ class PattuVaangunargalKooru extends ConsumerWidget {
     final tt = Theme.of(context).textTheme;
 
     return LayoutBuilder(builder: (context, constraints) {
-      final wide = constraints.maxWidth >= 700;
+      final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+      
       final customerSearch = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            K.vaangunarPeyarThaedu.tr(context, ref),
-            style: tt.labelMedium?.copyWith(
-              color: cs.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          ElvanThiruthiThalaippu(label: K.vaangunarPeyarThaedu.tr(context, ref)),
           ElvanVaangunarKeezhvirivuKooru(
             selectedVaangunarId: data.selectedVaangunarId,
             hideLabel: true,
@@ -129,14 +125,20 @@ class PattuVaangunargalKooru extends ConsumerWidget {
         ],
       );
 
-      if (wide) {
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(flex: 5, child: leftColumn),
-            const SizedBox(width: 24),
-            const Expanded(flex: 7, child: SizedBox.shrink()),
-          ],
+      if (isDesktop) {
+        // Niruvanam pill takes exactly (NiruvanamMaxWidth - 16) / 2 width and starts at X=0.
+        // Vaangunar pill is indented by 52px (due to ElvanEditorSection), so its constraints.maxWidth
+        // is exactly (NiruvanamMaxWidth - 52).
+        // To make their right edges align perfectly:
+        final niruvanamMaxWidth = constraints.maxWidth + 52;
+        final exactWidth = (niruvanamMaxWidth - 16) / 2 - 52;
+        
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: SizedBox(
+            width: exactWidth > 0 ? exactWidth : null,
+            child: leftColumn,
+          ),
         );
       }
       return leftColumn;

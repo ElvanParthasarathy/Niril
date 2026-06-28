@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 class ElvanThiruthiPillVadivu {
   /// Returns the standard dark grey pill decoration used consistently 
   /// across text fields and autocomplete boxes in the editor.
-  static InputDecoration getDecoration(BuildContext context, {double borderRadius = 100}) {
+  static InputDecoration getDecoration(BuildContext context, {double borderRadius = 100, bool isMultiline = false}) {
     return InputDecoration(
       isDense: true,
-      constraints: const BoxConstraints(minHeight: 45),
+      constraints: isMultiline
+          ? const BoxConstraints(minHeight: 45)
+          : const BoxConstraints(minHeight: 45, maxHeight: 45),
       filled: true,
       fillColor: WidgetStateColor.resolveWith((states) {
         if (states.contains(WidgetState.focused) ||
@@ -21,11 +23,9 @@ class ElvanThiruthiPillVadivu {
             .onSurface
             .withValues(alpha: 0.08);
       }),
-      contentPadding: const EdgeInsets.only(
-        left: 20,
-        right: 20,
-        top: 16,
-        bottom: 16,
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 20,
+        vertical: 12,
       ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(borderRadius),
