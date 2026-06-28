@@ -91,7 +91,6 @@ class PattiyalNaalKooru extends StatelessWidget {
           onTap: () => _openDatePicker(context),
           child: InputDecorator(
             decoration: InputDecoration(
-              constraints: const BoxConstraints(minHeight: 48),
               isDense: true,
               filled: true,
               fillColor: WidgetStateColor.resolveWith((states) {

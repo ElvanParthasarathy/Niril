@@ -15,7 +15,7 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
   final String Function(BuildContext, WidgetRef, T)? subtitleBuilder;
   final Widget Function(BuildContext, WidgetRef, T)? leadingBuilder;
   final String Function(BuildContext, WidgetRef, T) itemLabelBuilder;
-
+  
   // Optional features for the bottom sheet
   final bool showSearch;
   final bool Function(T, String)? searchFilter;
@@ -77,7 +77,6 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
           borderRadius: BorderRadius.circular(100),
           child: InputDecorator(
             decoration: InputDecoration(
-              constraints: const BoxConstraints(minHeight: 48),
               isDense: true,
               filled: true,
               fillColor: WidgetStateColor.resolveWith((states) {
