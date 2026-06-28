@@ -504,8 +504,8 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                   contentPadding: const EdgeInsets.only(
                     left: 20,
                     right: 20,
-                    top: 16,
-                    bottom: 16,
+                    top: 12,
+                    bottom: 12,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(100),
@@ -697,8 +697,8 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                 contentPadding: const EdgeInsets.only(
                   left: 20,
                   right: 20,
-                  top: 16,
-                  bottom: 16,
+                  top: 12,
+                  bottom: 12,
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(100),
