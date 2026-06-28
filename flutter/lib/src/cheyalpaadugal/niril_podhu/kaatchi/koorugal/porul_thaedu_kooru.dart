@@ -199,35 +199,12 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
       onTap: enabled ? onTap : null,
       borderRadius: BorderRadius.circular(100),
       child: InputDecorator(
-        decoration: InputDecoration(
-          constraints: ElvanThiruthiMarabu.singleLineConstraints,
+        decoration: const InputDecoration(
           isDense: true,
-          filled: true,
-          fillColor: WidgetStateColor.resolveWith((states) {
-            if (states.contains(WidgetState.focused) ||
-                states.contains(WidgetState.hovered)) {
-              return colorScheme.onSurface.withValues(alpha: 0.12);
-            }
-            return colorScheme.onSurface.withValues(alpha: 0.08);
-          }),
-          contentPadding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 16,
-            bottom: 16,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(100),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(100),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(100),
-            borderSide: BorderSide.none,
-          ),
+          filled: false,
+          border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
         ),
         child: Row(
           children: [

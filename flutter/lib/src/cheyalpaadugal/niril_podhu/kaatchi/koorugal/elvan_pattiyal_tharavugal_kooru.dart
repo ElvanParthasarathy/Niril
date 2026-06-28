@@ -88,16 +88,7 @@ class ElvanPattiyalTharavugalKooru extends ConsumerWidget {
               children: [
                 // Locked prefix pill
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 14, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: cs.surfaceContainerHighest,
-                    borderRadius: const BorderRadius.horizontal(
-                        left: Radius.circular(12)),
-                    border: Border.all(
-                      color: cs.outline.withValues(alpha: 0.3),
-                    ),
-                  ),
+                  padding: const EdgeInsets.only(right: 4),
                   child: Text(
                     profilePrefix,
                     style: tt.bodyLarge?.copyWith(
@@ -113,17 +104,11 @@ class ElvanPattiyalTharavugalKooru extends ConsumerWidget {
                     keyboardType: TextInputType.number,
                     inputFormatters: ElvanVadivamaippigal.enngalMattum,
                     autofocus: true,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: '01',
-                      border: OutlineInputBorder(
-                        borderRadius: const BorderRadius.horizontal(
-                            right: Radius.circular(12)),
-                        borderSide: BorderSide(
-                          color: cs.outline.withValues(alpha: 0.3),
-                        ),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 14),
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
                       isDense: true,
                     ),
                     onChanged: (v) {
@@ -135,7 +120,8 @@ class ElvanPattiyalTharavugalKooru extends ConsumerWidget {
               ],
             )
           else
-            ElvanThiruthiAttai(
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Text(
                 invoiceNumberOverride.isNotEmpty
                     ? invoiceNumberOverride

@@ -151,10 +151,6 @@ class PattuUrupadiAttai extends ConsumerWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: cs.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
                       child: Text(
                         item.thallupadiVagai == 'percentage' ? '%' : '₹',
                         style: const TextStyle(fontWeight: FontWeight.bold),
@@ -372,7 +368,10 @@ class _ItemFieldWidgetState extends State<ItemFieldWidget> {
       decoration: InputDecoration(
         labelText: widget.label,
         suffixText: widget.isWeight ? 'kg' : null,
+        filled: false,
         border: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         isDense: true,

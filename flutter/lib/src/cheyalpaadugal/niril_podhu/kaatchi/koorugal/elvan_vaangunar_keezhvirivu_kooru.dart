@@ -126,11 +126,7 @@ class ElvanVaangunarKeezhvirivuKooru extends ConsumerWidget {
           },
           borderRadius: BorderRadius.circular(100),
           child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.03),
-              borderRadius: BorderRadius.circular(100),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            padding: EdgeInsets.zero,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

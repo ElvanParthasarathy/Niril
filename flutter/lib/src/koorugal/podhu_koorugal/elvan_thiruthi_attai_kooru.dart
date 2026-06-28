@@ -76,13 +76,7 @@ class ElvanUrupadiAttai extends StatelessWidget {
 
     return Container(
       margin: margin,
-      decoration: BoxDecoration(
-        color: isDark
-            ? cs.surfaceContainerHighest
-            : cs.surface,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      padding: padding ?? const EdgeInsets.all(16),
+      padding: padding ?? const EdgeInsets.symmetric(vertical: 8),
       child: child,
     );
   }

@@ -91,24 +91,12 @@ class PattiyalNaalKooru extends StatelessWidget {
           borderRadius: BorderRadius.circular(100),
           onTap: () => _openDatePicker(context),
           child: InputDecorator(
-            decoration: InputDecoration(
-              constraints: ElvanThiruthiMarabu.singleLineConstraints,
+            decoration: const InputDecoration(
               isDense: true,
-              filled: true,
-              fillColor: ElvanThiruthiMarabu.buildFillColor(context),
-              contentPadding: ElvanThiruthiMarabu.contentPadding,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(ElvanThiruthiMarabu.borderRadius),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(ElvanThiruthiMarabu.borderRadius),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(ElvanThiruthiMarabu.borderRadius),
-                borderSide: BorderSide.none,
-              ),
+              filled: false,
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,

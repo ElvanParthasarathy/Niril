@@ -237,14 +237,7 @@ class PattuVilippiIdam extends ConsumerWidget {
       final editablePill = GestureDetector(
         onTap: () => _showStatePickerSheet(context, cs),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            color: cs.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: cs.outline.withValues(alpha: 0.3),
-            ),
-          ),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -278,11 +271,7 @@ class PattuVilippiIdam extends ConsumerWidget {
 
       final tamilPill = placeOfSupplyTa.isNotEmpty
           ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              decoration: BoxDecoration(
-                color: cs.surfaceContainerHighest.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(12),
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 8),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
