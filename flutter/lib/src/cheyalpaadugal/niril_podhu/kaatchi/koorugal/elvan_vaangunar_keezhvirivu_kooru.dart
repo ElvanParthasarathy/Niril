@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
@@ -110,96 +109,90 @@ class ElvanVaangunarKeezhvirivuKooru extends ConsumerWidget {
         final selectedVaangunar = vaangunargal.where((v) => v.id == selectedVaangunarId).firstOrNull;
         final currentValue = selectedVaangunar != null ? getPrimaryName(selectedVaangunar) : placeholder;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (!hideLabel)
-              ElvanThiruthiMarabu.buildLabel(context, placeholder),
-            InkWell(
-              onTap: () {
-                showElvanSelectionBottomSheet<VaangunarTharavuru>(
-                  context: context,
-                  title: placeholder,
-                  items: vaangunargal,
-                  currentValue: selectedVaangunar,
-                  onSelected: (val) => onChanged(val),
-                  itemLabelBuilder: (ctx, ref, item) => getPrimaryName(item),
-                  subtitleBuilder: (ctx, ref, item) => getSubtitle(item),
-                  searchFilter: filterSearch,
-                  showSearch: true,
-                  onRequestAddNew: onRequestAddNew,
-                );
-              },
-              borderRadius: BorderRadius.circular(ElvanThiruthiMarabu.borderRadius),
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  constraints: ElvanThiruthiMarabu.singleLineConstraints,
-                  isDense: true,
-                  filled: true,
-                  fillColor: ElvanThiruthiMarabu.buildFillColor(context),
-                  contentPadding: ElvanThiruthiMarabu.contentPadding,
-                  border: ElvanThiruthiMarabu.border,
-                  enabledBorder: ElvanThiruthiMarabu.border,
-                  focusedBorder: ElvanThiruthiMarabu.border,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            currentValue,
+        return InkWell(
+          onTap: () {
+            showElvanSelectionBottomSheet<VaangunarTharavuru>(
+              context: context,
+              title: placeholder,
+              items: vaangunargal,
+              currentValue: selectedVaangunar,
+              onSelected: (val) => onChanged(val),
+              itemLabelBuilder: (ctx, ref, item) => getPrimaryName(item),
+              subtitleBuilder: (ctx, ref, item) => getSubtitle(item),
+              searchFilter: filterSearch,
+              showSearch: true,
+              onRequestAddNew: onRequestAddNew,
+            );
+          },
+          borderRadius: BorderRadius.circular(100),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.03),
+              borderRadius: BorderRadius.circular(100),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (!hideLabel) ...[
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16, bottom: 8),
+                          child: Text(
+                            placeholder,
                             style: TextStyle(
-                              fontSize: ElvanThiruthiMarabu.fontSize,
-                              fontWeight: selectedVaangunarId == null ? FontWeight.w400 : FontWeight.w600,
-                              color: Theme.of(context).colorScheme.onSurface.withValues(
-                                    alpha: selectedVaangunarId == null ? 0.3 : 1.0,
-                                  ),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              letterSpacing: 0.3,
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                             ),
                           ),
-                          if (selectedVaangunar != null && getSubtitle(selectedVaangunar).isNotEmpty) ...[
-                            const SizedBox(height: 2),
-                            Text(
-                              getSubtitle(selectedVaangunar),
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-                              ),
-                            ),
-                          ]
-                        ],
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        if (showClearButton && selectedVaangunarId != null)
-                          InkWell(
-                            onTap: () => onChanged(null),
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: Icon(
-                                Icons.close_rounded,
-                                size: ElvanThiruthiMarabu.iconSize,
-                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
-                              ),
-                            ),
-                          ),
-                        Icon(
-                          Icons.keyboard_arrow_down_rounded,
-                          size: ElvanThiruthiMarabu.iconSize,
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                         ),
                       ],
+                      Text(
+                        currentValue,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: selectedVaangunarId == null ? FontWeight.w400 : FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onSurface.withValues(
+                                alpha: selectedVaangunarId == null ? 0.3 : 1.0,
+                              ),
+                        ),
+                      ),
+                      if (selectedVaangunar != null && getSubtitle(selectedVaangunar).isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          getSubtitle(selectedVaangunar),
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ]
+                    ],
+                  ),
+                ),
+                Row(
+                  children: [
+                    if (showClearButton && selectedVaangunarId != null)
+                      IconButton(
+                        onPressed: () => onChanged(null),
+                        icon: const Icon(Icons.close_rounded, size: 20),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                      ),
+                    Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
                     ),
                   ],
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         );
       },
       loading: () => Container(

@@ -45,7 +45,12 @@ class ElvanTextField extends StatelessWidget {
       controller: controller,
       initialValue: initialValue,
       focusNode: focusNode,
-      decoration: decoration,
+      decoration: decoration != null
+          ? decoration!.copyWith(
+              counterText: decoration!.counterText ??
+                  (maxLength != null ? '' : null),
+            )
+          : (maxLength != null ? const InputDecoration(counterText: '') : null),
       keyboardType: keyboardType,
       style: style,
       textAlign: textAlign,

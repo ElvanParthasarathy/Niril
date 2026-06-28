@@ -32,22 +32,20 @@ import 'package:path/path.dart' as p;
 import 'src/adippadai/tharavuthalam/migration_udhavi.dart';
 
 InputDecorationTheme _buildInputTheme(ColorScheme cs) {
-  final pillBorder = OutlineInputBorder(
-    borderRadius: BorderRadius.circular(100),
-    borderSide: BorderSide.none,
-  );
   return InputDecorationTheme(
     constraints: const BoxConstraints(minHeight: 48),
     isDense: true,
     filled: true,
     fillColor: cs.onSurface.withValues(alpha: 0.08),
     contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-    border: pillBorder,
-    enabledBorder: pillBorder,
-    focusedBorder: pillBorder,
-    errorBorder: pillBorder,
-    focusedErrorBorder: pillBorder,
-    disabledBorder: pillBorder,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(100),
+      borderSide: BorderSide.none,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(100),
+      borderSide: BorderSide.none,
+    ),
   );
 }
 

@@ -145,6 +145,7 @@ class ElvanSettingsTextField extends StatelessWidget {
             }),
             contentPadding: ElvanThiruthiMarabu.contentPadding,
             constraints: ElvanThiruthiMarabu.singleLineConstraints,
+            counterText: '',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(maxLines > 1 ? 16 : 100),
               borderSide: BorderSide.none,

@@ -81,9 +81,7 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
           maxLines: maxLines,
           style: const TextStyle(fontSize: 14),
           decoration: InputDecoration(
-            constraints: (maxLines == null || maxLines! > 1) 
-                ? ElvanThiruthiMarabu.multiLineConstraints 
-                : ElvanThiruthiMarabu.singleLineConstraints,
+            constraints: ElvanThiruthiMarabu.singleLineConstraints,
             isDense: true,
             prefixText: prefixText,
             suffixText: suffixText,
@@ -91,6 +89,7 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
             prefixIcon: prefixIcon,
             suffixIcon: suffixIcon,
             hintText: hintText,
+            counterText: maxLength != null ? '' : null,
             filled: true,
             fillColor: ElvanThiruthiMarabu.buildFillColor(context),
             contentPadding: ElvanThiruthiMarabu.contentPadding,

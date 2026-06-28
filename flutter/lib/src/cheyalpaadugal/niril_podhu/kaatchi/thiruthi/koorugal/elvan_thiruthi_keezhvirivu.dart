@@ -59,7 +59,7 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
               ),
             ),
           ),
-        InkWell(
+        GestureDetector(
           onTap: () {
             showElvanSelectionBottomSheet<T>(
               context: context,
@@ -75,29 +75,8 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
               onRequestAddNew: onRequestAddNew,
             );
           },
-          borderRadius: BorderRadius.circular(100),
-          child: InputDecorator(
-            decoration: InputDecoration(
-              constraints: ElvanThiruthiMarabu.singleLineConstraints,
-              isDense: true,
-              filled: true,
-              fillColor: ElvanThiruthiMarabu.buildFillColor(context),
-              contentPadding: ElvanThiruthiMarabu.contentPadding,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(ElvanThiruthiMarabu.borderRadius),
-                borderSide: BorderSide.none,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(ElvanThiruthiMarabu.borderRadius),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(ElvanThiruthiMarabu.borderRadius),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            child: Row(
-              children: [
+          child: Row(
+            children: [
                 if (value != null && leadingBuilder != null) ...[
                   leadingBuilder!(context, ref, value as T),
                   const SizedBox(width: 8),
@@ -139,7 +118,6 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
                 ),
               ],
             ),
-          ),
         ),
       ],
     );

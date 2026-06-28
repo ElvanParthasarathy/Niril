@@ -72,6 +72,7 @@ class _ElvanDesktopToolbarState extends State<ElvanDesktopToolbar> {
               constraints: const BoxConstraints(maxWidth: 400),
               child: Container(
                 height: 48,
+                alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: isDark
                       ? Colors.white.withValues(alpha: 0.08)
@@ -90,7 +91,7 @@ class _ElvanDesktopToolbarState extends State<ElvanDesktopToolbar> {
                           : Colors.black.withValues(alpha: 0.5),
                     ),
                     // React: gap: 1.25 = 10px
-                    const SizedBox(width: 10),
+                    const SizedBox(width: 16),
                     // React: <input> flex: 1, fontSize: 0.95rem (~15px), padding: 12px 0
                     Expanded(
                       child: TextField(
@@ -102,6 +103,7 @@ class _ElvanDesktopToolbarState extends State<ElvanDesktopToolbar> {
                           color: isDark ? Colors.white : Colors.black,
                           height: 1.4,
                         ),
+                        textAlignVertical: TextAlignVertical.center,
                         decoration: InputDecoration(
                           hintText: widget.searchPlaceholder,
                           hintStyle: TextStyle(
@@ -113,9 +115,8 @@ class _ElvanDesktopToolbarState extends State<ElvanDesktopToolbar> {
                           border: InputBorder.none,
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
-                          isDense: true,
-                          contentPadding:
-                              const EdgeInsets.symmetric(vertical: 12),
+                          filled: false,
+                          isCollapsed: true,
                         ),
                       ),
                     ),

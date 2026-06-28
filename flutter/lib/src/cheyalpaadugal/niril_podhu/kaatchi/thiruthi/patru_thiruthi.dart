@@ -493,29 +493,12 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
             if (_selectedInvoices.isNotEmpty)
               _buildCustomerCard(isDark, isLocked: true)
             else
-              InputDecorator(
-                decoration: InputDecoration(
-                  constraints: ElvanThiruthiMarabu.singleLineConstraints,
-                  isDense: true,
-                  filled: true,
-                  fillColor: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.08),
-                  contentPadding: const EdgeInsets.only(
-                    left: 20,
-                    right: 20,
-                    top: 16,
-                    bottom: 16,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(100),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(100),
-                    borderSide: BorderSide.none,
-                  ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  top: 16,
+                  bottom: 16,
                 ),
                 child: Row(
                   children: [
@@ -640,14 +623,6 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                  decoration: BoxDecoration(
-                    color: cs.surfaceContainerHighest,
-                    borderRadius: const BorderRadius.horizontal(
-                        left: Radius.circular(100)),
-                    border: Border.all(
-                      color: cs.outline.withValues(alpha: 0.3),
-                    ),
-                  ),
                   child: Text(
                     profilePrefix,
                     style: tt.bodyLarge?.copyWith(
@@ -662,17 +637,10 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                     keyboardType: TextInputType.number,
                     inputFormatters: ElvanVadivamaippigal.enngalMattum,
                     autofocus: true,
-                    decoration: InputDecoration(
-                      constraints: ElvanThiruthiMarabu.singleLineConstraints,
+                    decoration: const InputDecoration(
                       hintText: '01',
-                      border: OutlineInputBorder(
-                        borderRadius: const BorderRadius.horizontal(
-                            right: Radius.circular(100)),
-                        borderSide: BorderSide(
-                          color: cs.outline.withValues(alpha: 0.3),
-                        ),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(
                           horizontal: 20, vertical: 16),
                       isDense: true,
                     ),
@@ -689,13 +657,6 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
           else
             Container(
               width: double.infinity,
-              decoration: BoxDecoration(
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(100),
-              ),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: _patruEnCtrl.text.isNotEmpty ||
                       (_patruEn.isNotEmpty ? _patruEn : _previewPatruEn)
