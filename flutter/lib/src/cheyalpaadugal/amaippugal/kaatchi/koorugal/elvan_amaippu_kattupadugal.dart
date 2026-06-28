@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_pill_vadivu.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thooiya_ulleedu.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku/elvan_kizh_maeladukku.dart';
@@ -220,29 +221,43 @@ class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
               },
               fieldViewBuilder:
                   (context, fieldController, focusNode, onEditingComplete) {
-                return ElvanTextField(
-                  controller: fieldController,
-                  focusNode: focusNode,
-                  onChanged: widget.enabled ? widget.onChanged : null,
-                  onEditingComplete: onEditingComplete,
-                  enabled: widget.enabled,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: widget.enabled
-                        ? Theme.of(context).colorScheme.onSurface
-                        : Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.5),
-                  ),
-                  decoration: ElvanThiruthiPillVadivu.getDecoration(context).copyWith(
-                    suffixIcon: widget.enabled
-                        ? ValueListenableBuilder<TextEditingValue>(
+                return Material(
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(100),
+                  clipBehavior: Clip.antiAlias,
+                  child: SizedBox(
+                    height: 45.0,
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: ElvanThooiyaUlleedu(
+                              controller: fieldController,
+                              focusNode: focusNode,
+                              onChanged: widget.enabled ? widget.onChanged : null,
+                              onEditingComplete: onEditingComplete,
+                              enabled: widget.enabled,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: widget.enabled
+                                    ? Theme.of(context).colorScheme.onSurface
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.5),
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (widget.enabled)
+                          ValueListenableBuilder<TextEditingValue>(
                             valueListenable: fieldController,
                             builder: (context, value, child) {
                               if (value.text.isNotEmpty) {
                                 return IconButton(
-                                  icon: Icon(Icons.close, size: 20.0),
+                                  icon: const Icon(Icons.close, size: 20.0),
                                   color: Theme.of(context)
                                       .colorScheme
                                       .onSurface
@@ -250,7 +265,6 @@ class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
                                   onPressed: () {
                                     fieldController.clear();
                                     widget.onChanged('');
-                                    // Close keyboard when clearing if they want, but usually leave it open
                                   },
                                 );
                               }
@@ -269,8 +283,10 @@ class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
                                 },
                               );
                             },
-                          )
-                        : null,
+                          ),
+                        const SizedBox(width: 4),
+                      ],
+                    ),
                   ),
                 );
               },

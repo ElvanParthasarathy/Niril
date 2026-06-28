@@ -10,6 +10,7 @@ class ElvanTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final TextStyle? style;
   final TextAlign textAlign;
+  final TextAlignVertical? textAlignVertical;
   final bool obscureText;
   final int? maxLines;
   final int? minLines;
@@ -28,6 +29,7 @@ class ElvanTextField extends StatelessWidget {
     this.keyboardType,
     this.style,
     this.textAlign = TextAlign.start,
+    this.textAlignVertical,
     this.obscureText = false,
     this.maxLines = 1,
     this.minLines,
@@ -54,6 +56,7 @@ class ElvanTextField extends StatelessWidget {
       keyboardType: keyboardType,
       style: style,
       textAlign: textAlign,
+      textAlignVertical: textAlignVertical,
       obscureText: obscureText,
       maxLines: maxLines,
       minLines: minLines,

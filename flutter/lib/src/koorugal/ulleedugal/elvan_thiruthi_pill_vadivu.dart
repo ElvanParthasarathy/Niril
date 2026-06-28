@@ -6,9 +6,6 @@ class ElvanThiruthiPillVadivu {
   static InputDecoration getDecoration(BuildContext context, {double borderRadius = 100, bool isMultiline = false}) {
     return InputDecoration(
       isDense: true,
-      constraints: isMultiline
-          ? const BoxConstraints(minHeight: 45)
-          : const BoxConstraints(minHeight: 45, maxHeight: 45),
       filled: true,
       fillColor: WidgetStateColor.resolveWith((states) {
         if (states.contains(WidgetState.focused) ||
@@ -23,9 +20,9 @@ class ElvanThiruthiPillVadivu {
             .onSurface
             .withValues(alpha: 0.08);
       }),
-      contentPadding: const EdgeInsets.symmetric(
+      contentPadding: EdgeInsets.symmetric(
         horizontal: 20,
-        vertical: 12,
+        vertical: isMultiline ? 16 : 14.5,
       ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(borderRadius),
