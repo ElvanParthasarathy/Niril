@@ -21,9 +21,10 @@ class ElvanPagudhiThalaipu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
-      padding: const EdgeInsets.only(left: 16, bottom: 24),
+      padding: const EdgeInsets.only(left: 16, bottom: 8),
       child: Row(
         children: [
           // ── Numbered Circle Badge ──
@@ -31,15 +32,15 @@ class ElvanPagudhiThalaipu extends StatelessWidget {
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: cs.primary,
+              color: isDark ? Colors.white : Colors.black,
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
             child: Text(
               '$en',
               style: TextStyle(
-                color: cs.onPrimary,
-                fontSize: 12.8, // 0.8rem
+                color: isDark ? Colors.black : Colors.white,
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
                 height: 1,
               ),

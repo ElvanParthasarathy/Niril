@@ -46,7 +46,7 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
         if (profiles.length > 1) ...[
           ElvanPagudhiThalaipu(en: 1, thalaipu: K.niruvanam.tr(context, ref)),
           Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 24.0),
+            padding: const EdgeInsets.only(top: 4.0, bottom: 48.0),
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final isDesktop = MediaQuery.sizeOf(context).width >= 800;
