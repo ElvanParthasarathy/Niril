@@ -5,6 +5,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_pagudhi_thalaipu_kooru.dart';
+import 'package:elvan_niril/src/cheyalpaadugal/niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_thalaippu.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
@@ -47,37 +48,25 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (profiles.length > 1) ...[
-          Padding(
-            padding: const EdgeInsets.only(bottom: 32.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ElvanPagudhiThalaipu(en: 1, thalaipu: K.niruvanathTharavu.tr(context, ref)),
-                Padding(
-                  padding: EdgeInsets.only(top: isDesktop ? 4.0 : 16.0),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final width = isDesktop ? (constraints.maxWidth - 16) / 2 : constraints.maxWidth;
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ElvanThiruthiThalaippu(label: K.niruvanam.tr(context, ref)),
-                          SizedBox(
-                            width: width,
-                            child: ElvanNiruvanamKeezhvirivuKooru(
-                              selectedNiruvanamId: selectedNiruvanamId,
-                              hideLabel: true,
-                              showClearButton: true,
-                              onChanged: (p) => onChanged(p),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
+          ElvanEditorSection(
+            index: 0,
+            title: K.niruvanathTharavu.tr(context, ref),
+            displayChild: const SizedBox(),
+            initiallyExpanded: true,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ElvanThiruthiThalaippu(label: K.niruvanam.tr(context, ref)),
+                  ElvanNiruvanamKeezhvirivuKooru(
+                    selectedNiruvanamId: selectedNiruvanamId,
+                    hideLabel: true,
+                    showClearButton: true,
+                    onChanged: (p) => onChanged(p),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+            ],
           ),
         ],
 

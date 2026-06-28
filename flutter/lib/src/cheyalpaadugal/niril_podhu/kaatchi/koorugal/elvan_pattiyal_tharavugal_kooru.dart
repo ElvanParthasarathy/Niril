@@ -13,170 +13,134 @@ import 'pattiyal_naal_kooru.dart';
 
 /// Section 2/3: Invoice number (editable) + Date picker, responsive layout.
 /// Used commonly across Silk and Coolie editors.
-class ElvanPattiyalTharavugalKooru extends ConsumerWidget {
-  const ElvanPattiyalTharavugalKooru({
-    super.key,
-    required this.isEditing,
-    required this.invoiceNumberOverride,
-    required this.previewInvoiceNumber,
-    required this.isInvNumberEditing,
-    required this.invNumberController,
-    required this.profilePrefix,
-    required this.pattiyalNaal,
-    required this.onToggleEditInvNumber,
-    required this.onInvNumberChanged,
-    required this.onDateChanged,
-    required this.onDirty,
-    this.customNumberTitle,
-    this.customDateTitle,
-  });
+List<Widget> buildElvanPattiyalTharavugalKooru({
+  required BuildContext context,
+  required WidgetRef ref,
+  required bool isEditing,
+  required String invoiceNumberOverride,
+  required String previewInvoiceNumber,
+  required bool isInvNumberEditing,
+  required TextEditingController invNumberController,
+  required String profilePrefix,
+  required DateTime pattiyalNaal,
+  required VoidCallback onToggleEditInvNumber,
+  required ValueChanged<String> onInvNumberChanged,
+  required ValueChanged<DateTime> onDateChanged,
+  required VoidCallback onDirty,
+  String? customNumberTitle,
+  String? customDateTitle,
+}) {
+  final cs = Theme.of(context).colorScheme;
+  final tt = Theme.of(context).textTheme;
 
-  final bool isEditing;
-  final String invoiceNumberOverride;
-  final String previewInvoiceNumber;
-  final bool isInvNumberEditing;
-  final TextEditingController invNumberController;
-  final String profilePrefix;
-  final DateTime pattiyalNaal;
-  final VoidCallback onToggleEditInvNumber;
-  final ValueChanged<String> onInvNumberChanged;
-  final ValueChanged<DateTime> onDateChanged;
-  final VoidCallback onDirty;
-  final String? customNumberTitle;
-  final String? customDateTitle;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
-
-    return LayoutBuilder(builder: (context, constraints) {
-      final wide = constraints.maxWidth >= 700;
-
-      final invoiceNumberField = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                customNumberTitle ?? K.pattiyalEn.tr(context, ref),
-                style: tt.labelMedium?.copyWith(
-                  color: cs.onSurfaceVariant,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              ...[
-                const SizedBox(width: 8),
-                InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: onToggleEditInvNumber,
-                  child: Padding(
-                    padding: const EdgeInsets.all(4),
-                    child: Icon(
-                      isInvNumberEditing ? Icons.check : Icons.edit_outlined,
-                      size: 16,
-                      color: cs.primary,
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-          const SizedBox(height: 6),
-          if (isInvNumberEditing)
-            Row(
-              children: [
-                // Locked prefix pill
-                Container(
-                  padding: const EdgeInsets.only(right: 4),
-                  child: Text(
-                    profilePrefix,
-                    style: tt.bodyLarge?.copyWith(
-                      color: cs.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                // Editable number part
-                Expanded(
-                  child: TextField(
-                    controller: invNumberController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: ElvanVadivamaippigal.enngalMattum,
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                      hintText: '01',
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      isDense: true,
-                    ),
-                    onChanged: (v) {
-                      onInvNumberChanged(v);
-                      onDirty();
-                    },
-                  ),
-                ),
-              ],
-            )
-          else
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                invoiceNumberOverride.isNotEmpty
-                    ? invoiceNumberOverride
-                    : previewInvoiceNumber.isNotEmpty
-                        ? previewInvoiceNumber
-                        : K.thaaniyangkiUruvaam.tr(context, ref),
-                style: tt.bodyLarge?.copyWith(
-                  color: invoiceNumberOverride.isNotEmpty
-                      ? cs.onSurface
-                      : cs.onSurfaceVariant,
-                  fontWeight: invoiceNumberOverride.isNotEmpty
-                      ? FontWeight.w600
-                      : FontWeight.w500,
-                ),
-              ),
-            ),
-        ],
-      );
-
-      final dateField = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  final invoiceNumberField = Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
         children: [
           Text(
-            customDateTitle ?? K.naal.tr(context, ref),
+            customNumberTitle ?? K.pattiyalEn.tr(context, ref),
             style: tt.labelMedium?.copyWith(
               color: cs.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 6),
-          PattiyalNaalKooru(
-            selectedDate: pattiyalNaal,
-            onDateChanged: onDateChanged,
-          ),
-        ],
-      );
-
-      if (wide) {
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(child: invoiceNumberField),
-            const SizedBox(width: 24),
-            Expanded(child: dateField),
+          ...[
+            const SizedBox(width: 8),
+            InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: onToggleEditInvNumber,
+              child: Padding(
+                padding: const EdgeInsets.all(4),
+                child: Icon(
+                  isInvNumberEditing ? Icons.check : Icons.edit_outlined,
+                  size: 16,
+                  color: cs.primary,
+                ),
+              ),
+            ),
           ],
-        );
-      }
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          invoiceNumberField,
-          const SizedBox(height: 16),
-          dateField,
         ],
-      );
-    });
-  }
+      ),
+      const SizedBox(height: 6),
+      if (isInvNumberEditing)
+        Row(
+          children: [
+            // Locked prefix pill
+            Container(
+              padding: const EdgeInsets.only(right: 4),
+              child: Text(
+                profilePrefix,
+                style: tt.bodyLarge?.copyWith(
+                  color: cs.onSurfaceVariant,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            // Editable number part
+            Expanded(
+              child: TextField(
+                controller: invNumberController,
+                keyboardType: TextInputType.number,
+                inputFormatters: ElvanVadivamaippigal.enngalMattum,
+                autofocus: true,
+                decoration: const InputDecoration(
+                  hintText: '01',
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  isDense: true,
+                ),
+                onChanged: (v) {
+                  onInvNumberChanged(v);
+                  onDirty();
+                },
+              ),
+            ),
+          ],
+        )
+      else
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            invoiceNumberOverride.isNotEmpty
+                ? invoiceNumberOverride
+                : previewInvoiceNumber.isNotEmpty
+                    ? previewInvoiceNumber
+                    : K.thaaniyangkiUruvaam.tr(context, ref),
+            style: tt.bodyLarge?.copyWith(
+              color: invoiceNumberOverride.isNotEmpty
+                  ? cs.onSurface
+                  : cs.onSurfaceVariant,
+              fontWeight: invoiceNumberOverride.isNotEmpty
+                  ? FontWeight.w600
+                  : FontWeight.w500,
+            ),
+          ),
+        ),
+    ],
+  );
+
+  final dateField = Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        customDateTitle ?? K.naal.tr(context, ref),
+        style: tt.labelMedium?.copyWith(
+          color: cs.onSurfaceVariant,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      const SizedBox(height: 6),
+      PattiyalNaalKooru(
+        selectedDate: pattiyalNaal,
+        onDateChanged: onDateChanged,
+      ),
+    ],
+  );
+
+  return [
+    invoiceNumberField,
+    dateField,
+  ];
 }

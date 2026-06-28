@@ -343,72 +343,70 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
             displayChild: const SizedBox(),
             initiallyExpanded: true,
             children: [
-              ElvanFullWidth(
-                child: PattuVaangunargalKooru(
-                  data: PattuVaangunargalData(
-                    selectedVaangunarId: _selectedVaangunarId,
-                    selectedVaangunarPeyarMap: {ref.watch(silkMudhanmaiMozhiProvider): _selectedVaangunarPeyar, ref.watch(silkIrandaamMozhiProvider): _selectedVaangunarPeyar},
-                    placeOfSupply: _placeOfSupply,
-                    placeOfSupplyTa: _placeOfSupplyTa,
-                  ),
-                  callbacks: PattuVaangunargalCallbacks(
-                    onCustomerSelected: (entry) {
-                      setState(() {
-                        _selectedVaangunarId = entry.id;
-                        _selectedVaangunarPeyar =
-                            entry.peyar[ref.read(silkMudhanmaiMozhiProvider)] ?? entry.peyar[ref.read(silkIrandaamMozhiProvider)] ?? entry.peyar.values.firstOrNull ?? '';
-                        _customerState = (entry.maanilam['English'] ??
+              PattuVaangunargalKooru(
+                data: PattuVaangunargalData(
+                  selectedVaangunarId: _selectedVaangunarId,
+                  selectedVaangunarPeyarMap: {ref.watch(silkMudhanmaiMozhiProvider): _selectedVaangunarPeyar, ref.watch(silkIrandaamMozhiProvider): _selectedVaangunarPeyar},
+                  placeOfSupply: _placeOfSupply,
+                  placeOfSupplyTa: _placeOfSupplyTa,
+                ),
+                callbacks: PattuVaangunargalCallbacks(
+                  onCustomerSelected: (entry) {
+                    setState(() {
+                      _selectedVaangunarId = entry.id;
+                      _selectedVaangunarPeyar =
+                          entry.peyar[ref.read(silkMudhanmaiMozhiProvider)] ?? entry.peyar[ref.read(silkIrandaamMozhiProvider)] ?? entry.peyar.values.firstOrNull ?? '';
+                      _customerState = (entry.maanilam['English'] ??
+                                  entry.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ??
+                                  '')
+                              .trim()
+                              .toLowerCase();
+                      if (_placeOfSupply.isEmpty) {
+                        _placeOfSupply = (entry.maanilam['English'] ??
                                     entry.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ??
                                     '')
-                                .trim()
-                                .toLowerCase();
-                        if (_placeOfSupply.isEmpty) {
-                          _placeOfSupply = (entry.maanilam['English'] ??
-                                      entry.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ??
-                                      '')
-                                  .trim();
-                          _placeOfSupplyTa = (entry.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ?? '').trim();
-                        }
-                      });
-                      _hasUnsavedChanges = true;
-                      _recalculate();
-                    },
-                    onCustomerCleared: () {
-                      setState(() {
-                        _selectedVaangunarId = null;
-                        _selectedVaangunarPeyar = '';
-                        _customerState = '';
-                        _placeOfSupply = '';
-                        _placeOfSupplyTa = '';
-                      });
-                      setState(() => _hasUnsavedChanges = true);
-                      _recalculate();
-                    },
-                    onRequestAddNewCustomer: () async {
-                      await Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const SilkMerchantEditor(),
-                        ),
-                      );
-                    },
+                                .trim();
+                        _placeOfSupplyTa = (entry.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ?? '').trim();
+                      }
+                    });
+                    _hasUnsavedChanges = true;
+                    _recalculate();
+                  },
+                  onCustomerCleared: () {
+                    setState(() {
+                      _selectedVaangunarId = null;
+                      _selectedVaangunarPeyar = '';
+                      _customerState = '';
+                      _placeOfSupply = '';
+                      _placeOfSupplyTa = '';
+                    });
+                    setState(() => _hasUnsavedChanges = true);
+                    _recalculate();
+                  },
+                  onRequestAddNewCustomer: () async {
+                    await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const SilkMerchantEditor(),
+                      ),
+                    );
+                  },
 
-                    onPlaceOfSupplyChanged: (en, ta) {
-                      setState(() {
-                        _placeOfSupply = en;
-                        _placeOfSupplyTa = ta;
-                      });
-                      _recalculate();
-                    },
-                    onPlaceOfSupplyCleared: () {
-                      setState(() {
-                        _placeOfSupply = '';
-                        _placeOfSupplyTa = '';
-                      });
-                      _recalculate();
-                    },
-                  ),
-                  selectedVaangunar: selectedVaangunar,
+                  onPlaceOfSupplyChanged: (en, ta) {
+                    setState(() {
+                      _placeOfSupply = en;
+                      _placeOfSupplyTa = ta;
+                    });
+                    _recalculate();
+                  },
+                  onPlaceOfSupplyCleared: () {
+                    setState(() {
+                      _placeOfSupply = '';
+                      _placeOfSupplyTa = '';
+                    });
+                    _recalculate();
+                  },
                 ),
+                selectedVaangunar: selectedVaangunar,
               ),
             ],
           ),
@@ -423,82 +421,72 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-          // ───────────────────────────────────────────────────────────────
-          // Section 2: ② Invoice Details
-          // ───────────────────────────────────────────────────────────────
           ElvanEditorSection(
             index: baseIndex + 1,
             title: K.pattiyalTharavugal.tr(context, ref),
             displayChild: const SizedBox(),
             initiallyExpanded: true,
             children: [
-              ElvanFullWidth(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    ElvanPattiyalTharavugalKooru(
-                      isEditing: _isEditing,
-                      invoiceNumberOverride: _invoiceNumberOverride,
-                      previewInvoiceNumber: _previewInvoiceNumber,
-                      isInvNumberEditing: _isInvNumberEditing,
-                      invNumberController: _invNumberController,
-                      profilePrefix: _selectedProfile?.kurumPeyar.isNotEmpty == true
-                          ? '${_selectedProfile!.kurumPeyar}-'
-                          : 'INV-',
-                      pattiyalNaal: _pattiyalNaal,
-                      onToggleEditInvNumber: () {
-                        setState(() {
-                          _isInvNumberEditing = !_isInvNumberEditing;
-                          if (_isInvNumberEditing) {
-                            final current = _invoiceNumberOverride.isNotEmpty
-                                ? _invoiceNumberOverride
-                                : _previewInvoiceNumber;
-                            final parts = current.split('-');
-                            _invNumberController.text =
-                                parts.length > 1 ? parts.sublist(1).join('-') : parts.last;
-                          } else {
-                            final numPart = _invNumberController.text.trim();
-                            if (numPart.isNotEmpty) {
-                              final prefix = _selectedProfile?.kurumPeyar.isNotEmpty == true
-                                  ? '${_selectedProfile!.kurumPeyar}-'
-                                  : 'INV-';
-                              _invoiceNumberOverride = '$prefix$numPart';
-                            }
-                            _hasUnsavedChanges = true;
-                          }
-                        });
-                      },
-                      onInvNumberChanged: (_) {},
-                      onDateChanged: (d) => setState(() {
-                        _pattiyalNaal = d;
-                        _hasUnsavedChanges = true;
-                      }),
-                      onDirty: () => setState(() => _hasUnsavedChanges = true),
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // ─── Place of Supply ───
-                    PattuVilippiIdam(
-                      placeOfSupply: _placeOfSupply,
-                      placeOfSupplyTa: _placeOfSupplyTa,
-                      onSelected: (en, ta) {
-                        setState(() {
-                          _placeOfSupply = en;
-                          _placeOfSupplyTa = ta;
-                        });
-                        _recalculate();
-                      },
-                      onCleared: () {
-                        setState(() {
-                          _placeOfSupply = '';
-                          _placeOfSupplyTa = '';
-                        });
-                        _recalculate();
-                      },
-                    ),
-                  ],
-                ),
+              ...buildElvanPattiyalTharavugalKooru(
+                context: context,
+                ref: ref,
+                isEditing: _isEditing,
+                invoiceNumberOverride: _invoiceNumberOverride,
+                previewInvoiceNumber: _previewInvoiceNumber,
+                isInvNumberEditing: _isInvNumberEditing,
+                invNumberController: _invNumberController,
+                profilePrefix: _selectedProfile?.kurumPeyar.isNotEmpty == true
+                    ? '${_selectedProfile!.kurumPeyar}-'
+                    : 'INV-',
+                pattiyalNaal: _pattiyalNaal,
+                onToggleEditInvNumber: () {
+                  setState(() {
+                    _isInvNumberEditing = !_isInvNumberEditing;
+                    if (_isInvNumberEditing) {
+                      final current = _invoiceNumberOverride.isNotEmpty
+                          ? _invoiceNumberOverride
+                          : _previewInvoiceNumber;
+                      final parts = current.split('-');
+                      _invNumberController.text =
+                          parts.length > 1 ? parts.sublist(1).join('-') : parts.last;
+                    } else {
+                      final numPart = _invNumberController.text.trim();
+                      if (numPart.isNotEmpty) {
+                        final prefix = _selectedProfile?.kurumPeyar.isNotEmpty == true
+                            ? '${_selectedProfile!.kurumPeyar}-'
+                            : 'INV-';
+                        _invoiceNumberOverride = '$prefix$numPart';
+                      }
+                      _hasUnsavedChanges = true;
+                    }
+                  });
+                },
+                onInvNumberChanged: (_) {},
+                onDateChanged: (d) => setState(() {
+                  _pattiyalNaal = d;
+                  _hasUnsavedChanges = true;
+                }),
+                onDirty: () => setState(() => _hasUnsavedChanges = true),
+              ),
+              
+              // ─── Place of Supply ───
+              PattuVilippiIdam(
+                placeOfSupply: _placeOfSupply,
+                placeOfSupplyTa: _placeOfSupplyTa,
+                onSelected: (en, ta) {
+                  setState(() {
+                    _placeOfSupply = en;
+                    _placeOfSupplyTa = ta;
+                  });
+                  _recalculate();
+                },
+                onCleared: () {
+                  setState(() {
+                    _placeOfSupply = '';
+                    _placeOfSupplyTa = '';
+                  });
+                  _recalculate();
+                },
               ),
             ],
           ),

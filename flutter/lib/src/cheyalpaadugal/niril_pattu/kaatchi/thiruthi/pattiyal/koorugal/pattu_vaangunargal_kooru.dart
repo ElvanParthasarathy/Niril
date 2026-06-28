@@ -91,8 +91,10 @@ class PattuVaangunargalKooru extends ConsumerWidget {
       final savedDetailsCard = selectedVaangunar != null
           ? Padding(
               padding: const EdgeInsets.only(top: 12),
-              child: ElvanThiruthiAttai(
-                child: Column(
+              child: SizedBox(
+                width: double.infinity,
+                child: ElvanThiruthiAttai(
+                  child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -114,7 +116,8 @@ class PattuVaangunargalKooru extends ConsumerWidget {
                   ],
                 ),
               ),
-            )
+            ),
+          )
           : const SizedBox.shrink();
 
       final leftColumn = Column(
@@ -125,22 +128,6 @@ class PattuVaangunargalKooru extends ConsumerWidget {
         ],
       );
 
-      if (isDesktop) {
-        // Niruvanam pill takes exactly (NiruvanamMaxWidth - 16) / 2 width and starts at X=0.
-        // Vaangunar pill is indented by 52px (due to ElvanEditorSection), so its constraints.maxWidth
-        // is exactly (NiruvanamMaxWidth - 52).
-        // To make their right edges align perfectly:
-        final niruvanamMaxWidth = constraints.maxWidth + 52;
-        final exactWidth = (niruvanamMaxWidth - 16) / 2 - 52;
-        
-        return Align(
-          alignment: Alignment.centerLeft,
-          child: SizedBox(
-            width: exactWidth > 0 ? exactWidth : null,
-            child: leftColumn,
-          ),
-        );
-      }
       return leftColumn;
     });
   }

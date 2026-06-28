@@ -51,11 +51,13 @@ class KooliVaangunarKooru extends ConsumerWidget {
           ),
           if (selectedVaangunar != null) ...[
             const SizedBox(height: 12),
-            ElvanThiruthiAttai(
-              borderRadius: 16,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            SizedBox(
+              width: double.infinity,
+              child: ElvanThiruthiAttai(
+                borderRadius: 16,
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(K.chaemiththaTharavugal.tr(context, ref).toUpperCase(),
                       style: tt.labelSmall?.copyWith(
@@ -98,6 +100,7 @@ class KooliVaangunarKooru extends ConsumerWidget {
                 ],
               ),
             ),
+          ),
           ],
         ],
       );
