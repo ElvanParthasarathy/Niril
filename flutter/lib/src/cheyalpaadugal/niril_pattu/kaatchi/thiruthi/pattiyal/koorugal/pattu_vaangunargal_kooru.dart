@@ -8,6 +8,7 @@ import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dar
 import '../../../../../niril_podhu/kaatchi/koorugal/elvan_vaangunar_keezhvirivu_kooru.dart';
 import '../../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_thalaippu.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_pothan.dart';
 import 'maanila_thervu_maeladukku.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -90,10 +91,11 @@ class PattuVaangunargalKooru extends ConsumerWidget {
 
       final savedDetailsCard = selectedVaangunar != null
           ? Padding(
-              padding: const EdgeInsets.only(top: 12),
+              padding: const EdgeInsets.only(top: 24),
               child: SizedBox(
                 width: double.infinity,
                 child: ElvanThiruthiAttai(
+                  color: cs.onSurface.withValues(alpha: 0.08),
                   child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -107,7 +109,7 @@ class PattuVaangunargalKooru extends ConsumerWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      selectedVaangunar!.peyar[ref.watch(silkMudhanmaiMozhiProvider)] ?? (data.selectedVaangunarPeyarMap[ref.watch(silkMudhanmaiMozhiProvider)]?.isNotEmpty == true ? data.selectedVaangunarPeyarMap[ref.watch(silkMudhanmaiMozhiProvider)] : data.selectedVaangunarPeyarMap[ref.watch(silkIrandaamMozhiProvider)]) ?? '',
+                      selectedVaangunar!.peyar[ref.watch(silkIrandaamMozhiProvider)] ?? (data.selectedVaangunarPeyarMap[ref.watch(silkIrandaamMozhiProvider)]?.isNotEmpty == true ? data.selectedVaangunarPeyarMap[ref.watch(silkIrandaamMozhiProvider)] : data.selectedVaangunarPeyarMap[ref.watch(silkMudhanmaiMozhiProvider)]) ?? '',
                       style: tt.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -127,7 +129,15 @@ class PattuVaangunargalKooru extends ConsumerWidget {
           savedDetailsCard,
         ],
       );
-
+      if (isDesktop) {
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 360),
+            child: leftColumn,
+          ),
+        );
+      }
       return leftColumn;
     });
   }
@@ -180,7 +190,6 @@ class PattuVaangunargalKooru extends ConsumerWidget {
                 style: tt.bodySmall?.copyWith(
                   color: cs.onSurfaceVariant.withValues(alpha: 0.7),
                   height: 1.5,
-                  fontStyle: FontStyle.italic,
                 ),
               )),
         ],
@@ -189,7 +198,7 @@ class PattuVaangunargalKooru extends ConsumerWidget {
           Text(
             'GSTIN: ${v.gstin.trim()}',
             style: tt.bodySmall?.copyWith(
-              color: cs.primary,
+              color: cs.onSurfaceVariant,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -223,46 +232,41 @@ class PattuVilippiIdam extends ConsumerWidget {
     return LayoutBuilder(builder: (context, constraints) {
       final isNarrow = constraints.maxWidth < 500;
 
-      final editablePill = GestureDetector(
+      final editablePill = ElvanThiruthiPothan(
         onTap: () => _showStatePickerSheet(context, cs),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Expanded(
-                child: Text(
-                  placeOfSupply.isEmpty ? K.maanilamThaerodhu.tr(context, ref) : placeOfSupply,
-                  style: tt.bodyMedium?.copyWith(
-                    color: placeOfSupply.isEmpty
-                        ? cs.onSurfaceVariant
-                        : cs.onSurface,
-                    fontWeight: placeOfSupply.isNotEmpty
-                        ? FontWeight.w600
-                        : FontWeight.w400,
-                  ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                placeOfSupply.isEmpty ? K.maanilamThaerodhu.tr(context, ref) : placeOfSupply,
+                style: tt.bodyMedium?.copyWith(
+                  color: placeOfSupply.isEmpty
+                      ? cs.onSurfaceVariant
+                      : cs.onSurface,
+                  fontWeight: placeOfSupply.isNotEmpty
+                      ? FontWeight.w600
+                      : FontWeight.w400,
                 ),
               ),
-              if (placeOfSupply.isNotEmpty)
-                GestureDetector(
-                  onTap: onCleared,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: Icon(Icons.close, size: 16, color: cs.onSurfaceVariant),
-                  ),
-                )
-              else
-                Icon(Icons.arrow_drop_down, size: 20, color: cs.onSurfaceVariant),
-            ],
-          ),
+            ),
+            if (placeOfSupply.isNotEmpty)
+              GestureDetector(
+                onTap: onCleared,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Icon(Icons.close, size: 16, color: cs.onSurfaceVariant),
+                ),
+              )
+            else
+              Icon(Icons.arrow_drop_down, size: 20, color: cs.onSurfaceVariant),
+          ],
         ),
       );
 
       final tamilPill = placeOfSupplyTa.isNotEmpty
-          ? Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+          ? ElvanThiruthiPothan(
+              onTap: null,
               child: Row(
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.lock_outline, size: 14, color: cs.onSurfaceVariant),
                   const SizedBox(width: 8),

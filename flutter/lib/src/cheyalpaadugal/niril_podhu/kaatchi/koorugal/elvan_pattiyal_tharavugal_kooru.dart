@@ -5,6 +5,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 import 'pattiyal_naal_kooru.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -33,92 +34,39 @@ List<Widget> buildElvanPattiyalTharavugalKooru({
   final cs = Theme.of(context).colorScheme;
   final tt = Theme.of(context).textTheme;
 
-  final invoiceNumberField = Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Row(
-        children: [
-          Text(
-            customNumberTitle ?? K.pattiyalEn.tr(context, ref),
-            style: tt.labelMedium?.copyWith(
-              color: cs.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          ...[
-            const SizedBox(width: 8),
-            InkWell(
-              borderRadius: BorderRadius.circular(12),
-              onTap: onToggleEditInvNumber,
-              child: Padding(
-                padding: const EdgeInsets.all(4),
-                child: Icon(
-                  isInvNumberEditing ? Icons.check : Icons.edit_outlined,
-                  size: 16,
-                  color: cs.primary,
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-      const SizedBox(height: 6),
-      if (isInvNumberEditing)
-        Row(
-          children: [
-            // Locked prefix pill
-            Container(
-              padding: const EdgeInsets.only(right: 4),
-              child: Text(
-                profilePrefix,
-                style: tt.bodyLarge?.copyWith(
-                  color: cs.onSurfaceVariant,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            // Editable number part
-            Expanded(
-              child: TextField(
-                controller: invNumberController,
-                keyboardType: TextInputType.number,
-                inputFormatters: ElvanVadivamaippigal.enngalMattum,
-                autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: '01',
-                  border: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  isDense: true,
-                ),
-                onChanged: (v) {
-                  onInvNumberChanged(v);
-                  onDirty();
-                },
-              ),
-            ),
-          ],
-        )
-      else
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(
-            invoiceNumberOverride.isNotEmpty
-                ? invoiceNumberOverride
-                : previewInvoiceNumber.isNotEmpty
-                    ? previewInvoiceNumber
-                    : K.thaaniyangkiUruvaam.tr(context, ref),
-            style: tt.bodyLarge?.copyWith(
-              color: invoiceNumberOverride.isNotEmpty
-                  ? cs.onSurface
-                  : cs.onSurfaceVariant,
-              fontWeight: invoiceNumberOverride.isNotEmpty
-                  ? FontWeight.w600
-                  : FontWeight.w500,
-            ),
-          ),
+  final invoiceNumberField = ElvanThiruthiUlleedu(
+    label: customNumberTitle ?? K.pattiyalEn.tr(context, ref),
+    controller: isInvNumberEditing ? invNumberController : null,
+    initialValue: isInvNumberEditing
+        ? null
+        : (invoiceNumberOverride.isNotEmpty
+            ? invoiceNumberOverride
+            : previewInvoiceNumber.isNotEmpty
+                ? previewInvoiceNumber
+                : K.thaaniyangkiUruvaam.tr(context, ref)),
+    readOnly: !isInvNumberEditing,
+    keyboardType: TextInputType.number,
+    inputFormatters: ElvanVadivamaippigal.enngalMattum,
+    prefixText: isInvNumberEditing ? profilePrefix : null,
+    hintText: isInvNumberEditing ? '01' : null,
+    onChanged: (v) {
+      if (isInvNumberEditing) {
+        onInvNumberChanged(v);
+        onDirty();
+      }
+    },
+    suffixIcon: InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onToggleEditInvNumber,
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Icon(
+          isInvNumberEditing ? Icons.check : Icons.edit_outlined,
+          size: 20,
+          color: isInvNumberEditing ? cs.primary : cs.onSurfaceVariant,
         ),
-    ],
+      ),
+    ),
   );
 
   final dateField = Column(

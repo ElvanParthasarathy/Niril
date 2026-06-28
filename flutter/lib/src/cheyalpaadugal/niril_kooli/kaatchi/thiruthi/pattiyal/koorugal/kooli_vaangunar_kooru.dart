@@ -50,10 +50,11 @@ class KooliVaangunarKooru extends ConsumerWidget {
             },
           ),
           if (selectedVaangunar != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               child: ElvanThiruthiAttai(
+                color: cs.onSurface.withValues(alpha: 0.08),
                 borderRadius: 16,
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -72,10 +73,10 @@ class KooliVaangunarKooru extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            selectedVaangunar!.peyar[kooliLang] ??
-                                selectedVaangunar!.peyar['Tamil'] ??
+                            selectedVaangunar!.peyar['English'] ??
+                                selectedVaangunar!.peyar[kooliLang] ??
+                                selectedVaangunarPeyarMap['English'] ??
                                 selectedVaangunarPeyarMap[kooliLang] ??
-                                selectedVaangunarPeyarMap['Tamil'] ??
                                 '',
                             style: tt.bodyLarge?.copyWith(
                               fontWeight: FontWeight.w600,
@@ -105,6 +106,16 @@ class KooliVaangunarKooru extends ConsumerWidget {
         ],
       );
 
+      final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+      if (isDesktop) {
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 360),
+            child: customerColumn,
+          ),
+        );
+      }
       return customerColumn;
     });
   }

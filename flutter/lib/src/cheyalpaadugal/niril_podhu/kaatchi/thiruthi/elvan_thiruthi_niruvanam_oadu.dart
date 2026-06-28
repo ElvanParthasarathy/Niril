@@ -54,18 +54,37 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
             displayChild: const SizedBox(),
             initiallyExpanded: true,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ElvanThiruthiThalaippu(label: K.niruvanam.tr(context, ref)),
-                  ElvanNiruvanamKeezhvirivuKooru(
-                    selectedNiruvanamId: selectedNiruvanamId,
-                    hideLabel: true,
-                    showClearButton: true,
-                    onChanged: (p) => onChanged(p),
-                  ),
-                ],
-              ),
+              isDesktop
+                  ? Align(
+                      alignment: Alignment.centerLeft,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 360),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ElvanThiruthiThalaippu(label: K.niruvanam.tr(context, ref)),
+                            ElvanNiruvanamKeezhvirivuKooru(
+                              selectedNiruvanamId: selectedNiruvanamId,
+                              hideLabel: true,
+                              showClearButton: true,
+                              onChanged: (p) => onChanged(p),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ElvanThiruthiThalaippu(label: K.niruvanam.tr(context, ref)),
+                        ElvanNiruvanamKeezhvirivuKooru(
+                          selectedNiruvanamId: selectedNiruvanamId,
+                          hideLabel: true,
+                          showClearButton: true,
+                          onChanged: (p) => onChanged(p),
+                        ),
+                      ],
+                    ),
             ],
           ),
         ],

@@ -15,6 +15,7 @@ class ElvanThiruthiAttai extends StatelessWidget {
     this.padding,
     this.onTap,
     this.margin,
+    this.color,
   });
 
   final Widget child;
@@ -22,6 +23,7 @@ class ElvanThiruthiAttai extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final VoidCallback? onTap;
   final EdgeInsetsGeometry? margin;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +31,9 @@ class ElvanThiruthiAttai extends StatelessWidget {
 
     final container = Material(
       type: MaterialType.card,
-      color: isDark
+      color: color ?? (isDark
           ? Colors.white.withValues(alpha: 0.03)
-          : Colors.white,
+          : Colors.white),
       borderRadius: BorderRadius.circular(borderRadius),
       animationDuration: const Duration(milliseconds: 200),
       child: Container(
