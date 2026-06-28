@@ -496,9 +496,10 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,
-                  fillColor: isDark
-                      ? Colors.white.withValues(alpha: 0.05)
-                      : Colors.black.withValues(alpha: 0.03),
+                  fillColor: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.08),
                   contentPadding: const EdgeInsets.only(
                     left: 20,
                     right: 20,
@@ -507,15 +508,11 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(100),
-                    borderSide: BorderSide(
-                      color: isDark ? Colors.white12 : Colors.black12,
-                    ),
+                    borderSide: BorderSide.none,
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(100),
-                    borderSide: BorderSide(
-                      color: isDark ? Colors.white12 : Colors.black12,
-                    ),
+                    borderSide: BorderSide.none,
                   ),
                 ),
                 child: Row(
