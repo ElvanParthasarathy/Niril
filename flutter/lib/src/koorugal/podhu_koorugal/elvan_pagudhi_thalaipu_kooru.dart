@@ -23,7 +23,7 @@ class ElvanPagudhiThalaipu extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.only(left: 12, bottom: 24),
+      padding: const EdgeInsets.only(left: 16, bottom: 24),
       child: Row(
         children: [
           // ── Numbered Circle Badge ──

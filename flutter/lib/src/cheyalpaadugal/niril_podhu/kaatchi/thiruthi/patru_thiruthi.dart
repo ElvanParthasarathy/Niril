@@ -15,8 +15,11 @@ import '../../../niril_podhu/tharavuru/seluthi_vagai.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import 'koorugal/patru_pattiyal_theervu_maeladukku.dart';
 import 'koorugal/patru_thiruthi_paguthigal.dart';
-import '../koorugal/elvan_pattiyal_tharavugal_kooru.dart';
 import '../koorugal/elvan_vaangunar_keezhvirivu_kooru.dart';
+import '../koorugal/pattiyal_naal_kooru.dart';
+import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
+import '../../../../koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
+import '../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
@@ -304,6 +307,9 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     final isEditing = widget.editingEntry != null;
     final title =
         isEditing ? K.maatriyamai.tr(context, ref) : K.pudhiyaAakkam.tr(context, ref);
+    
+    final profiles = ref.watch(NiruvanaTharavugalListProvider);
+    final baseIndex = profiles.length > 1 ? 1 : 0;
 
     return ElvanEditorShell(
       title: title,
@@ -323,48 +329,60 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // ── Mode Dropdown ──
-            const SizedBox(height: 16),
-            ElvanThiruthiKeezhvirivu<String>(
-              label: K.patrucheettuVagai.tr(context, ref),
-              value: _mode == PatruMode.advance
-                  ? K.munthogai.tr(context, ref)
-                  : K.pattiyal.tr(context, ref),
-              items: [
-                K.pattiyal.tr(context, ref),
-                K.munthogai.tr(context, ref),
-              ],
-              itemLabelBuilder: (ctx, ref, item) => item,
-              onChanged: (String newValue) {
-                setState(() {
-                  _mode = newValue == K.munthogai.tr(context, ref)
-                      ? PatruMode.advance
-                      : PatruMode.againstInvoice;
-                  if (_mode == PatruMode.advance) {
-                    _selectedInvoices.clear();
-                    _recalculateAmount();
-                  }
-                });
-              },
+            Padding(
+              padding: const EdgeInsets.only(bottom: 24.0),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+                  final width = isDesktop ? (constraints.maxWidth - 16) / 2 : constraints.maxWidth;
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: SizedBox(
+                      width: width,
+                      child: ElvanThiruthiKeezhvirivu<String>(
+                        label: K.patrucheettuVagai.tr(context, ref),
+                        value: _mode == PatruMode.advance
+                            ? K.munthogai.tr(context, ref)
+                            : K.pattiyal.tr(context, ref),
+                        items: [
+                          K.pattiyal.tr(context, ref),
+                          K.munthogai.tr(context, ref),
+                        ],
+                        itemLabelBuilder: (ctx, ref, item) => item,
+                        onChanged: (String newValue) {
+                          setState(() {
+                            _mode = newValue == K.munthogai.tr(context, ref)
+                                ? PatruMode.advance
+                                : PatruMode.againstInvoice;
+                            if (_mode == PatruMode.advance) {
+                              _selectedInvoices.clear();
+                              _recalculateAmount();
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                  );
+                }
+              ),
             ),
 
             // ── Section 1: Against Invoice ──
             if (_mode == PatruMode.againstInvoice) ...[
               ElvanEditorSection(
-                index: 0,
+                index: baseIndex,
                 title: K.endhapPattiyalukku.tr(context, ref),
                 displayChild: const SizedBox(),
                 initiallyExpanded: true,
                 children: [
-                  ElvanFullWidth(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 24.0),
-                      child: _isLoadingInvoices 
-                          ? const Padding(
-                              padding: EdgeInsets.all(32.0),
-                              child: Center(child: CircularProgressIndicator()),
-                            )
-                          : _buildInvoicePickerSection(invoicesAsync, isDark),
-                    ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24.0),
+                    child: _isLoadingInvoices 
+                        ? const Padding(
+                            padding: EdgeInsets.all(32.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        : _buildInvoicePickerSection(invoicesAsync, isDark),
                   ),
                 ],
               ),
@@ -372,34 +390,20 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
 
             // ── Section 2: Receipt Data ──
             ElvanEditorSection(
-              index: _mode == PatruMode.againstInvoice ? 1 : 0,
+              index: baseIndex + (_mode == PatruMode.againstInvoice ? 1 : 0),
               title: K.patrucheettuTharavugal.tr(context, ref),
               displayChild: const SizedBox(),
               initiallyExpanded: true,
-              children: [
-                ElvanFullWidth(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24.0),
-                    child: _buildReceiptDataSection(isDark),
-                  ),
-                ),
-              ],
+              children: _buildReceiptDataFields(isDark),
             ),
 
             // ── Section 3: Payment Details ──
             ElvanEditorSection(
-              index: _mode == PatruMode.againstInvoice ? 2 : 1,
+              index: baseIndex + (_mode == PatruMode.againstInvoice ? 2 : 1),
               title: K.cheluthiyaTharavu.tr(context, ref),
               displayChild: const SizedBox(),
               initiallyExpanded: true,
-              children: [
-                ElvanFullWidth(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24.0),
-                    child: _buildPaymentSection(isDark),
-                  ),
-                ),
-              ],
+              children: _buildPaymentFields(isDark),
             ),
           ],
         ),
@@ -424,145 +428,265 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   }
 
   // ── Section 2: Receipt Data ──
-  Widget _buildReceiptDataSection(bool isDark) {
+  List<Widget> _buildReceiptDataFields(bool isDark) {
     final bizShort = (_selectedProfile?.kurumPeyar.isNotEmpty == true
             ? _selectedProfile!.kurumPeyar
             : 'BIZ')
         .toUpperCase();
     final profilePrefix = 'RCP/$bizShort/';
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // 1. Receipt Number & Date
-        ElvanPattiyalTharavugalKooru(
-          customNumberTitle: K.patrucheettuEn.tr(context, ref), // Receipt Number
-          customDateTitle: K.patrucheettuNaal.tr(context, ref), // Receipt Date
-          isEditing: widget.editingEntry != null,
-          invoiceNumberOverride: _patruEnCtrl.text,
-          previewInvoiceNumber: _patruEn.isNotEmpty ? _patruEn : _previewPatruEn,
-          isInvNumberEditing: _isPatruEnEditing,
-          invNumberController: _patruEnCtrl,
-          profilePrefix: profilePrefix,
-          pattiyalNaal: _patruNaal,
-          onToggleEditInvNumber: () {
-            setState(() {
-              if (_isPatruEnEditing) {
-                // Done editing: user typed custom number
-                final numPart = _patruEnCtrl.text.trim();
-                if (numPart.isNotEmpty) {
-                  _patruEn = '$profilePrefix$numPart';
-                } else {
-                  _patruEn = '';
-                }
-                _isPatruEnEditing = false;
-              } else {
-                // Start editing
-                _isPatruEnEditing = true;
-                _patruEnCtrl.text = ''; // Clear so they type only the number
-              }
-            });
-          },
-          onInvNumberChanged: (val) {
-            setState(() {
-              _previewPatruEn = val.isEmpty ? '' : '$profilePrefix$val';
-            });
-          },
-          onDateChanged: (date) {
-            setState(() => _patruNaal = date);
-          },
-          onDirty: () {},
-        ),
-        const SizedBox(height: 24),
+    final tt = Theme.of(context).textTheme;
+    final cs = Theme.of(context).colorScheme;
 
-        // 2. Customer Selector / Info
-        Text(
-          K.vaangunar.tr(context, ref),
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w500,
-              ),
-        ),
-        const SizedBox(height: 8),
+    return [
+      // 1. Receipt Date
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            K.patrucheettuNaal.tr(context, ref),
+            style: tt.labelMedium?.copyWith(
+              color: cs.onSurfaceVariant,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 6),
+          PattiyalNaalKooru(
+            selectedDate: _patruNaal,
+            onDateChanged: (date) {
+              setState(() => _patruNaal = date);
+            },
+          ),
+        ],
+      ),
 
-        if (_mode == PatruMode.againstInvoice) ...[
-          if (_selectedInvoices.isNotEmpty)
-            _buildCustomerCard(isDark, isLocked: true)
-          else
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.05)
-                    : Colors.black.withValues(alpha: 0.03),
-                borderRadius: BorderRadius.circular(12),
-                border:
-                    Border.all(color: isDark ? Colors.white12 : Colors.black12),
+      // 2. Customer Selector / Info
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 8),
+            child: Text(
+              K.vaangunar.tr(context, ref),
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                letterSpacing: 0.3,
+                color: cs.onSurface.withValues(alpha: 0.5),
               ),
-              child: Row(
-                children: [
-                  Icon(CupertinoIcons.info_circle_fill,
-                      size: 24,
-                      color: isDark ? Colors.white54 : Colors.black45),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      K.pattiyalThaervukkuPinVaangunarTharavugalNirappappadum.tr(context, ref),
-                      style: TextStyle(
-                          color: isDark ? Colors.white70 : Colors.black87),
+            ),
+          ),
+
+          if (_mode == PatruMode.againstInvoice) ...[
+            if (_selectedInvoices.isNotEmpty)
+              _buildCustomerCard(isDark, isLocked: true)
+            else
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.black.withValues(alpha: 0.03),
+                  borderRadius: BorderRadius.circular(100),
+                  border: Border.all(
+                      color: isDark ? Colors.white12 : Colors.black12),
+                ),
+                child: Row(
+                  children: [
+                    Icon(CupertinoIcons.info_circle_fill,
+                        size: 24,
+                        color: isDark ? Colors.white54 : Colors.black45),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        K.pattiyalThaervukkuPinVaangunarTharavugalNirappappadum
+                            .tr(context, ref),
+                        style: TextStyle(
+                            color: isDark ? Colors.white70 : Colors.black87),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+          ] else ...[
+            // Advance Mode — manual selection
+            if (_selectedVaangunarId == null)
+              ElvanVaangunarKeezhvirivuKooru(
+                selectedVaangunarId: _selectedVaangunarId,
+                hideLabel: true,
+                showClearButton: true,
+                onChanged: (v) {
+                  if (v == null) {
+                    setState(() {
+                      _selectedVaangunarId = null;
+                      _vaangunarPeyarMap = {};
+                      _vaangunarMunvariMap = {};
+                    });
+                  } else {
+                    setState(() {
+                      _selectedVaangunarId = v.id;
+                      _vaangunarPeyarMap = Map<String, String>.from(v.peyar);
+
+                      final tamilAddr = [
+                        if (v.oor['Tamil']?.isNotEmpty == true) v.oor['Tamil'],
+                        if (v.maavattam['Tamil']?.isNotEmpty == true)
+                          v.maavattam['Tamil'],
+                      ].where((e) => e != null).join(', ');
+
+                      final engAddr = [
+                        if (v.oor['English']?.isNotEmpty == true)
+                          v.oor['English'],
+                        if (v.maavattam['English']?.isNotEmpty == true)
+                          v.maavattam['English'],
+                      ].where((e) => e != null).join(', ');
+
+                      _vaangunarMunvariMap = {
+                        'Tamil': tamilAddr.isNotEmpty
+                            ? tamilAddr
+                            : (v.mugavari['Tamil'] ?? ''),
+                        'English': engAddr.isNotEmpty
+                            ? engAddr
+                            : (v.mugavari['English'] ?? ''),
+                      };
+                    });
+                  }
+                },
+              )
+            else
+              _buildCustomerCard(isDark, isLocked: false),
+          ],
+        ],
+      ),
+
+      // 3. Receipt Number
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 8),
+            child: Row(
+              children: [
+                Text(
+                  K.patrucheettuEn.tr(context, ref),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    letterSpacing: 0.3,
+                    color: cs.onSurface.withValues(alpha: 0.5),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                InkWell(
+                  borderRadius: BorderRadius.circular(100),
+                onTap: () {
+                  setState(() {
+                    if (_isPatruEnEditing) {
+                      final numPart = _patruEnCtrl.text.trim();
+                      if (numPart.isNotEmpty) {
+                        _patruEn = '$profilePrefix$numPart';
+                      } else {
+                        _patruEn = '';
+                      }
+                      _isPatruEnEditing = false;
+                    } else {
+                      _isPatruEnEditing = true;
+                      _patruEnCtrl.text = '';
+                    }
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Icon(
+                    _isPatruEnEditing ? Icons.check : Icons.edit_outlined,
+                    size: 16,
+                    color: cs.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          ),
+          const SizedBox(height: 6),
+          if (_isPatruEnEditing)
+            Row(
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  decoration: BoxDecoration(
+                    color: cs.surfaceContainerHighest,
+                    borderRadius: const BorderRadius.horizontal(
+                        left: Radius.circular(100)),
+                    border: Border.all(
+                      color: cs.outline.withValues(alpha: 0.3),
                     ),
                   ),
-                ],
-              ),
-            )
-        ] else ...[
-          // Advance Mode — manual selection
-          if (_selectedVaangunarId == null)
-            ElvanVaangunarKeezhvirivuKooru(
-              selectedVaangunarId: _selectedVaangunarId,
-              hideLabel: true,
-              showClearButton: true,
-              onChanged: (v) {
-                if (v == null) {
-                  setState(() {
-                    _selectedVaangunarId = null;
-                    _vaangunarPeyarMap = {};
-                    _vaangunarMunvariMap = {};
-                  });
-                } else {
-                  setState(() {
-                    _selectedVaangunarId = v.id;
-                    _vaangunarPeyarMap = Map<String, String>.from(v.peyar);
-
-                  final tamilAddr = [
-                    if (v.oor['Tamil']?.isNotEmpty == true) v.oor['Tamil'],
-                    if (v.maavattam['Tamil']?.isNotEmpty == true)
-                      v.maavattam['Tamil'],
-                  ].where((e) => e != null).join(', ');
-
-                  final engAddr = [
-                    if (v.oor['English']?.isNotEmpty == true) v.oor['English'],
-                    if (v.maavattam['English']?.isNotEmpty == true)
-                      v.maavattam['English'],
-                  ].where((e) => e != null).join(', ');
-
-                  _vaangunarMunvariMap = {
-                    'Tamil': tamilAddr.isNotEmpty
-                        ? tamilAddr
-                        : (v.mugavari['Tamil'] ?? ''),
-                    'English': engAddr.isNotEmpty
-                        ? engAddr
-                        : (v.mugavari['English'] ?? ''),
-                  };
-                });
-                }
-              },
+                  child: Text(
+                    profilePrefix,
+                    style: tt.bodyLarge?.copyWith(
+                      color: cs.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: _patruEnCtrl,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: ElvanVadivamaippigal.enngalMattum,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      hintText: '01',
+                      border: OutlineInputBorder(
+                        borderRadius: const BorderRadius.horizontal(
+                            right: Radius.circular(100)),
+                        borderSide: BorderSide(
+                          color: cs.outline.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 16),
+                      isDense: true,
+                    ),
+                    onChanged: (val) {
+                      setState(() {
+                        _previewPatruEn =
+                            val.isEmpty ? '' : '$profilePrefix$val';
+                      });
+                    },
+                  ),
+                ),
+              ],
             )
           else
-            _buildCustomerCard(isDark, isLocked: false),
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: cs.onSurface.withValues(alpha: 0.03),
+                borderRadius: BorderRadius.circular(100),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: _patruEnCtrl.text.isNotEmpty || (_patruEn.isNotEmpty ? _patruEn : _previewPatruEn).isNotEmpty
+                  ? Text(
+                      _patruEnCtrl.text.isNotEmpty
+                          ? _patruEnCtrl.text
+                          : (_patruEn.isNotEmpty ? _patruEn : _previewPatruEn),
+                      style: tt.bodyLarge?.copyWith(
+                        color: cs.onSurface,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )
+                  : Text(
+                      K.thaaniyangkiUruvaam.tr(context, ref),
+                      style: tt.bodyLarge?.copyWith(
+                        color: cs.onSurfaceVariant,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+            ),
         ],
-      ],
-    );
+      ),
+    ];
   }
 
   // ── Helper: Customer Info Card ──
@@ -574,13 +698,13 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
           ? Colors.white.withValues(alpha: 0.05)
           : Colors.black.withValues(alpha: 0.03),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(100),
         side: BorderSide(
           color: isDark ? Colors.white12 : Colors.black12,
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Row(
           children: [
             Icon(CupertinoIcons.person_solid,
@@ -633,18 +757,49 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
   }
 
   // ── Section 3: Payment Details ──
-  Widget _buildPaymentSection(bool isDark) {
-    return PatruSeluthiPagudhi(
-      thogaiCtrl: _thogaiCtrl,
-      suttruEnCtrl: _suttruEnCtrl,
-      ullkurippuCtrl: _ullkurippuCtrl,
-      seluthiVagai: _seluthiVagai,
-      isDark: isDark,
-      onThogaiChanged: (val) => _thogai = double.tryParse(val) ?? 0.0,
-      onSeluthiVagaiChanged: (val) => setState(() => _seluthiVagai = val),
-      onSuttruEnChanged: (val) => _suttruEn = val,
-      onUllkurippuChanged: (val) => _ullkurippu = val,
-    );
+  List<Widget> _buildPaymentFields(bool isDark) {
+    return [
+      // Amount field
+      ElvanThiruthiUlleedu(
+        controller: _thogaiCtrl,
+        label: K.thogaiVinmeen.tr(context, ref),
+        prefixText: '₹ ',
+        keyboardType:
+            const TextInputType.numberWithOptions(decimal: true),
+        inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
+        onChanged: (val) {
+          _thogai = double.tryParse(val) ?? 0.0;
+        },
+      ),
+
+      // Payment mode dropdown
+      ElvanThiruthiKeezhvirivu<SeluthiVagai>(
+        label: K.cheluthumMuraiVinmeen.tr(context, ref),
+        value: _seluthiVagai,
+        items: SeluthiVagai.values,
+        itemLabelBuilder: (ctx, ref, mode) => mode.label(ctx, ref),
+        leadingBuilder: (ctx, ref, mode) => Icon(mode.icon, size: 18, color: Theme.of(ctx).colorScheme.onSurface.withValues(alpha: 0.7)),
+        onChanged: (val) {
+          setState(() => _seluthiVagai = val);
+        },
+      ),
+
+      // Reference number (shown only when not Cash)
+      if (_seluthiVagai != null && _seluthiVagai!.needsReference)
+        ElvanThiruthiUlleedu(
+          controller: _suttruEnCtrl,
+          label: K.kurippuEnParimaatraEn.tr(context, ref),
+          onChanged: (val) => _suttruEn = val,
+        ),
+
+      // Note
+      ElvanThiruthiUlleedu(
+        controller: _ullkurippuCtrl,
+        label: K.kurippu.tr(context, ref),
+        maxLines: 3,
+        onChanged: (val) => _ullkurippu = val,
+      ),
+    ];
   }
 
   // ── Invoice Picker Dialog ──

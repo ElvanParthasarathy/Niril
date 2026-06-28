@@ -47,19 +47,20 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
           ElvanPagudhiThalaipu(en: 1, thalaipu: K.niruvanam.tr(context, ref)),
           Padding(
             padding: const EdgeInsets.only(top: 8.0, bottom: 24.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Builder(builder: (context) {
-                    return ElvanNiruvanamKeezhvirivuKooru(
-                      selectedNiruvanamId: selectedNiruvanamId,
-                      hideLabel: true,
-                      showClearButton: true,
-                      onChanged: (p) => onChanged(p),
-                    );
-                  }),
-                ),
-              ],
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+                final width = isDesktop ? (constraints.maxWidth - 16) / 2 : constraints.maxWidth;
+                return SizedBox(
+                  width: width,
+                  child: ElvanNiruvanamKeezhvirivuKooru(
+                    selectedNiruvanamId: selectedNiruvanamId,
+                    hideLabel: true,
+                    showClearButton: true,
+                    onChanged: (p) => onChanged(p),
+                  ),
+                );
+              }
             ),
           ),
         ],

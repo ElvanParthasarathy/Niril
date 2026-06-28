@@ -52,7 +52,7 @@ class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // _buildHeader(isActive: true), // Removed to reduce clutter
+            _buildHeader(isActive: true),
             Padding(
               padding: const EdgeInsets.only(top: 4.0),
               child: LayoutBuilder(
@@ -93,7 +93,7 @@ class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // _buildHeader(isActive: true), // Removed to reduce clutter
+          _buildHeader(isActive: true),
           Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: Column(

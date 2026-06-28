@@ -309,6 +309,9 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           : null,
     );
 
+    final profiles = ref.watch(NiruvanaTharavugalListProvider);
+    final baseIndex = profiles.length > 1 ? 1 : 0;
+
     return ElvanEditorShell(
       title: _isEditing
           ? K.maatriyamai.tr(context, ref)
@@ -335,7 +338,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           // Section 1: ① Billed To
           // ───────────────────────────────────────────────────────────────
           ElvanEditorSection(
-            index: 0,
+            index: baseIndex,
             title: K.perunar.tr(context, ref),
             displayChild: const SizedBox(),
             initiallyExpanded: true,
@@ -424,7 +427,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           // Section 2: ② Invoice Details
           // ───────────────────────────────────────────────────────────────
           ElvanEditorSection(
-            index: 1,
+            index: baseIndex + 1,
             title: K.pattiyalTharavugal.tr(context, ref),
             displayChild: const SizedBox(),
             initiallyExpanded: true,
@@ -506,7 +509,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           // Section 3: ③ Line Items (uses PattuUrupadiAttai component)
           // ───────────────────────────────────────────────────────────────
           ElvanEditorSection(
-            index: 2,
+            index: baseIndex + 2,
             title: K.porutkal.tr(context, ref),
             displayChild: const SizedBox(),
             initiallyExpanded: true,
@@ -597,7 +600,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           // Section 4: ④ Totals (uses PattuMothangalKooru component)
           // ───────────────────────────────────────────────────────────────
           ElvanEditorSection(
-            index: 3,
+            index: baseIndex + 3,
             title: K.mothangal.tr(context, ref),
             displayChild: const SizedBox(),
             initiallyExpanded: true,
@@ -612,7 +615,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           // Section 5: ⑤ Invoice Type
           // ───────────────────────────────────────────────────────────────
           ElvanEditorSection(
-            index: 4,
+            index: baseIndex + 4,
             title: K.pattiyalVagai.tr(context, ref),
             displayChild: const SizedBox(),
             initiallyExpanded: true,

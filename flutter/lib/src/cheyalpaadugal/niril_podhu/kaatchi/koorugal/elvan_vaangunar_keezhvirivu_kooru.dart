@@ -124,11 +124,11 @@ class ElvanVaangunarKeezhvirivuKooru extends ConsumerWidget {
               onRequestAddNew: onRequestAddNew,
             );
           },
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(100),
           child: Container(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.03),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(100),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Row(
@@ -139,15 +139,18 @@ class ElvanVaangunarKeezhvirivuKooru extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (!hideLabel) ...[
-                        Text(
-                          placeholder,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16, bottom: 8),
+                          child: Text(
+                            placeholder,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              letterSpacing: 0.3,
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 4),
                       ],
                       Text(
                         currentValue,

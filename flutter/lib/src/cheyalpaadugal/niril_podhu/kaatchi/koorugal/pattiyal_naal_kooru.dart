@@ -68,24 +68,26 @@ class PattiyalNaalKooru extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Optional label
-        if (label != null) ...[
-          Text(
-            label!,
-            style: theme.textTheme.labelMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
+        if (label != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 16, bottom: 8),
+            child: Text(
+              label!,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: colorScheme.onSurface.withValues(alpha: 0.5),
+                fontWeight: FontWeight.w400,
+                fontSize: 12,
+                letterSpacing: 0.3,
+              ),
             ),
           ),
-          const SizedBox(height: 6),
-        ],
 
         // Tappable date container
         InkWell(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(100),
           onTap: () => _openDatePicker(context),
           child: InputDecorator(
             decoration: InputDecoration(
