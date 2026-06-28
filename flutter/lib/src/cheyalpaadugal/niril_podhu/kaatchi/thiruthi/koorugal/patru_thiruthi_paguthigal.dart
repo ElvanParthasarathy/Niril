@@ -85,36 +85,57 @@ class _PatruPattiyalTheervuPagudhiState
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // "Select Invoices" button
-        Material(
-          color:
-              Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+        InkWell(
+          onTap: widget.onPickInvoices,
           borderRadius: BorderRadius.circular(100),
-          child: InkWell(
-            onTap: widget.onPickInvoices,
-            borderRadius: BorderRadius.circular(100),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    CupertinoIcons.doc_text,
-                    size: 18,
+          child: InputDecorator(
+            decoration: InputDecoration(
+              isDense: true,
+              filled: true,
+              fillColor: WidgetStateColor.resolveWith((states) {
+                if (states.contains(WidgetState.focused) ||
+                    states.contains(WidgetState.hovered)) {
+                  return Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.12);
+                }
+                return Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.08);
+              }),
+              contentPadding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 16,
+                bottom: 16,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(100),
+                borderSide: BorderSide.none,
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  CupertinoIcons.doc_text,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  widget.selectedInvoices.isEmpty
+                      ? K.pattiyalgalaiThaernhedu.tr(context, ref)
+                      : '${widget.selectedInvoices.length} ${K.pattiyalgal.tr(context, ref)}',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    widget.selectedInvoices.isEmpty
-                        ? K.pattiyalgalaiThaernhedu.tr(context, ref)
-                        : '${widget.selectedInvoices.length} ${K.pattiyalgal.tr(context, ref)}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
