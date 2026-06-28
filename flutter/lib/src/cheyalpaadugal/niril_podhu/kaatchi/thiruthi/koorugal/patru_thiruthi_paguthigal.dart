@@ -17,7 +17,6 @@ import 'elvan_thiruthi_keezhvirivu.dart';
 // RECEIPT EDITOR — EXTRACTED SECTION BUILDERS
 // ─────────────────────────────────────────────────────────────────────────────
 
-
 /// Invoice picker button + selected invoice chips.
 class PatruPattiyalTheervuPagudhi extends ConsumerStatefulWidget {
   const PatruPattiyalTheervuPagudhi({
@@ -34,10 +33,12 @@ class PatruPattiyalTheervuPagudhi extends ConsumerStatefulWidget {
   final void Function(PattiyalTharavuru invoice) onRemoveInvoice;
 
   @override
-  ConsumerState<PatruPattiyalTheervuPagudhi> createState() => _PatruPattiyalTheervuPagudhiState();
+  ConsumerState<PatruPattiyalTheervuPagudhi> createState() =>
+      _PatruPattiyalTheervuPagudhiState();
 }
 
-class _PatruPattiyalTheervuPagudhiState extends ConsumerState<PatruPattiyalTheervuPagudhi> {
+class _PatruPattiyalTheervuPagudhiState
+    extends ConsumerState<PatruPattiyalTheervuPagudhi> {
   final ScrollController _scrollController = ScrollController();
   bool _showLeftFade = false;
   bool _showRightFade = true;
@@ -95,8 +96,7 @@ class _PatruPattiyalTheervuPagudhiState extends ConsumerState<PatruPattiyalTheer
                   : '${widget.selectedInvoices.length} ${K.pattiyalgal.tr(context, ref)}',
             ),
             style: ElevatedButton.styleFrom(
-              padding:
-                  const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
               ),
@@ -115,7 +115,8 @@ class _PatruPattiyalTheervuPagudhiState extends ConsumerState<PatruPattiyalTheer
           ShaderMask(
             shaderCallback: (Rect bounds) {
               if (!_showLeftFade && !_showRightFade) {
-                return const LinearGradient(colors: [Colors.black, Colors.black]).createShader(bounds);
+                return const LinearGradient(
+                    colors: [Colors.black, Colors.black]).createShader(bounds);
               }
               return LinearGradient(
                 begin: Alignment.centerLeft,
@@ -140,21 +141,46 @@ class _PatruPattiyalTheervuPagudhiState extends ConsumerState<PatruPattiyalTheer
                   children: widget.selectedInvoices.map((inv) {
                     return Padding(
                       padding: const EdgeInsets.only(right: 8.0),
-                      child: Chip(
-                        label: Text(inv.patrucheettuEn,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: widget.isDark ? Colors.white : Colors.black87,
-                            )),
-                        backgroundColor: widget.isDark
-                            ? Colors.white.withValues(alpha: 0.08)
-                            : Colors.black.withValues(alpha: 0.05),
-                        deleteIconColor: widget.isDark ? Colors.white70 : Colors.black54,
-                        shape: const StadiumBorder(),
-                        side: BorderSide.none,
-                        deleteIcon:
-                            const Icon(CupertinoIcons.clear_thick_circled, size: 18),
-                        onDeleted: () => widget.onRemoveInvoice(inv),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10.0, vertical: 6.0),
+                        decoration: ShapeDecoration(
+                          shape: const StadiumBorder(),
+                          color: widget.isDark
+                              ? Colors.white.withValues(alpha: 0.08)
+                              : Colors.black.withValues(alpha: 0.05),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              inv.patrucheettuEn,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: widget.isDark
+                                    ? Colors.white
+                                    : Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(width: 6.0),
+                            InkWell(
+                              onTap: () => widget.onRemoveInvoice(inv),
+                              borderRadius: BorderRadius.circular(16),
+                              child: Padding(
+                                padding: const EdgeInsets.all(2.0),
+                                child: Icon(
+                                  CupertinoIcons.clear_thick_circled,
+                                  size: 16,
+                                  color: widget.isDark
+                                      ? Colors.white70
+                                      : Colors.black54,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   }).toList(),
@@ -225,7 +251,12 @@ class PatruSeluthiPagudhi extends ConsumerWidget {
                 value: seluthiVagai,
                 items: SeluthiVagai.values,
                 itemLabelBuilder: (ctx, ref, mode) => mode.label(ctx, ref),
-                leadingBuilder: (ctx, ref, mode) => Icon(mode.icon, size: 18, color: Theme.of(ctx).colorScheme.onSurface.withValues(alpha: 0.7)),
+                leadingBuilder: (ctx, ref, mode) => Icon(mode.icon,
+                    size: 18,
+                    color: Theme.of(ctx)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.7)),
                 onChanged: (val) {
                   if (onSeluthiVagaiChanged != null) {
                     onSeluthiVagaiChanged!(val);
