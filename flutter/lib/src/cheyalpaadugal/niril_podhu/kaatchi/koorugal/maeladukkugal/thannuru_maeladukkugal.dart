@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
@@ -184,8 +183,8 @@ void showNewProfileModal({
                   .onSurface
                   .withValues(alpha: 0.08);
             }),
-            contentPadding: ElvanThiruthiMarabu.contentPadding,
-            constraints: ElvanThiruthiMarabu.singleLineConstraints,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            constraints: const BoxConstraints(minHeight: 45),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(100),
               borderSide: BorderSide.none,
@@ -231,8 +230,8 @@ void showNewProfileModal({
                   .onSurface
                   .withValues(alpha: 0.08);
             }),
-            contentPadding: ElvanThiruthiMarabu.contentPadding,
-            constraints: ElvanThiruthiMarabu.singleLineConstraints,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            constraints: const BoxConstraints(minHeight: 45),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(100),
               borderSide: BorderSide.none,

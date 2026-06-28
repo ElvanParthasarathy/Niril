@@ -1,5 +1,6 @@
 import 'package:elvan_niril/src/adippadai/vazhikaattal/niril_nav.dart';
-import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_pothan.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_thalaippu.dart';
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -85,60 +86,30 @@ class _PatruPattiyalTheervuPagudhiState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        ElvanThiruthiThalaippu(label: K.pattiyal.tr(context, ref)),
         // "Select Invoices" button
-        InkWell(
+        ElvanThiruthiPothan(
           onTap: widget.onPickInvoices,
-          borderRadius: BorderRadius.circular(100),
-          child: InputDecorator(
-            decoration: InputDecoration(
-              constraints: ElvanThiruthiMarabu.singleLineConstraints,
-              isDense: true,
-              filled: true,
-              fillColor: WidgetStateColor.resolveWith((states) {
-                if (states.contains(WidgetState.focused) ||
-                    states.contains(WidgetState.hovered)) {
-                  return Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.12);
-                }
-                return Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.08);
-              }),
-              contentPadding: const EdgeInsets.only(
-                left: 20,
-                right: 20,
-                top: 16,
-                bottom: 16,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                CupertinoIcons.doc_text,
+                size: 18,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(100),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  CupertinoIcons.doc_text,
-                  size: 18,
+              const SizedBox(width: 8),
+              Text(
+                widget.selectedInvoices.isEmpty
+                    ? K.pattiyalgalaiThaernhedu.tr(context, ref)
+                    : '${widget.selectedInvoices.length} ${K.pattiyalgal.tr(context, ref)}',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  widget.selectedInvoices.isEmpty
-                      ? K.pattiyalgalaiThaernhedu.tr(context, ref)
-                      : '${widget.selectedInvoices.length} ${K.pattiyalgal.tr(context, ref)}',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
 

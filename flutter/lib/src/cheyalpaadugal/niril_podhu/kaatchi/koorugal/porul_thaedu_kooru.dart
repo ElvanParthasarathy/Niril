@@ -1,5 +1,4 @@
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
-import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
@@ -210,7 +209,7 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
           children: [
               Icon(
                 Icons.inventory_2_rounded,
-                size: ElvanThiruthiMarabu.iconSize,
+                size: 20.0,
                 color: colorScheme.onSurfaceVariant,
               ),
               const SizedBox(width: 12),
@@ -219,11 +218,11 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
                   text,
                   style: isHint
                       ? TextStyle(
-                          fontSize: ElvanThiruthiMarabu.fontSize,
+                          fontSize: 14.0,
                           color: colorScheme.onSurfaceVariant
                               .withValues(alpha: 0.7),
                         )
-                      : TextStyle(fontSize: ElvanThiruthiMarabu.fontSize),
+                      : TextStyle(fontSize: 14.0),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -231,12 +230,12 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
               if (onClear != null)
                 GestureDetector(
                   onTap: onClear,
-                  child: Icon(Icons.clear_rounded, size: ElvanThiruthiMarabu.iconSize),
+                  child: Icon(Icons.clear_rounded, size: 20.0),
                 )
               else
                 Icon(
                   Icons.arrow_drop_down,
-                  size: ElvanThiruthiMarabu.iconSize,
+                  size: 20.0,
                   color: colorScheme.onSurfaceVariant,
                 ),
             ],

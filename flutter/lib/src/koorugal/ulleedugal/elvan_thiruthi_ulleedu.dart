@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_pill_vadivu.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_thalaippu.dart';
 
 /// A standard pill-shaped text field component designed specifically for Elvan Editors (Thiruthi).
 /// It visually matches the standard Keezhvirivu (Dropdown) and other editor components.
 class ElvanThiruthiUlleedu extends StatelessWidget {
-  final String label;
+  final String? label;
   final TextEditingController? controller;
   final String? initialValue;
   final bool enabled;
@@ -23,10 +24,12 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
   final Widget? suffixIcon;
   final FocusNode? focusNode;
   final String? hintText;
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   const ElvanThiruthiUlleedu({
     super.key,
-    required this.label,
+    this.label,
     this.controller,
     this.initialValue,
     this.enabled = true,
@@ -44,6 +47,8 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
     this.suffixIcon,
     this.focusNode,
     this.hintText,
+    this.readOnly = false,
+    this.onTap,
   });
 
   @override
@@ -51,22 +56,7 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (label.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 8),
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 0.3,
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.5),
-              ),
-            ),
-          ),
+        if (label != null && label!.isNotEmpty) ElvanThiruthiThalaippu(label: label!),
         TextFormField(
           controller: controller,
           initialValue: controller == null ? initialValue : null,
@@ -77,12 +67,12 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
           textCapitalization: textCapitalization,
           onChanged: onChanged,
           inputFormatters: inputFormatters,
+          readOnly: readOnly,
+          onTap: onTap,
           maxLength: maxLength,
           maxLines: maxLines,
           style: const TextStyle(fontSize: 14),
-          decoration: InputDecoration(
-            constraints: ElvanThiruthiMarabu.singleLineConstraints,
-            isDense: true,
+          decoration: ElvanThiruthiPillVadivu.getDecoration(context).copyWith(
             prefixText: prefixText,
             suffixText: suffixText,
             errorText: errorText,
@@ -90,10 +80,6 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
             suffixIcon: suffixIcon,
             hintText: hintText,
             counterText: maxLength != null ? '' : null,
-            filled: false,
-            border: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
           ),
         ),
       ],

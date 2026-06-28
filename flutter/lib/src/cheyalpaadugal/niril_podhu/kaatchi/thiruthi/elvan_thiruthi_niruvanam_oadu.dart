@@ -5,6 +5,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/tharavuru/seyali_murai.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_pagudhi_thalaipu_kooru.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_thalaippu.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
@@ -45,13 +46,14 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
       children: [
         if (profiles.length > 1) ...[
           ElvanPagudhiThalaipu(en: 1, thalaipu: K.niruvanam.tr(context, ref)),
-          Padding(
-            padding: const EdgeInsets.only(top: 4.0, bottom: 48.0),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final isDesktop = MediaQuery.sizeOf(context).width >= 800;
-                final width = isDesktop ? (constraints.maxWidth - 16) / 2 : constraints.maxWidth;
-                return SizedBox(
+          ElvanThiruthiThalaippu(label: K.niruvanam.tr(context, ref)),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+              final width = isDesktop ? (constraints.maxWidth - 16) / 2 : constraints.maxWidth;
+              return Padding(
+                padding: const EdgeInsets.only(top: 4.0, bottom: 16.0),
+                child: SizedBox(
                   width: width,
                   child: ElvanNiruvanamKeezhvirivuKooru(
                     selectedNiruvanamId: selectedNiruvanamId,
@@ -59,9 +61,9 @@ class ElvanThiruthiNiruvanamOadu extends ConsumerWidget {
                     showClearButton: true,
                     onChanged: (p) => onChanged(p),
                   ),
-                );
-              }
-            ),
+                ),
+              );
+            }
           ),
         ],
 

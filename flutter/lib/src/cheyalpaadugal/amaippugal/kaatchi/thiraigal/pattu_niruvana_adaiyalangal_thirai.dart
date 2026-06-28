@@ -10,7 +10,6 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku/elvan_kizh_maeladukku.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
-import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
 import '../koorugal/elvan_amaippu_pagudhi.dart';
@@ -373,7 +372,7 @@ class _SilkNiruvanaAdaiyalangalPageState
                                   ? K.agalamaanaOavuruMattum.tr(context, ref)
                                   : K.chiriyaOavuruPeyar.tr(context, ref),
                               style: TextStyle(
-                                fontSize: ElvanThiruthiMarabu.fontSize,
+                                fontSize: 14.0,
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
@@ -440,8 +439,8 @@ class _SilkNiruvanaAdaiyalangalPageState
                                   .onSurface
                                   .withValues(alpha: 0.08);
                             }),
-                            contentPadding: ElvanThiruthiMarabu.contentPadding,
-                            constraints: ElvanThiruthiMarabu.singleLineConstraints,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                            constraints: const BoxConstraints(minHeight: 45),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(100),
                               borderSide: BorderSide.none,

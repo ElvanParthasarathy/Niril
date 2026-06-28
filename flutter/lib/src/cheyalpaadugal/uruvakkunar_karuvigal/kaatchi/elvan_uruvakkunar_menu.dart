@@ -32,12 +32,14 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
   Offset _position = const Offset(20, 100);
 
   void _seedAllData() async {
+    // ── Step 0: Erase all existing data across both modes ──
+    await SodhanaiTharavuUruvakki.eraseData(ref);
+
     // ── Step 1: Seed Silk Data ──
     ref.read(appModeProvider.notifier).setMode(AppMode.silk);
     // Yield to let providers rebuild
     await Future.delayed(const Duration(milliseconds: 100));
 
-    await SodhanaiTharavuUruvakki.eraseData(ref);
     await SodhanaiTharavuUruvakki.seedData(ref, AppMode.silk);
     await SodhanaiTharavuUruvakki.seedPorulAndVaangunar(ref, mode: AppMode.silk);
     await SodhanaiTharavuUruvakki.seedPattiyalgal(ref, mode: AppMode.silk);
@@ -48,7 +50,6 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
     // Yield to let providers rebuild
     await Future.delayed(const Duration(milliseconds: 100));
 
-    await SodhanaiTharavuUruvakki.eraseData(ref);
     await SodhanaiTharavuUruvakki.seedData(ref, AppMode.coolie);
     await SodhanaiTharavuUruvakki.seedPorulAndVaangunar(ref, mode: AppMode.coolie);
     await SodhanaiTharavuUruvakki.seedPattiyalgal(ref, mode: AppMode.coolie);

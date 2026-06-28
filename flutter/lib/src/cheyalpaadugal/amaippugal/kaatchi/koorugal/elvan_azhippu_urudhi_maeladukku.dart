@@ -3,7 +3,6 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
-import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 import '../../../../koorugal/maeladukkugal/elvan_cheyal_maeladukku.dart';
 
 void showElvanDeleteConfirmModal(
@@ -19,7 +18,7 @@ void showElvanDeleteConfirmModal(
       decoration: InputDecoration(
         hintText: K.kadavuchol.tr(context, ref),
         hintStyle: TextStyle(
-          fontSize: ElvanThiruthiMarabu.fontSize,
+          fontSize: 14.0,
           color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
         ),
         filled: true,
@@ -35,8 +34,8 @@ void showElvanDeleteConfirmModal(
               .onSurface
               .withValues(alpha: 0.08);
         }),
-        contentPadding: ElvanThiruthiMarabu.contentPadding,
-        constraints: ElvanThiruthiMarabu.singleLineConstraints,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        constraints: const BoxConstraints(minHeight: 45),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(100),
           borderSide: BorderSide.none,

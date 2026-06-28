@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_pill_vadivu.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku/elvan_kizh_maeladukku.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
-import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ElvanSettingsSwitch — A standard switch with Elvan's monochrome styling
@@ -234,35 +235,14 @@ class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
                             .onSurface
                             .withValues(alpha: 0.5),
                   ),
-                  decoration: InputDecoration(
-                    isDense: true,
-                    constraints: ElvanThiruthiMarabu.singleLineConstraints,
-                    filled: true,
-                    fillColor: WidgetStateColor.resolveWith((states) {
-                      if (states.contains(WidgetState.focused)) {
-                        return Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.12);
-                      }
-                      return Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withValues(alpha: 0.08);
-                    }),
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(100),
-                      borderSide: BorderSide.none,
-                    ),
+                  decoration: ElvanThiruthiPillVadivu.getDecoration(context).copyWith(
                     suffixIcon: widget.enabled
                         ? ValueListenableBuilder<TextEditingValue>(
                             valueListenable: fieldController,
                             builder: (context, value, child) {
                               if (value.text.isNotEmpty) {
                                 return IconButton(
-                                  icon: Icon(Icons.close, size: ElvanThiruthiMarabu.iconSize),
+                                  icon: Icon(Icons.close, size: 20.0),
                                   color: Theme.of(context)
                                       .colorScheme
                                       .onSurface

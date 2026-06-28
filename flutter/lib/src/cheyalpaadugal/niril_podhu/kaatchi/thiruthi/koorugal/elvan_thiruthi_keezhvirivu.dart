@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import 'package:elvan_niril/src/koorugal/maeladukkugal/elvan_kizh_maeladukku/elvan_kizh_maeladukku.dart';
-import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_pothan.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_thalaippu.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 
 /// A dropdown component designed specifically for the Elvan Editors (Thiruthi).
 /// It visually matches the standard text fields (same padding and background alpha).
@@ -43,23 +45,8 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (label.isNotEmpty && !hideLabel)
-          Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 8),
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 0.3,
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.5),
-              ),
-            ),
-          ),
-        GestureDetector(
+        if (label.isNotEmpty && !hideLabel) ElvanThiruthiThalaippu(label: label),
+        ElvanThiruthiPothan(
           onTap: () {
             showElvanSelectionBottomSheet<T>(
               context: context,
@@ -77,30 +64,32 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
           },
           child: Row(
             children: [
-                if (value != null && leadingBuilder != null) ...[
-                  leadingBuilder!(context, ref, value as T),
-                  const SizedBox(width: 8),
-                ],
-                Expanded(
-                  child: Text(
-                    value == null
-                        ? ''
-                        : itemLabelBuilder(context, ref, value as T),
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+              if (value != null && leadingBuilder != null) ...[
+                leadingBuilder!(context, ref, value as T),
+                const SizedBox(width: 8),
+              ],
+              Expanded(
+                child: Text(
+                  value == null ? '' : itemLabelBuilder(context, ref, value as T),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-                if (onClear != null && value != null)
-                  InkWell(
+              ),
+              if (onClear != null && value != null) ...[
+                Material(
+                  color: Colors.transparent,
+                  shape: const CircleBorder(),
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
                     onTap: onClear,
                     child: Padding(
-                      padding: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.all(4.0),
                       child: Icon(
                         Icons.close_rounded,
-                        size: ElvanThiruthiMarabu.iconSize,
+                        size: 20.0,
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
@@ -108,16 +97,19 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
                       ),
                     ),
                   ),
-                Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  size: ElvanThiruthiMarabu.iconSize,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.5),
                 ),
+                const SizedBox(width: 8),
               ],
-            ),
+              Icon(
+                Icons.keyboard_arrow_down_rounded,
+                size: 20.0,
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.5),
+              ),
+            ],
+          ),
         ),
       ],
     );

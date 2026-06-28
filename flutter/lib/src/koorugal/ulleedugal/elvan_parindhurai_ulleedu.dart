@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 
 class ElvanParindhuraiUlleedu extends StatefulWidget {
   final TextEditingController controller;
@@ -139,38 +139,15 @@ class _ElvanParindhuraiUlleeduState extends State<ElvanParindhuraiUlleedu> {
                 ),
               );
             },
-            child: TextFormField(
+            child: ElvanThiruthiUlleedu(
+              label: '', // Label is already rendered above by the Column
               controller: widget.controller,
               focusNode: _focusNode,
               keyboardType: widget.keyboardType,
               inputFormatters: widget.inputFormatters,
               maxLength: widget.maxLength,
-              style: const TextStyle(fontSize: 14),
-              decoration: InputDecoration(
-                isDense: true,
-                suffixText: widget.suffixText,
-                filled: true,
-                constraints: ElvanThiruthiMarabu.singleLineConstraints,
-                fillColor: WidgetStateColor.resolveWith((states) {
-                  if (states.contains(WidgetState.focused)) {
-                    return Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.12);
-                  }
-                  return Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.08);
-                }),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(100),
-                  borderSide: BorderSide.none,
-                ),
-                suffixIcon: Icon(Icons.arrow_drop_down, size: ElvanThiruthiMarabu.iconSize),
-              ),
+              suffixText: widget.suffixText,
+              suffixIcon: Icon(Icons.arrow_drop_down, size: 20.0),
             ),
           ),
         ),

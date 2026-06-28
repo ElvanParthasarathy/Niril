@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
-import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ElvanSettingsAnimatedExpand — Smoothly expands and fades between view and edit
@@ -143,8 +142,8 @@ class ElvanSettingsTextField extends StatelessWidget {
                   .onSurface
                   .withValues(alpha: 0.08);
             }),
-            contentPadding: ElvanThiruthiMarabu.contentPadding,
-            constraints: ElvanThiruthiMarabu.singleLineConstraints,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            constraints: const BoxConstraints(minHeight: 45),
             counterText: '',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(maxLines > 1 ? 16 : 100),

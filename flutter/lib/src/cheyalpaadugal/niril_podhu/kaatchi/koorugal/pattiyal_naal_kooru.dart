@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_pothan.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_thalaippu.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // பட்டியல் நாள் கூறு — Date Picker Widget
@@ -72,57 +73,35 @@ class PattiyalNaalKooru extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (label != null)
-          Padding(
-            padding: const EdgeInsets.only(left: 16, bottom: 8),
-            child: Text(
-              label!,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: colorScheme.onSurface.withValues(alpha: 0.5),
-                fontWeight: FontWeight.w400,
-                fontSize: 12,
-                letterSpacing: 0.3,
-              ),
-            ),
-          ),
+        if (label != null) ElvanThiruthiThalaippu(label: label!),
 
         // Tappable date container
-        InkWell(
-          borderRadius: BorderRadius.circular(100),
+        ElvanThiruthiPothan(
           onTap: () => _openDatePicker(context),
-          child: InputDecorator(
-            decoration: const InputDecoration(
-              isDense: true,
-              filled: false,
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.calendar_today_rounded,
-                  size: ElvanThiruthiMarabu.iconSize,
-                  color: colorScheme.onSurfaceVariant,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.calendar_today_rounded,
+                size: 20.0,
+                color: colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                _dateFormat.format(selectedDate),
+                style: TextStyle(
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.5,
                 ),
-                const SizedBox(width: 10),
-                Text(
-                  _dateFormat.format(selectedDate),
-                  style: TextStyle(
-                    fontSize: ElvanThiruthiMarabu.fontSize,
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Icon(
-                  Icons.arrow_drop_down_rounded,
-                  size: ElvanThiruthiMarabu.iconSize,
-                  color: colorScheme.onSurfaceVariant,
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 6),
+              Icon(
+                Icons.arrow_drop_down_rounded,
+                size: 20.0,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ],
           ),
         ),
       ],
