@@ -404,6 +404,8 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
               ],
             ),
 
+            const SizedBox(height: 24),
+
             // ── Disabled wrapper when no company selected ──
             Opacity(
               opacity: _selectedNiruvanamId == null ? 0.4 : 1.0,
@@ -441,6 +443,8 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                         ),
                       ],
                     ),
+
+                    const SizedBox(height: 24),
 
                     // ── Section 3: ③ Items ──
                     ElvanEditorSection(

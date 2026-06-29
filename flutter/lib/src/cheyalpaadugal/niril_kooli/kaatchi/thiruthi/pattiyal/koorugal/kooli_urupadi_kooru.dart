@@ -47,7 +47,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
     final displaySecondary = secondaryName.isNotEmpty ? secondaryName : item.porulPeyarEn;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -144,7 +144,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
               // Info line (Secondary name)
               final infoLine = displaySecondary.isNotEmpty
                   ? Padding(
-                      padding: const EdgeInsets.only(left: 16, top: 4),
+                      padding: const EdgeInsets.only(left: 16, top: 12),
                       child: Text(
                         displaySecondary,
                         style: TextStyle(
