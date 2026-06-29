@@ -241,6 +241,12 @@ class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
                     color: _isFocused 
                         ? (cs.brightness == Brightness.light && !isInsideCard ? Colors.white : cs.onSurface.withValues(alpha: 0.12))
                         : (cs.brightness == Brightness.light && !isInsideCard ? Colors.white : cs.onSurface.withValues(alpha: 0.08)),
+                    border: (cs.brightness == Brightness.light && !isInsideCard)
+                        ? Border.all(
+                            color: _isFocused ? cs.primary.withValues(alpha: 0.5) : Colors.transparent, 
+                            width: 1.5,
+                          )
+                        : null,
                     borderRadius: BorderRadius.circular(100),
                   ),
                   clipBehavior: Clip.antiAlias,

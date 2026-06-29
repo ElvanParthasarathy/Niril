@@ -33,11 +33,15 @@ class ElvanThiruthiPillVadivu {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(borderRadius),
-        borderSide: BorderSide.none,
+        borderSide: (Theme.of(context).colorScheme.brightness == Brightness.light && !ElvanAttaiSoolal.check(context)) 
+            ? const BorderSide(color: Colors.transparent, width: 1.5) 
+            : BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(borderRadius),
-        borderSide: BorderSide.none,
+        borderSide: (Theme.of(context).colorScheme.brightness == Brightness.light && !ElvanAttaiSoolal.check(context)) 
+            ? BorderSide(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5), width: 1.5)
+            : BorderSide.none,
       ),
     );
   }
