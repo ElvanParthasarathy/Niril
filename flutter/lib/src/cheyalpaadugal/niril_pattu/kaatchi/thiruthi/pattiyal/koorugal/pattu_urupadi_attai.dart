@@ -62,7 +62,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
     final rowTotal = taxableAmount + rowTax;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -104,7 +104,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
 
           // ── Item card ──
           ElvanUrupadiAttai(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: LayoutBuilder(builder: (context, constraints) {
               final isBilingual = ref.watch(bilingualProvider);
               final mudhanmaiLang = ref.watch(silkMudhanmaiMozhiProvider);

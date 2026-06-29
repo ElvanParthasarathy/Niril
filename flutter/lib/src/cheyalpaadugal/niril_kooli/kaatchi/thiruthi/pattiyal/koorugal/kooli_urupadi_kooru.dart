@@ -47,7 +47,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
     final displaySecondary = secondaryName.isNotEmpty ? secondaryName : item.porulPeyarEn;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -86,7 +86,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
           ),
           
           ElvanUrupadiAttai(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: LayoutBuilder(builder: (context, constraints) {
               final isWide = constraints.maxWidth >= 600;
               const gap = SizedBox(width: 12);
