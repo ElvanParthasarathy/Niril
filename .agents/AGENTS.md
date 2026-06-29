@@ -40,7 +40,8 @@ To ensure absolute consistency across databases, JSON payloads, and core models,
 - **Data / Details**: `tharavugal` (தரவுகள்) [NOT vivarangal]
 - **Settings**: `amaippugal` (அமைப்புகள்)
 - **Password**: `kadavuchol` (கடவுச்சொல்)
-- **Receipt / Invoice**: `patrucheettu` (பற்றுச்சீட்டு) [NOT raseedhu]
+- **Invoice**: `pattiyal` (பட்டியல்)
+- **Receipt (Payments)**: `patrucheettu` (பற்றுச்சீட்டு) [NOT raseedhu]
 
 ## Project Architecture & File Naming Policy (Pure Tanglish)
 This project STRICTLY follows a Pure Tanglish (Navil Vili) folder and file architecture. Any new AI agent or Developer working on this codebase MUST abide by these translations when creating new files or folders.
