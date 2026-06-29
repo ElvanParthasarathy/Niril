@@ -9,11 +9,10 @@ import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
-import '../../../../../../adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
+import '../../../../../../koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 import '../../../../../niril_podhu/kaatchi/koorugal/porul_thaedu_kooru.dart';
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../../../niril_pattu/kaatchi/thiruthi/pattiyal/koorugal/pattu_urupadi_attai.dart';
-import '../../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 
 /// Builds a single coolie line-item row: header label + delete + ElvanUrupadiAttai.
 class KooliUrupadiKooru extends ConsumerWidget {
@@ -47,26 +46,14 @@ class KooliUrupadiKooru extends ConsumerWidget {
     final displayPrimary = primaryName.isNotEmpty ? primaryName : item.porulPeyar;
     final displaySecondary = secondaryName.isNotEmpty ? secondaryName : item.porulPeyarEn;
 
-    // Weight display: 3 decimals (weighing machine standard) e.g. 24.100
-    // Rate display: clean integer (6 not 6.0)
-    String weightText = '';
-    if (item.edai != 0) {
-      weightText = item.edai.toStringAsFixed(3);
-    }
-
-    String rateText = '';
-    if (item.vilai != 0) {
-      rateText = item.vilai == item.vilai.truncateToDouble()
-          ? item.vilai.toInt().toString()
-          : item.vilai.toString();
-    }
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Item #N header + trash
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Padding(
                 padding: const EdgeInsets.only(left: 24, bottom: 6),
@@ -76,7 +63,6 @@ class KooliUrupadiKooru extends ConsumerWidget {
                       color: cs.onSurfaceVariant,
                     )),
               ),
-              const Spacer(),
               Opacity(
                 opacity: itemCount > 1 ? 1.0 : 0.0,
                 child: IgnorePointer(
@@ -84,8 +70,13 @@ class KooliUrupadiKooru extends ConsumerWidget {
                   child: Padding(
                     padding: const EdgeInsets.only(right: 12, bottom: 6),
                     child: IconButton(
-                      icon: Icon(CupertinoIcons.delete,
-                          color: cs.error, size: 20),
+                      icon: const Icon(CupertinoIcons.delete, size: 20),
+                      color: cs.onSurfaceVariant,
+                      style: IconButton.styleFrom(
+                        backgroundColor: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.white.withValues(alpha: 0.08) 
+                            : Colors.white,
+                      ),
                       onPressed: onDeleted,
                     ),
                   ),
@@ -93,121 +84,143 @@ class KooliUrupadiKooru extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          
           ElvanUrupadiAttai(
             padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: [
-                    // Product search — wider
-                    SizedBox(
-                      width: 280,
-                      child: Builder(
-                        builder: (context) {
-                          return PorulThaeduKooru(
-                            seyaliVagai: 'coolie',
-                            initialText: displayPrimary,
-                            onSelected: (p) {
-                              final primaryName = OruMozhiPorulUdhavi.mudhanmaiPeyar(p.porulPeyar, kooliLang);
-                              final secondaryName = OruMozhiPorulUdhavi.thunaiPeyar(p.porulPeyar, kooliLang);
-                              onUpdated(item.copyWith(
-                                porulId: p.id.toString(),
-                                porulPeyar: primaryName.isNotEmpty
-                                    ? primaryName
-                                    : secondaryName,
-                                porulPeyarEn: primaryName.isNotEmpty
-                                    ? secondaryName
-                                    : '',
-                                mozhiMap: p.porulPeyar,
-                              ));
-                            },
-                            onRequestAddNew: onRequestAddNewProduct,
-                            onCleared: () {
-                              onUpdated(const KooliUrupadi());
-                            },
-                          );
-                        }
-                      ),
-                    ),
-                    // Weight (kg) — instant math, 3-decimal on blur
-                    SizedBox(
-                      width: 120,
-                      child: ItemFieldWidget(
-                        label: K.edai.tr(context, ref),
-                        initialText: weightText,
-                        isWeight: true,
-                        onValueCommitted: (v) {
-                          onUpdated(
-                            item.copyWith(edai: double.tryParse(v) ?? 0),
-                          );
-                        },
-                        onChanged: (v) {
-                          onUpdated(
-                            item.copyWith(edai: double.tryParse(v) ?? 0),
-                          );
-                        },
-                      ),
-                    ),
-                    // Rate (per kg) — instant math, clean integer on blur
-                    SizedBox(
-                      width: 120,
-                      child: ItemFieldWidget(
-                        label: K.vilai.tr(context, ref),
-                        initialText: rateText,
-                        onValueCommitted: (v) {
-                          onUpdated(
-                            item.copyWith(vilai: double.tryParse(v) ?? 0),
-                          );
-                        },
-                        onChanged: (v) {
-                          onUpdated(
-                            item.copyWith(vilai: double.tryParse(v) ?? 0),
-                          );
-                        },
-                      ),
-                    ),
-                    // Row total (read-only)
-                    SizedBox(
-                      width: 120,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: cs.primaryContainer.withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(12),
+            child: LayoutBuilder(builder: (context, constraints) {
+              final isWide = constraints.maxWidth >= 600;
+              const gap = SizedBox(width: 12);
+              const vGap = SizedBox(height: 12);
+
+              // Product search row (always full width)
+              final productSearch = PorulThaeduKooru(
+                seyaliVagai: 'coolie',
+                initialText: displayPrimary,
+                onSelected: (p) {
+                  final primaryName = OruMozhiPorulUdhavi.mudhanmaiPeyar(p.porulPeyar, kooliLang);
+                  final secondaryName = OruMozhiPorulUdhavi.thunaiPeyar(p.porulPeyar, kooliLang);
+                  onUpdated(item.copyWith(
+                    porulId: p.id.toString(),
+                    porulPeyar: primaryName.isNotEmpty
+                        ? primaryName
+                        : secondaryName,
+                    porulPeyarEn: primaryName.isNotEmpty
+                        ? secondaryName
+                        : '',
+                    mozhiMap: p.porulPeyar,
+                  ));
+                },
+                onRequestAddNew: onRequestAddNewProduct,
+                onCleared: () {
+                  onUpdated(const KooliUrupadi());
+                },
+              );
+
+              // Build field widgets
+              final weightField = _buildItemField(
+                context,
+                K.edai.tr(context, ref),
+                item.edai,
+                (v) => onUpdated(
+                    item.copyWith(edai: double.tryParse(v) ?? 0)),
+                isWeight: true,
+              );
+
+              final rateField = _buildItemField(
+                context, 
+                K.vilai.tr(context, ref), 
+                item.vilai, 
+                (v) => onUpdated(
+                    item.copyWith(vilai: double.tryParse(v) ?? 0)),
+              );
+
+              final totalDisplay = ElvanThiruthiUlleedu(
+                key: ValueKey(item.varisaiThogai),
+                label: K.motham.tr(context, ref),
+                initialValue: formatter.format(item.varisaiThogai),
+                readOnly: true,
+              );
+
+              // Info line (Secondary name)
+              final infoLine = displaySecondary.isNotEmpty
+                  ? Padding(
+                      padding: const EdgeInsets.only(left: 16, top: 12),
+                      child: Text(
+                        displaySecondary,
+                        style: TextStyle(
+                          color: cs.onSurface.withValues(alpha: 0.5),
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: 0.3,
+                          fontSize: 10,
                         ),
-                        alignment: Alignment.center,
-                        child: Text(
-                            '₹${formatter.format(item.varisaiThogai)}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              color: cs.primary,
-                            )),
                       ),
+                    )
+                  : const SizedBox.shrink();
+
+              if (isWide) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(flex: 3, child: productSearch),
+                        gap,
+                        Expanded(flex: 1, child: weightField),
+                        gap,
+                        Expanded(flex: 1, child: rateField),
+                        gap,
+                        Expanded(flex: 1, child: totalDisplay),
+                      ],
                     ),
+                    infoLine,
                   ],
-                ),
-                // English subtitle
-                if (displaySecondary.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: Text(
-                      displaySecondary,
-                      style: tt.bodySmall?.copyWith(
-                        color: cs.onSurfaceVariant,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
+                );
+              }
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  productSearch,
+                  infoLine,
+                  vGap,
+                  Row(children: [
+                    Expanded(child: weightField),
+                    gap,
+                    Expanded(child: rateField),
+                  ]),
+                  vGap,
+                  totalDisplay,
+                ],
+              );
+            }),
           ),
         ],
       ),
+    );
+  }
+
+  /// Borderless numeric field — instant math + blur formatting.
+  Widget _buildItemField(
+      BuildContext context, String label, double value, ValueChanged<String> onChanged,
+      {bool isWeight = false}) {
+    String displayText = '';
+    if (value != 0) {
+      if (isWeight) {
+        displayText = value.toStringAsFixed(3);
+      } else {
+        displayText = value == value.truncateToDouble()
+            ? value.toInt().toString()
+            : value.toString();
+      }
+    }
+    return ItemFieldWidget(
+      label: label,
+      initialText: displayText,
+      isWeight: isWeight,
+      onValueCommitted: onChanged,
+      onChanged: onChanged,
+      backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
     );
   }
 }
