@@ -10,6 +10,7 @@ import '../../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_keezhvirivu.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../niril_podhu/kaatchi/koorugal/elvan_vaangunar_keezhvirivu_kooru.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_thalaippu.dart';
 
 /// §1 Customer — client search + company dropdown + saved-details card.
 class KooliVaangunarKooru extends ConsumerWidget {
@@ -37,6 +38,7 @@ class KooliVaangunarKooru extends ConsumerWidget {
       final customerColumn = Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          ElvanThiruthiThalaippu(label: K.vaangunarPeyarThaedu.tr(context, ref)),
           ElvanVaangunarKeezhvirivuKooru(
             selectedVaangunarId: selectedVaangunarId,
             hideLabel: true,

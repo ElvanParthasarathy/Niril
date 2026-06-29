@@ -377,7 +377,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
             // ── Section 1: ① Customer ──
             ElvanEditorSection(
               index: baseIndex,
-              title: K.vaangunar.tr(context, ref),
+              title: K.perunar.tr(context, ref),
               displayChild: const SizedBox(),
               initiallyExpanded: true,
               children: [
