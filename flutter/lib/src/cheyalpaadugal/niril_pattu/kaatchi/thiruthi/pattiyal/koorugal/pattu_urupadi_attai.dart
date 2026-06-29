@@ -58,6 +58,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final tt = Theme.of(context).textTheme;
     final taxableAmount = item.adippadaiThogai - item.thallupadiThogai;
     final rowTax = taxableAmount * (item.variVizhukkaadu / 100);
@@ -258,17 +259,17 @@ class PattuUrupadiAttai extends ConsumerWidget {
           ),
           if (onAddNewItem != null && index == itemCount - 1) ...[
             const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
+            Align(
+              alignment: Alignment.centerLeft,
               child: TextButton.icon(
                 onPressed: onAddNewItem,
                 icon: const Icon(Icons.add, size: 20),
                 label: Text(K.chaerPtn.tr(context, ref), style: const TextStyle(fontWeight: FontWeight.w600)),
                 style: TextButton.styleFrom(
-                  foregroundColor: cs.primary,
-                  backgroundColor: cs.primaryContainer.withValues(alpha: 0.3),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  foregroundColor: cs.onSurface,
+                  backgroundColor: isDark ? cs.onSurface.withValues(alpha: 0.08) : Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: const StadiumBorder(),
                 ),
               ),
             ),
