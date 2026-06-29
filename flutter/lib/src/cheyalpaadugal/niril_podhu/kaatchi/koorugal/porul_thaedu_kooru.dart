@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:intl/intl.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../koorugal/podhu_koorugal/elvan_kavanam.dart';
 import '../../kalanjiyam/porul_nilaimai.dart';
 import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku/elvan_kizh_maeladukku.dart';
 import '../../../../adippadai/nilaimai/achu_mozhi_facade.dart';
@@ -175,7 +176,7 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
           isHint: _currentText.isEmpty,
           enabled: true,
           onTap: () {
-            FocusScope.of(context).unfocus();
+            ElvanKavanam.viduvi(context);
             _openSelectionSheet(porulgal);
           },
           onClear: _currentText.isNotEmpty

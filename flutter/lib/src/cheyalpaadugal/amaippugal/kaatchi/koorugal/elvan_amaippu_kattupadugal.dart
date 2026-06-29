@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_pill_vadivu.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thooiya_ulleedu.dart';
+import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_kavanam.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku/elvan_kizh_maeladukku.dart';
@@ -326,7 +327,7 @@ class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
                         maxWidth: constraints.maxWidth, // Use text field width
                       ),
                       child: ListView.builder(
-                        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+                        keyboardDismissBehavior: ElvanKavanam.surulNadathai,
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         shrinkWrap: true,
                         itemCount: options.length,

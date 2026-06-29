@@ -10,6 +10,7 @@ import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku.dart'
     as legacy_sheet;
 import '../../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku/koorugal/elvan_maeladukku_thaedal.dart';
+import '../../../../../koorugal/podhu_koorugal/elvan_kavanam.dart';
 import '../../../kalanjiyam/vaangunar_nilaimai.dart';
 import 'package:elvan_niril/src/adippadai/vazhikaattal/niril_nav.dart';
 
@@ -83,7 +84,7 @@ class PatruPattiyalTheervuMaeladukku {
                               child: Text(K.pattiyalgalIllai.tr(context, ref),
                                   style: const TextStyle(color: Colors.grey)))
                           : ListView.builder(
-                              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+                              keyboardDismissBehavior: ElvanKavanam.surulNadathai,
                               shrinkWrap: true,
                               itemCount: filtered.length,
                               itemBuilder: (_, index) {

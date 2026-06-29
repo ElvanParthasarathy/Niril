@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../kalanjiyam/vaangunar_nilaimai.dart';
-import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
+import '../../../../koorugal/ulleedugal/elvan_thiruthi_pill_vadivu.dart';
+import '../../../../koorugal/podhu_koorugal/elvan_kavanam.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -220,7 +221,7 @@ class _VaangunarThaeduKooruState extends ConsumerState<VaangunarThaeduKooru> {
                     maxWidth: 400,
                   ),
                   child: ListView.builder(
-                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+                    keyboardDismissBehavior: ElvanKavanam.surulNadathai,
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     shrinkWrap: true,
                     itemCount: options.length +

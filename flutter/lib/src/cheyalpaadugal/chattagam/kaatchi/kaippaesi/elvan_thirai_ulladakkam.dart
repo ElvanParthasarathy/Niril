@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'elvan_virindha_pattai.dart';
+import '../../../../koorugal/podhu_koorugal/elvan_kavanam.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'koorugal/elvan_maeladukku_pattiyal.dart';
@@ -46,7 +47,7 @@ class ElvanPageContent extends ConsumerWidget {
     return Stack(
       children: [
         CustomScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+          keyboardDismissBehavior: ElvanKavanam.surulNadathai,
           cacheExtent: 1500.0, controller: scrollController, // Pre-builds items off-screen to prevent frame drops during slow scrolling!
           physics: ElvanBrickWallPhysics(
             isHeaderExpandedNotifier: isHeaderExpandedNotifier,
