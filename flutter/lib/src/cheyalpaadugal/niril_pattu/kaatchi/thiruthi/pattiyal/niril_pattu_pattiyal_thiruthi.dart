@@ -510,6 +510,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
             title: K.porutkal.tr(context, ref),
             displayChild: const SizedBox(),
             initiallyExpanded: true,
+            contentTopPadding: 0,
             children: [
               ElvanFullWidth(
                 child: Column(
