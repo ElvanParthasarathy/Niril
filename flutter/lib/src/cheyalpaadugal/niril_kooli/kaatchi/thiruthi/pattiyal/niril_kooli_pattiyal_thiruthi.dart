@@ -74,6 +74,9 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   bool _hasUnsavedChanges = false;
   Timer? _draftDebounce;
 
+  final GlobalKey<AnimatedListState> _itemsListKey = GlobalKey<AnimatedListState>();
+  final GlobalKey<AnimatedListState> _piraVarivugalListKey = GlobalKey<AnimatedListState>();
+
   // ── Bill Number ──
   String _previewBillNumber = '';
   String _invoiceNumberOverride = '';
@@ -450,51 +453,129 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              ...List.generate(_items.length, (i) => KooliUrupadiKooru(
-                                index: i,
-                                item: _items[i],
-                                itemCount: _items.length,
-                                formatter: formatter,
-                                onUpdated: (updated) {
-                                  setState(() {
-                                    _items = List.from(_items).. [i] = updated;
-                                    _hasUnsavedChanges = true;
-                                  });
-                                  _recalculate();
-                                },
-                                onDeleted: () {
-                                  setState(() {
-                                    _items = List.from(_items)..removeAt(i);
-                                    _hasUnsavedChanges = true;
-                                  });
-                                  _recalculate();
-                                },
-                                onRequestAddNewProduct: () async {
-                                  await Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (_) => const CoolieItemEditor()),
-                                  );
-                                },
-                              )),
+                              AnimatedList(
+                                key: _itemsListKey,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                initialItemCount: _items.length,
+                                itemBuilder: (context, i, animation) {
+                                  return ClipRect(
+                                    child: SizeTransition(
+                                      sizeFactor: animation,
+                                      axisAlignment: 1.0,
+                                      child: FadeTransition(
+                                        opacity: animation,
+                                      child: KooliUrupadiKooru(
+                                        index: i,
+                                        item: _items[i],
+                                        itemCount: _items.length,
+                                        formatter: formatter,
+                                        onUpdated: (updated) {
+                                          setState(() {
+                                            _items = List.from(_items).. [i] = updated;
+                                            _hasUnsavedChanges = true;
+                                          });
+                                          _recalculate();
+                                        },
+                                        onDeleted: () {
+                                          final removedItem = _items[i];
+                                          setState(() {
+                                            _items = List.from(_items)..removeAt(i);
+                                            _hasUnsavedChanges = true;
+                                          });
+                                          _itemsListKey.currentState?.removeItem(
+                                            i,
+                                            (context, anim) => ClipRect(
+                                              child: SizeTransition(
+                                                sizeFactor: anim,
+                                                axisAlignment: 1.0,
+                                                child: FadeTransition(
+                                                  opacity: anim,
+                                                child: KooliUrupadiKooru(
+                                                  index: i,
+                                                  item: removedItem,
+                                                  itemCount: _items.length + 1,
+                                                  formatter: formatter,
+                                                  onUpdated: (_) {},
+                                                  onDeleted: () {},
+                                                  onRequestAddNewProduct: () async {},
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          duration: const Duration(milliseconds: 500),
+                                        );
+                                          _recalculate();
+                                        },
+                                        onRequestAddNewProduct: () async {
+                                          await Navigator.of(context).push(
+                                            MaterialPageRoute(builder: (_) => const CoolieItemEditor()),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              ),
 
                               // Other charges item cards
-                              ...List.generate(_piraVarivugal.length, (i) => KooliPiraVarivuKooru(
-                                index: i,
-                                charge: _piraVarivugal[i],
-                                onUpdated: (updated) {
-                                  setState(() {
-                                    _piraVarivugal = List.from(_piraVarivugal).. [i] = updated;
-                                    _hasUnsavedChanges = true;
-                                  });
-                                },
-                                onDeleted: () {
-                                  setState(() {
-                                    _piraVarivugal = List.from(_piraVarivugal)..removeAt(i);
-                                    _hasUnsavedChanges = true;
-                                  });
-                                  _recalculate();
-                                },
-                                onRecalculate: _recalculate,
-                              )),
+                              AnimatedList(
+                                key: _piraVarivugalListKey,
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                initialItemCount: _piraVarivugal.length,
+                                itemBuilder: (context, i, animation) {
+                                  return ClipRect(
+                                    child: SizeTransition(
+                                      sizeFactor: animation,
+                                      axisAlignment: 1.0,
+                                      child: FadeTransition(
+                                        opacity: animation,
+                                      child: KooliPiraVarivuKooru(
+                                        index: i,
+                                        charge: _piraVarivugal[i],
+                                        onUpdated: (updated) {
+                                          setState(() {
+                                            _piraVarivugal = List.from(_piraVarivugal).. [i] = updated;
+                                            _hasUnsavedChanges = true;
+                                          });
+                                        },
+                                        onDeleted: () {
+                                          final removedItem = _piraVarivugal[i];
+                                          setState(() {
+                                            _piraVarivugal = List.from(_piraVarivugal)..removeAt(i);
+                                            _hasUnsavedChanges = true;
+                                          });
+                                          _piraVarivugalListKey.currentState?.removeItem(
+                                            i,
+                                            (context, anim) => ClipRect(
+                                              child: SizeTransition(
+                                                sizeFactor: anim,
+                                                axisAlignment: 1.0,
+                                                child: FadeTransition(
+                                                  opacity: anim,
+                                                child: KooliPiraVarivuKooru(
+                                                  index: i,
+                                                  charge: removedItem,
+                                                  onUpdated: (_) {},
+                                                  onDeleted: () {},
+                                                  onRecalculate: () {},
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          duration: const Duration(milliseconds: 500),
+                                        );
+                                          _recalculate();
+                                        },
+                                        onRecalculate: _recalculate,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              ),
 
                               const SizedBox(height: 12),
 
@@ -508,6 +589,10 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                                     label: K.chaerPtn.tr(context, ref),
                                     onPressed: () => setState(() {
                                       _items = [..._items, const KooliUrupadi()];
+                                      _itemsListKey.currentState?.insertItem(
+                                        _items.length - 1,
+                                        duration: const Duration(milliseconds: 500),
+                                      );
                                       _hasUnsavedChanges = true;
                                     }),
                                   ),
@@ -520,6 +605,10 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                                           ..._piraVarivugal,
                                           const PiraVarivu(),
                                         ];
+                                        _piraVarivugalListKey.currentState?.insertItem(
+                                          _piraVarivugal.length - 1,
+                                          duration: const Duration(milliseconds: 500),
+                                        );
                                         _hasUnsavedChanges = true;
                                       }),
                                     ),

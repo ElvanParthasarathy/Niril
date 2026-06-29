@@ -77,6 +77,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   // ── Unsaved Changes & Draft ──
   bool _hasUnsavedChanges = false;
   Timer? _draftDebounce;
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
 
   bool get _isEditing => widget.editingEntry != null;
 
@@ -142,6 +143,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
     }).toList();
     if (changed && mounted) {
       setState(() => _items = newItems);
+      // Wait for next frame to safely rebuild AnimatedList if needed, though initialItemCount usually handles startup.
     }
   }
 
@@ -513,41 +515,83 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    ...List.generate(_items.length, (i) => PattuUrupadiAttai(
-                      item: _items[i],
-                      index: i,
-                      itemCount: _items.length,
-                      seyaliVagai: 'silk',
-                      onItemUpdated: (updated) {
-                        setState(() {
-                          _items = List.from(_items)..[i] = updated;
-                          _hasUnsavedChanges = true;
-                        });
-                        _recalculate();
-                      },
-                      onItemDeleted: () {
-                        setState(() {
-                          _items = List.from(_items)..removeAt(i);
-                          _hasUnsavedChanges = true;
-                        });
-                        _recalculate();
-                      },
-                      onItemCleared: () {
-                        setState(() {
-                          _items = List.from(_items)..[i] = const PattuUrupadi();
-                          _hasUnsavedChanges = true;
-                        });
-                        _recalculate();
-                      },
-                      onDirty: () => setState(() => _hasUnsavedChanges = true),
-                      onRequestAddNewProduct: () async {
-                        await Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => const SilkItemEditor(),
+                    AnimatedList(
+                      key: _listKey,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      initialItemCount: _items.length,
+                      itemBuilder: (context, i, animation) {
+                        return ClipRect(
+                          child: SizeTransition(
+                            sizeFactor: animation,
+                            axisAlignment: 1.0,
+                            child: FadeTransition(
+                              opacity: animation,
+                            child: PattuUrupadiAttai(
+                              item: _items[i],
+                              index: i,
+                              itemCount: _items.length,
+                              seyaliVagai: 'silk',
+                              onItemUpdated: (updated) {
+                                setState(() {
+                                  _items = List.from(_items)..[i] = updated;
+                                  _hasUnsavedChanges = true;
+                                });
+                                _recalculate();
+                              },
+                              onItemDeleted: () {
+                                final removedItem = _items[i];
+                                setState(() {
+                                  _items = List.from(_items)..removeAt(i);
+                                  _hasUnsavedChanges = true;
+                                });
+                                _listKey.currentState?.removeItem(
+                                  i,
+                                  (context, anim) => ClipRect(
+                                    child: SizeTransition(
+                                      sizeFactor: anim,
+                                      axisAlignment: 1.0,
+                                      child: FadeTransition(
+                                        opacity: anim,
+                                      child: PattuUrupadiAttai(
+                                        item: removedItem,
+                                        index: i,
+                                        itemCount: _items.length + 1, // keep old visual count for the removed item
+                                        seyaliVagai: 'silk',
+                                        onItemUpdated: (_) {},
+                                        onItemDeleted: () {},
+                                        onItemCleared: () {},
+                                        onDirty: () {},
+                                        onRequestAddNewProduct: () async {},
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                duration: const Duration(milliseconds: 500),
+                              );
+                                _recalculate();
+                              },
+                              onItemCleared: () {
+                                setState(() {
+                                  _items = List.from(_items)..[i] = const PattuUrupadi();
+                                  _hasUnsavedChanges = true;
+                                });
+                                _recalculate();
+                              },
+                              onDirty: () => setState(() => _hasUnsavedChanges = true),
+                              onRequestAddNewProduct: () async {
+                                await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const SilkItemEditor(),
+                                  ),
+                                );
+                              },
+                            ),
                           ),
-                        );
-                      },
-                    )),
+                        ),
+                      );
+                    },
+                    ),
                     const SizedBox(height: 8),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -556,7 +600,13 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                           final isDark = Theme.of(ctx).brightness == Brightness.dark;
                           return TextButton.icon(
                             onPressed: () {
-                              setState(() => _items = [..._items, const PattuUrupadi()]);
+                              setState(() {
+                                _items = [..._items, const PattuUrupadi()];
+                                _listKey.currentState?.insertItem(
+                                  _items.length - 1,
+                                  duration: const Duration(milliseconds: 500),
+                                );
+                              });
                             },
                             icon: const Icon(Icons.add, size: 20),
                             label: Text(K.chaerPtn.tr(context, ref),

@@ -6,6 +6,6 @@ export 'pattu_urupadi_attai.dart';
 export 'pattu_mothangal_kooru.dart';
 export 'pattu_vaangunargal_kooru.dart';
 export 'pattu_pattiyal_udhavi.dart';
-export 'maanila_thervu_maeladukku.dart';
+
 export 'pattu_thallupadi_kooru.dart';
 export 'pattu_pattiyal_vagai_kooru.dart';

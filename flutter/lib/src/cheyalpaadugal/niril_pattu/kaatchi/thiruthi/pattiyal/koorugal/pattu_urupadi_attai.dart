@@ -80,20 +80,25 @@ class PattuUrupadiAttai extends ConsumerWidget {
                   ),
                 ),
               ),
-              if (itemCount > 1)
-                Padding(
-                  padding: const EdgeInsets.only(right: 12, bottom: 6),
-                  child: IconButton(
-                    icon: const Icon(CupertinoIcons.delete, size: 20),
-                    color: cs.onSurfaceVariant,
-                    style: IconButton.styleFrom(
-                      backgroundColor: Theme.of(context).brightness == Brightness.dark 
-                          ? Colors.white.withValues(alpha: 0.08) 
-                          : Colors.white,
+              Opacity(
+                opacity: itemCount > 1 ? 1.0 : 0.0,
+                child: IgnorePointer(
+                  ignoring: itemCount <= 1,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 12, bottom: 6),
+                    child: IconButton(
+                      icon: const Icon(CupertinoIcons.delete, size: 20),
+                      color: cs.onSurfaceVariant,
+                      style: IconButton.styleFrom(
+                        backgroundColor: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.white.withValues(alpha: 0.08) 
+                            : Colors.white,
+                      ),
+                      onPressed: onItemDeleted,
                     ),
-                    onPressed: onItemDeleted,
                   ),
                 ),
+              ),
             ],
           ),
 

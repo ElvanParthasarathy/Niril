@@ -77,15 +77,20 @@ class KooliUrupadiKooru extends ConsumerWidget {
                     )),
               ),
               const Spacer(),
-              if (itemCount > 1)
-                Padding(
-                  padding: const EdgeInsets.only(right: 12, bottom: 6),
-                  child: IconButton(
-                    icon: Icon(CupertinoIcons.delete,
-                        color: cs.error, size: 20),
-                    onPressed: onDeleted,
+              Opacity(
+                opacity: itemCount > 1 ? 1.0 : 0.0,
+                child: IgnorePointer(
+                  ignoring: itemCount <= 1,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 12, bottom: 6),
+                    child: IconButton(
+                      icon: Icon(CupertinoIcons.delete,
+                          color: cs.error, size: 20),
+                      onPressed: onDeleted,
+                    ),
                   ),
                 ),
+              ),
             ],
           ),
           const SizedBox(height: 4),
