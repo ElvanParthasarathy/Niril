@@ -47,7 +47,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
     final displaySecondary = secondaryName.isNotEmpty ? secondaryName : item.porulPeyarEn;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -144,7 +144,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
               // Info line (Secondary name)
               final infoLine = displaySecondary.isNotEmpty
                   ? Padding(
-                      padding: const EdgeInsets.only(left: 16, top: 12),
+                      padding: const EdgeInsets.only(left: 16, top: 4),
                       child: Text(
                         displaySecondary,
                         style: TextStyle(
@@ -183,7 +183,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
                 children: [
                   productSearch,
                   infoLine,
-                  vGap,
+                  const SizedBox(height: 8),
                   Row(children: [
                     Expanded(child: weightField),
                     gap,

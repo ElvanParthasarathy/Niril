@@ -89,7 +89,7 @@ class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
 
     // Mobile: Continuous Vertical List (No Accordion)
     return Padding(
-      padding: const EdgeInsets.only(bottom: 32.0),
+      padding: const EdgeInsets.only(bottom: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
