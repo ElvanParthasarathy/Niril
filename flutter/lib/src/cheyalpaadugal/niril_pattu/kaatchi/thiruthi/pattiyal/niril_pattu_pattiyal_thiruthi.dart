@@ -511,6 +511,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
             displayChild: const SizedBox(),
             initiallyExpanded: true,
             contentTopPadding: 0,
+            headerBottomPadding: 0,
             children: [
               ElvanFullWidth(
                 child: Column(

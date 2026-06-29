@@ -23,6 +23,7 @@ class ElvanEditorSection extends ConsumerStatefulWidget {
     required this.children,
     this.initiallyExpanded = false,
     this.contentTopPadding = 16.0,
+    this.headerBottomPadding = 8.0,
   });
 
   final int index;
@@ -31,6 +32,7 @@ class ElvanEditorSection extends ConsumerStatefulWidget {
   final List<Widget> children;
   final bool initiallyExpanded;
   final double contentTopPadding;
+  final double headerBottomPadding;
 
   @override
   ConsumerState<ElvanEditorSection> createState() => _ElvanEditorSectionState();
@@ -121,7 +123,7 @@ class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
       behavior: HitTestBehavior.opaque,
       onTap: () => FocusScope.of(context).unfocus(),
       child: Padding(
-        padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
+        padding: EdgeInsets.only(left: 16.0, bottom: widget.headerBottomPadding),
         child: Row(
           children: [
             Container(

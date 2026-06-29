@@ -71,7 +71,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 24, bottom: 0),
+                padding: const EdgeInsets.only(left: 24, bottom: 6),
                 child: Text(
                   '${K.porul.tr(context, ref)} #${index + 1}',
                   style: tt.labelMedium?.copyWith(
@@ -85,12 +85,10 @@ class PattuUrupadiAttai extends ConsumerWidget {
                 child: IgnorePointer(
                   ignoring: itemCount <= 1,
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 12),
+                    padding: const EdgeInsets.only(right: 12, bottom: 6),
                     child: IconButton(
                       icon: const Icon(CupertinoIcons.delete, size: 20),
                       color: cs.onSurfaceVariant,
-                      constraints: const BoxConstraints(),
-                      padding: const EdgeInsets.all(4),
                       style: IconButton.styleFrom(
                         backgroundColor: Theme.of(context).brightness == Brightness.dark 
                             ? Colors.white.withValues(alpha: 0.08) 

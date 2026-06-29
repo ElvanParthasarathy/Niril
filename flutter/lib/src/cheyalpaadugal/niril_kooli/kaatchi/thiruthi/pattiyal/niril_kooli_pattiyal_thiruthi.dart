@@ -454,6 +454,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                       displayChild: const SizedBox(),
                       initiallyExpanded: true,
                       contentTopPadding: 0,
+                      headerBottomPadding: 0,
                       children: [
                         ElvanFullWidth(
                           child: Column(
