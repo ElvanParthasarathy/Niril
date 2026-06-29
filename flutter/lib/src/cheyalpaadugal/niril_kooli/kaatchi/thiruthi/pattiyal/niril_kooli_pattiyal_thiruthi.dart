@@ -701,7 +701,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                                 },
                               ),
 
-                              if (MediaQuery.sizeOf(context).width >= 800) const SizedBox(height: 24),
+                              const SizedBox(height: 24),
 
                               // ── Totals Card ──
                               KooliMothangalKooru(

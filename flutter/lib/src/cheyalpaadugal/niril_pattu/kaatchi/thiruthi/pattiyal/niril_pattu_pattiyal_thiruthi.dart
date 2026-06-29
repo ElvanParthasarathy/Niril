@@ -671,7 +671,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                   _recalculate();
                 },
               ),
-              if (MediaQuery.sizeOf(context).width >= 800) const SizedBox(height: 16),
+              const SizedBox(height: 24),
               ElvanFullWidth(
                 child: PattuMothangalKooru(totals: _totals),
               ),
