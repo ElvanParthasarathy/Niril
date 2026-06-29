@@ -8,6 +8,7 @@ import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
+import '../../../../../../koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 
 /// Builds a dynamic "other charge" row inside an ElvanUrupadiAttai.
@@ -68,15 +69,9 @@ class KooliPiraVarivuKooru extends ConsumerWidget {
               children: [
                 Expanded(
                   flex: 2,
-                  child: TextFormField(
+                  child: ElvanThiruthiUlleedu(
+                    label: K.kattanaPeyar.tr(context, ref),
                     initialValue: charge.peyar,
-                    decoration: InputDecoration(
-                      hintText: K.kattanaPeyar.tr(context, ref),
-                      border: InputBorder.none,
-                      isDense: true,
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                    ),
                     onChanged: (v) {
                       onUpdated(charge.copyWith(peyar: v));
                     },
@@ -84,19 +79,11 @@ class KooliPiraVarivuKooru extends ConsumerWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: TextFormField(
-                    initialValue:
-                        charge.thogai > 0 ? charge.thogai.toString() : '',
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
+                  child: ElvanThiruthiUlleedu(
+                    label: '₹',
+                    initialValue: charge.thogai > 0 ? charge.thogai.toString() : '',
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
-                    decoration: const InputDecoration(
-                      hintText: '₹',
-                      border: InputBorder.none,
-                      isDense: true,
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-                    ),
                     onChanged: (v) {
                       onUpdated(
                           charge.copyWith(thogai: double.tryParse(v) ?? 0));
