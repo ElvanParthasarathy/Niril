@@ -38,11 +38,19 @@ class KooliMelthogaiKooru extends ConsumerWidget {
             kooliChargeField(
                 K.chaedhaaramGiraam.tr(context, ref), setharamCtrl, onSetharamChanged),
             const SizedBox(height: 12),
-            kooliChargeField(
-                K.ahimsaiPattuThogai.tr(context, ref), ahimsaCtrl, onAhimsaChanged),
-            const SizedBox(height: 12),
-            kooliChargeField(
-                K.koriyarKattanam.tr(context, ref), thabaalCtrl, onThabaalChanged),
+            Row(
+              children: [
+                Expanded(
+                  child: kooliChargeField(
+                      K.ahimsaiPattuThogai.tr(context, ref), ahimsaCtrl, onAhimsaChanged),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: kooliChargeField(
+                      K.koriyarKattanam.tr(context, ref), thabaalCtrl, onThabaalChanged),
+                ),
+              ],
+            ),
           ],
         ),
       ),
