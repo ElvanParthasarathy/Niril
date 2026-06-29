@@ -27,7 +27,7 @@ class _SilkUruvakkuAmaippuPageState
 
   bool _isEditingLanguages = false;
   String _tempPrimaryLanguage = IruMozhi.iyalbuMudhanmaiMozhi;
-  String _tempSecondaryLanguage = IruMozhi.iyalbuIrandaamMozhi;
+  String _tempSecondaryLanguage = IruMozhi.iyalbuThunaiMozhi;
 
   Widget _buildEditState() {
     return ElvanSettingsEditContainer(
@@ -157,7 +157,7 @@ class _SilkUruvakkuAmaippuPageState
                                 _tempPrimaryLanguage =
                                     ref.read(silkMudhanmaiMozhiProvider);
                                 _tempSecondaryLanguage =
-                                    ref.read(silkIrandaamMozhiProvider);
+                                    ref.read(silkThunaiMozhiProvider);
                                 _isEditingLanguages = true;
                               });
                             },
@@ -193,7 +193,7 @@ class _SilkUruvakkuAmaippuPageState
                           ElvanSimpleSettingsRow(
                             title: K.irandaamMozhi.tr(context, ref),
                             description: ref
-                                .watch(silkIrandaamMozhiProvider)
+                                .watch(silkThunaiMozhiProvider)
                                 .toLowerCase()
                                 .tr(context, ref),
                           ),

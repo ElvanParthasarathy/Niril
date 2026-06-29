@@ -110,7 +110,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   void _applySnapshot(PattuThiruththiNilaimai s) {
     _selectedNiruvanamId = s.selectedNiruvanamId;
     _selectedVaangunarId = s.selectedVaangunarId;
-    _selectedVaangunarPeyar = s.selectedVaangunarPeyarMap[ref.read(silkMudhanmaiMozhiProvider)] ?? s.selectedVaangunarPeyarMap[ref.read(silkIrandaamMozhiProvider)] ?? s.selectedVaangunarPeyarMap.values.firstOrNull ?? '';
+    _selectedVaangunarPeyar = s.selectedVaangunarPeyarMap[ref.read(silkMudhanmaiMozhiProvider)] ?? s.selectedVaangunarPeyarMap[ref.read(silkThunaiMozhiProvider)] ?? s.selectedVaangunarPeyarMap.values.firstOrNull ?? '';
     _customerState = s.customerState;
     _pattiyalVagai = s.pattiyalVagai;
     _pattiyalNaal = s.pattiyalNaal;
@@ -131,7 +131,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
       if (item.porulPeyarEn.isEmpty && (item.porulId?.isNotEmpty == true)) {
         final product = products.where((p) => p.id.toString() == item.porulId).firstOrNull;
         if (product != null) {
-          final enName = product.porulPeyar[ref.read(silkIrandaamMozhiProvider)] ?? '';
+          final enName = product.porulPeyar[ref.read(silkThunaiMozhiProvider)] ?? '';
           if (enName.isNotEmpty) {
             changed = true;
             return item.copyWith(porulPeyarEn: enName);
@@ -253,7 +253,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   PattuThiruththiNilaimai _currentSnapshot() => PattuThiruththiNilaimai(
         selectedNiruvanamId: _selectedNiruvanamId,
         selectedVaangunarId: _selectedVaangunarId,
-        selectedVaangunarPeyarMap: {ref.read(silkMudhanmaiMozhiProvider): _selectedVaangunarPeyar, ref.read(silkIrandaamMozhiProvider): _selectedVaangunarPeyar},
+        selectedVaangunarPeyarMap: {ref.read(silkMudhanmaiMozhiProvider): _selectedVaangunarPeyar, ref.read(silkThunaiMozhiProvider): _selectedVaangunarPeyar},
         customerState: _customerState,
         pattiyalVagai: _pattiyalVagai,
         pattiyalNaal: _pattiyalNaal,
@@ -374,7 +374,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
               PattuVaangunargalKooru(
                 data: PattuVaangunargalData(
                   selectedVaangunarId: _selectedVaangunarId,
-                  selectedVaangunarPeyarMap: {ref.watch(silkMudhanmaiMozhiProvider): _selectedVaangunarPeyar, ref.watch(silkIrandaamMozhiProvider): _selectedVaangunarPeyar},
+                  selectedVaangunarPeyarMap: {ref.watch(silkMudhanmaiMozhiProvider): _selectedVaangunarPeyar, ref.watch(silkThunaiMozhiProvider): _selectedVaangunarPeyar},
                   placeOfSupply: _placeOfSupply,
                   placeOfSupplyTa: _placeOfSupplyTa,
                 ),
@@ -383,7 +383,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                     setState(() {
                       _selectedVaangunarId = entry.id;
                       _selectedVaangunarPeyar =
-                          entry.peyar[ref.read(silkMudhanmaiMozhiProvider)] ?? entry.peyar[ref.read(silkIrandaamMozhiProvider)] ?? entry.peyar.values.firstOrNull ?? '';
+                          entry.peyar[ref.read(silkMudhanmaiMozhiProvider)] ?? entry.peyar[ref.read(silkThunaiMozhiProvider)] ?? entry.peyar.values.firstOrNull ?? '';
                       _customerState = (entry.maanilam['en'] ?? entry.maanilam['English'] ??
                                   entry.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ??
                                   '')
@@ -551,13 +551,22 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                     const SizedBox(height: 8),
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: FilledButton.tonalIcon(
-                        onPressed: () {
-                          setState(() => _items = [..._items, const PattuUrupadi()]);
-                        },
-                        icon: const Icon(Icons.add, size: 20),
-                        label: Text(K.chaerPtn.tr(context, ref),
-                            style: const TextStyle(fontWeight: FontWeight.w600)),
+                      child: Builder(
+                        builder: (ctx) {
+                          final isDark = Theme.of(ctx).brightness == Brightness.dark;
+                          return TextButton.icon(
+                            onPressed: () {
+                              setState(() => _items = [..._items, const PattuUrupadi()]);
+                            },
+                            icon: const Icon(Icons.add, size: 20),
+                            label: Text(K.chaerPtn.tr(context, ref),
+                                style: const TextStyle(fontWeight: FontWeight.w600)),
+                            style: TextButton.styleFrom(
+                              foregroundColor: cs.onSurface,
+                              backgroundColor: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.white,
+                            ),
+                          );
+                        }
                       ),
                     ),
 
@@ -576,7 +585,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
             displayChild: const SizedBox(),
             initiallyExpanded: true,
             children: [
-              PattuKazhivuKooru(
+              PattuThallupadiKooru(
                 controller: _globalDiscountController,
                 discountType: _globalDiscountType,
                 onValueChanged: (v) {
@@ -588,7 +597,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                   _recalculate();
                 },
               ),
-              const SizedBox(height: 16),
+              if (MediaQuery.sizeOf(context).width >= 800) const SizedBox(height: 16),
               ElvanFullWidth(
                 child: PattuMothangalKooru(totals: _totals),
               ),

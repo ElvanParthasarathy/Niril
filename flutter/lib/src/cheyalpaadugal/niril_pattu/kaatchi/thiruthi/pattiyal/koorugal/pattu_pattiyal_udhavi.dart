@@ -13,6 +13,7 @@ import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../../../niril_podhu/kalanjiyam/pattiyal_kalanjiyam.dart';
 import '../../../../../../adippadai/idangal_kalanjiyam/idangal_kalanjiyam.dart';
+import '../../../../../../koorugal/maeladukkugal/elvan_cheyal_maeladukku.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // பட்டு பட்டியல் உதவி — Helper for load / save / draft logic
@@ -288,25 +289,19 @@ class PattuPattiyalUthavi {
 
       if (!context.mounted) return null;
 
-      final restore = await showDialog<bool>(
+      bool restore = false;
+      await showElvanActionSheet(
         context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text(K.varaivuMeetka.tr(context, ref)),
-          content: Text(K.chaemikkaadhaVaraivu.tr(context, ref)),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: Text(K.purakkaniPtn.tr(context, ref)),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: Text(K.meetkavum.tr(context, ref)),
-            ),
-          ],
-        ),
+        title: '${K.varaivuMeetka.tr(context, ref)}\n\n${K.chaemikkaadhaVaraivu.tr(context, ref)}',
+        cancelText: K.purakkaniPtn.tr(context, ref),
+        confirmText: K.meetkavum.tr(context, ref),
+        isConfirmFilled: false,
+        onConfirm: () {
+          restore = true;
+        },
       );
 
-      if (restore == true) {
+      if (restore) {
         final parsedItems = PattiyalUthavigal.pattuListFromJson(items);
         return PattuThiruththiNilaimai(
           selectedVaangunarId: draft['vaangunarId'] as int?,

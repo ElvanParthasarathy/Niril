@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../../../adippadai/iru_mozhi/iru_mozhi_porul_udhavi.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 import '../../../../../../koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
@@ -88,7 +89,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
                     style: IconButton.styleFrom(
                       backgroundColor: Theme.of(context).brightness == Brightness.dark 
                           ? Colors.white.withValues(alpha: 0.08) 
-                          : cs.surface,
+                          : Colors.white,
                     ),
                     onPressed: onItemDeleted,
                   ),
@@ -100,6 +101,16 @@ class PattuUrupadiAttai extends ConsumerWidget {
           ElvanUrupadiAttai(
             padding: const EdgeInsets.all(16),
             child: LayoutBuilder(builder: (context, constraints) {
+              final isBilingual = ref.watch(bilingualProvider);
+              final mudhanmaiLang = ref.watch(silkMudhanmaiMozhiProvider);
+              final irandaamLang = ref.watch(silkThunaiMozhiProvider);
+              final displayMudhanmai = IruMozhiPorulUdhavi.mudhanmaiPeyar(item.mozhiMap, mudhanmaiLang);
+              final displayIrandaam = IruMozhiPorulUdhavi.thunaiPeyar(item.mozhiMap, irandaamLang, isBilingual);
+              final fallbackMudhanmai = displayMudhanmai.isNotEmpty ? displayMudhanmai : item.porulPeyar;
+              final fallbackIrandaam = isBilingual 
+                  ? (displayIrandaam.isNotEmpty ? displayIrandaam : item.porulPeyarEn)
+                  : '';
+
               final isWide = constraints.maxWidth >= 600;
               const gap = SizedBox(width: 12);
               const vGap = SizedBox(height: 12);
@@ -107,13 +118,18 @@ class PattuUrupadiAttai extends ConsumerWidget {
               // Product search row (always full width)
               final productSearch = PorulThaeduKooru(
                 seyaliVagai: seyaliVagai,
-                initialText: item.porulPeyar,
+                initialText: fallbackMudhanmai,
                 onSelected: (p) {
+                  final mudhanmaiLang = ref.read(silkMudhanmaiMozhiProvider);
+                  final irandaamLang = ref.read(silkThunaiMozhiProvider);
+                  final isBilingual = ref.read(bilingualProvider);
+                  final primaryName = IruMozhiPorulUdhavi.mudhanmaiPeyar(p.porulPeyar, mudhanmaiLang);
+                  final secondaryName = IruMozhiPorulUdhavi.thunaiPeyar(p.porulPeyar, irandaamLang, isBilingual);
                   final updated = item.copyWith(
                     porulId: p.id.toString(),
-                    porulPeyar:
-                        p.porulPeyar[ref.read(silkMudhanmaiMozhiProvider)] ?? p.porulPeyar[ref.read(silkIrandaamMozhiProvider)] ?? '',
-                    porulPeyarEn: p.porulPeyar[ref.read(silkIrandaamMozhiProvider)] ?? '',
+                    porulPeyar: primaryName.isNotEmpty ? primaryName : secondaryName,
+                    porulPeyarEn: secondaryName,
+                    mozhiMap: p.porulPeyar,
                     hsnKuriyeedu: p.hsnCode,
                     vilai: p.vilai,
                     variVizhukkaadu: p.variVeetham,
@@ -185,13 +201,13 @@ class PattuUrupadiAttai extends ConsumerWidget {
               );
 
               // Bilingual info line (English name · GST%)
-              final infoLine = (item.porulPeyarEn.isNotEmpty ||
+              final infoLine = (fallbackIrandaam.isNotEmpty ||
                       item.variVizhukkaadu > 0)
                   ? Padding(
                       padding: const EdgeInsets.only(left: 16, top: 12),
                       child: Text(
                         [
-                          if (item.porulPeyarEn.isNotEmpty) item.porulPeyarEn,
+                          if (fallbackIrandaam.isNotEmpty) fallbackIrandaam,
                           if (item.variVizhukkaadu > 0)
                             'GST ${item.variVizhukkaadu.toStringAsFixed(item.variVizhukkaadu.truncateToDouble() == item.variVizhukkaadu ? 0 : 1)}%',
                         ].join(' · '),

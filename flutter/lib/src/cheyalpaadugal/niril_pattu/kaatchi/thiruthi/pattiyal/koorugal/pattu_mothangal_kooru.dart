@@ -60,19 +60,30 @@ class PattuMothangalKooru extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Divider(height: 1, color: cs.onSurface.withValues(alpha: 0.08)),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(K.perumMotham.tr(context, ref),
-                        style: tt.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                            color: cs.onSurface)),
-                    Text(_inrFormat.format(totals.mothaMothangal),
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w800,
-                            color: cs.onSurface)),
-                  ],
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    return FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(K.perumMotham.tr(context, ref),
+                                style: tt.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: cs.onSurface)),
+                            const SizedBox(width: 8),
+                            Text(_inrFormat.format(totals.mothaMothangal),
+                                style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w800,
+                                    color: cs.onSurface)),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
                 ),
               ],
             ),
@@ -84,19 +95,25 @@ class PattuMothangalKooru extends ConsumerWidget {
   Widget _totalsRow(
       String label, double amount, ColorScheme cs, TextTheme tt,
       {Color? color}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Flexible(
-          child: Text(label,
-              overflow: TextOverflow.ellipsis,
-              style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant)),
-        ),
-        const SizedBox(width: 12),
-        Text(_inrFormat.format(amount),
-            style: tt.bodyMedium
-                ?.copyWith(fontWeight: FontWeight.w500, color: color ?? cs.onSurface)),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return FittedBox(
+          fit: BoxFit.scaleDown,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minWidth: constraints.maxWidth),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(label, style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant)),
+                const SizedBox(width: 12),
+                Text(_inrFormat.format(amount),
+                    style: tt.bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w500, color: color ?? cs.onSurface)),
+              ],
+            ),
+          ),
+        );
+      }
     );
   }
 }

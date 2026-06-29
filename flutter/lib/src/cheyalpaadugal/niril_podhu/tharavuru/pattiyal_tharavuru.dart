@@ -26,6 +26,9 @@ class PattuUrupadi {
   /// பொருள் பெயர் (English) — Product name in English
   final String porulPeyarEn;
 
+  /// இருமொழி அகராதி — Full bilingual dictionary snapshot
+  final Map<String, dynamic> mozhiMap;
+
   /// HSN குறியீடு — Harmonized System Nomenclature code
   final String hsnKuriyeedu;
 
@@ -58,6 +61,7 @@ class PattuUrupadi {
     this.variVizhukkaadu = 0,
     this.thallupadi = 0,
     this.thallupadiVagai = '%',
+    this.mozhiMap = const {},
   });
 
   /// அடிப்படைத் தொகை — Row amount before tax/discount (quantity × rate).
@@ -83,6 +87,7 @@ class PattuUrupadi {
     double? variVizhukkaadu,
     double? thallupadi,
     String? thallupadiVagai,
+    Map<String, dynamic>? mozhiMap,
   }) {
     return PattuUrupadi(
       porulId: porulId ?? this.porulId,
@@ -95,6 +100,7 @@ class PattuUrupadi {
       variVizhukkaadu: variVizhukkaadu ?? this.variVizhukkaadu,
       thallupadi: thallupadi ?? this.thallupadi,
       thallupadiVagai: thallupadiVagai ?? this.thallupadiVagai,
+      mozhiMap: mozhiMap ?? this.mozhiMap,
     );
   }
 
@@ -112,6 +118,7 @@ class PattuUrupadi {
       'thallupadi': thallupadi,
       'thallupadiVagai': thallupadiVagai,
       'thallupadiThogai': thallupadiThogai,
+      'mozhiMap': mozhiMap,
     };
   }
 
@@ -128,6 +135,7 @@ class PattuUrupadi {
       variVizhukkaadu: (json['variVizhukkaadu'] as num?)?.toDouble() ?? 0,
       thallupadi: (json['thallupadi'] as num?)?.toDouble() ?? 0,
       thallupadiVagai: (json['thallupadiVagai'] as String?) ?? '%',
+      mozhiMap: (json['mozhiMap'] as Map<String, dynamic>?) ?? {},
     );
   }
 
@@ -149,7 +157,8 @@ class PattuUrupadi {
           vilai == other.vilai &&
           variVizhukkaadu == other.variVizhukkaadu &&
           thallupadi == other.thallupadi &&
-          thallupadiVagai == other.thallupadiVagai;
+          thallupadiVagai == other.thallupadiVagai &&
+          mapEquals(mozhiMap, other.mozhiMap);
 
   @override
   int get hashCode => Object.hash(
@@ -163,6 +172,7 @@ class PattuUrupadi {
         variVizhukkaadu,
         thallupadi,
         thallupadiVagai,
+        mozhiMap,
       );
 }
 
@@ -176,11 +186,14 @@ class KooliUrupadi {
   /// பொருள் அடையாளம் — Product ID reference (nullable for new/unsaved rows)
   final String? porulId;
 
-  /// பொருள் பெயர் — Product name (primary language, usually Tamil)
+  /// பொருள் பெயர் — பொருள் பெயர் (primary language, usually Tamil)
   final String porulPeyar;
 
   /// பொருள் பெயர் (English) — Product name in English for subtitle display
   final String porulPeyarEn;
+
+  /// இருமொழி அகராதி — Full bilingual dictionary snapshot
+  final Map<String, dynamic> mozhiMap;
 
   /// எடை — Weight in kilograms
   final double edai;
@@ -194,6 +207,7 @@ class KooliUrupadi {
     this.porulPeyarEn = '',
     this.edai = 0,
     this.vilai = 0,
+    this.mozhiMap = const {},
   });
 
   /// வரிசைத் தொகை — Row total = floor(edai × vilai).
@@ -208,6 +222,7 @@ class KooliUrupadi {
     String? porulPeyarEn,
     double? edai,
     double? vilai,
+    Map<String, dynamic>? mozhiMap,
   }) {
     return KooliUrupadi(
       porulId: porulId ?? this.porulId,
@@ -215,6 +230,7 @@ class KooliUrupadi {
       porulPeyarEn: porulPeyarEn ?? this.porulPeyarEn,
       edai: edai ?? this.edai,
       vilai: vilai ?? this.vilai,
+      mozhiMap: mozhiMap ?? this.mozhiMap,
     );
   }
 
@@ -226,6 +242,7 @@ class KooliUrupadi {
       'porulPeyarEn': porulPeyarEn,
       'edai': edai,
       'vilai': vilai,
+      'mozhiMap': mozhiMap,
     };
   }
 
@@ -237,6 +254,7 @@ class KooliUrupadi {
       porulPeyarEn: (json['porulPeyarEn'] as String?) ?? '',
       edai: (json['edai'] as num?)?.toDouble() ?? 0,
       vilai: (json['vilai'] as num?)?.toDouble() ?? 0,
+      mozhiMap: (json['mozhiMap'] as Map<String, dynamic>?) ?? {},
     );
   }
 
@@ -251,11 +269,20 @@ class KooliUrupadi {
           runtimeType == other.runtimeType &&
           porulId == other.porulId &&
           porulPeyar == other.porulPeyar &&
+          porulPeyarEn == other.porulPeyarEn &&
           edai == other.edai &&
-          vilai == other.vilai;
+          vilai == other.vilai &&
+          mapEquals(mozhiMap, other.mozhiMap);
 
   @override
-  int get hashCode => Object.hash(porulId, porulPeyar, edai, vilai);
+  int get hashCode => Object.hash(
+        porulId,
+        porulPeyar,
+        porulPeyarEn,
+        edai,
+        vilai,
+        mozhiMap,
+      );
 }
 
 // =============================================================================

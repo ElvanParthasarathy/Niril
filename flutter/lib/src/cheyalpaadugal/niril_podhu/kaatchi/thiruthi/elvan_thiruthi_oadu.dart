@@ -72,6 +72,7 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
   @override
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final shell = PopScope(
       canPop: !widget.hasUnsavedChanges,
@@ -114,7 +115,9 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surface,
+                            color: isDark
+                                ? Theme.of(context).colorScheme.surface
+                                : Colors.white,
                             shape: BoxShape.circle,
                           ),
                           child: IconButton(
@@ -142,9 +145,9 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(50),
                                 ),
-                                backgroundColor: Theme.of(context)
-                                    .colorScheme
-                                    .surface,
+                                backgroundColor: isDark
+                                    ? Theme.of(context).colorScheme.surface
+                                    : Colors.white,
                                 foregroundColor: Theme.of(context)
                                     .colorScheme
                                     .onSurface,

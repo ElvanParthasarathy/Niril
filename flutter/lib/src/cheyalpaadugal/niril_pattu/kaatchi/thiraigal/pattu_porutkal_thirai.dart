@@ -1,3 +1,4 @@
+import 'package:elvan_niril/src/adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
 import 'package:elvan_niril/src/adippadai/nilaimai/achu_mozhi_facade.dart';
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter/cupertino.dart';
@@ -23,6 +24,7 @@ class SilkItemsPage extends ConsumerWidget {
     final porulgalAsync = ref.watch(porulgalProvider);
     final primaryLang = ref.watch(primaryLanguageProvider);
     final secondaryLang = ref.watch(secondaryLanguageProvider);
+    final isBilingual = ref.watch(bilingualProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isSelecting = ref.watch(porulSelectionModeProvider);
     final selectedIds = ref.watch(selectedPorulIdsProvider);
@@ -124,6 +126,7 @@ class SilkItemsPage extends ConsumerWidget {
                     porul: porul,
                     primaryLang: primaryLang,
                     secondaryLang: secondaryLang,
+                    isBilingual: isBilingual,
                     isDark: isDark,
                     isSelecting: isSelecting,
                     isSelected: isSelected,
@@ -291,6 +294,7 @@ class _SilkPorulCard extends StatelessWidget {
     required this.porul,
     required this.primaryLang,
     required this.secondaryLang,
+    required this.isBilingual,
     required this.isDark,
     required this.isSelecting,
     required this.isSelected,
@@ -302,6 +306,7 @@ class _SilkPorulCard extends StatelessWidget {
   final PorulTharavuru porul;
   final String primaryLang;
   final String secondaryLang;
+  final bool isBilingual;
   final bool isDark;
   final bool isSelecting;
   final bool isSelected;
@@ -383,7 +388,7 @@ class _SilkPorulCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
 
-                  if (secondary.isNotEmpty) ...[
+                  if (isBilingual && secondary.isNotEmpty) ...[
                     const SizedBox(height: 2),
                     Text(
                       secondary,

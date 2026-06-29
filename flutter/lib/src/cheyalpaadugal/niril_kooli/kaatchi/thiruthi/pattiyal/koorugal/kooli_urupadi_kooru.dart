@@ -1,4 +1,5 @@
 import 'package:elvan_niril/src/adippadai/oru_mozhi/oru_mozhi_vazhanguthigal.dart';
+import 'package:elvan_niril/src/adippadai/oru_mozhi/oru_mozhi_porul_udhavi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +9,7 @@ import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
+import '../../../../../../adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
 import '../../../../../niril_podhu/kaatchi/koorugal/porul_thaedu_kooru.dart';
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../../../niril_pattu/kaatchi/thiruthi/pattiyal/koorugal/pattu_urupadi_attai.dart';
@@ -38,6 +40,12 @@ class KooliUrupadiKooru extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
+
+    final kooliLang = ref.watch(kooliAchuMozhiProvider);
+    final primaryName = OruMozhiPorulUdhavi.mudhanmaiPeyar(item.mozhiMap, kooliLang);
+    final secondaryName = OruMozhiPorulUdhavi.thunaiPeyar(item.mozhiMap, kooliLang);
+    final displayPrimary = primaryName.isNotEmpty ? primaryName : item.porulPeyar;
+    final displaySecondary = secondaryName.isNotEmpty ? secondaryName : item.porulPeyarEn;
 
     // Weight display: 3 decimals (weighing machine standard) e.g. 24.100
     // Rate display: clean integer (6 not 6.0)
@@ -95,23 +103,21 @@ class KooliUrupadiKooru extends ConsumerWidget {
                       width: 280,
                       child: Builder(
                         builder: (context) {
-                          final kooliLang = ref.watch(kooliAchuMozhiProvider);
                           return PorulThaeduKooru(
                             seyaliVagai: 'coolie',
-                            initialText: kooliLang == 'English' && item.porulPeyarEn.isNotEmpty
-                                ? item.porulPeyarEn
-                                : item.porulPeyar,
+                            initialText: displayPrimary,
                             onSelected: (p) {
-                          final tamilName = p.porulPeyar['Tamil'] ?? '';
-                          final englishName = p.porulPeyar['English'] ?? '';
+                          final primaryName = OruMozhiPorulUdhavi.mudhanmaiPeyar(p.porulPeyar, kooliLang);
+                          final secondaryName = OruMozhiPorulUdhavi.thunaiPeyar(p.porulPeyar, kooliLang);
                           onUpdated(item.copyWith(
                             porulId: p.id.toString(),
-                            porulPeyar: tamilName.isNotEmpty
-                                ? tamilName
-                                : englishName,
-                            porulPeyarEn: tamilName.isNotEmpty
-                                ? englishName
+                            porulPeyar: primaryName.isNotEmpty
+                                ? primaryName
+                                : secondaryName,
+                            porulPeyarEn: primaryName.isNotEmpty
+                                ? secondaryName
                                 : '',
+                            mozhiMap: p.porulPeyar,
                           ));
                             },
                             onRequestAddNew: onRequestAddNewProduct,
@@ -181,11 +187,11 @@ class KooliUrupadiKooru extends ConsumerWidget {
                   ],
                 ),
                 // English subtitle
-                if (item.porulPeyarEn.isNotEmpty)
+                if (displaySecondary.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
-                      item.porulPeyarEn,
+                      displaySecondary,
                       style: tt.bodySmall?.copyWith(
                         color: cs.onSurfaceVariant,
                         fontWeight: FontWeight.w500,

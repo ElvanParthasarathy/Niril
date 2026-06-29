@@ -10,8 +10,8 @@ import '../../../../../../koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 
 /// கழிவு கூறு — Global Discount row with a text field and
 /// percentage / amount toggle (pill).
-class PattuKazhivuKooru extends ConsumerWidget {
-  const PattuKazhivuKooru({
+class PattuThallupadiKooru extends ConsumerWidget {
+  const PattuThallupadiKooru({
     super.key,
     required this.controller,
     required this.discountType,

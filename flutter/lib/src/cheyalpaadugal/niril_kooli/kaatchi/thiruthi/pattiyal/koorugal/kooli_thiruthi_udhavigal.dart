@@ -62,10 +62,15 @@ Widget kooliPillButton(
   required VoidCallback onPressed,
 }) {
   final cs = Theme.of(context).colorScheme;
-  return FilledButton.tonalIcon(
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  return TextButton.icon(
     onPressed: onPressed,
     icon: Icon(icon, size: 20),
     label: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+    style: TextButton.styleFrom(
+      foregroundColor: cs.onSurface,
+      backgroundColor: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.white,
+    ),
   );
 }
 
@@ -77,22 +82,29 @@ Widget kooliTotalsRow(
   FontWeight? valueWeight,
   Color? labelColor,
 }) {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Flexible(
-        child: Text(label,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontWeight: labelWeight ?? FontWeight.w500,
-              color: labelColor,
-            )),
-      ),
-      const SizedBox(width: 12),
-      Text(value,
-          style: TextStyle(
-            fontWeight: valueWeight ?? FontWeight.w600,
-          )),
-    ],
+  return LayoutBuilder(
+    builder: (context, constraints) {
+      return FittedBox(
+        fit: BoxFit.scaleDown,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minWidth: constraints.maxWidth),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(label,
+                  style: TextStyle(
+                    fontWeight: labelWeight ?? FontWeight.w500,
+                    color: labelColor,
+                  )),
+              const SizedBox(width: 12),
+              Text(value,
+                  style: TextStyle(
+                    fontWeight: valueWeight ?? FontWeight.w600,
+                  )),
+            ],
+          ),
+        ),
+      );
+    },
   );
 }

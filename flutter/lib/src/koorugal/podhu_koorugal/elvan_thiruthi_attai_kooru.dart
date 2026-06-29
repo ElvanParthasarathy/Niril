@@ -80,7 +80,7 @@ class ElvanUrupadiAttai extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark 
             ? cs.onSurface.withValues(alpha: 0.08) 
-            : cs.surface,
+            : Colors.white,
         borderRadius: BorderRadius.circular(16),
       ),
       clipBehavior: Clip.antiAlias,

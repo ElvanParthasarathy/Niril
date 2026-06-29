@@ -46,11 +46,11 @@ final silkMudhanmaiMozhiProvider =
   return SilkMudhanmaiMozhiNotifier();
 });
 
-class SilkIrandaamMozhiNotifier extends Notifier<String> {
+class SilkThunaiMozhiNotifier extends Notifier<String> {
   @override
   String build() {
     final profile = ref.watch(NiruvanaTharavugalProvider);
-    return profile?.thunaiMozhi ?? IruMozhi.iyalbuIrandaamMozhi;
+    return profile?.thunaiMozhi ?? IruMozhi.iyalbuThunaiMozhi;
   }
 
   @override
@@ -63,7 +63,7 @@ class SilkIrandaamMozhiNotifier extends Notifier<String> {
   }
 }
 
-final silkIrandaamMozhiProvider =
-    NotifierProvider<SilkIrandaamMozhiNotifier, String>(() {
-  return SilkIrandaamMozhiNotifier();
+final silkThunaiMozhiProvider =
+    NotifierProvider<SilkThunaiMozhiNotifier, String>(() {
+  return SilkThunaiMozhiNotifier();
 });

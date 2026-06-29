@@ -19,5 +19,5 @@ final secondaryLanguageProvider = Provider<String>((ref) {
     final kooliLang = ref.watch(kooliAchuMozhiProvider);
     return kooliLang == 'Tamil' ? 'English' : 'Tamil';
   }
-  return ref.watch(silkIrandaamMozhiProvider);
+  return ref.watch(silkThunaiMozhiProvider);
 });

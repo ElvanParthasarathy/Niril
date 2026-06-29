@@ -83,23 +83,34 @@ class KooliMothangalKooru extends ConsumerWidget {
               Divider(height: 1, color: cs.onSurface.withValues(alpha: 0.08)),
               const SizedBox(height: 12),
               // Grand Total
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(K.motham.tr(context, ref),
-                      style: tt.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: cs.onSurface,
-                      )),
-                  Text(
-                    '₹${formatter.format(totals.perumMothangal)}',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                      color: cs.onSurface,
-                    ),
-                  ),
-                ],
+              LayoutBuilder(
+                  builder: (context, constraints) {
+                    return FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(K.motham.tr(context, ref),
+                                style: tt.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: cs.onSurface,
+                                )),
+                            const SizedBox(width: 12),
+                            Text(
+                              '₹${formatter.format(totals.perumMothangal)}',
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w800,
+                                color: cs.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
               ),
             ],
           ),

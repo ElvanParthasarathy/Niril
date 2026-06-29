@@ -109,11 +109,27 @@ class PattuVaangunargalKooru extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      selectedVaangunar!.peyar[ref.watch(silkIrandaamMozhiProvider)] ?? (data.selectedVaangunarPeyarMap[ref.watch(silkIrandaamMozhiProvider)]?.isNotEmpty == true ? data.selectedVaangunarPeyarMap[ref.watch(silkIrandaamMozhiProvider)] : data.selectedVaangunarPeyarMap[ref.watch(silkMudhanmaiMozhiProvider)]) ?? '',
-                      style: tt.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                    Builder(
+                      builder: (context) {
+                        final isBilingual = ref.watch(bilingualProvider);
+                        if (!isBilingual) return const SizedBox.shrink();
+
+                        final primaryLang = ref.watch(silkMudhanmaiMozhiProvider);
+                        final secondaryLang = ref.watch(silkThunaiMozhiProvider);
+                        final displayName = selectedVaangunar!.peyar[secondaryLang] ?? (data.selectedVaangunarPeyarMap[secondaryLang]?.isNotEmpty == true ? data.selectedVaangunarPeyarMap[secondaryLang] : data.selectedVaangunarPeyarMap[primaryLang]) ?? '';
+                        
+                        if (displayName.isEmpty) return const SizedBox.shrink();
+
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 4.0),
+                          child: Text(
+                            displayName,
+                            style: tt.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        );
+                      }
                     ),
                     _buildAddressBlock(selectedVaangunar!, cs, tt, ref),
                   ],
@@ -146,7 +162,7 @@ class PattuVaangunargalKooru extends ConsumerWidget {
   // ── Address Block ──
   Widget _buildAddressBlock(VaangunarTharavuru v, ColorScheme cs, TextTheme tt, WidgetRef ref) {
     final silkMudhanmaiMozhi = ref.watch(silkMudhanmaiMozhiProvider);
-    final silkIrandaamMozhi = ref.watch(silkIrandaamMozhiProvider);
+    final silkThunaiMozhi = ref.watch(silkThunaiMozhiProvider);
 
     List<String> buildLines(String key) {
       final lines = <String>[];
@@ -171,10 +187,11 @@ class PattuVaangunargalKooru extends ConsumerWidget {
       return lines;
     }
 
+    final isBilingual = ref.watch(bilingualProvider);
     final tamilLines = buildLines(silkMudhanmaiMozhi);
-    final englishLines = buildLines(silkIrandaamMozhi);
-    final showEnglish = englishLines.isNotEmpty &&
-        englishLines.join() != tamilLines.join();
+    final secondaryLines = isBilingual ? buildLines(silkThunaiMozhi) : <String>[];
+    final showEnglish = secondaryLines.isNotEmpty &&
+        secondaryLines.join() != tamilLines.join();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,7 +208,7 @@ class PattuVaangunargalKooru extends ConsumerWidget {
         ],
         if (showEnglish) ...[
           const SizedBox(height: 6),
-          ...englishLines.map((line) => Text(
+          ...secondaryLines.map((line) => Text(
                 line,
                 style: tt.bodySmall?.copyWith(
                   color: cs.onSurfaceVariant.withValues(alpha: 0.7),

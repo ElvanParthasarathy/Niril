@@ -43,18 +43,20 @@ class ElvanCheyalPothan extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 50, // Must match ElvanBackButton's 50×50 exactly!
-      child: CupertinoButton(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        // ignore: deprecated_member_use
-        minSize: 0, // Override CupertinoButton's default 44px minimum
+      child: TextButton(
         onPressed: onPressed,
-        child: Text(
-          label,
-          style: TextStyle(
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          shape: const StadiumBorder(),
+          foregroundColor: color ?? Theme.of(context).colorScheme.onSurface,
+          disabledForegroundColor: (color ?? Theme.of(context).colorScheme.onSurface)
+              .withValues(alpha: 0.3),
+          textStyle: TextStyle(
+            fontFamily: DefaultTextStyle.of(context).style.fontFamily,
             fontWeight: fontWeight,
-            color: color ?? Theme.of(context).colorScheme.onSurface,
           ),
         ),
+        child: Text(label),
       ),
     );
   }

@@ -39,7 +39,7 @@ class SilkInvoicesPage extends ConsumerWidget {
     
     final currentLocale = ref.watch(localeProvider);
     final primaryLang = ref.watch(silkMudhanmaiMozhiProvider);
-    final secondaryLang = ref.watch(silkIrandaamMozhiProvider);
+    final secondaryLang = ref.watch(silkThunaiMozhiProvider);
 
     return pattiyalgalAsync.when(
       loading: () => const SliverFillRemaining(
