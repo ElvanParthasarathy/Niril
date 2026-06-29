@@ -516,16 +516,19 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                                                         index: i,
                                                         item: removedItem,
                                                   itemCount: _items.length + 1,
-                                                  formatter: formatter,
-                                                  onUpdated: (_) {},
-                                                  onDeleted: () {},
-                                                  onRequestAddNewProduct: () async {},
+                                                        itemCount: _items.length + 1,
+                                                        formatter: formatter,
+                                                        onUpdated: (_) {},
+                                                        onDeleted: () {},
+                                                        onRequestAddNewProduct: () async {},
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
-                                            ),
-                                          ),
-                                          duration: const Duration(milliseconds: 250),
-                                        );
+                                              );
+                                            },
+                                            duration: const Duration(milliseconds: 250),
+                                          );
                                           _recalculate();
                                         },
                                         onRequestAddNewProduct: () async {

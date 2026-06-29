@@ -610,9 +610,10 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                                 );
                               },
                             ),
-                          ),
-                        ),
-                      );
+                                  ),
+                                ),
+                              ),
+                            );
                     },
                     ),
                     const SizedBox(height: 8),
