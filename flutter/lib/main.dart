@@ -263,6 +263,7 @@ class ElvanNirilApp extends ConsumerWidget {
         scaffoldBackgroundColor: const Color(0xFFF7F7F7),
         inputDecorationTheme: _buildInputTheme(ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.light)),
         datePickerTheme: _buildMonochromeDatePickerTheme(ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.light)),
+        dialogTheme: const DialogTheme(surfaceTintColor: Colors.transparent),
         useMaterial3: true,
         textTheme: ThemeData.light().textTheme.apply(fontFamily: 'ElvanSans'),
         cupertinoOverrideTheme: CupertinoThemeData(
@@ -305,6 +306,7 @@ class ElvanNirilApp extends ConsumerWidget {
         scaffoldBackgroundColor: Colors.black, // AMOLED Black
         inputDecorationTheme: _buildInputTheme(ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.dark)),
         datePickerTheme: _buildMonochromeDatePickerTheme(ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.dark)),
+        dialogTheme: const DialogTheme(surfaceTintColor: Colors.transparent),
         useMaterial3: true,
         textTheme: ThemeData.dark().textTheme.apply(fontFamily: 'ElvanSans'),
         cupertinoOverrideTheme: CupertinoThemeData(
