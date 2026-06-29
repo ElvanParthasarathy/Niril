@@ -178,7 +178,6 @@ class ElvanSettingsEditContainer extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.02),
       child: child,
     );
   }
