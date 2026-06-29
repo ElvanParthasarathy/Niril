@@ -209,26 +209,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
 
               );
 
-              // Bilingual info line (English name · GST%)
-              final infoLine = (fallbackIrandaam.isNotEmpty ||
-                      item.variVizhukkaadu > 0)
-                  ? Padding(
-                      padding: const EdgeInsets.only(left: 16, top: 12),
-                      child: Text(
-                        [
-                          if (fallbackIrandaam.isNotEmpty) fallbackIrandaam,
-                          if (item.variVizhukkaadu > 0)
-                            'GST ${item.variVizhukkaadu.toStringAsFixed(item.variVizhukkaadu.truncateToDouble() == item.variVizhukkaadu ? 0 : 1)}%',
-                        ].join(' · '),
-                        style: TextStyle(
-                          color: cs.onSurface.withValues(alpha: 0.5),
-                          fontWeight: FontWeight.w400,
-                          letterSpacing: 0.3,
-                          fontSize: 10,
-                        ),
-                      ),
-                    )
-                  : const SizedBox.shrink();
+
 
               if (isWide) {
                 return Column(
@@ -248,8 +229,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
                         Expanded(flex: 1, child: totalDisplay),
                       ],
                     ),
-                    infoLine,
-                  ],
+                    ],
                 );
               }
 
@@ -257,7 +237,6 @@ class PattuUrupadiAttai extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   productSearch,
-                  infoLine,
                   vGap,
                   Row(children: [
                     Expanded(child: qtyField),
