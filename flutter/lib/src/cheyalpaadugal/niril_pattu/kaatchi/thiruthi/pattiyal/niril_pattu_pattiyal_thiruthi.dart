@@ -62,7 +62,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
 
   // ── Global Discount ──
   double _globalDiscountValue = 0;
-  String _globalDiscountType = 'percentage';
+  String _globalDiscountType = '%';
 
 
 
@@ -551,40 +551,16 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                     const SizedBox(height: 8),
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: TextButton.icon(
+                      child: FilledButton.tonalIcon(
                         onPressed: () {
                           setState(() => _items = [..._items, const PattuUrupadi()]);
                         },
-                        icon: const Icon(Icons.add_circle_outline, size: 20),
-                        label: Text(K.porulaichChaerPtn.tr(context, ref)),
-                        style: TextButton.styleFrom(
-                          backgroundColor: cs.surfaceContainerHighest,
-                          foregroundColor: cs.onSurface,
-                          padding:
-                              const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(24)),
-                        ),
+                        icon: const Icon(Icons.add, size: 20),
+                        label: Text(K.chaerPtn.tr(context, ref),
+                            style: const TextStyle(fontWeight: FontWeight.w600)),
                       ),
                     ),
 
-                    const SizedBox(height: 24),
-
-                    // ───────────────────────────────────────────────────────────────
-                    // Section 3.5: Global Discount
-                    // ───────────────────────────────────────────────────────────────
-                    PattuKazhivuKooru(
-                      controller: _globalDiscountController,
-                      discountType: _globalDiscountType,
-                      onValueChanged: (v) {
-                        _globalDiscountValue = double.tryParse(v) ?? 0;
-                        _recalculate();
-                      },
-                      onTypeChanged: (type) {
-                        setState(() => _globalDiscountType = type);
-                        _recalculate();
-                      },
-                    ),
                   ],
                 ),
               ),
@@ -600,6 +576,19 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
             displayChild: const SizedBox(),
             initiallyExpanded: true,
             children: [
+              PattuKazhivuKooru(
+                controller: _globalDiscountController,
+                discountType: _globalDiscountType,
+                onValueChanged: (v) {
+                  _globalDiscountValue = double.tryParse(v) ?? 0;
+                  _recalculate();
+                },
+                onTypeChanged: (type) {
+                  setState(() => _globalDiscountType = type);
+                  _recalculate();
+                },
+              ),
+              const SizedBox(height: 16),
               ElvanFullWidth(
                 child: PattuMothangalKooru(totals: _totals),
               ),

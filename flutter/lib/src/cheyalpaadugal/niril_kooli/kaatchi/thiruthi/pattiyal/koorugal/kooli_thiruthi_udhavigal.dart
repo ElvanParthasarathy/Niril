@@ -62,17 +62,10 @@ Widget kooliPillButton(
   required VoidCallback onPressed,
 }) {
   final cs = Theme.of(context).colorScheme;
-  return TextButton.icon(
+  return FilledButton.tonalIcon(
     onPressed: onPressed,
-    icon: Icon(icon, size: 18),
-    label: Text(label),
-    style: TextButton.styleFrom(
-      backgroundColor: cs.surfaceContainerHighest,
-      foregroundColor: cs.onSurface,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24)),
-    ),
+    icon: Icon(icon, size: 20),
+    label: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
   );
 }
 

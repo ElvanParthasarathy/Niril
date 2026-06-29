@@ -6,9 +6,10 @@ import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
+import '../../../../../../koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 
 /// கழிவு கூறு — Global Discount row with a text field and
-/// percentage / amount toggle (SegmentedButton).
+/// percentage / amount toggle (pill).
 class PattuKazhivuKooru extends ConsumerWidget {
   const PattuKazhivuKooru({
     super.key,
@@ -21,45 +22,55 @@ class PattuKazhivuKooru extends ConsumerWidget {
   /// Controller for the discount value text field.
   final TextEditingController controller;
 
-  /// Current discount mode — `'percentage'` or `'amount'`.
+  /// Current discount mode — `'%'` or `'₹'`.
   final String discountType;
 
   /// Fires when the user edits the discount value text.
   final ValueChanged<String> onValueChanged;
 
-  /// Fires when the user toggles between percentage and amount.
+  /// Fires when the user toggles between % and ₹.
   final ValueChanged<String> onTypeChanged;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ElvanThiruthiAttai(
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: controller,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
-              decoration: InputDecoration(
-                labelText: K.muzhuThallupadi.tr(context, ref),
-                border: InputBorder.none,
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+    final cs = Theme.of(context).colorScheme;
+
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: ElvanThiruthiUlleedu(
+          controller: controller,
+          label: K.muzhuThallupadi.tr(context, ref),
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
+          onChanged: onValueChanged,
+          suffixIcon: Padding(
+            padding: const EdgeInsets.only(right: 6.0),
+            child: Material(
+              color: Colors.transparent,
+              shape: const CircleBorder(),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () {
+                  final newType = discountType == '%' ? '₹' : '%';
+                  onTypeChanged(newType);
+                },
+                child: SizedBox(
+                  width: 32,
+                  height: 32,
+                  child: Center(
+                    child: Text(
+                      discountType == '%' ? '%' : '₹',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
               ),
-              onChanged: onValueChanged,
             ),
           ),
-          const SizedBox(width: 8),
-          SegmentedButton<String>(
-            segments: const [
-              ButtonSegment(value: 'percentage', label: Text('%')),
-              ButtonSegment(value: 'amount', label: Text('₹')),
-            ],
-            selected: {discountType},
-            onSelectionChanged: (s) => onTypeChanged(s.first),
-          ),
-        ],
+        ),
       ),
     );
   }

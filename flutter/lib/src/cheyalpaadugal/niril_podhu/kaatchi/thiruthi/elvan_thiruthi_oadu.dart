@@ -7,7 +7,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../chattagam/kaatchi/kaippaesi/elvan_utpakkach_chattagam.dart';
 import '../../../chattagam/kaatchi/kaippaesi/koorugal/elvan_cheyal_pothan.dart';
-
+import '../../../../koorugal/maeladukkugal/elvan_cheyal_maeladukku.dart';
 /// The Universal Editor Shell — wraps all creator/editor forms.
 ///
 /// Mobile: existing navbar with text save button.
@@ -44,41 +44,20 @@ class ElvanEditorShell extends ConsumerStatefulWidget {
 class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
   // ── Unsaved-changes confirmation dialog ──
   Future<void> _showUnsavedChangesDialog() async {
-    final cs = Theme.of(context).colorScheme;
-    final result = await showDialog<String>(
+    await showElvanActionSheet<void>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(K.chaemippuNiluvai.tr(context, ref)),
-        content: Text(K.chaemippuNiluvai.tr(context, ref)),
-        actions: [
-          // Cancel — stay on editor
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop('cancel'),
-            child: Text(K.thodarPtn.tr(context, ref)),
-          ),
-          // Discard — lose changes
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop('discard'),
-            style: TextButton.styleFrom(foregroundColor: cs.error),
-            child: Text(K.purakkaniPtn.tr(context, ref)),
-          ),
-          // Save — real save
-          FilledButton(
-            onPressed: () => Navigator.of(dialogContext).pop('save'),
-            child: Text(K.chaemiPtn.tr(context, ref)),
-          ),
-        ],
-      ),
+      title: K.chaemippuNiluvai.tr(context, ref),
+      cancelText: K.thodarPtn.tr(context, ref),
+      tertiaryText: K.purakkaniPtn.tr(context, ref),
+      onTertiary: () {
+        widget.onDiscard?.call();
+        Navigator.of(context).pop();
+      },
+      confirmText: K.chaemiPtn.tr(context, ref),
+      onConfirm: () {
+        widget.onSave?.call();
+      },
     );
-
-    if (!mounted || result == null || result == 'cancel') return;
-
-    if (result == 'save') {
-      widget.onSave?.call();
-    } else if (result == 'discard') {
-      widget.onDiscard?.call();
-      Navigator.of(context).pop();
-    }
   }
 
   /// Handles Cancel button / back-nav: if unsaved → dialog, else pop.

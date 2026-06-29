@@ -1,4 +1,4 @@
-import 'package:drift/drift.dart';
+﻿import 'package:drift/drift.dart';
 import '../../../adippadai/tharavuthalam/kooli_tharavuthalam.dart';
 import '../../../adippadai/tharavuru/uruvugal.dart';
 import 'pattiyal_kalanjiyam.dart';
@@ -15,7 +15,7 @@ class KooliPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   KooliPattiyalKalanjiyam(this._db);
 
-  PattiyalTharavuru _mapToDomain(KooliPatrucheettuEntry entry) {
+  PattiyalTharavuru _mapToDomain(KooliPattiyalEntry entry) {
     return PattiyalTharavuru(
       id: entry.id,
       niruvanamId: entry.niruvanamId,
@@ -32,6 +32,9 @@ class KooliPattiyalKalanjiyam implements PattiyalKalanjiyam {
       thallupadi: entry.thallupadi,
       variThogai: entry.variThogai,
       variTharavugal: entry.variTharavugal,
+      podhuThallupadiMathippu: entry.podhuThallupadiMathippu,
+      podhuThallupadiVagai: entry.podhuThallupadiVagai,
+      podhuThallupadiThogai: entry.podhuThallupadiThogai,
       // Kooli-specific fields
       mothaEdai: entry.mothaEdai,
       setharamGrams: entry.setharamGrams,
@@ -51,8 +54,8 @@ class KooliPattiyalKalanjiyam implements PattiyalKalanjiyam {
     );
   }
 
-  KooliPatrucheettuTableCompanion _mapToCompanion(PattiyalTharavuru tharavuru) {
-    return KooliPatrucheettuTableCompanion(
+  KooliPattiyalTableCompanion _mapToCompanion(PattiyalTharavuru tharavuru) {
+    return KooliPattiyalTableCompanion(
       niruvanamId: Value(tharavuru.niruvanamId),
       patrucheettuEn: Value(tharavuru.patrucheettuEn),
       finYear: Value(tharavuru.finYear),
@@ -65,6 +68,9 @@ class KooliPattiyalKalanjiyam implements PattiyalKalanjiyam {
       tharavugal: Value(tharavuru.tharavugal),
       mothaThogai: Value(tharavuru.mothaThogai),
       thallupadi: Value(tharavuru.thallupadi),
+      podhuThallupadiMathippu: Value(tharavuru.podhuThallupadiMathippu),
+      podhuThallupadiVagai: Value(tharavuru.podhuThallupadiVagai),
+      podhuThallupadiThogai: Value(tharavuru.podhuThallupadiThogai),
       variThogai: Value(tharavuru.variThogai),
       variTharavugal: Value(tharavuru.variTharavugal),
       mothaEdai: Value(tharavuru.mothaEdai),
@@ -79,7 +85,7 @@ class KooliPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Stream<List<PattiyalTharavuru>> watchPattiyalgal() {
-    return (_db.select(_db.kooliPatrucheettuTable)
+    return (_db.select(_db.kooliPattiyalTable)
           ..where((t) => t.isDeleted.equals(false))
           ..orderBy([
             (t) => OrderingTerm.desc(t.pattiyalNaal),
@@ -91,7 +97,7 @@ class KooliPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Future<List<PattiyalTharavuru>> getPattiyalgal() async {
-    final list = await (_db.select(_db.kooliPatrucheettuTable)
+    final list = await (_db.select(_db.kooliPattiyalTable)
           ..where((t) => t.isDeleted.equals(false))
           ..orderBy([
             (t) => OrderingTerm.desc(t.pattiyalNaal),
@@ -103,7 +109,7 @@ class KooliPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Future<PattiyalTharavuru?> getById(int id) async {
-    final entry = await (_db.select(_db.kooliPatrucheettuTable)
+    final entry = await (_db.select(_db.kooliPattiyalTable)
           ..where((t) => t.id.equals(id))
           ..where((t) => t.isDeleted.equals(false)))
         .getSingleOrNull();
@@ -112,19 +118,19 @@ class KooliPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Future<int> createPattiyal(PattiyalTharavuru tharavuru) async {
-    return _db.into(_db.kooliPatrucheettuTable).insert(_mapToCompanion(tharavuru));
+    return _db.into(_db.kooliPattiyalTable).insert(_mapToCompanion(tharavuru));
   }
 
   @override
   Future<void> updatePattiyal(int id, PattiyalTharavuru tharavuru) async {
-    await (_db.update(_db.kooliPatrucheettuTable)..where((t) => t.id.equals(id)))
+    await (_db.update(_db.kooliPattiyalTable)..where((t) => t.id.equals(id)))
         .write(_mapToCompanion(tharavuru));
   }
 
   @override
   Future<void> deletePattiyal(int id) async {
-    await (_db.update(_db.kooliPatrucheettuTable)..where((t) => t.id.equals(id))).write(
-      KooliPatrucheettuTableCompanion(
+    await (_db.update(_db.kooliPattiyalTable)..where((t) => t.id.equals(id))).write(
+      KooliPattiyalTableCompanion(
         isDeleted: const Value(true),
         deletedAt: Value(DateTime.now()),
       ),
@@ -133,8 +139,8 @@ class KooliPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Future<void> bulkDeletePattiyalgal(List<int> ids) async {
-    await (_db.update(_db.kooliPatrucheettuTable)..where((t) => t.id.isIn(ids))).write(
-      KooliPatrucheettuTableCompanion(
+    await (_db.update(_db.kooliPattiyalTable)..where((t) => t.id.isIn(ids))).write(
+      KooliPattiyalTableCompanion(
         isDeleted: const Value(true),
         deletedAt: Value(DateTime.now()),
       ),
@@ -143,8 +149,8 @@ class KooliPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Future<void> restorePattiyal(int id) async {
-    await (_db.update(_db.kooliPatrucheettuTable)..where((t) => t.id.equals(id))).write(
-      const KooliPatrucheettuTableCompanion(
+    await (_db.update(_db.kooliPattiyalTable)..where((t) => t.id.equals(id))).write(
+      const KooliPattiyalTableCompanion(
         isDeleted: Value(false),
         deletedAt: Value(null),
       ),
@@ -153,12 +159,12 @@ class KooliPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Future<void> deleteAllPattiyalgal() async {
-    await _db.delete(_db.kooliPatrucheettuTable).go();
+    await _db.delete(_db.kooliPattiyalTable).go();
   }
 
   @override
   Stream<List<PattiyalTharavuru>> watchDeletedPattiyalgal() {
-    return (_db.select(_db.kooliPatrucheettuTable)
+    return (_db.select(_db.kooliPattiyalTable)
           ..where((t) => t.isDeleted.equals(true))
           ..orderBy([(t) => OrderingTerm.desc(t.deletedAt)]))
         .watch()
@@ -167,7 +173,7 @@ class KooliPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Future<List<PattiyalTharavuru>> getDeletedPattiyalgal() async {
-    final list = await (_db.select(_db.kooliPatrucheettuTable)
+    final list = await (_db.select(_db.kooliPattiyalTable)
           ..where((t) => t.isDeleted.equals(true))
           ..orderBy([(t) => OrderingTerm.desc(t.deletedAt)]))
         .get();
@@ -177,7 +183,7 @@ class KooliPattiyalKalanjiyam implements PattiyalKalanjiyam {
   @override
   Future<int> purgeExpiredPattiyalgal({int days = 30}) async {
     final cutoff = DateTime.now().subtract(Duration(days: days));
-    return (_db.delete(_db.kooliPatrucheettuTable)
+    return (_db.delete(_db.kooliPattiyalTable)
           ..where((t) => t.isDeleted.equals(true))
           ..where((t) => t.deletedAt.isSmallerOrEqualValue(cutoff)))
         .go();
@@ -185,18 +191,18 @@ class KooliPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Future<int> getNextVanakkam(int? niruvanamId, int finYear) async {
-    final query = _db.selectOnly(_db.kooliPatrucheettuTable)
-      ..addColumns([_db.kooliPatrucheettuTable.vanakkam.max()])
-      ..where(_db.kooliPatrucheettuTable.finYear.equals(finYear));
+    final query = _db.selectOnly(_db.kooliPattiyalTable)
+      ..addColumns([_db.kooliPattiyalTable.vanakkam.max()])
+      ..where(_db.kooliPattiyalTable.finYear.equals(finYear));
 
     if (niruvanamId != null) {
-      query.where(_db.kooliPatrucheettuTable.niruvanamId.equals(niruvanamId));
+      query.where(_db.kooliPattiyalTable.niruvanamId.equals(niruvanamId));
     } else {
-      query.where(_db.kooliPatrucheettuTable.niruvanamId.isNull());
+      query.where(_db.kooliPattiyalTable.niruvanamId.isNull());
     }
 
     final result = await query.getSingle();
-    final maxVal = result.read(_db.kooliPatrucheettuTable.vanakkam.max());
+    final maxVal = result.read(_db.kooliPattiyalTable.vanakkam.max());
     return (maxVal ?? 0) + 1;
   }
 
@@ -215,7 +221,7 @@ class KooliPattiyalKalanjiyam implements PattiyalKalanjiyam {
     String pattiyalEn, {
     int? excludeId,
   }) async {
-    final query = _db.select(_db.kooliPatrucheettuTable)
+    final query = _db.select(_db.kooliPattiyalTable)
       ..where((t) => t.finYear.equals(finYear))
       ..where((t) => t.patrucheettuEn.upper().equals(pattiyalEn.toUpperCase()));
 

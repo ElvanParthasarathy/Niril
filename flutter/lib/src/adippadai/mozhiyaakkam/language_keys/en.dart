@@ -186,6 +186,7 @@ const Map<String, String> en = {
   'azhikka': 'Clear',
   'chaemiPtn': 'Save',
   'chaer': 'Add',
+  'chaerPtn': 'Add',
   'chariPtn': 'OK',
   'kaappuCheiPtn': 'Backup Now',
   'kaividuPtn': 'Cancel',

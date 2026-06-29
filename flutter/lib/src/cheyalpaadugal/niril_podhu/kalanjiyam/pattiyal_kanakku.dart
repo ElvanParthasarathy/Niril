@@ -37,7 +37,7 @@ class PattuKanakku {
   static PattuMothangal calculate({
     required List<PattuUrupadi> items,
     double globalDiscountValue = 0,
-    String globalDiscountType = 'percentage',
+    String globalDiscountType = '%',
     String businessState = '',
     String customerState = '',
     String country = 'India',
@@ -50,7 +50,7 @@ class PattuKanakku {
     for (final item in items) {
       final double amount = item.alavu * item.vilai;
       final double rawDiscount = item.thallupadi;
-      final double discountAmount = item.thallupadiVagai == 'percentage'
+      final double discountAmount = item.thallupadiVagai == '%'
           ? amount * (rawDiscount / 100)
           : rawDiscount;
 
@@ -62,7 +62,7 @@ class PattuKanakku {
 
     final double afterItemDiscountSubtotal = rawSubtotal - itemDiscounts;
 
-    final double globalDiscountAmount = globalDiscountType == 'percentage'
+    final double globalDiscountAmount = globalDiscountType == '%'
         ? afterItemDiscountSubtotal * (globalDiscountValue / 100)
         : globalDiscountValue;
 
@@ -75,7 +75,7 @@ class PattuKanakku {
     for (final item in items) {
       final double amount = item.alavu * item.vilai;
       final double rawDiscount = item.thallupadi;
-      final double itemDiscount = item.thallupadiVagai == 'percentage'
+      final double itemDiscount = item.thallupadiVagai == '%'
           ? amount * (rawDiscount / 100)
           : rawDiscount;
 

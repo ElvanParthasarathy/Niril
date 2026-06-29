@@ -504,8 +504,8 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                                 runSpacing: 8,
                                 children: [
                                   kooliPillButton(context,
-                                    icon: Icons.add_rounded,
-                                    label: K.porulaichChaerPtn.tr(context, ref),
+                                    icon: Icons.add,
+                                    label: K.chaerPtn.tr(context, ref),
                                     onPressed: () => setState(() {
                                       _items = [..._items, const KooliUrupadi()];
                                       _hasUnsavedChanges = true;

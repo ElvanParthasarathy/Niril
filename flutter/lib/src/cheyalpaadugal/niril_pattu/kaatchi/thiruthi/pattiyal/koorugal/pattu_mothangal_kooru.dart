@@ -24,46 +24,12 @@ class PattuMothangalKooru extends ConsumerWidget {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 12, bottom: 24),
-          child: Row(
-            children: [
-              Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: cs.onSurface,
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  '4',
-                  style: TextStyle(
-                    color: cs.surface,
-                    fontSize: 12.8,
-                    fontWeight: FontWeight.bold,
-                    height: 1,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                K.mothangal.tr(context, ref),
-                style: TextStyle(
-                  fontSize: 17.6,
-                  fontWeight: FontWeight.w600,
-                  color: cs.onSurface,
-                ),
-              ),
-            ],
-          ),
-        ),
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 400),
-          child: ElvanThiruthiAttai(
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: ElvanThiruthiAttai(
+          color: cs.onSurface.withValues(alpha: 0.08),
             padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -92,7 +58,7 @@ class PattuMothangalKooru extends ConsumerWidget {
                 ],
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Divider(height: 1, color: cs.outlineVariant),
+                  child: Divider(height: 1, color: cs.onSurface.withValues(alpha: 0.08)),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -105,15 +71,14 @@ class PattuMothangalKooru extends ConsumerWidget {
                         style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.w800,
-                            color: cs.primary)),
+                            color: cs.onSurface)),
                   ],
                 ),
               ],
             ),
           ),
         ),
-      ],
-    );
+      );
   }
 
   Widget _totalsRow(

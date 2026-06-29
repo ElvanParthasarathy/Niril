@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
@@ -127,8 +127,8 @@ class KooliPorulTable extends Table {
 }
 
 // ── Table: பற்றுச்சீட்டு (Invoice) ──
-@DataClassName('KooliPatrucheettuEntry')
-class KooliPatrucheettuTable extends Table {
+@DataClassName('KooliPattiyalEntry')
+class KooliPattiyalTable extends Table {
   // ── Identity ──
   IntColumn get id => integer().autoIncrement()();
   IntColumn get niruvanamId => integer().nullable()(); // FK → KooliNiruvanaTharavugalTable
@@ -161,6 +161,12 @@ class KooliPatrucheettuTable extends Table {
       real().withDefault(const Constant(0.0))(); // Grand total
   RealColumn get thallupadi =>
       real().withDefault(const Constant(0.0))(); // Total discount
+  RealColumn get podhuThallupadiMathippu =>
+      real().withDefault(const Constant(0.0))(); // Global discount input value
+  TextColumn get podhuThallupadiVagai =>
+      text().withDefault(const Constant('%'))(); // Global discount type (% or ₹)
+  RealColumn get podhuThallupadiThogai =>
+      real().withDefault(const Constant(0.0))(); // Global discount calculated amount
   RealColumn get variThogai =>
       real().withDefault(const Constant(0.0))(); // Total tax
   TextColumn get variTharavugal =>
@@ -249,7 +255,7 @@ class KooliPatrugalTable extends Table {
 class KooliPatruPattiyalTable extends Table {
   IntColumn get id => integer().autoIncrement()();
   IntColumn get patruId => integer()(); // FK → KooliPatrugalTable
-  IntColumn get pattiyalId => integer()(); // FK → KooliPatrucheettuTable
+  IntColumn get pattiyalId => integer()(); // FK → KooliPattiyalTable
   RealColumn get poruthiyaThogai =>
       real().withDefault(const Constant(0.0))(); // Amount applied to this invoice
 }
@@ -259,7 +265,7 @@ class KooliPatruPattiyalTable extends Table {
   KooliNiruvanaTharavugalTable,
   KooliVaangunarTable,
   KooliPorulTable,
-  KooliPatrucheettuTable,
+  KooliPattiyalTable,
   KooliPatrugalTable,
   KooliPatruPattiyalTable,
 ])

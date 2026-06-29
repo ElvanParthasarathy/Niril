@@ -188,6 +188,7 @@ class K {
   static const String azhikka = 'azhikka';
   static const String chaemiPtn = 'chaemiPtn';
   static const String chaer = 'chaer';
+  static const String chaerPtn = 'chaerPtn';
   static const String chariPtn = 'chariPtn';
   static const String kaappuCheiPtn = 'kaappuCheiPtn';
   static const String kaividuPtn = 'kaividuPtn';

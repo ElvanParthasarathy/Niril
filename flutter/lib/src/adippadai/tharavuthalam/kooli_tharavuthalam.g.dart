@@ -2616,12 +2616,12 @@ class KooliPorulTableCompanion extends UpdateCompanion<KooliPorulEntry> {
   }
 }
 
-class $KooliPatrucheettuTableTable extends KooliPatrucheettuTable
-    with TableInfo<$KooliPatrucheettuTableTable, KooliPatrucheettuEntry> {
+class $KooliPattiyalTableTable extends KooliPattiyalTable
+    with TableInfo<$KooliPattiyalTableTable, KooliPattiyalEntry> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $KooliPatrucheettuTableTable(this.attachedDatabase, [this._alias]);
+  $KooliPattiyalTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -2679,7 +2679,7 @@ class $KooliPatrucheettuTableTable extends KooliPatrucheettuTable
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $KooliPatrucheettuTableTable.$convertervaangunarPeyar);
+              $KooliPattiyalTableTable.$convertervaangunarPeyar);
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
       vaangunarMunvari = GeneratedColumn<String>(
@@ -2688,7 +2688,7 @@ class $KooliPatrucheettuTableTable extends KooliPatrucheettuTable
               requiredDuringInsert: false,
               defaultValue: const Constant('{}'))
           .withConverter<Map<String, String>>(
-              $KooliPatrucheettuTableTable.$convertervaangunarMunvari);
+              $KooliPattiyalTableTable.$convertervaangunarMunvari);
   static const VerificationMeta _pattiyalNaalMeta =
       const VerificationMeta('pattiyalNaal');
   @override
@@ -2721,6 +2721,30 @@ class $KooliPatrucheettuTableTable extends KooliPatrucheettuTable
       type: DriftSqlType.double,
       requiredDuringInsert: false,
       defaultValue: const Constant(0.0));
+  static const VerificationMeta _podhuThallupadiMathippuMeta =
+      const VerificationMeta('podhuThallupadiMathippu');
+  @override
+  late final GeneratedColumn<double> podhuThallupadiMathippu =
+      GeneratedColumn<double>('podhu_thallupadi_mathippu', aliasedName, false,
+          type: DriftSqlType.double,
+          requiredDuringInsert: false,
+          defaultValue: const Constant(0.0));
+  static const VerificationMeta _podhuThallupadiVagaiMeta =
+      const VerificationMeta('podhuThallupadiVagai');
+  @override
+  late final GeneratedColumn<String> podhuThallupadiVagai =
+      GeneratedColumn<String>('podhu_thallupadi_vagai', aliasedName, false,
+          type: DriftSqlType.string,
+          requiredDuringInsert: false,
+          defaultValue: const Constant('%'));
+  static const VerificationMeta _podhuThallupadiThogaiMeta =
+      const VerificationMeta('podhuThallupadiThogai');
+  @override
+  late final GeneratedColumn<double> podhuThallupadiThogai =
+      GeneratedColumn<double>('podhu_thallupadi_thogai', aliasedName, false,
+          type: DriftSqlType.double,
+          requiredDuringInsert: false,
+          defaultValue: const Constant(0.0));
   static const VerificationMeta _variThogaiMeta =
       const VerificationMeta('variThogai');
   @override
@@ -2856,6 +2880,9 @@ class $KooliPatrucheettuTableTable extends KooliPatrucheettuTable
         tharavugal,
         mothaThogai,
         thallupadi,
+        podhuThallupadiMathippu,
+        podhuThallupadiVagai,
+        podhuThallupadiThogai,
         variThogai,
         variTharavugal,
         mothaEdai,
@@ -2876,10 +2903,9 @@ class $KooliPatrucheettuTableTable extends KooliPatrucheettuTable
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'kooli_patrucheettu_table';
+  static const String $name = 'kooli_pattiyal_table';
   @override
-  VerificationContext validateIntegrity(
-      Insertable<KooliPatrucheettuEntry> instance,
+  VerificationContext validateIntegrity(Insertable<KooliPattiyalEntry> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -2945,6 +2971,25 @@ class $KooliPatrucheettuTableTable extends KooliPatrucheettuTable
           _thallupadiMeta,
           thallupadi.isAcceptableOrUnknown(
               data['thallupadi']!, _thallupadiMeta));
+    }
+    if (data.containsKey('podhu_thallupadi_mathippu')) {
+      context.handle(
+          _podhuThallupadiMathippuMeta,
+          podhuThallupadiMathippu.isAcceptableOrUnknown(
+              data['podhu_thallupadi_mathippu']!,
+              _podhuThallupadiMathippuMeta));
+    }
+    if (data.containsKey('podhu_thallupadi_vagai')) {
+      context.handle(
+          _podhuThallupadiVagaiMeta,
+          podhuThallupadiVagai.isAcceptableOrUnknown(
+              data['podhu_thallupadi_vagai']!, _podhuThallupadiVagaiMeta));
+    }
+    if (data.containsKey('podhu_thallupadi_thogai')) {
+      context.handle(
+          _podhuThallupadiThogaiMeta,
+          podhuThallupadiThogai.isAcceptableOrUnknown(
+              data['podhu_thallupadi_thogai']!, _podhuThallupadiThogaiMeta));
     }
     if (data.containsKey('vari_thogai')) {
       context.handle(
@@ -3032,9 +3077,9 @@ class $KooliPatrucheettuTableTable extends KooliPatrucheettuTable
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  KooliPatrucheettuEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+  KooliPattiyalEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return KooliPatrucheettuEntry(
+    return KooliPattiyalEntry(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       niruvanamId: attachedDatabase.typeMapping
@@ -3049,10 +3094,10 @@ class $KooliPatrucheettuTableTable extends KooliPatrucheettuTable
           .read(DriftSqlType.string, data['${effectivePrefix}pattiyal_vagai'])!,
       vaangunarId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}vaangunar_id']),
-      vaangunarPeyar: $KooliPatrucheettuTableTable.$convertervaangunarPeyar
-          .fromSql(attachedDatabase.typeMapping.read(
+      vaangunarPeyar: $KooliPattiyalTableTable.$convertervaangunarPeyar.fromSql(
+          attachedDatabase.typeMapping.read(
               DriftSqlType.string, data['${effectivePrefix}vaangunar_peyar'])!),
-      vaangunarMunvari: $KooliPatrucheettuTableTable.$convertervaangunarMunvari
+      vaangunarMunvari: $KooliPattiyalTableTable.$convertervaangunarMunvari
           .fromSql(attachedDatabase.typeMapping.read(DriftSqlType.string,
               data['${effectivePrefix}vaangunar_munvari'])!),
       pattiyalNaal: attachedDatabase.typeMapping.read(
@@ -3063,6 +3108,15 @@ class $KooliPatrucheettuTableTable extends KooliPatrucheettuTable
           .read(DriftSqlType.double, data['${effectivePrefix}motha_thogai'])!,
       thallupadi: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}thallupadi'])!,
+      podhuThallupadiMathippu: attachedDatabase.typeMapping.read(
+          DriftSqlType.double,
+          data['${effectivePrefix}podhu_thallupadi_mathippu'])!,
+      podhuThallupadiVagai: attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}podhu_thallupadi_vagai'])!,
+      podhuThallupadiThogai: attachedDatabase.typeMapping.read(
+          DriftSqlType.double,
+          data['${effectivePrefix}podhu_thallupadi_thogai'])!,
       variThogai: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}vari_thogai'])!,
       variTharavugal: attachedDatabase.typeMapping.read(
@@ -3097,8 +3151,8 @@ class $KooliPatrucheettuTableTable extends KooliPatrucheettuTable
   }
 
   @override
-  $KooliPatrucheettuTableTable createAlias(String alias) {
-    return $KooliPatrucheettuTableTable(attachedDatabase, alias);
+  $KooliPattiyalTableTable createAlias(String alias) {
+    return $KooliPattiyalTableTable(attachedDatabase, alias);
   }
 
   static TypeConverter<Map<String, String>, String> $convertervaangunarPeyar =
@@ -3107,8 +3161,8 @@ class $KooliPatrucheettuTableTable extends KooliPatrucheettuTable
       const MozhiMapConverter();
 }
 
-class KooliPatrucheettuEntry extends DataClass
-    implements Insertable<KooliPatrucheettuEntry> {
+class KooliPattiyalEntry extends DataClass
+    implements Insertable<KooliPattiyalEntry> {
   final int id;
   final int? niruvanamId;
   final String patrucheettuEn;
@@ -3122,6 +3176,9 @@ class KooliPatrucheettuEntry extends DataClass
   final String tharavugal;
   final double mothaThogai;
   final double thallupadi;
+  final double podhuThallupadiMathippu;
+  final String podhuThallupadiVagai;
+  final double podhuThallupadiThogai;
   final double variThogai;
   final String variTharavugal;
   final double mothaEdai;
@@ -3137,7 +3194,7 @@ class KooliPatrucheettuEntry extends DataClass
   final DateTime updatedAt;
   final bool isDeleted;
   final DateTime? deletedAt;
-  const KooliPatrucheettuEntry(
+  const KooliPattiyalEntry(
       {required this.id,
       this.niruvanamId,
       required this.patrucheettuEn,
@@ -3151,6 +3208,9 @@ class KooliPatrucheettuEntry extends DataClass
       required this.tharavugal,
       required this.mothaThogai,
       required this.thallupadi,
+      required this.podhuThallupadiMathippu,
+      required this.podhuThallupadiVagai,
+      required this.podhuThallupadiThogai,
       required this.variThogai,
       required this.variTharavugal,
       required this.mothaEdai,
@@ -3181,12 +3241,12 @@ class KooliPatrucheettuEntry extends DataClass
       map['vaangunar_id'] = Variable<int>(vaangunarId);
     }
     {
-      map['vaangunar_peyar'] = Variable<String>($KooliPatrucheettuTableTable
+      map['vaangunar_peyar'] = Variable<String>($KooliPattiyalTableTable
           .$convertervaangunarPeyar
           .toSql(vaangunarPeyar));
     }
     {
-      map['vaangunar_munvari'] = Variable<String>($KooliPatrucheettuTableTable
+      map['vaangunar_munvari'] = Variable<String>($KooliPattiyalTableTable
           .$convertervaangunarMunvari
           .toSql(vaangunarMunvari));
     }
@@ -3194,6 +3254,10 @@ class KooliPatrucheettuEntry extends DataClass
     map['tharavugal'] = Variable<String>(tharavugal);
     map['motha_thogai'] = Variable<double>(mothaThogai);
     map['thallupadi'] = Variable<double>(thallupadi);
+    map['podhu_thallupadi_mathippu'] =
+        Variable<double>(podhuThallupadiMathippu);
+    map['podhu_thallupadi_vagai'] = Variable<String>(podhuThallupadiVagai);
+    map['podhu_thallupadi_thogai'] = Variable<double>(podhuThallupadiThogai);
     map['vari_thogai'] = Variable<double>(variThogai);
     map['vari_tharavugal'] = Variable<String>(variTharavugal);
     map['motha_edai'] = Variable<double>(mothaEdai);
@@ -3214,8 +3278,8 @@ class KooliPatrucheettuEntry extends DataClass
     return map;
   }
 
-  KooliPatrucheettuTableCompanion toCompanion(bool nullToAbsent) {
-    return KooliPatrucheettuTableCompanion(
+  KooliPattiyalTableCompanion toCompanion(bool nullToAbsent) {
+    return KooliPattiyalTableCompanion(
       id: Value(id),
       niruvanamId: niruvanamId == null && nullToAbsent
           ? const Value.absent()
@@ -3233,6 +3297,9 @@ class KooliPatrucheettuEntry extends DataClass
       tharavugal: Value(tharavugal),
       mothaThogai: Value(mothaThogai),
       thallupadi: Value(thallupadi),
+      podhuThallupadiMathippu: Value(podhuThallupadiMathippu),
+      podhuThallupadiVagai: Value(podhuThallupadiVagai),
+      podhuThallupadiThogai: Value(podhuThallupadiThogai),
       variThogai: Value(variThogai),
       variTharavugal: Value(variTharavugal),
       mothaEdai: Value(mothaEdai),
@@ -3253,10 +3320,10 @@ class KooliPatrucheettuEntry extends DataClass
     );
   }
 
-  factory KooliPatrucheettuEntry.fromJson(Map<String, dynamic> json,
+  factory KooliPattiyalEntry.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return KooliPatrucheettuEntry(
+    return KooliPattiyalEntry(
       id: serializer.fromJson<int>(json['id']),
       niruvanamId: serializer.fromJson<int?>(json['niruvanamId']),
       patrucheettuEn: serializer.fromJson<String>(json['patrucheettuEn']),
@@ -3272,6 +3339,12 @@ class KooliPatrucheettuEntry extends DataClass
       tharavugal: serializer.fromJson<String>(json['tharavugal']),
       mothaThogai: serializer.fromJson<double>(json['mothaThogai']),
       thallupadi: serializer.fromJson<double>(json['thallupadi']),
+      podhuThallupadiMathippu:
+          serializer.fromJson<double>(json['podhuThallupadiMathippu']),
+      podhuThallupadiVagai:
+          serializer.fromJson<String>(json['podhuThallupadiVagai']),
+      podhuThallupadiThogai:
+          serializer.fromJson<double>(json['podhuThallupadiThogai']),
       variThogai: serializer.fromJson<double>(json['variThogai']),
       variTharavugal: serializer.fromJson<String>(json['variTharavugal']),
       mothaEdai: serializer.fromJson<double>(json['mothaEdai']),
@@ -3307,6 +3380,10 @@ class KooliPatrucheettuEntry extends DataClass
       'tharavugal': serializer.toJson<String>(tharavugal),
       'mothaThogai': serializer.toJson<double>(mothaThogai),
       'thallupadi': serializer.toJson<double>(thallupadi),
+      'podhuThallupadiMathippu':
+          serializer.toJson<double>(podhuThallupadiMathippu),
+      'podhuThallupadiVagai': serializer.toJson<String>(podhuThallupadiVagai),
+      'podhuThallupadiThogai': serializer.toJson<double>(podhuThallupadiThogai),
       'variThogai': serializer.toJson<double>(variThogai),
       'variTharavugal': serializer.toJson<String>(variTharavugal),
       'mothaEdai': serializer.toJson<double>(mothaEdai),
@@ -3325,7 +3402,7 @@ class KooliPatrucheettuEntry extends DataClass
     };
   }
 
-  KooliPatrucheettuEntry copyWith(
+  KooliPattiyalEntry copyWith(
           {int? id,
           Value<int?> niruvanamId = const Value.absent(),
           String? patrucheettuEn,
@@ -3339,6 +3416,9 @@ class KooliPatrucheettuEntry extends DataClass
           String? tharavugal,
           double? mothaThogai,
           double? thallupadi,
+          double? podhuThallupadiMathippu,
+          String? podhuThallupadiVagai,
+          double? podhuThallupadiThogai,
           double? variThogai,
           String? variTharavugal,
           double? mothaEdai,
@@ -3354,7 +3434,7 @@ class KooliPatrucheettuEntry extends DataClass
           DateTime? updatedAt,
           bool? isDeleted,
           Value<DateTime?> deletedAt = const Value.absent()}) =>
-      KooliPatrucheettuEntry(
+      KooliPattiyalEntry(
         id: id ?? this.id,
         niruvanamId: niruvanamId.present ? niruvanamId.value : this.niruvanamId,
         patrucheettuEn: patrucheettuEn ?? this.patrucheettuEn,
@@ -3368,6 +3448,11 @@ class KooliPatrucheettuEntry extends DataClass
         tharavugal: tharavugal ?? this.tharavugal,
         mothaThogai: mothaThogai ?? this.mothaThogai,
         thallupadi: thallupadi ?? this.thallupadi,
+        podhuThallupadiMathippu:
+            podhuThallupadiMathippu ?? this.podhuThallupadiMathippu,
+        podhuThallupadiVagai: podhuThallupadiVagai ?? this.podhuThallupadiVagai,
+        podhuThallupadiThogai:
+            podhuThallupadiThogai ?? this.podhuThallupadiThogai,
         variThogai: variThogai ?? this.variThogai,
         variTharavugal: variTharavugal ?? this.variTharavugal,
         mothaEdai: mothaEdai ?? this.mothaEdai,
@@ -3384,9 +3469,8 @@ class KooliPatrucheettuEntry extends DataClass
         isDeleted: isDeleted ?? this.isDeleted,
         deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
       );
-  KooliPatrucheettuEntry copyWithCompanion(
-      KooliPatrucheettuTableCompanion data) {
-    return KooliPatrucheettuEntry(
+  KooliPattiyalEntry copyWithCompanion(KooliPattiyalTableCompanion data) {
+    return KooliPattiyalEntry(
       id: data.id.present ? data.id.value : this.id,
       niruvanamId:
           data.niruvanamId.present ? data.niruvanamId.value : this.niruvanamId,
@@ -3415,6 +3499,15 @@ class KooliPatrucheettuEntry extends DataClass
           data.mothaThogai.present ? data.mothaThogai.value : this.mothaThogai,
       thallupadi:
           data.thallupadi.present ? data.thallupadi.value : this.thallupadi,
+      podhuThallupadiMathippu: data.podhuThallupadiMathippu.present
+          ? data.podhuThallupadiMathippu.value
+          : this.podhuThallupadiMathippu,
+      podhuThallupadiVagai: data.podhuThallupadiVagai.present
+          ? data.podhuThallupadiVagai.value
+          : this.podhuThallupadiVagai,
+      podhuThallupadiThogai: data.podhuThallupadiThogai.present
+          ? data.podhuThallupadiThogai.value
+          : this.podhuThallupadiThogai,
       variThogai:
           data.variThogai.present ? data.variThogai.value : this.variThogai,
       variTharavugal: data.variTharavugal.present
@@ -3453,7 +3546,7 @@ class KooliPatrucheettuEntry extends DataClass
 
   @override
   String toString() {
-    return (StringBuffer('KooliPatrucheettuEntry(')
+    return (StringBuffer('KooliPattiyalEntry(')
           ..write('id: $id, ')
           ..write('niruvanamId: $niruvanamId, ')
           ..write('patrucheettuEn: $patrucheettuEn, ')
@@ -3467,6 +3560,9 @@ class KooliPatrucheettuEntry extends DataClass
           ..write('tharavugal: $tharavugal, ')
           ..write('mothaThogai: $mothaThogai, ')
           ..write('thallupadi: $thallupadi, ')
+          ..write('podhuThallupadiMathippu: $podhuThallupadiMathippu, ')
+          ..write('podhuThallupadiVagai: $podhuThallupadiVagai, ')
+          ..write('podhuThallupadiThogai: $podhuThallupadiThogai, ')
           ..write('variThogai: $variThogai, ')
           ..write('variTharavugal: $variTharavugal, ')
           ..write('mothaEdai: $mothaEdai, ')
@@ -3501,6 +3597,9 @@ class KooliPatrucheettuEntry extends DataClass
         tharavugal,
         mothaThogai,
         thallupadi,
+        podhuThallupadiMathippu,
+        podhuThallupadiVagai,
+        podhuThallupadiThogai,
         variThogai,
         variTharavugal,
         mothaEdai,
@@ -3520,7 +3619,7 @@ class KooliPatrucheettuEntry extends DataClass
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is KooliPatrucheettuEntry &&
+      (other is KooliPattiyalEntry &&
           other.id == this.id &&
           other.niruvanamId == this.niruvanamId &&
           other.patrucheettuEn == this.patrucheettuEn &&
@@ -3534,6 +3633,9 @@ class KooliPatrucheettuEntry extends DataClass
           other.tharavugal == this.tharavugal &&
           other.mothaThogai == this.mothaThogai &&
           other.thallupadi == this.thallupadi &&
+          other.podhuThallupadiMathippu == this.podhuThallupadiMathippu &&
+          other.podhuThallupadiVagai == this.podhuThallupadiVagai &&
+          other.podhuThallupadiThogai == this.podhuThallupadiThogai &&
           other.variThogai == this.variThogai &&
           other.variTharavugal == this.variTharavugal &&
           other.mothaEdai == this.mothaEdai &&
@@ -3551,8 +3653,7 @@ class KooliPatrucheettuEntry extends DataClass
           other.deletedAt == this.deletedAt);
 }
 
-class KooliPatrucheettuTableCompanion
-    extends UpdateCompanion<KooliPatrucheettuEntry> {
+class KooliPattiyalTableCompanion extends UpdateCompanion<KooliPattiyalEntry> {
   final Value<int> id;
   final Value<int?> niruvanamId;
   final Value<String> patrucheettuEn;
@@ -3566,6 +3667,9 @@ class KooliPatrucheettuTableCompanion
   final Value<String> tharavugal;
   final Value<double> mothaThogai;
   final Value<double> thallupadi;
+  final Value<double> podhuThallupadiMathippu;
+  final Value<String> podhuThallupadiVagai;
+  final Value<double> podhuThallupadiThogai;
   final Value<double> variThogai;
   final Value<String> variTharavugal;
   final Value<double> mothaEdai;
@@ -3581,7 +3685,7 @@ class KooliPatrucheettuTableCompanion
   final Value<DateTime> updatedAt;
   final Value<bool> isDeleted;
   final Value<DateTime?> deletedAt;
-  const KooliPatrucheettuTableCompanion({
+  const KooliPattiyalTableCompanion({
     this.id = const Value.absent(),
     this.niruvanamId = const Value.absent(),
     this.patrucheettuEn = const Value.absent(),
@@ -3595,6 +3699,9 @@ class KooliPatrucheettuTableCompanion
     this.tharavugal = const Value.absent(),
     this.mothaThogai = const Value.absent(),
     this.thallupadi = const Value.absent(),
+    this.podhuThallupadiMathippu = const Value.absent(),
+    this.podhuThallupadiVagai = const Value.absent(),
+    this.podhuThallupadiThogai = const Value.absent(),
     this.variThogai = const Value.absent(),
     this.variTharavugal = const Value.absent(),
     this.mothaEdai = const Value.absent(),
@@ -3611,7 +3718,7 @@ class KooliPatrucheettuTableCompanion
     this.isDeleted = const Value.absent(),
     this.deletedAt = const Value.absent(),
   });
-  KooliPatrucheettuTableCompanion.insert({
+  KooliPattiyalTableCompanion.insert({
     this.id = const Value.absent(),
     this.niruvanamId = const Value.absent(),
     required String patrucheettuEn,
@@ -3625,6 +3732,9 @@ class KooliPatrucheettuTableCompanion
     this.tharavugal = const Value.absent(),
     this.mothaThogai = const Value.absent(),
     this.thallupadi = const Value.absent(),
+    this.podhuThallupadiMathippu = const Value.absent(),
+    this.podhuThallupadiVagai = const Value.absent(),
+    this.podhuThallupadiThogai = const Value.absent(),
     this.variThogai = const Value.absent(),
     this.variTharavugal = const Value.absent(),
     this.mothaEdai = const Value.absent(),
@@ -3642,7 +3752,7 @@ class KooliPatrucheettuTableCompanion
     this.deletedAt = const Value.absent(),
   })  : patrucheettuEn = Value(patrucheettuEn),
         finYear = Value(finYear);
-  static Insertable<KooliPatrucheettuEntry> custom({
+  static Insertable<KooliPattiyalEntry> custom({
     Expression<int>? id,
     Expression<int>? niruvanamId,
     Expression<String>? patrucheettuEn,
@@ -3656,6 +3766,9 @@ class KooliPatrucheettuTableCompanion
     Expression<String>? tharavugal,
     Expression<double>? mothaThogai,
     Expression<double>? thallupadi,
+    Expression<double>? podhuThallupadiMathippu,
+    Expression<String>? podhuThallupadiVagai,
+    Expression<double>? podhuThallupadiThogai,
     Expression<double>? variThogai,
     Expression<String>? variTharavugal,
     Expression<double>? mothaEdai,
@@ -3686,6 +3799,12 @@ class KooliPatrucheettuTableCompanion
       if (tharavugal != null) 'tharavugal': tharavugal,
       if (mothaThogai != null) 'motha_thogai': mothaThogai,
       if (thallupadi != null) 'thallupadi': thallupadi,
+      if (podhuThallupadiMathippu != null)
+        'podhu_thallupadi_mathippu': podhuThallupadiMathippu,
+      if (podhuThallupadiVagai != null)
+        'podhu_thallupadi_vagai': podhuThallupadiVagai,
+      if (podhuThallupadiThogai != null)
+        'podhu_thallupadi_thogai': podhuThallupadiThogai,
       if (variThogai != null) 'vari_thogai': variThogai,
       if (variTharavugal != null) 'vari_tharavugal': variTharavugal,
       if (mothaEdai != null) 'motha_edai': mothaEdai,
@@ -3704,7 +3823,7 @@ class KooliPatrucheettuTableCompanion
     });
   }
 
-  KooliPatrucheettuTableCompanion copyWith(
+  KooliPattiyalTableCompanion copyWith(
       {Value<int>? id,
       Value<int?>? niruvanamId,
       Value<String>? patrucheettuEn,
@@ -3718,6 +3837,9 @@ class KooliPatrucheettuTableCompanion
       Value<String>? tharavugal,
       Value<double>? mothaThogai,
       Value<double>? thallupadi,
+      Value<double>? podhuThallupadiMathippu,
+      Value<String>? podhuThallupadiVagai,
+      Value<double>? podhuThallupadiThogai,
       Value<double>? variThogai,
       Value<String>? variTharavugal,
       Value<double>? mothaEdai,
@@ -3733,7 +3855,7 @@ class KooliPatrucheettuTableCompanion
       Value<DateTime>? updatedAt,
       Value<bool>? isDeleted,
       Value<DateTime?>? deletedAt}) {
-    return KooliPatrucheettuTableCompanion(
+    return KooliPattiyalTableCompanion(
       id: id ?? this.id,
       niruvanamId: niruvanamId ?? this.niruvanamId,
       patrucheettuEn: patrucheettuEn ?? this.patrucheettuEn,
@@ -3747,6 +3869,11 @@ class KooliPatrucheettuTableCompanion
       tharavugal: tharavugal ?? this.tharavugal,
       mothaThogai: mothaThogai ?? this.mothaThogai,
       thallupadi: thallupadi ?? this.thallupadi,
+      podhuThallupadiMathippu:
+          podhuThallupadiMathippu ?? this.podhuThallupadiMathippu,
+      podhuThallupadiVagai: podhuThallupadiVagai ?? this.podhuThallupadiVagai,
+      podhuThallupadiThogai:
+          podhuThallupadiThogai ?? this.podhuThallupadiThogai,
       variThogai: variThogai ?? this.variThogai,
       variTharavugal: variTharavugal ?? this.variTharavugal,
       mothaEdai: mothaEdai ?? this.mothaEdai,
@@ -3790,12 +3917,12 @@ class KooliPatrucheettuTableCompanion
       map['vaangunar_id'] = Variable<int>(vaangunarId.value);
     }
     if (vaangunarPeyar.present) {
-      map['vaangunar_peyar'] = Variable<String>($KooliPatrucheettuTableTable
+      map['vaangunar_peyar'] = Variable<String>($KooliPattiyalTableTable
           .$convertervaangunarPeyar
           .toSql(vaangunarPeyar.value));
     }
     if (vaangunarMunvari.present) {
-      map['vaangunar_munvari'] = Variable<String>($KooliPatrucheettuTableTable
+      map['vaangunar_munvari'] = Variable<String>($KooliPattiyalTableTable
           .$convertervaangunarMunvari
           .toSql(vaangunarMunvari.value));
     }
@@ -3810,6 +3937,18 @@ class KooliPatrucheettuTableCompanion
     }
     if (thallupadi.present) {
       map['thallupadi'] = Variable<double>(thallupadi.value);
+    }
+    if (podhuThallupadiMathippu.present) {
+      map['podhu_thallupadi_mathippu'] =
+          Variable<double>(podhuThallupadiMathippu.value);
+    }
+    if (podhuThallupadiVagai.present) {
+      map['podhu_thallupadi_vagai'] =
+          Variable<String>(podhuThallupadiVagai.value);
+    }
+    if (podhuThallupadiThogai.present) {
+      map['podhu_thallupadi_thogai'] =
+          Variable<double>(podhuThallupadiThogai.value);
     }
     if (variThogai.present) {
       map['vari_thogai'] = Variable<double>(variThogai.value);
@@ -3861,7 +4000,7 @@ class KooliPatrucheettuTableCompanion
 
   @override
   String toString() {
-    return (StringBuffer('KooliPatrucheettuTableCompanion(')
+    return (StringBuffer('KooliPattiyalTableCompanion(')
           ..write('id: $id, ')
           ..write('niruvanamId: $niruvanamId, ')
           ..write('patrucheettuEn: $patrucheettuEn, ')
@@ -3875,6 +4014,9 @@ class KooliPatrucheettuTableCompanion
           ..write('tharavugal: $tharavugal, ')
           ..write('mothaThogai: $mothaThogai, ')
           ..write('thallupadi: $thallupadi, ')
+          ..write('podhuThallupadiMathippu: $podhuThallupadiMathippu, ')
+          ..write('podhuThallupadiVagai: $podhuThallupadiVagai, ')
+          ..write('podhuThallupadiThogai: $podhuThallupadiThogai, ')
           ..write('variThogai: $variThogai, ')
           ..write('variTharavugal: $variTharavugal, ')
           ..write('mothaEdai: $mothaEdai, ')
@@ -5028,8 +5170,8 @@ abstract class _$KooliDatabase extends GeneratedDatabase {
       $KooliVaangunarTableTable(this);
   late final $KooliPorulTableTable kooliPorulTable =
       $KooliPorulTableTable(this);
-  late final $KooliPatrucheettuTableTable kooliPatrucheettuTable =
-      $KooliPatrucheettuTableTable(this);
+  late final $KooliPattiyalTableTable kooliPattiyalTable =
+      $KooliPattiyalTableTable(this);
   late final $KooliPatrugalTableTable kooliPatrugalTable =
       $KooliPatrugalTableTable(this);
   late final $KooliPatruPattiyalTableTable kooliPatruPattiyalTable =
@@ -5042,7 +5184,7 @@ abstract class _$KooliDatabase extends GeneratedDatabase {
         kooliNiruvanaTharavugalTable,
         kooliVaangunarTable,
         kooliPorulTable,
-        kooliPatrucheettuTable,
+        kooliPattiyalTable,
         kooliPatrugalTable,
         kooliPatruPattiyalTable
       ];
@@ -6244,8 +6386,8 @@ typedef $$KooliPorulTableTableProcessedTableManager = ProcessedTableManager<
     ),
     KooliPorulEntry,
     PrefetchHooks Function()>;
-typedef $$KooliPatrucheettuTableTableCreateCompanionBuilder
-    = KooliPatrucheettuTableCompanion Function({
+typedef $$KooliPattiyalTableTableCreateCompanionBuilder
+    = KooliPattiyalTableCompanion Function({
   Value<int> id,
   Value<int?> niruvanamId,
   required String patrucheettuEn,
@@ -6259,6 +6401,9 @@ typedef $$KooliPatrucheettuTableTableCreateCompanionBuilder
   Value<String> tharavugal,
   Value<double> mothaThogai,
   Value<double> thallupadi,
+  Value<double> podhuThallupadiMathippu,
+  Value<String> podhuThallupadiVagai,
+  Value<double> podhuThallupadiThogai,
   Value<double> variThogai,
   Value<String> variTharavugal,
   Value<double> mothaEdai,
@@ -6275,8 +6420,8 @@ typedef $$KooliPatrucheettuTableTableCreateCompanionBuilder
   Value<bool> isDeleted,
   Value<DateTime?> deletedAt,
 });
-typedef $$KooliPatrucheettuTableTableUpdateCompanionBuilder
-    = KooliPatrucheettuTableCompanion Function({
+typedef $$KooliPattiyalTableTableUpdateCompanionBuilder
+    = KooliPattiyalTableCompanion Function({
   Value<int> id,
   Value<int?> niruvanamId,
   Value<String> patrucheettuEn,
@@ -6290,6 +6435,9 @@ typedef $$KooliPatrucheettuTableTableUpdateCompanionBuilder
   Value<String> tharavugal,
   Value<double> mothaThogai,
   Value<double> thallupadi,
+  Value<double> podhuThallupadiMathippu,
+  Value<String> podhuThallupadiVagai,
+  Value<double> podhuThallupadiThogai,
   Value<double> variThogai,
   Value<String> variTharavugal,
   Value<double> mothaEdai,
@@ -6307,9 +6455,9 @@ typedef $$KooliPatrucheettuTableTableUpdateCompanionBuilder
   Value<DateTime?> deletedAt,
 });
 
-class $$KooliPatrucheettuTableTableFilterComposer
-    extends Composer<_$KooliDatabase, $KooliPatrucheettuTableTable> {
-  $$KooliPatrucheettuTableTableFilterComposer({
+class $$KooliPattiyalTableTableFilterComposer
+    extends Composer<_$KooliDatabase, $KooliPattiyalTableTable> {
+  $$KooliPattiyalTableTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -6362,6 +6510,18 @@ class $$KooliPatrucheettuTableTableFilterComposer
   ColumnFilters<double> get thallupadi => $composableBuilder(
       column: $table.thallupadi, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<double> get podhuThallupadiMathippu => $composableBuilder(
+      column: $table.podhuThallupadiMathippu,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get podhuThallupadiVagai => $composableBuilder(
+      column: $table.podhuThallupadiVagai,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get podhuThallupadiThogai => $composableBuilder(
+      column: $table.podhuThallupadiThogai,
+      builder: (column) => ColumnFilters(column));
+
   ColumnFilters<double> get variThogai => $composableBuilder(
       column: $table.variThogai, builder: (column) => ColumnFilters(column));
 
@@ -6413,9 +6573,9 @@ class $$KooliPatrucheettuTableTableFilterComposer
       column: $table.deletedAt, builder: (column) => ColumnFilters(column));
 }
 
-class $$KooliPatrucheettuTableTableOrderingComposer
-    extends Composer<_$KooliDatabase, $KooliPatrucheettuTableTable> {
-  $$KooliPatrucheettuTableTableOrderingComposer({
+class $$KooliPattiyalTableTableOrderingComposer
+    extends Composer<_$KooliDatabase, $KooliPattiyalTableTable> {
+  $$KooliPattiyalTableTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -6465,6 +6625,18 @@ class $$KooliPatrucheettuTableTableOrderingComposer
 
   ColumnOrderings<double> get thallupadi => $composableBuilder(
       column: $table.thallupadi, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get podhuThallupadiMathippu => $composableBuilder(
+      column: $table.podhuThallupadiMathippu,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get podhuThallupadiVagai => $composableBuilder(
+      column: $table.podhuThallupadiVagai,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get podhuThallupadiThogai => $composableBuilder(
+      column: $table.podhuThallupadiThogai,
+      builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<double> get variThogai => $composableBuilder(
       column: $table.variThogai, builder: (column) => ColumnOrderings(column));
@@ -6520,9 +6692,9 @@ class $$KooliPatrucheettuTableTableOrderingComposer
       column: $table.deletedAt, builder: (column) => ColumnOrderings(column));
 }
 
-class $$KooliPatrucheettuTableTableAnnotationComposer
-    extends Composer<_$KooliDatabase, $KooliPatrucheettuTableTable> {
-  $$KooliPatrucheettuTableTableAnnotationComposer({
+class $$KooliPattiyalTableTableAnnotationComposer
+    extends Composer<_$KooliDatabase, $KooliPattiyalTableTable> {
+  $$KooliPattiyalTableTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -6570,6 +6742,15 @@ class $$KooliPatrucheettuTableTableAnnotationComposer
   GeneratedColumn<double> get thallupadi => $composableBuilder(
       column: $table.thallupadi, builder: (column) => column);
 
+  GeneratedColumn<double> get podhuThallupadiMathippu => $composableBuilder(
+      column: $table.podhuThallupadiMathippu, builder: (column) => column);
+
+  GeneratedColumn<String> get podhuThallupadiVagai => $composableBuilder(
+      column: $table.podhuThallupadiVagai, builder: (column) => column);
+
+  GeneratedColumn<double> get podhuThallupadiThogai => $composableBuilder(
+      column: $table.podhuThallupadiThogai, builder: (column) => column);
+
   GeneratedColumn<double> get variThogai => $composableBuilder(
       column: $table.variThogai, builder: (column) => column);
 
@@ -6616,35 +6797,33 @@ class $$KooliPatrucheettuTableTableAnnotationComposer
       $composableBuilder(column: $table.deletedAt, builder: (column) => column);
 }
 
-class $$KooliPatrucheettuTableTableTableManager extends RootTableManager<
+class $$KooliPattiyalTableTableTableManager extends RootTableManager<
     _$KooliDatabase,
-    $KooliPatrucheettuTableTable,
-    KooliPatrucheettuEntry,
-    $$KooliPatrucheettuTableTableFilterComposer,
-    $$KooliPatrucheettuTableTableOrderingComposer,
-    $$KooliPatrucheettuTableTableAnnotationComposer,
-    $$KooliPatrucheettuTableTableCreateCompanionBuilder,
-    $$KooliPatrucheettuTableTableUpdateCompanionBuilder,
+    $KooliPattiyalTableTable,
+    KooliPattiyalEntry,
+    $$KooliPattiyalTableTableFilterComposer,
+    $$KooliPattiyalTableTableOrderingComposer,
+    $$KooliPattiyalTableTableAnnotationComposer,
+    $$KooliPattiyalTableTableCreateCompanionBuilder,
+    $$KooliPattiyalTableTableUpdateCompanionBuilder,
     (
-      KooliPatrucheettuEntry,
-      BaseReferences<_$KooliDatabase, $KooliPatrucheettuTableTable,
-          KooliPatrucheettuEntry>
+      KooliPattiyalEntry,
+      BaseReferences<_$KooliDatabase, $KooliPattiyalTableTable,
+          KooliPattiyalEntry>
     ),
-    KooliPatrucheettuEntry,
+    KooliPattiyalEntry,
     PrefetchHooks Function()> {
-  $$KooliPatrucheettuTableTableTableManager(
-      _$KooliDatabase db, $KooliPatrucheettuTableTable table)
+  $$KooliPattiyalTableTableTableManager(
+      _$KooliDatabase db, $KooliPattiyalTableTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$KooliPatrucheettuTableTableFilterComposer(
-                  $db: db, $table: table),
+              $$KooliPattiyalTableTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$KooliPatrucheettuTableTableOrderingComposer(
-                  $db: db, $table: table),
+              $$KooliPattiyalTableTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$KooliPatrucheettuTableTableAnnotationComposer(
+              $$KooliPattiyalTableTableAnnotationComposer(
                   $db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
@@ -6660,6 +6839,9 @@ class $$KooliPatrucheettuTableTableTableManager extends RootTableManager<
             Value<String> tharavugal = const Value.absent(),
             Value<double> mothaThogai = const Value.absent(),
             Value<double> thallupadi = const Value.absent(),
+            Value<double> podhuThallupadiMathippu = const Value.absent(),
+            Value<String> podhuThallupadiVagai = const Value.absent(),
+            Value<double> podhuThallupadiThogai = const Value.absent(),
             Value<double> variThogai = const Value.absent(),
             Value<String> variTharavugal = const Value.absent(),
             Value<double> mothaEdai = const Value.absent(),
@@ -6676,7 +6858,7 @@ class $$KooliPatrucheettuTableTableTableManager extends RootTableManager<
             Value<bool> isDeleted = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
           }) =>
-              KooliPatrucheettuTableCompanion(
+              KooliPattiyalTableCompanion(
             id: id,
             niruvanamId: niruvanamId,
             patrucheettuEn: patrucheettuEn,
@@ -6690,6 +6872,9 @@ class $$KooliPatrucheettuTableTableTableManager extends RootTableManager<
             tharavugal: tharavugal,
             mothaThogai: mothaThogai,
             thallupadi: thallupadi,
+            podhuThallupadiMathippu: podhuThallupadiMathippu,
+            podhuThallupadiVagai: podhuThallupadiVagai,
+            podhuThallupadiThogai: podhuThallupadiThogai,
             variThogai: variThogai,
             variTharavugal: variTharavugal,
             mothaEdai: mothaEdai,
@@ -6720,6 +6905,9 @@ class $$KooliPatrucheettuTableTableTableManager extends RootTableManager<
             Value<String> tharavugal = const Value.absent(),
             Value<double> mothaThogai = const Value.absent(),
             Value<double> thallupadi = const Value.absent(),
+            Value<double> podhuThallupadiMathippu = const Value.absent(),
+            Value<String> podhuThallupadiVagai = const Value.absent(),
+            Value<double> podhuThallupadiThogai = const Value.absent(),
             Value<double> variThogai = const Value.absent(),
             Value<String> variTharavugal = const Value.absent(),
             Value<double> mothaEdai = const Value.absent(),
@@ -6736,7 +6924,7 @@ class $$KooliPatrucheettuTableTableTableManager extends RootTableManager<
             Value<bool> isDeleted = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
           }) =>
-              KooliPatrucheettuTableCompanion.insert(
+              KooliPattiyalTableCompanion.insert(
             id: id,
             niruvanamId: niruvanamId,
             patrucheettuEn: patrucheettuEn,
@@ -6750,6 +6938,9 @@ class $$KooliPatrucheettuTableTableTableManager extends RootTableManager<
             tharavugal: tharavugal,
             mothaThogai: mothaThogai,
             thallupadi: thallupadi,
+            podhuThallupadiMathippu: podhuThallupadiMathippu,
+            podhuThallupadiVagai: podhuThallupadiVagai,
+            podhuThallupadiThogai: podhuThallupadiThogai,
             variThogai: variThogai,
             variTharavugal: variTharavugal,
             mothaEdai: mothaEdai,
@@ -6773,23 +6964,22 @@ class $$KooliPatrucheettuTableTableTableManager extends RootTableManager<
         ));
 }
 
-typedef $$KooliPatrucheettuTableTableProcessedTableManager
-    = ProcessedTableManager<
-        _$KooliDatabase,
-        $KooliPatrucheettuTableTable,
-        KooliPatrucheettuEntry,
-        $$KooliPatrucheettuTableTableFilterComposer,
-        $$KooliPatrucheettuTableTableOrderingComposer,
-        $$KooliPatrucheettuTableTableAnnotationComposer,
-        $$KooliPatrucheettuTableTableCreateCompanionBuilder,
-        $$KooliPatrucheettuTableTableUpdateCompanionBuilder,
-        (
-          KooliPatrucheettuEntry,
-          BaseReferences<_$KooliDatabase, $KooliPatrucheettuTableTable,
-              KooliPatrucheettuEntry>
-        ),
-        KooliPatrucheettuEntry,
-        PrefetchHooks Function()>;
+typedef $$KooliPattiyalTableTableProcessedTableManager = ProcessedTableManager<
+    _$KooliDatabase,
+    $KooliPattiyalTableTable,
+    KooliPattiyalEntry,
+    $$KooliPattiyalTableTableFilterComposer,
+    $$KooliPattiyalTableTableOrderingComposer,
+    $$KooliPattiyalTableTableAnnotationComposer,
+    $$KooliPattiyalTableTableCreateCompanionBuilder,
+    $$KooliPattiyalTableTableUpdateCompanionBuilder,
+    (
+      KooliPattiyalEntry,
+      BaseReferences<_$KooliDatabase, $KooliPattiyalTableTable,
+          KooliPattiyalEntry>
+    ),
+    KooliPattiyalEntry,
+    PrefetchHooks Function()>;
 typedef $$KooliPatrugalTableTableCreateCompanionBuilder
     = KooliPatrugalTableCompanion Function({
   Value<int> id,
@@ -7342,9 +7532,8 @@ class $KooliDatabaseManager {
       $$KooliVaangunarTableTableTableManager(_db, _db.kooliVaangunarTable);
   $$KooliPorulTableTableTableManager get kooliPorulTable =>
       $$KooliPorulTableTableTableManager(_db, _db.kooliPorulTable);
-  $$KooliPatrucheettuTableTableTableManager get kooliPatrucheettuTable =>
-      $$KooliPatrucheettuTableTableTableManager(
-          _db, _db.kooliPatrucheettuTable);
+  $$KooliPattiyalTableTableTableManager get kooliPattiyalTable =>
+      $$KooliPattiyalTableTableTableManager(_db, _db.kooliPattiyalTable);
   $$KooliPatrugalTableTableTableManager get kooliPatrugalTable =>
       $$KooliPatrugalTableTableTableManager(_db, _db.kooliPatrugalTable);
   $$KooliPatruPattiyalTableTableTableManager get kooliPatruPattiyalTable =>

@@ -30,7 +30,7 @@ class PattuPatruKalanjiyam implements PatruKalanjiyam {
     );
   }
 
-  PattiyalTharavuru _mapPattiyalToDomain(PattuPatrucheettuEntry entry) {
+  PattiyalTharavuru _mapPattiyalToDomain(PattuPattiyalEntry entry) {
     return PattiyalTharavuru(
       id: entry.id,
       niruvanamId: entry.niruvanamId,
@@ -45,6 +45,9 @@ class PattuPatruKalanjiyam implements PatruKalanjiyam {
       tharavugal: entry.tharavugal,
       mothaThogai: entry.mothaThogai,
       thallupadi: entry.thallupadi,
+      podhuThallupadiMathippu: entry.podhuThallupadiMathippu,
+      podhuThallupadiVagai: entry.podhuThallupadiVagai,
+      podhuThallupadiThogai: entry.podhuThallupadiThogai,
       variThogai: entry.variThogai,
       variTharavugal: entry.variTharavugal,
       mothaEdai: 0.0,
@@ -220,7 +223,7 @@ class PattuPatruKalanjiyam implements PatruKalanjiyam {
 
   @override
   Stream<List<PattiyalTharavuru>> watchUnpaidInvoices() {
-    return (_db.select(_db.pattuPatrucheettuTable)
+    return (_db.select(_db.pattuPattiyalTable)
           ..where((t) => t.isDeleted.equals(false))
           ..orderBy([
             (t) => OrderingTerm.desc(t.pattiyalNaal),
@@ -231,7 +234,7 @@ class PattuPatruKalanjiyam implements PatruKalanjiyam {
 
   @override
   Future<double> getPendingBalance(int pattiyalId) async {
-    final invoice = await (_db.select(_db.pattuPatrucheettuTable)
+    final invoice = await (_db.select(_db.pattuPattiyalTable)
           ..where((t) => t.id.equals(pattiyalId)))
         .getSingleOrNull();
     if (invoice == null) return 0.0;
@@ -315,7 +318,7 @@ class PattuPatruKalanjiyam implements PatruKalanjiyam {
     int? excludePatruId,
   }) async {
     for (final link in links) {
-      final invoice = await (_db.select(_db.pattuPatrucheettuTable)
+      final invoice = await (_db.select(_db.pattuPattiyalTable)
             ..where((t) => t.id.equals(link.pattiyalId)))
           .getSingleOrNull();
       if (invoice == null) {

@@ -1,4 +1,4 @@
-import 'package:drift/drift.dart';
+﻿import 'package:drift/drift.dart';
 import '../../../adippadai/tharavuthalam/pattu_tharavuthalam.dart';
 import '../../../adippadai/tharavuru/uruvugal.dart';
 import 'pattiyal_kalanjiyam.dart';
@@ -15,7 +15,7 @@ class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   PattuPattiyalKalanjiyam(this._db);
 
-  PattiyalTharavuru _mapToDomain(PattuPatrucheettuEntry entry) {
+  PattiyalTharavuru _mapToDomain(PattuPattiyalEntry entry) {
     return PattiyalTharavuru(
       id: entry.id,
       niruvanamId: entry.niruvanamId,
@@ -32,6 +32,9 @@ class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
       thallupadi: entry.thallupadi,
       variThogai: entry.variThogai,
       variTharavugal: entry.variTharavugal,
+      podhuThallupadiMathippu: entry.podhuThallupadiMathippu,
+      podhuThallupadiVagai: entry.podhuThallupadiVagai,
+      podhuThallupadiThogai: entry.podhuThallupadiThogai,
       // Default / empty values for Kooli-specific fields since Pattu doesn't have them
       mothaEdai: 0.0,
       setharamGrams: 0.0,
@@ -51,8 +54,8 @@ class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
     );
   }
 
-  PattuPatrucheettuTableCompanion _mapToCompanion(PattiyalTharavuru tharavuru) {
-    return PattuPatrucheettuTableCompanion(
+  PattuPattiyalTableCompanion _mapToCompanion(PattiyalTharavuru tharavuru) {
+    return PattuPattiyalTableCompanion(
       niruvanamId: Value(tharavuru.niruvanamId),
       patrucheettuEn: Value(tharavuru.patrucheettuEn),
       finYear: Value(tharavuru.finYear),
@@ -65,6 +68,9 @@ class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
       tharavugal: Value(tharavuru.tharavugal),
       mothaThogai: Value(tharavuru.mothaThogai),
       thallupadi: Value(tharavuru.thallupadi),
+      podhuThallupadiMathippu: Value(tharavuru.podhuThallupadiMathippu),
+      podhuThallupadiVagai: Value(tharavuru.podhuThallupadiVagai),
+      podhuThallupadiThogai: Value(tharavuru.podhuThallupadiThogai),
       variThogai: Value(tharavuru.variThogai),
       variTharavugal: Value(tharavuru.variTharavugal),
       sonthaViruppangal: Value(tharavuru.sonthaViruppangal),
@@ -76,7 +82,7 @@ class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Stream<List<PattiyalTharavuru>> watchPattiyalgal() {
-    return (_db.select(_db.pattuPatrucheettuTable)
+    return (_db.select(_db.pattuPattiyalTable)
           ..where((t) => t.isDeleted.equals(false))
           ..orderBy([
             (t) => OrderingTerm.desc(t.pattiyalNaal),
@@ -88,7 +94,7 @@ class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Future<List<PattiyalTharavuru>> getPattiyalgal() async {
-    final list = await (_db.select(_db.pattuPatrucheettuTable)
+    final list = await (_db.select(_db.pattuPattiyalTable)
           ..where((t) => t.isDeleted.equals(false))
           ..orderBy([
             (t) => OrderingTerm.desc(t.pattiyalNaal),
@@ -100,7 +106,7 @@ class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Future<PattiyalTharavuru?> getById(int id) async {
-    final entry = await (_db.select(_db.pattuPatrucheettuTable)
+    final entry = await (_db.select(_db.pattuPattiyalTable)
           ..where((t) => t.id.equals(id))
           ..where((t) => t.isDeleted.equals(false)))
         .getSingleOrNull();
@@ -109,19 +115,19 @@ class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Future<int> createPattiyal(PattiyalTharavuru tharavuru) async {
-    return _db.into(_db.pattuPatrucheettuTable).insert(_mapToCompanion(tharavuru));
+    return _db.into(_db.pattuPattiyalTable).insert(_mapToCompanion(tharavuru));
   }
 
   @override
   Future<void> updatePattiyal(int id, PattiyalTharavuru tharavuru) async {
-    await (_db.update(_db.pattuPatrucheettuTable)..where((t) => t.id.equals(id)))
+    await (_db.update(_db.pattuPattiyalTable)..where((t) => t.id.equals(id)))
         .write(_mapToCompanion(tharavuru));
   }
 
   @override
   Future<void> deletePattiyal(int id) async {
-    await (_db.update(_db.pattuPatrucheettuTable)..where((t) => t.id.equals(id))).write(
-      PattuPatrucheettuTableCompanion(
+    await (_db.update(_db.pattuPattiyalTable)..where((t) => t.id.equals(id))).write(
+      PattuPattiyalTableCompanion(
         isDeleted: const Value(true),
         deletedAt: Value(DateTime.now()),
       ),
@@ -130,8 +136,8 @@ class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Future<void> bulkDeletePattiyalgal(List<int> ids) async {
-    await (_db.update(_db.pattuPatrucheettuTable)..where((t) => t.id.isIn(ids))).write(
-      PattuPatrucheettuTableCompanion(
+    await (_db.update(_db.pattuPattiyalTable)..where((t) => t.id.isIn(ids))).write(
+      PattuPattiyalTableCompanion(
         isDeleted: const Value(true),
         deletedAt: Value(DateTime.now()),
       ),
@@ -140,8 +146,8 @@ class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Future<void> restorePattiyal(int id) async {
-    await (_db.update(_db.pattuPatrucheettuTable)..where((t) => t.id.equals(id))).write(
-      const PattuPatrucheettuTableCompanion(
+    await (_db.update(_db.pattuPattiyalTable)..where((t) => t.id.equals(id))).write(
+      const PattuPattiyalTableCompanion(
         isDeleted: Value(false),
         deletedAt: Value(null),
       ),
@@ -150,12 +156,12 @@ class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Future<void> deleteAllPattiyalgal() async {
-    await _db.delete(_db.pattuPatrucheettuTable).go();
+    await _db.delete(_db.pattuPattiyalTable).go();
   }
 
   @override
   Stream<List<PattiyalTharavuru>> watchDeletedPattiyalgal() {
-    return (_db.select(_db.pattuPatrucheettuTable)
+    return (_db.select(_db.pattuPattiyalTable)
           ..where((t) => t.isDeleted.equals(true))
           ..orderBy([(t) => OrderingTerm.desc(t.deletedAt)]))
         .watch()
@@ -164,7 +170,7 @@ class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Future<List<PattiyalTharavuru>> getDeletedPattiyalgal() async {
-    final list = await (_db.select(_db.pattuPatrucheettuTable)
+    final list = await (_db.select(_db.pattuPattiyalTable)
           ..where((t) => t.isDeleted.equals(true))
           ..orderBy([(t) => OrderingTerm.desc(t.deletedAt)]))
         .get();
@@ -174,7 +180,7 @@ class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
   @override
   Future<int> purgeExpiredPattiyalgal({int days = 30}) async {
     final cutoff = DateTime.now().subtract(Duration(days: days));
-    return (_db.delete(_db.pattuPatrucheettuTable)
+    return (_db.delete(_db.pattuPattiyalTable)
           ..where((t) => t.isDeleted.equals(true))
           ..where((t) => t.deletedAt.isSmallerOrEqualValue(cutoff)))
         .go();
@@ -182,18 +188,18 @@ class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
 
   @override
   Future<int> getNextVanakkam(int? niruvanamId, int finYear) async {
-    final query = _db.selectOnly(_db.pattuPatrucheettuTable)
-      ..addColumns([_db.pattuPatrucheettuTable.vanakkam.max()])
-      ..where(_db.pattuPatrucheettuTable.finYear.equals(finYear));
+    final query = _db.selectOnly(_db.pattuPattiyalTable)
+      ..addColumns([_db.pattuPattiyalTable.vanakkam.max()])
+      ..where(_db.pattuPattiyalTable.finYear.equals(finYear));
 
     if (niruvanamId != null) {
-      query.where(_db.pattuPatrucheettuTable.niruvanamId.equals(niruvanamId));
+      query.where(_db.pattuPattiyalTable.niruvanamId.equals(niruvanamId));
     } else {
-      query.where(_db.pattuPatrucheettuTable.niruvanamId.isNull());
+      query.where(_db.pattuPattiyalTable.niruvanamId.isNull());
     }
 
     final result = await query.getSingle();
-    final maxVal = result.read(_db.pattuPatrucheettuTable.vanakkam.max());
+    final maxVal = result.read(_db.pattuPattiyalTable.vanakkam.max());
     return (maxVal ?? 0) + 1;
   }
 
@@ -212,7 +218,7 @@ class PattuPattiyalKalanjiyam implements PattiyalKalanjiyam {
     String pattiyalEn, {
     int? excludeId,
   }) async {
-    final query = _db.select(_db.pattuPatrucheettuTable)
+    final query = _db.select(_db.pattuPattiyalTable)
       ..where((t) => t.finYear.equals(finYear))
       ..where((t) => t.patrucheettuEn.upper().equals(pattiyalEn.toUpperCase()));
 

@@ -157,8 +157,8 @@ class MigrationUdhavi {
     
     for (final entry in entries) {
       if (entry.seyaliVagai == 'silk') {
-        await pattuDb.into(pattuDb.pattuPatrucheettuTable).insert(
-          PattuPatrucheettuTableCompanion.insert(
+        await pattuDb.into(pattuDb.pattuPattiyalTable).insert(
+          PattuPattiyalTableCompanion.insert(
             id: Value(entry.id),
             niruvanamId: Value(entry.niruvanamId),
             patrucheettuEn: entry.patrucheettuEn,
@@ -185,8 +185,8 @@ class MigrationUdhavi {
           mode: InsertMode.insertOrIgnore,
         );
       } else if (entry.seyaliVagai == 'coolie') {
-        await kooliDb.into(kooliDb.kooliPatrucheettuTable).insert(
-          KooliPatrucheettuTableCompanion.insert(
+        await kooliDb.into(kooliDb.kooliPattiyalTable).insert(
+          KooliPattiyalTableCompanion.insert(
             id: Value(entry.id),
             niruvanamId: Value(entry.niruvanamId),
             patrucheettuEn: entry.patrucheettuEn,

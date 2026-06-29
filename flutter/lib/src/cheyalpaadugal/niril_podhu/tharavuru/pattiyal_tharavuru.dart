@@ -57,7 +57,7 @@ class PattuUrupadi {
     this.vilai = 0,
     this.variVizhukkaadu = 0,
     this.thallupadi = 0,
-    this.thallupadiVagai = 'amount',
+    this.thallupadiVagai = '%',
   });
 
   /// அடிப்படைத் தொகை — Row amount before tax/discount (quantity × rate).
@@ -67,7 +67,7 @@ class PattuUrupadi {
   ///
   /// When [thallupadiVagai] is `'percentage'`, computes discount as a
   /// percentage of [adippadaiThogai]. Otherwise returns flat [thallupadi].
-  double get thallupadiThogai => thallupadiVagai == 'percentage'
+  double get thallupadiThogai => thallupadiVagai == '%'
       ? adippadaiThogai * (thallupadi / 100)
       : thallupadi;
 
@@ -111,6 +111,7 @@ class PattuUrupadi {
       'variVizhukkaadu': variVizhukkaadu,
       'thallupadi': thallupadi,
       'thallupadiVagai': thallupadiVagai,
+      'thallupadiThogai': thallupadiThogai,
     };
   }
 
@@ -126,7 +127,7 @@ class PattuUrupadi {
       vilai: (json['vilai'] as num?)?.toDouble() ?? 0,
       variVizhukkaadu: (json['variVizhukkaadu'] as num?)?.toDouble() ?? 0,
       thallupadi: (json['thallupadi'] as num?)?.toDouble() ?? 0,
-      thallupadiVagai: (json['thallupadiVagai'] as String?) ?? 'amount',
+      thallupadiVagai: (json['thallupadiVagai'] as String?) ?? '%',
     );
   }
 

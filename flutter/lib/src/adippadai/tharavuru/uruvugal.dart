@@ -86,6 +86,11 @@ class PattiyalTharavuru {
   final double variThogai;
   final String variTharavugal;
 
+  // Global Discount (Explicit Database Columns)
+  final double podhuThallupadiMathippu;
+  final String podhuThallupadiVagai;
+  final double podhuThallupadiThogai;
+
   // Kooli-specific
   final double mothaEdai;
   final double setharamGrams;
@@ -122,6 +127,9 @@ class PattiyalTharavuru {
     required this.thallupadi,
     required this.variThogai,
     required this.variTharavugal,
+    required this.podhuThallupadiMathippu,
+    required this.podhuThallupadiVagai,
+    required this.podhuThallupadiThogai,
     required this.mothaEdai,
     required this.setharamGrams,
     required this.thabaalThogai,

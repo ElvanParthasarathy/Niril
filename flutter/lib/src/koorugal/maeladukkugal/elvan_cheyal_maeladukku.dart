@@ -11,6 +11,10 @@ Future<T?> showElvanActionSheet<T>({
   required VoidCallback onConfirm,
   Color? confirmColor,
   Widget? customContent,
+  String? tertiaryText,
+  VoidCallback? onTertiary,
+  Color? tertiaryColor,
+  bool isConfirmFilled = false,
 }) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
   final bgColor = isDark
@@ -40,16 +44,121 @@ Future<T?> showElvanActionSheet<T>({
           customContent,
         ],
         const SizedBox(height: 24),
-        Row(
-          children: [
-            Expanded(
-              child: TextButton(
+        if (tertiaryText == null)
+          Row(
+            children: [
+              Expanded(
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.6),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    cancelText,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600, fontSize: 16),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: isConfirmFilled
+                    ? FilledButton(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: mainColor,
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          onConfirm();
+                        },
+                        child: Text(
+                          confirmText,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      )
+                    : TextButton(
+                        style: TextButton.styleFrom(
+                          foregroundColor: mainColor,
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          onConfirm();
+                        },
+                        child: Text(
+                          confirmText,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ),
+              ),
+            ],
+          )
+        else
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              isConfirmFilled
+                  ? FilledButton(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: mainColor,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        onConfirm();
+                      },
+                      child: Text(
+                        confirmText,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                    )
+                  : TextButton(
+                      style: TextButton.styleFrom(
+                        foregroundColor: mainColor,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        onConfirm();
+                      },
+                      child: Text(
+                        confirmText,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                    ),
+              const SizedBox(height: 8),
+              TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: tertiaryColor ?? Theme.of(context).colorScheme.error,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  onTertiary?.call();
+                },
+                child: Text(
+                  tertiaryText,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextButton(
                 style: TextButton.styleFrom(
                   foregroundColor: Theme.of(context)
                       .colorScheme
                       .onSurface
                       .withValues(alpha: 0.6),
-                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
                 onPressed: () => Navigator.pop(context),
                 child: Text(
@@ -58,27 +167,8 @@ Future<T?> showElvanActionSheet<T>({
                       fontWeight: FontWeight.w600, fontSize: 16),
                 ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  foregroundColor: mainColor,
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                  onConfirm();
-                },
-                child: Text(
-                  confirmText,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-              ),
-            ),
-          ],
-        ),
+            ],
+          ),
       ],
     );
   }
@@ -92,7 +182,7 @@ Future<T?> showElvanActionSheet<T>({
           backgroundColor: Colors.transparent,
           elevation: 0,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 480),
+            constraints: BoxConstraints(maxWidth: tertiaryText != null ? 280 : 480),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(32),
               child: BackdropFilter(

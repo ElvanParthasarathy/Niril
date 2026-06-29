@@ -155,9 +155,9 @@ class PattuUrupadiAttai extends ConsumerWidget {
                     clipBehavior: Clip.antiAlias,
                     child: InkWell(
                       onTap: () {
-                        final newType = item.thallupadiVagai == 'percentage'
-                            ? 'amount'
-                            : 'percentage';
+                        final newType = item.thallupadiVagai == '%'
+                            ? '₹'
+                            : '%';
                         onItemUpdated(
                             item.copyWith(thallupadiVagai: newType));
                       },
@@ -166,7 +166,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
                         height: 32,
                         child: Center(
                           child: Text(
-                            item.thallupadiVagai == 'percentage' ? '%' : '₹',
+                            item.thallupadiVagai == '%' ? '%' : '₹',
                             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                             textAlign: TextAlign.center,
                           ),

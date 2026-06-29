@@ -34,7 +34,7 @@ class PattuThiruththiNilaimai {
     this.invoiceNumberOverride = '',
     this.items = const [],
     this.globalDiscountValue = 0,
-    this.globalDiscountType = 'percentage',
+    this.globalDiscountType = '%',
   });
 
   final int? selectedNiruvanamId;
@@ -76,7 +76,7 @@ class PattuPattiyalUthavi {
 
     // Parse settings
     double globalDiscountValue = 0;
-    String globalDiscountType = 'percentage';
+    String globalDiscountType = '%';
     String placeOfSupply = '';
     String placeOfSupplyTa = '';
     try {
@@ -85,7 +85,7 @@ class PattuPattiyalUthavi {
       globalDiscountValue =
           (settings['globalDiscountValue'] as num?)?.toDouble() ?? 0;
       globalDiscountType =
-          settings['globalDiscountType'] as String? ?? 'percentage';
+          settings['globalDiscountType'] as String? ?? '%';
       placeOfSupply = settings['placeOfSupply'] as String? ?? '';
       placeOfSupplyTa = settings['placeOfSupplyTa'] as String? ?? '';
     } catch (_) {}
@@ -181,6 +181,9 @@ class PattuPattiyalUthavi {
           tharavugal: PattiyalUthavigal.pattuListToJson(validItems),
           mothaThogai: totals.mothaMothangal,
           thallupadi: totals.thallupadiMothangal,
+          podhuThallupadiThogai: 0.0,
+          podhuThallupadiVagai: '%',
+          podhuThallupadiMathippu: 0.0,
           variThogai: totals.variMothangal,
           variTharavugal: jsonEncode(totals.variToJson()),
           sonthaViruppangal: settingsJson,
@@ -216,6 +219,9 @@ class PattuPattiyalUthavi {
           tharavugal: PattiyalUthavigal.pattuListToJson(validItems),
           mothaThogai: totals.mothaMothangal,
           thallupadi: totals.thallupadiMothangal,
+          podhuThallupadiThogai: 0.0,
+          podhuThallupadiVagai: '%',
+          podhuThallupadiMathippu: 0.0,
           variThogai: totals.variMothangal,
           variTharavugal: jsonEncode(totals.variToJson()),
           sonthaViruppangal: settingsJson,
@@ -320,7 +326,7 @@ class PattuPattiyalUthavi {
           globalDiscountValue:
               (draft['globalDiscountValue'] as num?)?.toDouble() ?? 0,
           globalDiscountType:
-              draft['globalDiscountType'] as String? ?? 'percentage',
+              draft['globalDiscountType'] as String? ?? '%',
         );
       } else {
         await prefs.remove(_draftKey);

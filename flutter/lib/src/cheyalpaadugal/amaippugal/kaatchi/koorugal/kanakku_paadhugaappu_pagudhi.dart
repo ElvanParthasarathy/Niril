@@ -253,7 +253,7 @@ class AccountSecuritySection extends ConsumerWidget {
               await pattuDb.delete(pattuDb.pattuNiruvanaTharavugalTable).go();
               await pattuDb.delete(pattuDb.pattuPorulTable).go();
               await pattuDb.delete(pattuDb.pattuVaangunarTable).go();
-              await pattuDb.delete(pattuDb.pattuPatrucheettuTable).go();
+              await pattuDb.delete(pattuDb.pattuPattiyalTable).go();
               await pattuDb.delete(pattuDb.pattuPatrugalTable).go();
               await pattuDb.delete(pattuDb.pattuPatruPattiyalTable).go();
 
@@ -262,7 +262,7 @@ class AccountSecuritySection extends ConsumerWidget {
               await kooliDb.delete(kooliDb.kooliNiruvanaTharavugalTable).go();
               await kooliDb.delete(kooliDb.kooliPorulTable).go();
               await kooliDb.delete(kooliDb.kooliVaangunarTable).go();
-              await kooliDb.delete(kooliDb.kooliPatrucheettuTable).go();
+              await kooliDb.delete(kooliDb.kooliPattiyalTable).go();
               await kooliDb.delete(kooliDb.kooliPatrugalTable).go();
               await kooliDb.delete(kooliDb.kooliPatruPattiyalTable).go();
 

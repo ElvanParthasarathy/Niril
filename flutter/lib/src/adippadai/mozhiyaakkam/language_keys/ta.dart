@@ -186,6 +186,7 @@ const Map<String, String> ta = {
   'azhikka': 'அழிக்க',
   'chaemiPtn': 'சேமி',
   'chaer': 'சேர்',
+  'chaerPtn': 'சேர்',
   'chariPtn': 'சரி',
   'kaappuCheiPtn': 'காப்பு செய்',
   'kaividuPtn': 'கைவிடு',

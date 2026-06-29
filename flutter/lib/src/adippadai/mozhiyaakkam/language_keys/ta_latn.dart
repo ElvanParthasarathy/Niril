@@ -186,6 +186,7 @@ const Map<String, String> taLatn = {
   'azhikka': 'Azhikka',
   'chaemiPtn': 'Chaemi',
   'chaer': 'Chaer',
+  'chaerPtn': 'Chaer',
   'chariPtn': 'Chari',
   'kaappuCheiPtn': 'Kaappu Chei',
   'kaividuPtn': 'Kaividu',
