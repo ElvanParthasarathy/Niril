@@ -26,6 +26,7 @@ class ElvanThiruthiUlleedu extends StatefulWidget {
   final String? hintText;
   final bool readOnly;
   final VoidCallback? onTap;
+  final Color? backgroundColor;
 
   const ElvanThiruthiUlleedu({
     super.key,
@@ -49,6 +50,7 @@ class ElvanThiruthiUlleedu extends StatefulWidget {
     this.hintText,
     this.readOnly = false,
     this.onTap,
+    this.backgroundColor,
   });
 
   @override
@@ -214,7 +216,9 @@ class _ElvanThiruthiUlleeduState extends State<ElvanThiruthiUlleedu> {
           duration: const Duration(milliseconds: 150),
           curve: Curves.easeInOut,
           decoration: BoxDecoration(
-            color: _isFocused ? cs.onSurface.withValues(alpha: 0.12) : cs.onSurface.withValues(alpha: 0.08),
+            color: widget.backgroundColor ?? (_isFocused 
+                ? (cs.brightness == Brightness.light ? Colors.white : cs.onSurface.withValues(alpha: 0.12))
+                : (cs.brightness == Brightness.light ? Colors.white : cs.onSurface.withValues(alpha: 0.08))),
             borderRadius: BorderRadius.circular(borderRadius),
           ),
           clipBehavior: Clip.antiAlias,

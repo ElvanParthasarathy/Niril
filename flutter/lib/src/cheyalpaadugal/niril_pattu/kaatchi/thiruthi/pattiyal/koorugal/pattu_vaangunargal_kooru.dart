@@ -96,7 +96,7 @@ class PattuVaangunargalKooru extends ConsumerWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: ElvanThiruthiAttai(
-                  color: cs.onSurface.withValues(alpha: 0.08),
+                  color: cs.brightness == Brightness.light ? Colors.white : cs.onSurface.withValues(alpha: 0.08),
                   child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

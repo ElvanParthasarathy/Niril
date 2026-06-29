@@ -39,7 +39,7 @@ InputDecorationTheme _buildInputTheme(ColorScheme cs) {
     constraints: const BoxConstraints(minHeight: 48),
     isDense: true,
     filled: true,
-    fillColor: cs.onSurface.withValues(alpha: 0.08),
+    fillColor: cs.brightness == Brightness.light ? Colors.white : cs.onSurface.withValues(alpha: 0.08),
     contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(100),

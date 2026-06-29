@@ -22,7 +22,7 @@ class ElvanThiruthiPothan extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: backgroundColor ?? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+      color: backgroundColor ?? (Theme.of(context).colorScheme.brightness == Brightness.light ? Colors.white : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08)),
       borderRadius: BorderRadius.circular(100),
       clipBehavior: Clip.antiAlias,
       child: InkWell(

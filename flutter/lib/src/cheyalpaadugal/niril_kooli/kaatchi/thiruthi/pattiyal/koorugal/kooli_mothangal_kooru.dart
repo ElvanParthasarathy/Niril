@@ -38,7 +38,7 @@ class KooliMothangalKooru extends ConsumerWidget {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 400),
         child: ElvanThiruthiAttai(
-          color: cs.onSurface.withValues(alpha: 0.08),
+          color: cs.brightness == Brightness.light ? Colors.white : cs.onSurface.withValues(alpha: 0.08),
           padding: const EdgeInsets.all(24),
           child: Column(
             children: [

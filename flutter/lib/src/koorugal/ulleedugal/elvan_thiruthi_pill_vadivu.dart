@@ -8,14 +8,15 @@ class ElvanThiruthiPillVadivu {
       isDense: true,
       filled: true,
       fillColor: WidgetStateColor.resolveWith((states) {
+        final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
         if (states.contains(WidgetState.focused) ||
             states.contains(WidgetState.hovered)) {
-          return Theme.of(context)
+          return isLight ? Colors.white : Theme.of(context)
               .colorScheme
               .onSurface
               .withValues(alpha: 0.12);
         }
-        return Theme.of(context)
+        return isLight ? Colors.white : Theme.of(context)
             .colorScheme
             .onSurface
             .withValues(alpha: 0.08);

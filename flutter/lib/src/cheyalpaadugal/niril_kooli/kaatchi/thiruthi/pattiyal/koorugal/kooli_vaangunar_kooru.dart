@@ -54,7 +54,7 @@ class KooliVaangunarKooru extends ConsumerWidget {
             SizedBox(
               width: double.infinity,
               child: ElvanThiruthiAttai(
-                color: cs.onSurface.withValues(alpha: 0.08),
+                color: cs.brightness == Brightness.light ? Colors.white : cs.onSurface.withValues(alpha: 0.08),
                 borderRadius: 16,
                 padding: const EdgeInsets.all(16),
                 child: Column(

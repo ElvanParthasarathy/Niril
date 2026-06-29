@@ -185,11 +185,12 @@ class _VaangunarThaeduKooruState extends ConsumerState<VaangunarThaeduKooru> {
                 ),
                 filled: true,
                 fillColor: WidgetStateColor.resolveWith((states) {
+                  final isLight = colorScheme.brightness == Brightness.light;
                   if (states.contains(WidgetState.focused) ||
                       states.contains(WidgetState.hovered)) {
-                    return colorScheme.onSurface.withValues(alpha: 0.12);
+                    return isLight ? Colors.white : colorScheme.onSurface.withValues(alpha: 0.12);
                   }
-                  return colorScheme.onSurface.withValues(alpha: 0.08);
+                  return isLight ? Colors.white : colorScheme.onSurface.withValues(alpha: 0.08);
                 }),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(100),

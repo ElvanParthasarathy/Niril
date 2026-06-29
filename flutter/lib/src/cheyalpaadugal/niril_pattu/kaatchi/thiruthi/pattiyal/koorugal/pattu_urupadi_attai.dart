@@ -124,6 +124,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
               final productSearch = PorulThaeduKooru(
                 seyaliVagai: seyaliVagai,
                 initialText: fallbackMudhanmai,
+                backgroundColor: cs.onSurface.withValues(alpha: 0.08),
                 onSelected: (p) {
                   final mudhanmaiLang = ref.read(silkMudhanmaiMozhiProvider);
                   final irandaamLang = ref.read(silkThunaiMozhiProvider);
@@ -149,6 +150,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
               // Build field widgets
               final isWeightItem = item.alagu == 'Kg';
               final qtyField = _buildItemField(
+                context,
                 isWeightItem ? K.edai.tr(context, ref) : K.alavu.tr(context, ref),
                 item.alavu,
                 (v) => onItemUpdated(
@@ -156,12 +158,13 @@ class PattuUrupadiAttai extends ConsumerWidget {
                 isWeight: isWeightItem,
               );
 
-              final rateField = _buildItemField(K.vilaiVeedham.tr(context, ref), item.vilai, (v) {
+              final rateField = _buildItemField(context, K.vilaiVeedham.tr(context, ref), item.vilai, (v) {
                 onItemUpdated(
                     item.copyWith(vilai: double.tryParse(v) ?? 0));
               });
 
               final discField = _buildItemField(
+                context,
                 K.thallupadi.tr(context, ref), 
                 item.thallupadi, 
                 (v) {
@@ -203,6 +206,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
                 label: K.motham.tr(context, ref),
                 initialValue: _inrFormat.format(rowTotal),
                 readOnly: true,
+                backgroundColor: cs.onSurface.withValues(alpha: 0.08),
               );
 
               // Bilingual info line (English name · GST%)
@@ -277,7 +281,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
 
   /// Borderless numeric field — instant math + blur formatting.
   Widget _buildItemField(
-      String label, double value, ValueChanged<String> onChanged,
+      BuildContext context, String label, double value, ValueChanged<String> onChanged,
       {bool isWeight = false, Widget? suffixIcon}) {
     // Weight: always 3 decimals matching weighing machine (24.100 = 24kg 100g).
     // Non-weight: clean integers (6 not 6.0).
@@ -299,6 +303,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
       onChanged: onChanged,
       onDirty: onDirty,
       suffixIcon: suffixIcon,
+      backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
     );
   }
 }
@@ -319,6 +324,7 @@ class ItemFieldWidget extends StatefulWidget {
     this.onDirty,
     this.onChanged,
     this.suffixIcon,
+    this.backgroundColor,
   });
 
   final String label;
@@ -330,6 +336,7 @@ class ItemFieldWidget extends StatefulWidget {
   /// Called on every keystroke for instant calculation (optional).
   final ValueChanged<String>? onChanged;
   final Widget? suffixIcon;
+  final Color? backgroundColor;
 
   @override
   State<ItemFieldWidget> createState() => _ItemFieldWidgetState();
@@ -391,6 +398,7 @@ class _ItemFieldWidgetState extends State<ItemFieldWidget> {
       inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
       suffixText: widget.isWeight ? 'kg' : null,
       suffixIcon: widget.suffixIcon,
+      backgroundColor: widget.backgroundColor,
       onChanged: (v) {
         if (!_isDirty) {
           _isDirty = true;

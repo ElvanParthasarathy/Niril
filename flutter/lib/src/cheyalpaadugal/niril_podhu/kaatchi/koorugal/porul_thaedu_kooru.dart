@@ -45,6 +45,9 @@ class PorulThaeduKooru extends ConsumerStatefulWidget {
   /// Called when the user clears the selected product (X button).
   final VoidCallback? onCleared;
 
+  /// Optional background color for the pill
+  final Color? backgroundColor;
+
   const PorulThaeduKooru({
     super.key,
     required this.onSelected,
@@ -52,6 +55,7 @@ class PorulThaeduKooru extends ConsumerStatefulWidget {
     this.onCleared,
     this.initialText,
     required this.seyaliVagai,
+    this.backgroundColor,
   });
 
   @override
@@ -177,6 +181,7 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
               _currentText.isEmpty ? K.porutkal.tr(context, ref) : _currentText,
           isHint: _currentText.isEmpty,
           enabled: true,
+          backgroundColor: widget.backgroundColor,
           onTap: () {
             ElvanKavanam.viduvi(context);
             _openSelectionSheet(porulgal);
@@ -203,6 +208,7 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
     String? labelText,
     VoidCallback? onTap,
     VoidCallback? onClear,
+    Color? backgroundColor,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -213,6 +219,7 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
           ElvanThiruthiThalaippu(label: labelText),
         ElvanThiruthiPothan(
           onTap: enabled ? onTap : null,
+          backgroundColor: backgroundColor,
           padding: const EdgeInsets.only(left: 20, right: 6),
           child: Row(
             children: [
