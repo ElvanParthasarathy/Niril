@@ -340,6 +340,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   @override
   Widget build(BuildContext context) {
     final profiles = ref.watch(NiruvanaTharavugalListProvider);
+    final baseIndex = profiles.length > 1 ? 1 : 0;
     final formatter = NumberFormat('#,##0', 'en_IN');
     final vaangunargalAsync = ref.watch(vaangunargalProvider);
     final VaangunarTharavuru? selectedVaangunar = vaangunargalAsync.whenOrNull(
@@ -375,7 +376,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
           children: [
             // ── Section 1: ① Customer ──
             ElvanEditorSection(
-              index: 0,
+              index: baseIndex,
               title: K.vaangunar.tr(context, ref),
               displayChild: const SizedBox(),
               initiallyExpanded: true,
@@ -416,7 +417,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                   children: [
                     // ── Section 2: ② Invoice Details ──
                     ElvanEditorSection(
-                      index: 1,
+                      index: baseIndex + 1,
                       title: K.pattiyalTharavugal.tr(context, ref),
                       displayChild: const SizedBox(),
                       initiallyExpanded: true,
@@ -448,7 +449,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
 
                     // ── Section 3: ③ Items ──
                     ElvanEditorSection(
-                      index: 2,
+                      index: baseIndex + 2,
                       title: K.porutkal.tr(context, ref),
                       displayChild: const SizedBox(),
                       initiallyExpanded: true,
