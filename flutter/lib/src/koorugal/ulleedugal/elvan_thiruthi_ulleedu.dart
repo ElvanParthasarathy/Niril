@@ -5,7 +5,7 @@ import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_thalaippu.dar
 
 /// A standard pill-shaped text field component designed specifically for Elvan Editors (Thiruthi).
 /// Uses ElvanThooiyaUlleedu to bypass InputDecoration constraints, offering perfect 45px vertical centering.
-class ElvanThiruthiUlleedu extends StatelessWidget {
+class ElvanThiruthiUlleedu extends StatefulWidget {
   final String? label;
   final TextEditingController? controller;
   final String? initialValue;
@@ -52,24 +52,67 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
   });
 
   @override
+  State<ElvanThiruthiUlleedu> createState() => _ElvanThiruthiUlleeduState();
+}
+
+class _ElvanThiruthiUlleeduState extends State<ElvanThiruthiUlleedu> {
+  late FocusNode _focusNode;
+  bool _isFocused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = widget.focusNode ?? FocusNode();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void didUpdateWidget(ElvanThiruthiUlleedu oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.focusNode != oldWidget.focusNode) {
+      _focusNode.removeListener(_onFocusChange);
+      if (oldWidget.focusNode == null) {
+        _focusNode.dispose();
+      }
+      _focusNode = widget.focusNode ?? FocusNode();
+      _focusNode.addListener(_onFocusChange);
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusNode.removeListener(_onFocusChange);
+    if (widget.focusNode == null) {
+      _focusNode.dispose();
+    }
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final isSingleLine = maxLines == 1;
+    final isSingleLine = widget.maxLines == 1;
     final borderRadius = isSingleLine ? 100.0 : 16.0;
     final cs = Theme.of(context).colorScheme;
 
     // The raw text field without any padding or decorations
     final rawInput = ElvanThooiyaUlleedu(
-      controller: controller,
-      initialValue: initialValue,
-      focusNode: focusNode,
-      enabled: enabled,
-      keyboardType: keyboardType,
-      onChanged: onChanged,
-      inputFormatters: inputFormatters,
-      readOnly: readOnly,
-      onTap: onTap,
-      maxLength: maxLength,
-      maxLines: maxLines,
+      controller: widget.controller,
+      initialValue: widget.initialValue,
+      focusNode: _focusNode,
+      enabled: widget.enabled,
+      keyboardType: widget.keyboardType,
+      onChanged: widget.onChanged,
+      inputFormatters: widget.inputFormatters,
+      readOnly: widget.readOnly,
+      onTap: widget.onTap,
+      maxLength: widget.maxLength,
+      maxLines: widget.maxLines,
       style: const TextStyle(fontSize: 14),
     );
 
@@ -81,14 +124,14 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            if (prefixIcon != null) ...[
-              prefixIcon!,
+            if (widget.prefixIcon != null) ...[
+              widget.prefixIcon!,
               const SizedBox(width: 8),
             ] else
               const SizedBox(width: 20),
             
-            if (prefixText != null) ...[
-              Text(prefixText!, style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant)),
+            if (widget.prefixText != null) ...[
+              Text(widget.prefixText!, style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant)),
               const SizedBox(width: 4),
             ],
 
@@ -97,13 +140,13 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 children: [
                   // Hint Text
-                  if (hintText != null)
+                  if (widget.hintText != null)
                     ValueListenableBuilder<TextEditingValue>(
-                      valueListenable: controller ?? TextEditingController(),
+                      valueListenable: widget.controller ?? TextEditingController(),
                       builder: (context, value, child) {
-                        if (value.text.isEmpty && (initialValue == null || initialValue!.isEmpty)) {
+                        if (value.text.isEmpty && (widget.initialValue == null || widget.initialValue!.isEmpty)) {
                           return Text(
-                            hintText!,
+                            widget.hintText!,
                             style: TextStyle(
                               fontSize: 14,
                               color: cs.onSurface.withValues(alpha: 0.4),
@@ -122,14 +165,14 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
               ),
             ),
 
-            if (suffixText != null) ...[
+            if (widget.suffixText != null) ...[
               const SizedBox(width: 4),
-              Text(suffixText!, style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant)),
+              Text(widget.suffixText!, style: TextStyle(fontSize: 14, color: cs.onSurfaceVariant)),
             ],
 
-            if (suffixIcon != null) ...[
+            if (widget.suffixIcon != null) ...[
               const SizedBox(width: 8),
-              suffixIcon!,
+              widget.suffixIcon!,
             ] else
               const SizedBox(width: 20),
           ],
@@ -141,13 +184,13 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
         child: Stack(
           alignment: Alignment.topLeft,
           children: [
-            if (hintText != null)
+            if (widget.hintText != null)
               ValueListenableBuilder<TextEditingValue>(
-                valueListenable: controller ?? TextEditingController(),
+                valueListenable: widget.controller ?? TextEditingController(),
                 builder: (context, value, child) {
-                  if (value.text.isEmpty && (initialValue == null || initialValue!.isEmpty)) {
+                  if (value.text.isEmpty && (widget.initialValue == null || widget.initialValue!.isEmpty)) {
                     return Text(
-                      hintText!,
+                      widget.hintText!,
                       style: TextStyle(
                         fontSize: 14,
                         color: cs.onSurface.withValues(alpha: 0.4),
@@ -166,18 +209,25 @@ class ElvanThiruthiUlleedu extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (label != null && label!.isNotEmpty) ElvanThiruthiThalaippu(label: label!),
-        Material(
-          color: cs.onSurface.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(borderRadius),
+        if (widget.label != null && widget.label!.isNotEmpty) ElvanThiruthiThalaippu(label: widget.label!),
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            color: _isFocused ? cs.onSurface.withValues(alpha: 0.12) : cs.onSurface.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
           clipBehavior: Clip.antiAlias,
-          child: inputArea,
+          child: Material(
+            color: Colors.transparent,
+            child: inputArea,
+          ),
         ),
-        if (errorText != null && errorText!.isNotEmpty)
+        if (widget.errorText != null && widget.errorText!.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 8, left: 12),
             child: Text(
-              errorText!,
+              widget.errorText!,
               style: TextStyle(
                 color: cs.error,
                 fontSize: 12,

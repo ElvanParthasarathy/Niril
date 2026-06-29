@@ -50,6 +50,32 @@ class _ElvanIrumozhiAutocompleteState extends ConsumerState<ElvanIrumozhiAutocom
   }
 
   @override
+  void didUpdateWidget(ElvanIrumozhiAutocomplete oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_initialized) {
+      final primaryLang = ref.read(primaryLanguageProvider);
+      final secondaryLang = ref.read(secondaryLanguageProvider);
+      
+      final pText = widget.value[primaryLang] ?? '';
+      final sText = widget.value[secondaryLang] ?? '';
+      
+      if (pText != _primaryController.text) {
+        _primaryController.text = pText;
+      }
+      if (sText != _secondaryController.text) {
+        _secondaryController.text = sText;
+      }
+      
+      // Update custom mode if it's no longer custom
+      if (_isCustomMode && pText.isNotEmpty) {
+         final pKey = _mapLangToKey(primaryLang);
+         final match = widget.options.any((d) => d[pKey] == pText);
+         if (match) _isCustomMode = false;
+      }
+    }
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_initialized) {

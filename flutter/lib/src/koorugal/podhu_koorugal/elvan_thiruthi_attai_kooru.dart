@@ -76,10 +76,18 @@ class ElvanUrupadiAttai extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      margin: margin,
-      padding: padding ?? const EdgeInsets.symmetric(vertical: 8),
-      child: child,
+    return Material(
+      type: MaterialType.card,
+      color: isDark 
+          ? cs.onSurface.withValues(alpha: 0.08) 
+          : cs.surface,
+      borderRadius: BorderRadius.circular(16),
+      clipBehavior: Clip.antiAlias,
+      child: Container(
+        margin: margin,
+        padding: padding ?? const EdgeInsets.symmetric(vertical: 8),
+        child: child,
+      ),
     );
   }
 }

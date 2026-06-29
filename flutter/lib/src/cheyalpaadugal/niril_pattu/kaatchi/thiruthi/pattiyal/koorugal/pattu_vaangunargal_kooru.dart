@@ -9,7 +9,8 @@ import '../../../../../niril_podhu/kaatchi/koorugal/elvan_vaangunar_keezhvirivu_
 import '../../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_thalaippu.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_pothan.dart';
-import 'maanila_thervu_maeladukku.dart';
+import '../../../../../../koorugal/pulan_koorugal/elvan_irumozhi_autocomplete.dart';
+import '../../../../../../adippadai/idangal_kalanjiyam/indhiya_maanilangal.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // பட்டு வணிகர்கள் கூறு — Customer Section (search + address + profile + PoS)
@@ -161,7 +162,12 @@ class PattuVaangunargalKooru extends ConsumerWidget {
       ].join(', ');
       if (cityLine.isNotEmpty) lines.add(cityLine);
       final maanilam = (v.maanilam[key] ?? '').trim();
-      if (maanilam.isNotEmpty) lines.add(maanilam);
+      final naadu = (v.naadu[key] ?? '').trim();
+      final stateLine = [
+        if (maanilam.isNotEmpty) maanilam,
+        if (naadu.isNotEmpty) naadu,
+      ].join(', ');
+      if (stateLine.isNotEmpty) lines.add(stateLine);
       return lines;
     }
 
@@ -209,7 +215,7 @@ class PattuVaangunargalKooru extends ConsumerWidget {
 
 }
 
-/// Place of Supply widget: two pills (editable English + locked Tamil).
+/// Place of Supply widget: typeable autocomplete using ElvanIrumozhiAutocomplete.
 class PattuVilippiIdam extends ConsumerWidget {
   const PattuVilippiIdam({
     super.key,
@@ -226,111 +232,28 @@ class PattuVilippiIdam extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cs = Theme.of(context).colorScheme;
-    final tt = Theme.of(context).textTheme;
+    final mapValue = <String, String>{};
+    if (placeOfSupply.isNotEmpty) {
+      mapValue['English'] = placeOfSupply;
+    }
+    if (placeOfSupplyTa.isNotEmpty) {
+      mapValue['Tamil'] = placeOfSupplyTa;
+    }
 
-    return LayoutBuilder(builder: (context, constraints) {
-      final isNarrow = constraints.maxWidth < 500;
-
-      final editablePill = ElvanThiruthiPothan(
-        onTap: () => _showStatePickerSheet(context, cs),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                placeOfSupply.isEmpty ? K.maanilamThaerodhu.tr(context, ref) : placeOfSupply,
-                style: tt.bodyMedium?.copyWith(
-                  color: placeOfSupply.isEmpty
-                      ? cs.onSurfaceVariant
-                      : cs.onSurface,
-                  fontWeight: placeOfSupply.isNotEmpty
-                      ? FontWeight.w600
-                      : FontWeight.w400,
-                ),
-              ),
-            ),
-            if (placeOfSupply.isNotEmpty)
-              GestureDetector(
-                onTap: onCleared,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8),
-                  child: Icon(Icons.close, size: 16, color: cs.onSurfaceVariant),
-                ),
-              )
-            else
-              Icon(Icons.arrow_drop_down, size: 20, color: cs.onSurfaceVariant),
-          ],
-        ),
-      );
-
-      final tamilPill = placeOfSupplyTa.isNotEmpty
-          ? ElvanThiruthiPothan(
-              onTap: null,
-              child: Row(
-                children: [
-                  Icon(Icons.lock_outline, size: 14, color: cs.onSurfaceVariant),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      placeOfSupplyTa,
-                      style: tt.bodyMedium?.copyWith(
-                        color: cs.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : const SizedBox.shrink();
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            K.vazhangalIdam.tr(context, ref),
-            style: tt.labelMedium?.copyWith(
-              color: cs.onSurfaceVariant,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 6),
-          if (isNarrow)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                editablePill,
-                if (placeOfSupplyTa.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  tamilPill,
-                ],
-              ],
-            )
-          else
-            Row(
-              children: [
-                Expanded(child: editablePill),
-                if (placeOfSupplyTa.isNotEmpty) ...[
-                  const SizedBox(width: 12),
-                  Expanded(child: tamilPill),
-                ],
-              ],
-            ),
-        ],
-      );
-    });
-  }
-
-  void _showStatePickerSheet(BuildContext context, ColorScheme cs) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) => MaanilaThervuMeladukku(
-        isDark: isDark,
-        onSelected: (en, ta) {
+    return ElvanIrumozhiAutocomplete(
+      label: K.vazhangalIdam.tr(context, ref),
+      value: mapValue,
+      options: indhiyaMaanilangal,
+      onChanged: (map) {
+        final en = map['en'] ?? map['English'] ?? '';
+        final ta = map['ta'] ?? map['Tamil'] ?? '';
+        
+        if (en.isEmpty && ta.isEmpty) {
+          onCleared();
+        } else {
           onSelected(en, ta);
-          Navigator.pop(ctx);
-        },
-      ),
+        }
+      },
     );
   }
 }

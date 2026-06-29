@@ -8,6 +8,8 @@ import '../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 import 'pattiyal_naal_kooru.dart';
 
+import '../../../../koorugal/ulleedugal/elvan_aavana_enn_kooru.dart';
+
 // ─────────────────────────────────────────────────────────────────────────────
 // பட்டியல் தரவுகள் கூறு — Invoice Details Section (Number + Date)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -20,11 +22,8 @@ List<Widget> buildElvanPattiyalTharavugalKooru({
   required bool isEditing,
   required String invoiceNumberOverride,
   required String previewInvoiceNumber,
-  required bool isInvNumberEditing,
-  required TextEditingController invNumberController,
   required String profilePrefix,
   required DateTime pattiyalNaal,
-  required VoidCallback onToggleEditInvNumber,
   required ValueChanged<String> onInvNumberChanged,
   required ValueChanged<DateTime> onDateChanged,
   required VoidCallback onDirty,
@@ -34,57 +33,22 @@ List<Widget> buildElvanPattiyalTharavugalKooru({
   final cs = Theme.of(context).colorScheme;
   final tt = Theme.of(context).textTheme;
 
-  final invoiceNumberField = ElvanThiruthiUlleedu(
+  final initialFull = invoiceNumberOverride.isNotEmpty
+      ? invoiceNumberOverride
+      : previewInvoiceNumber;
+
+  final invoiceNumberField = ElvanAavanaEnnKooru(
     label: customNumberTitle ?? K.pattiyalEn.tr(context, ref),
-    controller: isInvNumberEditing ? invNumberController : null,
-    initialValue: isInvNumberEditing
-        ? null
-        : (invoiceNumberOverride.isNotEmpty
-            ? invoiceNumberOverride
-            : previewInvoiceNumber.isNotEmpty
-                ? previewInvoiceNumber
-                : K.thaaniyangkiUruvaam.tr(context, ref)),
-    readOnly: !isInvNumberEditing,
-    keyboardType: TextInputType.number,
-    inputFormatters: ElvanVadivamaippigal.enngalMattum,
-    prefixText: isInvNumberEditing ? profilePrefix : null,
-    hintText: isInvNumberEditing ? '01' : null,
-    onChanged: (v) {
-      if (isInvNumberEditing) {
-        onInvNumberChanged(v);
-        onDirty();
-      }
-    },
-    suffixIcon: InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: onToggleEditInvNumber,
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Icon(
-          isInvNumberEditing ? Icons.check : Icons.edit_outlined,
-          size: 20,
-          color: isInvNumberEditing ? cs.primary : cs.onSurfaceVariant,
-        ),
-      ),
-    ),
+    prefix: profilePrefix,
+    initialFullNumber: initialFull,
+    onFullNumberChanged: onInvNumberChanged,
+    onDirty: onDirty,
   );
 
-  final dateField = Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        customDateTitle ?? K.naal.tr(context, ref),
-        style: tt.labelMedium?.copyWith(
-          color: cs.onSurfaceVariant,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      const SizedBox(height: 6),
-      PattiyalNaalKooru(
-        selectedDate: pattiyalNaal,
-        onDateChanged: onDateChanged,
-      ),
-    ],
+  final dateField = PattiyalNaalKooru(
+    label: customDateTitle ?? K.naal.tr(context, ref),
+    selectedDate: pattiyalNaal,
+    onDateChanged: onDateChanged,
   );
 
   return [

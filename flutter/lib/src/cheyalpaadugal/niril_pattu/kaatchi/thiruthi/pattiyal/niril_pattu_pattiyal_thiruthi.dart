@@ -55,7 +55,6 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   String _placeOfSupplyTa = ''; // Tamil bilingual for Place of Supply
   String _invoiceNumberOverride = ''; // Manual override for inv number
   String _previewInvoiceNumber = ''; // Preview of next auto-generated number
-  bool _isInvNumberEditing = false;
 
   // ── Line Items ──
   List<PattuUrupadi> _items = [const PattuUrupadi()];
@@ -72,7 +71,6 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   // ── Controllers ──
 
   final _globalDiscountController = TextEditingController();
-  final _invNumberController = TextEditingController();
   bool _saving = false;
 
   // ── Unsaved Changes & Draft ──
@@ -119,7 +117,6 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
     _items = s.items.isNotEmpty ? s.items : [const PattuUrupadi()];
     _globalDiscountValue = s.globalDiscountValue;
     _globalDiscountType = s.globalDiscountType;
-    _invNumberController.text = _invoiceNumberOverride;
     _globalDiscountController.text =
         _globalDiscountValue > 0 ? _globalDiscountValue.toString() : '';
   }
@@ -140,11 +137,18 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
       final vaangunar =
           vaangunargal.where((v) => v.id == _selectedVaangunarId).firstOrNull;
       if (vaangunar != null) {
-        _customerState = (vaangunar.maanilam['English'] ??
-                    vaangunar.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ??
-                    '')
-                .trim()
-                .toLowerCase();
+        setState(() {
+          _customerState = (vaangunar.maanilam['en'] ?? vaangunar.maanilam['English'] ??
+                      vaangunar.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ??
+                      '')
+                  .trim()
+                  .toLowerCase();
+          
+          if (_placeOfSupply.isEmpty) {
+            _placeOfSupply = (vaangunar.maanilam['en'] ?? vaangunar.maanilam['English'] ?? '').trim();
+            _placeOfSupplyTa = (vaangunar.maanilam['ta'] ?? vaangunar.maanilam['Tamil'] ?? vaangunar.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ?? '').trim();
+          }
+        });
       }
     }
   }
@@ -171,7 +175,6 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   void dispose() {
 
     _globalDiscountController.dispose();
-    _invNumberController.dispose();
     _draftDebounce?.cancel();
     super.dispose();
   }
@@ -356,18 +359,14 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                       _selectedVaangunarId = entry.id;
                       _selectedVaangunarPeyar =
                           entry.peyar[ref.read(silkMudhanmaiMozhiProvider)] ?? entry.peyar[ref.read(silkIrandaamMozhiProvider)] ?? entry.peyar.values.firstOrNull ?? '';
-                      _customerState = (entry.maanilam['English'] ??
+                      _customerState = (entry.maanilam['en'] ?? entry.maanilam['English'] ??
                                   entry.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ??
                                   '')
                               .trim()
                               .toLowerCase();
-                      if (_placeOfSupply.isEmpty) {
-                        _placeOfSupply = (entry.maanilam['English'] ??
-                                    entry.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ??
-                                    '')
-                                .trim();
-                        _placeOfSupplyTa = (entry.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ?? '').trim();
-                      }
+                      
+                      _placeOfSupply = (entry.maanilam['en'] ?? entry.maanilam['English'] ?? '').trim();
+                      _placeOfSupplyTa = (entry.maanilam['ta'] ?? entry.maanilam['Tamil'] ?? entry.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ?? '').trim();
                     });
                     _hasUnsavedChanges = true;
                     _recalculate();
@@ -433,35 +432,16 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                 isEditing: _isEditing,
                 invoiceNumberOverride: _invoiceNumberOverride,
                 previewInvoiceNumber: _previewInvoiceNumber,
-                isInvNumberEditing: _isInvNumberEditing,
-                invNumberController: _invNumberController,
                 profilePrefix: _selectedProfile?.kurumPeyar.isNotEmpty == true
                     ? '${_selectedProfile!.kurumPeyar}-'
                     : 'INV-',
                 pattiyalNaal: _pattiyalNaal,
-                onToggleEditInvNumber: () {
+                onInvNumberChanged: (v) {
                   setState(() {
-                    _isInvNumberEditing = !_isInvNumberEditing;
-                    if (_isInvNumberEditing) {
-                      final current = _invoiceNumberOverride.isNotEmpty
-                          ? _invoiceNumberOverride
-                          : _previewInvoiceNumber;
-                      final parts = current.split('-');
-                      _invNumberController.text =
-                          parts.length > 1 ? parts.sublist(1).join('-') : parts.last;
-                    } else {
-                      final numPart = _invNumberController.text.trim();
-                      if (numPart.isNotEmpty) {
-                        final prefix = _selectedProfile?.kurumPeyar.isNotEmpty == true
-                            ? '${_selectedProfile!.kurumPeyar}-'
-                            : 'INV-';
-                        _invoiceNumberOverride = '$prefix$numPart';
-                      }
-                      _hasUnsavedChanges = true;
-                    }
+                    _invoiceNumberOverride = v;
+                    _hasUnsavedChanges = true;
                   });
                 },
-                onInvNumberChanged: (_) {},
                 onDateChanged: (d) => setState(() {
                   _pattiyalNaal = d;
                   _hasUnsavedChanges = true;
@@ -470,23 +450,25 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
               ),
               
               // ─── Place of Supply ───
-              PattuVilippiIdam(
-                placeOfSupply: _placeOfSupply,
-                placeOfSupplyTa: _placeOfSupplyTa,
-                onSelected: (en, ta) {
-                  setState(() {
-                    _placeOfSupply = en;
-                    _placeOfSupplyTa = ta;
-                  });
-                  _recalculate();
-                },
-                onCleared: () {
-                  setState(() {
-                    _placeOfSupply = '';
-                    _placeOfSupplyTa = '';
-                  });
-                  _recalculate();
-                },
+              ElvanFullWidth(
+                child: PattuVilippiIdam(
+                  placeOfSupply: _placeOfSupply,
+                  placeOfSupplyTa: _placeOfSupplyTa,
+                  onSelected: (en, ta) {
+                    setState(() {
+                      _placeOfSupply = en;
+                      _placeOfSupplyTa = ta;
+                    });
+                    _recalculate();
+                  },
+                  onCleared: () {
+                    setState(() {
+                      _placeOfSupply = '';
+                      _placeOfSupplyTa = '';
+                    });
+                    _recalculate();
+                  },
+                ),
               ),
             ],
           ),

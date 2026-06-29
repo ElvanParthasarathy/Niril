@@ -160,17 +160,26 @@ class ElvanSettingsAutocomplete extends StatefulWidget {
 
 class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
   late FocusNode _focusNode;
+  bool _isFocused = false;
 
   @override
   void initState() {
     super.initState();
     _focusNode = FocusNode();
+    _focusNode.addListener(_onFocusChange);
   }
 
   @override
   void dispose() {
+    _focusNode.removeListener(_onFocusChange);
     _focusNode.dispose();
     super.dispose();
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      _isFocused = _focusNode.hasFocus;
+    });
   }
 
   @override
@@ -221,12 +230,20 @@ class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
               },
               fieldViewBuilder:
                   (context, fieldController, focusNode, onEditingComplete) {
-                return Material(
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(100),
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 150),
+                  curve: Curves.easeInOut,
+                  decoration: BoxDecoration(
+                    color: _isFocused
+                        ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12)
+                        : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(100),
+                  ),
                   clipBehavior: Clip.antiAlias,
-                  child: SizedBox(
-                    height: 45.0,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: SizedBox(
+                      height: 45.0,
                     child: Row(
                       children: [
                         const SizedBox(width: 20),
@@ -287,6 +304,7 @@ class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
                         const SizedBox(width: 4),
                       ],
                     ),
+                  ),
                   ),
                 );
               },

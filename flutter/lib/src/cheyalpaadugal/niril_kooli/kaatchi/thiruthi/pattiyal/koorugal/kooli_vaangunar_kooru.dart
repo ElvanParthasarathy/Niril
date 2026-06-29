@@ -138,7 +138,12 @@ class KooliVaangunarKooru extends ConsumerWidget {
     if (combined.isNotEmpty) parts.add(combined);
 
     final maanilam = (v.maanilam[key]?.isNotEmpty == true ? v.maanilam[key] : v.maanilam['Tamil'] ?? '').trim();
-    if (maanilam.isNotEmpty) parts.add(maanilam);
+    final naadu = (v.naadu[key]?.isNotEmpty == true ? v.naadu[key] : v.naadu['Tamil'] ?? '').trim();
+    final stateLine = [
+      if (maanilam.isNotEmpty) maanilam,
+      if (naadu.isNotEmpty) naadu,
+    ].join(', ');
+    if (stateLine.isNotEmpty) parts.add(stateLine);
 
     if (parts.isEmpty) return [];
 

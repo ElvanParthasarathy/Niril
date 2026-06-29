@@ -9,6 +9,9 @@ import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku/elvan_kizh_mael
 import '../../../../adippadai/nilaimai/achu_mozhi_facade.dart';
 import '../../../../adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
+import '../../../../koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
+import '../../../../koorugal/ulleedugal/elvan_thiruthi_pothan.dart';
+import '../../../../koorugal/ulleedugal/elvan_thiruthi_thalaippu.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // பொருள் தேடு கூறு — Product Picker Selection
@@ -153,17 +156,20 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
     return porulgalAsync.when(
       loading: () => _buildFakeField(
         context: context,
+        labelText: K.porutkal.tr(context, ref),
         text: '...',
         enabled: false,
       ),
       error: (err, _) => _buildFakeField(
         context: context,
+        labelText: K.porutkal.tr(context, ref),
         text: K.pizhai.tr(context, ref),
         enabled: false,
       ),
       data: (porulgal) {
         return _buildFakeField(
           context: context,
+          labelText: K.porutkal.tr(context, ref),
           text:
               _currentText.isEmpty ? K.porutkal.tr(context, ref) : _currentText,
           isHint: _currentText.isEmpty,
@@ -188,59 +194,53 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
     required String text,
     bool isHint = false,
     required bool enabled,
+    String? labelText,
     VoidCallback? onTap,
     VoidCallback? onClear,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
 
-    return InkWell(
-      onTap: enabled ? onTap : null,
-      borderRadius: BorderRadius.circular(100),
-      child: InputDecorator(
-        decoration: const InputDecoration(
-          isDense: true,
-          filled: false,
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-        ),
-        child: Row(
-          children: [
-              Icon(
-                Icons.inventory_2_rounded,
-                size: 20.0,
-                color: colorScheme.onSurfaceVariant,
-              ),
-              const SizedBox(width: 12),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (labelText != null && labelText.isNotEmpty) 
+          ElvanThiruthiThalaippu(label: labelText),
+        ElvanThiruthiPothan(
+          onTap: enabled ? onTap : null,
+          padding: const EdgeInsets.only(left: 20, right: 6),
+          child: Row(
+            children: [
               Expanded(
                 child: Text(
                   text,
-                  style: isHint
-                      ? TextStyle(
-                          fontSize: 14.0,
-                          color: colorScheme.onSurfaceVariant
-                              .withValues(alpha: 0.7),
-                        )
-                      : TextStyle(fontSize: 14.0),
-                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: isHint ? colorScheme.onSurfaceVariant : colorScheme.onSurface,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              if (onClear != null)
-                GestureDetector(
-                  onTap: onClear,
-                  child: Icon(Icons.clear_rounded, size: 20.0),
+              if (onClear != null && !isHint)
+                IconButton(
+                  icon: const Icon(Icons.close_rounded),
+                  iconSize: 16,
+                  color: colorScheme.onSurface,
+                  style: IconButton.styleFrom(
+                    padding: const EdgeInsets.all(8),
+                    minimumSize: const Size(0, 0),
+                  ),
+                  onPressed: onClear,
                 )
               else
                 Icon(
-                  Icons.arrow_drop_down,
+                  Icons.keyboard_arrow_down_rounded,
                   size: 20.0,
-                  color: colorScheme.onSurfaceVariant,
+                  color: colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
             ],
           ),
         ),
-      );
+      ],
+    );
   }
 }

@@ -65,6 +65,8 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   final _setharamCtrl = TextEditingController();
   final _thabaalCtrl = TextEditingController();
   final _ahimsaCtrl = TextEditingController();
+  final _globalDiscountController = TextEditingController();
+  final _kurippuCtrl = TextEditingController();
   bool _saving = false;
 
   // ── Unsaved Changes & Draft ──
@@ -74,8 +76,6 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   // ── Bill Number ──
   String _previewBillNumber = '';
   String _invoiceNumberOverride = '';
-  bool _isInvNumberEditing = false;
-  final _invNumberController = TextEditingController();
   String _profilePrefix = 'CB';
 
   bool get _isEditing => widget.editingEntry != null;
@@ -111,7 +111,6 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     // Load existing bill number for display + override
     _previewBillNumber = widget.editingEntry!.patrucheettuEn;
     _invoiceNumberOverride = widget.editingEntry!.patrucheettuEn;
-    _invNumberController.text = _invoiceNumberOverride;
 
     _setharamCtrl.text = _setharamGrams > 0 ? _cleanNum(_setharamGrams) : '';
     _thabaalCtrl.text = _thabaalThogai > 0 ? _cleanNum(_thabaalThogai) : '';
@@ -140,7 +139,6 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     _setharamCtrl.dispose();
     _thabaalCtrl.dispose();
     _ahimsaCtrl.dispose();
-    _invNumberController.dispose();
     _draftDebounce?.cancel();
     super.dispose();
   }
@@ -341,7 +339,6 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
             _selectedProfile = p;
             _profilePrefix = p?.kurumPeyar.isNotEmpty == true ? p!.kurumPeyar : 'CB';
             _invoiceNumberOverride = '';
-            _isInvNumberEditing = false;
             _hasUnsavedChanges = true;
           });
           _computePreviewBillNumber();
@@ -401,36 +398,13 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                           isEditing: _isEditing,
                           invoiceNumberOverride: _invoiceNumberOverride,
                           previewInvoiceNumber: _previewBillNumber,
-                          isInvNumberEditing: _isInvNumberEditing,
-                          invNumberController: _invNumberController,
                           profilePrefix: _profilePrefix,
                           pattiyalNaal: _pattiyalNaal,
-                          onToggleEditInvNumber: () {
+                          onInvNumberChanged: (v) {
                             setState(() {
-                              if (_isInvNumberEditing) {
-                                // Finishing edit → build full override string
-                                final numPart = _invNumberController.text.trim();
-                                if (numPart.isNotEmpty) {
-                                  final prefix = _profilePrefix.isNotEmpty
-                                      ? _profilePrefix
-                                      : 'CB-';
-                                  _invoiceNumberOverride = '$prefix$numPart';
-                                }
-                              } else {
-                                // Starting edit → extract number part
-                                final current = _invoiceNumberOverride.isNotEmpty
-                                    ? _invoiceNumberOverride
-                                    : _previewBillNumber;
-                                final parts = current.split('-');
-                                _invNumberController.text =
-                                    parts.length > 1 ? parts.last : current;
-                              }
-                              _isInvNumberEditing = !_isInvNumberEditing;
+                              _invoiceNumberOverride = v;
                               _hasUnsavedChanges = true;
                             });
-                          },
-                          onInvNumberChanged: (v) {
-                            setState(() => _hasUnsavedChanges = true);
                           },
                           onDateChanged: (d) => setState(() {
                             _pattiyalNaal = d;

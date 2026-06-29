@@ -22,6 +22,7 @@ import 'koorugal/patru_thiruthi_paguthigal.dart';
 import '../koorugal/elvan_vaangunar_keezhvirivu_kooru.dart';
 import '../koorugal/pattiyal_naal_kooru.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
+import '../../../../koorugal/ulleedugal/elvan_aavana_enn_kooru.dart';
 import '../../../../koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
@@ -490,73 +491,17 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ElvanThiruthiThalaippu(label: K.patrucheettuEn.tr(context, ref)),
-          if (_isPatruEnEditing)
-            // Editing mode: text field with locked prefix
-            ElvanThiruthiUlleedu(
-              controller: _patruEnCtrl,
-              prefixText: profilePrefix,
-              keyboardType: TextInputType.number,
-              inputFormatters: ElvanVadivamaippigal.enngalMattum,
-              autofocus: true,
-              onChanged: (val) {
-                setState(() {
-                  _previewPatruEn = val.isEmpty ? '' : '$profilePrefix$val';
-                });
-              },
-              suffixIcon: IconButton(
-                icon: Icon(Icons.check, size: 20, color: cs.primary),
-                onPressed: () {
-                  setState(() {
-                    final numPart = _patruEnCtrl.text.trim();
-                    if (numPart.isNotEmpty) {
-                      _patruEn = '$profilePrefix$numPart';
-                    }
-                    _isPatruEnEditing = false;
-                  });
-                },
-              ),
-            )
-          else
-            // Locked mode: read-only pill showing full receipt number
-            ElvanThiruthiPothan(
-              onTap: null,
-              padding: const EdgeInsets.only(left: 20, right: 6),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      _patruEn.isNotEmpty
-                          ? _patruEn
-                          : K.thaaniyangkiUruvaam.tr(context, ref),
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: _patruEn.isNotEmpty
-                            ? cs.onSurface
-                            : cs.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.edit_outlined),
-                    iconSize: 16,
-                    color: cs.onSurface,
-                    style: IconButton.styleFrom(
-                      padding: const EdgeInsets.all(8),
-                      minimumSize: const Size(0, 0),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isPatruEnEditing = true;
-                        final currentNum = _patruEn.replaceFirst(profilePrefix, '');
-                        _patruEnCtrl.text = currentNum;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
+          ElvanAavanaEnnKooru(
+            label: K.patrucheettuEn.tr(context, ref),
+            prefix: profilePrefix,
+            initialFullNumber: _patruEn.isNotEmpty ? _patruEn : _previewPatruEn,
+            onFullNumberChanged: (v) {
+              setState(() {
+                _patruEn = v;
+                _previewPatruEn = v;
+              });
+            },
+          ),
         ],
       ),
     ];

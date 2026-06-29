@@ -7,6 +7,7 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../../../../koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
+import '../../../../../../koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 import '../../../../../niril_podhu/kaatchi/koorugal/porul_thaedu_kooru.dart';
 import '../../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
@@ -79,8 +80,13 @@ class PattuUrupadiAttai extends ConsumerWidget {
               ),
               if (itemCount > 1)
                 IconButton(
-                  icon: Icon(Icons.delete_outline,
-                      size: 20, color: cs.error),
+                  icon: const Icon(Icons.delete_outline, size: 20),
+                  color: cs.onSurfaceVariant,
+                  style: IconButton.styleFrom(
+                    backgroundColor: Theme.of(context).brightness == Brightness.dark 
+                        ? Colors.white.withValues(alpha: 0.08) 
+                        : cs.surface,
+                  ),
                   onPressed: onItemDeleted,
                   visualDensity: VisualDensity.compact,
                 ),
@@ -131,70 +137,66 @@ class PattuUrupadiAttai extends ConsumerWidget {
                     item.copyWith(vilai: double.tryParse(v) ?? 0));
               });
 
-              final discField = Row(
-                children: [
-                  Expanded(
-                    child: _buildItemField(K.thallupadi.tr(context, ref), item.thallupadi, (v) {
-                      onItemUpdated(item.copyWith(
-                          thallupadi: double.tryParse(v) ?? 0));
-                    }),
-                  ),
-                  InkWell(
-                    borderRadius: BorderRadius.circular(8),
-                    onTap: () {
-                      final newType = item.thallupadiVagai == 'percentage'
-                          ? 'amount'
-                          : 'percentage';
-                      onItemUpdated(
-                          item.copyWith(thallupadiVagai: newType));
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 8),
-                      child: Text(
-                        item.thallupadiVagai == 'percentage' ? '%' : '₹',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+              final discField = _buildItemField(
+                K.thallupadi.tr(context, ref), 
+                item.thallupadi, 
+                (v) {
+                  onItemUpdated(item.copyWith(
+                      thallupadi: double.tryParse(v) ?? 0));
+                },
+                suffixIcon: Padding(
+                  padding: const EdgeInsets.only(right: 6.0),
+                  child: Material(
+                    color: Colors.transparent,
+                    shape: const CircleBorder(),
+                    clipBehavior: Clip.antiAlias,
+                    child: InkWell(
+                      onTap: () {
+                        final newType = item.thallupadiVagai == 'percentage'
+                            ? 'amount'
+                            : 'percentage';
+                        onItemUpdated(
+                            item.copyWith(thallupadiVagai: newType));
+                      },
+                      child: SizedBox(
+                        width: 32,
+                        height: 32,
+                        child: Center(
+                          child: Text(
+                            item.thallupadiVagai == 'percentage' ? '%' : '₹',
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ],
+                ),
               );
 
-              final totalDisplay = Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    K.motham.tr(context, ref),
-                    style: tt.labelSmall?.copyWith(
-                      color: cs.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _inrFormat.format(rowTotal),
-                    style: tt.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: cs.primary,
-                    ),
-                  ),
-                ],
+              final totalDisplay = ElvanThiruthiUlleedu(
+                key: ValueKey(rowTotal),
+                label: K.motham.tr(context, ref),
+                initialValue: _inrFormat.format(rowTotal),
+                readOnly: true,
               );
 
               // Bilingual info line (English name · GST%)
               final infoLine = (item.porulPeyarEn.isNotEmpty ||
                       item.variVizhukkaadu > 0)
                   ? Padding(
-                      padding: const EdgeInsets.only(left: 4, top: 4),
+                      padding: const EdgeInsets.only(left: 16, top: 4),
                       child: Text(
                         [
                           if (item.porulPeyarEn.isNotEmpty) item.porulPeyarEn,
                           if (item.variVizhukkaadu > 0)
                             'GST ${item.variVizhukkaadu.toStringAsFixed(item.variVizhukkaadu.truncateToDouble() == item.variVizhukkaadu ? 0 : 1)}%',
                         ].join(' · '),
-                        style: tt.bodySmall?.copyWith(
-                          color: cs.onSurfaceVariant,
-                          fontStyle: FontStyle.italic,
-                          fontSize: 12,
+                        style: TextStyle(
+                          color: cs.onSurface.withValues(alpha: 0.5),
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: 0.3,
+                          fontSize: 10,
                         ),
                       ),
                     )
@@ -204,20 +206,21 @@ class PattuUrupadiAttai extends ConsumerWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    productSearch,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(flex: 3, child: productSearch),
+                        gap,
+                        Expanded(flex: 1, child: qtyField),
+                        gap,
+                        Expanded(flex: 1, child: rateField),
+                        gap,
+                        Expanded(flex: 1, child: discField),
+                        gap,
+                        Expanded(flex: 1, child: totalDisplay),
+                      ],
+                    ),
                     infoLine,
-                    vGap,
-                    Row(children: [
-                      Expanded(child: qtyField),
-                      gap,
-                      Expanded(child: rateField),
-                    ]),
-                    vGap,
-                    Row(children: [
-                      Expanded(child: discField),
-                      gap,
-                      Expanded(child: totalDisplay),
-                    ]),
                   ],
                 );
               }
@@ -251,7 +254,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
   /// Borderless numeric field — instant math + blur formatting.
   Widget _buildItemField(
       String label, double value, ValueChanged<String> onChanged,
-      {bool isWeight = false}) {
+      {bool isWeight = false, Widget? suffixIcon}) {
     // Weight: always 3 decimals matching weighing machine (24.100 = 24kg 100g).
     // Non-weight: clean integers (6 not 6.0).
     String displayText = '';
@@ -271,6 +274,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
       onValueCommitted: onChanged,
       onChanged: onChanged,
       onDirty: onDirty,
+      suffixIcon: suffixIcon,
     );
   }
 }
@@ -290,6 +294,7 @@ class ItemFieldWidget extends StatefulWidget {
     this.isWeight = false,
     this.onDirty,
     this.onChanged,
+    this.suffixIcon,
   });
 
   final String label;
@@ -300,6 +305,7 @@ class ItemFieldWidget extends StatefulWidget {
   final VoidCallback? onDirty;
   /// Called on every keystroke for instant calculation (optional).
   final ValueChanged<String>? onChanged;
+  final Widget? suffixIcon;
 
   @override
   State<ItemFieldWidget> createState() => _ItemFieldWidgetState();
@@ -353,11 +359,14 @@ class _ItemFieldWidgetState extends State<ItemFieldWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
+    return ElvanThiruthiUlleedu(
+      label: widget.label,
       controller: _controller,
       focusNode: _focusNode,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
+      suffixText: widget.isWeight ? 'kg' : null,
+      suffixIcon: widget.suffixIcon,
       onChanged: (v) {
         if (!_isDirty) {
           _isDirty = true;
@@ -365,17 +374,6 @@ class _ItemFieldWidgetState extends State<ItemFieldWidget> {
         }
         widget.onChanged?.call(v);
       },
-      decoration: InputDecoration(
-        labelText: widget.label,
-        suffixText: widget.isWeight ? 'kg' : null,
-        filled: false,
-        border: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        focusedBorder: InputBorder.none,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-        isDense: true,
-      ),
     );
   }
 }
