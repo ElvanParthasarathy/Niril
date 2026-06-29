@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -36,22 +37,33 @@ class KooliPiraVarivuKooru extends ConsumerWidget {
       child: Column(
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('${K.pira.tr(context, ref)} #${index + 1}',
-                  style: tt.titleSmall?.copyWith(
-                    color: cs.onSurfaceVariant,
-                  )),
-              const Spacer(),
-              IconButton(
-                icon: Icon(Icons.remove_circle_outline,
-                    color: cs.error, size: 20),
-                onPressed: onDeleted,
+              Padding(
+                padding: const EdgeInsets.only(left: 24, bottom: 6),
+                child: Text('${K.pira.tr(context, ref)} #${index + 1}',
+                    style: tt.labelMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: cs.onSurfaceVariant,
+                    )),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 12, bottom: 6),
+                child: IconButton(
+                  icon: const Icon(CupertinoIcons.delete, size: 20),
+                  color: cs.onSurfaceVariant,
+                  style: IconButton.styleFrom(
+                    backgroundColor: Theme.of(context).brightness == Brightness.dark 
+                        ? Colors.white.withValues(alpha: 0.08) 
+                        : Colors.white,
+                  ),
+                  onPressed: onDeleted,
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 4),
           ElvanUrupadiAttai(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
                 Expanded(
