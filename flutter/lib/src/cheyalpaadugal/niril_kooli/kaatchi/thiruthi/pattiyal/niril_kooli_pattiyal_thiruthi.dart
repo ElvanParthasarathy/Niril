@@ -478,68 +478,68 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                                           child: KooliUrupadiKooru(
                                             index: i,
                                             item: _items[i],
-                                        itemCount: _items.length,
-                                        formatter: formatter,
-                                        onUpdated: (updated) {
-                                          setState(() {
-                                            _items = List.from(_items).. [i] = updated;
-                                            _hasUnsavedChanges = true;
-                                          });
-                                          _recalculate();
-                                        },
-                                        onDeleted: () {
-                                          final removedItem = _items[i];
-                                          setState(() {
-                                            _items = List.from(_items)..removeAt(i);
-                                            _hasUnsavedChanges = true;
-                                          });
-                                          _itemsListKey.currentState?.removeItem(
-                                            i,
-                                            (context, anim) {
-                                              final curvedAnimation = CurvedAnimation(
-                                                parent: anim,
-                                                curve: Curves.easeOutQuart,
-                                                reverseCurve: Curves.easeInQuart,
-                                              );
-                                              return ClipRect(
-                                                child: SizeTransition(
-                                                  sizeFactor: curvedAnimation,
-                                                  axisAlignment: -1.0,
-                                                  child: FadeTransition(
-                                                    opacity: curvedAnimation,
-                                                    child: SlideTransition(
-                                                      position: Tween<Offset>(
-                                                        begin: const Offset(0.0, -0.1),
-                                                        end: Offset.zero,
-                                                      ).animate(curvedAnimation),
-                                                      child: KooliUrupadiKooru(
-                                                        index: i,
-                                                        item: removedItem,
-                                                  itemCount: _items.length + 1,
-                                                        itemCount: _items.length + 1,
-                                                        formatter: formatter,
-                                                        onUpdated: (_) {},
-                                                        onDeleted: () {},
-                                                        onRequestAddNewProduct: () async {},
+                                            itemCount: _items.length,
+                                            formatter: formatter,
+                                            onUpdated: (updated) {
+                                              setState(() {
+                                                _items = List.from(_items).. [i] = updated;
+                                                _hasUnsavedChanges = true;
+                                              });
+                                              _recalculate();
+                                            },
+                                            onDeleted: () {
+                                              final removedItem = _items[i];
+                                              setState(() {
+                                                _items = List.from(_items)..removeAt(i);
+                                                _hasUnsavedChanges = true;
+                                              });
+                                              _itemsListKey.currentState?.removeItem(
+                                                i,
+                                                (context, anim) {
+                                                  final curvedAnimation = CurvedAnimation(
+                                                    parent: anim,
+                                                    curve: Curves.easeOutQuart,
+                                                    reverseCurve: Curves.easeInQuart,
+                                                  );
+                                                  return ClipRect(
+                                                    child: SizeTransition(
+                                                      sizeFactor: curvedAnimation,
+                                                      axisAlignment: -1.0,
+                                                      child: FadeTransition(
+                                                        opacity: curvedAnimation,
+                                                        child: SlideTransition(
+                                                          position: Tween<Offset>(
+                                                            begin: const Offset(0.0, -0.1),
+                                                            end: Offset.zero,
+                                                          ).animate(curvedAnimation),
+                                                          child: KooliUrupadiKooru(
+                                                            index: i,
+                                                            item: removedItem,
+                                                            itemCount: _items.length + 1,
+                                                            formatter: formatter,
+                                                            onUpdated: (_) {},
+                                                            onDeleted: () {},
+                                                            onRequestAddNewProduct: () async {},
+                                                          ),
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ),
+                                                  );
+                                                },
+                                                duration: const Duration(milliseconds: 250),
+                                              );
+                                              _recalculate();
+                                            },
+                                            onRequestAddNewProduct: () async {
+                                              await Navigator.of(context).push(
+                                                MaterialPageRoute(builder: (_) => const CoolieItemEditor()),
                                               );
                                             },
-                                            duration: const Duration(milliseconds: 250),
-                                          );
-                                          _recalculate();
-                                        },
-                                        onRequestAddNewProduct: () async {
-                                          await Navigator.of(context).push(
-                                            MaterialPageRoute(builder: (_) => const CoolieItemEditor()),
-                                          );
-                                        },
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                );
+                                  );
                               },
                               ),
 
@@ -568,58 +568,60 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                                           ).animate(curvedAnimation),
                                           child: KooliPiraVarivuKooru(
                                             index: i,
-                                        charge: _piraVarivugal[i],
-                                        onUpdated: (updated) {
-                                          setState(() {
-                                            _piraVarivugal = List.from(_piraVarivugal).. [i] = updated;
-                                            _hasUnsavedChanges = true;
-                                          });
-                                        },
-                                        onDeleted: () {
-                                          final removedItem = _piraVarivugal[i];
-                                          setState(() {
-                                            _piraVarivugal = List.from(_piraVarivugal)..removeAt(i);
-                                            _hasUnsavedChanges = true;
-                                          });
-                                          _piraVarivugalListKey.currentState?.removeItem(
-                                            i,
-                                            (context, anim) {
-                                              final curvedAnimation = CurvedAnimation(
-                                                parent: anim,
-                                                curve: Curves.easeOutQuart,
-                                                reverseCurve: Curves.easeInQuart,
-                                              );
-                                              return ClipRect(
-                                                child: SizeTransition(
-                                                  sizeFactor: curvedAnimation,
-                                                  axisAlignment: -1.0,
-                                                  child: FadeTransition(
-                                                    opacity: curvedAnimation,
-                                                    child: SlideTransition(
-                                                      position: Tween<Offset>(
-                                                        begin: const Offset(0.0, -0.1),
-                                                        end: Offset.zero,
-                                                      ).animate(curvedAnimation),
-                                                      child: KooliPiraVarivuKooru(
-                                                        index: i,
-                                                  charge: removedItem,
-                                                  onUpdated: (_) {},
-                                                  onDeleted: () {},
-                                                  onRecalculate: () {},
-                                                ),
+                                            charge: _piraVarivugal[i],
+                                            onUpdated: (updated) {
+                                              setState(() {
+                                                _piraVarivugal = List.from(_piraVarivugal).. [i] = updated;
+                                                _hasUnsavedChanges = true;
+                                              });
+                                            },
+                                            onDeleted: () {
+                                              final removedItem = _piraVarivugal[i];
+                                              setState(() {
+                                                _piraVarivugal = List.from(_piraVarivugal)..removeAt(i);
+                                                _hasUnsavedChanges = true;
+                                              });
+                                              _piraVarivugalListKey.currentState?.removeItem(
+                                                i,
+                                                (context, anim) {
+                                                  final curvedAnimation = CurvedAnimation(
+                                                    parent: anim,
+                                                    curve: Curves.easeOutQuart,
+                                                    reverseCurve: Curves.easeInQuart,
+                                                  );
+                                                  return ClipRect(
+                                                    child: SizeTransition(
+                                                      sizeFactor: curvedAnimation,
+                                                      axisAlignment: -1.0,
+                                                      child: FadeTransition(
+                                                        opacity: curvedAnimation,
+                                                        child: SlideTransition(
+                                                          position: Tween<Offset>(
+                                                            begin: const Offset(0.0, -0.1),
+                                                            end: Offset.zero,
+                                                          ).animate(curvedAnimation),
+                                                          child: KooliPiraVarivuKooru(
+                                                            index: i,
+                                                            charge: removedItem,
+                                                            onUpdated: (_) {},
+                                                            onDeleted: () {},
+                                                            onRecalculate: () {},
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                );
-                                              },
-                                              duration: const Duration(milliseconds: 250),
-                                            );
-                                          _recalculate();
-                                        },
-                                        onRecalculate: _recalculate,
+                                                  );
+                                                },
+                                                duration: const Duration(milliseconds: 250),
+                                              );
+                                              _recalculate();
+                                            },
+                                            onRecalculate: _recalculate,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                );
+                                  );
                               },
                               ),
 
