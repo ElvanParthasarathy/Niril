@@ -13,7 +13,7 @@ class ElvanThiruthiPillVadivu {
         final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
         if (states.contains(WidgetState.focused) ||
             states.contains(WidgetState.hovered)) {
-          return (isLight && !isInsideCard) ? Colors.white : Theme.of(context)
+          return (isLight && !isInsideCard) ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08) : Theme.of(context)
               .colorScheme
               .onSurface
               .withValues(alpha: 0.12);
@@ -33,15 +33,11 @@ class ElvanThiruthiPillVadivu {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(borderRadius),
-        borderSide: (Theme.of(context).colorScheme.brightness == Brightness.light && !ElvanAttaiSoolal.check(context)) 
-            ? const BorderSide(color: Colors.transparent, width: 1.5) 
-            : BorderSide.none,
+        borderSide: BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(borderRadius),
-        borderSide: (Theme.of(context).colorScheme.brightness == Brightness.light && !ElvanAttaiSoolal.check(context)) 
-            ? BorderSide(color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5), width: 1.5)
-            : BorderSide.none,
+        borderSide: BorderSide.none,
       ),
     );
   }
