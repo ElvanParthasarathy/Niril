@@ -3,11 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import '../podhu_koorugal/elvan_kavanam.dart';
 
 Future<T?> showElvanBottomSheet<T>({
   required BuildContext context,
   required WidgetBuilder builder,
 }) {
+  ElvanKavanam.viduvi(context);
+
   final isDesktop =
       !kIsWeb && (Platform.isWindows || Platform.isMacOS || Platform.isLinux);
 

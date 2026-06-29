@@ -9,7 +9,7 @@ class ElvanKavanam {
   /// Used primarily before opening bottom sheets or modals to prevent the 
   /// keyboard from glitching or re-appearing unexpectedly when the modal closes.
   static void viduvi(BuildContext context) {
-    FocusScope.of(context).unfocus();
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 
   /// The standard keyboard dismiss behavior for all scroll views in the app.
