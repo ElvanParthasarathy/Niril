@@ -183,7 +183,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
             }),
           ),
           if (onAddNewItem != null && index == itemCount - 1) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               child: TextButton.icon(
