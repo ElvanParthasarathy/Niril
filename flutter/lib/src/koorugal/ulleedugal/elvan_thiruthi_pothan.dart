@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 
 /// A native Material button designed specifically for Elvan Editors (Thiruthi).
 /// It visually matches the standard text fields (`ElvanThiruthiUlleedu`) 
@@ -21,8 +22,10 @@ class ElvanThiruthiPothan extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isInsideCard = ElvanAttaiSoolal.check(context);
+    final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
     return Material(
-      color: backgroundColor ?? (Theme.of(context).colorScheme.brightness == Brightness.light ? Colors.white : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08)),
+      color: backgroundColor ?? ((isLight && !isInsideCard) ? Colors.white : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08)),
       borderRadius: BorderRadius.circular(100),
       clipBehavior: Clip.antiAlias,
       child: InkWell(

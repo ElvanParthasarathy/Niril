@@ -7,6 +7,26 @@ import 'package:flutter/material.dart';
 /// - No shadow, no border
 /// - Light: white bg, Dark: `rgba(255,255,255,0.03)`
 /// - Optional tap with scale animation
+/// InheritedWidget to let descendants (like text fields) know they are inside a card.
+class ElvanAttaiSoolal extends InheritedWidget {
+  final bool isInsideCard;
+
+  const ElvanAttaiSoolal({
+    super.key,
+    required this.isInsideCard,
+    required super.child,
+  });
+
+  static bool check(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<ElvanAttaiSoolal>()?.isInsideCard ?? false;
+  }
+
+  @override
+  bool updateShouldNotify(ElvanAttaiSoolal oldWidget) {
+    return isInsideCard != oldWidget.isInsideCard;
+  }
+}
+
 class ElvanThiruthiAttai extends StatelessWidget {
   const ElvanThiruthiAttai({
     super.key,
@@ -40,7 +60,10 @@ class ElvanThiruthiAttai extends StatelessWidget {
         margin: margin,
         padding: padding ??
             const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: child,
+        child: ElvanAttaiSoolal(
+          isInsideCard: true,
+          child: child,
+        ),
       ),
     );
 
@@ -88,7 +111,10 @@ class ElvanUrupadiAttai extends StatelessWidget {
       padding: padding ?? const EdgeInsets.symmetric(vertical: 8),
       child: Material(
         type: MaterialType.transparency,
-        child: child,
+        child: ElvanAttaiSoolal(
+          isInsideCard: true,
+          child: child,
+        ),
       ),
     );
   }

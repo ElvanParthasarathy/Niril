@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 
 class ElvanThiruthiPillVadivu {
   /// Returns the standard dark grey pill decoration used consistently 
@@ -8,15 +9,16 @@ class ElvanThiruthiPillVadivu {
       isDense: true,
       filled: true,
       fillColor: WidgetStateColor.resolveWith((states) {
+        final isInsideCard = ElvanAttaiSoolal.check(context);
         final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
         if (states.contains(WidgetState.focused) ||
             states.contains(WidgetState.hovered)) {
-          return isLight ? Colors.white : Theme.of(context)
+          return (isLight && !isInsideCard) ? Colors.white : Theme.of(context)
               .colorScheme
               .onSurface
               .withValues(alpha: 0.12);
         }
-        return isLight ? Colors.white : Theme.of(context)
+        return (isLight && !isInsideCard) ? Colors.white : Theme.of(context)
             .colorScheme
             .onSurface
             .withValues(alpha: 0.08);

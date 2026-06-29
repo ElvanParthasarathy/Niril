@@ -124,7 +124,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
               final productSearch = PorulThaeduKooru(
                 seyaliVagai: seyaliVagai,
                 initialText: fallbackMudhanmai,
-                backgroundColor: cs.onSurface.withValues(alpha: 0.08),
+
                 onSelected: (p) {
                   final mudhanmaiLang = ref.read(silkMudhanmaiMozhiProvider);
                   final irandaamLang = ref.read(silkThunaiMozhiProvider);
@@ -206,7 +206,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
                 label: K.motham.tr(context, ref),
                 initialValue: _inrFormat.format(rowTotal),
                 readOnly: true,
-                backgroundColor: cs.onSurface.withValues(alpha: 0.08),
+
               );
 
               // Bilingual info line (English name · GST%)

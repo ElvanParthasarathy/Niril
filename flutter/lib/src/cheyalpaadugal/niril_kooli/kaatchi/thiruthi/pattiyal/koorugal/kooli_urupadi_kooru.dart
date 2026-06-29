@@ -111,7 +111,6 @@ class KooliUrupadiKooru extends ConsumerWidget {
                           return PorulThaeduKooru(
                             seyaliVagai: 'coolie',
                             initialText: displayPrimary,
-                            backgroundColor: cs.onSurface.withValues(alpha: 0.08),
                             onSelected: (p) {
                               final primaryName = OruMozhiPorulUdhavi.mudhanmaiPeyar(p.porulPeyar, kooliLang);
                               final secondaryName = OruMozhiPorulUdhavi.thunaiPeyar(p.porulPeyar, kooliLang);
@@ -141,7 +140,6 @@ class KooliUrupadiKooru extends ConsumerWidget {
                         label: K.edai.tr(context, ref),
                         initialText: weightText,
                         isWeight: true,
-                        backgroundColor: cs.onSurface.withValues(alpha: 0.08),
                         onValueCommitted: (v) {
                           onUpdated(
                             item.copyWith(edai: double.tryParse(v) ?? 0),
@@ -160,7 +158,6 @@ class KooliUrupadiKooru extends ConsumerWidget {
                       child: ItemFieldWidget(
                         label: K.vilai.tr(context, ref),
                         initialText: rateText,
-                        backgroundColor: cs.onSurface.withValues(alpha: 0.08),
                         onValueCommitted: (v) {
                           onUpdated(
                             item.copyWith(vilai: double.tryParse(v) ?? 0),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thooiya_ulleedu.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_thalaippu.dart';
 
@@ -208,6 +209,8 @@ class _ElvanThiruthiUlleeduState extends State<ElvanThiruthiUlleedu> {
       );
     }
 
+    final isInsideCard = ElvanAttaiSoolal.check(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -217,8 +220,8 @@ class _ElvanThiruthiUlleeduState extends State<ElvanThiruthiUlleedu> {
           curve: Curves.easeInOut,
           decoration: BoxDecoration(
             color: widget.backgroundColor ?? (_isFocused 
-                ? (cs.brightness == Brightness.light ? Colors.white : cs.onSurface.withValues(alpha: 0.12))
-                : (cs.brightness == Brightness.light ? Colors.white : cs.onSurface.withValues(alpha: 0.08))),
+                ? (cs.brightness == Brightness.light && !isInsideCard ? Colors.white : cs.onSurface.withValues(alpha: 0.12))
+                : (cs.brightness == Brightness.light && !isInsideCard ? Colors.white : cs.onSurface.withValues(alpha: 0.08))),
             borderRadius: BorderRadius.circular(borderRadius),
           ),
           clipBehavior: Clip.antiAlias,
