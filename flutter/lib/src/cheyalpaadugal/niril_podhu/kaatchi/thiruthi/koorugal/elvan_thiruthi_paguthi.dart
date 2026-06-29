@@ -95,7 +95,7 @@ class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
         children: [
           _buildHeader(isActive: true),
           Padding(
-            padding: const EdgeInsets.only(top: 16.0),
+            padding: const EdgeInsets.only(top: 8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

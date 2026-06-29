@@ -544,6 +544,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                               ),
 
                               // Other charges item cards
+                              if (_piraVarivugal.isNotEmpty)
                               AnimatedList(
                                 key: _piraVarivugalListKey,
                                 shrinkWrap: true,
