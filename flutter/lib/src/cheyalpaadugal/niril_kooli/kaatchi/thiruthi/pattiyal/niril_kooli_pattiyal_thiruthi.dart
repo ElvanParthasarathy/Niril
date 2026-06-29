@@ -550,88 +550,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                               },
                               ),
 
-                              // Other charges item cards
-                              if (_piraVarivugal.isNotEmpty)
-                              AnimatedList(
-                                key: _piraVarivugalListKey,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                initialItemCount: _piraVarivugal.length,
-                                itemBuilder: (context, i, animation) {
-                                  final curvedAnimation = CurvedAnimation(
-                                    parent: animation,
-                                    curve: Curves.easeOutQuart,
-                                    reverseCurve: Curves.easeInQuart,
-                                  );
-                                  return ClipRect(
-                                    child: SizeTransition(
-                                      sizeFactor: curvedAnimation,
-                                      axisAlignment: -1.0,
-                                      child: FadeTransition(
-                                        opacity: curvedAnimation,
-                                        child: SlideTransition(
-                                          position: Tween<Offset>(
-                                            begin: const Offset(0.0, -0.1),
-                                            end: Offset.zero,
-                                          ).animate(curvedAnimation),
-                                          child: KooliPiraVarivuKooru(
-                                            index: i,
-                                            charge: _piraVarivugal[i],
-                                            onUpdated: (updated) {
-                                              setState(() {
-                                                _piraVarivugal = List.from(_piraVarivugal).. [i] = updated;
-                                                _hasUnsavedChanges = true;
-                                              });
-                                            },
-                                            onDeleted: () {
-                                              final removedItem = _piraVarivugal[i];
-                                              setState(() {
-                                                _piraVarivugal = List.from(_piraVarivugal)..removeAt(i);
-                                                _hasUnsavedChanges = true;
-                                              });
-                                              _piraVarivugalListKey.currentState?.removeItem(
-                                                i,
-                                                (context, anim) {
-                                                  final curvedAnimation = CurvedAnimation(
-                                                    parent: anim,
-                                                    curve: Curves.easeOutQuart,
-                                                    reverseCurve: Curves.easeInQuart,
-                                                  );
-                                                  return ClipRect(
-                                                    child: SizeTransition(
-                                                      sizeFactor: curvedAnimation,
-                                                      axisAlignment: -1.0,
-                                                      child: FadeTransition(
-                                                        opacity: curvedAnimation,
-                                                        child: SlideTransition(
-                                                          position: Tween<Offset>(
-                                                            begin: const Offset(0.0, -0.1),
-                                                            end: Offset.zero,
-                                                          ).animate(curvedAnimation),
-                                                          child: KooliPiraVarivuKooru(
-                                                            index: i,
-                                                            charge: removedItem,
-                                                            onUpdated: (_) {},
-                                                            onDeleted: () {},
-                                                            onRecalculate: () {},
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                                duration: const Duration(milliseconds: 250),
-                                              );
-                                              _recalculate();
-                                            },
-                                            onRecalculate: _recalculate,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                              },
-                              ),
+
 
                               const SizedBox(height: 8),
 
@@ -652,22 +571,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                                       _hasUnsavedChanges = true;
                                     }),
                                   ),
-                                  // Always show the Add Other Charges button (not just when empty)
-                                  kooliPillButton(context,
-                                      icon: Icons.add_rounded,
-                                      label: K.piraVarivuChaer.tr(context, ref),
-                                      onPressed: () => setState(() {
-                                        _piraVarivugal = [
-                                          ..._piraVarivugal,
-                                          const PiraVarivu(),
-                                        ];
-                                        _piraVarivugalListKey.currentState?.insertItem(
-                                          _piraVarivugal.length - 1,
-                                          duration: const Duration(milliseconds: 250),
-                                        );
-                                        _hasUnsavedChanges = true;
-                                      }),
-                                    ),
+
                                 ],
                               ),
                             ],
