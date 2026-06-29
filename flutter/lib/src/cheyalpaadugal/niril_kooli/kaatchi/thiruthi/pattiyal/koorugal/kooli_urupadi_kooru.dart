@@ -1,5 +1,6 @@
 import 'package:elvan_niril/src/adippadai/oru_mozhi/oru_mozhi_vazhanguthigal.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
@@ -59,16 +60,23 @@ class KooliUrupadiKooru extends ConsumerWidget {
           // Item #N header + trash
           Row(
             children: [
-              Text('${K.porul.tr(context, ref)} #${index + 1}',
-                  style: tt.titleSmall?.copyWith(
-                    color: cs.onSurfaceVariant,
-                  )),
+              Padding(
+                padding: const EdgeInsets.only(left: 24, bottom: 6),
+                child: Text('${K.porul.tr(context, ref)} #${index + 1}',
+                    style: tt.labelMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: cs.onSurfaceVariant,
+                    )),
+              ),
               const Spacer(),
               if (itemCount > 1)
-                IconButton(
-                  icon: Icon(Icons.delete_outline,
-                      color: cs.error, size: 20),
-                  onPressed: onDeleted,
+                Padding(
+                  padding: const EdgeInsets.only(right: 12, bottom: 6),
+                  child: IconButton(
+                    icon: Icon(CupertinoIcons.delete,
+                        color: cs.error, size: 20),
+                    onPressed: onDeleted,
+                  ),
                 ),
             ],
           ),

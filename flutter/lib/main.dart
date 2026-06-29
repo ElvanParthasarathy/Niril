@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:cyclop/cyclop.dart';
 import 'src/koorugal/podhu_koorugal/elvan_nagarvu_panbu.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,6 +23,7 @@ import 'src/cheyalpaadugal/ulnuzhaivu/kaatchi/thiraigal/anumadhi_kaavalar_thirai
 import 'src/cheyalpaadugal/chattagam/kaatchi/pinnaetrum_oadu.dart';
 import 'src/cheyalpaadugal/chattagam/kaatchi/niril_seyali_thirai.dart';
 import 'src/cheyalpaadugal/uruvakkunar_karuvigal/kaatchi/elvan_uruvakkunar_menu.dart';
+import 'src/adippadai/vazhikaattal/niril_nav.dart';
 
 import 'dart:async';
 import 'dart:io';
@@ -214,11 +216,21 @@ class ElvanNirilApp extends ConsumerWidget {
     final locale = ref.watch(localeProvider);
 
     return MaterialApp(
+      navigatorKey: globalRootNavigatorKey,
       builder: (context, child) {
+        // Wrap EyeDrop in its own Overlay so it can be accessed globally without needing the Navigator's internal overlay.
+        Widget wrappedChild = Overlay(
+          initialEntries: [
+            OverlayEntry(
+              builder: (context) => EyeDrop(child: child!),
+            ),
+          ],
+        );
+        
         if (kDebugMode) {
-          return ElvanUruvakkunarMenu(child: child!);
+          return ElvanUruvakkunarMenu(child: wrappedChild);
         }
-        return child!;
+        return wrappedChild;
       },
       onGenerateTitle: (context) => K.elvanNiril.tr(context, ref),
       debugShowCheckedModeBanner: false,

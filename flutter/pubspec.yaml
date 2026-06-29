@@ -50,6 +50,8 @@ dependencies:
   firebase_remote_config: ^6.5.3
 
   sqlite3: any
+  flutter_colorpicker: ^1.1.0
+  cyclop: ^0.7.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

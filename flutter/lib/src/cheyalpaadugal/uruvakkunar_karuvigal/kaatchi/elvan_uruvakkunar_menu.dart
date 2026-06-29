@@ -13,6 +13,8 @@ import '../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../tharavu/sodhanai_tharavu_uruvakki.dart';
 import '../tharavu/sodhanai_tharavugal.dart';
+import 'elvan_uruvakkunar_nira_kaatti.dart';
+import '../../../adippadai/vazhikaattal/niril_nav.dart';
 
 /// A global floating developer menu that only appears in Debug mode.
 class ElvanUruvakkunarMenu extends ConsumerStatefulWidget {
@@ -356,6 +358,19 @@ class _ElvanUruvakkunarMenuState extends ConsumerState<ElvanUruvakkunarMenu> {
                                 icon: CupertinoIcons.arrow_right_arrow_left,
                                 color: Colors.pink,
                                 onTap: _swapDataLanguages,
+                              ),
+                              Divider(height: 1, thickness: 1, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)),
+                              _buildCompactAction(
+                                label: 'Color Analyzer',
+                                icon: Icons.color_lens,
+                                color: Colors.amber,
+                                onTap: () {
+                                  setState(() => _isExpanded = false);
+                                  final navContext = globalRootNavigatorKey.currentContext;
+                                  if (navContext != null) {
+                                    ElvanUruvakkunarNiraKaatti.show(navContext);
+                                  }
+                                },
                               ),
                             ],
                           ),

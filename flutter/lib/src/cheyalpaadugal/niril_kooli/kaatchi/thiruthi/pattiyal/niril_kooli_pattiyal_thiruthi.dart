@@ -23,6 +23,7 @@ import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../porul/niril_kooli_porul_thiruthi.dart';
 import 'koorugal/koorugal.dart';
+import '../../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 import '../../../../niril_podhu/kaatchi/koorugal/elvan_pattiyal_tharavugal_kooru.dart';
 
 /// Coolie Invoice Editor — weight-based billing with setharam, courier,
@@ -131,7 +132,29 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
       }
     });
 
+    _backfillItems();
     _recalculate();
+  }
+
+  Future<void> _backfillItems() async {
+    final products = await ref.read(porulgalProvider.future);
+    bool changed = false;
+    final newItems = _items.map((item) {
+      if (item.porulPeyarEn.isEmpty && (item.porulId?.isNotEmpty == true)) {
+        final product = products.where((p) => p.id.toString() == item.porulId).firstOrNull;
+        if (product != null) {
+          final enName = product.porulPeyar['en'] ?? ''; // or use a provider if available, but en works
+          if (enName.isNotEmpty) {
+            changed = true;
+            return item.copyWith(porulPeyarEn: enName);
+          }
+        }
+      }
+      return item;
+    }).toList();
+    if (changed && mounted) {
+      setState(() => _items = newItems);
+    }
   }
 
   @override
@@ -194,6 +217,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
         _ahimsaCtrl.text =
             _ahimsaPattuThogai > 0 ? _cleanNum(_ahimsaPattuThogai) : '';
       });
+      _backfillItems();
       _recalculate();
     }
   }

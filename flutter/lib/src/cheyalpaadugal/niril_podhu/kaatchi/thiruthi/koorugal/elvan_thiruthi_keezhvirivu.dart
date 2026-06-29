@@ -92,13 +92,16 @@ class ElvanThiruthiKeezhvirivu<T> extends ConsumerWidget {
                     onPressed: onClear,
                   ),
               ] else
-                Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  size: 20.0,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.5),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    size: 20.0,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.5),
+                  ),
                 ),
             ],
           ),

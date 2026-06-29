@@ -22,6 +22,8 @@ bool isDesktopLayoutContext(BuildContext context) {
   return isDesktopLayout(MediaQuery.sizeOf(context).width);
 }
 
+final GlobalKey<NavigatorState> globalRootNavigatorKey = GlobalKey<NavigatorState>();
+
 /// Industry-standard navigation helper that automatically routes page pushes
 /// through the correct navigator based on the current layout.
 ///

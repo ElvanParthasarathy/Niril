@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_pothan.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_thalaippu.dart';
@@ -80,8 +81,8 @@ class PattiyalNaalKooru extends StatelessWidget {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.calendar_today_rounded),
-                iconSize: 16,
+                icon: const Icon(CupertinoIcons.calendar),
+                iconSize: 18,
                 color: colorScheme.onSurface,
                 style: IconButton.styleFrom(
                   padding: const EdgeInsets.all(8),

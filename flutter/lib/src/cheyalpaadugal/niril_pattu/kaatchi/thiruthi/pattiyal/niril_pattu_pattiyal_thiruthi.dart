@@ -24,6 +24,7 @@ import '../vaangunar/niril_pattu_vaangunar_thiruthi.dart';
 import '../porul/niril_pattu_porul_thiruthi.dart';
 import 'koorugal/koorugal.dart';
 import '../../../../niril_podhu/kaatchi/koorugal/elvan_pattiyal_tharavugal_kooru.dart';
+import '../../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 
 
 /// Silk (GST) Invoice Editor — full form with line items, tax calculation,
@@ -86,11 +87,13 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
       _applySnapshot(
         PattuPattiyalUthavi.loadFromEntry(widget.editingEntry!),
       );
+      _backfillItems();
     } else if (widget.duplicateFrom != null) {
       _applySnapshot(
         PattuPattiyalUthavi.loadFromEntry(widget.duplicateFrom!,
             isDuplicate: true),
       );
+      _backfillItems();
     } else {
       _tryRestoreDraft();
     }
@@ -119,6 +122,27 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
     _globalDiscountType = s.globalDiscountType;
     _globalDiscountController.text =
         _globalDiscountValue > 0 ? _globalDiscountValue.toString() : '';
+  }
+
+  Future<void> _backfillItems() async {
+    final products = await ref.read(porulgalProvider.future);
+    bool changed = false;
+    final newItems = _items.map((item) {
+      if (item.porulPeyarEn.isEmpty && (item.porulId?.isNotEmpty == true)) {
+        final product = products.where((p) => p.id.toString() == item.porulId).firstOrNull;
+        if (product != null) {
+          final enName = product.porulPeyar[ref.read(silkIrandaamMozhiProvider)] ?? '';
+          if (enName.isNotEmpty) {
+            changed = true;
+            return item.copyWith(porulPeyarEn: enName);
+          }
+        }
+      }
+      return item;
+    }).toList();
+    if (changed && mounted) {
+      setState(() => _items = newItems);
+    }
   }
 
 
@@ -219,6 +243,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
     final snapshot = await PattuPattiyalUthavi.tryRestoreDraft(context, ref);
     if (snapshot != null && mounted) {
       setState(() => _applySnapshot(snapshot));
+      _backfillItems();
       _resolveCustomerState();
       _recalculate();
     }

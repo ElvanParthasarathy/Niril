@@ -1,5 +1,6 @@
 import 'package:elvan_niril/src/adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -69,26 +70,28 @@ class PattuUrupadiAttai extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 4, bottom: 6),
+                padding: const EdgeInsets.only(left: 24, bottom: 6),
                 child: Text(
                   '${K.porul.tr(context, ref)} #${index + 1}',
-                  style: tt.labelLarge?.copyWith(
+                  style: tt.labelMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: cs.onSurfaceVariant,
                   ),
                 ),
               ),
               if (itemCount > 1)
-                IconButton(
-                  icon: const Icon(Icons.delete_outline, size: 20),
-                  color: cs.onSurfaceVariant,
-                  style: IconButton.styleFrom(
-                    backgroundColor: Theme.of(context).brightness == Brightness.dark 
-                        ? Colors.white.withValues(alpha: 0.08) 
-                        : cs.surface,
+                Padding(
+                  padding: const EdgeInsets.only(right: 12, bottom: 6),
+                  child: IconButton(
+                    icon: const Icon(CupertinoIcons.delete, size: 20),
+                    color: cs.onSurfaceVariant,
+                    style: IconButton.styleFrom(
+                      backgroundColor: Theme.of(context).brightness == Brightness.dark 
+                          ? Colors.white.withValues(alpha: 0.08) 
+                          : cs.surface,
+                    ),
+                    onPressed: onItemDeleted,
                   ),
-                  onPressed: onItemDeleted,
-                  visualDensity: VisualDensity.compact,
                 ),
             ],
           ),
@@ -185,7 +188,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
               final infoLine = (item.porulPeyarEn.isNotEmpty ||
                       item.variVizhukkaadu > 0)
                   ? Padding(
-                      padding: const EdgeInsets.only(left: 16, top: 4),
+                      padding: const EdgeInsets.only(left: 16, top: 12),
                       child: Text(
                         [
                           if (item.porulPeyarEn.isNotEmpty) item.porulPeyarEn,
