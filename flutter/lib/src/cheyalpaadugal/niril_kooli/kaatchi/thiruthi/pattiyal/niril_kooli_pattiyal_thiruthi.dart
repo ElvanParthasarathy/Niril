@@ -459,15 +459,25 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                                 physics: const NeverScrollableScrollPhysics(),
                                 initialItemCount: _items.length,
                                 itemBuilder: (context, i, animation) {
+                                  final curvedAnimation = CurvedAnimation(
+                                    parent: animation,
+                                    curve: Curves.easeOutQuart,
+                                    reverseCurve: Curves.easeInQuart,
+                                  );
                                   return ClipRect(
                                     child: SizeTransition(
-                                      sizeFactor: animation,
-                                      axisAlignment: 1.0,
+                                      sizeFactor: curvedAnimation,
+                                      axisAlignment: -1.0,
                                       child: FadeTransition(
-                                        opacity: animation,
-                                      child: KooliUrupadiKooru(
-                                        index: i,
-                                        item: _items[i],
+                                        opacity: curvedAnimation,
+                                        child: SlideTransition(
+                                          position: Tween<Offset>(
+                                            begin: const Offset(0.0, -0.1),
+                                            end: Offset.zero,
+                                          ).animate(curvedAnimation),
+                                          child: KooliUrupadiKooru(
+                                            index: i,
+                                            item: _items[i],
                                         itemCount: _items.length,
                                         formatter: formatter,
                                         onUpdated: (updated) {
@@ -485,15 +495,26 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                                           });
                                           _itemsListKey.currentState?.removeItem(
                                             i,
-                                            (context, anim) => ClipRect(
-                                              child: SizeTransition(
-                                                sizeFactor: anim,
-                                                axisAlignment: 1.0,
-                                                child: FadeTransition(
-                                                  opacity: anim,
-                                                child: KooliUrupadiKooru(
-                                                  index: i,
-                                                  item: removedItem,
+                                            (context, anim) {
+                                              final curvedAnimation = CurvedAnimation(
+                                                parent: anim,
+                                                curve: Curves.easeOutQuart,
+                                                reverseCurve: Curves.easeInQuart,
+                                              );
+                                              return ClipRect(
+                                                child: SizeTransition(
+                                                  sizeFactor: curvedAnimation,
+                                                  axisAlignment: -1.0,
+                                                  child: FadeTransition(
+                                                    opacity: curvedAnimation,
+                                                    child: SlideTransition(
+                                                      position: Tween<Offset>(
+                                                        begin: const Offset(0.0, -0.1),
+                                                        end: Offset.zero,
+                                                      ).animate(curvedAnimation),
+                                                      child: KooliUrupadiKooru(
+                                                        index: i,
+                                                        item: removedItem,
                                                   itemCount: _items.length + 1,
                                                   formatter: formatter,
                                                   onUpdated: (_) {},
@@ -526,14 +547,24 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                                 physics: const NeverScrollableScrollPhysics(),
                                 initialItemCount: _piraVarivugal.length,
                                 itemBuilder: (context, i, animation) {
+                                  final curvedAnimation = CurvedAnimation(
+                                    parent: animation,
+                                    curve: Curves.easeOutQuart,
+                                    reverseCurve: Curves.easeInQuart,
+                                  );
                                   return ClipRect(
                                     child: SizeTransition(
-                                      sizeFactor: animation,
-                                      axisAlignment: 1.0,
+                                      sizeFactor: curvedAnimation,
+                                      axisAlignment: -1.0,
                                       child: FadeTransition(
-                                        opacity: animation,
-                                      child: KooliPiraVarivuKooru(
-                                        index: i,
+                                        opacity: curvedAnimation,
+                                        child: SlideTransition(
+                                          position: Tween<Offset>(
+                                            begin: const Offset(0.0, -0.1),
+                                            end: Offset.zero,
+                                          ).animate(curvedAnimation),
+                                          child: KooliPiraVarivuKooru(
+                                            index: i,
                                         charge: _piraVarivugal[i],
                                         onUpdated: (updated) {
                                           setState(() {
@@ -549,24 +580,36 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                                           });
                                           _piraVarivugalListKey.currentState?.removeItem(
                                             i,
-                                            (context, anim) => ClipRect(
-                                              child: SizeTransition(
-                                                sizeFactor: anim,
-                                                axisAlignment: 1.0,
-                                                child: FadeTransition(
-                                                  opacity: anim,
-                                                child: KooliPiraVarivuKooru(
-                                                  index: i,
+                                            (context, anim) {
+                                              final curvedAnimation = CurvedAnimation(
+                                                parent: anim,
+                                                curve: Curves.easeOutQuart,
+                                                reverseCurve: Curves.easeInQuart,
+                                              );
+                                              return ClipRect(
+                                                child: SizeTransition(
+                                                  sizeFactor: curvedAnimation,
+                                                  axisAlignment: -1.0,
+                                                  child: FadeTransition(
+                                                    opacity: curvedAnimation,
+                                                    child: SlideTransition(
+                                                      position: Tween<Offset>(
+                                                        begin: const Offset(0.0, -0.1),
+                                                        end: Offset.zero,
+                                                      ).animate(curvedAnimation),
+                                                      child: KooliPiraVarivuKooru(
+                                                        index: i,
                                                   charge: removedItem,
                                                   onUpdated: (_) {},
                                                   onDeleted: () {},
                                                   onRecalculate: () {},
                                                 ),
-                                              ),
-                                            ),
-                                          ),
-                                          duration: const Duration(milliseconds: 250),
-                                        );
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              duration: const Duration(milliseconds: 250),
+                                            );
                                           _recalculate();
                                         },
                                         onRecalculate: _recalculate,
