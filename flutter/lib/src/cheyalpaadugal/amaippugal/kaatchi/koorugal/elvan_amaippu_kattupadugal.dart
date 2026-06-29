@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_pill_vadivu.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thooiya_ulleedu.dart';
 import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_kavanam.dart';
@@ -231,13 +232,15 @@ class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
               },
               fieldViewBuilder:
                   (context, fieldController, focusNode, onEditingComplete) {
+                final isInsideCard = ElvanAttaiSoolal.check(context);
+                final cs = Theme.of(context).colorScheme;
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 150),
                   curve: Curves.easeInOut,
                   decoration: BoxDecoration(
-                    color: _isFocused
-                        ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12)
-                        : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+                    color: _isFocused 
+                        ? (cs.brightness == Brightness.light && !isInsideCard ? Colors.white : cs.onSurface.withValues(alpha: 0.12))
+                        : (cs.brightness == Brightness.light && !isInsideCard ? Colors.white : cs.onSurface.withValues(alpha: 0.08)),
                     borderRadius: BorderRadius.circular(100),
                   ),
                   clipBehavior: Clip.antiAlias,
