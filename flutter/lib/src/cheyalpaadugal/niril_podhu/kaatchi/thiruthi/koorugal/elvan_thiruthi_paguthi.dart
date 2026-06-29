@@ -95,7 +95,7 @@ class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
         children: [
           _buildHeader(isActive: true),
           Padding(
-            padding: const EdgeInsets.only(top: 16.0),
+            padding: EdgeInsets.zero,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -119,7 +119,7 @@ class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
       behavior: HitTestBehavior.opaque,
       onTap: () => FocusScope.of(context).unfocus(),
       child: Padding(
-        padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
+        padding: const EdgeInsets.only(left: 16.0),
         child: Row(
           children: [
             Container(
