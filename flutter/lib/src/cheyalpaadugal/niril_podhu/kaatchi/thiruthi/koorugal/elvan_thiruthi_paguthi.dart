@@ -115,42 +115,46 @@ class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
   Widget _buildHeader({required bool isActive}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Padding(
-      padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
-      child: Row(
-        children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: isActive
-                  ? (isDark ? Colors.white : Colors.black)
-                  : (isDark ? Colors.white10 : Colors.black12),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                '${widget.index + 1}',
-                style: TextStyle(
-                  color: isActive
-                      ? (isDark ? Colors.black : Colors.white)
-                      : (isDark ? Colors.white54 : Colors.black54),
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16.0, bottom: 8.0, top: 4.0),
+        child: Row(
+          children: [
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                color: isActive
+                    ? (isDark ? Colors.white : Colors.black)
+                    : (isDark ? Colors.white10 : Colors.black12),
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  '${widget.index + 1}',
+                  style: TextStyle(
+                    color: isActive
+                        ? (isDark ? Colors.black : Colors.white)
+                        : (isDark ? Colors.white54 : Colors.black54),
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            widget.title,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: isDark ? Colors.white : Colors.black,
+            const SizedBox(width: 12),
+            Text(
+              widget.title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : Colors.black,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

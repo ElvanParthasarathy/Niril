@@ -83,6 +83,7 @@ class PatruPattiyalTheervuMaeladukku {
                               child: Text(K.pattiyalgalIllai.tr(context, ref),
                                   style: const TextStyle(color: Colors.grey)))
                           : ListView.builder(
+                              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
                               shrinkWrap: true,
                               itemCount: filtered.length,
                               itemBuilder: (_, index) {
@@ -258,6 +259,7 @@ class PatruPattiyalTheervuMaeladukku {
                                 child: Text(K.pattiyalgalIllai.tr(context, ref),
                                     style: const TextStyle(color: Colors.grey)))
                             : ListView.builder(
+                                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
                                 shrinkWrap: true,
                                 itemCount: filtered.length,
                                 itemBuilder: (_, index) {

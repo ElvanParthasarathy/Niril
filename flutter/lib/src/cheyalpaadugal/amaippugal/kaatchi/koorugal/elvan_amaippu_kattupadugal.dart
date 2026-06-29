@@ -326,6 +326,7 @@ class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
                         maxWidth: constraints.maxWidth, // Use text field width
                       ),
                       child: ListView.builder(
+                        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         shrinkWrap: true,
                         itemCount: options.length,

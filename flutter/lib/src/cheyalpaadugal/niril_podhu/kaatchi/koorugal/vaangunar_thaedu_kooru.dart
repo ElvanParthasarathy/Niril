@@ -220,6 +220,7 @@ class _VaangunarThaeduKooruState extends ConsumerState<VaangunarThaeduKooru> {
                     maxWidth: 400,
                   ),
                   child: ListView.builder(
+                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     shrinkWrap: true,
                     itemCount: options.length +

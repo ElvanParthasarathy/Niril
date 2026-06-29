@@ -174,7 +174,10 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
               _currentText.isEmpty ? K.porutkal.tr(context, ref) : _currentText,
           isHint: _currentText.isEmpty,
           enabled: true,
-          onTap: () => _openSelectionSheet(porulgal),
+          onTap: () {
+            FocusScope.of(context).unfocus();
+            _openSelectionSheet(porulgal);
+          },
           onClear: _currentText.isNotEmpty
               ? () {
                   setState(() {

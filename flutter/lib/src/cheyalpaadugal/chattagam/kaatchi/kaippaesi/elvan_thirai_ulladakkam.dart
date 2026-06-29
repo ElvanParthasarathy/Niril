@@ -46,6 +46,7 @@ class ElvanPageContent extends ConsumerWidget {
     return Stack(
       children: [
         CustomScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
           cacheExtent: 1500.0, controller: scrollController, // Pre-builds items off-screen to prevent frame drops during slow scrolling!
           physics: ElvanBrickWallPhysics(
             isHeaderExpandedNotifier: isHeaderExpandedNotifier,
