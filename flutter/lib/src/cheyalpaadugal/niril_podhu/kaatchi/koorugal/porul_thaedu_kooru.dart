@@ -136,15 +136,13 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
       },
       itemLabelBuilder: (ctx, ref, item) => _getDisplayName(ctx, ref, item),
       subtitleBuilder: (ctx, ref, item) {
-        if (!_isSilk) return ''; // Coolie mode has no price/secondary name logic in UI list
-        
         final secondary = isBilingual ? _getSecondaryName(ctx, ref, item) : '';
         final parts = <String>[];
         
         if (secondary.isNotEmpty && secondary != _getDisplayName(ctx, ref, item)) {
           parts.add(secondary);
         }
-        if (item.vilai > 0) {
+        if (_isSilk && item.vilai > 0) {
           parts.add(_inrFormat.format(item.vilai));
         }
         
