@@ -141,21 +141,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
                 readOnly: true,
               );
 
-              // Info line (Secondary name)
-              final infoLine = displaySecondary.isNotEmpty
-                  ? Padding(
-                      padding: const EdgeInsets.only(left: 16, top: 12),
-                      child: Text(
-                        displaySecondary,
-                        style: TextStyle(
-                          color: cs.onSurface.withValues(alpha: 0.5),
-                          fontWeight: FontWeight.w400,
-                          letterSpacing: 0.3,
-                          fontSize: 10,
-                        ),
-                      ),
-                    )
-                  : const SizedBox.shrink();
+
 
               if (isWide) {
                 return Column(
@@ -173,7 +159,6 @@ class KooliUrupadiKooru extends ConsumerWidget {
                         Expanded(flex: 1, child: totalDisplay),
                       ],
                     ),
-                    infoLine,
                   ],
                 );
               }
@@ -182,7 +167,6 @@ class KooliUrupadiKooru extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   productSearch,
-                  infoLine,
                   const SizedBox(height: 8),
                   Row(children: [
                     Expanded(child: weightField),
