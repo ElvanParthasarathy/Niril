@@ -503,7 +503,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                                               ),
                                             ),
                                           ),
-                                          duration: const Duration(milliseconds: 500),
+                                          duration: const Duration(milliseconds: 250),
                                         );
                                           _recalculate();
                                         },
@@ -565,7 +565,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                                               ),
                                             ),
                                           ),
-                                          duration: const Duration(milliseconds: 500),
+                                          duration: const Duration(milliseconds: 250),
                                         );
                                           _recalculate();
                                         },
@@ -591,7 +591,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                                       _items = [..._items, const KooliUrupadi()];
                                       _itemsListKey.currentState?.insertItem(
                                         _items.length - 1,
-                                        duration: const Duration(milliseconds: 500),
+                                        duration: const Duration(milliseconds: 250),
                                       );
                                       _hasUnsavedChanges = true;
                                     }),
@@ -607,7 +607,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                                         ];
                                         _piraVarivugalListKey.currentState?.insertItem(
                                           _piraVarivugal.length - 1,
-                                          duration: const Duration(milliseconds: 500),
+                                          duration: const Duration(milliseconds: 250),
                                         );
                                         _hasUnsavedChanges = true;
                                       }),

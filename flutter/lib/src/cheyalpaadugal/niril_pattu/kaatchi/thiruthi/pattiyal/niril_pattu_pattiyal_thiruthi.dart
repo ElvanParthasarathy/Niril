@@ -567,7 +567,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                                     ),
                                   ),
                                 ),
-                                duration: const Duration(milliseconds: 500),
+                                duration: const Duration(milliseconds: 250),
                               );
                                 _recalculate();
                               },
@@ -604,7 +604,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                                 _items = [..._items, const PattuUrupadi()];
                                 _listKey.currentState?.insertItem(
                                   _items.length - 1,
-                                  duration: const Duration(milliseconds: 500),
+                                  duration: const Duration(milliseconds: 250),
                                 );
                               });
                             },

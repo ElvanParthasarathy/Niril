@@ -253,6 +253,12 @@ class ElvanNirilApp extends ConsumerWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF6750A4),
           brightness: Brightness.light,
+          surface: Colors.white,
+          surfaceContainerLowest: Colors.white,
+          surfaceContainerLow: const Color(0xFFF5F5F5),
+          surfaceContainer: const Color(0xFFEEEEEE),
+          surfaceContainerHigh: const Color(0xFFE0E0E0),
+          surfaceContainerHighest: const Color(0xFFBDBDBD),
         ),
         scaffoldBackgroundColor: const Color(0xFFF7F7F7),
         inputDecorationTheme: _buildInputTheme(ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.light)),
@@ -289,6 +295,12 @@ class ElvanNirilApp extends ConsumerWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF6750A4),
           brightness: Brightness.dark,
+          surface: const Color(0xFF121212),
+          surfaceContainerLowest: const Color(0xFF0D0D0D),
+          surfaceContainerLow: const Color(0xFF1A1A1A),
+          surfaceContainer: const Color(0xFF1E1E1E),
+          surfaceContainerHigh: const Color(0xFF2B2B2B),
+          surfaceContainerHighest: const Color(0xFF333333),
         ),
         scaffoldBackgroundColor: Colors.black, // AMOLED Black
         inputDecorationTheme: _buildInputTheme(ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.dark)),

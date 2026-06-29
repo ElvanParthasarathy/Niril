@@ -9,6 +9,9 @@ import '../../kalanjiyam/porul_nilaimai.dart';
 import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku/elvan_kizh_maeladukku.dart';
 import '../../../../adippadai/nilaimai/achu_mozhi_facade.dart';
 import '../../../../adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
+import '../../../../adippadai/iru_mozhi/iru_mozhi_porul_udhavi.dart';
+import '../../../../adippadai/oru_mozhi/oru_mozhi_vazhanguthigal.dart';
+import '../../../../adippadai/oru_mozhi/oru_mozhi_porul_udhavi.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 import '../../../../koorugal/ulleedugal/elvan_thiruthi_pothan.dart';
@@ -77,26 +80,25 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
 
   String _getDisplayName(
       BuildContext context, WidgetRef ref, PorulTharavuru entry) {
-    // We use NiruvanaTharavugal helper technically, but we can't because it takes NiruvanaTharavugal.
-    // We'll write our own logic respecting the current primary language:
-    final primaryLang = ref.watch(primaryLanguageProvider);
-    final peyar = entry.porulPeyar;
-
-    if (peyar[primaryLang] != null && peyar[primaryLang]!.isNotEmpty) {
-      return peyar[primaryLang]!;
+    if (_isSilk) {
+      final mudhanmaiLang = ref.watch(silkMudhanmaiMozhiProvider);
+      return IruMozhiPorulUdhavi.mudhanmaiPeyar(entry.porulPeyar, mudhanmaiLang);
+    } else {
+      final kooliLang = ref.watch(kooliAchuMozhiProvider);
+      return OruMozhiPorulUdhavi.mudhanmaiPeyar(entry.porulPeyar, kooliLang);
     }
-    return peyar['Tamil'] ?? peyar['English'] ?? '';
   }
 
   String _getSecondaryName(
       BuildContext context, WidgetRef ref, PorulTharavuru entry) {
-    final secondaryLang = ref.watch(secondaryLanguageProvider);
-    final peyar = entry.porulPeyar;
-
-    if (peyar[secondaryLang] != null && peyar[secondaryLang]!.isNotEmpty) {
-      return peyar[secondaryLang]!;
+    if (_isSilk) {
+      final thunaiLang = ref.watch(silkThunaiMozhiProvider);
+      final isBilingual = ref.watch(bilingualProvider);
+      return IruMozhiPorulUdhavi.thunaiPeyar(entry.porulPeyar, thunaiLang, isBilingual);
+    } else {
+      final kooliLang = ref.watch(kooliAchuMozhiProvider);
+      return OruMozhiPorulUdhavi.thunaiPeyar(entry.porulPeyar, kooliLang);
     }
-    return peyar['English'] ?? peyar['Tamil'] ?? '';
   }
 
   bool _matchesQuery(PorulTharavuru entry, String query) {

@@ -2642,7 +2642,9 @@ class $KooliPattiyalTableTable extends KooliPattiyalTable
   @override
   late final GeneratedColumn<String> patrucheettuEn = GeneratedColumn<String>(
       'patrucheettu_en', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
   static const VerificationMeta _finYearMeta =
       const VerificationMeta('finYear');
   @override
@@ -3076,6 +3078,10 @@ class $KooliPattiyalTableTable extends KooliPattiyalTable
 
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+        {niruvanamId, finYear, vanakkam},
+      ];
   @override
   KooliPattiyalEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
@@ -4063,7 +4069,9 @@ class $KooliPatrugalTableTable extends KooliPatrugalTable
   @override
   late final GeneratedColumn<String> patruEn = GeneratedColumn<String>(
       'patru_en', aliasedName, false,
-      type: DriftSqlType.string, requiredDuringInsert: true);
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
   static const VerificationMeta _finYearMeta =
       const VerificationMeta('finYear');
   @override
@@ -4292,6 +4300,10 @@ class $KooliPatrugalTableTable extends KooliPatrugalTable
 
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+        {niruvanamId, finYear, vanakkam},
+      ];
   @override
   KooliPatrugalEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';

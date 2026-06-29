@@ -1,4 +1,4 @@
-﻿import 'dart:io';
+import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
@@ -138,10 +138,16 @@ class PattuPattiyalTable extends Table {
   IntColumn get niruvanamId => integer().nullable()(); // FK → PattuNiruvanaTharavugalTable
 
   // ── Invoice Header ──
-  TextColumn get patrucheettuEn => text()(); // Display: SJS/2026-27/001
+  TextColumn get patrucheettuEn => text().unique()(); // Display: SJS/2026-27/001
   IntColumn get finYear => integer()(); // e.g. 2026
   IntColumn get vanakkam =>
       integer().withDefault(const Constant(1))(); // Seq # within FY+company
+
+  @override
+  List<Set<Column>> get uniqueKeys => [
+        {niruvanamId, finYear, vanakkam},
+      ];
+
   TextColumn get pattiyalVagai =>
       text().withDefault(const Constant('tax-invoice'))(); // Silk: tax-invoice / proforma
 
@@ -201,10 +207,15 @@ class PattuPatrugalTable extends Table {
       integer().nullable()(); // FK → PattuNiruvanaTharavugalTable
 
   // ── Receipt Identity ──
-  TextColumn get patruEn => text()();
+  TextColumn get patruEn => text().unique()();
   TextColumn get finYear => text().withDefault(const Constant(''))();
   IntColumn get vanakkam =>
       integer().withDefault(const Constant(1))(); // Seq # for auto-numbering
+
+  @override
+  List<Set<Column>> get uniqueKeys => [
+        {niruvanamId, finYear, vanakkam},
+      ];
 
   // ── Customer (FK-first, fallback snapshot) ──
   IntColumn get vaangunarId =>
@@ -261,7 +272,7 @@ class PattuDatabase extends _$PattuDatabase {
   PattuDatabase(super.e);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
