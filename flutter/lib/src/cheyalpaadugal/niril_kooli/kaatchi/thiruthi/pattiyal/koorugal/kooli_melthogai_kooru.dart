@@ -28,50 +28,24 @@ class KooliMelthogaiKooru extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return LayoutBuilder(builder: (context, constraints) {
-      final isDesktop = constraints.maxWidth >= 600;
-      final gap = 12.0;
-
-      if (isDesktop) {
-        final colWidth = (constraints.maxWidth - gap * 2) / 3;
-        return Wrap(
-          spacing: gap,
-          runSpacing: gap,
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(
-                width: colWidth,
-                child: kooliChargeField(
-                    K.chaedhaaramGiraam.tr(context, ref), setharamCtrl, onSetharamChanged)),
-            SizedBox(
-                width: colWidth,
-                child: kooliChargeField(
-                    K.ahimsaiPattuThogai.tr(context, ref), ahimsaCtrl, onAhimsaChanged)),
-            SizedBox(
-                width: colWidth,
-                child: kooliChargeField(
-                    K.koriyarKattanam.tr(context, ref), thabaalCtrl, onThabaalChanged)),
+            kooliChargeField(
+                K.chaedhaaramGiraam.tr(context, ref), setharamCtrl, onSetharamChanged),
+            const SizedBox(height: 12),
+            kooliChargeField(
+                K.ahimsaiPattuThogai.tr(context, ref), ahimsaCtrl, onAhimsaChanged),
+            const SizedBox(height: 12),
+            kooliChargeField(
+                K.koriyarKattanam.tr(context, ref), thabaalCtrl, onThabaalChanged),
           ],
-        );
-      }
-      final halfWidth = (constraints.maxWidth - gap) / 2;
-      return Wrap(
-        spacing: gap,
-        runSpacing: gap,
-        children: [
-          SizedBox(
-              width: constraints.maxWidth,
-              child: kooliChargeField(
-                  K.chaedhaaramGiraam.tr(context, ref), setharamCtrl, onSetharamChanged)),
-          SizedBox(
-              width: halfWidth,
-              child: kooliChargeField(
-                  K.ahimsaiPattuThogai.tr(context, ref), ahimsaCtrl, onAhimsaChanged)),
-          SizedBox(
-              width: halfWidth,
-              child: kooliChargeField(
-                  K.koriyarKattanam.tr(context, ref), thabaalCtrl, onThabaalChanged)),
-        ],
-      );
-    });
+        ),
+      ),
+    );
   }
 }
