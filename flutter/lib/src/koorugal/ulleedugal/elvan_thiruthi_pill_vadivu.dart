@@ -13,7 +13,7 @@ class ElvanThiruthiPillVadivu {
         final isLight = Theme.of(context).colorScheme.brightness == Brightness.light;
         if (states.contains(WidgetState.focused) ||
             states.contains(WidgetState.hovered)) {
-          return (isLight && !isInsideCard) ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08) : Theme.of(context)
+          return (isLight && !isInsideCard) ? Colors.white : Theme.of(context)
               .colorScheme
               .onSurface
               .withValues(alpha: 0.12);

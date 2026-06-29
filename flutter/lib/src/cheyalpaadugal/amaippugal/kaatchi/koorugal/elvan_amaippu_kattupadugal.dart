@@ -239,7 +239,7 @@ class _ElvanSettingsAutocompleteState extends State<ElvanSettingsAutocomplete> {
                   curve: Curves.easeInOut,
                   decoration: BoxDecoration(
                     color: _isFocused 
-                        ? (cs.brightness == Brightness.light && !isInsideCard ? cs.onSurface.withValues(alpha: 0.08) : cs.onSurface.withValues(alpha: 0.12))
+                        ? (cs.brightness == Brightness.light && !isInsideCard ? Colors.white : cs.onSurface.withValues(alpha: 0.12))
                         : (cs.brightness == Brightness.light && !isInsideCard ? Colors.white : cs.onSurface.withValues(alpha: 0.08)),
                     borderRadius: BorderRadius.circular(100),
                   ),
