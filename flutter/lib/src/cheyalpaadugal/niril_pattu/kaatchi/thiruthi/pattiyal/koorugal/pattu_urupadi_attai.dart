@@ -76,7 +76,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
                   '${K.porul.tr(context, ref)} #${index + 1}',
                   style: tt.labelMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: cs.onSurfaceVariant,
+                    color: cs.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
               ),
