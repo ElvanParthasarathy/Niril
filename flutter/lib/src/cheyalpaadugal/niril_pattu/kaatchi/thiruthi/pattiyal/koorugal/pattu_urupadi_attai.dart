@@ -41,6 +41,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
     required this.onItemCleared,
     required this.onDirty,
     required this.onRequestAddNewProduct,
+    this.onAddNewItem,
   });
 
   final PattuUrupadi item;
@@ -52,6 +53,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
   final VoidCallback onItemCleared;
   final VoidCallback onDirty;
   final VoidCallback onRequestAddNewProduct;
+  final VoidCallback? onAddNewItem;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -249,6 +251,23 @@ class PattuUrupadiAttai extends ConsumerWidget {
                     gap,
                     Expanded(child: totalDisplay),
                   ]),
+                  if (onAddNewItem != null && index == itemCount - 1) ...[
+                    vGap,
+                    SizedBox(
+                      width: double.infinity,
+                      child: TextButton.icon(
+                        onPressed: onAddNewItem,
+                        icon: const Icon(Icons.add, size: 20),
+                        label: Text(K.chaerPtn.tr(context, ref), style: const TextStyle(fontWeight: FontWeight.w600)),
+                        style: TextButton.styleFrom(
+                          foregroundColor: cs.primary,
+                          backgroundColor: cs.primaryContainer.withValues(alpha: 0.3),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               );
             }),

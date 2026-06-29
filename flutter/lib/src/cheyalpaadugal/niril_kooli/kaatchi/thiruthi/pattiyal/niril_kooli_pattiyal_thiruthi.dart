@@ -542,6 +542,14 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                                                 MaterialPageRoute(builder: (_) => const CoolieItemEditor()),
                                               );
                                             },
+                                            onAddNewItem: () => setState(() {
+                                              _items = [..._items, const KooliUrupadi()];
+                                              _itemsListKey.currentState?.insertItem(
+                                                _items.length - 1,
+                                                duration: const Duration(milliseconds: 250),
+                                              );
+                                              _hasUnsavedChanges = true;
+                                            }),
                                           ),
                                         ),
                                       ),
@@ -552,28 +560,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
 
 
 
-                              const SizedBox(height: 8),
 
-                              // Pill buttons row
-                              Wrap(
-                                spacing: 12,
-                                runSpacing: 8,
-                                children: [
-                                  kooliPillButton(context,
-                                    icon: Icons.add,
-                                    label: K.chaerPtn.tr(context, ref),
-                                    onPressed: () => setState(() {
-                                      _items = [..._items, const KooliUrupadi()];
-                                      _itemsListKey.currentState?.insertItem(
-                                        _items.length - 1,
-                                        duration: const Duration(milliseconds: 250),
-                                      );
-                                      _hasUnsavedChanges = true;
-                                    }),
-                                  ),
-
-                                ],
-                              ),
                             ],
                           ),
                         ),

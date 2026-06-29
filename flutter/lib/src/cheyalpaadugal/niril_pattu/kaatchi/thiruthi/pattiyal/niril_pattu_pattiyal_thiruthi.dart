@@ -611,6 +611,13 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                                   ),
                                 );
                               },
+                              onAddNewItem: () => setState(() {
+                                _items = [..._items, const PattuUrupadi()];
+                                _listKey.currentState?.insertItem(
+                                  _items.length - 1,
+                                  duration: const Duration(milliseconds: 250),
+                                );
+                              }),
                             ),
                                   ),
                                 ),
@@ -618,33 +625,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                             );
                     },
                     ),
-                    const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Builder(
-                        builder: (ctx) {
-                          final isDark = Theme.of(ctx).brightness == Brightness.dark;
-                          return TextButton.icon(
-                            onPressed: () {
-                              setState(() {
-                                _items = [..._items, const PattuUrupadi()];
-                                _listKey.currentState?.insertItem(
-                                  _items.length - 1,
-                                  duration: const Duration(milliseconds: 250),
-                                );
-                              });
-                            },
-                            icon: const Icon(Icons.add, size: 20),
-                            label: Text(K.chaerPtn.tr(context, ref),
-                                style: const TextStyle(fontWeight: FontWeight.w600)),
-                            style: TextButton.styleFrom(
-                              foregroundColor: cs.onSurface,
-                              backgroundColor: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.white,
-                            ),
-                          );
-                        }
-                      ),
-                    ),
+
 
                   ],
                 ),

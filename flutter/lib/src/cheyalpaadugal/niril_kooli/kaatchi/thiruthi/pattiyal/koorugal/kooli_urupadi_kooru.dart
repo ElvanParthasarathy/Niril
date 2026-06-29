@@ -23,6 +23,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
   final ValueChanged<KooliUrupadi> onUpdated;
   final VoidCallback onDeleted;
   final VoidCallback? onRequestAddNewProduct;
+  final VoidCallback? onAddNewItem;
 
   const KooliUrupadiKooru({
     super.key,
@@ -33,6 +34,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
     required this.onUpdated,
     required this.onDeleted,
     this.onRequestAddNewProduct,
+    this.onAddNewItem,
   });
 
   @override
@@ -175,6 +177,23 @@ class KooliUrupadiKooru extends ConsumerWidget {
                   ]),
                   vGap,
                   totalDisplay,
+                  if (onAddNewItem != null && index == itemCount - 1) ...[
+                    vGap,
+                    SizedBox(
+                      width: double.infinity,
+                      child: TextButton.icon(
+                        onPressed: onAddNewItem,
+                        icon: const Icon(Icons.add, size: 20),
+                        label: Text(K.chaerPtn.tr(context, ref), style: const TextStyle(fontWeight: FontWeight.w600)),
+                        style: TextButton.styleFrom(
+                          foregroundColor: cs.primary,
+                          backgroundColor: cs.primaryContainer.withValues(alpha: 0.3),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               );
             }),
