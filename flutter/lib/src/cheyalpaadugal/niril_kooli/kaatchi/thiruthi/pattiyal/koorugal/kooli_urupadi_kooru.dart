@@ -56,7 +56,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 24, bottom: 6),
+                padding: const EdgeInsets.only(left: 24, bottom: 4),
                 child: Text('${K.porul.tr(context, ref)} #${index + 1}',
                     style: tt.labelMedium?.copyWith(
                       fontWeight: FontWeight.w600,
@@ -68,11 +68,14 @@ class KooliUrupadiKooru extends ConsumerWidget {
                 child: IgnorePointer(
                   ignoring: itemCount <= 1,
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 12, bottom: 6),
+                    padding: const EdgeInsets.only(right: 12, bottom: 4),
                     child: IconButton(
-                      icon: const Icon(CupertinoIcons.delete, size: 20),
+                      icon: const Icon(CupertinoIcons.delete, size: 16),
                       color: cs.onSurfaceVariant,
                       style: IconButton.styleFrom(
+                        padding: const EdgeInsets.all(6),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         backgroundColor: Theme.of(context).brightness == Brightness.dark 
                             ? Colors.white.withValues(alpha: 0.08) 
                             : Colors.white,
