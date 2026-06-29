@@ -118,12 +118,14 @@ class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
 
   Widget _buildHeader({required bool isActive}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDesktop = MediaQuery.sizeOf(context).width >= 800;
+    final bottomPadding = isDesktop ? 8.0 : widget.headerBottomPadding;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => FocusScope.of(context).unfocus(),
       child: Padding(
-        padding: EdgeInsets.only(left: 16.0, bottom: widget.headerBottomPadding),
+        padding: EdgeInsets.only(left: 16.0, bottom: bottomPadding),
         child: Row(
           children: [
             Container(
