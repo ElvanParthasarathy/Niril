@@ -71,15 +71,15 @@ class VanakkamPill extends ConsumerWidget {
                         );
                       },
                       child: SizedBox(
-                        width: isMobile ? 60 : 48,
-                        height: isMobile ? 60 : 48,
+                        width: isMobile ? 64 : 48,
+                        height: isMobile ? 64 : 48,
                         child: Center(
                           child: SvgPicture.string(
                             appMode == AppMode.coolie
                                 ? AppSvgs.coolieMode
                                 : AppSvgs.silkMode,
-                            width: isMobile ? 24 : 20,
-                            height: isMobile ? 24 : 20,
+                            width: isMobile ? 32 : 20,
+                            height: isMobile ? 32 : 20,
                             colorFilter: ColorFilter.mode(
                               isDark ? Colors.white : Colors.black,
                               BlendMode.srcIn,

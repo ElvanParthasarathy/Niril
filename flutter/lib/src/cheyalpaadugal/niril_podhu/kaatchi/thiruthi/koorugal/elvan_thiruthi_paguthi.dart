@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/nilaimai/seyali_nilaimai.dart';
 import 'package:elvan_niril/src/koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
 import 'package:elvan_niril/src/koorugal/pulan_koorugal/elvan_irumozhi_autocomplete.dart';
-import 'package:elvan_niril/src/cheyalpaadugal/niril_kooli/kaatchi/koorugal/elvan_kooli_irumozhi_pulan.dart';
+import 'package:elvan_niril/src/koorugal/pulan_koorugal/elvan_kooli_irumozhi_pulan.dart';
 
 class ElvanFullWidth extends StatelessWidget {
   const ElvanFullWidth({super.key, required this.child});
@@ -71,7 +71,7 @@ class _ElvanEditorSectionState extends ConsumerState<ElvanEditorSection> {
                               child is ElvanIrumozhiAutocomplete);
 
                       if (child is ElvanKooliIrumozhiPulan) {
-                        isBilingualField = !child.forceStacked;
+                        isBilingualField = true;
                       }
 
                       final isFull =

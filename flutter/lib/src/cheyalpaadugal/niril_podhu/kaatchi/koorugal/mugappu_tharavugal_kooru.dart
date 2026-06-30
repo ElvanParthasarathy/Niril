@@ -8,6 +8,8 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/oru_mozhi/oru_mozhi_vazhanguthigal.dart';
 
+import '../../../../koorugal/podhu_koorugal/elvan_pothu_attai.dart';
+
 // ── Stats Card (Bento Grid Item) ────────────────────────────────────────────
 
 /// A flat, monochrome stats card matching React's MugappuLayout design.
@@ -19,31 +21,32 @@ class ElvanStatsCard extends StatelessWidget {
     required this.label,
     required this.value,
     this.isLoading = false,
+    this.onTap,
   });
 
   final IconData icon;
   final String label;
   final String value;
   final bool isLoading;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: Material(
-        color: isDark ? const Color(0xFF111111) : Colors.white,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(24),
-          child: LayoutBuilder(
+    return ElvanPothuAttai(
+      padding: EdgeInsets.zero,
+      onTap: onTap,
+      child: LayoutBuilder(
             builder: (context, constraints) {
               final isNarrow = constraints.maxWidth < 160;
               final cardPadding = isNarrow ? 16.0 : 20.0;
 
+              final iconSize = isNarrow ? 40.0 : 48.0;
+
               final iconBox = Container(
-                width: isNarrow ? 40 : 48,
-                height: isNarrow ? 40 : 48,
+                width: iconSize,
+                height: iconSize,
                 decoration: BoxDecoration(
                   color: isDark
                       ? Colors.white.withValues(alpha: 0.05)
@@ -54,49 +57,44 @@ class ElvanStatsCard extends StatelessWidget {
                     color: isDark ? Colors.white : Colors.black),
               );
 
-              final textContent = Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      label,
-                      style: TextStyle(
-                        fontSize: isNarrow ? 12 : 14,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white54 : Colors.black54,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+              final textColumn = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: isNarrow ? 12 : 14,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white54 : Colors.black54,
                     ),
-                    const SizedBox(height: 4),
-                    if (isLoading)
-                      Container(
-                        width: 80,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.08)
-                              : Colors.black.withValues(alpha: 0.06),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      )
-                    else
-                      Text(
-                        value,
-                        style: TextStyle(
-                          fontSize: isNarrow
-                              ? _adaptiveFontSize(value) * 0.8
-                              : _adaptiveFontSize(value),
-                          fontWeight: FontWeight.w800,
-                          color: isDark ? Colors.white : Colors.black,
-                          height: 1.2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        maxLines: 1,
+                  ),
+                  const SizedBox(height: 4),
+                  if (isLoading)
+                    Container(
+                      width: 80,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.08)
+                            : Colors.black.withValues(alpha: 0.06),
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                  ],
-                ),
+                    )
+                  else
+                    Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: isNarrow
+                            ? _adaptiveFontSize(value) * 0.8
+                            : _adaptiveFontSize(value),
+                        fontWeight: FontWeight.w800,
+                        color: isDark ? Colors.white : Colors.black,
+                        height: 1.2,
+                      ),
+                    ),
+                ],
               );
 
               // Column layout on narrow mobile, Row on wider screens
@@ -109,7 +107,11 @@ class ElvanStatsCard extends StatelessWidget {
                     children: [
                       iconBox,
                       const SizedBox(height: 8),
-                      textContent,
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: textColumn,
+                      ),
                     ],
                   ),
                 );
@@ -118,18 +120,26 @@ class ElvanStatsCard extends StatelessWidget {
               return Padding(
                 padding: EdgeInsets.all(cardPadding),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     iconBox,
                     const SizedBox(width: 16),
-                    textContent,
+                    Expanded(
+                      child: Container(
+                        height: iconSize, // Constrain text to icon's vertical boundary
+                        alignment: Alignment.centerLeft,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: textColumn,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               );
             },
           ),
-        ),
-      ),
     );
   }
 
@@ -156,7 +166,7 @@ class RecentActivityHeader extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
-      padding: const EdgeInsets.only(left: 6, right: 6, top: 8, bottom: 16),
+      padding: const EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -164,7 +174,7 @@ class RecentActivityHeader extends StatelessWidget {
             builder: (context, ref, _) => Text(
               K.arugilSeyalgal.tr(context, ref),
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 16,
                 fontWeight: FontWeight.w700,
                 color: isDark ? Colors.white : Colors.black,
               ),
@@ -200,184 +210,6 @@ class RecentActivityHeader extends StatelessWidget {
   }
 }
 
-// ── Recent Invoice Card ─────────────────────────────────────────────────────
-
-/// Pixel-perfect port of React's ElvanCard + renderRecentItem.
-/// Shows: index circle + customer name + invoice # + date + amount.
-class ElvanRecentCard extends ConsumerStatefulWidget {
-  const ElvanRecentCard({
-    super.key,
-    required this.index,
-    required this.pattiyal,
-    required this.onTap,
-  });
-
-  final int index;
-  final PattiyalTharavuru pattiyal;
-  final VoidCallback onTap;
-
-  @override
-  ConsumerState<ElvanRecentCard> createState() => _ElvanRecentCardState();
-}
-
-class _ElvanRecentCardState extends ConsumerState<ElvanRecentCard> {
-  bool _isPressed = false;
-  static final _dateFormat = DateFormat('dd/MM/yyyy');
-  static final _currencyFormat =
-      NumberFormat.currency(locale: 'en_IN', symbol: '₹');
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final p = widget.pattiyal;
-    final amountStr = _currencyFormat.format(p.mothaThogai);
-    
-    final currentLocale = ref.watch(localeProvider);
-    final effectiveLang = currentLocale?.languageCode ?? Localizations.localeOf(context).languageCode;
-    
-    String primaryLang;
-    String secondaryLang;
-
-    if (p.pattiyalVagai == 'coolie') {
-      final kooliAchuMozhi = ref.watch(kooliAchuMozhiProvider);
-      primaryLang = kooliAchuMozhi;
-      secondaryLang = kooliAchuMozhi == 'Tamil' ? 'English' : 'Tamil';
-    } else {
-      primaryLang = effectiveLang == 'ta' ? 'Tamil' : 'English';
-      secondaryLang = effectiveLang == 'ta' ? 'English' : 'Tamil';
-    }
-
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) => setState(() => _isPressed = false),
-      onTapCancel: () => setState(() => _isPressed = false),
-      child: AnimatedScale(
-        scale: _isPressed ? 0.985 : 1.0,
-        duration: _isPressed
-            ? const Duration(milliseconds: 100)
-            : const Duration(milliseconds: 200),
-        curve: Curves.easeOut,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: Material(
-            color: isDark ? const Color(0xFF111111) : Colors.white,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(24),
-              onTap: widget.onTap,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Index circle
-                    Container(
-                      width: 28,
-                      height: 28,
-                      margin: const EdgeInsets.only(top: 1),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.12)
-                            : Colors.black.withValues(alpha: 0.08),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Text(
-                          (widget.index + 1).toString().padLeft(2, '0'),
-                          style: TextStyle(
-                            fontSize: 11.2,
-                            fontWeight: FontWeight.w800,
-                            color: isDark ? Colors.white : Colors.black,
-                            height: 1,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    // Content
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Row 1: Customer name + chevron
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  p.vaangunarPeyar[primaryLang]?.isNotEmpty == true
-                                      ? p.vaangunarPeyar[primaryLang]!
-                                      : p.vaangunarPeyar[secondaryLang] ?? '-',
-                                  style: const TextStyle(
-                                    fontSize: 15.2,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              Icon(
-                                CupertinoIcons.chevron_right,
-                                size: 18,
-                                color: isDark
-                                    ? const Color(0xFF555555)
-                                    : const Color(0xFFAAAAAA),
-                              ),
-                            ],
-                          ),
-                          // Row 2: Invoice # + Date
-                          const SizedBox(height: 4),
-                          Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(text: p.patrucheettuEn),
-                                TextSpan(
-                                  text: '  •  ',
-                                  style: TextStyle(
-                                    color:
-                                        (isDark ? Colors.white : Colors.black)
-                                            .withValues(alpha: 0.4),
-                                  ),
-                                ),
-                                TextSpan(
-                                    text:
-                                        _dateFormat.format(p.pattiyalNaal)),
-                              ],
-                            ),
-                            style: TextStyle(
-                              fontSize: 13.6,
-                              color: isDark ? Colors.white54 : Colors.black54,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          // Row 3: Amount (right-aligned)
-                          const SizedBox(height: 2),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                              amountStr,
-                              style: TextStyle(
-                                fontSize:
-                                    amountStr.length > 11 ? 12.8 : 15.2,
-                                fontWeight: FontWeight.w800,
-                                color:
-                                    Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 // ── Empty State ─────────────────────────────────────────────────────────────
 

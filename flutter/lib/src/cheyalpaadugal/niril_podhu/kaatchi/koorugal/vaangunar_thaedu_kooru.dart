@@ -4,9 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../kalanjiyam/vaangunar_nilaimai.dart';
-import '../../../../koorugal/ulleedugal/elvan_thiruthi_pill_vadivu.dart';
+import '../../../../koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_kavanam.dart';
-import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_marabu.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // வணிகர் தேடு கூறு — Customer Picker Autocomplete
@@ -155,19 +154,19 @@ class _VaangunarThaeduKooruState extends ConsumerState<VaangunarThaeduKooru> {
               style: theme.textTheme.bodyLarge,
               decoration: InputDecoration(
                 isDense: true,
-                constraints: ElvanThiruthiMarabu.singleLineConstraints,
+                constraints: const BoxConstraints(minHeight: 45, maxHeight: 45),
                 labelText: K.vaangunargal.tr(context, ref),
                 hintText: K.vaangunargal.tr(context, ref),
                 prefixIcon: Icon(
                   Icons.person_search_rounded,
-                  size: ElvanThiruthiMarabu.iconSize,
+                  size: 20,
                   color: colorScheme.onSurfaceVariant,
                 ),
                 suffixIcon: fieldController.text.isNotEmpty
                     ? IconButton(
                         icon: Icon(
                           Icons.close,
-                          size: ElvanThiruthiMarabu.iconSize,
+                          size: 20,
                           color: colorScheme.onSurfaceVariant,
                         ),
                         onPressed: () {

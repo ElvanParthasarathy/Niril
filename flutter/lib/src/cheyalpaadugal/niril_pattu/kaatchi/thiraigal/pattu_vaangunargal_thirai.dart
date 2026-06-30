@@ -97,18 +97,6 @@ class SilkMerchantsPage extends ConsumerWidget {
           padding: const EdgeInsets.only(left: 16, right: 16, bottom: 120),
           sliver: SliverMainAxisGroup(
             slivers: [
-              // ── Selection Bar ──
-                    onDelete: () {
-                      _showBulkDeleteConfirm(
-                          context, ref, selectedIds.toList());
-                    },
-                    onCancel: () {
-                      ref.read(vaangunarSelectionModeProvider.notifier).state =
-                          false;
-                      ref.read(selectedVaangunarIdsProvider.notifier).state = {};
-                    },
-                  ),
-                ),
 
               // ── Merchant Grid ──
               ElvanResponsiveGrid(

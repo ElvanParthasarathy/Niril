@@ -30,6 +30,26 @@ import 'elvan_thaedal_pattai.dart';
 ///
 /// This widget is **fully decoupled** — pass any [body], [title],
 /// [navActions], [navItems], [currentIndex], and [onTabSelected] callback.
+
+class ElvanOverlayState extends InheritedWidget {
+  const ElvanOverlayState({
+    super.key,
+    required this.isExpanded,
+    required super.child,
+  });
+
+  final bool isExpanded;
+
+  static ElvanOverlayState? of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<ElvanOverlayState>();
+  }
+
+  @override
+  bool updateShouldNotify(ElvanOverlayState oldWidget) {
+    return isExpanded != oldWidget.isExpanded;
+  }
+}
+
 class ElvanShell extends ConsumerStatefulWidget {
   const ElvanShell({
     super.key,
@@ -147,6 +167,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
 
   bool _isNavbarVisible = true;
   double _lastScrollDelta = 0.0;
+  Widget? _cachedOverlayWidget;
   final ValueNotifier<bool> _isHeaderExpandedNotifier =
       ValueNotifier<bool>(true);
   final ValueNotifier<bool> _isSearchActiveNotifier =
@@ -159,6 +180,9 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
   @override
   void initState() {
     super.initState();
+    if (widget.isOverlayActive) {
+      _cachedOverlayWidget = widget.overlayWidget;
+    }
     _navbarController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 280),
@@ -176,9 +200,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
   void _activateOverlay(OverlayType type) {
     // Auto-Collapse logic
     if (!_scrollController.hasClients) {
-      if (type == OverlayType.search) {
-        _isSearchActiveNotifier.value = true;
-      }
+      _isSearchActiveNotifier.value = true;
       return;
     }
 
@@ -191,12 +213,14 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
     // Scroll slightly past the threshold to perfectly snap the header to its collapsed pill state
     final double targetOffset = snapThreshold + 20.0;
 
-    // Animate the scroll, but start the choreography immediately!
-    _scrollController.animateTo(
-      targetOffset,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOutCubic,
-    );
+    // Animate the scroll only if the search keyboard is going to open!
+    if (type == OverlayType.search) {
+      _scrollController.animateTo(
+        targetOffset,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+      );
+    }
 
     // --- The Choreographed Container Transform Sequence ---
 
@@ -213,9 +237,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
         if (!mounted) return;
         setState(() {
           _overlayStep3ExpandContainer = true;
-          if (type == OverlayType.search) {
-            _isSearchActiveNotifier.value = true;
-          }
+          _isSearchActiveNotifier.value = true;
         });
         if (type == OverlayType.search) {
           _searchFocusNode.requestFocus();
@@ -232,9 +254,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
     // Reverse Step 3: Shrink the container and fade out its contents
     setState(() {
       _overlayStep3ExpandContainer = false;
-      if (_currentOverlayType == OverlayType.search) {
-        _isSearchActiveNotifier.value = false;
-      }
+      _isSearchActiveNotifier.value = false;
     });
 
     Future.delayed(const Duration(milliseconds: 300), () {
@@ -251,17 +271,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
     });
   }
 
-  @override
-  void didUpdateWidget(covariant ElvanShell oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.isOverlayActive != oldWidget.isOverlayActive) {
-      if (widget.isOverlayActive) {
-        _activateOverlay(OverlayType.custom);
-      } else {
-        _closeOverlaySequence();
-      }
-    }
-  }
+
 
   @override
   void didChangeDependencies() {
@@ -289,6 +299,23 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
   @override
   void didUpdateWidget(ElvanShell oldWidget) {
     super.didUpdateWidget(oldWidget);
+
+    if (widget.isOverlayActive != oldWidget.isOverlayActive) {
+      if (widget.isOverlayActive) {
+        _cachedOverlayWidget = widget.overlayWidget;
+        _activateOverlay(OverlayType.custom);
+      } else {
+        _closeOverlaySequence();
+        // Clear it AFTER the closing animation completes (350ms total)
+        Future.delayed(const Duration(milliseconds: 350), () {
+          if (mounted && !widget.isOverlayActive) {
+            setState(() => _cachedOverlayWidget = null);
+          }
+        });
+      }
+    } else if (widget.isOverlayActive) {
+      _cachedOverlayWidget = widget.overlayWidget;
+    }
 
     // Check if we are in a tabbed environment and this specific tab just became active!
     if (widget.assignedIndex != null &&
@@ -695,18 +722,21 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
                                               : 61.0) *
                                           widget.navItems.length +
                                       16.0),
-                              child: _currentOverlayType == OverlayType.search
-                                  ? ElvanSearchBar(
-                                      focusNode: _searchFocusNode,
-                                      onChanged: widget.onSearchChanged,
-                                      onClose: () {
-                                        _closeOverlaySequence();
-                                        widget.onSearchChanged
-                                            ?.call(''); // Clear query
-                                      },
-                                      isExpanded: _overlayStep3ExpandContainer,
-                                    )
-                                  : (widget.overlayWidget ?? const SizedBox.shrink()),
+                              child: ElvanOverlayState(
+                                isExpanded: _overlayStep3ExpandContainer,
+                                child: _currentOverlayType == OverlayType.search
+                                    ? ElvanSearchBar(
+                                        focusNode: _searchFocusNode,
+                                        onChanged: widget.onSearchChanged,
+                                        onClose: () {
+                                          _closeOverlaySequence();
+                                          widget.onSearchChanged
+                                              ?.call(''); // Clear query
+                                        },
+                                        isExpanded: _overlayStep3ExpandContainer,
+                                      )
+                                    : (_cachedOverlayWidget ?? const SizedBox.shrink()),
+                              ),
                             ),
                         ],
                       ),

@@ -8,20 +8,20 @@ import '../../../../adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 
 import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
-import '../../../niril_podhu/kalanjiyam/patrucheettu_nilaimai.dart';
+import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 import '../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 import '../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
-
-import '../../../niril_podhu/tharavuthalam/app_database.dart';
+import '../../../../adippadai/oru_mozhi/oru_mozhi_vazhanguthigal.dart';
+import '../../../../adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
 
 import '../../../../koorugal/podhu_koorugal/elvan_thervu_pattai.dart';
-import '../../../../koorugal/maeladukkugal/elvan_azhippu_urudhi_meladukku.dart';
-import '../../../../koorugal/podhu_koorugal/elvan_pothu_snack_bar.dart';
+import '../../../../koorugal/maeladukkugal/elvan_cheyal_maeladukku.dart';
+import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 
 import '../../../../adippadai/vazhikaattal/navigation_provider.dart';
 
 class SelectionOverlayHelper {
-  static Widget? buildOverlay(BuildContext context, WidgetRef ref, int tabIndex, NirilNavigationState navState) {
+  static Widget? buildOverlay(BuildContext context, WidgetRef ref, int tabIndex, NirilNavigationState navState, {bool isExpanded = true}) {
     final mode = ref.watch(appModeProvider) ?? AppMode.silk;
     
     if (tabIndex == 1) { // Invoices / Receipts
@@ -32,6 +32,8 @@ class SelectionOverlayHelper {
         final selectedIds = ref.watch(selectedPattiyalIdsProvider);
         
         return ElvanThervuPattai(
+          key: const ValueKey('selection_bar'),
+          isExpanded: isExpanded,
           selectedCount: selectedIds.length,
           onSelectAll: () {
             // Need to get filtered IDs
@@ -39,7 +41,7 @@ class SelectionOverlayHelper {
                 ? ref.read(coolieInvoicesSearchQueryProvider) 
                 : ref.read(silkInvoicesSearchQueryProvider);
             final items = ref.read(pattiyalgalProvider).value ?? [];
-            final primaryLang = ref.read(mode == AppMode.coolie ? kooliAchuMozhiProvider : silkAchuMozhiProvider);
+            final primaryLang = ref.read(mode == AppMode.coolie ? kooliAchuMozhiProvider : silkMudhanmaiMozhiProvider);
             final secondaryLang = primaryLang == 'Tamil' ? 'English' : 'Tamil';
             
             final filtered = query.isEmpty ? items : items.where((p) {
@@ -64,17 +66,19 @@ class SelectionOverlayHelper {
         final selectedIds = ref.watch(selectedPatruIdsProvider);
         
         return ElvanThervuPattai(
+          key: const ValueKey('selection_bar'),
+          isExpanded: isExpanded,
           selectedCount: selectedIds.length,
           onSelectAll: () {
             final query = mode == AppMode.coolie 
                 ? ref.read(coolieReceiptsSearchQueryProvider) 
                 : ref.read(silkReceiptsSearchQueryProvider);
-            final items = ref.read(patrucheettugalProvider).value ?? [];
-            final primaryLang = ref.read(mode == AppMode.coolie ? kooliAchuMozhiProvider : silkAchuMozhiProvider);
+            final items = ref.read(patrugalProvider).value ?? [];
+            final primaryLang = ref.read(mode == AppMode.coolie ? kooliAchuMozhiProvider : silkMudhanmaiMozhiProvider);
             final secondaryLang = primaryLang == 'Tamil' ? 'English' : 'Tamil';
             
             final filtered = query.isEmpty ? items : items.where((p) {
-              final en = p.patrucheettuEn.toLowerCase();
+              final en = p.patruEn.toLowerCase();
               final peyarPrimary = (p.vaangunarPeyar[primaryLang] ?? '').toLowerCase();
               final peyarSecondary = (p.vaangunarPeyar[secondaryLang] ?? '').toLowerCase();
               return en.contains(query) || peyarPrimary.contains(query) || peyarSecondary.contains(query);
@@ -96,24 +100,26 @@ class SelectionOverlayHelper {
       final selectedIds = ref.watch(selectedPorulIdsProvider);
       
       return ElvanThervuPattai(
+        key: const ValueKey('selection_bar'),
+        isExpanded: isExpanded,
         selectedCount: selectedIds.length,
         onSelectAll: () {
           final query = mode == AppMode.coolie 
               ? ref.read(coolieItemsSearchQueryProvider) 
               : ref.read(silkItemsSearchQueryProvider);
-          final items = ref.read(porutkalListProvider).value ?? [];
-          final primaryLang = ref.read(mode == AppMode.coolie ? kooliAchuMozhiProvider : silkAchuMozhiProvider);
+          final items = ref.read(porulgalProvider).value ?? [];
+          final primaryLang = ref.read(mode == AppMode.coolie ? kooliAchuMozhiProvider : silkMudhanmaiMozhiProvider);
             final secondaryLang = primaryLang == 'Tamil' ? 'English' : 'Tamil';
             
           final filtered = query.isEmpty ? items : items.where((p) {
-            final peyarPrimary = (p.peyar[primaryLang] ?? '').toLowerCase();
-            final peyarSecondary = (p.peyar[secondaryLang] ?? '').toLowerCase();
+            final peyarPrimary = (p.porulPeyar[primaryLang] ?? '').toLowerCase();
+            final peyarSecondary = (p.porulPeyar[secondaryLang] ?? '').toLowerCase();
             return peyarPrimary.contains(query) || peyarSecondary.contains(query);
           }).toList();
           
           ref.read(selectedPorulIdsProvider.notifier).state = filtered.map((e) => e.id).toSet();
         },
-        onDelete: () => _deletePorutkal(context, ref, selectedIds.toList()),
+        onDelete: () => _deletePorulgal(context, ref, selectedIds.toList()),
         onCancel: () {
           ref.read(porulSelectionModeProvider.notifier).state = false;
           ref.read(selectedPorulIdsProvider.notifier).state = {};
@@ -126,13 +132,15 @@ class SelectionOverlayHelper {
       final selectedIds = ref.watch(selectedVaangunarIdsProvider);
       
       return ElvanThervuPattai(
+        key: const ValueKey('selection_bar'),
+        isExpanded: isExpanded,
         selectedCount: selectedIds.length,
         onSelectAll: () {
           final query = mode == AppMode.coolie 
               ? ref.read(coolieMerchantsSearchQueryProvider) 
               : ref.read(silkMerchantsSearchQueryProvider);
-          final items = ref.read(vaangunargalListProvider).value ?? [];
-          final primaryLang = ref.read(mode == AppMode.coolie ? kooliAchuMozhiProvider : silkAchuMozhiProvider);
+          final items = ref.read(vaangunargalProvider).value ?? [];
+          final primaryLang = ref.read(mode == AppMode.coolie ? kooliAchuMozhiProvider : silkMudhanmaiMozhiProvider);
           final secondaryLang = primaryLang == 'Tamil' ? 'English' : 'Tamil';
             
           final filtered = query.isEmpty ? items : items.where((p) {
@@ -155,77 +163,85 @@ class SelectionOverlayHelper {
   }
 
   static void _deletePattiyalgal(BuildContext context, WidgetRef ref, List<int> ids) {
-    showElvanConfirmDialog(
+    if (ids.isEmpty) return;
+    
+    showElvanActionSheet(
       context: context,
-      title: K.azhippaiUrudhiCheyga.tr(context, ref),
-      message: '${ids.length} ${K.pattiyalgal.tr(context, ref).toLowerCase()} ${K.azhikkaUrudhiyagaUleerhala.tr(context, ref)}',
-      confirmText: K.azhi.tr(context, ref),
-      onConfirm: () async {
-        final db = ref.read(pattiyalDatabaseProvider);
-        for (final id in ids) {
-          await db.deletePattiyal(id);
-        }
-        if (!context.mounted) return;
+      title: '${ids.length} ${K.pattiyalgal.tr(context, ref)}',
+      cancelText: K.kaividuPtn.tr(context, ref),
+      confirmText: K.neekkuPtn.tr(context, ref),
+      confirmColor: Colors.red,
+      onConfirm: () {
+        ref.read(pattiyalKalanjiyamProvider).bulkDeletePattiyalgal(ids);
+        ref.invalidate(pattiyalgalProvider);
+        
         ref.read(pattiyalSelectionModeProvider.notifier).state = false;
         ref.read(selectedPattiyalIdsProvider.notifier).state = {};
-        ElvanSnackBar.showSuccess(context, '${ids.length} ${K.pattiyalgal.tr(context, ref).toLowerCase()} ${K.azhikkapattadhu.tr(context, ref)}');
+        
+        ElvanSnackbar.show(context, '${ids.length} ${K.pattiyalgal.tr(context, ref)} ${K.azhikkiradhu.tr(context, ref)}');
       },
     );
   }
 
   static void _deletePatrucheettugal(BuildContext context, WidgetRef ref, List<int> ids) {
-    showElvanConfirmDialog(
+    if (ids.isEmpty) return;
+    
+    showElvanActionSheet(
       context: context,
-      title: K.azhippaiUrudhiCheyga.tr(context, ref),
-      message: '${ids.length} ${K.patrucheettugal.tr(context, ref).toLowerCase()} ${K.azhikkaUrudhiyagaUleerhala.tr(context, ref)}',
-      confirmText: K.azhi.tr(context, ref),
-      onConfirm: () async {
-        final db = ref.read(patrucheettuDatabaseProvider);
-        for (final id in ids) {
-          await db.deletePatrucheettu(id);
-        }
-        if (!context.mounted) return;
+      title: '${ids.length} ${K.patrucheettugal.tr(context, ref)}',
+      cancelText: K.kaividuPtn.tr(context, ref),
+      confirmText: K.neekkuPtn.tr(context, ref),
+      confirmColor: Colors.red,
+      onConfirm: () {
+        ref.read(patruKalanjiyamProvider).bulkDeletePatrugal(ids);
+        ref.invalidate(patrugalProvider);
+        
         ref.read(patruSelectionModeProvider.notifier).state = false;
         ref.read(selectedPatruIdsProvider.notifier).state = {};
-        ElvanSnackBar.showSuccess(context, '${ids.length} ${K.patrucheettugal.tr(context, ref).toLowerCase()} ${K.azhikkapattadhu.tr(context, ref)}');
+        
+        ElvanSnackbar.show(context, '${ids.length} ${K.patrucheettugal.tr(context, ref)} ${K.azhikkiradhu.tr(context, ref)}');
       },
     );
   }
 
-  static void _deletePorutkal(BuildContext context, WidgetRef ref, List<int> ids) {
-    showElvanConfirmDialog(
+  static void _deletePorulgal(BuildContext context, WidgetRef ref, List<int> ids) {
+    if (ids.isEmpty) return;
+    
+    showElvanActionSheet(
       context: context,
-      title: K.azhippaiUrudhiCheyga.tr(context, ref),
-      message: '${ids.length} ${K.porutkal.tr(context, ref).toLowerCase()} ${K.azhikkaUrudhiyagaUleerhala.tr(context, ref)}',
-      confirmText: K.azhi.tr(context, ref),
-      onConfirm: () async {
-        final db = ref.read(porulDatabaseProvider);
-        for (final id in ids) {
-          await db.deletePorul(id);
-        }
-        if (!context.mounted) return;
+      title: '${ids.length} ${K.porulAzhikkappattadhu.tr(context, ref)}',
+      cancelText: K.kaividuPtn.tr(context, ref),
+      confirmText: K.neekkuPtn.tr(context, ref),
+      confirmColor: Colors.red,
+      onConfirm: () {
+        ref.read(porulKalanjiyamProvider).bulkDeletePorulgal(ids);
+        ref.invalidate(porulgalProvider);
+        
         ref.read(porulSelectionModeProvider.notifier).state = false;
         ref.read(selectedPorulIdsProvider.notifier).state = {};
-        ElvanSnackBar.showSuccess(context, '${ids.length} ${K.porutkal.tr(context, ref).toLowerCase()} ${K.azhikkapattadhu.tr(context, ref)}');
+        
+        ElvanSnackbar.show(context, '${ids.length} ${K.porulAzhikkappattadhu.tr(context, ref)}');
       },
     );
   }
 
   static void _deleteVaangunargal(BuildContext context, WidgetRef ref, List<int> ids) {
-    showElvanConfirmDialog(
+    if (ids.isEmpty) return;
+    
+    showElvanActionSheet(
       context: context,
-      title: K.azhippaiUrudhiCheyga.tr(context, ref),
-      message: '${ids.length} ${K.vaangunargal.tr(context, ref).toLowerCase()} ${K.azhikkaUrudhiyagaUleerhala.tr(context, ref)}',
-      confirmText: K.azhi.tr(context, ref),
-      onConfirm: () async {
-        final db = ref.read(vaangunarDatabaseProvider);
-        for (final id in ids) {
-          await db.deleteVaangunar(id);
-        }
-        if (!context.mounted) return;
+      title: '${ids.length} ${K.vaangunarAzhikkappattadhu.tr(context, ref)}',
+      cancelText: K.kaividuPtn.tr(context, ref),
+      confirmText: K.neekkuPtn.tr(context, ref),
+      confirmColor: Colors.red,
+      onConfirm: () {
+        ref.read(vaangunarKalanjiyamProvider).bulkDeleteVaangunargal(ids);
+        ref.invalidate(vaangunargalProvider);
+        
         ref.read(vaangunarSelectionModeProvider.notifier).state = false;
         ref.read(selectedVaangunarIdsProvider.notifier).state = {};
-        ElvanSnackBar.showSuccess(context, '${ids.length} ${K.vaangunargal.tr(context, ref).toLowerCase()} ${K.azhikkapattadhu.tr(context, ref)}');
+        
+        ElvanSnackbar.show(context, '${ids.length} ${K.vaangunarAzhikkappattadhu.tr(context, ref)}');
       },
     );
   }
