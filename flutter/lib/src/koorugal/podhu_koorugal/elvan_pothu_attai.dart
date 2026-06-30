@@ -73,25 +73,25 @@ class _ElvanPothuAttaiState extends State<ElvanPothuAttai> {
             ? const Duration(milliseconds: 100)
             : const Duration(milliseconds: 200),
         curve: Curves.easeOut,
-        child: TweenAnimationBuilder<Color?>(
-          tween: ColorTween(begin: bgColor, end: bgColor),
+        child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          builder: (context, color, _) {
-            return Material(
-              color: color,
-              borderRadius: BorderRadius.circular(widget.borderRadius),
-              clipBehavior: Clip.antiAlias,
-              child: InkWell(
-                onTap: widget.onTap,
-                onLongPress: widget.onLongPress,
-                borderRadius: BorderRadius.circular(widget.borderRadius),
-                child: Padding(
-                  padding: widget.padding,
-                  child: widget.child,
-                ),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(widget.borderRadius),
+          ),
+          child: Material(
+            type: MaterialType.transparency,
+            borderRadius: BorderRadius.circular(widget.borderRadius),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: widget.onTap,
+              onLongPress: widget.onLongPress,
+              child: Padding(
+                padding: widget.padding,
+                child: widget.child,
               ),
-            );
-          },
+            ),
+          ),
         ),
       ),
     );

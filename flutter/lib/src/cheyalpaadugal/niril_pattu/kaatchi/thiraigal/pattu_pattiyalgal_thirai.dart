@@ -65,7 +65,7 @@ class SilkInvoicesPage extends ConsumerWidget {
       },
       groupBy: (p) => p.niruvanamId,
       groupHeaderBuilder: (context, niruvanamId) {
-        final profiles = profilesAsync.valueOrNull ?? [];
+        final profiles = profilesAsync;
         String sectionName;
         if (niruvanamId == null) {
           sectionName = 'General';

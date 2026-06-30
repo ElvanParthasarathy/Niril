@@ -18,6 +18,8 @@ import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 
 import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_pothu_attai.dart';
 import '../thiruthi/pattiyal/niril_kooli_pattiyal_thiruthi.dart';
+import '../koorugal/elvan_kooli_tharavu_pattiyal.dart';
+
 /// Coolie invoice list — real DB-backed view.
 /// Shows invoices grouped by business profile with search, selection, and
 /// tap-to-edit navigation.
@@ -38,193 +40,79 @@ class CoolieInvoicesPage extends ConsumerWidget {
     final primaryLang = ref.watch(kooliAchuMozhiProvider);
     final secondaryLang = primaryLang == 'Tamil' ? 'English' : 'Tamil';
 
-    return pattiyalgalAsync.when(
-      loading: () => const SliverFillRemaining(
-        child: Center(child: CupertinoActivityIndicator()),
-      ),
-      error: (e, _) => SliverFillRemaining(
-        child: Center(child: Text('Error: $e')),
-      ),
-      data: (pattiyalgal) {
+    return ElvanKooliTharavuPattiyal<PattiyalTharavuru>(
+      dataAsync: pattiyalgalAsync,
+      searchQuery: query,
+      onFilter: (p, q) {
+        final en = p.patrucheettuEn.toLowerCase();
+        final peyarPrimary = (p.vaangunarPeyar[primaryLang] ?? '').toLowerCase();
+        final peyarSecondary = (p.vaangunarPeyar[secondaryLang] ?? '').toLowerCase();
+        return en.contains(q) || 
+               peyarPrimary.contains(q) || 
+               peyarSecondary.contains(q);
+      },
+      emptyIcon: CupertinoIcons.doc_text,
+      emptyTitle: K.pattiyalgalIllai.tr(context, ref),
+      emptySubtitle: K.pudhiyaPattiyalPtn.tr(context, ref),
+      itemId: (p) => p.id,
+      selectionModeProvider: pattiyalSelectionModeProvider,
+      selectedIdsProvider: selectedPattiyalIdsProvider,
+      onItemTap: (context, p) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => CoolieInvoiceEditor(
+              editingEntry: p,
+            ),
+          ),
+        );
+      },
+      groupBy: (p) => p.niruvanamId,
+      groupHeaderBuilder: (context, niruvanamId) {
         final profiles = profilesAsync;
-
-        // Filter by search query
-        final filtered = query.isEmpty
-            ? pattiyalgal
-            : pattiyalgal.where((p) {
-                final en = p.patrucheettuEn.toLowerCase();
-                final peyarPrimary = (p.vaangunarPeyar[primaryLang] ?? '').toLowerCase();
-                final peyarSecondary = (p.vaangunarPeyar[secondaryLang] ?? '').toLowerCase();
-                return en.contains(query) || 
-                       peyarPrimary.contains(query) || 
-                       peyarSecondary.contains(query);
-              }).toList();
-
-        // Empty state
-        if (filtered.isEmpty) {
-          return SliverFillRemaining(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    CupertinoIcons.doc_text,
-                    size: 48,
-                    color: isDark ? Colors.white24 : Colors.black26,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    K.pattiyalgalIllai.tr(context, ref),
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: isDark ? Colors.white38 : Colors.black38,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    K.pudhiyaPattiyalPtn.tr(context, ref),
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: isDark ? Colors.white24 : Colors.black26,
-                    ),
-                  ),
-                ],
+        String sectionName;
+        if (niruvanamId == null) {
+          sectionName = 'General';
+        } else {
+          final profile = profiles
+              .where((p) => p.id == niruvanamId)
+              .firstOrNull;
+          sectionName = profile?.kurumPeyar ?? 'General';
+        }
+        return SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 16, bottom: 8),
+            child: Text(
+              sectionName,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.5)
+                    : Colors.black.withValues(alpha: 0.4),
               ),
             ),
-          );
-        }
-
-        // Group invoices by niruvanamId
-        final grouped = <int?, List<PattiyalTharavuru>>{};
-        for (final p in filtered) {
-          grouped.putIfAbsent(p.niruvanamId, () => []).add(p);
-        }
-
-        // Build section slivers
-        final slivers = <Widget>[];
-
-
-        // Sections per business profile
-        for (final entry in grouped.entries) {
-          final niruvanamId = entry.key;
-          final items = entry.value;
-
-          // Resolve business name
-          String sectionName;
-          if (niruvanamId == null) {
-            sectionName = 'General';
-          } else {
-            final profile = profiles
-                .where((p) => p.id == niruvanamId)
-                .firstOrNull;
-            sectionName = profile?.kurumPeyar ?? 'General';
-          }
-
-          // Show section header only if there's more than one group
-          if (grouped.length > 1) {
-            slivers.add(
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 16, bottom: 8),
-                  child: Text(
-                    sectionName,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.5)
-                          : Colors.black.withValues(alpha: 0.4),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }
-
-          // Invoice cards for this group
-          slivers.add(
-            ElvanResponsiveGrid(
-              itemCount: items.length,
-              desktopCrossAxisCount: 2,
-              childAspectRatio: 3.0,
-              mobileItemHeight: 96,
-              itemBuilder: (context, index) {
-                final pattiyal = items[index];
-                return Consumer(
-                  builder: (context, ref, _) {
-                    final isSelecting = ref.watch(pattiyalSelectionModeProvider);
-                    final isSelected = ref.watch(
-                      selectedPattiyalIdsProvider.select((ids) => ids.contains(pattiyal.id)),
-                    );
-                    return _CooliePatrucheettuCard(
-                      index: index,
-                      pattiyal: pattiyal,
-                      isDark: isDark,
-                      isSelecting: isSelecting,
-                      isSelected: isSelected,
-                      dateFormat: _dateFormat,
-                      currencyFormat: _currencyFormat,
-                      primaryLang: primaryLang,
-                      secondaryLang: secondaryLang,
-                      onTap: () {
-                        if (isSelecting) {
-                          final currentIds = ref.read(selectedPattiyalIdsProvider);
-                          _toggleSelection(ref, pattiyal.id, currentIds);
-                        } else {
-                          // Navigate to editor for editing
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => CoolieInvoiceEditor(
-                                editingEntry: pattiyal,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                      onLongPress: () {
-                        if (!isSelecting) {
-                          ref
-                              .read(pattiyalSelectionModeProvider.notifier)
-                              .state = true;
-                          ref
-                              .read(selectedPattiyalIdsProvider.notifier)
-                              .state = {pattiyal.id};
-                        }
-                      },
-                    );
-                  },
-                );
-              },
-            ),
-          );
-        }
-
-        return SliverPadding(
-          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 120),
-          sliver: SliverMainAxisGroup(slivers: slivers),
+          ),
+        );
+      },
+      cardBuilder: (context, ref, p, index, isSelecting, isSelected, onTap, onLongPress) {
+        return _CooliePatrucheettuCard(
+          index: index,
+          pattiyal: p,
+          isDark: isDark,
+          isSelecting: isSelecting,
+          isSelected: isSelected,
+          dateFormat: _dateFormat,
+          currencyFormat: _currencyFormat,
+          primaryLang: primaryLang,
+          secondaryLang: secondaryLang,
+          onTap: onTap,
+          onLongPress: onLongPress,
         );
       },
     );
   }
-
-  void _toggleSelection(WidgetRef ref, int id, Set<int> current) {
-    final updated = Set<int>.from(current);
-    if (updated.contains(id)) {
-      updated.remove(id);
-    } else {
-      updated.add(id);
-    }
-    ref.read(selectedPattiyalIdsProvider.notifier).state = updated;
-
-    if (updated.isEmpty) {
-      ref.read(pattiyalSelectionModeProvider.notifier).state = false;
-    }
-  }
-
 }
-
 
 // ── Coolie Invoice Card ─────────────────────────────────────────────────────
 

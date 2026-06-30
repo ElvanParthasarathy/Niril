@@ -14,6 +14,8 @@ import '../../../chattagam/kaatchi/koorugal/elvan_uyir_valai.dart';
 import '../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_pothu_attai.dart';
 import '../thiruthi/porul/niril_kooli_porul_thiruthi.dart';
+import '../koorugal/elvan_kooli_tharavu_pattiyal.dart';
+
 class CoolieItemsPage extends ConsumerWidget {
   const CoolieItemsPage({super.key});
 
@@ -25,135 +27,43 @@ class CoolieItemsPage extends ConsumerWidget {
     final secondaryLang = ref.watch(secondaryLanguageProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-
-    return porulgalAsync.when(
-      loading: () => const SliverFillRemaining(
-        child: Center(child: CupertinoActivityIndicator()),
-      ),
-      error: (e, _) => SliverFillRemaining(
-        child: Center(child: Text('Error: $e')),
-      ),
-      data: (porulgal) {
-        // Filter by search query
-        final filtered = query.isEmpty
-            ? porulgal
-            : porulgal.where((p) {
-                final primary = (p.porulPeyar[primaryLang] ?? '').toLowerCase();
-                final secondary =
-                    (p.porulPeyar[secondaryLang] ?? '').toLowerCase();
-                return primary.contains(query) || secondary.contains(query);
-              }).toList();
-
-        // Empty state
-        if (filtered.isEmpty) {
-          return SliverFillRemaining(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    CupertinoIcons.cube_box,
-                    size: 48,
-                    color: isDark ? Colors.white24 : Colors.black26,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    K.porulgalIllai.tr(context, ref),
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: isDark ? Colors.white38 : Colors.black38,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    K.porulaiChaerkkavum.tr(context, ref),
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: isDark ? Colors.white24 : Colors.black26,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-
-        return SliverPadding(
-          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 120),
-          sliver: SliverMainAxisGroup(
-            slivers: [
-
-              // ── Product Grid ──
-              ElvanResponsiveGrid(
-                itemCount: filtered.length,
-                desktopCrossAxisCount: 2,
-                childAspectRatio: 3.5,
-                mobileItemHeight: 72,
-                itemBuilder: (context, index) {
-                  final porul = filtered[index];
-                  return Consumer(
-                    builder: (context, ref, _) {
-                      final isSelecting = ref.watch(porulSelectionModeProvider);
-                      final isSelected = ref.watch(
-                        selectedPorulIdsProvider.select((ids) => ids.contains(porul.id)),
-                      );
-                      return _CooliePorulCard(
-                        index: index,
-                        porul: porul,
-                        primaryLang: primaryLang,
-                        secondaryLang: secondaryLang,
-                        isDark: isDark,
-                        isSelecting: isSelecting,
-                        isSelected: isSelected,
-                        onTap: () {
-                          if (isSelecting) {
-                            final currentIds = ref.read(selectedPorulIdsProvider);
-                            _toggleSelection(ref, porul.id, currentIds);
-                          } else {
-                            NirilNav.push(
-                              context,
-                              CoolieItemEditor(product: porul),
-                            );
-                          }
-                        },
-                        onLongPress: () {
-                          if (!isSelecting) {
-                            // Enter selection mode + select this item
-                            ref.read(porulSelectionModeProvider.notifier).state =
-                                true;
-                            ref.read(selectedPorulIdsProvider.notifier).state = {
-                              porul.id
-                            };
-                          }
-                        },
-                      );
-                    },
-                  );
-                },
-              ),
-            ],
-          ),
+    return ElvanKooliTharavuPattiyal<PorulTharavuru>(
+      dataAsync: porulgalAsync,
+      searchQuery: query,
+      onFilter: (p, q) {
+        final primary = (p.porulPeyar[primaryLang] ?? '').toLowerCase();
+        final secondary = (p.porulPeyar[secondaryLang] ?? '').toLowerCase();
+        return primary.contains(q) || secondary.contains(q);
+      },
+      emptyIcon: CupertinoIcons.cube_box,
+      emptyTitle: K.porulgalIllai.tr(context, ref),
+      emptySubtitle: K.porulaiChaerkkavum.tr(context, ref),
+      itemId: (p) => p.id,
+      selectionModeProvider: porulSelectionModeProvider,
+      selectedIdsProvider: selectedPorulIdsProvider,
+      onItemTap: (context, p) {
+        NirilNav.push(
+          context,
+          CoolieItemEditor(product: p),
+        );
+      },
+      childAspectRatio: 3.5,
+      mobileItemHeight: 72,
+      cardBuilder: (context, ref, p, index, isSelecting, isSelected, onTap, onLongPress) {
+        return _CooliePorulCard(
+          index: index,
+          porul: p,
+          primaryLang: primaryLang,
+          secondaryLang: secondaryLang,
+          isDark: isDark,
+          isSelecting: isSelecting,
+          isSelected: isSelected,
+          onTap: onTap,
+          onLongPress: onLongPress,
         );
       },
     );
   }
-
-  void _toggleSelection(WidgetRef ref, int id, Set<int> current) {
-    final updated = Set<int>.from(current);
-    if (updated.contains(id)) {
-      updated.remove(id);
-    } else {
-      updated.add(id);
-    }
-    ref.read(selectedPorulIdsProvider.notifier).state = updated;
-
-    // Auto-exit selection mode when nothing selected
-    if (updated.isEmpty) {
-      ref.read(porulSelectionModeProvider.notifier).state = false;
-    }
-  }
-
 }
 
 
