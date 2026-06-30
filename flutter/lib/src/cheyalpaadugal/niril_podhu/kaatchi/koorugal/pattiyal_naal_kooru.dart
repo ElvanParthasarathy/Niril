@@ -46,10 +46,24 @@ class PattiyalNaalKooru extends StatelessWidget {
       helpText: '', // Removes the unnecessary 'Select date' text
       fieldLabelText: '', // Removes the 'Enter Date' label in input mode
       builder: (context, child) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final bgColor = isDark ? const Color(0xFF1E1E1E) : Colors.white; // Pure dark grey or white
         return Theme(
           data: Theme.of(context).copyWith(
+            dialogBackgroundColor: bgColor,
+            dialogTheme: DialogThemeData(
+              backgroundColor: bgColor,
+              surfaceTintColor: Colors.transparent,
+            ),
+            datePickerTheme: Theme.of(context).datePickerTheme.copyWith(
+              backgroundColor: bgColor,
+              surfaceTintColor: Colors.transparent,
+              headerBackgroundColor: bgColor,
+            ),
             colorScheme: Theme.of(context).colorScheme.copyWith(
               surfaceTint: Colors.transparent,
+              surfaceContainerHigh: bgColor,
+              surface: bgColor,
             ),
           ),
           child: child!,
