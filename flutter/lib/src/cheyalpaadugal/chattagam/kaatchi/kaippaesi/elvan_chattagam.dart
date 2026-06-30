@@ -533,12 +533,14 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
               controller: _scrollController,
               child: NotificationListener<ScrollNotification>(
                 onNotification: _handleScrollNotification,
-                child: ElvanPageContent(
-                  scrollController: _scrollController,
-                  title: widget.title,
-                  navActions: _buildEffectiveNavActions(),
-                  slivers: widget.slivers,
-                  expandedHeight: _kExpandedHeight,
+                child: CupertinoScrollbar(
+                  controller: _scrollController,
+                  child: ElvanPageContent(
+                    scrollController: _scrollController,
+                    title: widget.title,
+                    navActions: _buildEffectiveNavActions(),
+                    slivers: widget.slivers,
+                    expandedHeight: _kExpandedHeight,
                   isHeaderExpandedNotifier:
                       _isHeaderExpandedNotifier, // Passed to content
                   isSearchActiveNotifier: _isSearchActiveNotifier,
@@ -547,6 +549,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
                   leadingWidget: widget.leadingWidget,
                   showLeadingWidgetInExpandedBar:
                       widget.showLeadingWidgetInExpandedBar,
+                  ),
                 ),
               ),
             ),
