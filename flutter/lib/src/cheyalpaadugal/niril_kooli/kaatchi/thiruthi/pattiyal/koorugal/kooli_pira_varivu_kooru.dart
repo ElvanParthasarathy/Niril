@@ -49,7 +49,10 @@ class KooliPiraVarivuKooru extends ConsumerWidget {
                     )),
               ),
               Padding(
-                padding: const EdgeInsets.only(right: 24, bottom: 12),
+                padding: EdgeInsets.only(
+                  right: MediaQuery.sizeOf(context).width >= 600 ? 48 : 12, 
+                  bottom: 12
+                ),
                 child: IconButton(
                   icon: const Icon(CupertinoIcons.delete, size: 20),
                   color: cs.onSurfaceVariant,
