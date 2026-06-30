@@ -189,8 +189,8 @@ class KooliUrupadiKooru extends ConsumerWidget {
             const SizedBox(height: 16),
             Align(
               alignment: Alignment.centerLeft,
-              child: Wrap(
-                spacing: 12,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (onAddNewItem != null)
                     TextButton.icon(
@@ -204,7 +204,8 @@ class KooliUrupadiKooru extends ConsumerWidget {
                         shape: const StadiumBorder(),
                       ),
                     ),
-                  if (onAddNewCharge != null)
+                  if (onAddNewCharge != null) ...[
+                    const SizedBox(height: 12),
                     TextButton.icon(
                       onPressed: onAddNewCharge,
                       icon: const Icon(Icons.add, size: 20),
@@ -216,6 +217,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
                         shape: const StadiumBorder(),
                       ),
                     ),
+                  ],
                 ],
               ),
             ),
