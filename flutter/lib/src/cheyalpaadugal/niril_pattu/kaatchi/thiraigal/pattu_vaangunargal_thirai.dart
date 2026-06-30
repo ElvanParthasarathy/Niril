@@ -15,6 +15,7 @@ import '../../../chattagam/kaatchi/koorugal/elvan_uyir_valai.dart';
 import '../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_pothu_attai.dart';
 import '../thiruthi/vaangunar/niril_pattu_vaangunar_thiruthi.dart';
+import '../koorugal/elvan_pattu_tharavu_pattiyal.dart';
 class SilkMerchantsPage extends ConsumerWidget {
   const SilkMerchantsPage({super.key});
 
@@ -27,143 +28,51 @@ class SilkMerchantsPage extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
 
-    return vaangunargalAsync.when(
-      loading: () => const SliverFillRemaining(
-        child: Center(child: CupertinoActivityIndicator()),
-      ),
-      error: (e, _) => SliverFillRemaining(
-        child: Center(child: Text('Error: $e')),
-      ),
-      data: (vaangunargal) {
-        // Filter by search query (name, city, gstin, phone, email)
-        final filtered = query.isEmpty
-            ? vaangunargal
-            : vaangunargal.where((v) {
-                final pName = (v.peyar[primaryLang] ?? '').toLowerCase();
-                final sName = (v.peyar[secondaryLang] ?? '').toLowerCase();
-                final pCity = (v.oor[primaryLang] ?? '').toLowerCase();
-                final gstin = v.gstin.toLowerCase();
-                final phone = v.tholaipaesi.toLowerCase();
-                final email = v.minnanjal.toLowerCase();
-                return pName.contains(query) ||
-                    sName.contains(query) ||
-                    pCity.contains(query) ||
-                    gstin.contains(query) ||
-                    phone.contains(query) ||
-                    email.contains(query);
-              }).toList();
-
-        // Empty state
-        if (filtered.isEmpty) {
-          return SliverFillRemaining(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SvgPicture.string(
-                    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"></path></svg>',
-                    width: 48,
-                    height: 48,
-                    colorFilter: ColorFilter.mode(
-                      isDark ? Colors.white24 : Colors.black26,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    K.vaangunargalIllai.tr(context, ref),
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: isDark ? Colors.white38 : Colors.black38,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    K.vaangunaraiChaerkkavum.tr(context, ref),
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: isDark ? Colors.white24 : Colors.black26,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-
-        return SliverPadding(
-          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 120),
-          sliver: SliverMainAxisGroup(
-            slivers: [
-
-              // ── Merchant Grid ──
-              ElvanResponsiveGrid(
-                itemCount: filtered.length,
-                desktopCrossAxisCount: 2,
-                childAspectRatio: 2.8,
-                mobileItemHeight: 100,
-                itemBuilder: (context, index) {
-                  final vaangunar = filtered[index];
-
-                  return Consumer(
-                    builder: (context, ref, _) {
-                      final isSelecting = ref.watch(vaangunarSelectionModeProvider);
-                      final isSelected = ref.watch(
-                        selectedVaangunarIdsProvider.select((ids) => ids.contains(vaangunar.id)),
-                      );
-                      return _SilkVaangunarCard(
-                        index: index,
-                        vaangunar: vaangunar,
-                        primaryLang: primaryLang,
-                        secondaryLang: secondaryLang,
-                        isDark: isDark,
-                        isSelecting: isSelecting,
-                        isSelected: isSelected,
-                        onTap: () {
-                          if (isSelecting) {
-                            final currentIds = ref.read(selectedVaangunarIdsProvider);
-                            _toggleSelection(ref, vaangunar.id, currentIds);
-                          } else {
-                            NirilNav.push(
-                              context,
-                              SilkMerchantEditor(vaangunar: vaangunar),
-                            );
-                          }
-                        },
-                        onLongPress: () {
-                          if (!isSelecting) {
-                            ref.read(vaangunarSelectionModeProvider.notifier).state =
-                                true;
-                            ref.read(selectedVaangunarIdsProvider.notifier).state = {
-                              vaangunar.id
-                            };
-                          }
-                        },
-                      );
-                    },
-                  );
-                },
-              ),
-            ],
-          ),
+    return ElvanPattuTharavuPattiyal<VaangunarTharavuru>(
+      dataAsync: vaangunargalAsync,
+      searchQuery: query,
+      onFilter: (v, q) {
+        final pName = (v.peyar[primaryLang] ?? '').toLowerCase();
+        final sName = (v.peyar[secondaryLang] ?? '').toLowerCase();
+        final pCity = (v.oor[primaryLang] ?? '').toLowerCase();
+        final gstin = v.gstin.toLowerCase();
+        final phone = v.tholaipaesi.toLowerCase();
+        final email = v.minnanjal.toLowerCase();
+        return pName.contains(q) ||
+            sName.contains(q) ||
+            pCity.contains(q) ||
+            gstin.contains(q) ||
+            phone.contains(q) ||
+            email.contains(q);
+      },
+      emptyIcon: CupertinoIcons.person_2,
+      emptyTitle: K.vaangunargalIllai.tr(context, ref),
+      emptySubtitle: K.vaangunaraiChaerkkavum.tr(context, ref),
+      itemId: (v) => v.id,
+      selectionModeProvider: vaangunarSelectionModeProvider,
+      selectedIdsProvider: selectedVaangunarIdsProvider,
+      onItemTap: (context, vaangunar) {
+        NirilNav.push(
+          context,
+          SilkMerchantEditor(vaangunar: vaangunar),
+        );
+      },
+      childAspectRatio: 2.8,
+      mobileItemHeight: 100,
+      cardBuilder: (context, ref, vaangunar, index, isSelecting, isSelected, onTap, onLongPress) {
+        return _SilkVaangunarCard(
+          index: index,
+          vaangunar: vaangunar,
+          primaryLang: primaryLang,
+          secondaryLang: secondaryLang,
+          isDark: isDark,
+          isSelecting: isSelecting,
+          isSelected: isSelected,
+          onTap: onTap,
+          onLongPress: onLongPress,
         );
       },
     );
-  }
-
-  void _toggleSelection(WidgetRef ref, int id, Set<int> current) {
-    final updated = Set<int>.from(current);
-    if (updated.contains(id)) {
-      updated.remove(id);
-    } else {
-      updated.add(id);
-    }
-    ref.read(selectedVaangunarIdsProvider.notifier).state = updated;
-
-    if (updated.isEmpty) {
-      ref.read(vaangunarSelectionModeProvider.notifier).state = false;
-    }
   }
 
 }

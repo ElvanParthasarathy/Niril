@@ -18,6 +18,7 @@ import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 import '../../../niril_podhu/tharavuru/seluthi_vagai.dart';
 import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_pothu_attai.dart';
 import '../thiruthi/patrucheettu/niril_pattu_patrucheettu_thiruthi.dart';
+import '../koorugal/elvan_pattu_tharavu_pattiyal.dart';
 /// Silk Receipt List — real DB-backed view showing payment receipts.
 /// Mirror of coolie receipt list but navigates to SilkReceiptEditor.
 class SilkReceiptsPage extends ConsumerWidget {
@@ -37,190 +38,78 @@ class SilkReceiptsPage extends ConsumerWidget {
     final primaryLang = ref.watch(silkMudhanmaiMozhiProvider);
     final secondaryLang = ref.watch(silkThunaiMozhiProvider);
 
-    return patrugalAsync.when(
-      loading: () => const SliverFillRemaining(
-        child: Center(child: CupertinoActivityIndicator()),
-      ),
-      error: (e, _) => SliverFillRemaining(
-        child: Center(child: Text('Error: $e')),
-      ),
-      data: (patrugal) {
-        final profiles = profilesAsync;
-
-        // Filter by search query
-        final filtered = query.isEmpty
-            ? patrugal
-            : patrugal.where((p) {
-                final en = p.patruEn.toLowerCase();
-                final peyarPrimary = (p.vaangunarPeyar[primaryLang] ?? '').toLowerCase();
-                final peyarSecondary = (p.vaangunarPeyar[secondaryLang] ?? '').toLowerCase();
-                final vagai = p.seluthumMurai.toLowerCase();
-                return en.contains(query) ||
-                    peyarPrimary.contains(query) ||
-                    peyarSecondary.contains(query) ||
-                    vagai.contains(query);
-              }).toList();
-
-        // Empty state
-        if (filtered.isEmpty) {
-          return SliverFillRemaining(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SvgPicture.string(
-                    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M72,104a8,8,0,0,1,8-8h96a8,8,0,0,1,0,16H80A8,8,0,0,1,72,104Zm8,40h96a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16ZM232,56V208a8,8,0,0,1-11.58,7.15L192,200.94l-28.42,14.21a8,8,0,0,1-7.16,0L128,200.94,99.58,215.15a8,8,0,0,1-7.16,0L64,200.94,35.58,215.15A8,8,0,0,1,24,208V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56Zm-16,0H40V195.06l20.42-10.22a8,8,0,0,1,7.16,0L96,199.06l28.42-14.22a8,8,0,0,1,7.16,0L160,199.06l28.42-14.22a8,8,0,0,1,7.16,0L216,195.06Z"></path></svg>',
-                    width: 48,
-                    height: 48,
-                    colorFilter: ColorFilter.mode(
-                      isDark ? Colors.white24 : Colors.black26,
-                      BlendMode.srcIn,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    K.patrucheettugalIllai.tr(context, ref),
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: isDark ? Colors.white38 : Colors.black38,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    K.pudhiyaPatrucheettuPtn.tr(context, ref),
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: isDark ? Colors.white24 : Colors.black26,
-                    ),
-                  ),
-                ],
+    return ElvanPattuTharavuPattiyal<PatrugalTharavuru>(
+      dataAsync: patrugalAsync,
+      searchQuery: query,
+      onFilter: (p, q) {
+        final en = p.patruEn.toLowerCase();
+        final peyarPrimary = (p.vaangunarPeyar[primaryLang] ?? '').toLowerCase();
+        final peyarSecondary = (p.vaangunarPeyar[secondaryLang] ?? '').toLowerCase();
+        final vagai = p.seluthumMurai.toLowerCase();
+        return en.contains(q) ||
+            peyarPrimary.contains(q) ||
+            peyarSecondary.contains(q) ||
+            vagai.contains(q);
+      },
+      emptyIcon: CupertinoIcons.doc_text,
+      emptyTitle: K.patrucheettugalIllai.tr(context, ref),
+      emptySubtitle: K.pudhiyaPatrucheettuPtn.tr(context, ref),
+      itemId: (p) => p.id,
+      selectionModeProvider: patruSelectionModeProvider,
+      selectedIdsProvider: selectedPatruIdsProvider,
+      onItemTap: (context, patru) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => SilkReceiptEditor(editingEntry: patru),
+          ),
+        );
+      },
+      groupBy: (p) => p.niruvanamId,
+      groupHeaderBuilder: (context, niruvanamId) {
+        final profiles = profilesAsync.valueOrNull ?? [];
+        String sectionName;
+        if (niruvanamId == null) {
+          sectionName = 'General';
+        } else {
+          final profile = profiles
+              .where((p) => p.id == niruvanamId)
+              .firstOrNull;
+          sectionName = profile?.kurumPeyar ?? 'General';
+        }
+        return SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 16, bottom: 8),
+            child: Text(
+              sectionName,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.5)
+                    : Colors.black.withValues(alpha: 0.4),
               ),
             ),
-          );
-        }
-
-        // Group by niruvanamId
-        final grouped = <int?, List<PatrugalTharavuru>>{};
-        for (final p in filtered) {
-          grouped.putIfAbsent(p.niruvanamId, () => []).add(p);
-        }
-
-        final slivers = <Widget>[];
-
-
-        // Sections per business profile
-        for (final entry in grouped.entries) {
-          final niruvanamId = entry.key;
-          final items = entry.value;
-
-          String sectionName;
-          if (niruvanamId == null) {
-            sectionName = 'General';
-          } else {
-            final profile =
-                profiles.where((p) => p.id == niruvanamId).firstOrNull;
-            sectionName = profile?.kurumPeyar ?? 'General';
-          }
-
-          if (grouped.length > 1) {
-            slivers.add(
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 16, bottom: 8),
-                  child: Text(
-                    sectionName,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.5)
-                          : Colors.black.withValues(alpha: 0.4),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }
-
-          // Receipt cards
-          slivers.add(
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final patru = items[index];
-
-                  return Consumer(
-                    builder: (context, ref, _) {
-                      final isSelecting = ref.watch(patruSelectionModeProvider);
-                      final isSelected = ref.watch(
-                        selectedPatruIdsProvider.select((ids) => ids.contains(patru.id)),
-                      );
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: _PatruCard(
-                          patru: patru,
-                          isDark: isDark,
-                          isSelecting: isSelecting,
-                          isSelected: isSelected,
-                          dateFormat: _dateFormat,
-                          currencyFormat: _currencyFormat,
-                          primaryLang: primaryLang,
-                          secondaryLang: secondaryLang,
-                          onTap: () {
-                            if (isSelecting) {
-                              final currentIds = ref.read(selectedPatruIdsProvider);
-                              _toggleSelection(ref, patru.id, currentIds);
-                            } else {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      SilkReceiptEditor(editingEntry: patru),
-                                ),
-                              );
-                            }
-                          },
-                          onLongPress: () {
-                            if (!isSelecting) {
-                              ref.read(patruSelectionModeProvider.notifier).state =
-                                  true;
-                              ref.read(selectedPatruIdsProvider.notifier).state = {
-                                patru.id
-                              };
-                            }
-                          },
-                        ),
-                      );
-                    },
-                  );
-                },
-                childCount: items.length,
-              ),
-            ),
-          );
-        }
-
-        return SliverPadding(
-          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 120),
-          sliver: SliverMainAxisGroup(slivers: slivers),
+          ),
+        );
+      },
+      childAspectRatio: 6.0, // adjusted for single row cards visually based on original SliverList, actually let's just use defaults or omit
+      mobileItemHeight: 72,
+      cardBuilder: (context, ref, patru, index, isSelecting, isSelected, onTap, onLongPress) {
+        return _PatruCard(
+          patru: patru,
+          isDark: isDark,
+          isSelecting: isSelecting,
+          isSelected: isSelected,
+          dateFormat: _dateFormat,
+          currencyFormat: _currencyFormat,
+          primaryLang: primaryLang,
+          secondaryLang: secondaryLang,
+          onTap: onTap,
+          onLongPress: onLongPress,
         );
       },
     );
-  }
-
-  void _toggleSelection(WidgetRef ref, int id, Set<int> current) {
-    final updated = Set<int>.from(current);
-    if (updated.contains(id)) {
-      updated.remove(id);
-    } else {
-      updated.add(id);
-    }
-    ref.read(selectedPatruIdsProvider.notifier).state = updated;
-
-    if (updated.isEmpty) {
-      ref.read(patruSelectionModeProvider.notifier).state = false;
-    }
   }
 
 }
