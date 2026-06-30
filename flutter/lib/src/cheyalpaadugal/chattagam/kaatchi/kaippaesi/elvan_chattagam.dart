@@ -170,8 +170,8 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
   Widget? _cachedOverlayWidget;
   final ValueNotifier<bool> _isHeaderExpandedNotifier =
       ValueNotifier<bool>(true);
-  final ValueNotifier<bool> _isSearchActiveNotifier =
-      ValueNotifier<bool>(false);
+  final ValueNotifier<bool> _isSearchActiveNotifier = ValueNotifier(false);
+  final ValueNotifier<bool> _showScrollbarNotifier = ValueNotifier(false);
   final ValueNotifier<double> _dynamicPillHeightNotifier =
       ValueNotifier<double>(50.0);
   final GlobalKey _pillKey = GlobalKey();
@@ -353,6 +353,18 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
   // ── Scroll direction listener ─────────────────────────────────────────
 
   bool _handleScrollNotification(ScrollNotification notification) {
+    if (notification is ScrollMetricsNotification || notification is ScrollUpdateNotification) {
+      final metrics = notification.metrics;
+      // Only show scrollbar if the scrollable content is MORE than 2x the screen height.
+      // This ensures the thumb size is less than half the screen height.
+      final bool shouldShow = metrics.maxScrollExtent > metrics.viewportDimension;
+      if (_showScrollbarNotifier.value != shouldShow) {
+        Future.microtask(() {
+          if (mounted) _showScrollbarNotifier.value = shouldShow;
+        });
+      }
+    }
+
     final double statusBarHeight = MediaQuery.paddingOf(context).top;
     final double snapThreshold =
         _kExpandedHeight - 8.0 - kToolbarHeight - statusBarHeight - 20.0;
@@ -533,23 +545,26 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
               controller: _scrollController,
               child: NotificationListener<ScrollNotification>(
                 onNotification: _handleScrollNotification,
-                child: CupertinoScrollbar(
-                  controller: _scrollController,
-                  thumbVisibility: false, // Forces auto-hide on all platforms (like Apple)
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: _showScrollbarNotifier,
+                  builder: (context, showScrollbar, childContent) {
+                    return CupertinoScrollbar(
+                      controller: _scrollController,
+                      thickness: showScrollbar ? 3.0 : 0.0,
+                      child: childContent!,
+                    );
+                  },
                   child: ElvanPageContent(
                     scrollController: _scrollController,
                     title: widget.title,
                     navActions: _buildEffectiveNavActions(),
                     slivers: widget.slivers,
                     expandedHeight: _kExpandedHeight,
-                  isHeaderExpandedNotifier:
-                      _isHeaderExpandedNotifier, // Passed to content
-                  isSearchActiveNotifier: _isSearchActiveNotifier,
-                  dynamicPillHeightNotifier:
-                      _dynamicPillHeightNotifier, // Pass to sync text fade
-                  leadingWidget: widget.leadingWidget,
-                  showLeadingWidgetInExpandedBar:
-                      widget.showLeadingWidgetInExpandedBar,
+                    isHeaderExpandedNotifier: _isHeaderExpandedNotifier,
+                    isSearchActiveNotifier: _isSearchActiveNotifier,
+                    dynamicPillHeightNotifier: _dynamicPillHeightNotifier,
+                    leadingWidget: widget.leadingWidget,
+                    showLeadingWidgetInExpandedBar: widget.showLeadingWidgetInExpandedBar,
                   ),
                 ),
               ),
