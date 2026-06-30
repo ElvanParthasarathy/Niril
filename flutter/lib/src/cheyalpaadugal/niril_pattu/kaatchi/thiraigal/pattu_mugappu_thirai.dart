@@ -163,67 +163,86 @@ class SilkHomePage extends ConsumerWidget {
 
         if (isDesktop) {
           // 3-column grid
-          return IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-              Expanded(
-                child: ElvanStatsCard(
-                  icon: CupertinoIcons.money_dollar_circle,
-                  label: K.mothaKanakku.tr(context, ref),
-                  value: _currencyFormat.format(overallTotal),
-                  isLoading: isLoading,
-                ),
-              ),
-              SizedBox(width: gap),
-              Expanded(
-                child: ElvanStatsCard(
-                  icon: CupertinoIcons.building_2_fill,
-                  label: K.niruvanangal.tr(context, ref),
-                  value: companiesValue,
-                  isLoading: isLoading,
-                ),
-              ),
-              SizedBox(width: gap),
-              Expanded(
-                child: ElvanStatsCard(
-                  icon: CupertinoIcons.doc_text,
-                  label: K.mothaPattiyalgal.tr(context, ref),
-                  value: invoiceCountValue,
-                  isLoading: isLoading,
-                ),
+          return Table(
+            columnWidths: {
+              0: const FlexColumnWidth(),
+              1: FixedColumnWidth(gap),
+              2: const FlexColumnWidth(),
+              3: FixedColumnWidth(gap),
+              4: const FlexColumnWidth(),
+            },
+            children: [
+              TableRow(
+                children: [
+                  TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.fill,
+                    child: ElvanStatsCard(
+                      icon: CupertinoIcons.money_dollar_circle,
+                      label: K.mothaKanakku.tr(context, ref),
+                      value: _currencyFormat.format(overallTotal),
+                      isLoading: isLoading,
+                    ),
+                  ),
+                  const SizedBox(),
+                  TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.fill,
+                    child: ElvanStatsCard(
+                      icon: CupertinoIcons.building_2_fill,
+                      label: K.niruvanangal.tr(context, ref),
+                      value: companiesValue,
+                      isLoading: isLoading,
+                    ),
+                  ),
+                  const SizedBox(),
+                  TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.fill,
+                    child: ElvanStatsCard(
+                      icon: CupertinoIcons.doc_text,
+                      label: K.mothaPattiyalgal.tr(context, ref),
+                      value: invoiceCountValue,
+                      isLoading: isLoading,
+                    ),
+                  ),
+                ],
               ),
             ],
-            ),
           );
         }
 
         // Mobile: 2-col top row + full-width third card
         return Column(
           children: [
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                Expanded(
-                  child: ElvanStatsCard(
-                    icon: CupertinoIcons.money_dollar_circle,
-                    label: K.mothaKanakku.tr(context, ref),
-                    value: _currencyFormat.format(overallTotal),
-                    isLoading: isLoading,
-                  ),
+            Table(
+              columnWidths: {
+                0: const FlexColumnWidth(),
+                1: FixedColumnWidth(gap),
+                2: const FlexColumnWidth(),
+              },
+              children: [
+                TableRow(
+                  children: [
+                    TableCell(
+                      verticalAlignment: TableCellVerticalAlignment.fill,
+                      child: ElvanStatsCard(
+                        icon: CupertinoIcons.money_dollar_circle,
+                        label: K.mothaKanakku.tr(context, ref),
+                        value: _currencyFormat.format(overallTotal),
+                        isLoading: isLoading,
+                      ),
+                    ),
+                    const SizedBox(),
+                    TableCell(
+                      verticalAlignment: TableCellVerticalAlignment.fill,
+                      child: ElvanStatsCard(
+                        icon: CupertinoIcons.building_2_fill,
+                        label: K.niruvanangal.tr(context, ref),
+                        value: companiesValue,
+                        isLoading: isLoading,
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(width: gap),
-                Expanded(
-                  child: ElvanStatsCard(
-                    icon: CupertinoIcons.building_2_fill,
-                    label: K.niruvanangal.tr(context, ref),
-                    value: companiesValue,
-                    isLoading: isLoading,
-                  ),
-                ),
-                ],
-              ),
+              ],
             ),
             SizedBox(height: gap),
             ElvanStatsCard(
