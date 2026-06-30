@@ -259,7 +259,7 @@ class ElvanNirilApp extends ConsumerWidget {
           surfaceContainer: Colors.white,
           surfaceContainerHigh: Colors.white,
           surfaceContainerHighest: Colors.white,
-        ),
+        ).copyWith(surfaceTint: Colors.transparent),
         scaffoldBackgroundColor: const Color(0xFFF7F7F7),
         inputDecorationTheme: _buildInputTheme(ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.light)),
         datePickerTheme: _buildMonochromeDatePickerTheme(ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.light)),
@@ -302,7 +302,7 @@ class ElvanNirilApp extends ConsumerWidget {
           surfaceContainer: const Color(0xFF1E1E1E),
           surfaceContainerHigh: const Color(0xFF2B2B2B),
           surfaceContainerHighest: const Color(0xFF333333),
-        ),
+        ).copyWith(surfaceTint: Colors.transparent),
         scaffoldBackgroundColor: Colors.black, // AMOLED Black
         inputDecorationTheme: _buildInputTheme(ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.dark)),
         datePickerTheme: _buildMonochromeDatePickerTheme(ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4), brightness: Brightness.dark)),
