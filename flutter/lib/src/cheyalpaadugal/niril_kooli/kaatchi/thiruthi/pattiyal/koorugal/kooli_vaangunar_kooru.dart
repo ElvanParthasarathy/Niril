@@ -75,10 +75,10 @@ class KooliVaangunarKooru extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            selectedVaangunar!.peyar['English'] ??
-                                selectedVaangunar!.peyar[kooliLang] ??
-                                selectedVaangunarPeyarMap['English'] ??
-                                selectedVaangunarPeyarMap[kooliLang] ??
+                            (selectedVaangunar!.peyar[kooliLang]?.isNotEmpty == true ? selectedVaangunar!.peyar[kooliLang] : null) ??
+                                (selectedVaangunar!.peyar['Tamil']?.isNotEmpty == true ? selectedVaangunar!.peyar['Tamil'] : null) ??
+                                (selectedVaangunarPeyarMap[kooliLang]?.isNotEmpty == true ? selectedVaangunarPeyarMap[kooliLang] : null) ??
+                                selectedVaangunarPeyarMap['Tamil'] ??
                                 '',
                             style: tt.bodyLarge?.copyWith(
                               fontWeight: FontWeight.w600,
