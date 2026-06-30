@@ -209,38 +209,35 @@ class _CoolieVaangunarCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Index circle or selection checkbox
-            if (isSelecting)
-              Icon(
-                isSelected
-                    ? CupertinoIcons.checkmark_square_fill
-                    : CupertinoIcons.square,
-                size: 24,
-                color: isSelected
+            // Index circle / selection checkbox
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: (isSelecting && isSelected)
                     ? Theme.of(context).colorScheme.primary
-                    : (isDark ? Colors.white38 : Colors.black38),
-              )
-            else
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.12)
-                      : Colors.black.withValues(alpha: 0.08),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  (index + 1).toString().padLeft(2, '0'),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 11.2,
-                    color: isDark ? Colors.white : Colors.black,
-                    height: 1,
-                  ),
-                ),
+                    : (isDark
+                        ? Colors.white.withValues(alpha: 0.12)
+                        : Colors.black.withValues(alpha: 0.08)),
               ),
+              alignment: Alignment.center,
+              child: (isSelecting && isSelected)
+                  ? const Icon(
+                      CupertinoIcons.checkmark_alt,
+                      size: 16,
+                      color: Colors.white,
+                    )
+                  : Text(
+                      (index + 1).toString().padLeft(2, '0'),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 11.2,
+                        color: isDark ? Colors.white : Colors.black,
+                        height: 1,
+                      ),
+                    ),
+            ),
             const SizedBox(width: 12),
             // Content
             Expanded(
