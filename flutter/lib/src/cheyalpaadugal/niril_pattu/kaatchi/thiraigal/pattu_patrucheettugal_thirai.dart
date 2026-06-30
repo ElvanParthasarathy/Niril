@@ -16,8 +16,8 @@ import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../koorugal/maeladukkugal/elvan_cheyal_maeladukku.dart';
 import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 import '../../../niril_podhu/tharavuru/seluthi_vagai.dart';
+import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_pothu_attai.dart';
 import '../thiruthi/patrucheettu/niril_pattu_patrucheettu_thiruthi.dart';
-
 /// Silk Receipt List — real DB-backed view showing payment receipts.
 /// Mirror of coolie receipt list but navigates to SilkReceiptEditor.
 class SilkReceiptsPage extends ConsumerWidget {
@@ -252,31 +252,14 @@ class _PatruCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final mode = SeluthiVagaiX.fromStored(patru.seluthumMurai);
 
-    return GestureDetector(
+    return ElvanPothuAttai(
       onTap: onTap,
       onLongPress: onLongPress,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? Theme.of(context)
-                  .colorScheme
-                  .primary
-                  .withValues(alpha: 0.12)
-              : (isDark
-                  ? const Color(0xFF111111)
-                  : Colors.black.withValues(alpha: 0.03)),
-          borderRadius: BorderRadius.circular(14),
-          border: isSelected
-              ? Border.all(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 1.5,
-                )
-              : null,
-        ),
-        child: Row(
-          children: [
+      isSelected: isSelected,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      borderRadius: 14.0,
+      child: Row(
+        children: [
             // Selection checkbox
             if (isSelecting) ...[
               Icon(

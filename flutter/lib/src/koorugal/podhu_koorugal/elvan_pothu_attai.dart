@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 /// It wraps the content in a Material + InkWell to provide the native
 /// Android ripple effect upon tap. It also smoothly animates background
 /// color changes when `isSelected` changes.
-class ElvanPothuAttai extends StatelessWidget {
+class ElvanPothuAttai extends StatefulWidget {
   const ElvanPothuAttai({
     super.key,
     required this.child,
@@ -34,6 +34,25 @@ class ElvanPothuAttai extends StatelessWidget {
   final double borderRadius;
 
   @override
+  State<ElvanPothuAttai> createState() => _ElvanPothuAttaiState();
+}
+
+class _ElvanPothuAttaiState extends State<ElvanPothuAttai> {
+  bool _isPressed = false;
+
+  void _handleTapDown(TapDownDetails details) {
+    setState(() => _isPressed = true);
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    setState(() => _isPressed = false);
+  }
+
+  void _handleTapCancel() {
+    setState(() => _isPressed = false);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -42,27 +61,39 @@ class ElvanPothuAttai extends StatelessWidget {
         ? const Color(0xFF1A1A1A)
         : Colors.black.withValues(alpha: 0.04);
     
-    final bgColor = isSelected ? selectedBg : defaultBg;
+    final bgColor = widget.isSelected ? selectedBg : defaultBg;
 
-    return TweenAnimationBuilder<Color?>(
-      tween: ColorTween(begin: bgColor, end: bgColor),
-      duration: const Duration(milliseconds: 200),
-      builder: (context, color, _) {
-        return Material(
-          color: color,
-          borderRadius: BorderRadius.circular(borderRadius),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: onTap,
-            onLongPress: onLongPress,
-            borderRadius: BorderRadius.circular(borderRadius),
-            child: Padding(
-              padding: padding,
-              child: child,
-            ),
-          ),
-        );
-      },
+    return GestureDetector(
+      onTapDown: _handleTapDown,
+      onTapUp: _handleTapUp,
+      onTapCancel: _handleTapCancel,
+      child: AnimatedScale(
+        scale: _isPressed ? 0.985 : 1.0,
+        duration: _isPressed
+            ? const Duration(milliseconds: 100)
+            : const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        child: TweenAnimationBuilder<Color?>(
+          tween: ColorTween(begin: bgColor, end: bgColor),
+          duration: const Duration(milliseconds: 200),
+          builder: (context, color, _) {
+            return Material(
+              color: color,
+              borderRadius: BorderRadius.circular(widget.borderRadius),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: widget.onTap,
+                onLongPress: widget.onLongPress,
+                borderRadius: BorderRadius.circular(widget.borderRadius),
+                child: Padding(
+                  padding: widget.padding,
+                  child: widget.child,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

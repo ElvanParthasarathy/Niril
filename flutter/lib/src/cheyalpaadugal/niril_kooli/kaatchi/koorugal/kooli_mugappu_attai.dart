@@ -7,10 +7,10 @@ import '../../../../adippadai/tharavuru/uruvugal.dart';
 import '../../../../adippadai/oru_mozhi/oru_mozhi_vazhanguthigal.dart';
 
 import '../../../../adippadai/oru_mozhi/oru_mozhi_vaangunar_udhavi.dart';
-
+import '../../../../koorugal/podhu_koorugal/elvan_pothu_attai.dart';
 /// Pixel-perfect port of React's ElvanCard + renderRecentItem for Kooli mode.
 /// Shows: index circle + customer name (primary + secondary) + invoice # + date + oor + amount.
-class KooliMugappuAttai extends ConsumerStatefulWidget {
+class KooliMugappuAttai extends ConsumerWidget {
   const KooliMugappuAttai({
     super.key,
     required this.index,
@@ -22,20 +22,14 @@ class KooliMugappuAttai extends ConsumerStatefulWidget {
   final PattiyalTharavuru pattiyal;
   final VoidCallback onTap;
 
-  @override
-  ConsumerState<KooliMugappuAttai> createState() => _KooliMugappuAttaiState();
-}
-
-class _KooliMugappuAttaiState extends ConsumerState<KooliMugappuAttai> {
-  bool _isPressed = false;
   static final _dateFormat = DateFormat('dd/MM/yyyy');
   static final _currencyFormat =
       NumberFormat.currency(locale: 'en_IN', symbol: '₹');
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final p = widget.pattiyal;
+    final p = pattiyal;
     final amountStr = _currencyFormat.format(p.mothaThogai);
 
     final kooliAchuMozhi = ref.watch(kooliAchuMozhiProvider);
@@ -55,29 +49,13 @@ class _KooliMugappuAttaiState extends ConsumerState<KooliMugappuAttai> {
       kooliAchuMozhi
     );
 
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _isPressed = true),
-      onTapUp: (_) => setState(() => _isPressed = false),
-      onTapCancel: () => setState(() => _isPressed = false),
-      child: AnimatedScale(
-        scale: _isPressed ? 0.985 : 1.0,
-        duration: _isPressed
-            ? const Duration(milliseconds: 100)
-            : const Duration(milliseconds: 200),
-        curve: Curves.easeOut,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
-          child: Material(
-            color: isDark ? const Color(0xFF111111) : Colors.white,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(24),
-              onTap: widget.onTap,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Index circle
+    return ElvanPothuAttai(
+      onTap: onTap,
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Index circle
                     Container(
                       width: 28,
                       height: 28,
@@ -90,7 +68,7 @@ class _KooliMugappuAttaiState extends ConsumerState<KooliMugappuAttai> {
                       ),
                       child: Center(
                         child: Text(
-                          (widget.index + 1).toString().padLeft(2, '0'),
+                          (index + 1).toString().padLeft(2, '0'),
                           style: TextStyle(
                             fontSize: 11.2,
                             fontWeight: FontWeight.w800,
@@ -195,11 +173,6 @@ class _KooliMugappuAttaiState extends ConsumerState<KooliMugappuAttai> {
                       ),
                     ),
                   ],
-                ),
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

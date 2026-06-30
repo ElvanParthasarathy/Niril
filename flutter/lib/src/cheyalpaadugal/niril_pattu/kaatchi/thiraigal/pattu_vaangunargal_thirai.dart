@@ -13,8 +13,8 @@ import '../../../../adippadai/vazhikaattal/niril_nav.dart';
 import '../../../../koorugal/maeladukkugal/elvan_cheyal_maeladukku.dart';
 import '../../../chattagam/kaatchi/koorugal/elvan_uyir_valai.dart';
 import '../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
+import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_pothu_attai.dart';
 import '../thiruthi/vaangunar/niril_pattu_vaangunar_thiruthi.dart';
-
 class SilkMerchantsPage extends ConsumerWidget {
   const SilkMerchantsPage({super.key});
 
@@ -196,25 +196,15 @@ class _SilkVaangunarCard extends StatelessWidget {
     final gstin = vaangunar.gstin;
     final phone = vaangunar.tholaipaesi;
 
-    return GestureDetector(
+    return ElvanPothuAttai(
       onTap: onTap,
       onLongPress: onLongPress,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? (isDark
-                  ? const Color(0xFF1A1A1A)
-                  : Colors.black.withValues(alpha: 0.04))
-              : (isDark
-                  ? const Color(0xFF111111)
-                  : Colors.white),
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      isSelected: isSelected,
+      padding: const EdgeInsets.all(16),
+      borderRadius: 24.0,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
             // Index circle / selection checkbox
             Container(
               width: 28,
