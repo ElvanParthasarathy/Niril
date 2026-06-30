@@ -1,4 +1,5 @@
 import 'package:elvan_niril/src/adippadai/oru_mozhi/oru_mozhi_vazhanguthigal.dart';
+import 'package:elvan_niril/src/adippadai/oru_mozhi/oru_mozhi_vaangunar_udhavi.dart';
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -71,20 +72,38 @@ class KooliVaangunarKooru extends ConsumerWidget {
                   Builder(
                     builder: (context) {
                       final kooliLang = ref.watch(kooliAchuMozhiProvider);
+                      final thunaiLang = kooliLang == 'Tamil' ? 'English' : 'Tamil';
+                      
+                      final primaryName = OruMozhiVaangunarUdhavi.mudhanmaiPeyar(selectedVaangunar!, kooliLang).isNotEmpty 
+                              ? OruMozhiVaangunarUdhavi.mudhanmaiPeyar(selectedVaangunar!, kooliLang) 
+                              : OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(selectedVaangunarPeyarMap, kooliLang);
+                              
+                      final secondaryName = OruMozhiVaangunarUdhavi.thunaiPeyar(selectedVaangunar!, kooliLang).isNotEmpty 
+                              ? OruMozhiVaangunarUdhavi.thunaiPeyar(selectedVaangunar!, kooliLang) 
+                              : OruMozhiVaangunarUdhavi.thunaiPeyarFromMap(selectedVaangunarPeyarMap, kooliLang);
+
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            (selectedVaangunar!.peyar[kooliLang]?.isNotEmpty == true ? selectedVaangunar!.peyar[kooliLang] : null) ??
-                                (selectedVaangunar!.peyar['Tamil']?.isNotEmpty == true ? selectedVaangunar!.peyar['Tamil'] : null) ??
-                                (selectedVaangunarPeyarMap[kooliLang]?.isNotEmpty == true ? selectedVaangunarPeyarMap[kooliLang] : null) ??
-                                selectedVaangunarPeyarMap['Tamil'] ??
-                                '',
+                            primaryName,
                             style: tt.bodyLarge?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           ..._buildAddressLines(selectedVaangunar!, kooliLang, tt, cs),
+                          
+                          if (secondaryName.isNotEmpty) ...[
+                            const SizedBox(height: 12),
+                            Text(
+                              secondaryName,
+                              style: tt.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w500,
+                                color: cs.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                          ..._buildAddressLines(selectedVaangunar!, thunaiLang, tt, cs),
                         ],
                       );
                     },
