@@ -9,14 +9,12 @@ import 'package:intl/intl.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../../koorugal/podhu_koorugal/elvan_pagudhi_thalaipu_kooru.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_niruvanam_oadu.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_kanakku.dart';
-import '../../../../niril_podhu/kalanjiyam/pattiyal_kalanjiyam.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 import '../../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
@@ -60,22 +58,18 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   List<PiraVarivu> _piraVarivugal = [];
 
   // ── Totals ──
-  KooliMothangal _totals = const KooliMothangal();
+  final ValueNotifier<KooliMothangal> _totalsNotifier =
+      ValueNotifier(const KooliMothangal());
 
   // ── Controllers ──
   final _setharamCtrl = TextEditingController();
   final _thabaalCtrl = TextEditingController();
   final _ahimsaCtrl = TextEditingController();
-  final _globalDiscountController = TextEditingController();
-  final _kurippuCtrl = TextEditingController();
   bool _saving = false;
 
   // ── Unsaved Changes & Draft ──
   bool _hasUnsavedChanges = false;
   Timer? _draftDebounce;
-
-  final GlobalKey<AnimatedListState> _itemsListKey = GlobalKey<AnimatedListState>();
-  final GlobalKey<AnimatedListState> _piraVarivugalListKey = GlobalKey<AnimatedListState>();
 
   // ── Bill Number ──
   String _previewBillNumber = '';
@@ -146,7 +140,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
       if (item.porulPeyarEn.isEmpty && (item.porulId?.isNotEmpty == true)) {
         final product = products.where((p) => p.id.toString() == item.porulId).firstOrNull;
         if (product != null) {
-          final enName = product.porulPeyar['en'] ?? ''; // or use a provider if available, but en works
+          final enName = product.porulPeyar['en'] ?? '';
           if (enName.isNotEmpty) {
             changed = true;
             return item.copyWith(porulPeyarEn: enName);
@@ -165,6 +159,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     _setharamCtrl.dispose();
     _thabaalCtrl.dispose();
     _ahimsaCtrl.dispose();
+    _totalsNotifier.dispose();
     _draftDebounce?.cancel();
     super.dispose();
   }
@@ -175,7 +170,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
 
   void _recalculate() {
     setState(() {
-      _totals = KooliKanakku.calculate(
+      _totalsNotifier.value = KooliKanakku.calculate(
         items: _items,
         setharamGrams: _setharamGrams,
         thabaalThogai: _thabaalThogai,
@@ -183,6 +178,21 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
         piraVarivugal: _piraVarivugal,
       );
     });
+    _scheduleDraftSave();
+  }
+
+  /// Lightweight recalculation that updates the totals notifier
+  /// WITHOUT calling setState — only the ValueListenableBuilder
+  /// around the totals card rebuilds. This prevents the AnimatedList
+  /// in Section 3 from being rebuilt on every keystroke.
+  void _recalculateQuiet() {
+    _totalsNotifier.value = KooliKanakku.calculate(
+      items: _items,
+      setharamGrams: _setharamGrams,
+      thabaalThogai: _thabaalThogai,
+      ahimsaPattuThogai: _ahimsaPattuThogai,
+      piraVarivugal: _piraVarivugal,
+    );
     _scheduleDraftSave();
   }
 
@@ -251,7 +261,9 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
           ? _selectedProfile!.kurumPeyar
           : 'CB');
       _profilePrefix = '$shortName-';
-      final vanakkam = await kalanjiyam.getNextVanakkam(_selectedNiruvanamId, finYear,
+      final vanakkam = await kalanjiyam.getNextVanakkam(
+        _selectedNiruvanamId,
+        finYear,
       );
       if (mounted) {
         setState(() {
@@ -307,7 +319,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
           piraVarivugal: _piraVarivugal,
           invoiceNumberOverride: _invoiceNumberOverride,
         ),
-        totals: _totals,
+        totals: _totalsNotifier.value,
         profilePrefix: prefix,
         profile: _selectedProfile!,
         editingEntry: widget.editingEntry,
@@ -334,7 +346,11 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // BUILD
+  // BUILD — Flat layout (receipt editor pattern)
+  //
+  // Each section is an independent widget in a flat Column. No shared
+  // Opacity/IgnorePointer wrapper coupling sections together. This prevents
+  // focus changes in Section 4 from causing layout shifts in Section 3.
   // ═══════════════════════════════════════════════════════════════════════════
 
   @override
@@ -346,9 +362,12 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
     final VaangunarTharavuru? selectedVaangunar = vaangunargalAsync.whenOrNull(
       data: (list) => _selectedVaangunarId != null
           ? list.cast<VaangunarTharavuru?>().firstWhere(
-                (v) => v!.id == _selectedVaangunarId, orElse: () => null)
+                (v) => v!.id == _selectedVaangunarId,
+                orElse: () => null)
           : null,
     );
+
+    final bool isDisabled = _selectedNiruvanamId == null;
 
     return ElvanEditorShell(
       title: _isEditing
@@ -365,7 +384,9 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
           setState(() {
             _selectedNiruvanamId = p?.id;
             _selectedProfile = p;
-            _profilePrefix = p?.kurumPeyar.isNotEmpty == true ? p!.kurumPeyar : 'CB';
+            _profilePrefix = p?.kurumPeyar.isNotEmpty == true
+                ? p!.kurumPeyar
+                : 'CB';
             _invoiceNumberOverride = '';
             _hasUnsavedChanges = true;
           });
@@ -374,7 +395,9 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Section 1: ① Customer ──
+            // ──────────────────────────────────────────────────────────
+            // Section 1: ① Customer
+            // ──────────────────────────────────────────────────────────
             ElvanEditorSection(
               index: baseIndex,
               title: K.perunar.tr(context, ref),
@@ -382,247 +405,202 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
               initiallyExpanded: true,
               children: [
                 KooliVaangunarKooru(
-                    selectedVaangunarId: _selectedVaangunarId,
-                    selectedVaangunarPeyarMap: _selectedVaangunarPeyarMap,
-                    selectedVaangunar: selectedVaangunar,
-                    onVaangunarSelected: (entry) {
-                      setState(() {
-                        _selectedVaangunarId = entry.id;
-                        _selectedVaangunarPeyarMap = entry.peyar.cast<String, String>();
-                        _selectedVaangunarMunvariMap = entry.mugavari.cast<String, String>();
-                        _hasUnsavedChanges = true;
-                      });
-                    },
-                    onVaangunarCleared: () {
-                      setState(() {
-                        _selectedVaangunarId = null;
-                        _selectedVaangunarPeyarMap = const {};
-                        _selectedVaangunarMunvariMap = const {};
-                        _hasUnsavedChanges = true;
-                      });
-                    },
-                  ),
+                  selectedVaangunarId: _selectedVaangunarId,
+                  selectedVaangunarPeyarMap: _selectedVaangunarPeyarMap,
+                  selectedVaangunar: selectedVaangunar,
+                  onVaangunarSelected: (entry) {
+                    setState(() {
+                      _selectedVaangunarId = entry.id;
+                      _selectedVaangunarPeyarMap =
+                          entry.peyar.cast<String, String>();
+                      _selectedVaangunarMunvariMap =
+                          entry.mugavari.cast<String, String>();
+                      _hasUnsavedChanges = true;
+                    });
+                  },
+                  onVaangunarCleared: () {
+                    setState(() {
+                      _selectedVaangunarId = null;
+                      _selectedVaangunarPeyarMap = const {};
+                      _selectedVaangunarMunvariMap = const {};
+                      _hasUnsavedChanges = true;
+                    });
+                  },
+                ),
               ],
             ),
 
-            const SizedBox(height: 24),
+            // ──────────────────────────────────────────────────────────
+            // Section 2: ② Invoice Details
+            // ──────────────────────────────────────────────────────────
+            _disabledWrap(
+              isDisabled: isDisabled,
+              child: ElvanEditorSection(
+                index: baseIndex + 1,
+                title: K.pattiyalTharavugal.tr(context, ref),
+                displayChild: const SizedBox(),
+                initiallyExpanded: true,
+                children: [
+                  ...buildElvanPattiyalTharavugalKooru(
+                    context: context,
+                    ref: ref,
+                    isEditing: _isEditing,
+                    invoiceNumberOverride: _invoiceNumberOverride,
+                    previewInvoiceNumber: _previewBillNumber,
+                    profilePrefix: _profilePrefix,
+                    pattiyalNaal: _pattiyalNaal,
+                    onInvNumberChanged: (v) {
+                      setState(() {
+                        _invoiceNumberOverride = v;
+                        _hasUnsavedChanges = true;
+                      });
+                    },
+                    onDateChanged: (d) => setState(() {
+                      _pattiyalNaal = d;
+                      _hasUnsavedChanges = true;
+                    }),
+                    onDirty: () =>
+                        setState(() => _hasUnsavedChanges = true),
+                  ),
+                ],
+              ),
+            ),
 
-            // ── Disabled wrapper when no company selected ──
-            Opacity(
-              opacity: _selectedNiruvanamId == null ? 0.4 : 1.0,
-              child: IgnorePointer(
-                ignoring: _selectedNiruvanamId == null,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // ── Section 2: ② Invoice Details ──
-                    ElvanEditorSection(
-                      index: baseIndex + 1,
-                      title: K.pattiyalTharavugal.tr(context, ref),
-                      displayChild: const SizedBox(),
-                      initiallyExpanded: true,
-                      children: [
-                        ...buildElvanPattiyalTharavugalKooru(
-                          context: context,
-                          ref: ref,
-                          isEditing: _isEditing,
-                          invoiceNumberOverride: _invoiceNumberOverride,
-                          previewInvoiceNumber: _previewBillNumber,
-                          profilePrefix: _profilePrefix,
-                          pattiyalNaal: _pattiyalNaal,
-                          onInvNumberChanged: (v) {
-                            setState(() {
-                              _invoiceNumberOverride = v;
-                              _hasUnsavedChanges = true;
-                            });
-                          },
-                          onDateChanged: (d) => setState(() {
-                            _pattiyalNaal = d;
-                            _hasUnsavedChanges = true;
-                          }),
-                          onDirty: () => setState(() => _hasUnsavedChanges = true),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // ── Section 3: ③ Items ──
-                    ElvanEditorSection(
-                      index: baseIndex + 2,
-                      title: K.porutkal.tr(context, ref),
-                      displayChild: const SizedBox(),
-                      initiallyExpanded: true,
-                      contentTopPadding: 0,
-                      headerBottomPadding: 0,
-                      children: [
-                        ElvanFullWidth(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              AnimatedList(
-                                key: _itemsListKey,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                initialItemCount: _items.length,
-                                itemBuilder: (context, i, animation) {
-                                  final curvedAnimation = CurvedAnimation(
-                                    parent: animation,
-                                    curve: Curves.easeOutQuart,
-                                    reverseCurve: Curves.easeInQuart,
-                                  );
-                                  return ClipRect(
-                                    child: SizeTransition(
-                                      sizeFactor: curvedAnimation,
-                                      axisAlignment: -1.0,
-                                      child: FadeTransition(
-                                        opacity: curvedAnimation,
-                                        child: SlideTransition(
-                                          position: Tween<Offset>(
-                                            begin: const Offset(0.0, -0.1),
-                                            end: Offset.zero,
-                                          ).animate(curvedAnimation),
-                                          child: KooliUrupadiKooru(
-                                            index: i,
-                                            item: _items[i],
-                                            itemCount: _items.length,
-                                            formatter: formatter,
-                                            onUpdated: (updated) {
-                                              setState(() {
-                                                _items = List.from(_items).. [i] = updated;
-                                                _hasUnsavedChanges = true;
-                                              });
-                                              _recalculate();
-                                            },
-                                            onDeleted: () {
-                                              final removedItem = _items[i];
-                                              setState(() {
-                                                _items = List.from(_items)..removeAt(i);
-                                                _hasUnsavedChanges = true;
-                                              });
-                                              _itemsListKey.currentState?.removeItem(
-                                                i,
-                                                (context, anim) {
-                                                  final curvedAnimation = CurvedAnimation(
-                                                    parent: anim,
-                                                    curve: Curves.easeOutQuart,
-                                                    reverseCurve: Curves.easeInQuart,
-                                                  );
-                                                  return ClipRect(
-                                                    child: SizeTransition(
-                                                      sizeFactor: curvedAnimation,
-                                                      axisAlignment: -1.0,
-                                                      child: FadeTransition(
-                                                        opacity: curvedAnimation,
-                                                        child: SlideTransition(
-                                                          position: Tween<Offset>(
-                                                            begin: const Offset(0.0, -0.1),
-                                                            end: Offset.zero,
-                                                          ).animate(curvedAnimation),
-                                                          child: KooliUrupadiKooru(
-                                                            index: i,
-                                                            item: removedItem,
-                                                            itemCount: _items.length + 1,
-                                                            formatter: formatter,
-                                                            onUpdated: (_) {},
-                                                            onDeleted: () {},
-                                                            onRequestAddNewProduct: () async {},
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                                duration: const Duration(milliseconds: 250),
-                                              );
-                                              _recalculate();
-                                            },
-                                            onRequestAddNewProduct: () async {
-                                              await Navigator.of(context).push(
-                                                MaterialPageRoute(builder: (_) => const CoolieItemEditor()),
-                                              );
-                                            },
-                                            onAddNewItem: () => setState(() {
-                                              _items = [..._items, const KooliUrupadi()];
-                                              _itemsListKey.currentState?.insertItem(
-                                                _items.length - 1,
-                                                duration: const Duration(milliseconds: 250),
-                                              );
-                                              _hasUnsavedChanges = true;
-                                            }),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
+            // ──────────────────────────────────────────────────────────
+            // Section 3: ③ Items
+            // ──────────────────────────────────────────────────────────
+            _disabledWrap(
+              isDisabled: isDisabled,
+              child: ElvanEditorSection(
+                index: baseIndex + 2,
+                title: K.porutkal.tr(context, ref),
+                displayChild: const SizedBox(),
+                initiallyExpanded: true,
+                contentTopPadding: 0,
+                headerBottomPadding: 0,
+                children: [
+                  ElvanFullWidth(
+                    child: AnimatedSize(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOutQuart,
+                      alignment: Alignment.topCenter,
+                      child: Column(
+                        children: [
+                          for (int i = 0; i < _items.length; i++)
+                            KooliUrupadiKooru(
+                              // Using a ValueKey based on the item index isn't perfect for re-ordering,
+                              // but since we only add/remove, it works fine with AnimatedSize shrinking the list.
+                              key: ValueKey('item_$i'),
+                              index: i,
+                              item: _items[i],
+                              itemCount: _items.length,
+                              formatter: formatter,
+                              onUpdated: (updated) {
+                                setState(() {
+                                  _items = List.from(_items)..[i] = updated;
+                                  _hasUnsavedChanges = true;
+                                });
+                                _recalculateQuiet();
                               },
-                              ),
-
-
-
-
-                            ],
-                          ),
-                        ),
-                      ],
+                              onDeleted: () => _deleteItem(i, formatter),
+                              onRequestAddNewProduct: () async {
+                                await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const CoolieItemEditor(),
+                                  ),
+                                );
+                              },
+                              onAddNewItem: () => setState(() {
+                                _items = [..._items, const KooliUrupadi()];
+                                _hasUnsavedChanges = true;
+                              }),
+                            ),
+                        ],
+                      ),
                     ),
+                  ),
+                ],
+              ),
+            ),
 
-                    // ── Section 4: ④ Totals ──
-                    ElvanEditorSection(
-                      index: 3,
-                      title: K.mothangal.tr(context, ref),
-                      displayChild: const SizedBox(),
-                      initiallyExpanded: true,
-                      children: [
-                        ElvanFullWidth(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              // ── Extra Charges Bento Grid ──
-                              KooliMelthogaiKooru(
-                                setharamCtrl: _setharamCtrl,
-                                ahimsaCtrl: _ahimsaCtrl,
-                                thabaalCtrl: _thabaalCtrl,
-                                onSetharamChanged: (v) {
-                                  _setharamGrams = double.tryParse(v) ?? 0;
-                                  _hasUnsavedChanges = true;
-                                  _recalculate();
-                                },
-                                onAhimsaChanged: (v) {
-                                  _ahimsaPattuThogai = double.tryParse(v) ?? 0;
-                                  _hasUnsavedChanges = true;
-                                  _recalculate();
-                                },
-                                onThabaalChanged: (v) {
-                                  _thabaalThogai = double.tryParse(v) ?? 0;
-                                  _hasUnsavedChanges = true;
-                                  _recalculate();
-                                },
-                              ),
+            // ──────────────────────────────────────────────────────────
+            // Section 4: ④ Totals — INDEPENDENT from Section 3
+            // ──────────────────────────────────────────────────────────
+            _disabledWrap(
+              isDisabled: isDisabled,
+              child: ElvanEditorSection(
+                index: baseIndex + 3,
+                title: K.mothangal.tr(context, ref),
+                displayChild: const SizedBox(),
+                initiallyExpanded: true,
+                children: [
+                  // Extra Charges
+                  KooliMelthogaiKooru(
+                    setharamCtrl: _setharamCtrl,
+                    ahimsaCtrl: _ahimsaCtrl,
+                    thabaalCtrl: _thabaalCtrl,
+                    onSetharamChanged: (v) {
+                      _setharamGrams = double.tryParse(v) ?? 0;
+                      _hasUnsavedChanges = true;
+                      _recalculateQuiet();
+                    },
+                    onAhimsaChanged: (v) {
+                      _ahimsaPattuThogai = double.tryParse(v) ?? 0;
+                      _hasUnsavedChanges = true;
+                      _recalculateQuiet();
+                    },
+                    onThabaalChanged: (v) {
+                      _thabaalThogai = double.tryParse(v) ?? 0;
+                      _hasUnsavedChanges = true;
+                      _recalculateQuiet();
+                    },
+                  ),
 
-                              const SizedBox(height: 24),
-
-                              // ── Totals Card ──
-                              KooliMothangalKooru(
-                                totals: _totals,
-                                setharamGrams: _setharamGrams,
-                                ahimsaPattuThogai: _ahimsaPattuThogai,
-                                thabaalThogai: _thabaalThogai,
-                                piraVarivugal: _piraVarivugal,
-                                formatter: formatter,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                  // Totals Card
+                  ElvanFullWidth(
+                    child: ValueListenableBuilder<KooliMothangal>(
+                      valueListenable: _totalsNotifier,
+                      builder: (context, totals, _) {
+                        return KooliMothangalKooru(
+                          totals: totals,
+                          setharamGrams: _setharamGrams,
+                          ahimsaPattuThogai: _ahimsaPattuThogai,
+                          thabaalThogai: _thabaalThogai,
+                          piraVarivugal: _piraVarivugal,
+                          formatter: formatter,
+                        );
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // HELPERS
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  /// Per-section disabled wrapper — isolates each section so that
+  /// focus/rebuild in one cannot cause layout shifts in another.
+  Widget _disabledWrap({required bool isDisabled, required Widget child}) {
+    if (!isDisabled) return child;
+    return Opacity(
+      opacity: 0.4,
+      child: IgnorePointer(child: child),
+    );
+  }
+
+  /// Handles item deletion cleanly.
+  void _deleteItem(int i, NumberFormat formatter) {
+    setState(() {
+      _items = List.from(_items)..removeAt(i);
+      _hasUnsavedChanges = true;
+    });
+    _recalculate();
   }
 }
