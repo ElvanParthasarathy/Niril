@@ -152,7 +152,6 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
                               ),
                               child: Text(K.chaemiPtn.tr(context, ref)),
                             ),
-                          ),
                         ],
                       ],
                     ),
