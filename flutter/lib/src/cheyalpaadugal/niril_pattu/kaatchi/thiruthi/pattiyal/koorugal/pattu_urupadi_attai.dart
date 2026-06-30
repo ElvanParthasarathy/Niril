@@ -107,7 +107,7 @@ class PattuUrupadiAttai extends ConsumerWidget {
 
           // ── Item card ──
           ElvanUrupadiAttai(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.all(16),
             child: LayoutBuilder(builder: (context, constraints) {
               final isBilingual = ref.watch(bilingualProvider);
               final mudhanmaiLang = ref.watch(silkMudhanmaiMozhiProvider);

@@ -91,7 +91,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
           ),
           
           ElvanUrupadiAttai(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.all(16),
             child: LayoutBuilder(builder: (context, constraints) {
               final isWide = constraints.maxWidth >= 600;
               const gap = SizedBox(width: 12);

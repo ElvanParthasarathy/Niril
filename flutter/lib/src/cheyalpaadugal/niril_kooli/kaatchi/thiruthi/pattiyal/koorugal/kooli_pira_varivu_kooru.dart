@@ -64,7 +64,7 @@ class KooliPiraVarivuKooru extends ConsumerWidget {
             ],
           ),
           ElvanUrupadiAttai(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.all(16),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
