@@ -34,102 +34,108 @@ class ElvanStatsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return SizedBox(
-      height: 135,
-      child: ElvanPothuAttai(
-        padding: EdgeInsets.zero,
-        onTap: onTap,
-        child: LayoutBuilder(
-              builder: (context, constraints) {
-                final isNarrow = constraints.maxWidth < 160;
-                final cardPadding = isNarrow ? 16.0 : 20.0;
+    return ElvanPothuAttai(
+      padding: EdgeInsets.zero,
+      onTap: onTap,
+      child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isNarrow = constraints.maxWidth < 160;
+              final cardPadding = isNarrow ? 16.0 : 20.0;
 
-                final iconSize = isNarrow ? 40.0 : 48.0;
+              final iconSize = isNarrow ? 40.0 : 48.0;
 
-                final iconBox = Container(
-                  width: iconSize,
-                  height: iconSize,
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.05)
-                        : const Color(0xFFF5F5F5),
-                    borderRadius: BorderRadius.circular(isNarrow ? 12 : 16),
+              final iconBox = Container(
+                width: iconSize,
+                height: iconSize,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : const Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.circular(isNarrow ? 12 : 16),
+                ),
+                child: Icon(icon, size: isNarrow ? 20 : 24,
+                    color: isDark ? Colors.white : Colors.black),
+              );
+
+              final textColumn = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: isNarrow ? 12 : 14,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white54 : Colors.black54,
+                    ),
                   ),
-                  child: Icon(icon, size: isNarrow ? 20 : 24,
-                      color: isDark ? Colors.white : Colors.black),
-                );
-
-                final textColumn = Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+                  const SizedBox(height: 4),
+                  if (isLoading)
+                    Container(
+                      width: 80,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.08)
+                            : Colors.black.withValues(alpha: 0.06),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    )
+                  else
                     Text(
-                      label,
+                      value,
                       style: TextStyle(
-                        fontSize: isNarrow ? 12 : 14,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white54 : Colors.black54,
+                        fontSize: isNarrow
+                            ? _adaptiveFontSize(value) * 0.8
+                            : _adaptiveFontSize(value),
+                        fontWeight: FontWeight.w800,
+                        color: isDark ? Colors.white : Colors.black,
+                        height: 1.2,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    if (isLoading)
-                      Container(
-                        width: 80,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? Colors.white.withValues(alpha: 0.08)
-                              : Colors.black.withValues(alpha: 0.06),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      )
-                    else
-                      Text(
-                        value,
-                        style: TextStyle(
-                          fontSize: isNarrow
-                              ? _adaptiveFontSize(value) * 0.8
-                              : _adaptiveFontSize(value),
-                          fontWeight: FontWeight.w800,
-                          color: isDark ? Colors.white : Colors.black,
-                          height: 1.2,
-                        ),
-                      ),
-                  ],
-                );
+                ],
+              );
 
-                // Column layout on narrow mobile, Row on wider screens
-                if (isNarrow) {
-                  return Padding(
-                    padding: EdgeInsets.all(cardPadding),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        iconBox,
-                        const SizedBox(height: 8),
-                        FittedBox(
+              // Column layout on narrow mobile, Row on wider screens
+              if (isNarrow) {
+                return Padding(
+                  padding: EdgeInsets.all(cardPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      iconBox,
+                      const SizedBox(height: 8),
+                      FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: textColumn,
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return Padding(
+                padding: EdgeInsets.all(cardPadding),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    iconBox,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Container(
+                        height: iconSize, // Constrain text to icon's vertical boundary
+                        alignment: Alignment.centerLeft,
+                        child: FittedBox(
                           fit: BoxFit.scaleDown,
                           alignment: Alignment.centerLeft,
                           child: textColumn,
                         ),
-                      ],
-                    ),
-                  );
-                }
-
-                return Padding(
-                  padding: EdgeInsets.all(cardPadding),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      iconBox,
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: textColumn,
                       ),
-                    ],
+                    ),
+                  ],
                 ),
               );
             },
