@@ -285,7 +285,7 @@ const Map<String, String> ta = {
   'kooliNiruvanaAdaiyaalangal': 'கூலி நிறுவன அடையாளங்கள்',
   'kooliNiruvanaPeyar': 'கூலி நிறுவனப் பெயர்',
   'kooliTharavugal': 'கூலித் தரவுகள்',
-  'mothaKanakku': 'மொத்தக் கணக்கு',
+  'mothaKanakku': 'மொத்தப் பட்டியல்',
   'mothaPattiyalgal': 'மொத்தப் பட்டியல்கள்',
   'muzhuThallupadi': 'முழுத் தள்ளுபடி',
   'nirilKooli': 'நிறிள் கூலி',

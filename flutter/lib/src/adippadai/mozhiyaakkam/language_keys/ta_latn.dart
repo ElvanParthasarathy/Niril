@@ -285,7 +285,7 @@ const Map<String, String> taLatn = {
   'kooliNiruvanaAdaiyaalangal': 'Kooli Niruvana Adaiyaalangal',
   'kooliNiruvanaPeyar': 'Kooli Niruvanap Peyar',
   'kooliTharavugal': 'Koolith Tharavugal',
-  'mothaKanakku': 'Mothak Kanakku',
+  'mothaKanakku': 'Mothap Pattiyal',
   'mothaPattiyalgal': 'Mothap Pattiyalgal',
   'muzhuThallupadi': 'Muzhu Thallupadi',
   'nirilKooli': 'Niril Kooli',
