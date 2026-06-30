@@ -509,25 +509,14 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                             _items = [..._items, const KooliUrupadi()];
                             _hasUnsavedChanges = true;
                           }),
+                          onAddNewCharge: () => setState(() {
+                            _piraVarivugal = [..._piraVarivugal, const PiraVarivu()];
+                            _hasUnsavedChanges = true;
+                          }),
                         );
                       },
                     ),
                   ),
-                ],
-              ),
-            ),
-
-            // ──────────────────────────────────────────────────────────
-            // Section 4: ④ Totals — INDEPENDENT from Section 3
-            // ──────────────────────────────────────────────────────────
-            _disabledWrap(
-              isDisabled: isDisabled,
-              child: ElvanEditorSection(
-                index: baseIndex + 3,
-                title: K.mothangal.tr(context, ref),
-                displayChild: const SizedBox(),
-                initiallyExpanded: true,
-                children: [
                   ElvanFullWidth(
                     child: ElvanAsaiPattiyal(
                       itemCount: _piraVarivugal.length,
@@ -555,33 +544,21 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                       },
                     ),
                   ),
-                  ElvanFullWidth(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: TextButton.icon(
-                          onPressed: () {
-                            setState(() {
-                              _piraVarivugal = [..._piraVarivugal, const PiraVarivu()];
-                              _hasUnsavedChanges = true;
-                            });
-                            _recalculateQuiet();
-                          },
-                          icon: const Icon(Icons.add, size: 20),
-                          label: Text('${K.pira.tr(context, ref)} ${K.chaerPtn.tr(context, ref)}', style: const TextStyle(fontWeight: FontWeight.w600)),
-                          style: TextButton.styleFrom(
-                            foregroundColor: Theme.of(context).colorScheme.onSurface,
-                            backgroundColor: Theme.of(context).brightness == Brightness.dark 
-                                ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08) 
-                                : Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                            shape: const StadiumBorder(),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                ],
+              ),
+            ),
+
+            // ──────────────────────────────────────────────────────────
+            // Section 4: ④ Totals — INDEPENDENT from Section 3
+            // ──────────────────────────────────────────────────────────
+            _disabledWrap(
+              isDisabled: isDisabled,
+              child: ElvanEditorSection(
+                index: baseIndex + 3,
+                title: K.mothangal.tr(context, ref),
+                displayChild: const SizedBox(),
+                initiallyExpanded: true,
+                children: [
                   // Extra Charges
                   KooliMelthogaiKooru(
                     setharamCtrl: _setharamCtrl,

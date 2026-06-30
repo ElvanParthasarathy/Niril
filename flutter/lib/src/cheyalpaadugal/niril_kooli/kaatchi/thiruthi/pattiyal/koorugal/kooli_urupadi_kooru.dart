@@ -24,6 +24,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
   final VoidCallback onDeleted;
   final VoidCallback? onRequestAddNewProduct;
   final VoidCallback? onAddNewItem;
+  final VoidCallback? onAddNewCharge;
 
   const KooliUrupadiKooru({
     super.key,
@@ -35,6 +36,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
     required this.onDeleted,
     this.onRequestAddNewProduct,
     this.onAddNewItem,
+    this.onAddNewCharge,
   });
 
   @override
@@ -183,20 +185,38 @@ class KooliUrupadiKooru extends ConsumerWidget {
               );
             }),
           ),
-          if (onAddNewItem != null && index == itemCount - 1) ...[
+          if ((onAddNewItem != null || onAddNewCharge != null) && index == itemCount - 1) ...[
             const SizedBox(height: 16),
             Align(
               alignment: Alignment.centerLeft,
-              child: TextButton.icon(
-                onPressed: onAddNewItem,
-                icon: const Icon(Icons.add, size: 20),
-                label: Text(K.chaerPtn.tr(context, ref), style: const TextStyle(fontWeight: FontWeight.w600)),
-                style: TextButton.styleFrom(
-                  foregroundColor: cs.onSurface,
-                  backgroundColor: isDark ? cs.onSurface.withValues(alpha: 0.08) : Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  shape: const StadiumBorder(),
-                ),
+              child: Wrap(
+                spacing: 12,
+                children: [
+                  if (onAddNewItem != null)
+                    TextButton.icon(
+                      onPressed: onAddNewItem,
+                      icon: const Icon(Icons.add, size: 20),
+                      label: Text(K.chaerPtn.tr(context, ref), style: const TextStyle(fontWeight: FontWeight.w600)),
+                      style: TextButton.styleFrom(
+                        foregroundColor: cs.onSurface,
+                        backgroundColor: isDark ? cs.onSurface.withValues(alpha: 0.08) : Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: const StadiumBorder(),
+                      ),
+                    ),
+                  if (onAddNewCharge != null)
+                    TextButton.icon(
+                      onPressed: onAddNewCharge,
+                      icon: const Icon(Icons.add, size: 20),
+                      label: Text(K.piraVarivuChaer.tr(context, ref), style: const TextStyle(fontWeight: FontWeight.w600)),
+                      style: TextButton.styleFrom(
+                        foregroundColor: cs.onSurface,
+                        backgroundColor: isDark ? cs.onSurface.withValues(alpha: 0.08) : Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: const StadiumBorder(),
+                      ),
+                    ),
+                ],
               ),
             ),
           ],
