@@ -3,8 +3,11 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../adippadai/panigal/urai_thervu_karuvi.dart';
 
-class ElvanSearchBar extends ConsumerWidget {
+import '../../../../koorugal/ulleedugal/elvan_thooiya_ulleedu.dart';
+
+class ElvanSearchBar extends ConsumerStatefulWidget {
   const ElvanSearchBar({
     super.key,
     required this.focusNode,
@@ -19,7 +22,26 @@ class ElvanSearchBar extends ConsumerWidget {
   final bool isExpanded;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ElvanSearchBar> createState() => _ElvanSearchBarState();
+}
+
+class _ElvanSearchBarState extends ConsumerState<ElvanSearchBar> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -48,31 +70,49 @@ class ElvanSearchBar extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 200),
-          opacity: isExpanded ? 1.0 : 0.0,
+          opacity: widget.isExpanded ? 1.0 : 0.0,
           child: Row(
             children: [
               const Icon(CupertinoIcons.search, size: 20, color: Colors.grey),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10), // Increased padding to separate icon from cursor
               Expanded(
-                child: TextField(
-                  focusNode: focusNode,
-                  onChanged: onChanged,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    hintText: K.thaeduga.tr(context, ref),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  style: const TextStyle(fontSize: 16),
+                child: Stack(
+                  alignment: Alignment.centerLeft,
+                  children: [
+                    // Manual hint text locked in place
+                    ValueListenableBuilder<TextEditingValue>(
+                      valueListenable: _controller,
+                      builder: (context, value, child) {
+                        if (value.text.isEmpty) {
+                          return Text(
+                            K.thaeduga.tr(context, ref),
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey,
+                              height: 1.2,
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      },
+                    ),
+                    // Raw input field with no decoration
+                    ElvanThooiyaUlleedu(
+                      controller: _controller,
+                      focusNode: widget.focusNode,
+                      onChanged: widget.onChanged,
+                      style: const TextStyle(fontSize: 18, height: 1.2),
+                    ),
+                  ],
                 ),
               ),
               GestureDetector(
-                onTap: onClose,
+                onTap: widget.onClose,
                 behavior: HitTestBehavior.opaque,
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
                   child: Icon(CupertinoIcons.clear_circled_solid,
-                      size: 22, color: Colors.grey),
+                      size: 24, color: Colors.grey),
                 ),
               ),
             ],
@@ -82,3 +122,4 @@ class ElvanSearchBar extends ConsumerWidget {
     );
   }
 }
+

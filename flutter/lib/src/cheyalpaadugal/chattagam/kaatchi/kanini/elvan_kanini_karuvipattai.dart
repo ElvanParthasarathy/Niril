@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../../../../adippadai/panigal/urai_thervu_karuvi.dart';
 
 /// A pixel-perfect port of the React `ElvanListView` toolbar row.
 /// Layout: [Search Pill (flex:1, max 400)] [gap:16] [Edit Pill 48x48] [ml:auto → + Add Button]
@@ -95,6 +96,7 @@ class _ElvanDesktopToolbarState extends State<ElvanDesktopToolbar> {
                     // React: <input> flex: 1, fontSize: 0.95rem (~15px), padding: 12px 0
                     Expanded(
                       child: TextField(
+                        contextMenuBuilder: buildElvanContextMenu,
                         controller: _controller,
                         focusNode: _focusNode,
                         onChanged: widget.onSearchChanged,

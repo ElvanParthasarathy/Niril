@@ -62,7 +62,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 24, bottom: 4),
+                padding: const EdgeInsets.only(left: 24, bottom: 0),
                 child: Text(
                   '${K.porul.tr(context, ref)} #${index + 1}',
                   style: tt.labelMedium?.copyWith(

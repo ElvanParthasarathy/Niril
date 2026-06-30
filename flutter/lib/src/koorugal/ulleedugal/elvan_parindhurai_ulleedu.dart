@@ -81,20 +81,27 @@ class _ElvanParindhuraiUlleeduState extends State<ElvanParindhuraiUlleedu> {
           child: OverlayPortal(
             controller: _overlayController,
             overlayChildBuilder: (context) {
+              final RenderBox? renderBox = _focusNode.context?.findRenderObject() as RenderBox?;
+              bool showAbove = false;
+              if (renderBox != null) {
+                final offset = renderBox.localToGlobal(Offset.zero);
+                final screenHeight = MediaQuery.of(context).size.height;
+                final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+                final availableSpaceBelow = screenHeight - keyboardHeight - offset.dy - renderBox.size.height;
+                if (availableSpaceBelow < 200) {
+                  showAbove = true;
+                }
+              }
+
               return CompositedTransformFollower(
                 link: _layerLink,
                 showWhenUnlinked: false,
-                targetAnchor: Alignment.bottomLeft,
-                followerAnchor: Alignment.topLeft,
-                offset: const Offset(0, 12),
+                targetAnchor: showAbove ? Alignment.topLeft : Alignment.bottomLeft,
+                followerAnchor: showAbove ? Alignment.bottomLeft : Alignment.topLeft,
+                offset: showAbove ? const Offset(0, -12) : const Offset(0, 12),
                 child: Align(
-                  alignment: Alignment.topLeft,
-                  child: TapRegion(
-                    onTapOutside: (_) {
-                      _overlayController.hide();
-                      _focusNode.unfocus();
-                    },
-                    child: MouseRegion(
+                  alignment: showAbove ? Alignment.bottomLeft : Alignment.topLeft,
+                  child: MouseRegion(
                       onEnter: (_) => _isHovering = true,
                       onExit: (_) => _isHovering = false,
                       child: Material(
@@ -105,9 +112,8 @@ class _ElvanParindhuraiUlleeduState extends State<ElvanParindhuraiUlleedu> {
                             .surfaceContainerHigh,
                         child: CustomPaint(
                           painter: _ArrowPainter(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .surfaceContainerHigh,
+                            color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                            isAbove: showAbove,
                           ),
                           child: Container(
                             width: 250,
@@ -134,7 +140,6 @@ class _ElvanParindhuraiUlleeduState extends State<ElvanParindhuraiUlleedu> {
                           ),
                         ),
                       ),
-                    ),
                   ),
                 ),
               );
@@ -158,8 +163,9 @@ class _ElvanParindhuraiUlleeduState extends State<ElvanParindhuraiUlleedu> {
 
 class _ArrowPainter extends CustomPainter {
   final Color color;
+  final bool isAbove;
 
-  _ArrowPainter({required this.color});
+  _ArrowPainter({required this.color, this.isAbove = false});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -168,9 +174,15 @@ class _ArrowPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final path = Path();
-    path.moveTo(24, 0); // Start slightly inward from top-left
-    path.lineTo(32, -10); // Arrow tip
-    path.lineTo(40, 0); // End arrow
+    if (isAbove) {
+      path.moveTo(24, size.height); 
+      path.lineTo(32, size.height + 10); // Arrow tip pointing down
+      path.lineTo(40, size.height);
+    } else {
+      path.moveTo(24, 0); 
+      path.lineTo(32, -10); // Arrow tip pointing up
+      path.lineTo(40, 0); 
+    }
     path.close();
 
     canvas.drawPath(path, paint);
