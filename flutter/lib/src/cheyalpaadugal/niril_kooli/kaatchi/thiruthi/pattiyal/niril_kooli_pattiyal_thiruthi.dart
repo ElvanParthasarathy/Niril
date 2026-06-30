@@ -23,6 +23,7 @@ import '../porul/niril_kooli_porul_thiruthi.dart';
 import 'koorugal/koorugal.dart';
 import '../../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 import '../../../../niril_podhu/kaatchi/koorugal/elvan_pattiyal_tharavugal_kooru.dart';
+import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_asai_pattiyal.dart';
 
 /// Coolie Invoice Editor — weight-based billing with setharam, courier,
 /// ahimsa, and other charges. Uses floor(kg × rate) truncation.
@@ -480,43 +481,36 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                 headerBottomPadding: 0,
                 children: [
                   ElvanFullWidth(
-                    child: AnimatedSize(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeOutQuart,
-                      alignment: Alignment.topCenter,
-                      child: Column(
-                        children: [
-                          for (int i = 0; i < _items.length; i++)
-                            KooliUrupadiKooru(
-                              // Using a ValueKey based on the item index isn't perfect for re-ordering,
-                              // but since we only add/remove, it works fine with AnimatedSize shrinking the list.
-                              key: ValueKey('item_$i'),
-                              index: i,
-                              item: _items[i],
-                              itemCount: _items.length,
-                              formatter: formatter,
-                              onUpdated: (updated) {
-                                setState(() {
-                                  _items = List.from(_items)..[i] = updated;
-                                  _hasUnsavedChanges = true;
-                                });
-                                _recalculateQuiet();
-                              },
-                              onDeleted: () => _deleteItem(i, formatter),
-                              onRequestAddNewProduct: () async {
-                                await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const CoolieItemEditor(),
-                                  ),
-                                );
-                              },
-                              onAddNewItem: () => setState(() {
-                                _items = [..._items, const KooliUrupadi()];
-                                _hasUnsavedChanges = true;
-                              }),
-                            ),
-                        ],
-                      ),
+                    child: ElvanAsaiPattiyal(
+                      itemCount: _items.length,
+                      itemBuilder: (context, i) {
+                        return KooliUrupadiKooru(
+                          key: ValueKey('item_$i'),
+                          index: i,
+                          item: _items[i],
+                          itemCount: _items.length,
+                          formatter: formatter,
+                          onUpdated: (updated) {
+                            setState(() {
+                              _items = List.from(_items)..[i] = updated;
+                              _hasUnsavedChanges = true;
+                            });
+                            _recalculateQuiet();
+                          },
+                          onDeleted: () => _deleteItem(i, formatter),
+                          onRequestAddNewProduct: () async {
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const CoolieItemEditor(),
+                              ),
+                            );
+                          },
+                          onAddNewItem: () => setState(() {
+                            _items = [..._items, const KooliUrupadi()];
+                            _hasUnsavedChanges = true;
+                          }),
+                        );
+                      },
                     ),
                   ),
                 ],

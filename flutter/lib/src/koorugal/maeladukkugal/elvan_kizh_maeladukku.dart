@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import '../podhu_koorugal/elvan_kavanam.dart';
+import '../podhu_koorugal/elvan_keezhnagar.dart';
 
 Future<T?> showElvanBottomSheet<T>({
   required BuildContext context,
@@ -48,11 +49,12 @@ Future<T?> showElvanBottomSheet<T>({
     backgroundColor: Theme.of(context).brightness == Brightness.dark
         ? const Color(0xFF111111)
         : Colors.white,
-    builder: (context) => Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: builder(context),
+    builder: (context) => Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Flexible(child: builder(context)),
+        const ElvanKeezhNagar(),
+      ],
     ),
   );
 }

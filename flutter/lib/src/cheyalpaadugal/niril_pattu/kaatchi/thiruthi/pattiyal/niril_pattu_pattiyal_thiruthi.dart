@@ -24,6 +24,7 @@ import '../vaangunar/niril_pattu_vaangunar_thiruthi.dart';
 import '../porul/niril_pattu_porul_thiruthi.dart';
 import 'koorugal/koorugal.dart';
 import '../../../../niril_podhu/kaatchi/koorugal/elvan_pattiyal_tharavugal_kooru.dart';
+import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_asai_pattiyal.dart';
 import '../../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 
 
@@ -77,8 +78,6 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   // ── Unsaved Changes & Draft ──
   bool _hasUnsavedChanges = false;
   Timer? _draftDebounce;
-  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
-
   bool get _isEditing => widget.editingEntry != null;
 
   @override
@@ -517,113 +516,55 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    AnimatedList(
-                      key: _listKey,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      initialItemCount: _items.length,
-                      itemBuilder: (context, i, animation) {
-                        final curvedAnimation = CurvedAnimation(
-                          parent: animation,
-                          curve: Curves.easeOutQuart,
-                          reverseCurve: Curves.easeInQuart,
-                        );
-                        return ClipRect(
-                          child: SizeTransition(
-                            sizeFactor: curvedAnimation,
-                            axisAlignment: -1.0,
-                            child: FadeTransition(
-                              opacity: curvedAnimation,
-                              child: SlideTransition(
-                                position: Tween<Offset>(
-                                  begin: const Offset(0.0, -0.1),
-                                  end: Offset.zero,
-                                ).animate(curvedAnimation),
-                                child: PattuUrupadiAttai(
-                                  item: _items[i],
-                                  index: i,
-                              itemCount: _items.length,
-                              seyaliVagai: 'silk',
-                              onItemUpdated: (updated) {
-                                setState(() {
-                                  _items = List.from(_items)..[i] = updated;
-                                  _hasUnsavedChanges = true;
-                                });
-                                _recalculate();
-                              },
-                              onItemDeleted: () {
-                                final removedItem = _items[i];
-                                setState(() {
-                                  _items = List.from(_items)..removeAt(i);
-                                  _hasUnsavedChanges = true;
-                                });
-                                _listKey.currentState?.removeItem(
-                                  i,
-                                  (context, anim) {
-                                    final curvedAnimation = CurvedAnimation(
-                                      parent: anim,
-                                      curve: Curves.easeOutQuart,
-                                      reverseCurve: Curves.easeInQuart,
-                                    );
-                                    return ClipRect(
-                                      child: SizeTransition(
-                                        sizeFactor: curvedAnimation,
-                                        axisAlignment: -1.0,
-                                        child: FadeTransition(
-                                          opacity: curvedAnimation,
-                                          child: SlideTransition(
-                                            position: Tween<Offset>(
-                                              begin: const Offset(0.0, -0.1),
-                                              end: Offset.zero,
-                                            ).animate(curvedAnimation),
-                                            child: PattuUrupadiAttai(
-                                              item: removedItem,
-                                              index: i,
-                                              itemCount: _items.length + 1, // keep old visual count for the removed item
-                                              seyaliVagai: 'silk',
-                                              onItemUpdated: (_) {},
-                                              onItemDeleted: () {},
-                                              onItemCleared: () {},
-                                              onDirty: () {},
-                                              onRequestAddNewProduct: () async {},
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  duration: const Duration(milliseconds: 250),
-                                );
-                                _recalculate();
-                              },
-                              onItemCleared: () {
-                                setState(() {
-                                  _items = List.from(_items)..[i] = const PattuUrupadi();
-                                  _hasUnsavedChanges = true;
-                                });
-                                _recalculate();
-                              },
-                              onDirty: () => setState(() => _hasUnsavedChanges = true),
-                              onRequestAddNewProduct: () async {
-                                await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const SilkItemEditor(),
-                                  ),
-                                );
-                              },
-                              onAddNewItem: () => setState(() {
-                                _items = [..._items, const PattuUrupadi()];
-                                _listKey.currentState?.insertItem(
-                                  _items.length - 1,
-                                  duration: const Duration(milliseconds: 250),
-                                );
-                              }),
-                            ),
-                                  ),
-                                ),
+                    ElvanAsaiPattiyal(
+                      itemCount: _items.length,
+                      itemBuilder: (context, i) {
+                        return PattuUrupadiAttai(
+                          key: ValueKey('item_$i'),
+                          item: _items[i],
+                          index: i,
+                          itemCount: _items.length,
+                          seyaliVagai: 'silk',
+                          onItemUpdated: (updated) {
+                            setState(() {
+                              _items = List.from(_items)..[i] = updated;
+                              _hasUnsavedChanges = true;
+                            });
+                            _recalculate();
+                          },
+                          onItemDeleted: () {
+                            setState(() {
+                              _items = List.from(_items)..removeAt(i);
+                              _hasUnsavedChanges = true;
+                            });
+                            _recalculate();
+                          },
+                          onItemCleared: () {
+                            setState(() {
+                              _items = List.from(_items)
+                                ..[i] = const PattuUrupadi();
+                              _hasUnsavedChanges = true;
+                            });
+                            _recalculate();
+                          },
+                          onDirty: () {
+                            setState(() {
+                              _hasUnsavedChanges = true;
+                            });
+                          },
+                          onRequestAddNewProduct: () async {
+                            await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const SilkItemEditor(),
                               ),
                             );
-                    },
+                          },
+                          onAddNewItem: () => setState(() {
+                            _items = [..._items, const PattuUrupadi()];
+                            _hasUnsavedChanges = true;
+                          }),
+                        );
+                      },
                     ),
 
 

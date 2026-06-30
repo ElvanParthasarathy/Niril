@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
+import '../podhu_koorugal/elvan_keezhnagar.dart';
+
 Future<T?> showElvanActionSheet<T>({
   required BuildContext context,
   required String title,
@@ -212,27 +214,31 @@ Future<T?> showElvanActionSheet<T>({
     isScrollControlled: true,
     elevation: 0,
     builder: (BuildContext context) {
-      final bottomInset = MediaQuery.of(context).viewInsets.bottom;
       return SafeArea(
         child: Padding(
-          padding:
-              EdgeInsets.only(left: 16, right: 16, bottom: 24 + bottomInset),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(32),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: bgColor,
-                  borderRadius: BorderRadius.circular(32),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 16, right: 16, top: 24, bottom: 16),
-                  child: buildContent(context),
+          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(32),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: bgColor,
+                      borderRadius: BorderRadius.circular(32),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16, right: 16, top: 24, bottom: 16),
+                      child: buildContent(context),
+                    ),
+                  ),
                 ),
               ),
-            ),
+              const ElvanKeezhNagar(),
+            ],
           ),
         ),
       );

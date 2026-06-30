@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'thalaippu_nilaimai.dart';
-import '../../../../koorugal/podhu_koorugal/elvan_menmai_nagarvu.dart';
+import '../../../../koorugal/podhu_koorugal/elvan_kavanam.dart';
 
 export 'elvan_kizh_pattai.dart';
 import 'elvan_kizh_pattai.dart';
@@ -405,7 +405,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
   @override
   Widget build(BuildContext context) {
     // ── Keyboard Auto-Collapse ──
-    final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+    final double bottomInset = MediaQuery.viewInsetsOf(context).bottom;
     if (bottomInset > 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Future.delayed(const Duration(milliseconds: 150), () {
@@ -536,6 +536,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
                 ),
               ),
             ),
+
             // ─── Layer 2: Main Desktop Sidebar (when in desktop split-view) ─for horizontal navigation) ───
             Positioned(
               left: 0,

@@ -5,6 +5,8 @@ import 'elvan_virindha_pattai.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_kavanam.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../koorugal/podhu_koorugal/elvan_keezhnagar.dart';
 import 'koorugal/elvan_maeladukku_pattiyal.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -106,6 +108,11 @@ class ElvanPageContent extends ConsumerWidget {
                 );
               },
             ),
+
+            // ── Keyboard Artificial Padding ──
+            // Because Scaffold has resizeToAvoidBottomInset: false, the UI doesn't squish.
+            // But we still need to allow the user to scroll up past the keyboard!
+            const ElvanSliverKeezhNagar(),
           ],
         ),
       ],
