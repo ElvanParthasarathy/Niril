@@ -355,9 +355,9 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
   bool _handleScrollNotification(ScrollNotification notification) {
     if (notification is ScrollMetricsNotification || notification is ScrollUpdateNotification) {
       final metrics = notification.metrics;
-      // Only show scrollbar if the scrollable content is MORE than 2x the screen height.
-      // This ensures the thumb size is less than half the screen height.
-      final bool shouldShow = metrics.maxScrollExtent > metrics.viewportDimension;
+      // Only show scrollbar if the scrollable content is MORE than 3x the screen height (extra is 2x).
+      // This ensures the thumb size is at most 33% of the screen height when it appears.
+      final bool shouldShow = metrics.maxScrollExtent > (metrics.viewportDimension * 2.0);
       if (_showScrollbarNotifier.value != shouldShow) {
         Future.microtask(() {
           if (mounted) _showScrollbarNotifier.value = shouldShow;
