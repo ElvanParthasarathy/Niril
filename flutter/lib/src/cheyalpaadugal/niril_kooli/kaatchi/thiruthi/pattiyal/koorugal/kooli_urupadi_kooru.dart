@@ -73,7 +73,7 @@ class KooliUrupadiKooru extends ConsumerWidget {
                 child: IgnorePointer(
                   ignoring: itemCount <= 1,
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 12, bottom: 2),
+                    padding: EdgeInsets.only(right: MediaQuery.sizeOf(context).width >= 600 ? 24 : 12, bottom: 2),
                     child: IconButton(
                       icon: const Icon(CupertinoIcons.delete, size: 20),
                       color: cs.onSurfaceVariant,
