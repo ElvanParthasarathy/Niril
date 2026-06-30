@@ -82,8 +82,7 @@ class KooliPiraVarivuKooru extends ConsumerWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElvanThiruthiUlleedu(
-                    label: K.motham.tr(context, ref),
-                    prefixText: '₹ ',
+                    label: '${K.motham.tr(context, ref)} (₹)',
                     initialValue: charge.thogai > 0 ? charge.thogai.toString() : '',
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     inputFormatters: ElvanVadivamaippigal.thasamamEnngal,
