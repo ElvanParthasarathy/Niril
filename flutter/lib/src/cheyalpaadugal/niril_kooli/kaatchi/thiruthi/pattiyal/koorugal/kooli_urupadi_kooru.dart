@@ -203,7 +203,10 @@ class KooliUrupadiKooru extends ConsumerWidget {
                       style: TextButton.styleFrom(
                         foregroundColor: cs.onSurface,
                         backgroundColor: isDark ? cs.onSurface.withValues(alpha: 0.08) : Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 24, 
+                          vertical: MediaQuery.sizeOf(context).width >= 600 ? 18 : 12,
+                        ),
                         shape: const StadiumBorder(),
                       ),
                     ),
@@ -215,7 +218,10 @@ class KooliUrupadiKooru extends ConsumerWidget {
                       style: TextButton.styleFrom(
                         foregroundColor: cs.onSurface,
                         backgroundColor: isDark ? cs.onSurface.withValues(alpha: 0.08) : Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 24, 
+                          vertical: MediaQuery.sizeOf(context).width >= 600 ? 18 : 12,
+                        ),
                         shape: const StadiumBorder(),
                       ),
                     ),

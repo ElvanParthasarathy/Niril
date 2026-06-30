@@ -135,16 +135,14 @@ class _ElvanEditorShellState extends ConsumerState<ElvanEditorShell> {
                         ),
                         if (widget.onSave != null) ...[
                           const Spacer(),
-                          SizedBox(
-                            height: 40,
-                            child: FilledButton(
-                              onPressed: widget.onSave,
-                              style: FilledButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 24),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
+                          FilledButton(
+                            onPressed: widget.onSave,
+                            style: FilledButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 32, vertical: 18),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
                                 backgroundColor: isDark
                                     ? Theme.of(context).colorScheme.surface
                                     : Colors.white,
