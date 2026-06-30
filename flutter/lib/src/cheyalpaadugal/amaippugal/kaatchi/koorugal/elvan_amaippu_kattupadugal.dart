@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
-import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_pill_vadivu.dart';
+
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thooiya_ulleedu.dart';
 import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_kavanam.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

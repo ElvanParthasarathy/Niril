@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
-import '../../../../koorugal/ulleedugal/elvan_thiruthi_pill_vadivu.dart';
+import '../../../../koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ElvanSettingsAnimatedExpand — Smoothly expands and fades between view and edit
@@ -119,23 +118,14 @@ class ElvanSettingsTextField extends StatelessWidget {
             ),
           ),
         ),
-        ElvanTextField(
+        ElvanThiruthiUlleedu(
           initialValue: initialValue,
           onChanged: onChanged,
           keyboardType: keyboardType,
           inputFormatters: inputFormatters,
           maxLength: maxLength,
-          style: const TextStyle(fontSize: 14),
           maxLines: maxLines,
-          minLines: maxLines,
-          decoration: ElvanThiruthiPillVadivu.getDecoration(
-            context,
-            borderRadius: maxLines > 1 ? 16 : 100,
-            isMultiline: maxLines > 1,
-          ).copyWith(
-            counterText: '',
-            suffixIcon: suffixIcon,
-          ),
+          suffixIcon: suffixIcon,
         ),
       ],
     );
