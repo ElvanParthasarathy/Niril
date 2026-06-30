@@ -47,7 +47,7 @@ class KooliPiraVarivuKooru extends ConsumerWidget {
                   '${K.pira.tr(context, ref)} #${index + 1}',
                   style: tt.labelMedium?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: cs.onSurfaceVariant,
+                    color: cs.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
               ),
@@ -66,7 +66,6 @@ class KooliPiraVarivuKooru extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 4),
           ElvanUrupadiAttai(
             padding: const EdgeInsets.all(16),
             child: Row(
