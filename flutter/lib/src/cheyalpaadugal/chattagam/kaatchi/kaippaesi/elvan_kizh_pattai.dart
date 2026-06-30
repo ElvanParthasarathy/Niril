@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../koorugal/podhu_koorugal/elvan_kizh_pattai_base.dart';
+import '../../../../koorugal/podhu_koorugal/elvan_kizh_pattai_base.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DATA MODEL — Fully decoupled nav item descriptor
@@ -279,7 +279,6 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
                     ),
                   ],
                 ),
-              ),
             ),
           ),
         ),

@@ -91,24 +91,38 @@ class ElvanThervuPattai extends ConsumerWidget {
         ? (isDark ? Colors.white24 : Colors.black26)
         : (activeColor ?? (isDark ? Colors.white : Colors.black87));
 
+    const double iconSize = 23.0;
+    const double fontSize = 9.5;
+    const double layoutWidth = 67.0; // Same as Navbar with <= 4 items
+
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 22, color: color),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              color: color,
+      child: SizedBox(
+        width: layoutWidth,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: iconSize, color: color),
+            const SizedBox(height: 2),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: activeColor != null ? FontWeight.w600 : FontWeight.w400,
+                    color: color,
+                    height: 1.2,
+                  ),
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
