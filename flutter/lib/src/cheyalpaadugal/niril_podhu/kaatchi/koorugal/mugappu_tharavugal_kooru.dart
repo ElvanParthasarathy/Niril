@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../../adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
 import '../../../../adippadai/oru_mozhi/oru_mozhi_vazhanguthigal.dart';
 
 // ── Stats Card (Bento Grid Item) ────────────────────────────────────────────
@@ -238,13 +239,13 @@ class _ElvanRecentCardState extends ConsumerState<ElvanRecentCard> {
     String primaryLang;
     String secondaryLang;
 
-    if (p.seyaliVagai == 'coolie') {
+    if (p.pattiyalVagai == 'coolie') {
       final kooliAchuMozhi = ref.watch(kooliAchuMozhiProvider);
       primaryLang = kooliAchuMozhi;
       secondaryLang = kooliAchuMozhi == 'Tamil' ? 'English' : 'Tamil';
     } else {
-      primaryLang = effectiveLang == 'ta' ? 'Tamil' : 'English';
-      secondaryLang = effectiveLang == 'ta' ? 'English' : 'Tamil';
+      primaryLang = ref.watch(silkMudhanmaiMozhiProvider);
+      secondaryLang = ref.watch(silkThunaiMozhiProvider);
     }
 
     return GestureDetector(
