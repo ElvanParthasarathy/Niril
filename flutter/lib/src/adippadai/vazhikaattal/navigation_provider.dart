@@ -1,5 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'navigation_destination.dart';
+import '../../cheyalpaadugal/niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
+import '../../cheyalpaadugal/niril_podhu/kalanjiyam/patru_nilaimai.dart';
+import '../../cheyalpaadugal/niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
+import '../../cheyalpaadugal/niril_podhu/kalanjiyam/porul_nilaimai.dart';
 
 /// The single source of truth for all navigation state in the app.
 ///
@@ -103,6 +107,8 @@ class NirilNavigationNotifier extends Notifier<NirilNavigationState> {
   void goTo(NirilDestination dest) {
     if (dest == state.destination) return;
 
+    _clearSelectionStates();
+
     if (dest.isCustomView) {
       // Going to a custom view — save the current primary tab
       state = state.copyWith(
@@ -131,6 +137,8 @@ class NirilNavigationNotifier extends Notifier<NirilNavigationState> {
   ///
   /// Returns true if the system should handle the pop (i.e., exit app).
   bool goBack() {
+    _clearSelectionStates();
+
     // 1. Custom view → return to last primary tab
     if (state.isCustomView) {
       state = state.copyWith(
@@ -172,6 +180,21 @@ class NirilNavigationNotifier extends Notifier<NirilNavigationState> {
   /// Clear search query.
   void clearSearch() {
     state = state.copyWith(searchQuery: '');
+  }
+
+  /// Clears all selection states across all list views when navigating away.
+  void _clearSelectionStates() {
+    ref.read(pattiyalSelectionModeProvider.notifier).state = false;
+    ref.read(selectedPattiyalIdsProvider.notifier).state = {};
+    
+    ref.read(patruSelectionModeProvider.notifier).state = false;
+    ref.read(selectedPatruIdsProvider.notifier).state = {};
+    
+    ref.read(vaangunarSelectionModeProvider.notifier).state = false;
+    ref.read(selectedVaangunarIdsProvider.notifier).state = {};
+    
+    ref.read(porulSelectionModeProvider.notifier).state = false;
+    ref.read(selectedPorulIdsProvider.notifier).state = {};
   }
 }
 

@@ -25,6 +25,7 @@ import '../../niril_pattu/kaatchi/thiruthi/porul/niril_pattu_porul_thiruthi.dart
 
 
 import '../../niril_kooli/kaatchi/thiraigal/kooli_pattiyalgal_thirai.dart';
+import 'kaippaesi/elvan_selection_overlay_helper.dart';
 import '../../niril_kooli/kaatchi/thiraigal/kooli_patrucheettugal_thirai.dart';
 import '../../niril_kooli/kaatchi/thiruthi/pattiyal/niril_kooli_pattiyal_thiruthi.dart';
 import '../../niril_kooli/kaatchi/thiruthi/patrucheettu/niril_kooli_patrucheettu_thiruthi.dart';
@@ -284,12 +285,24 @@ class _NirilSeyaliThiraiState extends ConsumerState<NirilSeyaliThirai> {
         btnText = K.vaangunaraichChaer.tr(context, ref);
       }
 
-      desktopToolbar = ElvanDesktopToolbar(
-        searchPlaceholder: K.thaeduga.tr(context, ref),
-        addButtonText: btnText,
-        onSearchChanged: (query) =>
-            _routeSearchQuery(query, dest),
-        onAdd: _onAddPressed,
+      final selectionBar = SelectionOverlayHelper.buildOverlay(context, ref, desktopIndex, navState);
+
+      desktopToolbar = Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ElvanDesktopToolbar(
+            searchPlaceholder: K.thaeduga.tr(context, ref),
+            addButtonText: btnText,
+            onSearchChanged: (query) =>
+                _routeSearchQuery(query, dest),
+            onAdd: _onAddPressed,
+          ),
+          if (selectionBar != null) ...[
+            const SizedBox(height: 16),
+            selectionBar,
+          ],
+        ],
       );
     }
 
@@ -378,51 +391,60 @@ class _NirilSeyaliThiraiState extends ConsumerState<NirilSeyaliThirai> {
             index: mobileTabIndex,
               children: [
                 for (int i = 0; i < 4; i++)
-                  ElvanShell(
-                    assignedIndex: i,
-                    title: navItems[i].headerLabel ?? navItems[i].label,
-                    currentIndex: mobileTabIndex,
-                    onTabSelected: (index) {
-                      // Map mobile tab index to NirilDestination
-                      final destinations = [
-                        NirilDestination.mugappu,
-                        navState.uruvakkuSegment == 1
-                            ? NirilDestination.raseethu
-                            : NirilDestination.pattiyal,
-                        NirilDestination.porul,
-                        NirilDestination.vaangunar,
-                      ];
-                      if (index >= 0 && index < destinations.length) {
-                        nav.goTo(destinations[index]);
-                      }
-                    },
-                    showSearchIcon: i != 0,
-                    onSearchChanged: (query) => _routeMobileSearch(query, i),
-                    navActions: [
-                      const SizedBox(width: 7),
-                      ElvanTopBarIcon(
-                        icon: CupertinoIcons.add,
-                        onTap: _onAddPressed,
-                      ),
-                      const SizedBox(width: 14),
-                      ElvanPopupMenu(
-                        showSelectOption: i > 0,
-                        isSilkHome:
-                            ref.watch(appModeProvider) != AppMode.coolie &&
-                                i == 0,
-                        onSelectTapped: () {
-                          _onSelectTapped();
+                  Builder(
+                    builder: (context) {
+                      final overlayWidget = SelectionOverlayHelper.buildOverlay(context, ref, i, navState);
+                      final isOverlayActive = overlayWidget != null;
+
+                      return ElvanShell(
+                        assignedIndex: i,
+                        title: navItems[i].headerLabel ?? navItems[i].label,
+                        currentIndex: mobileTabIndex,
+                        onTabSelected: (index) {
+                          // Map mobile tab index to NirilDestination
+                          final destinations = [
+                            NirilDestination.mugappu,
+                            navState.uruvakkuSegment == 1
+                                ? NirilDestination.raseethu
+                                : NirilDestination.pattiyal,
+                            NirilDestination.porul,
+                            NirilDestination.vaangunar,
+                          ];
+                          if (index >= 0 && index < destinations.length) {
+                            nav.goTo(destinations[index]);
+                          }
                         },
-                      ),
-                      const SizedBox(width: 7),
-                    ],
-                    navItems: navItems,
-                    slivers: [
-                      if (i == 0) const MugappuPage(),
-                      if (i == 1) const UruvakkuPage(),
-                      if (i == 2) const PorulPage(),
-                      if (i == 3) const VaangunarPage(),
-                    ],
+                        showSearchIcon: i != 0,
+                        onSearchChanged: (query) => _routeMobileSearch(query, i),
+                        isOverlayActive: isOverlayActive,
+                        overlayWidget: overlayWidget,
+                        navActions: [
+                          const SizedBox(width: 7),
+                          ElvanTopBarIcon(
+                            icon: CupertinoIcons.add,
+                            onTap: _onAddPressed,
+                          ),
+                          const SizedBox(width: 14),
+                          ElvanPopupMenu(
+                            showSelectOption: i > 0,
+                            isSilkHome:
+                                ref.watch(appModeProvider) != AppMode.coolie &&
+                                    i == 0,
+                            onSelectTapped: () {
+                              _onSelectTapped();
+                            },
+                          ),
+                          const SizedBox(width: 7),
+                        ],
+                        navItems: navItems,
+                        slivers: [
+                          if (i == 0) const MugappuPage(),
+                          if (i == 1) const UruvakkuPage(),
+                          if (i == 2) const PorulPage(),
+                          if (i == 3) const VaangunarPage(),
+                        ],
+                      );
+                    },
                   ),
               ],
             ),

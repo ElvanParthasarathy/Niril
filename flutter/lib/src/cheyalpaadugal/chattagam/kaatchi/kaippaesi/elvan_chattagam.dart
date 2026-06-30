@@ -48,6 +48,8 @@ class ElvanShell extends ConsumerStatefulWidget {
     this.startCollapsed = false,
     this.backgroundColor,
     this.syncWithGlobalHeader = true,
+    this.overlayWidget,
+    this.isOverlayActive = false,
   });
 
   /// The scrollable content placed inside the [CustomScrollView] as slivers.
@@ -97,17 +99,28 @@ class ElvanShell extends ConsumerStatefulWidget {
   /// Whether to sync header collapse/expand state with the global headerExpandedProvider.
   final bool syncWithGlobalHeader;
 
+  /// If provided, this widget will be rendered as an overlay on top of the navbar
+  /// using the same animation sequence as the search bar.
+  final Widget? overlayWidget;
+  
+  /// Whether the overlay sequence is currently active.
+  final bool isOverlayActive;
+
   @override
   ConsumerState<ElvanShell> createState() => _ElvanShellState();
 }
 
+enum OverlayType { none, search, custom }
+
 class _ElvanShellState extends ConsumerState<ElvanShell>
     with SingleTickerProviderStateMixin {
   // ── Navbar hide / show animation ──────────────────────────────────────
-  // ── State for sequential search animation ──
-  bool _searchStep1HideIcons = false;
-  bool _searchStep2ShowSearchContainer = false;
-  bool _searchStep3ExpandSearch = false;
+  // ── State for sequential overlay animation ──
+  bool _overlayStep1HideIcons = false;
+  bool _overlayStep2ShowContainer = false;
+  bool _overlayStep3ExpandContainer = false;
+  
+  OverlayType _currentOverlayType = OverlayType.none;
 
   // Controls the fade and hit-testing of the entire Layer 3 bottom floating pill
   late final AnimationController _navbarController;
@@ -160,12 +173,16 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
     ));
   }
 
-  void _activateSearch() {
+  void _activateOverlay(OverlayType type) {
     // Auto-Collapse logic
     if (!_scrollController.hasClients) {
-      _isSearchActiveNotifier.value = true;
+      if (type == OverlayType.search) {
+        _isSearchActiveNotifier.value = true;
+      }
       return;
     }
+
+    _currentOverlayType = type;
 
     final double statusBarHeight = MediaQuery.paddingOf(context).top;
     final double snapThreshold =
@@ -184,45 +201,66 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
     // --- The Choreographed Container Transform Sequence ---
 
     // Step 1: Smoothly fade out the Navbar icons (leaves empty glassy pill)
-    setState(() => _searchStep1HideIcons = true);
+    setState(() => _overlayStep1HideIcons = true);
 
     Future.delayed(const Duration(milliseconds: 150), () {
       if (!mounted) return;
-      // Step 2: Render the small Search container precisely on top of the empty Navbar
-      setState(() => _searchStep2ShowSearchContainer = true);
+      // Step 2: Render the small container precisely on top of the empty Navbar
+      setState(() => _overlayStep2ShowContainer = true);
 
-      // Step 3: Now stretch the Search container to full width and fade in its contents
+      // Step 3: Now stretch the container to full width and fade in its contents
       Future.delayed(const Duration(milliseconds: 50), () {
         if (!mounted) return;
         setState(() {
-          _searchStep3ExpandSearch = true;
-          _isSearchActiveNotifier.value = true;
+          _overlayStep3ExpandContainer = true;
+          if (type == OverlayType.search) {
+            _isSearchActiveNotifier.value = true;
+          }
         });
-        _searchFocusNode.requestFocus();
+        if (type == OverlayType.search) {
+          _searchFocusNode.requestFocus();
+        }
       });
     });
   }
 
-  void _closeSearchSequence() {
-    _searchFocusNode.unfocus();
+  void _closeOverlaySequence() {
+    if (_currentOverlayType == OverlayType.search) {
+      _searchFocusNode.unfocus();
+    }
 
-    // Reverse Step 3: Shrink the Search container and fade out its contents
+    // Reverse Step 3: Shrink the container and fade out its contents
     setState(() {
-      _searchStep3ExpandSearch = false;
-      _isSearchActiveNotifier.value = false;
+      _overlayStep3ExpandContainer = false;
+      if (_currentOverlayType == OverlayType.search) {
+        _isSearchActiveNotifier.value = false;
+      }
     });
 
     Future.delayed(const Duration(milliseconds: 300), () {
       if (!mounted) return;
-      // Reverse Step 2: Remove the small Search container to reveal the empty Navbar below
-      setState(() => _searchStep2ShowSearchContainer = false);
+      // Reverse Step 2: Remove the small container to reveal the empty Navbar below
+      setState(() => _overlayStep2ShowContainer = false);
+      _currentOverlayType = OverlayType.none;
 
       Future.delayed(const Duration(milliseconds: 50), () {
         if (!mounted) return;
         // Reverse Step 1: Fade the Navbar icons back in
-        setState(() => _searchStep1HideIcons = false);
+        setState(() => _overlayStep1HideIcons = false);
       });
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant ElvanShell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isOverlayActive != oldWidget.isOverlayActive) {
+      if (widget.isOverlayActive) {
+        _activateOverlay(OverlayType.custom);
+      } else {
+        _closeOverlaySequence();
+      }
+    }
   }
 
   @override
@@ -584,9 +622,9 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
                           // The base Navbar (icons fade out on command, but background stays!)
                           AnimatedOpacity(
                             duration: const Duration(milliseconds: 200),
-                            opacity: _searchStep3ExpandSearch ? 0.0 : 1.0,
+                            opacity: _overlayStep3ExpandContainer ? 0.0 : 1.0,
                             child: IgnorePointer(
-                              ignoring: _searchStep2ShowSearchContainer,
+                              ignoring: _overlayStep2ShowContainer,
                               child: ElvanNavbar(
                                 items: widget.navItems,
                                 currentIndex: widget.currentIndex,
@@ -639,34 +677,36 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
                                     widget.onTabSelected?.call(index);
                                   }
                                 },
-                                hideContent: _searchStep1HideIcons,
+                                hideContent: _overlayStep1HideIcons,
                               ),
                             ),
                           ),
 
-                          // The Search Overlay (appears exactly on top of Navbar, then stretches!)
-                          if (_searchStep2ShowSearchContainer)
+                          // The Overlay (appears exactly on top of Navbar, then stretches!)
+                          if (_overlayStep2ShowContainer)
                             AnimatedContainer(
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.easeOutCubic,
                               // Exact mathematical width of the Navbar vs full screen
-                              width: _searchStep3ExpandSearch
+                              width: _overlayStep3ExpandContainer
                                   ? MediaQuery.of(context).size.width - 32
                                   : ((widget.navItems.length <= 4
                                               ? 67.0
                                               : 61.0) *
                                           widget.navItems.length +
                                       16.0),
-                              child: ElvanSearchBar(
-                                focusNode: _searchFocusNode,
-                                onChanged: widget.onSearchChanged,
-                                onClose: () {
-                                  _closeSearchSequence();
-                                  widget.onSearchChanged
-                                      ?.call(''); // Clear query
-                                },
-                                isExpanded: _searchStep3ExpandSearch,
-                              ),
+                              child: _currentOverlayType == OverlayType.search
+                                  ? ElvanSearchBar(
+                                      focusNode: _searchFocusNode,
+                                      onChanged: widget.onSearchChanged,
+                                      onClose: () {
+                                        _closeOverlaySequence();
+                                        widget.onSearchChanged
+                                            ?.call(''); // Clear query
+                                      },
+                                      isExpanded: _overlayStep3ExpandContainer,
+                                    )
+                                  : (widget.overlayWidget ?? const SizedBox.shrink()),
                             ),
                         ],
                       ),
@@ -716,7 +756,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
               ignoring: !widget.showSearchIcon,
               child: ElvanTopBarIcon(
                 icon: CupertinoIcons.search,
-                onTap: _activateSearch,
+                onTap: () => _activateOverlay(OverlayType.search),
               ),
             ),
           ),
