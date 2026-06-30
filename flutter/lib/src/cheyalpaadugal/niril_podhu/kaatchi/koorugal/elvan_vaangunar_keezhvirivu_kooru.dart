@@ -67,6 +67,9 @@ class ElvanVaangunarKeezhvirivuKooru extends ConsumerWidget {
     String getSecondaryName(VaangunarTharavuru v) {
       if (mode == AppMode.silk && isBilingual) {
         return _getDisplayString(v.peyar, irandaamMozhi, fallbackLang: mudhanmaiMozhi);
+      } else if (mode != AppMode.silk) {
+        final otherKeys = v.peyar.keys.where((k) => k != kooliAchuMozhi).toList();
+        return otherKeys.isNotEmpty ? (v.peyar[otherKeys.first]?.toString() ?? '') : '';
       }
       return '';
     }
