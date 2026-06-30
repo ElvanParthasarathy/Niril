@@ -57,26 +57,26 @@ class KooliUrupadiKooru extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Item #N header + trash
-          Padding(
-            padding: const EdgeInsets.only(
-              left: 24, 
-              right: 12,
-              bottom: 12,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 24, bottom: 4),
+                child: Text(
                   '${K.porul.tr(context, ref)} #${index + 1}',
                   style: tt.labelMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                     color: cs.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
-                Opacity(
-                  opacity: itemCount > 1 ? 1.0 : 0.0,
-                  child: IgnorePointer(
-                    ignoring: itemCount <= 1,
+              ),
+              Opacity(
+                opacity: itemCount > 1 ? 1.0 : 0.0,
+                child: IgnorePointer(
+                  ignoring: itemCount <= 1,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 12, bottom: 12),
                     child: IconButton(
                       icon: const Icon(CupertinoIcons.delete, size: 20),
                       color: cs.onSurfaceVariant,
@@ -89,8 +89,8 @@ class KooliUrupadiKooru extends ConsumerWidget {
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
           
           ElvanUrupadiAttai(
