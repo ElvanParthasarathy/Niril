@@ -71,10 +71,10 @@ class PattuUrupadiAttai extends ConsumerWidget {
         children: [
           // ── Header: "பொருள் #N" + trash icon ──
           Padding(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               left: 24, 
-              right: MediaQuery.sizeOf(context).width >= 600 ? 48 : 12,
-              bottom: 2,
+              right: 12,
+              bottom: 12,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
