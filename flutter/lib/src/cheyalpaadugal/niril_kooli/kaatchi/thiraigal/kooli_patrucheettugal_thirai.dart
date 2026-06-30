@@ -33,10 +33,7 @@ class CoolieReceiptsPage extends ConsumerWidget {
     final patrugalAsync = ref.watch(patrugalProvider);
     final profilesAsync = ref.watch(kooliNiruvanaTharavugalListProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isSelecting = ref.watch(patruSelectionModeProvider);
-    final selectedIds = ref.watch(selectedPatruIdsProvider);
-    
-    final currentLocale = ref.watch(localeProvider);
+
     final primaryLang = ref.watch(kooliAchuMozhiProvider);
     final secondaryLang = primaryLang == 'Tamil' ? 'English' : 'Tamil';
 
@@ -153,41 +150,48 @@ class CoolieReceiptsPage extends ConsumerWidget {
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final patru = items[index];
-                  final isSelected = selectedIds.contains(patru.id);
-
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: _PatruCard(
-                      patru: patru,
-                      isDark: isDark,
-                      isSelecting: isSelecting,
-                      isSelected: isSelected,
-                      dateFormat: _dateFormat,
-                      currencyFormat: _currencyFormat,
-                      primaryLang: primaryLang,
-                      secondaryLang: secondaryLang,
-                      onTap: () {
-                        if (isSelecting) {
-                          _toggleSelection(ref, patru.id, selectedIds);
-                        } else {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  CoolieReceiptEditor(editingEntry: patru),
-                            ),
-                          );
-                        }
-                      },
-                      onLongPress: () {
-                        if (!isSelecting) {
-                          ref.read(patruSelectionModeProvider.notifier).state =
-                              true;
-                          ref.read(selectedPatruIdsProvider.notifier).state = {
-                            patru.id
-                          };
-                        }
-                      },
-                    ),
+                  return Consumer(
+                    builder: (context, ref, _) {
+                      final isSelecting = ref.watch(patruSelectionModeProvider);
+                      final isSelected = ref.watch(
+                        selectedPatruIdsProvider.select((ids) => ids.contains(patru.id)),
+                      );
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: _PatruCard(
+                          patru: patru,
+                          isDark: isDark,
+                          isSelecting: isSelecting,
+                          isSelected: isSelected,
+                          dateFormat: _dateFormat,
+                          currencyFormat: _currencyFormat,
+                          primaryLang: primaryLang,
+                          secondaryLang: secondaryLang,
+                          onTap: () {
+                            if (isSelecting) {
+                              final currentIds = ref.read(selectedPatruIdsProvider);
+                              _toggleSelection(ref, patru.id, currentIds);
+                            } else {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      CoolieReceiptEditor(editingEntry: patru),
+                                ),
+                              );
+                            }
+                          },
+                          onLongPress: () {
+                            if (!isSelecting) {
+                              ref.read(patruSelectionModeProvider.notifier).state =
+                                  true;
+                              ref.read(selectedPatruIdsProvider.notifier).state = {
+                                patru.id
+                              };
+                            }
+                          },
+                        ),
+                      );
+                    },
                   );
                 },
                 childCount: items.length,

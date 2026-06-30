@@ -34,10 +34,7 @@ class CoolieInvoicesPage extends ConsumerWidget {
     final pattiyalgalAsync = ref.watch(pattiyalgalProvider);
     final profilesAsync = ref.watch(kooliNiruvanaTharavugalListProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isSelecting = ref.watch(pattiyalSelectionModeProvider);
-    final selectedIds = ref.watch(selectedPattiyalIdsProvider);
 
-    final currentLocale = ref.watch(localeProvider);
     final primaryLang = ref.watch(kooliAchuMozhiProvider);
     final secondaryLang = primaryLang == 'Tamil' ? 'English' : 'Tamil';
 
@@ -155,41 +152,48 @@ class CoolieInvoicesPage extends ConsumerWidget {
               mobileItemHeight: 96,
               itemBuilder: (context, index) {
                 final pattiyal = items[index];
-                final isSelected = selectedIds.contains(pattiyal.id);
-
-                return _CooliePatrucheettuCard(
-                  index: index,
-                  pattiyal: pattiyal,
-                  isDark: isDark,
-                  isSelecting: isSelecting,
-                  isSelected: isSelected,
-                  dateFormat: _dateFormat,
-                  currencyFormat: _currencyFormat,
-                  primaryLang: primaryLang,
-                  secondaryLang: secondaryLang,
-                  onTap: () {
-                    if (isSelecting) {
-                      _toggleSelection(ref, pattiyal.id, selectedIds);
-                    } else {
-                      // Navigate to editor for editing
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => CoolieInvoiceEditor(
-                            editingEntry: pattiyal,
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  onLongPress: () {
-                    if (!isSelecting) {
-                      ref
-                          .read(pattiyalSelectionModeProvider.notifier)
-                          .state = true;
-                      ref
-                          .read(selectedPattiyalIdsProvider.notifier)
-                          .state = {pattiyal.id};
-                    }
+                return Consumer(
+                  builder: (context, ref, _) {
+                    final isSelecting = ref.watch(pattiyalSelectionModeProvider);
+                    final isSelected = ref.watch(
+                      selectedPattiyalIdsProvider.select((ids) => ids.contains(pattiyal.id)),
+                    );
+                    return _CooliePatrucheettuCard(
+                      index: index,
+                      pattiyal: pattiyal,
+                      isDark: isDark,
+                      isSelecting: isSelecting,
+                      isSelected: isSelected,
+                      dateFormat: _dateFormat,
+                      currencyFormat: _currencyFormat,
+                      primaryLang: primaryLang,
+                      secondaryLang: secondaryLang,
+                      onTap: () {
+                        if (isSelecting) {
+                          final currentIds = ref.read(selectedPattiyalIdsProvider);
+                          _toggleSelection(ref, pattiyal.id, currentIds);
+                        } else {
+                          // Navigate to editor for editing
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => CoolieInvoiceEditor(
+                                editingEntry: pattiyal,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      onLongPress: () {
+                        if (!isSelecting) {
+                          ref
+                              .read(pattiyalSelectionModeProvider.notifier)
+                              .state = true;
+                          ref
+                              .read(selectedPattiyalIdsProvider.notifier)
+                              .state = {pattiyal.id};
+                        }
+                      },
+                    );
                   },
                 );
               },

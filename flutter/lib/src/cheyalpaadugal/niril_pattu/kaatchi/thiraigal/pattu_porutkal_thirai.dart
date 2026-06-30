@@ -26,8 +26,7 @@ class SilkItemsPage extends ConsumerWidget {
     final secondaryLang = ref.watch(secondaryLanguageProvider);
     final isBilingual = ref.watch(bilingualProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isSelecting = ref.watch(porulSelectionModeProvider);
-    final selectedIds = ref.watch(selectedPorulIdsProvider);
+
 
     return porulgalAsync.when(
       loading: () => const SliverFillRemaining(
@@ -98,35 +97,43 @@ class SilkItemsPage extends ConsumerWidget {
                 mobileItemHeight: 100,
                 itemBuilder: (context, index) {
                   final porul = filtered[index];
-                  final isSelected = selectedIds.contains(porul.id);
 
-                  return _SilkPorulCard(
-                    index: index,
-                    porul: porul,
-                    primaryLang: primaryLang,
-                    secondaryLang: secondaryLang,
-                    isBilingual: isBilingual,
-                    isDark: isDark,
-                    isSelecting: isSelecting,
-                    isSelected: isSelected,
-                    onTap: () {
-                      if (isSelecting) {
-                        _toggleSelection(ref, porul.id, selectedIds);
-                      } else {
-                        NirilNav.push(
-                          context,
-                          SilkItemEditor(product: porul),
-                        );
-                      }
-                    },
-                    onLongPress: () {
-                      if (!isSelecting) {
-                        ref.read(porulSelectionModeProvider.notifier).state =
-                            true;
-                        ref.read(selectedPorulIdsProvider.notifier).state = {
-                          porul.id
-                        };
-                      }
+                  return Consumer(
+                    builder: (context, ref, _) {
+                      final isSelecting = ref.watch(porulSelectionModeProvider);
+                      final isSelected = ref.watch(
+                        selectedPorulIdsProvider.select((ids) => ids.contains(porul.id)),
+                      );
+                      return _SilkPorulCard(
+                        index: index,
+                        porul: porul,
+                        primaryLang: primaryLang,
+                        secondaryLang: secondaryLang,
+                        isBilingual: isBilingual,
+                        isDark: isDark,
+                        isSelecting: isSelecting,
+                        isSelected: isSelected,
+                        onTap: () {
+                          if (isSelecting) {
+                            final currentIds = ref.read(selectedPorulIdsProvider);
+                            _toggleSelection(ref, porul.id, currentIds);
+                          } else {
+                            NirilNav.push(
+                              context,
+                              SilkItemEditor(product: porul),
+                            );
+                          }
+                        },
+                        onLongPress: () {
+                          if (!isSelecting) {
+                            ref.read(porulSelectionModeProvider.notifier).state =
+                                true;
+                            ref.read(selectedPorulIdsProvider.notifier).state = {
+                              porul.id
+                            };
+                          }
+                        },
+                      );
                     },
                   );
                 },

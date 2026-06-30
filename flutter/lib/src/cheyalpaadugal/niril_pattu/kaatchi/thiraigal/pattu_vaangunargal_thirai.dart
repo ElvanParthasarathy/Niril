@@ -25,8 +25,7 @@ class SilkMerchantsPage extends ConsumerWidget {
     final primaryLang = ref.watch(primaryLanguageProvider);
     final secondaryLang = ref.watch(secondaryLanguageProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isSelecting = ref.watch(vaangunarSelectionModeProvider);
-    final selectedIds = ref.watch(selectedVaangunarIdsProvider);
+
 
     return vaangunargalAsync.when(
       loading: () => const SliverFillRemaining(
@@ -106,34 +105,42 @@ class SilkMerchantsPage extends ConsumerWidget {
                 mobileItemHeight: 100,
                 itemBuilder: (context, index) {
                   final vaangunar = filtered[index];
-                  final isSelected = selectedIds.contains(vaangunar.id);
 
-                  return _SilkVaangunarCard(
-                    index: index,
-                    vaangunar: vaangunar,
-                    primaryLang: primaryLang,
-                    secondaryLang: secondaryLang,
-                    isDark: isDark,
-                    isSelecting: isSelecting,
-                    isSelected: isSelected,
-                    onTap: () {
-                      if (isSelecting) {
-                        _toggleSelection(ref, vaangunar.id, selectedIds);
-                      } else {
-                        NirilNav.push(
-                          context,
-                          SilkMerchantEditor(vaangunar: vaangunar),
-                        );
-                      }
-                    },
-                    onLongPress: () {
-                      if (!isSelecting) {
-                        ref.read(vaangunarSelectionModeProvider.notifier).state =
-                            true;
-                        ref.read(selectedVaangunarIdsProvider.notifier).state = {
-                          vaangunar.id
-                        };
-                      }
+                  return Consumer(
+                    builder: (context, ref, _) {
+                      final isSelecting = ref.watch(vaangunarSelectionModeProvider);
+                      final isSelected = ref.watch(
+                        selectedVaangunarIdsProvider.select((ids) => ids.contains(vaangunar.id)),
+                      );
+                      return _SilkVaangunarCard(
+                        index: index,
+                        vaangunar: vaangunar,
+                        primaryLang: primaryLang,
+                        secondaryLang: secondaryLang,
+                        isDark: isDark,
+                        isSelecting: isSelecting,
+                        isSelected: isSelected,
+                        onTap: () {
+                          if (isSelecting) {
+                            final currentIds = ref.read(selectedVaangunarIdsProvider);
+                            _toggleSelection(ref, vaangunar.id, currentIds);
+                          } else {
+                            NirilNav.push(
+                              context,
+                              SilkMerchantEditor(vaangunar: vaangunar),
+                            );
+                          }
+                        },
+                        onLongPress: () {
+                          if (!isSelecting) {
+                            ref.read(vaangunarSelectionModeProvider.notifier).state =
+                                true;
+                            ref.read(selectedVaangunarIdsProvider.notifier).state = {
+                              vaangunar.id
+                            };
+                          }
+                        },
+                      );
                     },
                   );
                 },

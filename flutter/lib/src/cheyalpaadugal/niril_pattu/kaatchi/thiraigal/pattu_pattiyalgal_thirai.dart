@@ -34,10 +34,7 @@ class SilkInvoicesPage extends ConsumerWidget {
     final pattiyalgalAsync = ref.watch(pattiyalgalProvider);
     final profilesAsync = ref.watch(pattuNiruvanaTharavugalListProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isSelecting = ref.watch(pattiyalSelectionModeProvider);
-    final selectedIds = ref.watch(selectedPattiyalIdsProvider);
-    
-    final currentLocale = ref.watch(localeProvider);
+
     final primaryLang = ref.watch(silkMudhanmaiMozhiProvider);
     final secondaryLang = ref.watch(silkThunaiMozhiProvider);
 
@@ -156,50 +153,59 @@ class SilkInvoicesPage extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final pattiyal = items[index];
 
-                return _SilkPatrucheettuCard(
-                  index: index,
-                  pattiyal: pattiyal,
-                  isDark: isDark,
-                  isSelecting: isSelecting,
-                  isSelected: selectedIds.contains(pattiyal.id),
-                  dateFormat: _dateFormat,
-                  currencyFormat: _currencyFormat,
-                  primaryLang: primaryLang,
-                  secondaryLang: secondaryLang,
-                  onTap: () {
-                    if (isSelecting) {
-                      _toggleSelection(ref, pattiyal.id, selectedIds);
-                    } else {
-                      // Navigate to editor for editing
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => SilkInvoiceEditor(
-                            editingEntry: pattiyal,
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  onDuplicate: () {
-                    // Open editor with same data but no editingEntry (creates new)
-                    // We pass the entry as a "duplicate source" via a new constructor param
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => SilkInvoiceEditor(
-                          duplicateFrom: pattiyal,
-                        ),
-                      ),
+                return Consumer(
+                  builder: (context, ref, _) {
+                    final isSelecting = ref.watch(pattiyalSelectionModeProvider);
+                    final isSelected = ref.watch(
+                      selectedPattiyalIdsProvider.select((ids) => ids.contains(pattiyal.id)),
                     );
-                  },
-                  onLongPress: () {
-                    if (!isSelecting) {
-                      ref
-                          .read(pattiyalSelectionModeProvider.notifier)
-                          .state = true;
-                      ref
-                          .read(selectedPattiyalIdsProvider.notifier)
-                          .state = {pattiyal.id};
-                    }
+                    return _SilkPatrucheettuCard(
+                      index: index,
+                      pattiyal: pattiyal,
+                      isDark: isDark,
+                      isSelecting: isSelecting,
+                      isSelected: isSelected,
+                      dateFormat: _dateFormat,
+                      currencyFormat: _currencyFormat,
+                      primaryLang: primaryLang,
+                      secondaryLang: secondaryLang,
+                      onTap: () {
+                        if (isSelecting) {
+                          final currentIds = ref.read(selectedPattiyalIdsProvider);
+                          _toggleSelection(ref, pattiyal.id, currentIds);
+                        } else {
+                          // Navigate to editor for editing
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => SilkInvoiceEditor(
+                                editingEntry: pattiyal,
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      onDuplicate: () {
+                        // Open editor with same data but no editingEntry (creates new)
+                        // We pass the entry as a "duplicate source" via a new constructor param
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => SilkInvoiceEditor(
+                              duplicateFrom: pattiyal,
+                            ),
+                          ),
+                        );
+                      },
+                      onLongPress: () {
+                        if (!isSelecting) {
+                          ref
+                              .read(pattiyalSelectionModeProvider.notifier)
+                              .state = true;
+                          ref
+                              .read(selectedPattiyalIdsProvider.notifier)
+                              .state = {pattiyal.id};
+                        }
+                      },
+                    );
                   },
                 );
               },
