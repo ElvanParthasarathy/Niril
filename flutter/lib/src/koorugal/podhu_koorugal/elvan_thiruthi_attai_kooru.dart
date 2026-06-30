@@ -104,7 +104,7 @@ class ElvanUrupadiAttai extends StatelessWidget {
         color: isDark 
             ? cs.onSurface.withValues(alpha: 0.08) 
             : Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
       ),
       clipBehavior: Clip.antiAlias,
       margin: margin,
