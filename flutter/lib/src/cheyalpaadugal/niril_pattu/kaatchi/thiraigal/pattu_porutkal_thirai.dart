@@ -296,7 +296,6 @@ class _SilkPorulCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }

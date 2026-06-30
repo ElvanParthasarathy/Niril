@@ -307,7 +307,6 @@ class _SilkVaangunarCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }

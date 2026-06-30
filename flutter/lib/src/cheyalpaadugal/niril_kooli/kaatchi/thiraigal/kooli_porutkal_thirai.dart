@@ -255,7 +255,6 @@ class _CooliePorulCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }

@@ -288,7 +288,6 @@ class _CoolieVaangunarCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 }

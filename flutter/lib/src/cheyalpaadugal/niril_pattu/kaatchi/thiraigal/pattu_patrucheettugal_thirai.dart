@@ -364,7 +364,6 @@ class _PatruCard extends ConsumerWidget {
             ],
           ],
         ),
-      ),
-    );
+      );
   }
 }

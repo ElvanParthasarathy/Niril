@@ -382,7 +382,6 @@ class _SilkPatrucheettuCard extends StatelessWidget {
               ),
           ],
         ),
-      ),
-    );
+      );
   }
 }

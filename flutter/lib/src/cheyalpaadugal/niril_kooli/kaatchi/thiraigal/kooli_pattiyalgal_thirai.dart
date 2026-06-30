@@ -341,7 +341,6 @@ class _CooliePatrucheettuCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
+      );
+    }
 }
