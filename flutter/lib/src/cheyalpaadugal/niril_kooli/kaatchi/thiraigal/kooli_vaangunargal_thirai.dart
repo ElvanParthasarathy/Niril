@@ -94,15 +94,6 @@ class CoolieMerchantsPage extends ConsumerWidget {
           sliver: SliverMainAxisGroup(
             slivers: [
               // ── Selection Bar ──
-              if (isSelecting)
-                SliverToBoxAdapter(
-                  child: _SelectionBar(
-                    selectedCount: selectedIds.length,
-                    isDark: isDark,
-                    onSelectAll: () {
-                      ref.read(selectedVaangunarIdsProvider.notifier).state =
-                          filtered.map((v) => v.id).toSet();
-                    },
                     onDelete: () {
                       _showBulkDeleteConfirm(
                           context, ref, selectedIds.toList());
@@ -176,79 +167,8 @@ class CoolieMerchantsPage extends ConsumerWidget {
     }
   }
 
-  void _showBulkDeleteConfirm(
-      BuildContext context, WidgetRef ref, List<int> ids) {
-    if (ids.isEmpty) return;
-
-    showElvanActionSheet(
-      context: context,
-      title: '${ids.length} ${K.vaangunarAzhikkappattadhu.tr(context, ref)}',
-      cancelText: K.kaividuPtn.tr(context, ref),
-      confirmText: K.neekkuPtn.tr(context, ref),
-      confirmColor: Colors.red,
-      onConfirm: () {
-        ref.read(vaangunarKalanjiyamProvider).bulkDeleteVaangunargal(ids);
-        ref.invalidate(vaangunargalProvider);
-        ref.read(vaangunarSelectionModeProvider.notifier).state = false;
-        ref.read(selectedVaangunarIdsProvider.notifier).state = {};
-      },
-    );
-  }
 }
 
-// ── Selection Bar Widget ────────────────────────────────────────────────────
-
-class _SelectionBar extends ConsumerWidget {
-  const _SelectionBar({
-    required this.selectedCount,
-    required this.isDark,
-    required this.onSelectAll,
-    required this.onDelete,
-    required this.onCancel,
-  });
-
-  final int selectedCount;
-  final bool isDark;
-  final VoidCallback onSelectAll;
-  final VoidCallback onDelete;
-  final VoidCallback onCancel;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.08)
-            : Colors.black.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          Text(
-            '$selectedCount ${K.thaerndhedu.tr(context, ref)}',
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-          const Spacer(),
-          TextButton(
-            onPressed: onSelectAll,
-            child: Text(K.anaithaiyumTheriPtn.tr(context, ref)),
-          ),
-          IconButton(
-            icon: Icon(CupertinoIcons.delete,
-                color: Colors.red.withValues(alpha: 0.8), size: 20),
-            onPressed: onDelete,
-          ),
-          IconButton(
-            icon: const Icon(CupertinoIcons.xmark, size: 18),
-            onPressed: onCancel,
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 // ── Coolie Merchant Card ────────────────────────────────────────────────────
 

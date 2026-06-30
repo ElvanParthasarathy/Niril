@@ -4,6 +4,7 @@ import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../koorugal/pattu_mugappu_attai.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -52,10 +53,10 @@ class SilkHomePage extends ConsumerWidget {
       data: (pattiyalgal) {
         final profiles = profilesAsync;
 
-        // Sort by date descending, take top 6
+        // Sort by date descending, take top 8
         final sorted = [...pattiyalgal]
           ..sort((a, b) => b.pattiyalNaal.compareTo(a.pattiyalNaal));
-        final recentBills = sorted.take(6).toList();
+        final recentBills = sorted.take(8).toList();
 
         return SliverPadding(
           padding: const EdgeInsets.only(left: 16, right: 16, bottom: 120),
@@ -249,7 +250,7 @@ class SilkHomePage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: ElvanRecentCard(
+                child: PattuMugappuAttai(
                   index: i,
                   pattiyal: items[i],
                   onTap: () => _openEditor(context, items[i]),
@@ -258,7 +259,7 @@ class SilkHomePage extends ConsumerWidget {
               const SizedBox(width: 16),
               if (i + 1 < items.length)
                 Expanded(
-                  child: ElvanRecentCard(
+                  child: PattuMugappuAttai(
                     index: i + 1,
                     pattiyal: items[i + 1],
                     onTap: () => _openEditor(context, items[i + 1]),
@@ -287,7 +288,7 @@ class SilkHomePage extends ConsumerWidget {
         children: items.asMap().entries.map((entry) {
           return Padding(
             padding: const EdgeInsets.only(bottom: 16),
-            child: ElvanRecentCard(
+            child: PattuMugappuAttai(
               index: entry.key,
               pattiyal: entry.value,
               onTap: () => _openEditor(context, entry.value),

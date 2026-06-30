@@ -90,15 +90,6 @@ class SilkItemsPage extends ConsumerWidget {
           sliver: SliverMainAxisGroup(
             slivers: [
               // ── Selection Bar ──
-              if (isSelecting)
-                SliverToBoxAdapter(
-                  child: _SelectionBar(
-                    selectedCount: selectedIds.length,
-                    isDark: isDark,
-                    onSelectAll: () {
-                      ref.read(selectedPorulIdsProvider.notifier).state =
-                          filtered.map((p) => p.id).toSet();
-                    },
                     onDelete: () {
                       _showBulkDeleteConfirm(
                           context, ref, selectedIds.toList());
@@ -173,118 +164,8 @@ class SilkItemsPage extends ConsumerWidget {
     }
   }
 
-  void _showBulkDeleteConfirm(
-      BuildContext context, WidgetRef ref, List<int> ids) {
-    if (ids.isEmpty) return;
-
-    showElvanActionSheet(
-      context: context,
-      title: '${ids.length} ${K.porulAzhikkappattadhu.tr(context, ref)}',
-      cancelText: K.kaividuPtn.tr(context, ref),
-      confirmText: K.neekkuPtn.tr(context, ref),
-      confirmColor: Colors.red,
-      onConfirm: () {
-        ref.read(porulKalanjiyamProvider).bulkDeletePorulgal(ids);
-        ref.invalidate(porulgalProvider);
-        ref.read(porulSelectionModeProvider.notifier).state = false;
-        ref.read(selectedPorulIdsProvider.notifier).state = {};
-      },
-    );
-  }
 }
 
-// ── Selection Bar Widget ────────────────────────────────────────────────────
-
-class _SelectionBar extends ConsumerWidget {
-  const _SelectionBar({
-    required this.selectedCount,
-    required this.isDark,
-    required this.onSelectAll,
-    required this.onDelete,
-    required this.onCancel,
-  });
-
-  final int selectedCount;
-  final bool isDark;
-  final VoidCallback onSelectAll;
-  final VoidCallback onDelete;
-  final VoidCallback onCancel;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        decoration: BoxDecoration(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.06)
-              : Colors.black.withValues(alpha: 0.04),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: onSelectAll,
-              child: Row(
-                children: [
-                  Icon(
-                    selectedCount > 0
-                        ? CupertinoIcons.checkmark_square_fill
-                        : CupertinoIcons.square,
-                    size: 22,
-                    color: selectedCount > 0
-                        ? Theme.of(context).colorScheme.primary
-                        : (isDark ? Colors.white38 : Colors.black38),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '$selectedCount ${K.thaerndhedu.tr(context, ref)}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: isDark ? Colors.white70 : Colors.black54,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const Spacer(),
-            GestureDetector(
-              onTap: onCancel,
-              child: Icon(
-                CupertinoIcons.xmark_circle_fill,
-                size: 24,
-                color: isDark ? Colors.white38 : Colors.black38,
-              ),
-            ),
-            const SizedBox(width: 12),
-            GestureDetector(
-              onTap: selectedCount > 0 ? onDelete : null,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: selectedCount > 0
-                      ? Colors.red.withValues(alpha: 0.12)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Icon(
-                  CupertinoIcons.trash,
-                  size: 20,
-                  color: selectedCount > 0
-                      ? Colors.red
-                      : (isDark ? Colors.white24 : Colors.black26),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 // ── Product Card Widget ─────────────────────────────────────────────────────
 
