@@ -57,26 +57,26 @@ class KooliUrupadiKooru extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Item #N header + trash
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 24, bottom: 2),
-                child: Text('${K.porul.tr(context, ref)} #${index + 1}',
-                    style: tt.labelMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: cs.onSurface.withValues(alpha: 0.5),
-                    )),
-              ),
-              Opacity(
-                opacity: itemCount > 1 ? 1.0 : 0.0,
-                child: IgnorePointer(
-                  ignoring: itemCount <= 1,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      right: MediaQuery.sizeOf(context).width >= 600 ? 48 : 12, 
-                      bottom: 2
-                    ),
+          Padding(
+            padding: EdgeInsets.only(
+              left: 24, 
+              right: MediaQuery.sizeOf(context).width >= 600 ? 48 : 12,
+              bottom: 2,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${K.porul.tr(context, ref)} #${index + 1}',
+                  style: tt.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: cs.onSurface.withValues(alpha: 0.5),
+                  ),
+                ),
+                Opacity(
+                  opacity: itemCount > 1 ? 1.0 : 0.0,
+                  child: IgnorePointer(
+                    ignoring: itemCount <= 1,
                     child: IconButton(
                       icon: const Icon(CupertinoIcons.delete, size: 20),
                       color: cs.onSurfaceVariant,
@@ -89,8 +89,8 @@ class KooliUrupadiKooru extends ConsumerWidget {
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           
           ElvanUrupadiAttai(

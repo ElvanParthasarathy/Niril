@@ -37,23 +37,23 @@ class KooliPiraVarivuKooru extends ConsumerWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 24, bottom: 6),
-                child: Text('${K.pira.tr(context, ref)} #${index + 1}',
-                    style: tt.labelMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: cs.onSurfaceVariant,
-                    )),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  right: MediaQuery.sizeOf(context).width >= 600 ? 48 : 12, 
-                  bottom: 12
+          Padding(
+            padding: EdgeInsets.only(
+              left: 24, 
+              right: MediaQuery.sizeOf(context).width >= 600 ? 48 : 12,
+              bottom: 6,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${K.pira.tr(context, ref)} #${index + 1}',
+                  style: tt.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: cs.onSurfaceVariant,
+                  ),
                 ),
-                child: IconButton(
+                IconButton(
                   icon: const Icon(CupertinoIcons.delete, size: 20),
                   color: cs.onSurfaceVariant,
                   style: IconButton.styleFrom(
@@ -63,8 +63,8 @@ class KooliPiraVarivuKooru extends ConsumerWidget {
                   ),
                   onPressed: onDeleted,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 4),
           ElvanUrupadiAttai(
