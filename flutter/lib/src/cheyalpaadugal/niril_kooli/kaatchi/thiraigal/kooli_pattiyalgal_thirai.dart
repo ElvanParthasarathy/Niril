@@ -281,17 +281,17 @@ class _CooliePatrucheettuCard extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: (isSelecting && isSelected)
-                    ? Theme.of(context).colorScheme.primary
+                    ? (isDark ? Colors.white : Colors.black)
                     : (isDark
                         ? Colors.white.withValues(alpha: 0.12)
                         : Colors.black.withValues(alpha: 0.08)),
               ),
               alignment: Alignment.center,
               child: (isSelecting && isSelected)
-                  ? const Icon(
+                  ? Icon(
                       CupertinoIcons.checkmark_alt,
                       size: 16,
-                      color: Colors.white,
+                      color: isDark ? Colors.black : Colors.white,
                     )
                   : Text(
                       (index + 1).toString().padLeft(2, '0'),

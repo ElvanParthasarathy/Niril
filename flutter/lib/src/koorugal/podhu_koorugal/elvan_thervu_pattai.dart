@@ -49,9 +49,7 @@ class ElvanThervuPattai extends ConsumerWidget {
                   : K.anaithaiyumTheriPtn.tr(context, ref),
               onTap: onSelectAll,
               isDark: isDark,
-              activeColor: selectedCount > 0
-                  ? Theme.of(context).colorScheme.primary
-                  : null,
+              isActive: selectedCount > 0,
             ),
             _buildAction(
               context: context,
@@ -60,7 +58,6 @@ class ElvanThervuPattai extends ConsumerWidget {
               label: K.neekkuPtn.tr(context, ref),
               onTap: selectedCount > 0 ? onDelete : null,
               isDark: isDark,
-              activeColor: Colors.redAccent,
               isDisabled: selectedCount == 0,
             ),
             _buildAction(
@@ -84,12 +81,12 @@ class ElvanThervuPattai extends ConsumerWidget {
     required String label,
     required VoidCallback? onTap,
     required bool isDark,
-    Color? activeColor,
+    bool isActive = false,
     bool isDisabled = false,
   }) {
     final color = isDisabled
         ? (isDark ? Colors.white24 : Colors.black26)
-        : (activeColor ?? (isDark ? Colors.white : Colors.black87));
+        : (isDark ? Colors.white : Colors.black87);
 
     const double iconSize = 23.0;
     const double fontSize = 9.5;
@@ -114,7 +111,7 @@ class ElvanThervuPattai extends ConsumerWidget {
                   label,
                   style: TextStyle(
                     fontSize: fontSize,
-                    fontWeight: activeColor != null ? FontWeight.w600 : FontWeight.w400,
+                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
                     color: color,
                     height: 1.2,
                   ),

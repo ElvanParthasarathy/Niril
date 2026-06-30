@@ -285,7 +285,7 @@ class _PatruCard extends ConsumerWidget {
                     : CupertinoIcons.circle,
                 size: 22,
                 color: isSelected
-                    ? Theme.of(context).colorScheme.primary
+                    ? (isDark ? Colors.white : Colors.black)
                     : (isDark ? Colors.white30 : Colors.black26),
               ),
               const SizedBox(width: 12),
