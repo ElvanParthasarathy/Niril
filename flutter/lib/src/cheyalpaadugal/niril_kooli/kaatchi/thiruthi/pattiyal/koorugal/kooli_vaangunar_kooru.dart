@@ -82,28 +82,26 @@ class KooliVaangunarKooru extends ConsumerWidget {
                               ? OruMozhiVaangunarUdhavi.thunaiPeyar(selectedVaangunar!, kooliLang) 
                               : OruMozhiVaangunarUdhavi.thunaiPeyarFromMap(selectedVaangunarPeyarMap, kooliLang);
 
+                      final titleName = secondaryName.isNotEmpty ? secondaryName : primaryName;
+                      final primaryAddress = _buildAddressLines(selectedVaangunar!, kooliLang, tt, cs);
+                      final secondaryAddress = _buildAddressLines(selectedVaangunar!, thunaiLang, tt, cs);
+
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            primaryName,
+                            titleName,
                             style: tt.bodyLarge?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          ..._buildAddressLines(selectedVaangunar!, kooliLang, tt, cs),
+                          ...primaryAddress,
                           
-                          if (secondaryName.isNotEmpty) ...[
-                            const SizedBox(height: 12),
-                            Text(
-                              secondaryName,
-                              style: tt.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w500,
-                                color: cs.onSurfaceVariant,
-                              ),
-                            ),
+                          // Add a small spacing if there are secondary address lines
+                          if (secondaryAddress.isNotEmpty) ...[
+                            const SizedBox(height: 6),
+                            ...secondaryAddress,
                           ],
-                          ..._buildAddressLines(selectedVaangunar!, thunaiLang, tt, cs),
                         ],
                       );
                     },
