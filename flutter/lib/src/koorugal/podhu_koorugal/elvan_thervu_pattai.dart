@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../adippadai/mozhiyaakkam/k.dart';
 import '../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../cheyalpaadugal/chattagam/kaatchi/kaippaesi/elvan_chattagam.dart';
+import 'elvan_kizh_pattai_base.dart';
 
 /// A shared bulk selection action bar used across list screens.
 class ElvanThervuPattai extends ConsumerWidget {
@@ -28,29 +29,9 @@ class ElvanThervuPattai extends ConsumerWidget {
     final bool effectiveExpanded = ElvanOverlayState.of(context)?.isExpanded ?? isExpanded;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      height: 60,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      decoration: BoxDecoration(
-        color: isDark
-            ? const Color(0xFF1E1E1E).withValues(alpha: 0.88)
-            : const Color(0xFFFFFFFF).withValues(alpha: 0.88),
-        borderRadius: BorderRadius.circular(100),
-        border: Border.all(
-          color: isDark
-              ? const Color(0xFF333333).withValues(alpha: 0.6)
-              : const Color(0xFFFFFFFF).withValues(alpha: 0.6),
-          width: 0.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 16,
-            spreadRadius: 0,
-            offset: const Offset(0, 4),
-            color: Colors.black.withValues(alpha: 0.05),
-          ),
-        ],
-      ),
+    return ElvanKizhPattaiBase(
+      horizontalPadding: 16.0,
+      verticalPadding: 6.0,
       child: AnimatedOpacity(
         duration: const Duration(milliseconds: 200),
         opacity: effectiveExpanded ? 1.0 : 0.0,

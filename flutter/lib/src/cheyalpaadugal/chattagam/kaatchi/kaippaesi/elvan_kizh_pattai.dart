@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../koorugal/podhu_koorugal/elvan_kizh_pattai_base.dart';
+
 // ─────────────────────────────────────────────────────────────────────────────
 // DATA MODEL — Fully decoupled nav item descriptor
 // ─────────────────────────────────────────────────────────────────────────────
@@ -130,33 +132,10 @@ class _ElvanNavbarState extends State<ElvanNavbar> {
           : 1.0, // Zoom effect matching Kotlin maxScale logic
       duration: const Duration(milliseconds: 150),
       curve: Curves.easeOutCubic,
-      child: Container(
-        height: 60,
-        decoration: BoxDecoration(
-          // ── Translucent background — content is clearly visible beneath ──
-          color: isDark
-              ? const Color(0xFF1E1E1E).withValues(alpha: 0.88)
-              : const Color(0xFFFFFFFF).withValues(alpha: 0.88),
-          borderRadius: BorderRadius.circular(100),
-          border: Border.all(
-            color: isDark
-                ? const Color(0xFF333333).withValues(alpha: 0.15)
-                : const Color(0xFFFFFFFF).withValues(alpha: 0.6),
-            width: 0.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              blurRadius: 16,
-              spreadRadius: 0,
-              offset: const Offset(0, 4),
-              color: Colors.black.withValues(alpha: 0.05),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: horizontalPadding, vertical: verticalPadding),
-          child: AnimatedOpacity(
+      child: ElvanKizhPattaiBase(
+        horizontalPadding: horizontalPadding,
+        verticalPadding: verticalPadding,
+        child: AnimatedOpacity(
             duration: const Duration(milliseconds: 150),
             opacity: widget.hideContent ? 0.0 : 1.0,
             child: GestureDetector(
