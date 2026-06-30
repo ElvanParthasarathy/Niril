@@ -219,27 +219,9 @@ class _ElvanThiruthiUlleeduState extends State<ElvanThiruthiUlleedu> {
           duration: const Duration(milliseconds: 150),
           curve: Curves.easeInOut,
           decoration: BoxDecoration(
-            color: widget.backgroundColor ?? (() {
-              if (cs.brightness == Brightness.dark) {
-                if (isInsideCard) {
-                  return _isFocused 
-                      ? cs.onSurface.withValues(alpha: 0.16) 
-                      : cs.onSurface.withValues(alpha: 0.12);
-                } else {
-                  return _isFocused 
-                      ? cs.onSurface.withValues(alpha: 0.12) 
-                      : cs.onSurface.withValues(alpha: 0.08);
-                }
-              } else {
-                if (isInsideCard) {
-                  return _isFocused 
-                      ? Colors.black.withValues(alpha: 0.02) 
-                      : Colors.black.withValues(alpha: 0.04);
-                } else {
-                  return Colors.white;
-                }
-              }
-            })(),
+            color: widget.backgroundColor ?? (_isFocused 
+                ? (cs.brightness == Brightness.light && !isInsideCard ? Colors.white : cs.onSurface.withValues(alpha: 0.12))
+                : (cs.brightness == Brightness.light && !isInsideCard ? Colors.white : cs.onSurface.withValues(alpha: 0.08))),
             borderRadius: BorderRadius.circular(borderRadius),
           ),
           clipBehavior: Clip.antiAlias,

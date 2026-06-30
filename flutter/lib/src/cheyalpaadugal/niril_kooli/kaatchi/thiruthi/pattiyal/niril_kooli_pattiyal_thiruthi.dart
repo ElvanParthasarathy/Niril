@@ -528,6 +528,60 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
                 displayChild: const SizedBox(),
                 initiallyExpanded: true,
                 children: [
+                  ElvanFullWidth(
+                    child: ElvanAsaiPattiyal(
+                      itemCount: _piraVarivugal.length,
+                      itemBuilder: (context, i) {
+                        return KooliPiraVarivuKooru(
+                          key: ValueKey('pira_$i'),
+                          index: i,
+                          charge: _piraVarivugal[i],
+                          onUpdated: (updated) {
+                            setState(() {
+                              _piraVarivugal = List.from(_piraVarivugal)..[i] = updated;
+                              _hasUnsavedChanges = true;
+                            });
+                            _recalculateQuiet();
+                          },
+                          onDeleted: () {
+                            setState(() {
+                              _piraVarivugal = List.from(_piraVarivugal)..removeAt(i);
+                              _hasUnsavedChanges = true;
+                            });
+                            _recalculateQuiet();
+                          },
+                          onRecalculate: _recalculateQuiet,
+                        );
+                      },
+                    ),
+                  ),
+                  ElvanFullWidth(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              _piraVarivugal = [..._piraVarivugal, const PiraVarivu()];
+                              _hasUnsavedChanges = true;
+                            });
+                            _recalculateQuiet();
+                          },
+                          icon: const Icon(Icons.add, size: 20),
+                          label: Text('${K.pira.tr(context, ref)} ${K.chaerPtn.tr(context, ref)}', style: const TextStyle(fontWeight: FontWeight.w600)),
+                          style: TextButton.styleFrom(
+                            foregroundColor: Theme.of(context).colorScheme.onSurface,
+                            backgroundColor: Theme.of(context).brightness == Brightness.dark 
+                                ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08) 
+                                : Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                            shape: const StadiumBorder(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   // Extra Charges
                   KooliMelthogaiKooru(
                     setharamCtrl: _setharamCtrl,
