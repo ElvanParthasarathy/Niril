@@ -87,6 +87,16 @@ class _PayanarAmaippugalPageState extends ConsumerState<PayanarAmaippugalPage> {
       lastDate: DateTime.now(),
       helpText: '', // Removes the unnecessary 'Select date' text
       fieldLabelText: '', // Removes the 'Enter Date' label in input mode
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+              surfaceTint: Colors.transparent,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
