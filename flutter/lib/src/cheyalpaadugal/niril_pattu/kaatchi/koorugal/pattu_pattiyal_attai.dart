@@ -6,19 +6,27 @@ import 'package:intl/intl.dart';
 import '../../../../adippadai/tharavuru/uruvugal.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_pothu_attai.dart';
-/// Pixel-perfect port of React's ElvanCard + renderRecentItem for Silk mode.
-/// Shows: index circle + customer name + invoice # + date + amount.
-class PattuMugappuAttai extends ConsumerWidget {
-  const PattuMugappuAttai({
+
+/// Dedicated reusable Invoice Card for Silk (Pattu) Invoice Lists
+class PattuPattiyalAttai extends ConsumerWidget {
+  const PattuPattiyalAttai({
     super.key,
     required this.index,
     required this.pattiyal,
     required this.onTap,
+    this.isSelecting = false,
+    this.isSelected = false,
+    this.onLongPress,
+    this.onDuplicate,
   });
 
   final int index;
   final PattiyalTharavuru pattiyal;
   final VoidCallback onTap;
+  final bool isSelecting;
+  final bool isSelected;
+  final VoidCallback? onLongPress;
+  final VoidCallback? onDuplicate;
 
   static final _dateFormat = DateFormat('dd/MM/yyyy');
   static final _currencyFormat =
@@ -39,31 +47,41 @@ class PattuMugappuAttai extends ConsumerWidget {
 
     return ElvanPothuAttai(
       onTap: onTap,
+      onLongPress: onLongPress,
+      isSelected: isSelected,
       padding: const EdgeInsets.all(16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Index circle
+          // Index circle / Selection checkbox
           Container(
             width: 28,
             height: 28,
             margin: const EdgeInsets.only(top: 1),
             decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.12)
-                  : Colors.black.withValues(alpha: 0.08),
+              color: (isSelecting && isSelected)
+                  ? (isDark ? Colors.white : Colors.black)
+                  : (isDark
+                      ? Colors.white.withValues(alpha: 0.12)
+                      : Colors.black.withValues(alpha: 0.08)),
               shape: BoxShape.circle,
             ),
             child: Center(
-              child: Text(
-                (index + 1).toString().padLeft(2, '0'),
-                style: TextStyle(
-                  fontSize: 11.2,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : Colors.black,
-                  height: 1,
-                ),
-              ),
+              child: (isSelecting && isSelected)
+                  ? Icon(
+                      CupertinoIcons.checkmark_alt,
+                      size: 16,
+                      color: isDark ? Colors.black : Colors.white,
+                    )
+                  : Text(
+                      (index + 1).toString().padLeft(2, '0'),
+                      style: TextStyle(
+                        fontSize: 11.2,
+                        fontWeight: FontWeight.w800,
+                        color: isDark ? Colors.white : Colors.black,
+                        height: 1,
+                      ),
+                    ),
             ),
           ),
           const SizedBox(width: 12),
@@ -137,9 +155,36 @@ class PattuMugappuAttai extends ConsumerWidget {
               ],
             ),
           ),
+          if (onDuplicate != null && !isSelecting)
+            PopupMenuButton<String>(
+              icon: Icon(
+                Icons.more_vert,
+                size: 20,
+                color: isDark ? Colors.white38 : Colors.black38,
+              ),
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              itemBuilder: (_) => [
+                const PopupMenuItem(
+                  value: 'duplicate',
+                  child: Row(
+                    children: [
+                      Icon(Icons.copy_outlined, size: 18),
+                      SizedBox(width: 8),
+                      Text('Duplicate'),
+                    ],
+                  ),
+                ),
+              ],
+              onSelected: (value) {
+                if (value == 'duplicate') onDuplicate!();
+              },
+            ),
         ],
       ),
     );
   }
 }
-

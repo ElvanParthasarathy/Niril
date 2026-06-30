@@ -19,6 +19,7 @@ import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_pothu_attai.dart';
 import '../thiruthi/pattiyal/niril_kooli_pattiyal_thiruthi.dart';
 import '../koorugal/elvan_kooli_tharavu_pattiyal.dart';
+import '../koorugal/kooli_pattiyal_attai.dart';
 
 /// Coolie invoice list — real DB-backed view.
 /// Shows invoices grouped by business profile with search, selection, and
@@ -96,16 +97,11 @@ class CoolieInvoicesPage extends ConsumerWidget {
         );
       },
       cardBuilder: (context, ref, p, index, isSelecting, isSelected, onTap, onLongPress) {
-        return _CooliePatrucheettuCard(
+        return KooliPattiyalAttai(
           index: index,
           pattiyal: p,
-          isDark: isDark,
           isSelecting: isSelecting,
           isSelected: isSelected,
-          dateFormat: _dateFormat,
-          currencyFormat: _currencyFormat,
-          primaryLang: primaryLang,
-          secondaryLang: secondaryLang,
           onTap: onTap,
           onLongPress: onLongPress,
         );
@@ -114,125 +110,3 @@ class CoolieInvoicesPage extends ConsumerWidget {
   }
 }
 
-// ── Coolie Invoice Card ─────────────────────────────────────────────────────
-
-class _CooliePatrucheettuCard extends StatelessWidget {
-  const _CooliePatrucheettuCard({
-    required this.index,
-    required this.pattiyal,
-    required this.isDark,
-    required this.isSelecting,
-    required this.isSelected,
-    required this.dateFormat,
-    required this.currencyFormat,
-    required this.primaryLang,
-    required this.secondaryLang,
-    required this.onTap,
-    required this.onLongPress,
-  });
-
-  final int index;
-  final PattiyalTharavuru pattiyal;
-  final bool isDark;
-  final bool isSelecting;
-  final bool isSelected;
-  final DateFormat dateFormat;
-  final NumberFormat currencyFormat;
-  final String primaryLang;
-  final String secondaryLang;
-  final VoidCallback onTap;
-  final VoidCallback onLongPress;
-
-  @override
-  Widget build(BuildContext context) {
-    final amountStr = currencyFormat.format(pattiyal.mothaThogai);
-
-    return ElvanPothuAttai(
-      onTap: onTap,
-      onLongPress: onLongPress,
-      isSelected: isSelected,
-      padding: const EdgeInsets.all(16),
-      borderRadius: 24.0,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-            // Index circle / selection checkbox
-            Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: (isSelecting && isSelected)
-                    ? (isDark ? Colors.white : Colors.black)
-                    : (isDark
-                        ? Colors.white.withValues(alpha: 0.12)
-                        : Colors.black.withValues(alpha: 0.08)),
-              ),
-              alignment: Alignment.center,
-              child: (isSelecting && isSelected)
-                  ? Icon(
-                      CupertinoIcons.checkmark_alt,
-                      size: 16,
-                      color: isDark ? Colors.black : Colors.white,
-                    )
-                  : Text(
-                      (index + 1).toString().padLeft(2, '0'),
-                      style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 11.2,
-                        color: isDark ? Colors.white : Colors.black,
-                        height: 1,
-                      ),
-                    ),
-            ),
-            const SizedBox(width: 12),
-            // Content column
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Row 1: Customer name (primary)
-                  Text(
-                    pattiyal.vaangunarPeyar[primaryLang]?.isNotEmpty == true
-                        ? pattiyal.vaangunarPeyar[primaryLang]!
-                        : pattiyal.vaangunarPeyar[secondaryLang] ?? '',
-                    style: const TextStyle(
-                      fontSize: 15.2,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  // Row 2: placeholder (no secondary name yet)
-                  // Row 3: Bill number • date
-                  const SizedBox(height: 4),
-                  Text(
-                    '${pattiyal.patrucheettuEn} • ${dateFormat.format(pattiyal.pattiyalNaal)}',
-                    style: TextStyle(
-                      fontSize: 13.6,
-                      color: isDark ? Colors.white38 : Colors.black38,
-                    ),
-                  ),
-                  // Row 4: Amount
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Spacer(),
-                      Text(
-                        amountStr,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w800,
-                          fontSize: amountStr.length > 11 ? 12.8 : 15.2,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-}

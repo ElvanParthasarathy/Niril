@@ -56,30 +56,30 @@ class KooliMugappuAttai extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Index circle
-                    Container(
-                      width: 28,
-                      height: 28,
-                      margin: const EdgeInsets.only(top: 1),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.12)
-                            : Colors.black.withValues(alpha: 0.08),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Text(
-                          (index + 1).toString().padLeft(2, '0'),
-                          style: TextStyle(
-                            fontSize: 11.2,
-                            fontWeight: FontWeight.w800,
-                            color: isDark ? Colors.white : Colors.black,
-                            height: 1,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    // Content
+          Container(
+            width: 28,
+            height: 28,
+            margin: const EdgeInsets.only(top: 1),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.12)
+                  : Colors.black.withValues(alpha: 0.08),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                (index + 1).toString().padLeft(2, '0'),
+                style: TextStyle(
+                  fontSize: 11.2,
+                  fontWeight: FontWeight.w800,
+                  color: isDark ? Colors.white : Colors.black,
+                  height: 1,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Content
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
