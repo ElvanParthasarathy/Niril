@@ -176,6 +176,7 @@ class _ElvanThiruthiUlleeduState extends State<ElvanThiruthiUlleedu> {
             if (widget.suffixIcon != null) ...[
               const SizedBox(width: 8),
               widget.suffixIcon!,
+              const SizedBox(width: 16),
             ] else
               const SizedBox(width: 20),
           ],
