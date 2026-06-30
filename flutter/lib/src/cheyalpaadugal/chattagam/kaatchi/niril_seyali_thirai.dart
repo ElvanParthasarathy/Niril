@@ -243,18 +243,18 @@ class _NirilSeyaliThiraiState extends ConsumerState<NirilSeyaliThirai> {
 
         // If selection mode is active, intercept back to clear selection
         final isPattiyalSelecting = ref.read(pattiyalSelectionModeProvider);
-        final isPatrucheettuSelecting = ref.read(patrucheettuSelectionModeProvider);
+        final isPatruSelecting = ref.read(patruSelectionModeProvider);
         final isPorulSelecting = ref.read(porulSelectionModeProvider);
         final isVaangunarSelecting = ref.read(vaangunarSelectionModeProvider);
 
-        if (isPattiyalSelecting || isPatrucheettuSelecting || isPorulSelecting || isVaangunarSelecting) {
+        if (isPattiyalSelecting || isPatruSelecting || isPorulSelecting || isVaangunarSelecting) {
           ref.read(pattiyalSelectionModeProvider.notifier).state = false;
-          ref.read(patrucheettuSelectionModeProvider.notifier).state = false;
+          ref.read(patruSelectionModeProvider.notifier).state = false;
           ref.read(porulSelectionModeProvider.notifier).state = false;
           ref.read(vaangunarSelectionModeProvider.notifier).state = false;
           
           ref.read(selectedPattiyalIdsProvider.notifier).state = {};
-          ref.read(selectedPatrucheettuIdsProvider.notifier).state = {};
+          ref.read(selectedPatruIdsProvider.notifier).state = {};
           ref.read(selectedPorulIdsProvider.notifier).state = {};
           ref.read(selectedVaangunarIdsProvider.notifier).state = {};
           return; // Exit selection mode without navigating back
