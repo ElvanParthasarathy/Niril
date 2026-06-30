@@ -535,6 +535,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
                 onNotification: _handleScrollNotification,
                 child: CupertinoScrollbar(
                   controller: _scrollController,
+                  thumbVisibility: false, // Forces auto-hide on all platforms (like Apple)
                   child: ElvanPageContent(
                     scrollController: _scrollController,
                     title: widget.title,
