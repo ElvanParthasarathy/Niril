@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
+import '../../../../koorugal/ulleedugal/elvan_thiruthi_pill_vadivu.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ElvanSettingsAnimatedExpand — Smoothly expands and fades between view and edit
@@ -127,36 +128,12 @@ class ElvanSettingsTextField extends StatelessWidget {
           style: const TextStyle(fontSize: 14),
           maxLines: maxLines,
           minLines: maxLines,
-          decoration: InputDecoration(
-            isDense: true,
-            filled: true,
-            fillColor: WidgetStateColor.resolveWith((states) {
-              if (states.contains(WidgetState.focused)) {
-                return Theme.of(context)
-                    .colorScheme
-                    .onSurface
-                    .withValues(alpha: 0.12);
-              }
-              return Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.08);
-            }),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            constraints: const BoxConstraints(minHeight: 45),
+          decoration: ElvanThiruthiPillVadivu.getDecoration(
+            context,
+            borderRadius: maxLines > 1 ? 16 : 100,
+            isMultiline: maxLines > 1,
+          ).copyWith(
             counterText: '',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(maxLines > 1 ? 16 : 100),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(maxLines > 1 ? 16 : 100),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(maxLines > 1 ? 16 : 100),
-              borderSide: BorderSide.none,
-            ),
             suffixIcon: suffixIcon,
           ),
         ),
