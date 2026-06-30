@@ -52,7 +52,7 @@ class ElvanNiruvanamKeezhvirivuKooru extends ConsumerWidget {
       if (mode == AppMode.silk) {
         return IruMozhiNiruvanamUdhavi.thunaiPeyar(p, isBilingual, true, irandaamMozhi);
       } else {
-        return '';
+        return OruMozhiNiruvanamUdhavi.thunaiPeyar(p, kooliAchuMozhi);
       }
     }
 

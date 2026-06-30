@@ -9,4 +9,10 @@ class OruMozhiNiruvanamUdhavi {
         p.niruvanathinPeyar.values.firstOrNull ??
         '';
   }
+
+  /// Returns the secondary display name based on the first available alternative in niruvanathinPeyar.
+  static String thunaiPeyar(NiruvanaTharavugal p, String kooliAchuMozhi) {
+    final otherKeys = p.niruvanathinPeyar.keys.where((k) => k != kooliAchuMozhi).toList();
+    return otherKeys.isNotEmpty ? p.niruvanathinPeyar[otherKeys.first] ?? '' : '';
+  }
 }
