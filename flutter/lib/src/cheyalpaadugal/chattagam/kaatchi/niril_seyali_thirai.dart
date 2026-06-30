@@ -34,6 +34,8 @@ import '../../niril_kooli/kaatchi/thiruthi/porul/niril_kooli_porul_thiruthi.dart
 
 import '../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 import '../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
+import '../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
+import '../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 
 import '../../amaippugal/kaatchi/amaippugal_thirai.dart';
 import '../../amaippugal/kaatchi/koorugal/chaemippu_matrum_kaappu_pagudhi.dart';
@@ -238,6 +240,26 @@ class _NirilSeyaliThiraiState extends ConsumerState<NirilSeyaliThirai> {
       canPop: navState.destination == NirilDestination.mugappu,
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) return;
+
+        // If selection mode is active, intercept back to clear selection
+        final isPattiyalSelecting = ref.read(pattiyalSelectionModeProvider);
+        final isPatrucheettuSelecting = ref.read(patrucheettuSelectionModeProvider);
+        final isPorulSelecting = ref.read(porulSelectionModeProvider);
+        final isVaangunarSelecting = ref.read(vaangunarSelectionModeProvider);
+
+        if (isPattiyalSelecting || isPatrucheettuSelecting || isPorulSelecting || isVaangunarSelecting) {
+          ref.read(pattiyalSelectionModeProvider.notifier).state = false;
+          ref.read(patrucheettuSelectionModeProvider.notifier).state = false;
+          ref.read(porulSelectionModeProvider.notifier).state = false;
+          ref.read(vaangunarSelectionModeProvider.notifier).state = false;
+          
+          ref.read(selectedPattiyalIdsProvider.notifier).state = {};
+          ref.read(selectedPatrucheettuIdsProvider.notifier).state = {};
+          ref.read(selectedPorulIdsProvider.notifier).state = {};
+          ref.read(selectedVaangunarIdsProvider.notifier).state = {};
+          return; // Exit selection mode without navigating back
+        }
+
         nav.goBack();
       },
       child: LayoutBuilder(
