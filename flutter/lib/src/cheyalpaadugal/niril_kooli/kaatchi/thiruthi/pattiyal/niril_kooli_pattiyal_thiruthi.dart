@@ -10,12 +10,18 @@ import 'package:intl/intl.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
-import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_niruvanam_oadu.dart';
-import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_kanakku.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
+import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_ulleedu_vadivamaippigal.dart';
+import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
+import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_keezhvirivu.dart';
+import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
 import '../../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
+import 'package:elvan_niril/src/cheyalpaadugal/amaippugal/tharavu/kooli_niruvana_tharavugal_provider.dart';
+import 'package:elvan_niril/src/cheyalpaadugal/chattagam/kaatchi/kaippaesi/koorugal/elvan_cheyal_pothan.dart';
+import '../../paarvai/kooli_pattiyal_paarvai.dart';
 import '../../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../../amaippugal/tharavu/niruvana_tharavugal.dart';
@@ -304,7 +310,7 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
           ? _selectedProfile!.kurumPeyar
           : 'CB';
 
-      await KooliPattiyalUthavi.save(
+      final result = await KooliPattiyalUthavi.save(
         kalanjiyam: kalanjiyam,
         state: KooliThiruththiNilaimai(
           selectedNiruvanamId: _selectedNiruvanamId,
@@ -326,6 +332,16 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
         editingEntry: widget.editingEntry,
       );
 
+      if (result is String) {
+        if (mounted) {
+          setState(() => _saving = false);
+          ElvanSnackbar.show(context, result);
+        }
+        return;
+      }
+
+      final savedPattiyal = result as PattiyalTharavuru;
+
       await KooliPattiyalUthavi.clearDraft();
       _hasUnsavedChanges = false;
       if (mounted) {
@@ -335,7 +351,13 @@ class _CoolieInvoiceEditorState extends ConsumerState<CoolieInvoiceEditor> {
           K.porulChaemikkappattadhu.tr(context, ref),
           showAboveNavbar: true,
         );
-        Navigator.of(context).pop();
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => KooliPattiyalPaarvai(
+              pattiyal: savedPattiyal,
+            ),
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {

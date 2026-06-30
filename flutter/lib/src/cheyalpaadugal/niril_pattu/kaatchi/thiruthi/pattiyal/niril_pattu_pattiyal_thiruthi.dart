@@ -26,6 +26,7 @@ import 'koorugal/koorugal.dart';
 import '../../../../niril_podhu/kaatchi/koorugal/elvan_pattiyal_tharavugal_kooru.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_asai_pattiyal.dart';
 import '../../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
+import '../../paarvai/pattu_pattiyal_paarvai.dart';
 
 
 /// Silk (GST) Invoice Editor — full form with line items, tax calculation,
@@ -293,13 +294,23 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           ? _selectedProfile!.kurumPeyar
           : 'INV';
 
-      await PattuPattiyalUthavi.save(
+      final result = await PattuPattiyalUthavi.save(
         kalanjiyam: kalanjiyam,
         state: _currentSnapshot(),
         totals: _totals,
         profilePrefix: prefix,
         editingEntry: widget.editingEntry,
       );
+
+      if (result is String) {
+        if (mounted) {
+          setState(() => _saving = false);
+          ElvanSnackbar.show(context, result);
+        }
+        return;
+      }
+
+      final savedPattiyal = result as PattiyalTharavuru;
 
       await PattuPattiyalUthavi.clearDraft();
       _hasUnsavedChanges = false;
@@ -310,7 +321,13 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           K.porulChaemikkappattadhu.tr(context, ref),
           showAboveNavbar: true,
         );
-        Navigator.of(context).pop();
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => PattuPattiyalPaarvai(
+              pattiyal: savedPattiyal,
+            ),
+          ),
+        );
       }
     } catch (e) {
       if (mounted) ElvanSnackbar.show(context, 'Error: $e');

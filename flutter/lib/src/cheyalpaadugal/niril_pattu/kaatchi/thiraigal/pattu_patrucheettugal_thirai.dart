@@ -19,6 +19,7 @@ import '../../../niril_podhu/tharavuru/seluthi_vagai.dart';
 import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_pothu_attai.dart';
 import '../thiruthi/patrucheettu/niril_pattu_patrucheettu_thiruthi.dart';
 import '../koorugal/elvan_pattu_tharavu_pattiyal.dart';
+import '../../../niril_podhu/kaatchi/paarvai/patrucheettu_paarvai.dart';
 /// Silk Receipt List — real DB-backed view showing payment receipts.
 /// Mirror of coolie receipt list but navigates to SilkReceiptEditor.
 class SilkReceiptsPage extends ConsumerWidget {
@@ -60,7 +61,17 @@ class SilkReceiptsPage extends ConsumerWidget {
       onItemTap: (context, patru) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => SilkReceiptEditor(editingEntry: patru),
+            builder: (_) => PatrucheettuPaarvai(
+              patru: patru,
+              achuMozhi: primaryLang,
+              onEdit: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (_) => SilkReceiptEditor(editingEntry: patru),
+                  ),
+                );
+              },
+            ),
           ),
         );
       },

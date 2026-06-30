@@ -11,12 +11,17 @@ import 'package:elvan_niril/src/koorugal/pulan_koorugal/elvan_kooli_irumozhi_pul
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
 import '../../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
+import '../../../../niril_podhu/kaatchi/paarvai/vaangunar_paarvai.dart';
 
 class CoolieMerchantEditor extends ConsumerStatefulWidget {
-  const CoolieMerchantEditor({super.key, this.vaangunar});
-
-  /// If provided, we're editing an existing merchant.
   final VaangunarTharavuru? vaangunar;
+  final void Function(BuildContext context, VaangunarTharavuru savedVaangunar)? onSaved;
+
+  const CoolieMerchantEditor({
+    super.key, 
+    this.vaangunar,
+    this.onSaved,
+  });
 
   @override
   ConsumerState<CoolieMerchantEditor> createState() =>
@@ -52,8 +57,7 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
     }
 
     final kalanjiyam = ref.read(vaangunarKalanjiyamProvider);
-
-    kalanjiyam.saveVaangunar(VaangunarTharavuru(
+    final tharavuruToSave = VaangunarTharavuru(
       id: _isEditing ? widget.vaangunar!.id : -1,
       peyar: _peyar,
       oor: _oor,
@@ -67,9 +71,11 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
       minnanjal: '',
       tholaipaesi: '',
       isDeleted: false,
-      createdAt: DateTime.now(),
+      createdAt: widget.vaangunar?.createdAt ?? DateTime.now(),
       updatedAt: DateTime.now(),
-    )).then((_) {
+    );
+
+    kalanjiyam.saveVaangunar(tharavuruToSave).then((savedId) {
       if (mounted) {
         ref.invalidate(vaangunargalProvider);
         ElvanSnackbar.show(
@@ -77,7 +83,47 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
           K.vaangunarChaemikkappattadhu.tr(context, ref),
           showAboveNavbar: true,
         );
-        Navigator.of(context).pop();
+        
+        final finalObject = VaangunarTharavuru(
+          id: savedId,
+          peyar: tharavuruToSave.peyar,
+          oor: tharavuruToSave.oor,
+          mugavari: tharavuruToSave.mugavari,
+          maavattam: tharavuruToSave.maavattam,
+          maanilam: tharavuruToSave.maanilam,
+          naadu: tharavuruToSave.naadu,
+          velinaadMugavari: tharavuruToSave.velinaadMugavari,
+          anjalKuriyeedu: tharavuruToSave.anjalKuriyeedu,
+          gstin: tharavuruToSave.gstin,
+          minnanjal: tharavuruToSave.minnanjal,
+          tholaipaesi: tharavuruToSave.tholaipaesi,
+          createdAt: tharavuruToSave.createdAt,
+          updatedAt: tharavuruToSave.updatedAt,
+          isDeleted: tharavuruToSave.isDeleted,
+        );
+
+        if (widget.onSaved != null) {
+          widget.onSaved!(context, finalObject);
+        } else {
+          final primaryLang = ref.read(primaryLanguageProvider);
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => VaangunarPaarvai(
+                vaangunar: finalObject,
+                achuMozhi: primaryLang,
+                onEdit: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => CoolieMerchantEditor(
+                        vaangunar: finalObject,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        }
       }
     });
   }

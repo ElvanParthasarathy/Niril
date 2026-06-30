@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../niril_podhu/kaatchi/thiruthi/patru_thiruthi.dart';
 
+import '../../../../niril_podhu/kaatchi/paarvai/patrucheettu_paarvai.dart';
+import 'package:elvan_niril/src/adippadai/nilaimai/achu_mozhi_facade.dart';
+
 /// Coolie Receipt Editor — thin wrapper around the shared PatruThiruthi.
 class CoolieReceiptEditor extends ConsumerWidget {
   final PatrugalTharavuru? editingEntry;
@@ -12,6 +15,27 @@ class CoolieReceiptEditor extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return PatruThiruthi(editingEntry: editingEntry);
+    final primaryLang = ref.watch(primaryLanguageProvider);
+
+    return PatruThiruthi(
+      editingEntry: editingEntry,
+      onSaved: (context, saved) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => PatrucheettuPaarvai(
+              patru: saved,
+              achuMozhi: primaryLang,
+              onEdit: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => CoolieReceiptEditor(editingEntry: saved),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
   }
 }

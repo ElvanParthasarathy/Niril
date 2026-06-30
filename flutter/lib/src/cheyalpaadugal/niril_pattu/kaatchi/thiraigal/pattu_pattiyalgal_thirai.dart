@@ -18,8 +18,9 @@ import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 
 import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_pothu_attai.dart';
 import '../thiruthi/pattiyal/niril_pattu_pattiyal_thiruthi.dart';
-import '../koorugal/elvan_pattu_tharavu_pattiyal.dart';
 import '../koorugal/pattu_pattiyal_attai.dart';
+import '../koorugal/elvan_pattu_tharavu_pattiyal.dart';
+import '../paarvai/pattu_pattiyal_paarvai.dart';
 /// Silk invoice list — real DB-backed view.
 /// Shows invoices grouped by business profile with search, selection, and
 /// tap-to-edit navigation.
@@ -60,7 +61,7 @@ class SilkInvoicesPage extends ConsumerWidget {
       onItemTap: (context, pattiyal) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => SilkInvoiceEditor(editingEntry: pattiyal),
+            builder: (_) => PattuPattiyalPaarvai(pattiyal: pattiyal),
           ),
         );
       },

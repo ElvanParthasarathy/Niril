@@ -11,12 +11,17 @@ import 'package:elvan_niril/src/koorugal/pulan_koorugal/elvan_kooli_irumozhi_pul
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
 import '../../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
+import '../../../../niril_podhu/kaatchi/paarvai/porul_paarvai.dart';
 
 class CoolieItemEditor extends ConsumerStatefulWidget {
-  const CoolieItemEditor({super.key, this.product});
-
-  /// If provided, we're editing an existing product.
   final PorulTharavuru? product;
+  final void Function(BuildContext context, PorulTharavuru savedPorul)? onSaved;
+
+  const CoolieItemEditor({
+    super.key, 
+    this.product,
+    this.onSaved,
+  });
 
   @override
   ConsumerState<CoolieItemEditor> createState() => _CoolieItemEditorState();
@@ -61,7 +66,7 @@ class _CoolieItemEditorState extends ConsumerState<CoolieItemEditor> {
       isDeleted: widget.product?.isDeleted ?? false,
     );
 
-    kalanjiyam.savePorul(tharavuru).then((_) {
+    kalanjiyam.savePorul(tharavuru).then((savedId) {
       if (mounted) {
         ref.invalidate(porulgalProvider);
         ElvanSnackbar.show(
@@ -69,7 +74,42 @@ class _CoolieItemEditorState extends ConsumerState<CoolieItemEditor> {
           K.porulChaemikkappattadhu.tr(context, ref),
           showAboveNavbar: true,
         );
-        Navigator.of(context).pop();
+        
+        final finalObject = PorulTharavuru(
+          id: savedId,
+          porulPeyar: tharavuru.porulPeyar,
+          hsnCode: tharavuru.hsnCode,
+          vilai: tharavuru.vilai,
+          variVeetham: tharavuru.variVeetham,
+          alavuVagai: tharavuru.alavuVagai,
+          alagu: tharavuru.alagu,
+          createdAt: tharavuru.createdAt,
+          updatedAt: tharavuru.updatedAt,
+          isDeleted: tharavuru.isDeleted,
+        );
+
+        if (widget.onSaved != null) {
+          widget.onSaved!(context, finalObject);
+        } else {
+          final primaryLang = ref.read(primaryLanguageProvider);
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => PorulPaarvai(
+                porul: finalObject,
+                achuMozhi: primaryLang,
+                onEdit: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => CoolieItemEditor(
+                        product: finalObject,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        }
       }
     });
   }

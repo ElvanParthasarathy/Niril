@@ -16,13 +16,18 @@ import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_keezhvirivu.dart';
 import '../../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
+import '../../../../niril_podhu/kaatchi/paarvai/porul_paarvai.dart';
 
 
 class SilkItemEditor extends ConsumerStatefulWidget {
-  const SilkItemEditor({super.key, this.product});
-
-  /// If provided, we're editing an existing product.
   final PorulTharavuru? product;
+  final void Function(BuildContext context, PorulTharavuru savedPorul)? onSaved;
+
+  const SilkItemEditor({
+    super.key, 
+    this.product,
+    this.onSaved,
+  });
 
   @override
   ConsumerState<SilkItemEditor> createState() => _SilkItemEditorState();
@@ -72,7 +77,7 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
     final kalanjiyam = ref.read(porulKalanjiyamProvider);
     final alagu = _alavuVagai == 'weight' ? 'kg' : 'Nos';
 
-    kalanjiyam.savePorul(PorulTharavuru(
+    final tharavuruToSave = PorulTharavuru(
       id: _isEditing ? widget.product!.id : -1,
       porulPeyar: _porulPeyar,
       hsnCode: _hsnController.text.trim(),
@@ -83,7 +88,9 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
       createdAt: widget.product?.createdAt ?? DateTime.now(),
       updatedAt: DateTime.now(),
       isDeleted: widget.product?.isDeleted ?? false,
-    )).then((_) {
+    );
+
+    kalanjiyam.savePorul(tharavuruToSave).then((savedId) {
       if (mounted) {
         ref.invalidate(porulgalProvider);
         ElvanSnackbar.show(
@@ -91,7 +98,42 @@ class _SilkItemEditorState extends ConsumerState<SilkItemEditor> {
           K.porulChaemikkappattadhu.tr(context, ref),
           showAboveNavbar: true,
         );
-        Navigator.of(context).pop();
+        
+        final finalObject = PorulTharavuru(
+          id: savedId,
+          porulPeyar: tharavuruToSave.porulPeyar,
+          hsnCode: tharavuruToSave.hsnCode,
+          vilai: tharavuruToSave.vilai,
+          variVeetham: tharavuruToSave.variVeetham,
+          alavuVagai: tharavuruToSave.alavuVagai,
+          alagu: tharavuruToSave.alagu,
+          createdAt: tharavuruToSave.createdAt,
+          updatedAt: tharavuruToSave.updatedAt,
+          isDeleted: tharavuruToSave.isDeleted,
+        );
+
+        if (widget.onSaved != null) {
+          widget.onSaved!(context, finalObject);
+        } else {
+          final primaryLang = ref.read(primaryLanguageProvider);
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => PorulPaarvai(
+                porul: finalObject,
+                achuMozhi: primaryLang,
+                onEdit: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => SilkItemEditor(
+                        product: finalObject,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        }
       }
     });
   }

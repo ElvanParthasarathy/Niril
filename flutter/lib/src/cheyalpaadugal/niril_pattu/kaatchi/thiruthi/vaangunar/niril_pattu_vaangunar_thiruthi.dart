@@ -14,6 +14,7 @@ import '../../../../../koorugal/pulan_koorugal/elvan_irumozhi_autocomplete.dart'
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
 import '../../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
+import '../../../../niril_podhu/kaatchi/paarvai/vaangunar_paarvai.dart';
 import '../../../../../adippadai/idangal_kalanjiyam/idangal_kalanjiyam.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart';
 
@@ -28,9 +29,14 @@ import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_ulleedu.dart'
 // ─────────────────────────────────────────────────────────────────────────────
 
 class SilkMerchantEditor extends ConsumerStatefulWidget {
-  const SilkMerchantEditor({super.key, this.vaangunar});
-
   final VaangunarTharavuru? vaangunar;
+  final void Function(BuildContext context, VaangunarTharavuru savedVaangunar)? onSaved;
+
+  const SilkMerchantEditor({
+    super.key, 
+    this.vaangunar,
+    this.onSaved,
+  });
 
   @override
   ConsumerState<SilkMerchantEditor> createState() =>
@@ -129,23 +135,25 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
 
     final kalanjiyam = ref.read(vaangunarKalanjiyamProvider);
 
-    kalanjiyam.saveVaangunar(VaangunarTharavuru(
+    final tharavuruToSave = VaangunarTharavuru(
       id: _isEditing ? widget.vaangunar!.id : -1,
       peyar: _peyar,
-      mugavari: _mugavari,
       oor: _oor,
+      mugavari: _mugavari,
       maavattam: _maavattam,
       maanilam: _maanilam,
       naadu: _naadu,
       velinaadMugavari: _velinaadMugavari,
-      anjalKuriyeedu: _anjalKuriyeeduController.text.trim(),
-      gstin: gstin.toUpperCase(),
-      minnanjal: _minnanjalController.text.trim(),
-      tholaipaesi: _tholaipaesiController.text.trim(),
+      anjalKuriyeedu: _anjalKuriyeeduController.text,
+      gstin: _gstinController.text,
+      minnanjal: _minnanjalController.text,
+      tholaipaesi: _tholaipaesiController.text,
+      isDeleted: false,
       createdAt: widget.vaangunar?.createdAt ?? DateTime.now(),
       updatedAt: DateTime.now(),
-      isDeleted: widget.vaangunar?.isDeleted ?? false,
-    )).then((_) {
+    );
+
+    kalanjiyam.saveVaangunar(tharavuruToSave).then((savedId) {
       if (mounted) {
         ref.invalidate(vaangunargalProvider);
         ElvanSnackbar.show(
@@ -153,7 +161,47 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
           K.vaangunarChaemikkappattadhu.tr(context, ref),
           showAboveNavbar: true,
         );
-        Navigator.of(context).pop();
+        
+        final finalObject = VaangunarTharavuru(
+          id: savedId,
+          peyar: tharavuruToSave.peyar,
+          oor: tharavuruToSave.oor,
+          mugavari: tharavuruToSave.mugavari,
+          maavattam: tharavuruToSave.maavattam,
+          maanilam: tharavuruToSave.maanilam,
+          naadu: tharavuruToSave.naadu,
+          velinaadMugavari: tharavuruToSave.velinaadMugavari,
+          anjalKuriyeedu: tharavuruToSave.anjalKuriyeedu,
+          gstin: tharavuruToSave.gstin,
+          minnanjal: tharavuruToSave.minnanjal,
+          tholaipaesi: tharavuruToSave.tholaipaesi,
+          createdAt: tharavuruToSave.createdAt,
+          updatedAt: tharavuruToSave.updatedAt,
+          isDeleted: tharavuruToSave.isDeleted,
+        );
+
+        if (widget.onSaved != null) {
+          widget.onSaved!(context, finalObject);
+        } else {
+          final primaryLang = ref.read(primaryLanguageProvider);
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => VaangunarPaarvai(
+                vaangunar: finalObject,
+                achuMozhi: primaryLang,
+                onEdit: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => SilkMerchantEditor(
+                        vaangunar: finalObject,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        }
       }
     });
   }

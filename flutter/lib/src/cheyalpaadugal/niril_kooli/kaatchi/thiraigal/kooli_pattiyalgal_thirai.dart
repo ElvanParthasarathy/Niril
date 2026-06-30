@@ -20,6 +20,7 @@ import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_pothu_attai.dart';
 import '../thiruthi/pattiyal/niril_kooli_pattiyal_thiruthi.dart';
 import '../koorugal/elvan_kooli_tharavu_pattiyal.dart';
 import '../koorugal/kooli_pattiyal_attai.dart';
+import '../paarvai/kooli_pattiyal_paarvai.dart';
 
 /// Coolie invoice list — real DB-backed view.
 /// Shows invoices grouped by business profile with search, selection, and
@@ -61,8 +62,8 @@ class CoolieInvoicesPage extends ConsumerWidget {
       onItemTap: (context, p) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => CoolieInvoiceEditor(
-              editingEntry: p,
+            builder: (_) => KooliPattiyalPaarvai(
+              pattiyal: p,
             ),
           ),
         );

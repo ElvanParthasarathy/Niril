@@ -52,6 +52,10 @@ dependencies:
   sqlite3: any
   flutter_colorpicker: ^1.1.0
   cyclop: ^0.7.0
+
+  # PDF Generation & Preview
+  pdf: ^3.11.1
+  printing: ^5.13.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

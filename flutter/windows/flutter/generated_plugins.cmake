@@ -10,6 +10,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_remote_config
   firebase_storage
   permission_handler_windows
+  printing
   screen_retriever_windows
   share_plus
   syncfusion_pdfviewer_windows

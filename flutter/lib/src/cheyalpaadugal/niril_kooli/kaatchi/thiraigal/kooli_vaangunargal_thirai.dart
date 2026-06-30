@@ -16,6 +16,7 @@ import '../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_pothu_attai.dart';
 import '../thiruthi/vaangunar/niril_kooli_vaangunar_thiruthi.dart';
 import '../koorugal/elvan_kooli_tharavu_pattiyal.dart';
+import '../../../niril_podhu/kaatchi/paarvai/vaangunar_paarvai.dart';
 
 class CoolieMerchantsPage extends ConsumerWidget {
   const CoolieMerchantsPage({super.key});
@@ -47,10 +48,21 @@ class CoolieMerchantsPage extends ConsumerWidget {
       itemId: (v) => v.id,
       selectionModeProvider: vaangunarSelectionModeProvider,
       selectedIdsProvider: selectedVaangunarIdsProvider,
-      onItemTap: (context, v) {
-        NirilNav.push(
-          context,
-          CoolieMerchantEditor(vaangunar: v),
+      onItemTap: (context, vaangunar) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => VaangunarPaarvai(
+              vaangunar: vaangunar,
+              achuMozhi: primaryLang,
+              onEdit: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (_) => CoolieMerchantEditor(vaangunar: vaangunar),
+                  ),
+                );
+              },
+            ),
+          ),
         );
       },
       childAspectRatio: 3.5,

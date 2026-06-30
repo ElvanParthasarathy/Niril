@@ -19,6 +19,7 @@ import '../../../niril_podhu/tharavuru/seluthi_vagai.dart';
 import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_pothu_attai.dart';
 import '../thiruthi/patrucheettu/niril_kooli_patrucheettu_thiruthi.dart';
 import '../koorugal/elvan_kooli_tharavu_pattiyal.dart';
+import '../../../niril_podhu/kaatchi/paarvai/patrucheettu_paarvai.dart';
 
 /// Coolie Receipt List — real DB-backed view showing payment receipts.
 /// Completely separate from invoice list.
@@ -61,7 +62,17 @@ class CoolieReceiptsPage extends ConsumerWidget {
       onItemTap: (context, p) {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (_) => CoolieReceiptEditor(editingEntry: p),
+            builder: (_) => PatrucheettuPaarvai(
+              patru: p,
+              achuMozhi: primaryLang,
+              onEdit: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (_) => CoolieReceiptEditor(editingEntry: p),
+                  ),
+                );
+              },
+            ),
           ),
         );
       },

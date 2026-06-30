@@ -16,6 +16,7 @@ import '../../../niril_podhu/kalanjiyam/porul_nilaimai.dart';
 import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_pothu_attai.dart';
 import '../thiruthi/porul/niril_pattu_porul_thiruthi.dart';
 import '../koorugal/elvan_pattu_tharavu_pattiyal.dart';
+import '../../../niril_podhu/kaatchi/paarvai/porul_paarvai.dart';
 class SilkItemsPage extends ConsumerWidget {
   const SilkItemsPage({super.key});
 
@@ -47,9 +48,20 @@ class SilkItemsPage extends ConsumerWidget {
       selectionModeProvider: porulSelectionModeProvider,
       selectedIdsProvider: selectedPorulIdsProvider,
       onItemTap: (context, porul) {
-        NirilNav.push(
-          context,
-          SilkItemEditor(product: porul),
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => PorulPaarvai(
+              porul: porul,
+              achuMozhi: primaryLang,
+              onEdit: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (_) => SilkItemEditor(product: porul),
+                  ),
+                );
+              },
+            ),
+          ),
         );
       },
       childAspectRatio: 2.8,

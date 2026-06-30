@@ -16,6 +16,7 @@ import '../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
 import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_pothu_attai.dart';
 import '../thiruthi/vaangunar/niril_pattu_vaangunar_thiruthi.dart';
 import '../koorugal/elvan_pattu_tharavu_pattiyal.dart';
+import '../../../niril_podhu/kaatchi/paarvai/vaangunar_paarvai.dart';
 class SilkMerchantsPage extends ConsumerWidget {
   const SilkMerchantsPage({super.key});
 
@@ -52,9 +53,20 @@ class SilkMerchantsPage extends ConsumerWidget {
       selectionModeProvider: vaangunarSelectionModeProvider,
       selectedIdsProvider: selectedVaangunarIdsProvider,
       onItemTap: (context, vaangunar) {
-        NirilNav.push(
-          context,
-          SilkMerchantEditor(vaangunar: vaangunar),
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => VaangunarPaarvai(
+              vaangunar: vaangunar,
+              achuMozhi: primaryLang,
+              onEdit: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (_) => SilkMerchantEditor(vaangunar: vaangunar),
+                  ),
+                );
+              },
+            ),
+          ),
         );
       },
       childAspectRatio: 2.8,

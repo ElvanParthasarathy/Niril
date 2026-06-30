@@ -18,7 +18,7 @@ import '../../../../adippadai/vazhikaattal/niril_nav.dart';
 import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
 import '../../../niril_podhu/kaatchi/koorugal/mugappu_tharavugal_kooru.dart';
-import '../thiruthi/pattiyal/niril_pattu_pattiyal_thiruthi.dart';
+import '../paarvai/pattu_pattiyal_paarvai.dart';
 
 /// Silk Home Page — pixel-perfect port of React Mugappu (GST mode).
 /// Shows: 3 stats cards (bento grid) + 6 recent invoice cards.
@@ -302,7 +302,7 @@ class SilkHomePage extends ConsumerWidget {
   void _openEditor(BuildContext context, PattiyalTharavuru pattiyal) {
     NirilNav.push(
       context,
-      SilkInvoiceEditor(editingEntry: pattiyal),
+      PattuPattiyalPaarvai(pattiyal: pattiyal),
     );
   }
 }

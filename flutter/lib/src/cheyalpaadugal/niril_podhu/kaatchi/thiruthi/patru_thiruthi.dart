@@ -32,8 +32,13 @@ import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 /// Three sections: ① Invoice picker, ② Receipt data, ③ Payment details.
 class PatruThiruthi extends ConsumerStatefulWidget {
   final PatrugalTharavuru? editingEntry;
+  final void Function(BuildContext context, PatrugalTharavuru savedPatru)? onSaved;
 
-  const PatruThiruthi({super.key, this.editingEntry});
+  const PatruThiruthi({
+    super.key, 
+    this.editingEntry,
+    this.onSaved,
+  });
 
   @override
   ConsumerState<PatruThiruthi> createState() => _PatruThiruthiState();
@@ -281,11 +286,31 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
         isDeleted: false,
       );
 
+      int finalId = widget.editingEntry?.id ?? 0;
       if (widget.editingEntry != null) {
         await kalanjiyam.updatePatru(widget.editingEntry!.id, companion, links);
       } else {
-        await kalanjiyam.insertPatru(companion, links);
+        finalId = await kalanjiyam.insertPatru(companion, links);
       }
+
+      final savedCompanion = PatrugalTharavuru(
+        id: finalId,
+        niruvanamId: companion.niruvanamId,
+        patruEn: companion.patruEn,
+        vanakkam: companion.vanakkam,
+        finYear: companion.finYear,
+        vaangunarId: companion.vaangunarId,
+        vaangunarPeyar: companion.vaangunarPeyar,
+        patruNaal: companion.patruNaal,
+        thogai: companion.thogai,
+        seluthumMurai: companion.seluthumMurai,
+        vangiPeyar: companion.vangiPeyar,
+        parivarthanaiEn: companion.parivarthanaiEn,
+        ullkurippu: companion.ullkurippu,
+        createdAt: companion.createdAt,
+        updatedAt: companion.updatedAt,
+        isDeleted: companion.isDeleted,
+      );
 
       if (mounted) {
         ref.invalidate(patrugalProvider);
@@ -295,7 +320,11 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
           K.patrucheettuChaemikkappattadhu.tr(context, ref),
           showAboveNavbar: true,
         );
-        Navigator.of(context).pop();
+        if (widget.onSaved != null) {
+          widget.onSaved!(context, savedCompanion);
+        } else {
+          Navigator.of(context).pop();
+        }
       }
     } catch (e) {
       if (mounted) {
