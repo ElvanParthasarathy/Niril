@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../../adippadai/nilaimai/seyali_nilaimai.dart';
-import '../../koorugal/elvan_kooli_irumozhi_pulan.dart';
+import '../../../../koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../../niril_podhu/kaatchi/thiruthi/koorugal/elvan_thiruthi_paguthi.dart';
 import '../../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
@@ -101,7 +101,7 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
             displayChild: Text(peyarText),
             children: [
               // 1. Bilingual merchant name
-              ElvanKooliIrumozhiPulan(
+              ElvanIrumozhiPulan(
                 label: K.vaangunarPeyar.tr(context, ref),
                 value: _peyar,
                 autofocus: !_isEditing,
@@ -116,7 +116,7 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
             displayChild: Text(_oor[primaryLang]?.trim().isNotEmpty == true ? _oor[primaryLang]! : '-'),
             children: [
               // 2. Bilingual city
-              ElvanKooliIrumozhiPulan(
+              ElvanIrumozhiPulan(
                 label: K.oor.tr(context, ref),
                 value: _oor,
                 onChanged: (map) => setState(() => _oor = map),
@@ -124,7 +124,7 @@ class _CoolieMerchantEditorState extends ConsumerState<CoolieMerchantEditor> {
 
               // 3. Bilingual address
               ElvanFullWidth(
-                child: ElvanKooliIrumozhiPulan(
+                child: ElvanIrumozhiPulan(
                   label: K.mugavari.tr(context, ref),
                   value: _mugavari,
                   maxLines: 4,
