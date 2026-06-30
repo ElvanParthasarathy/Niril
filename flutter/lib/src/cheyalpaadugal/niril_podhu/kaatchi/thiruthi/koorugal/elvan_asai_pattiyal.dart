@@ -31,12 +31,15 @@ class ElvanAsaiPattiyal extends StatelessWidget {
       duration: duration,
       curve: curve,
       alignment: Alignment.topCenter,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          for (int i = 0; i < itemCount; i++)
-            itemBuilder(context, i),
-        ],
+      child: SizedBox(
+        width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (int i = 0; i < itemCount; i++)
+              itemBuilder(context, i),
+          ],
+        ),
       ),
     );
   }

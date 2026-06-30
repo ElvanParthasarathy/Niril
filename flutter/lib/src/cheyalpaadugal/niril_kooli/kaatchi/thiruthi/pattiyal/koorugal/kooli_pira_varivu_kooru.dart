@@ -49,7 +49,7 @@ class KooliPiraVarivuKooru extends ConsumerWidget {
                     )),
               ),
               Padding(
-                padding: const EdgeInsets.only(right: 12, bottom: 6),
+                padding: const EdgeInsets.only(right: 12, bottom: 12),
                 child: IconButton(
                   icon: const Icon(CupertinoIcons.delete, size: 20),
                   color: cs.onSurfaceVariant,
@@ -63,6 +63,7 @@ class KooliPiraVarivuKooru extends ConsumerWidget {
               ),
             ],
           ),
+          const SizedBox(height: 4),
           ElvanUrupadiAttai(
             padding: const EdgeInsets.all(16),
             child: Row(
