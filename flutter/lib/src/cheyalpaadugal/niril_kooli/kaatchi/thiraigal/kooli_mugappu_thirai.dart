@@ -162,10 +162,9 @@ class CoolieHomePage extends ConsumerWidget {
 
         if (isDesktop) {
           // 3-column grid
-          return IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
               Expanded(
                 child: ElvanStatsCard(
                   icon: CupertinoIcons.money_dollar_circle,
@@ -193,17 +192,15 @@ class CoolieHomePage extends ConsumerWidget {
                 ),
               ),
             ],
-          ),
-        );
-      }
+          );
+        }
 
         // Mobile: 2-col top row + full-width third card
         return Column(
           children: [
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Expanded(
                   child: ElvanStatsCard(
                     icon: CupertinoIcons.money_dollar_circle,
@@ -222,7 +219,6 @@ class CoolieHomePage extends ConsumerWidget {
                   ),
                 ),
               ],
-            ),
             ),
             SizedBox(height: gap),
             ElvanStatsCard(

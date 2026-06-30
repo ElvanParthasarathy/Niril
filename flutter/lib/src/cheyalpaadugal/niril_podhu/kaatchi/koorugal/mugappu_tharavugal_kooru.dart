@@ -99,43 +99,48 @@ class ElvanStatsCard extends StatelessWidget {
 
               // Column layout on narrow mobile, Row on wider screens
               if (isNarrow) {
-                return Padding(
-                  padding: EdgeInsets.all(cardPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      iconBox,
-                      const SizedBox(height: 8),
-                      FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerLeft,
-                        child: textColumn,
-                      ),
-                    ],
-                  ),
-                );
-              }
-
-              return Padding(
-                padding: EdgeInsets.all(cardPadding),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    iconBox,
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Container(
-                        height: iconSize, // Constrain text to icon's vertical boundary
-                        alignment: Alignment.centerLeft,
-                        child: FittedBox(
+                return SizedBox(
+                  height: 128,
+                  child: Padding(
+                    padding: EdgeInsets.all(cardPadding),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        iconBox,
+                        FittedBox(
                           fit: BoxFit.scaleDown,
                           alignment: Alignment.centerLeft,
                           child: textColumn,
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
+                );
+              }
+
+              return SizedBox(
+                height: 96,
+                child: Padding(
+                  padding: EdgeInsets.all(cardPadding),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      iconBox,
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Container(
+                          height: iconSize, // Constrain text to icon's vertical boundary
+                          alignment: Alignment.centerLeft,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: textColumn,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
