@@ -68,13 +68,32 @@ class PattuAchadippuHtmlUruvakki {
       );
     }
     
-    // Fix blank second page in Android printing due to 297mm + margins
+    // Enforce strict single A4 page for Android printing
     finalCss += '''\n
     @media print {
-      .invoice-preview-container {
-        min-height: auto !important;
+      @page {
+        size: A4;
+        margin: 0 !important;
+      }
+      html, body {
+        width: 100% !important;
         height: 100% !important;
-        page-break-after: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+      }
+      .invoice-preview-container {
+        width: 210mm !important;
+        min-height: 282mm !important; 
+        max-height: 282mm !important;
+        height: 282mm !important;
+        margin: 0 auto !important;
+        padding-top: 0 !important;
+        page-break-inside: avoid !important;
+        page-break-after: avoid !important;
+        overflow: hidden !important;
+        box-shadow: none !important;
+        border: none !important;
       }
     }
     ''';
