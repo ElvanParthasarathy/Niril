@@ -7,6 +7,11 @@ import '../../../adippadai/tharavuru/uruvugal.dart';
 import '../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../adippadai/oru_mozhi/oru_mozhi_vaangunar_udhavi.dart';
 
+/// பட்டு அச்சடிப்பு HTML உருவாக்கி — Silk Invoice HTML Generator
+///
+/// Loads the exact sjs_gst_intra.html template from assets (unmodified copy
+/// of Elvan Niril Achugal) and replaces only the sample content with real
+/// invoice data at runtime. The HTML/CSS structure is never altered.
 class PattuAchadippuHtmlUruvakki {
   static Future<String> generatePattiyalHtml({
     required PattiyalTharavuru pattiyal,
@@ -14,52 +19,87 @@ class PattuAchadippuHtmlUruvakki {
     VaangunarTharavuru? client,
     required bool isWindows,
   }) async {
-    // 1. Read templates from assets/templates/silk folder
-    final templateHtml = await rootBundle.loadString('assets/templates/silk/invoice.html');
+    // 1. Load the EXACT template + CSS from assets (identical to Achugal folder)
+    String html = await rootBundle.loadString('assets/templates/silk/sjs_gst_intra.html');
     final invoiceCss = await rootBundle.loadString('assets/templates/silk/invoice.css');
     final printCss = await rootBundle.loadString('assets/templates/silk/print.css');
 
-    // Make sure basic fonts from universal generator are ready if Windows
     if (isWindows) {
       await AchadippuHtmlUruvakki.initFonts();
     }
 
-    String html = templateHtml;
+    // 2. Inline CSS (replace <link> tags so WebView doesn't need asset paths)
+    html = html.replaceFirst(
+      '<link rel="stylesheet" href="invoice.css">',
+      '<style>\n$invoiceCss\n</style>',
+    );
+    html = html.replaceFirst(
+      '<link rel="stylesheet" href="print.css">',
+      '<style>\n$printCss\n</style>',
+    );
 
-    // Inject CSS inline to avoid asset path resolution in WebView
-    html = html.replaceFirst('<link rel="stylesheet" href="invoice.css">', '<style>\n$invoiceCss\n</style>');
-    html = html.replaceFirst('<link rel="stylesheet" href="print.css">', '<style>\n$printCss\n</style>');
-
-    // Format Date
+    // ─── Extract real data from database ───
     final df = DateFormat('dd/MM/yyyy');
     final dateStr = df.format(pattiyal.pattiyalNaal);
 
-    // Profile Details
-    final companyName = profile.niruvanathinPeyar != null 
-        ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(profile.niruvanathinPeyar.cast<String, dynamic>(), 'ta')
-        : 'Elvan Niril';
-    final companyNameSec = profile.niruvanathinPeyar != null 
+    // Profile (business) details
+    final companyNameTa = profile.niruvanathinPeyar != null
+        ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
+            profile.niruvanathinPeyar.cast<String, dynamic>(), 'ta')
+        : '';
+    final companyNameEn = profile.niruvanathinPeyar != null
         ? (profile.niruvanathinPeyar['en'] ?? '')
         : '';
-    final address1 = profile.mugavari != null 
-        ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(profile.mugavari.cast<String, dynamic>(), 'ta')
+    final bizAddress1 = profile.mugavari != null
+        ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
+            profile.mugavari.cast<String, dynamic>(), 'ta')
         : '';
-    final address2 = profile.oor != null 
-        ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(profile.oor.cast<String, dynamic>(), 'ta')
+    final bizAddress2 = profile.oor != null
+        ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
+            profile.oor.cast<String, dynamic>(), 'ta')
         : '';
-    final phone = profile.tholaipaesi1 ?? '';
-    final email = profile.minnanjal ?? '';
-    final gstin = profile.gstin ?? '';
+    final bizPhone = profile.tholaipaesi1 ?? '';
+    final bizEmail = profile.minnanjal ?? '';
+    final bizGstin = profile.gstin ?? '';
 
-    // Customer Details
-    final clientName = OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-      pattiyal.vaangunarPeyar.cast<String, dynamic>(), 'ta',
-    );
-    final clientAddress = OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-      pattiyal.vaangunarMunvari.cast<String, dynamic>(), 'ta',
-    );
+    // Client details
+    final clientNameStr = client != null
+        ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
+            client.peyar.cast<String, dynamic>(), 'ta')
+        : OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
+            pattiyal.vaangunarPeyar.cast<String, dynamic>(), 'ta');
+    final clientAddr1 = client != null
+        ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
+            client.mugavari.cast<String, dynamic>(), 'ta')
+        : OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
+            pattiyal.vaangunarMunvari.cast<String, dynamic>(), 'ta');
+    final clientAddr2 = client != null
+        ? [
+            OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
+                client.oor.cast<String, dynamic>(), 'ta'),
+            OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
+                client.maavattam.cast<String, dynamic>(), 'ta'),
+            OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
+                client.maanilam.cast<String, dynamic>(), 'ta'),
+            client.anjalKuriyeedu,
+          ].where((e) => e.isNotEmpty).join(', ')
+        : '';
+    final clientGstin = client?.gstin ?? '';
+    final clientPhone = client?.tholaipaesi ?? '';
+    final clientState = client != null
+        ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
+            client.maanilam.cast<String, dynamic>(), 'ta')
+        : 'தமிழ்நாடு';
 
-    // Build Items HTML
+    // Bank
+    final bankName = profile.vangiPeyar != null
+        ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
+            profile.vangiPeyar.cast<String, dynamic>(), 'ta')
+        : '';
+    final accountNo = profile.vangiKanakku ?? '';
+    final ifsc = profile.ifsc ?? '';
+
+    // ─── Build item rows (exact same HTML structure as the template) ───
     String itemRows = '';
     int index = 1;
     double subTotal = 0;
@@ -71,7 +111,6 @@ class PattuAchadippuHtmlUruvakki {
     final items = PattiyalUthavigal.pattuListFromJson(pattiyal.tharavugal);
     for (final item in items) {
       final amount = item.alavu * item.vilai;
-      
       final cgstRate = item.variVizhukkaadu / 2;
       final sgstRate = item.variVizhukkaadu / 2;
       final cgstAmt = amount * (cgstRate / 100);
@@ -86,7 +125,8 @@ class PattuAchadippuHtmlUruvakki {
       if (commonHSN.isEmpty && item.hsnKuriyeedu.isNotEmpty) {
         commonHSN = item.hsnKuriyeedu;
       }
-      
+
+      // Build row using the EXACT same class names / structure as the template
       itemRows += '''
           <tr>
             <td class="inv-td inv-td-muted">\$index</td>
@@ -96,83 +136,97 @@ class PattuAchadippuHtmlUruvakki {
             </td>
             <td class="inv-td inv-td-center inv-td-muted">\${item.hsnKuriyeedu}</td>
             <td class="inv-td inv-td-center">\${item.alavu.toInt()}</td>
-            <td class="inv-td inv-td-right">₹ \${item.vilai.toStringAsFixed(2)}</td>
+            <td class="inv-td inv-td-right">₹ \${_fmt(item.vilai)}</td>
             <td class="inv-td inv-td-center">\${cgstRate.toStringAsFixed(1)}%</td>
-            <td class="inv-td inv-td-right">₹ \${cgstAmt.toStringAsFixed(2)}</td>
+            <td class="inv-td inv-td-right">₹ \${_fmt(cgstAmt)}</td>
             <td class="inv-td inv-td-center">\${sgstRate.toStringAsFixed(1)}%</td>
-            <td class="inv-td inv-td-right">₹ \${sgstAmt.toStringAsFixed(2)}</td>
-            <td class="inv-td inv-td-right">₹ \${rowTotal.toStringAsFixed(2)}</td>
-          </tr>
-      ''';
+            <td class="inv-td inv-td-right">₹ \${_fmt(sgstAmt)}</td>
+            <td class="inv-td inv-td-right">₹ \${_fmt(rowTotal)}</td>
+          </tr>''';
       index++;
     }
 
     final grandTotal = subTotal + totalCgst + totalSgst - pattiyal.thallupadi;
-    
-    // Convert to words (Assuming AchadippuHtmlUruvakki has a words function, if not leave blank or implement later)
-    final wordsEn = '₹ \${grandTotal.toStringAsFixed(2)} Only'; 
-    final wordsTa = '';
 
-    // String Replacements
-    final Map<String, String> data = {
-      'businessNamePrimary': companyName,
-      'businessNameSecondary': companyNameSec,
-      'businessNameForSignature': companyName,
-      'businessGstin': gstin,
-      'invoiceNumber': pattiyal.patrucheettuEn,
-      'invoiceDate': dateStr,
-      
-      'clientName': client != null 
-          ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(client.peyar.cast<String, dynamic>(), 'ta')
-          : clientName,
-      'clientAddress1': client != null
-          ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(client.mugavari.cast<String, dynamic>(), 'ta')
-          : clientAddress,
-      'clientAddress2': client != null
-          ? [
-              OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(client.oor.cast<String, dynamic>(), 'ta'),
-              OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(client.maavattam.cast<String, dynamic>(), 'ta'),
-              OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(client.maanilam.cast<String, dynamic>(), 'ta'),
-              client.anjalKuriyeedu
-            ].where((e) => e.isNotEmpty).join(', ')
-          : '',
-      'clientGstin': client?.gstin ?? '', 
-      'clientPhone': client?.tholaipaesi ?? '',
-      
-      'posPrimary': client != null 
-          ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(client.maanilam.cast<String, dynamic>(), 'ta')
-          : 'தமிழ்நாடு',
-      'posSecondary': 'Tamil Nadu',
-      
-      'itemRows': itemRows,
-      'totalItemsQty': totalQty.toString(),
-      'commonHSN': commonHSN,
-      
-      'amountInWordsPrimary': wordsTa,
-      'amountInWordsSecondary': wordsEn,
-      
-      'subTotal': '₹ \${subTotal.toStringAsFixed(2)}',
-      'totalCgst': '₹ \${totalCgst.toStringAsFixed(2)}',
-      'totalSgst': '₹ \${totalSgst.toStringAsFixed(2)}',
-      'grandTotal': '₹ \${grandTotal.toStringAsFixed(2)}',
-      
-      'bankName': profile.vangiPeyar != null ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(profile.vangiPeyar.cast<String, dynamic>(), 'ta') : '',
-      'accountNumber': profile.vangiKanakku ?? '',
-      'ifscCode': profile.ifsc ?? '',
-      
-      'businessAddress1': address1,
-      'businessAddress2': address2,
-      'businessPhone': phone,
-      'businessEmail': email,
-    };
+    // ─── 3. Runtime replacements on the EXACT template content ───
+    // Header — business name
+    html = html.replaceFirst('ஸ்ரீ சிவராம் சில்க் சாரீஸ்', companyNameTa);
+    // Second occurrence of company name (signature block) — uses English
+    html = html.replaceFirst('Sri Sivaram Silk Sarees', companyNameEn);
+    // Signature block still has the English name
+    html = html.replaceFirst('Sri Sivaram Silk Sarees', companyNameEn);
 
-    data.forEach((key, value) {
-      html = html.replaceAll('{{\$key}}', value);
-    });
+    // GSTIN (business)
+    html = html.replaceFirst('33AABCS1234H1Z5', bizGstin);
 
-    // Remove any remaining unused placeholders
-    html = html.replaceAll(RegExp(r'\{\{[^}]+\}\}'), '');
+    // Invoice number (appears in title and in meta box)
+    html = html.replaceAll('SJPS-29', pattiyal.patrucheettuEn);
+
+    // Date
+    html = html.replaceFirst('15/06/2026', dateStr);
+
+    // Client
+    html = html.replaceFirst('லட்சுமி டெக்ஸ்டைல்ஸ்', clientNameStr);
+    html = html.replaceFirst('12, நேரு தெரு, சேலம் - 636001', clientAddr1);
+    html = html.replaceFirst('சேலம் District, தமிழ்நாடு / Tamil Nadu', clientAddr2);
+    html = html.replaceFirst('33AABLM9876Z1K4', clientGstin);
+    html = html.replaceFirst('+91 94432 11223', clientPhone);
+
+    // Place of supply
+    html = html.replaceFirst(
+      '<div class="pos-primary">தமிழ்நாடு</div>',
+      '<div class="pos-primary">\$clientState</div>',
+    );
+
+    // Replace entire <tbody>…</tbody> with generated rows
+    html = html.replaceFirst(
+      RegExp(r'<tbody>.*?</tbody>', dotAll: true),
+      '<tbody>\n$itemRows\n        </tbody>',
+    );
+
+    // Totals section
+    html = html.replaceFirst(
+      '<span class="font-semibold" style="color: #334155;">6</span>',
+      '<span class="font-semibold" style="color: #334155;">$totalQty</span>',
+    );
+    html = html.replaceFirst(
+      '<span class="font-semibold" style="color: #334155;">5007</span>',
+      '<span class="font-semibold" style="color: #334155;">$commonHSN</span>',
+    );
+
+    // Amount in words (leave blank for now — replace the sample text)
+    html = html.replaceFirst(
+      'ஆறுபத்தொன்பதாயிரத்து எண்ணூற்றிருபத்தைந்து ரூபாய் மட்டும்', '');
+    html = html.replaceFirst(
+      'Sixty Nine Thousand Eight Hundred Twenty Five Rupees Only',
+      '₹ ${_fmt(grandTotal)} Only');
+
+    // Sub total, CGST, SGST, Grand Total values
+    html = html.replaceFirst('₹ 66,500.00', '₹ ${_fmt(subTotal)}');
+    // CGST amount (first ₹ 1,662.50)
+    html = html.replaceFirst('₹ 1,662.50', '₹ ${_fmt(totalCgst)}');
+    // SGST amount (second ₹ 1,662.50)
+    html = html.replaceFirst('₹ 1,662.50', '₹ ${_fmt(totalSgst)}');
+    // Grand total
+    html = html.replaceFirst('₹ 69,825.00', '₹ ${_fmt(grandTotal)}');
+
+    // Bank details
+    html = html.replaceFirst('Indian Bank, கரூர் கிளை', bankName);
+    html = html.replaceFirst('6789012345', accountNo);
+    html = html.replaceFirst('IDIB000K123', ifsc);
+
+    // Contact block
+    html = html.replaceFirst('45, ராஜாஜி தெரு, கரூர் - 639001', bizAddress1);
+    html = html.replaceFirst('கரூர், தமிழ்நாடு / Tamil Nadu, இந்தியா', bizAddress2);
+    html = html.replaceFirst('+91 98765 43210', bizPhone);
+    html = html.replaceFirst('sales@srisilks.com', bizEmail);
 
     return html;
+  }
+
+  /// Format a number as Indian currency style (e.g. 1,662.50)
+  static String _fmt(double val) {
+    final f = NumberFormat('#,##,##0.00', 'en_IN');
+    return f.format(val);
   }
 }

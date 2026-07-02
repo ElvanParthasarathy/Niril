@@ -3,10 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tax Invoice - SJPS-29</title>
+  <title>{{documentTitle}} - {{invoiceNumber}}</title>
   <link rel="stylesheet" href="invoice.css">
   <link rel="stylesheet" href="print.css">
   <style>
+    /*
+      Dynamic accent color injection.
+      When generating, replace #388e3c with the profile's themeColor.
+      You must also update --accent-bg, --accent-bg-alt, --accent-bg-light,
+      and --accent-watermark with the same hex + alpha suffix.
+      Example for #1e40af:
+        --accent: #1e40af;
+        --accent-bg: #1e40af1a;
+        --accent-bg-alt: #1e40af14;
+        --accent-bg-light: #1e40af15;
+        --accent-watermark: #1e40af0a;
+    */
     :root {
       --accent: #388e3c;
       --accent-bg: #388e3c1a;
@@ -20,56 +32,83 @@
 
   <div class="invoice-preview-container" id="invoice-preview">
 
+    <!-- ============ WATERMARK (proforma only — leave empty/remove if not needed) ============ -->
+    <div class="watermark">{{watermarkText}}</div>
+
+    <!-- ============ CLASSIC HEADER ============ -->
     <div class="inv-classic-header">
+
+      <!-- Greeting Row -->
       <div class="greeting-row">
-        <span>வாழ்க வையகம்</span>
+        <span>{{greetingLeft}}</span>
         <span>உ</span>
-        <span>வாழ்க வளமுடன்</span>
+        <span>{{greetingRight}}</span>
       </div>
 
+      <!-- Header Row: Logo + Document Title -->
       <div class="header-row">
         <div class="logo-container">
+          <!--
+            WIDE LOGO variant — use when profile.billHeaderStyle === 'wide':
+            <img src="{{wideLogoUrl}}" class="logo-wide"
+                 alt="Wide Logo"
+                 style="transform: translate({{wideLogoX}}px, {{wideLogoY}}px) scale({{wideLogoScale}});" />
+
+            STANDARD LOGO variant — default:
+          -->
           <div class="logo-standard-wrapper">
+            <img src="{{logoUrl}}" class="logo-standard" alt="Logo" />
             <div class="flex-col justify-center">
               <div class="business-name">{{businessNamePrimary}}</div>
               <div class="business-name-sec">{{businessNameSecondary}}</div>
             </div>
           </div>
         </div>
+
         <div class="header-right">
           <div class="document-title">
-            <div>tax invoice</div>
+            <div>{{documentTitle}}</div>
+            <!-- Proforma subtitle: "This is not a tax invoice" -->
+            <!-- Credit-note subtitle: "Against Invoice: {{originalInvoiceRef}}" -->
+            <div class="document-subtitle">{{documentSubtitle}}</div>
           </div>
           <p class="gstin-line">
-            GSTIN: <strong style="color: inherit;">{{businessGstin}}</strong>
+            {{taxIdLabel}}: <strong style="color: inherit;">{{businessGstin}}</strong>
           </p>
         </div>
       </div>
 
+      <!-- Meta Box: Bill No + Date -->
       <div class="meta-box">
         <div class="meta-item">
-          பில் எண் / Bill No : <strong>{{invoiceNumber}}</strong>
+          {{billNoLabel}} : <strong>{{invoiceNumber}}</strong>
         </div>
         <div class="meta-item">
-          நாள் / Date : <strong>{{invoiceDate}}</strong>
+          {{dateLabel}} : <strong>{{invoiceDate}}</strong>
         </div>
       </div>
     </div>
 
-    <!-- Parties -->
+    <!-- ============ BILLING PARTIES ============ -->
     <div class="inv-parties">
+      <!-- Bill To -->
       <div class="inv-party">
-        <h4 class="inv-section-label">பெறுநர் / Bill To</h4>
+        <h4 class="inv-section-label">{{billToLabel}}</h4>
         <p class="inv-party-name">{{clientName}}</p>
         <div class="inv-party-details">
           <p>{{clientAddress1}}</p>
           <p>{{clientAddress2}}</p>
-          <p style="margin-top: 1px; color: #475569;">GSTIN: <strong style="color: inherit;">{{clientGstin}}</strong></p>
+          <p style="margin-top: 1px; color: #475569;">
+            {{taxIdLabel}}: <strong style="color: inherit;">{{clientGstin}}</strong>
+          </p>
+          <p>{{clientEmail}}</p>
           <p>Ph: {{clientPhone}}</p>
         </div>
       </div>
+
+      <!-- Place of Supply -->
       <div class="inv-party inv-party-right">
-        <h4 class="inv-section-label">வழங்கும் இடம் / Place of Supply</h4>
+        <h4 class="inv-section-label">{{placeOfSupplyLabel}}</h4>
         <div class="inv-party-name" style="text-align: right; display: flex; justify-content: flex-end;">
           <div class="flex-col items-end justify-center">
             <div class="pos-primary">{{posPrimary}}</div>
@@ -79,93 +118,214 @@
       </div>
     </div>
 
-    <!-- GST INTRASTATE TABLE (CGST + SGST columns) -->
+    <!-- ============ ITEMS TABLE + TOTALS (UNIFIED BOX) ============ -->
     <div class="unified-table-box">
       <table class="inv-table">
         <thead>
-          <tr>
-            <th class="inv-th" rowspan="2">#</th>
-            <th class="inv-th" rowspan="2" style="width: auto;">
-              <div style="font-weight: 700; margin-bottom: 2px; line-height: 1.2; text-transform: none;">பொருள் பெயர்</div>
-              <div style="font-weight: 400; font-size: 10.5px; opacity: 0.9; line-height: 1; text-transform: none;">Product Name</div>
-            </th>
-            <th class="inv-th inv-th-center" rowspan="2">HSN Code</th>
-            <th class="inv-th inv-th-center" rowspan="2">
-              <div style="font-weight: 700; margin-bottom: 2px; line-height: 1.2; text-align: center; text-transform: none;">எண்</div>
-              <div style="font-weight: 400; font-size: 10.5px; opacity: 0.9; line-height: 1; text-align: center; text-transform: none;">Qty</div>
-            </th>
-            <th class="inv-th inv-th-right" rowspan="2">
-              <div style="font-weight: 700; margin-bottom: 2px; line-height: 1.2; text-align: right; text-transform: none;">விலை</div>
-              <div style="font-weight: 400; font-size: 10.5px; opacity: 0.9; line-height: 1; text-align: right; text-transform: none;">Rate</div>
-            </th>
-            <th class="inv-th inv-th-center" colspan="2" style="border-bottom: 1px solid #cbd5e1;">CGST</th>
-            <th class="inv-th inv-th-center" colspan="2" style="border-bottom: 1px solid #cbd5e1;">SGST</th>
-            <th class="inv-th inv-th-right" rowspan="2">
-              <div style="font-weight: 700; margin-bottom: 2px; line-height: 1.2; text-align: right; text-transform: none;">தொகை</div>
-              <div style="font-weight: 400; font-size: 10.5px; opacity: 0.9; line-height: 1; text-align: right; text-transform: none;">Amount</div>
-            </th>
-          </tr>
-          <tr>
-            <th class="inv-th inv-th-center">%</th>
-            <th class="inv-th inv-th-right">Amt</th>
-            <th class="inv-th inv-th-center">%</th>
-            <th class="inv-th inv-th-right">Amt</th>
-          </tr>
+          {{tableHeaders}}
+          <!--
+            The backend MUST generate one of these header variants based on
+            showGST, showItemizedTax, isIndia, isInterstate flags:
+
+            ─── VARIANT A: No itemized tax (simple) ───
+            <tr>
+              <th class="inv-th">#</th>
+              <th class="inv-th" style="width: 100%;">
+                <div style="font-weight: 700; margin-bottom: 2px; line-height: 1.2;">பொருள் பெயர்</div>
+                <div style="font-weight: 400; font-size: 10.5px; opacity: 0.9; line-height: 1;">Product Name</div>
+              </th>
+              <th class="inv-th inv-th-center">HSN Code</th>
+              <th class="inv-th inv-th-center">
+                <div style="font-weight: 700; margin-bottom: 2px; line-height: 1.2;">அளவு</div>
+                <div style="font-weight: 400; font-size: 10.5px; opacity: 0.9; line-height: 1;">Quantity</div>
+              </th>
+              <th class="inv-th inv-th-right">
+                <div style="font-weight: 700; margin-bottom: 2px; line-height: 1.2;">விலை</div>
+                <div style="font-weight: 400; font-size: 10.5px; opacity: 0.9; line-height: 1;">Rate</div>
+              </th>
+              <th class="inv-th inv-th-right">
+                <div style="font-weight: 700; margin-bottom: 2px; line-height: 1.2;">தள்ளுபடி</div>
+                <div style="font-weight: 400; font-size: 10.5px; opacity: 0.9; line-height: 1;">Discount</div>
+              </th>
+              <th class="inv-th inv-th-right">
+                <div style="font-weight: 700; margin-bottom: 2px; line-height: 1.2;">தொகை</div>
+                <div style="font-weight: 400; font-size: 10.5px; opacity: 0.9; line-height: 1;">Amount</div>
+              </th>
+            </tr>
+
+            ─── VARIANT B: India Intrastate (CGST + SGST) ───
+            <tr>
+              <th class="inv-th" rowspan="2">#</th>
+              <th class="inv-th" rowspan="2">Product Name</th>
+              <th class="inv-th inv-th-center" rowspan="2">HSN Code</th>
+              <th class="inv-th inv-th-center" rowspan="2">Qty</th>
+              <th class="inv-th inv-th-right" rowspan="2">Rate</th>
+              <th class="inv-th inv-th-right" rowspan="2">Discount</th>
+              <th class="inv-th inv-th-center" colspan="2" style="border-bottom: 1px solid #cbd5e1;">CGST</th>
+              <th class="inv-th inv-th-center" colspan="2" style="border-bottom: 1px solid #cbd5e1;">SGST</th>
+              <th class="inv-th inv-th-right" rowspan="2">Amount</th>
+            </tr>
+            <tr>
+              <th class="inv-th inv-th-center">%</th>
+              <th class="inv-th inv-th-right">Amt</th>
+              <th class="inv-th inv-th-center">%</th>
+              <th class="inv-th inv-th-right">Amt</th>
+            </tr>
+
+            ─── VARIANT C: India Interstate (IGST) ───
+            <tr>
+              <th class="inv-th" rowspan="2">#</th>
+              <th class="inv-th" rowspan="2">Product Name</th>
+              <th class="inv-th inv-th-center" rowspan="2">HSN Code</th>
+              <th class="inv-th inv-th-center" rowspan="2">Qty</th>
+              <th class="inv-th inv-th-right" rowspan="2">Rate</th>
+              <th class="inv-th inv-th-right" rowspan="2">Discount</th>
+              <th class="inv-th inv-th-center" colspan="2" style="border-bottom: 1px solid #cbd5e1;">IGST</th>
+              <th class="inv-th inv-th-right" rowspan="2">Amount</th>
+            </tr>
+            <tr>
+              <th class="inv-th inv-th-center">%</th>
+              <th class="inv-th inv-th-right">Amt</th>
+            </tr>
+
+            ─── VARIANT D: Foreign (single VAT/SST/MwSt column) ───
+            Same as VARIANT C but header text = taxLabel instead of "IGST"
+          -->
         </thead>
         <tbody>
-{{itemRows}}
-</tbody>
+          {{itemRows}}
+          <!--
+            Each row should match this structure:
+            <tr>
+              <td class="inv-td inv-td-muted">1</td>
+              <td class="inv-td">
+                <div class="item-name">பட்டுப்புடவை</div>
+                <div class="item-name-sec">Silk Saree</div>
+                <div class="item-desc">Green handloom, Kanchipuram</div>
+                <div class="item-desc-sec">Description line 2</div>
+              </td>
+              <td class="inv-td inv-td-center inv-td-muted">5407</td>
+              <td class="inv-td inv-td-center">2</td>
+              <td class="inv-td inv-td-right">₹ 5,000.00</td>
+              <td class="inv-td inv-td-right">-</td>
+              (if CGST/SGST:)
+              <td class="inv-td inv-td-center">2.5%</td>
+              <td class="inv-td inv-td-right">₹ 125.00</td>
+              <td class="inv-td inv-td-center">2.5%</td>
+              <td class="inv-td inv-td-right">₹ 125.00</td>
+              (end if)
+              <td class="inv-td inv-td-right">₹ 10,000.00</td>
+            </tr>
+          -->
+        </tbody>
       </table>
 
-      <!-- Totals -->
+      <!-- Totals Section (inside the unified box) -->
       <div class="inv-totals-section">
+
+        <!-- Left: Total items, HSN, Amount in words, QR -->
         <div class="inv-words">
+          <!-- Total Items / Weight -->
           <div class="inv-words-meta">
-            மொத்த அளவு • Total Items: <span class="font-semibold" style="color: #334155;">{{totalItemsQty}}</span>
+            {{totalItemsLabel}}: <span class="font-semibold" style="color: #334155;">{{totalItemsQty}}</span>
           </div>
-          <div class="inv-words-meta">
-            HSN Code: <span class="font-semibold" style="color: #334155;">{{commonHSN}}</span>
-          </div>
+
+          <!-- Common HSN (when all items share the same HSN) -->
+          <!-- <div class="inv-words-meta">HSN Code: <span class="font-semibold" style="color: #334155;">{{commonHSN}}</span></div> -->
+
+          <!-- Amount in Words -->
           <div class="inv-words-text">
             <span>{{amountInWordsPrimary}}</span>
             <span class="inv-words-text-sec">{{amountInWordsSecondary}}</span>
           </div>
+
+          <!-- UPI QR Code -->
+          <!--
+          <div class="qr-section">
+            <h4 class="inv-section-label">{{scanToPayLabel}}</h4>
+            <div class="flex items-center" style="gap: 0.75rem;">
+              <img src="{{qrCodeUrl}}" alt="UPI QR" class="qr-img" />
+              <div class="qr-info">
+                <p style="margin: 0; color: #94a3b8;">UPI ID:</p>
+                <p class="qr-info-id">{{upiId}}</p>
+                <p style="margin: 0.25rem 0 0; color: #94a3b8;">{{grandTotal}}</p>
+              </div>
+            </div>
+          </div>
+          -->
         </div>
+
+        <!-- Right: Totals breakdown -->
         <div class="inv-totals">
-          <div class="inv-total-row">
-            <span>உபமொத்தம்</span>
-            <span>{{subTotal}}</span>
-          </div>
-          <div class="inv-total-row">
-            <span>CGST</span>
-            <span>{{totalCgst}}</span>
-          </div>
-          <div class="inv-total-row">
-            <span>SGST</span>
-            <span>{{totalCgst}}</span>
-          </div>
+          {{totalsRows}}
+          <!--
+            Generate rows like:
+            <div class="inv-total-row"><span>Subtotal</span><span>₹ 10,000.00</span></div>
+            <div class="inv-total-row"><span>Discount</span><span>- ₹ 500.00</span></div>
+            <div class="inv-total-row"><span>CGST</span><span>₹ 237.50</span></div>
+            <div class="inv-total-row"><span>SGST</span><span>₹ 237.50</span></div>
+            (or IGST for interstate, or taxLabel for foreign)
+            <div class="inv-total-row"><span>Tax</span><span>Nil</span></div>  (if all zero)
+            <div class="inv-total-row"><span>Cess</span><span>₹ 50.00</span></div>
+            <div class="inv-total-row"><span>TCS (206C(1H) @ 0.1%)</span><span>₹ 10.00</span></div>
+            <div class="inv-total-row inv-total-row-roundoff"><span>Round-off</span><span>+₹ 0.50</span></div>
+          -->
+
+          <!-- Grand Total (always present) -->
           <div class="inv-total-row grand-total-row">
             <div class="flex-col" style="gap: 1px;">
-              <span class="grand-total-label">மொத்தம்</span>
-              <span class="grand-total-label-sec">Grand Total</span>
+              <span class="grand-total-label">{{grandTotalLabelPrimary}}</span>
+              <span class="grand-total-label-sec">{{grandTotalLabelSecondary}}</span>
             </div>
             <span class="grand-total-val">{{grandTotal}}</span>
           </div>
+
+          {{extraTotalsRows}}
+          <!--
+            TDS + Net Receivable (if applicable):
+            <div class="inv-total-row inv-total-row-tds">
+              <span>Less: TDS (194Q @ 0.1%)</span>
+              <span>− ₹ 100.00</span>
+            </div>
+            <div class="inv-total-row inv-total-row-net">
+              <span>Net Receivable</span>
+              <span>₹ 9,900.00</span>
+            </div>
+          -->
         </div>
       </div>
     </div>
 
-    <!-- Footer -->
+    <!-- ============ DECLARATIONS ============ -->
+    {{declarationsBlock}}
+    <!--
+      Reverse Charge (India, GST):
+      <div class="declaration-warn">
+        <strong>Reverse Charge Applicable:</strong> GST is payable by the recipient under Section 9(3)/9(4) of the CGST Act.
+      </div>
+
+      Composition Scheme (Rule 46A):
+      <div class="declaration-info">
+        "Composition taxable person, not eligible to collect tax on supplies."
+        &nbsp;<span style="font-style: normal; font-size: 0.7rem;">(Rule 46A, CGST Rules)</span>
+      </div>
+    -->
+
+    <!-- ============ FOOTER ============ -->
     <div class="inv-footer">
+
+      <!-- Top Row: Bank Details + Signature -->
       <div class="flex justify-between items-start" style="width: 100%;">
+
+        <!-- Left: Bank Details -->
         <div class="flex-col" style="padding-top: 5px;">
           <div class="bank-details">
             <div class="bank-row">
-              <div class="bank-label">வங்கி விவரம் :</div>
+              <div class="bank-label">{{bankDetailsLabel}} :</div>
               <div class="bank-val">{{bankName}}</div>
             </div>
             <div class="bank-row">
-              <div class="bank-label">கணக்கு எண் :</div>
+              <div class="bank-label">{{accountNoLabel}} :</div>
               <div class="bank-val">{{accountNumber}}</div>
             </div>
             <div class="bank-row">
@@ -173,36 +333,58 @@
               <div class="bank-val">{{ifscCode}}</div>
             </div>
           </div>
+
+          <!-- Exchange Rate (foreign currency invoices) -->
+          <!--
+          <div class="exchange-rate-block">
+            <h4 class="inv-section-label">{{exchangeRateLabel}}</h4>
+            <p class="inv-terms">{{exchangeRateLine}}</p>
+          </div>
+          -->
         </div>
+
+        <!-- Right: Signature -->
         <div class="signature-box">
-          <div class="signature-name">{{businessNameSecondary}}</div>
-          <div class="signature-img-container"></div>
+          <div class="signature-name">{{businessNameForSignature}}</div>
+          <div class="signature-img-container">
+            <img src="{{signatureUrl}}" class="signature-img" alt="Signature" />
+          </div>
         </div>
       </div>
+
+      <!-- Bottom Row: Thank You + Signatory Text -->
       <div class="footer-bottom">
-        <div class="thank-you">நன்றி</div>
+        <div class="thank-you">{{thankYouLabel}}</div>
         <div style="min-width: 220px; text-align: right;">
-          <div class="signatory-text">(கையொப்பம்)</div>
+          <div class="signatory-text">({{signatoryName}})</div>
         </div>
       </div>
     </div>
 
-    <!-- Contact -->
+    <!-- ============ CONTACT SECTION ============ -->
     <div class="inv-contact-block">
       <div class="contact-inner">
         <div class="flex justify-between items-start">
+
+          <!-- Left: Address -->
           <div class="flex-col" style="gap: 4px;">
-            <div class="contact-label">தொடர்பு கொள்ள</div>
+            <div class="contact-label">{{contactUsLabel}}</div>
             <div class="contact-addr">{{businessAddress1}}</div>
             <div class="contact-addr">{{businessAddress2}}</div>
           </div>
+
+          <!-- Right: Phone(s) + Email -->
           <div class="flex-col" style="gap: 4px;">
-            <div class="contact-phone-row">
-              <div class="text-accent flex">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+            {{phoneRows}}
+            <!--
+              Generate one row per phone number:
+              <div class="contact-phone-row">
+                <div class="text-accent flex">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" /></svg>
+                </div>
+                <span class="contact-phone-num">+91 98765 43210</span>
               </div>
-              <span class="contact-phone-num">{{businessPhone}}</span>
-            </div>
+            -->
             <div class="contact-email-row">
               <div class="text-accent flex">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
