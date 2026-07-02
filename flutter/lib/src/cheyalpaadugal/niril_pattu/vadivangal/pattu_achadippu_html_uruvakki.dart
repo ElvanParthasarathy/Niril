@@ -13,6 +13,21 @@ import '../../../adippadai/oru_mozhi/oru_mozhi_vaangunar_udhavi.dart';
 /// of Elvan Niril Achugal) and replaces only the sample content with real
 /// invoice data at runtime. The HTML/CSS structure is never altered.
 class PattuAchadippuHtmlUruvakki {
+
+  static String? _b64Regular;
+  static String? _b64Medium;
+  static String? _b64SemiBold;
+  static String? _b64Bold;
+
+  static Future<void> _initWindowsFonts() async {
+    if (_b64Regular == null) {
+      _b64Regular = base64Encode((await rootBundle.load('assets/templates/silk/fonts/ElvanSans-Regular.woff')).buffer.asUint8List());
+      _b64Medium = base64Encode((await rootBundle.load('assets/templates/silk/fonts/ElvanSans-Medium.woff')).buffer.asUint8List());
+      _b64SemiBold = base64Encode((await rootBundle.load('assets/templates/silk/fonts/ElvanSans-SemiBold.woff')).buffer.asUint8List());
+      _b64Bold = base64Encode((await rootBundle.load('assets/templates/silk/fonts/ElvanSans-Bold.woff')).buffer.asUint8List());
+    }
+  }
+
   static Future<String> generatePattiyalHtml({
     required PattiyalTharavuru pattiyal,
     required dynamic profile,
@@ -27,14 +42,35 @@ class PattuAchadippuHtmlUruvakki {
     final invoiceCss = await rootBundle.loadString('assets/templates/silk/invoice.css');
     final printCss = await rootBundle.loadString('assets/templates/silk/print.css');
 
+
+
+    // 2. Resolve font paths and inline CSS
+    String finalCss = invoiceCss;
     if (isWindows) {
-      await AchadippuHtmlUruvakki.initFonts();
+      await _initWindowsFonts();
+      finalCss = finalCss.replaceAll(
+        "url('fonts/ElvanSans-Regular.woff')",
+        "url(data:font/woff;charset=utf-8;base64,$_b64Regular)"
+      ).replaceAll(
+        "url('fonts/ElvanSans-Medium.woff')",
+        "url(data:font/woff;charset=utf-8;base64,$_b64Medium)"
+      ).replaceAll(
+        "url('fonts/ElvanSans-SemiBold.woff')",
+        "url(data:font/woff;charset=utf-8;base64,$_b64SemiBold)"
+      ).replaceAll(
+        "url('fonts/ElvanSans-Bold.woff')",
+        "url(data:font/woff;charset=utf-8;base64,$_b64Bold)"
+      );
+    } else {
+      finalCss = finalCss.replaceAll(
+        "url('fonts/",
+        "url('file:///android_asset/flutter_assets/assets/templates/silk/fonts/"
+      );
     }
 
-    // 2. Inline CSS (replace <link> tags so WebView doesn't need asset paths)
     html = html.replaceFirst(
       '<link rel="stylesheet" href="invoice.css">',
-      '<style>\n$invoiceCss\n</style>',
+      '<style>\n$finalCss\n</style>',
     );
     html = html.replaceFirst(
       '<link rel="stylesheet" href="print.css">',
