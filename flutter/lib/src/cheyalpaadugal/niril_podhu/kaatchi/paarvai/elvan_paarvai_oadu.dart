@@ -18,6 +18,7 @@ class ElvanPaarvaiOadu extends ConsumerWidget {
     required this.title,
     required this.child,
     this.onEdit,
+    this.onPrint,
   });
 
   final String title;
@@ -26,6 +27,9 @@ class ElvanPaarvaiOadu extends ConsumerWidget {
   /// Callback when the "Edit" (Thiruthi) button is pressed.
   /// If null, the edit button is not shown.
   final VoidCallback? onEdit;
+  
+  /// Callback when the "Print" (Achadippu) button is pressed.
+  final VoidCallback? onPrint;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,6 +41,11 @@ class ElvanPaarvaiOadu extends ConsumerWidget {
       maxWidth: double.infinity,
       hideHeaderOnDesktop: true,
       navActions: [
+        if (onPrint != null)
+          ElvanCheyalPothan(
+            label: 'அச்சிடு', // Print
+            onPressed: onPrint,
+          ),
         if (onEdit != null)
           ElvanCheyalPothan(
             label: K.maatriyamai.tr(context, ref), // "Edit"

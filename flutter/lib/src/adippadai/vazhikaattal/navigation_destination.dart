@@ -44,7 +44,7 @@ extension NirilDestinationX on NirilDestination {
   /// Only used by the desktop layout for state-driven content replacement.
   bool get isCustomView => !isPrimaryTab;
 
-  /// Maps this destination to the mobile tab index (0-3).
+  /// Maps this destination to the mobile tab index (0-4).
   /// Invoices and Receipts both map to tab 1 (Uruvakku).
   int get mobileTabIndex => switch (this) {
         NirilDestination.mugappu => 0,
@@ -56,7 +56,7 @@ extension NirilDestinationX on NirilDestination {
         _ => 0,
       };
 
-  /// Maps this destination to the desktop sidebar index (0-4).
+  /// Maps this destination to the desktop sidebar index (0-5).
   int get desktopSidebarIndex => switch (this) {
         NirilDestination.mugappu => 0,
         NirilDestination.pattiyal => 1,

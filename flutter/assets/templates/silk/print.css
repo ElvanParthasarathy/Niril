@@ -1,0 +1,48 @@
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: white !important;
+    font-size: 14px;
+  }
+
+  .invoice-preview-container {
+    box-shadow: none !important;
+    margin: 0 !important;
+    border: none !important;
+    width: 210mm;
+    min-height: 297mm;
+    page-break-after: avoid;
+  }
+
+  /* Prevent page breaks inside key sections */
+  .inv-classic-header,
+  .inv-parties,
+  .unified-table-box,
+  .inv-totals-section,
+  .inv-footer,
+  .inv-contact-block {
+    page-break-inside: avoid;
+  }
+
+  /* Force background colors and images to print */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide any elements explicitly marked no-print */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Hide watermark in print if empty */
+  .watermark:empty {
+    display: none !important;
+  }
+}

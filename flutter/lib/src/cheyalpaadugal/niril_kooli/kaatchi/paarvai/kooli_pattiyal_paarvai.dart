@@ -11,6 +11,32 @@ import '../../../niril_podhu/kaatchi/paarvai/elvan_paarvai_oadu.dart';
 import '../thiruthi/pattiyal/niril_kooli_pattiyal_thiruthi.dart';
 import '../thiruthi/pattiyal/koorugal/kooli_pattiyal_udhavi.dart';
 import '../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
+import '../../../../adippadai/achadippu/achadippu_html_uruvakki.dart';
+import 'dart:io' show Platform;
+import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart';
+
+Future<void> _handlePrint(dynamic pattiyal, dynamic profile) async {
+  bool isWindows = !kIsWeb && Platform.isWindows;
+  String html = await AchadippuHtmlUruvakki.generatePattiyalHtml(
+    pattiyal: pattiyal,
+    profile: profile,
+    isWindows: isWindows,
+    isKooli: true,
+  );
+
+  if (isWindows) {
+    debugPrint('Windows print not fully hooked here yet.');
+  } else {
+    try {
+      const MethodChannel _printChannel = MethodChannel('com.elvan.niril/print');
+      await _printChannel.invokeMethod('printHtml', {'html': html});
+    } on PlatformException catch (e) {
+      debugPrint("Failed to invoke native print: \${e.message}");
+    }
+  }
+}
 
 class KooliPattiyalPaarvai extends ConsumerWidget {
   const KooliPattiyalPaarvai({
@@ -51,6 +77,11 @@ class KooliPattiyalPaarvai extends ConsumerWidget {
             ),
           ),
         );
+      },
+      onPrint: () {
+        // Find Kooli profile if possible, fallback to empty object if not easily available
+        // Actually we don't have Kooli profile provider fetched here. We can pass an empty dynamic object for now.
+        _handlePrint(pattiyal, {});
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

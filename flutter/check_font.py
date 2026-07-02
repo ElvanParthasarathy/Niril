@@ -1,0 +1,1 @@
+from fontTools.ttLib import TTFont; font = TTFont('assets/fonts/ElvanSans-Regular.ttf'); cmap = font.getBestCmap(); print('Total mapped chars:', len(cmap)); print('U+1D57 mapped:', 0x1D57 in cmap); print('U+0B95 mapped:', 0x0B95 in cmap); print('GSUB exists:', 'GSUB' in font)

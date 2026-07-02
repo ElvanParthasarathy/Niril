@@ -1,0 +1,695 @@
+/* ========== Elvan Sans Font (woff primary, ttf fallback) ========== */
+@font-face {
+  font-family: 'Elvan Sans';
+  src: url('fonts/ElvanSans-Regular.woff') format('woff'),
+       url('fonts/ElvanSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Elvan Sans';
+  src: url('fonts/ElvanSans-Medium.woff') format('woff'),
+       url('fonts/ElvanSans-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Elvan Sans';
+  src: url('fonts/ElvanSans-SemiBold.woff') format('woff'),
+       url('fonts/ElvanSans-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Elvan Sans';
+  src: url('fonts/ElvanSans-Bold.woff') format('woff'),
+       url('fonts/ElvanSans-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+
+:root {
+  --accent: #388e3c; /* Default green accent — override via inline <style> or backend replacement */
+  --accent-bg: #388e3c1a;       /* accent + 10% opacity — equivalent to accent + '1A' in TSX */
+  --accent-bg-alt: #388e3c14;   /* accent + 8% opacity — equivalent to accent + '14' in TSX */
+  --accent-bg-light: #388e3c15; /* accent + 8.2% — contact block bg, equivalent to accent + '15' */
+  --accent-watermark: #388e3c0a; /* accent + 4% — watermark color, equivalent to accent + '0a' */
+  --text-dark: #0f172a;
+  --text-primary: #334155;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+  --border-light: #e2e8f0;
+  --border-sub: #cbd5e1;
+
+  /* Declaration banners */
+  --warn-bg: #fef3c7;
+  --warn-border: #fcd34d;
+  --warn-text: #92400e;
+  --info-bg: #dbeafe;
+  --info-border: #93c5fd;
+  --info-text: #1e40af;
+}
+
+body {
+  font-family: 'Elvan Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
+  background-color: #f8fafc; /* Optional off-white background */
+  font-size: 13.6px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* ========== Main Container ========== */
+.invoice-preview-container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: 297mm;
+  width: 210mm;
+  margin: 20px auto;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* ========== Typography & Utility Classes ========== */
+h1, h2, h3, h4, p { margin: 0; }
+
+.text-accent  { color: var(--accent); }
+.text-dark    { color: var(--text-dark); }
+.text-muted   { color: var(--text-muted); }
+.text-primary { color: var(--text-primary); }
+.font-bold    { font-weight: 700; }
+.font-semibold{ font-weight: 600; }
+.font-medium  { font-weight: 500; }
+
+.flex         { display: flex; }
+.flex-col     { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.items-start  { align-items: flex-start; }
+.items-end    { align-items: flex-end; }
+.justify-between { justify-content: space-between; }
+.justify-center  { justify-content: center; }
+.justify-end     { justify-content: flex-end; }
+.text-right   { text-align: right; }
+.text-center  { text-align: center; }
+
+/* ========== Classic Header ========== */
+.inv-classic-header {
+  padding-top: 5mm;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+/* Greeting: வாழ்க வையகம் / வாழ்க வளமுடன் */
+.greeting-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0;
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+}
+
+/* Header row: logo + title */
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  min-height: 70px;
+  border-bottom: none;
+  padding: 15px 0;
+  margin-bottom: 15px;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+  position: relative;
+}
+
+/* Wide logo (absolutely positioned) */
+.logo-wide {
+  position: absolute;
+  left: 0;
+  top: -20px;
+  height: 140px;
+  width: 400px;
+  object-fit: contain;
+  object-position: left center;
+  transform-origin: left center;
+}
+
+.logo-standard-wrapper {
+  position: absolute;
+  left: 0;
+  top: -40px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 140px;
+}
+.logo-standard {
+  max-height: 120px;
+  max-width: 160px;
+  object-fit: contain;
+}
+
+.business-name {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.business-name-sec {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* Right side: document title + GSTIN */
+.header-right {
+  text-align: right;
+  z-index: 5;
+  position: relative;
+}
+.document-title {
+  color: var(--accent);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-transform: capitalize;
+  transform: translateY(3px);
+}
+.document-subtitle {
+  font-size: 0.55em;
+  font-weight: 500;
+  opacity: 0.85;
+  letter-spacing: 0.02em;
+  margin-top: 2px;
+}
+.gstin-line {
+  font-size: 0.75rem;
+  color: #475569;
+  margin: 1px 0 0;
+  transform: translateY(3px);
+}
+
+/* Bill No / Date meta bar */
+.meta-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--accent-bg);
+  border-radius: 8px;
+  padding: 8px 0.5rem;
+  margin-bottom: 15px;
+}
+.meta-item {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.meta-item strong {
+  color: #000;
+  font-weight: 700;
+}
+
+/* ========== Billing Parties ========== */
+.inv-parties {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 1.5rem 0.5rem 1.5rem;
+  padding: 0 0.5rem;
+}
+.inv-party {
+  flex: 1;
+}
+.inv-party-right {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.inv-section-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+}
+.inv-party-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.3rem;
+}
+.inv-party-details {
+  font-size: 0.8rem;
+  color: #64748b;
+  line-height: 1.65;
+}
+.inv-party-details p {
+  margin: 0;
+  color: var(--text-secondary);
+}
+.inv-party-details strong {
+  color: var(--text-primary); /* #334155 */
+}
+
+/* Place of supply bilingual display */
+.pos-primary {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-dark); /* #0f172a */
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+.pos-secondary {
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* ========== Items Table ========== */
+.unified-table-box {
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0 1.5rem 0.5rem 1.5rem;
+}
+.inv-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: none;
+  border-radius: 0;
+  margin: 0;
+  width: 100%;
+  table-layout: auto;
+}
+
+/* Table headers */
+.inv-table th {
+  background-color: var(--accent-bg);
+  color: var(--accent) !important;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  border-right: 1px solid rgba(0,0,0,0.08);
+  border-radius: 0;
+  padding: 0.5rem 0.5rem;
+  text-align: left;
+}
+.inv-table th.inv-th-center { text-align: center; }
+.inv-table th.inv-th-right  { text-align: right; }
+.inv-table th:last-child    { border-right: none; }
+
+/* Sub-header borders for CGST/SGST/IGST */
+.inv-table th.inv-th-sub {
+  border-bottom: 1px solid var(--border-sub);
+}
+
+/* Table cells */
+.inv-table td {
+  font-size: 0.75rem;
+  border-right: 1px solid rgba(0,0,0,0.08);
+  border-bottom: 1px dashed var(--border-sub);
+  padding: 0.25rem 0.5rem;
+  vertical-align: top;
+}
+.inv-table td:last-child    { border-right: none; }
+/* Bilingual OFF: taller cell padding */
+.inv-table.bilingual-off td {
+  padding: 0.65rem 0.5rem;
+}
+.inv-table td.inv-td-center { text-align: center; }
+.inv-table td.inv-td-right  { text-align: right; }
+.inv-table td.inv-td-muted  { color: #94a3b8; }
+.inv-table td.inv-td-name   { font-weight: 600; color: #1e293b; white-space: normal; word-wrap: break-word; overflow-wrap: break-word; }
+.inv-table td.inv-td-amount { text-align: right; font-weight: 600; color: #0f172a; white-space: nowrap; }
+.inv-table td:last-child    { border-right: none; }
+
+/* Even row striping — also support explicit class from React */
+.inv-table tbody tr:nth-child(even),
+.inv-table tbody tr.inv-tr-even {
+  background-color: var(--accent-bg-alt);
+}
+
+/* Item name cells */
+.item-name {
+  font-weight: 500;
+}
+.item-name-sec {
+  font-size: 0.85em;
+  color: #64748b;
+  margin-top: 2px;
+}
+.item-desc {
+  font-size: 0.8em;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+.item-desc-sec {
+  font-size: 0.8em;
+  color: var(--text-light);
+  margin-top: 1px;
+}
+
+/* ========== Totals Section ========== */
+.inv-totals-section {
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid var(--border-light);
+  background: #fff;
+  margin: 0;
+  padding: 0;
+}
+
+/* Left column: total items, HSN, words, QR */
+.inv-words {
+  padding: 0.75rem 0.5rem;
+  border-right: 1px solid var(--border-light);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.inv-words-meta {
+  margin-bottom: 0.2rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+.inv-words-text {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--text-dark);
+  font-size: 0.75rem;
+  margin: 0;
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.inv-words-text-sec {
+  font-weight: 400;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* QR Code */
+.qr-section {
+  margin-top: 1.25rem;
+}
+.qr-img {
+  width: 90px;
+  height: 90px;
+  border-radius: 6px;
+  border: 1px solid var(--border-light);
+}
+.qr-info {
+  font-size: 0.7rem;
+  color: var(--text-light);
+  line-height: 1.5;
+}
+.qr-info-id {
+  margin: 0;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+/* Right column: totals */
+.inv-totals {
+  padding: 0.75rem 0.5rem;
+  align-self: center;
+  min-width: 220px;
+  width: auto;
+  white-space: nowrap;
+}
+.inv-total-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.15rem 0;
+  font-size: 0.75rem;
+  color: var(--text-muted); /* #64748b */
+}
+.inv-total-row span:last-child {
+  font-weight: 500;
+  color: var(--text-dark); /* #1e293b approx */
+}
+.grand-total-row {
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: 0.35rem;
+  padding-top: 0;
+  align-items: center;
+}
+.grand-total-row span {
+  color: var(--accent);
+}
+.grand-total-label {
+  font-size: 0.85rem;
+  color: var(--accent);
+  line-height: 1;
+}
+.grand-total-label-sec {
+  font-size: 0.55rem;
+  color: var(--accent);
+  opacity: 0.8;
+  font-weight: 500;
+}
+.grand-total-val {
+  color: var(--accent);
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+/* TDS/Net Receivable rows */
+.inv-total-row-tds {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  border-top: 1px dashed var(--border-light);
+  padding-top: 0.4rem;
+}
+.inv-total-row-net {
+  font-weight: 600;
+  color: #0f766e;
+  font-size: 0.78rem;
+}
+.inv-total-row-roundoff {
+  color: var(--text-muted);
+}
+
+/* ========== Declarations (Reverse Charge, Composition) ========== */
+.declaration-warn {
+  margin: 0 2rem 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  border-radius: 4px;
+  font-size: 0.78rem;
+  color: var(--warn-text);
+}
+.declaration-info {
+  margin: 0 2rem 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--info-bg);
+  border: 1px solid var(--info-border);
+  border-radius: 4px;
+  font-size: 0.78rem;
+  color: var(--info-text);
+  font-style: italic;
+}
+
+/* ========== Footer ========== */
+.inv-footer {
+  display: flex;
+  flex-direction: column;
+  margin: 1.5rem 1.5rem 0.5rem 1.5rem;
+  padding: 0.5rem;
+}
+
+/* Bank details */
+.bank-details {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin-bottom: 15px;
+  padding-top: 5px;
+}
+.bank-account-label {
+  font-size: 0.75rem;
+  font-style: italic;
+  margin-bottom: 1px;
+}
+.bank-row {
+  display: flex;
+  gap: 4px;
+}
+.bank-label {
+  font-weight: 700;
+  white-space: nowrap;
+  font-size: 0.82rem;
+  color: var(--accent);
+}
+.bank-val {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Exchange rate block */
+.exchange-rate-block {
+  margin-bottom: 15px;
+}
+.inv-terms {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Signature */
+.signature-box {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 220px;
+}
+.signature-name {
+  color: var(--accent);
+  position: relative;
+  z-index: 10;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+  line-height: 1;
+}
+.signature-img-container {
+  position: relative;
+  height: 55px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+.signature-img {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: -10px;
+  max-height: 95px;
+  max-width: 200px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+/* Thank you + Signatory */
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 10px;
+}
+.thank-you {
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+.signatory-text {
+  position: relative;
+  z-index: 10;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #555;
+  line-height: 1;
+}
+
+/* ========== Contact Block ========== */
+.inv-contact-block {
+  margin-top: auto;
+  padding: 10px 1.5rem 14px 1.5rem;
+  background: var(--accent-bg-light);
+  margin-bottom: 0;
+}
+.contact-inner {
+  padding: 0 0.5rem;
+}
+.contact-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  min-height: 20px;
+}
+.contact-addr {
+  font-size: 0.8rem;
+  color: #333;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  min-height: 20px;
+}
+.contact-phone-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #444;
+  justify-content: flex-end;
+  min-height: 20px;
+}
+.contact-email-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #444;
+  justify-content: flex-end;
+  min-height: 20px;
+}
+.contact-phone-num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* ========== Watermark ========== */
+.watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-35deg);
+  font-size: 5rem;
+  font-weight: 800;
+  color: var(--accent-watermark);
+  pointer-events: none;
+  white-space: nowrap;
+}
+/* Hide watermark when empty */
+.watermark:empty {
+  display: none;
+}

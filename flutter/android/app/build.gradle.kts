@@ -2,6 +2,8 @@ plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    // Compose compiler plugin
+    id("org.jetbrains.kotlin.plugin.compose")
     // Firebase Crashlytics (uncomment when Firebase is configured)
     // id("com.google.gms.google-services")
     // id("com.google.firebase.crashlytics")
@@ -22,6 +24,10 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        compose = true
     }
 
     defaultConfig {
@@ -64,4 +70,19 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    val composeBom = platform("androidx.compose:compose-bom:2024.04.01")
+    implementation(composeBom)
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    implementation("androidx.activity:activity-compose:1.9.0")
+    
+    // Core KTX
+    implementation("androidx.core:core-ktx:1.13.1")
+    // Coroutines for WebView background tasks
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 }
