@@ -67,6 +67,17 @@ class PattuAchadippuHtmlUruvakki {
         "url('file:///android_asset/flutter_assets/assets/templates/silk/fonts/"
       );
     }
+    
+    // Fix blank second page in Android printing due to 297mm + margins
+    finalCss += '''\n
+    @media print {
+      .invoice-preview-container {
+        min-height: auto !important;
+        height: 100% !important;
+        page-break-after: auto !important;
+      }
+    }
+    ''';
 
     html = html.replaceFirst(
       '<link rel="stylesheet" href="invoice.css">',
@@ -203,6 +214,12 @@ class PattuAchadippuHtmlUruvakki {
     final grandTotal = subTotal + totalCgst + totalSgst - pattiyal.thallupadi;
 
     // ─── 3. Runtime replacements on the EXACT template content ───
+    // 4. Fix viewport zooming on mobile and print page overflow
+    html = html.replaceFirst(
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+      '<meta name="viewport" content="width=800, user-scalable=yes">',
+    );
+    
     // Header — business name
     html = html.replaceFirst('ஸ்ரீ சிவராம் சில்க் சாரீஸ்', companyNameTa);
     // Second occurrence of company name (signature block) — uses English
