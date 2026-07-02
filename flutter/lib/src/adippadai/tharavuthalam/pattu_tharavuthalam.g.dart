@@ -46,6 +46,16 @@ class $PattuNiruvanaTharavugalTableTable extends PattuNiruvanaTharavugalTable
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('CHECK ("iru_mozhi" IN (0, 1))'),
       defaultValue: const Constant(false));
+  static const VerificationMeta _gstPirippugalMeta =
+      const VerificationMeta('gstPirippugal');
+  @override
+  late final GeneratedColumn<bool> gstPirippugal = GeneratedColumn<bool>(
+      'gst_pirippugal', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("gst_pirippugal" IN (0, 1))'),
+      defaultValue: const Constant(false));
   @override
   late final GeneratedColumnWithTypeConverter<Map<String, String>, String>
       niruvanathinPeyar = GeneratedColumn<String>(
@@ -265,6 +275,7 @@ class $PattuNiruvanaTharavugalTableTable extends PattuNiruvanaTharavugalTable
         mudhanMozhi,
         thunaiMozhi,
         iruMozhi,
+        gstPirippugal,
         niruvanathinPeyar,
         kurumPeyar,
         tholaipaesi1,
@@ -322,6 +333,12 @@ class $PattuNiruvanaTharavugalTableTable extends PattuNiruvanaTharavugalTable
     if (data.containsKey('iru_mozhi')) {
       context.handle(_iruMozhiMeta,
           iruMozhi.isAcceptableOrUnknown(data['iru_mozhi']!, _iruMozhiMeta));
+    }
+    if (data.containsKey('gst_pirippugal')) {
+      context.handle(
+          _gstPirippugalMeta,
+          gstPirippugal.isAcceptableOrUnknown(
+              data['gst_pirippugal']!, _gstPirippugalMeta));
     }
     if (data.containsKey('kurum_peyar')) {
       context.handle(
@@ -429,6 +446,8 @@ class $PattuNiruvanaTharavugalTableTable extends PattuNiruvanaTharavugalTable
           .read(DriftSqlType.string, data['${effectivePrefix}thunai_mozhi'])!,
       iruMozhi: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}iru_mozhi'])!,
+      gstPirippugal: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}gst_pirippugal'])!,
       niruvanathinPeyar: $PattuNiruvanaTharavugalTableTable
           .$converterniruvanathinPeyar
           .fromSql(attachedDatabase.typeMapping.read(DriftSqlType.string,
@@ -527,6 +546,7 @@ class PattuNiruvanaTharavugalEntry extends DataClass
   final String mudhanMozhi;
   final String thunaiMozhi;
   final bool iruMozhi;
+  final bool gstPirippugal;
   final Map<String, String> niruvanathinPeyar;
   final String kurumPeyar;
   final String tholaipaesi1;
@@ -559,6 +579,7 @@ class PattuNiruvanaTharavugalEntry extends DataClass
       required this.mudhanMozhi,
       required this.thunaiMozhi,
       required this.iruMozhi,
+      required this.gstPirippugal,
       required this.niruvanathinPeyar,
       required this.kurumPeyar,
       required this.tholaipaesi1,
@@ -593,6 +614,7 @@ class PattuNiruvanaTharavugalEntry extends DataClass
     map['mudhan_mozhi'] = Variable<String>(mudhanMozhi);
     map['thunai_mozhi'] = Variable<String>(thunaiMozhi);
     map['iru_mozhi'] = Variable<bool>(iruMozhi);
+    map['gst_pirippugal'] = Variable<bool>(gstPirippugal);
     {
       map['niruvanathin_peyar'] = Variable<String>(
           $PattuNiruvanaTharavugalTableTable.$converterniruvanathinPeyar
@@ -664,6 +686,7 @@ class PattuNiruvanaTharavugalEntry extends DataClass
       mudhanMozhi: Value(mudhanMozhi),
       thunaiMozhi: Value(thunaiMozhi),
       iruMozhi: Value(iruMozhi),
+      gstPirippugal: Value(gstPirippugal),
       niruvanathinPeyar: Value(niruvanathinPeyar),
       kurumPeyar: Value(kurumPeyar),
       tholaipaesi1: Value(tholaipaesi1),
@@ -704,6 +727,7 @@ class PattuNiruvanaTharavugalEntry extends DataClass
       mudhanMozhi: serializer.fromJson<String>(json['mudhanMozhi']),
       thunaiMozhi: serializer.fromJson<String>(json['thunaiMozhi']),
       iruMozhi: serializer.fromJson<bool>(json['iruMozhi']),
+      gstPirippugal: serializer.fromJson<bool>(json['gstPirippugal']),
       niruvanathinPeyar:
           serializer.fromJson<Map<String, String>>(json['niruvanathinPeyar']),
       kurumPeyar: serializer.fromJson<String>(json['kurumPeyar']),
@@ -742,6 +766,7 @@ class PattuNiruvanaTharavugalEntry extends DataClass
       'mudhanMozhi': serializer.toJson<String>(mudhanMozhi),
       'thunaiMozhi': serializer.toJson<String>(thunaiMozhi),
       'iruMozhi': serializer.toJson<bool>(iruMozhi),
+      'gstPirippugal': serializer.toJson<bool>(gstPirippugal),
       'niruvanathinPeyar':
           serializer.toJson<Map<String, String>>(niruvanathinPeyar),
       'kurumPeyar': serializer.toJson<String>(kurumPeyar),
@@ -778,6 +803,7 @@ class PattuNiruvanaTharavugalEntry extends DataClass
           String? mudhanMozhi,
           String? thunaiMozhi,
           bool? iruMozhi,
+          bool? gstPirippugal,
           Map<String, String>? niruvanathinPeyar,
           String? kurumPeyar,
           String? tholaipaesi1,
@@ -810,6 +836,7 @@ class PattuNiruvanaTharavugalEntry extends DataClass
         mudhanMozhi: mudhanMozhi ?? this.mudhanMozhi,
         thunaiMozhi: thunaiMozhi ?? this.thunaiMozhi,
         iruMozhi: iruMozhi ?? this.iruMozhi,
+        gstPirippugal: gstPirippugal ?? this.gstPirippugal,
         niruvanathinPeyar: niruvanathinPeyar ?? this.niruvanathinPeyar,
         kurumPeyar: kurumPeyar ?? this.kurumPeyar,
         tholaipaesi1: tholaipaesi1 ?? this.tholaipaesi1,
@@ -847,6 +874,9 @@ class PattuNiruvanaTharavugalEntry extends DataClass
       thunaiMozhi:
           data.thunaiMozhi.present ? data.thunaiMozhi.value : this.thunaiMozhi,
       iruMozhi: data.iruMozhi.present ? data.iruMozhi.value : this.iruMozhi,
+      gstPirippugal: data.gstPirippugal.present
+          ? data.gstPirippugal.value
+          : this.gstPirippugal,
       niruvanathinPeyar: data.niruvanathinPeyar.present
           ? data.niruvanathinPeyar.value
           : this.niruvanathinPeyar,
@@ -900,6 +930,7 @@ class PattuNiruvanaTharavugalEntry extends DataClass
           ..write('mudhanMozhi: $mudhanMozhi, ')
           ..write('thunaiMozhi: $thunaiMozhi, ')
           ..write('iruMozhi: $iruMozhi, ')
+          ..write('gstPirippugal: $gstPirippugal, ')
           ..write('niruvanathinPeyar: $niruvanathinPeyar, ')
           ..write('kurumPeyar: $kurumPeyar, ')
           ..write('tholaipaesi1: $tholaipaesi1, ')
@@ -937,6 +968,7 @@ class PattuNiruvanaTharavugalEntry extends DataClass
         mudhanMozhi,
         thunaiMozhi,
         iruMozhi,
+        gstPirippugal,
         niruvanathinPeyar,
         kurumPeyar,
         tholaipaesi1,
@@ -973,6 +1005,7 @@ class PattuNiruvanaTharavugalEntry extends DataClass
           other.mudhanMozhi == this.mudhanMozhi &&
           other.thunaiMozhi == this.thunaiMozhi &&
           other.iruMozhi == this.iruMozhi &&
+          other.gstPirippugal == this.gstPirippugal &&
           other.niruvanathinPeyar == this.niruvanathinPeyar &&
           other.kurumPeyar == this.kurumPeyar &&
           other.tholaipaesi1 == this.tholaipaesi1 &&
@@ -1008,6 +1041,7 @@ class PattuNiruvanaTharavugalTableCompanion
   final Value<String> mudhanMozhi;
   final Value<String> thunaiMozhi;
   final Value<bool> iruMozhi;
+  final Value<bool> gstPirippugal;
   final Value<Map<String, String>> niruvanathinPeyar;
   final Value<String> kurumPeyar;
   final Value<String> tholaipaesi1;
@@ -1040,6 +1074,7 @@ class PattuNiruvanaTharavugalTableCompanion
     this.mudhanMozhi = const Value.absent(),
     this.thunaiMozhi = const Value.absent(),
     this.iruMozhi = const Value.absent(),
+    this.gstPirippugal = const Value.absent(),
     this.niruvanathinPeyar = const Value.absent(),
     this.kurumPeyar = const Value.absent(),
     this.tholaipaesi1 = const Value.absent(),
@@ -1073,6 +1108,7 @@ class PattuNiruvanaTharavugalTableCompanion
     this.mudhanMozhi = const Value.absent(),
     this.thunaiMozhi = const Value.absent(),
     this.iruMozhi = const Value.absent(),
+    this.gstPirippugal = const Value.absent(),
     this.niruvanathinPeyar = const Value.absent(),
     this.kurumPeyar = const Value.absent(),
     this.tholaipaesi1 = const Value.absent(),
@@ -1106,6 +1142,7 @@ class PattuNiruvanaTharavugalTableCompanion
     Expression<String>? mudhanMozhi,
     Expression<String>? thunaiMozhi,
     Expression<bool>? iruMozhi,
+    Expression<bool>? gstPirippugal,
     Expression<String>? niruvanathinPeyar,
     Expression<String>? kurumPeyar,
     Expression<String>? tholaipaesi1,
@@ -1139,6 +1176,7 @@ class PattuNiruvanaTharavugalTableCompanion
       if (mudhanMozhi != null) 'mudhan_mozhi': mudhanMozhi,
       if (thunaiMozhi != null) 'thunai_mozhi': thunaiMozhi,
       if (iruMozhi != null) 'iru_mozhi': iruMozhi,
+      if (gstPirippugal != null) 'gst_pirippugal': gstPirippugal,
       if (niruvanathinPeyar != null) 'niruvanathin_peyar': niruvanathinPeyar,
       if (kurumPeyar != null) 'kurum_peyar': kurumPeyar,
       if (tholaipaesi1 != null) 'tholaipaesi1': tholaipaesi1,
@@ -1174,6 +1212,7 @@ class PattuNiruvanaTharavugalTableCompanion
       Value<String>? mudhanMozhi,
       Value<String>? thunaiMozhi,
       Value<bool>? iruMozhi,
+      Value<bool>? gstPirippugal,
       Value<Map<String, String>>? niruvanathinPeyar,
       Value<String>? kurumPeyar,
       Value<String>? tholaipaesi1,
@@ -1206,6 +1245,7 @@ class PattuNiruvanaTharavugalTableCompanion
       mudhanMozhi: mudhanMozhi ?? this.mudhanMozhi,
       thunaiMozhi: thunaiMozhi ?? this.thunaiMozhi,
       iruMozhi: iruMozhi ?? this.iruMozhi,
+      gstPirippugal: gstPirippugal ?? this.gstPirippugal,
       niruvanathinPeyar: niruvanathinPeyar ?? this.niruvanathinPeyar,
       kurumPeyar: kurumPeyar ?? this.kurumPeyar,
       tholaipaesi1: tholaipaesi1 ?? this.tholaipaesi1,
@@ -1250,6 +1290,9 @@ class PattuNiruvanaTharavugalTableCompanion
     }
     if (iruMozhi.present) {
       map['iru_mozhi'] = Variable<bool>(iruMozhi.value);
+    }
+    if (gstPirippugal.present) {
+      map['gst_pirippugal'] = Variable<bool>(gstPirippugal.value);
     }
     if (niruvanathinPeyar.present) {
       map['niruvanathin_peyar'] = Variable<String>(
@@ -1359,6 +1402,7 @@ class PattuNiruvanaTharavugalTableCompanion
           ..write('mudhanMozhi: $mudhanMozhi, ')
           ..write('thunaiMozhi: $thunaiMozhi, ')
           ..write('iruMozhi: $iruMozhi, ')
+          ..write('gstPirippugal: $gstPirippugal, ')
           ..write('niruvanathinPeyar: $niruvanathinPeyar, ')
           ..write('kurumPeyar: $kurumPeyar, ')
           ..write('tholaipaesi1: $tholaipaesi1, ')
@@ -5038,6 +5082,7 @@ typedef $$PattuNiruvanaTharavugalTableTableCreateCompanionBuilder
   Value<String> mudhanMozhi,
   Value<String> thunaiMozhi,
   Value<bool> iruMozhi,
+  Value<bool> gstPirippugal,
   Value<Map<String, String>> niruvanathinPeyar,
   Value<String> kurumPeyar,
   Value<String> tholaipaesi1,
@@ -5072,6 +5117,7 @@ typedef $$PattuNiruvanaTharavugalTableTableUpdateCompanionBuilder
   Value<String> mudhanMozhi,
   Value<String> thunaiMozhi,
   Value<bool> iruMozhi,
+  Value<bool> gstPirippugal,
   Value<Map<String, String>> niruvanathinPeyar,
   Value<String> kurumPeyar,
   Value<String> tholaipaesi1,
@@ -5121,6 +5167,9 @@ class $$PattuNiruvanaTharavugalTableTableFilterComposer
 
   ColumnFilters<bool> get iruMozhi => $composableBuilder(
       column: $table.iruMozhi, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get gstPirippugal => $composableBuilder(
+      column: $table.gstPirippugal, builder: (column) => ColumnFilters(column));
 
   ColumnWithTypeConverterFilters<Map<String, String>, Map<String, String>,
           String>
@@ -5254,6 +5303,10 @@ class $$PattuNiruvanaTharavugalTableTableOrderingComposer
   ColumnOrderings<bool> get iruMozhi => $composableBuilder(
       column: $table.iruMozhi, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<bool> get gstPirippugal => $composableBuilder(
+      column: $table.gstPirippugal,
+      builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get niruvanathinPeyar => $composableBuilder(
       column: $table.niruvanathinPeyar,
       builder: (column) => ColumnOrderings(column));
@@ -5362,6 +5415,9 @@ class $$PattuNiruvanaTharavugalTableTableAnnotationComposer
 
   GeneratedColumn<bool> get iruMozhi =>
       $composableBuilder(column: $table.iruMozhi, builder: (column) => column);
+
+  GeneratedColumn<bool> get gstPirippugal => $composableBuilder(
+      column: $table.gstPirippugal, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<Map<String, String>, String>
       get niruvanathinPeyar => $composableBuilder(
@@ -5482,6 +5538,7 @@ class $$PattuNiruvanaTharavugalTableTableTableManager extends RootTableManager<
             Value<String> mudhanMozhi = const Value.absent(),
             Value<String> thunaiMozhi = const Value.absent(),
             Value<bool> iruMozhi = const Value.absent(),
+            Value<bool> gstPirippugal = const Value.absent(),
             Value<Map<String, String>> niruvanathinPeyar = const Value.absent(),
             Value<String> kurumPeyar = const Value.absent(),
             Value<String> tholaipaesi1 = const Value.absent(),
@@ -5515,6 +5572,7 @@ class $$PattuNiruvanaTharavugalTableTableTableManager extends RootTableManager<
             mudhanMozhi: mudhanMozhi,
             thunaiMozhi: thunaiMozhi,
             iruMozhi: iruMozhi,
+            gstPirippugal: gstPirippugal,
             niruvanathinPeyar: niruvanathinPeyar,
             kurumPeyar: kurumPeyar,
             tholaipaesi1: tholaipaesi1,
@@ -5548,6 +5606,7 @@ class $$PattuNiruvanaTharavugalTableTableTableManager extends RootTableManager<
             Value<String> mudhanMozhi = const Value.absent(),
             Value<String> thunaiMozhi = const Value.absent(),
             Value<bool> iruMozhi = const Value.absent(),
+            Value<bool> gstPirippugal = const Value.absent(),
             Value<Map<String, String>> niruvanathinPeyar = const Value.absent(),
             Value<String> kurumPeyar = const Value.absent(),
             Value<String> tholaipaesi1 = const Value.absent(),
@@ -5581,6 +5640,7 @@ class $$PattuNiruvanaTharavugalTableTableTableManager extends RootTableManager<
             mudhanMozhi: mudhanMozhi,
             thunaiMozhi: thunaiMozhi,
             iruMozhi: iruMozhi,
+            gstPirippugal: gstPirippugal,
             niruvanathinPeyar: niruvanathinPeyar,
             kurumPeyar: kurumPeyar,
             tholaipaesi1: tholaipaesi1,

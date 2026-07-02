@@ -9,7 +9,7 @@ import '../../../adippadai/oru_mozhi/oru_mozhi_vaangunar_udhavi.dart';
 
 /// பட்டு அச்சடிப்பு HTML உருவாக்கி — Silk Invoice HTML Generator
 ///
-/// Loads the exact sjs_gst_intra.html template from assets (unmodified copy
+/// Loads the exact sjs_gst_intra.html or sjs_simple.html template from assets (unmodified copy
 /// of Elvan Niril Achugal) and replaces only the sample content with real
 /// invoice data at runtime. The HTML/CSS structure is never altered.
 class PattuAchadippuHtmlUruvakki {
@@ -19,8 +19,11 @@ class PattuAchadippuHtmlUruvakki {
     VaangunarTharavuru? client,
     required bool isWindows,
   }) async {
+    final bool showGstSplits = profile.gstPirippugal ?? false;
+    final String templateName = showGstSplits ? 'sjs_gst_intra.html' : 'sjs_simple.html';
+
     // 1. Load the EXACT template + CSS from assets (identical to Achugal folder)
-    String html = await rootBundle.loadString('assets/templates/silk/sjs_gst_intra.html');
+    String html = await rootBundle.loadString('assets/templates/silk/$templateName');
     final invoiceCss = await rootBundle.loadString('assets/templates/silk/invoice.css');
     final printCss = await rootBundle.loadString('assets/templates/silk/print.css');
 
@@ -127,22 +130,37 @@ class PattuAchadippuHtmlUruvakki {
       }
 
       // Build row using the EXACT same class names / structure as the template
-      itemRows += '''
+      if (showGstSplits) {
+        itemRows += '''
           <tr>
-            <td class="inv-td inv-td-muted">\$index</td>
+            <td class="inv-td inv-td-muted">$index</td>
             <td class="inv-td">
-              <div class="item-name">\${item.porulPeyar}</div>
-              \${item.porulPeyarEn.isNotEmpty ? '<div class="item-name-sec">\${item.porulPeyarEn}</div>' : ''}
+              <div class="item-name">${item.porulPeyar}</div>
+              ${item.porulPeyarEn.isNotEmpty ? '<div class="item-name-sec">${item.porulPeyarEn}</div>' : ''}
             </td>
-            <td class="inv-td inv-td-center inv-td-muted">\${item.hsnKuriyeedu}</td>
-            <td class="inv-td inv-td-center">\${item.alavu.toInt()}</td>
-            <td class="inv-td inv-td-right">₹ \${_fmt(item.vilai)}</td>
-            <td class="inv-td inv-td-center">\${cgstRate.toStringAsFixed(1)}%</td>
-            <td class="inv-td inv-td-right">₹ \${_fmt(cgstAmt)}</td>
-            <td class="inv-td inv-td-center">\${sgstRate.toStringAsFixed(1)}%</td>
-            <td class="inv-td inv-td-right">₹ \${_fmt(sgstAmt)}</td>
-            <td class="inv-td inv-td-right">₹ \${_fmt(rowTotal)}</td>
+            <td class="inv-td inv-td-center inv-td-muted">${item.hsnKuriyeedu}</td>
+            <td class="inv-td inv-td-center">${item.alavu.toInt()}</td>
+            <td class="inv-td inv-td-right">₹ ${_fmt(item.vilai)}</td>
+            <td class="inv-td inv-td-center">${cgstRate.toStringAsFixed(1)}%</td>
+            <td class="inv-td inv-td-right">₹ ${_fmt(cgstAmt)}</td>
+            <td class="inv-td inv-td-center">${sgstRate.toStringAsFixed(1)}%</td>
+            <td class="inv-td inv-td-right">₹ ${_fmt(sgstAmt)}</td>
+            <td class="inv-td inv-td-right">₹ ${_fmt(rowTotal)}</td>
           </tr>''';
+      } else {
+        itemRows += '''
+          <tr>
+            <td class="inv-td inv-td-muted">$index</td>
+            <td class="inv-td inv-td-name">
+              <div class="item-name">${item.porulPeyar}</div>
+              ${item.porulPeyarEn.isNotEmpty ? '<div class="item-name-sec">${item.porulPeyarEn}</div>' : ''}
+            </td>
+            <td class="inv-td inv-td-center inv-td-muted">${item.hsnKuriyeedu}</td>
+            <td class="inv-td inv-td-center">${item.alavu.toInt()}</td>
+            <td class="inv-td inv-td-right">₹ ${_fmt(item.vilai)}</td>
+            <td class="inv-td inv-td-right">₹ ${_fmt(rowTotal)}</td>
+          </tr>''';
+      }
       index++;
     }
 
@@ -160,22 +178,29 @@ class PattuAchadippuHtmlUruvakki {
     html = html.replaceFirst('33AABCS1234H1Z5', bizGstin);
 
     // Invoice number (appears in title and in meta box)
-    html = html.replaceAll('SJPS-29', pattiyal.patrucheettuEn);
-
-    // Date
-    html = html.replaceFirst('15/06/2026', dateStr);
-
-    // Client
-    html = html.replaceFirst('லட்சுமி டெக்ஸ்டைல்ஸ்', clientNameStr);
-    html = html.replaceFirst('12, நேரு தெரு, சேலம் - 636001', clientAddr1);
-    html = html.replaceFirst('சேலம் District, தமிழ்நாடு / Tamil Nadu', clientAddr2);
-    html = html.replaceFirst('33AABLM9876Z1K4', clientGstin);
-    html = html.replaceFirst('+91 94432 11223', clientPhone);
+    if (showGstSplits) {
+      html = html.replaceAll('SJPS-29', pattiyal.patrucheettuEn);
+      html = html.replaceFirst('15/06/2026', dateStr);
+      html = html.replaceFirst('லட்சுமி டெக்ஸ்டைல்ஸ்', clientNameStr);
+      html = html.replaceFirst('12, நேரு தெரு, சேலம் - 636001', clientAddr1);
+      html = html.replaceFirst('சேலம் District, தமிழ்நாடு / Tamil Nadu', clientAddr2);
+      html = html.replaceFirst('33AABLM9876Z1K4', clientGstin);
+      html = html.replaceFirst('+91 94432 11223', clientPhone);
+    } else {
+      html = html.replaceAll('SJPS-31', pattiyal.patrucheettuEn);
+      html = html.replaceFirst('28/06/2026', dateStr);
+      html = html.replaceFirst('முருகன் டெக்ஸ்டைல்ஸ்', clientNameStr);
+      html = html.replaceFirst('45, காந்தி நகர், கரூர் - 639001', clientAddr1);
+      html = html.replaceFirst('கரூர் District, தமிழ்நாடு / Tamil Nadu', clientAddr2);
+      html = html.replaceFirst('33AABCM5678K1Z2', clientGstin);
+      // In simple template, phone is replaced first
+      html = html.replaceFirst('+91 98765 43210', clientPhone);
+    }
 
     // Place of supply
     html = html.replaceFirst(
       '<div class="pos-primary">தமிழ்நாடு</div>',
-      '<div class="pos-primary">\$clientState</div>',
+      '<div class="pos-primary">$clientState</div>',
     );
 
     // Replace entire <tbody>…</tbody> with generated rows
@@ -194,21 +219,29 @@ class PattuAchadippuHtmlUruvakki {
       '<span class="font-semibold" style="color: #334155;">$commonHSN</span>',
     );
 
-    // Amount in words (leave blank for now — replace the sample text)
-    html = html.replaceFirst(
-      'ஆறுபத்தொன்பதாயிரத்து எண்ணூற்றிருபத்தைந்து ரூபாய் மட்டும்', '');
-    html = html.replaceFirst(
-      'Sixty Nine Thousand Eight Hundred Twenty Five Rupees Only',
-      '₹ ${_fmt(grandTotal)} Only');
-
-    // Sub total, CGST, SGST, Grand Total values
-    html = html.replaceFirst('₹ 66,500.00', '₹ ${_fmt(subTotal)}');
-    // CGST amount (first ₹ 1,662.50)
-    html = html.replaceFirst('₹ 1,662.50', '₹ ${_fmt(totalCgst)}');
-    // SGST amount (second ₹ 1,662.50)
-    html = html.replaceFirst('₹ 1,662.50', '₹ ${_fmt(totalSgst)}');
-    // Grand total
-    html = html.replaceFirst('₹ 69,825.00', '₹ ${_fmt(grandTotal)}');
+    // Amount in words
+    if (showGstSplits) {
+      html = html.replaceFirst('ஆறுபத்தொன்பதாயிரத்து எண்ணூற்றிருபத்தைந்து ரூபாய் மட்டும்', '');
+      html = html.replaceFirst(
+        'Sixty Nine Thousand Eight Hundred Twenty Five Rupees Only',
+        '₹ ${_fmt(grandTotal)} Only');
+      
+      html = html.replaceFirst('₹ 66,500.00', '₹ ${_fmt(subTotal)}');
+      html = html.replaceFirst('₹ 1,662.50', '₹ ${_fmt(totalCgst)}');
+      html = html.replaceFirst('₹ 1,662.50', '₹ ${_fmt(totalSgst)}');
+      html = html.replaceFirst('₹ 69,825.00', '₹ ${_fmt(grandTotal)}');
+    } else {
+      html = html.replaceFirst('அறுபத்தாறு ஆயிரத்து ஐநூறு ரூபாய் மட்டும்', '');
+      html = html.replaceFirst(
+        'Sixty Six Thousand Five Hundred Rupees Only',
+        '₹ ${_fmt(grandTotal)} Only');
+      
+      html = html.replaceFirst('₹ 56,355.93', '₹ ${_fmt(subTotal)}');
+      html = html.replaceFirst('₹ 1,412.50', '₹ ${_fmt(totalCgst)}');
+      html = html.replaceFirst('₹ 1,412.50', '₹ ${_fmt(totalSgst)}');
+      html = html.replaceFirst('-₹ 0.93', '₹ 0.00'); // Round off
+      html = html.replaceFirst('₹ 66,500.00', '₹ ${_fmt(grandTotal)}');
+    }
 
     // Bank details
     html = html.replaceFirst('Indian Bank, கரூர் கிளை', bankName);
@@ -218,7 +251,13 @@ class PattuAchadippuHtmlUruvakki {
     // Contact block
     html = html.replaceFirst('45, ராஜாஜி தெரு, கரூர் - 639001', bizAddress1);
     html = html.replaceFirst('கரூர், தமிழ்நாடு / Tamil Nadu, இந்தியா', bizAddress2);
-    html = html.replaceFirst('+91 98765 43210', bizPhone);
+    if (showGstSplits) {
+      html = html.replaceFirst('+91 98765 43210', bizPhone);
+    } else {
+      // It has two phones in contact block, let's replace both with bizPhone
+      html = html.replaceFirst('+91 98765 43210', bizPhone);
+      html = html.replaceFirst('+91 87654 32109', '');
+    }
     html = html.replaceFirst('sales@srisilks.com', bizEmail);
 
     return html;

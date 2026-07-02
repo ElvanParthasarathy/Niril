@@ -23,7 +23,6 @@ class SilkUruvakkuAmaippuPage extends ConsumerStatefulWidget {
 
 class _SilkUruvakkuAmaippuPageState
     extends ConsumerState<SilkUruvakkuAmaippuPage> {
-  bool _showGstSplits = false;
 
   bool _isEditingLanguages = false;
   String _tempPrimaryLanguage = IruMozhi.iyalbuMudhanmaiMozhi;
@@ -218,11 +217,9 @@ class _SilkUruvakkuAmaippuPageState
                   ElvanSimpleSettingsRow(
                     title: K.gstpirippugal.tr(context, ref),
                     trailing: ElvanSettingsSwitch(
-                      value: _showGstSplits,
+                      value: ref.watch(gstSplitProvider),
                       onChanged: (val) {
-                        setState(() {
-                          _showGstSplits = val;
-                        });
+                        ref.read(gstSplitProvider.notifier).state = val;
                       },
                     ),
                   ),

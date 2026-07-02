@@ -19,6 +19,7 @@ class PattuNiruvanaTharavugalTable extends Table {
   TextColumn get mudhanMozhi => text().withDefault(const Constant('Tamil'))();
   TextColumn get thunaiMozhi => text().withDefault(const Constant('English'))();
   BoolColumn get iruMozhi => boolean().withDefault(const Constant(false))();
+  BoolColumn get gstPirippugal => boolean().withDefault(const Constant(false))();
 
   // ── நிறுவனத் தரவு (Business Details) ──
   TextColumn get niruvanathinPeyar =>
@@ -272,7 +273,8 @@ class PattuDatabase extends _$PattuDatabase {
   PattuDatabase(super.e);
 
   @override
-  int get schemaVersion => 2;
+  @override
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -280,7 +282,10 @@ class PattuDatabase extends _$PattuDatabase {
           await m.createAll();
         },
         onUpgrade: (Migrator m, int from, int to) async {
-          // Future migrations
+          if (from < 3) {
+            await m.addColumn(pattuNiruvanaTharavugalTable,
+                pattuNiruvanaTharavugalTable.gstPirippugal);
+          }
         },
       );
 

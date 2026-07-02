@@ -25,6 +25,27 @@ final bilingualProvider = NotifierProvider<BilingualNotifier, bool>(() {
   return BilingualNotifier();
 });
 
+class GstSplitNotifier extends Notifier<bool> {
+  @override
+  bool build() {
+    final profile = ref.watch(pattuNiruvanaTharavugalProvider);
+    return profile?.gstPirippugal ?? false;
+  }
+
+  @override
+  set state(bool value) {
+    final profile = ref.read(pattuNiruvanaTharavugalProvider);
+    if (profile != null) {
+      final newProfile = profile.copyWith(gstPirippugal: value);
+      ref.read(pattuNiruvanaTharavugalListProvider.notifier).updateProfile(newProfile);
+    }
+  }
+}
+
+final gstSplitProvider = NotifierProvider<GstSplitNotifier, bool>(() {
+  return GstSplitNotifier();
+});
+
 class SilkMudhanmaiMozhiNotifier extends Notifier<String> {
   @override
   String build() {
