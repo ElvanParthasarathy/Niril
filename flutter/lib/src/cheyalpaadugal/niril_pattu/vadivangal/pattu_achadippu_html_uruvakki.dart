@@ -7,6 +7,7 @@ import '../../../adippadai/tharavuru/uruvugal.dart';
 import '../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../adippadai/oru_mozhi/oru_mozhi_vaangunar_udhavi.dart';
 import '../../../adippadai/iru_mozhi/iru_mozhi_porul_udhavi.dart';
+import '../../../adippadai/elvan_navil_ezhuthen/elvan_navil_ezhuthen.dart';
 
 /// பட்டு அச்சடிப்பு HTML உருவாக்கி — Silk Invoice HTML Generator
 ///
@@ -316,21 +317,29 @@ class PattuAchadippuHtmlUruvakki {
     );
 
     // Amount in words
+    final mozhiMapAmt = ElvanNavilEzhuthen.convertToMozhiMap(grandTotal);
+    String displayAmtTa = '';
+    String displayAmtEn = '';
+    
+    if (isBilingual) {
+      displayAmtTa = mozhiMapAmt[mudhanmaiLang] ?? '';
+      displayAmtEn = mozhiMapAmt[irandaamLang] ?? '';
+    } else {
+      displayAmtTa = mozhiMapAmt[mudhanmaiLang] ?? '';
+      displayAmtEn = '';
+    }
+
     if (showGstSplits) {
-      html = html.replaceFirst('ஆறுபத்தொன்பதாயிரத்து எண்ணூற்றிருபத்தைந்து ரூபாய் மட்டும்', '');
-      html = html.replaceFirst(
-        'Sixty Nine Thousand Eight Hundred Twenty Five Rupees Only',
-        '₹ ${_fmt(grandTotal)} Only');
+      html = html.replaceFirst('ஆறுபத்தொன்பதாயிரத்து எண்ணூற்றிருபத்தைந்து ரூபாய் மட்டும்', displayAmtTa);
+      html = html.replaceFirst('Sixty Nine Thousand Eight Hundred Twenty Five Rupees Only', displayAmtEn);
       
       html = html.replaceFirst('₹ 66,500.00', '₹ ${_fmt(subTotal)}');
       html = html.replaceFirst('₹ 1,662.50', '₹ ${_fmt(totalCgst)}');
       html = html.replaceFirst('₹ 1,662.50', '₹ ${_fmt(totalSgst)}');
       html = html.replaceFirst('₹ 69,825.00', '₹ ${_fmt(grandTotal)}');
     } else {
-      html = html.replaceFirst('அறுபத்தாறு ஆயிரத்து ஐநூறு ரூபாய் மட்டும்', '');
-      html = html.replaceFirst(
-        'Sixty Six Thousand Five Hundred Rupees Only',
-        '₹ ${_fmt(grandTotal)} Only');
+      html = html.replaceFirst('அறுபத்தாறு ஆயிரத்து ஐநூறு ரூபாய் மட்டும்', displayAmtTa);
+      html = html.replaceFirst('Sixty Six Thousand Five Hundred Rupees Only', displayAmtEn);
       
       html = html.replaceFirst('₹ 56,355.93', '₹ ${_fmt(subTotal)}');
       html = html.replaceFirst('₹ 1,412.50', '₹ ${_fmt(totalCgst)}');
