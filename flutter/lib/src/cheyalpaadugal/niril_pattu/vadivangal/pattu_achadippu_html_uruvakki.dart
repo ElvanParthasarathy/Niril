@@ -68,7 +68,7 @@ class PattuAchadippuHtmlUruvakki {
       );
     }
     
-    // Enforce strict single A4 page for Android printing
+    // Fix Header and Footer to absolute top/bottom in print using Option 1
     finalCss += '''\n
     @media print {
       @page {
@@ -76,24 +76,40 @@ class PattuAchadippuHtmlUruvakki {
         margin: 0 !important;
       }
       html, body {
-        width: 100% !important;
-        height: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
-        overflow: hidden !important;
       }
       .invoice-preview-container {
         width: 210mm !important;
-        min-height: 282mm !important; 
-        max-height: 282mm !important;
-        height: 282mm !important;
         margin: 0 auto !important;
-        padding-top: 0 !important;
-        page-break-inside: avoid !important;
-        page-break-after: avoid !important;
-        overflow: hidden !important;
         box-shadow: none !important;
         border: none !important;
+        /* Allow container to grow, header and footer are fixed */
+        min-height: 100% !important;
+        height: auto !important;
+        position: relative !important;
+      }
+      .inv-classic-header {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        background: white !important;
+        z-index: 999 !important;
+      }
+      .inv-parties {
+        margin-top: 150px !important; /* Push content below fixed header */
+      }
+      .inv-contact-block {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        background: var(--accent-bg-light) !important;
+        z-index: 999 !important;
+      }
+      .unified-table-box {
+        margin-bottom: 80px !important; /* Prevent overlapping with fixed footer */
       }
     }
     ''';
