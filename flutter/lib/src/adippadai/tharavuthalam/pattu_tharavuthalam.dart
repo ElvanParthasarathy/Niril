@@ -274,7 +274,7 @@ class PattuDatabase extends _$PattuDatabase {
 
   @override
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -318,6 +318,13 @@ class PattuDatabase extends _$PattuDatabase {
             await customStatement("UPDATE pattu_niruvana_tharavugal_table SET maanilam = REPLACE(REPLACE(maanilam, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
             await customStatement("UPDATE pattu_niruvana_tharavugal_table SET naadu = REPLACE(REPLACE(naadu, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
             await customStatement("UPDATE pattu_niruvana_tharavugal_table SET adaimozhi = REPLACE(REPLACE(adaimozhi, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+          }
+          if (from < 5) {
+            // v5: Migrate the flat database columns that were missed in v4
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET mudhan_mozhi = 'ta' WHERE mudhan_mozhi = 'Tamil'");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET mudhan_mozhi = 'en' WHERE mudhan_mozhi = 'English'");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET thunai_mozhi = 'ta' WHERE thunai_mozhi = 'Tamil'");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET thunai_mozhi = 'en' WHERE thunai_mozhi = 'English'");
           }
         },
       );

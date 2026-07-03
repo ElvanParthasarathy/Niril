@@ -309,7 +309,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 13;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -499,6 +499,13 @@ class AppDatabase extends _$AppDatabase {
             await customStatement("UPDATE niruvana_tharavugal_table SET maanilam = REPLACE(REPLACE(maanilam, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
             await customStatement("UPDATE niruvana_tharavugal_table SET naadu = REPLACE(REPLACE(naadu, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
             await customStatement("UPDATE niruvana_tharavugal_table SET adaimozhi = REPLACE(REPLACE(adaimozhi, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+          }
+          if (from < 13) {
+            // v13: Migrate the flat database columns that were missed in v12
+            await customStatement("UPDATE niruvana_tharavugal_table SET mudhan_mozhi = 'ta' WHERE mudhan_mozhi = 'Tamil'");
+            await customStatement("UPDATE niruvana_tharavugal_table SET mudhan_mozhi = 'en' WHERE mudhan_mozhi = 'English'");
+            await customStatement("UPDATE niruvana_tharavugal_table SET thunai_mozhi = 'ta' WHERE thunai_mozhi = 'Tamil'");
+            await customStatement("UPDATE niruvana_tharavugal_table SET thunai_mozhi = 'en' WHERE thunai_mozhi = 'English'");
           }
         },
       );
