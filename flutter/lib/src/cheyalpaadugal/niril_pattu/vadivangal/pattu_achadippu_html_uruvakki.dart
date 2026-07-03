@@ -6,6 +6,7 @@ import '../../../adippadai/tharavuru/uruvugal.dart';
 
 import '../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import '../../../adippadai/oru_mozhi/oru_mozhi_vaangunar_udhavi.dart';
+import '../../../adippadai/iru_mozhi/iru_mozhi_porul_udhavi.dart';
 
 /// பட்டு அச்சடிப்பு HTML உருவாக்கி — Silk Invoice HTML Generator
 ///
@@ -33,6 +34,9 @@ class PattuAchadippuHtmlUruvakki {
     required dynamic profile,
     VaangunarTharavuru? client,
     required bool isWindows,
+    required bool isBilingual,
+    required String mudhanmaiLang,
+    required String irandaamLang,
   }) async {
     final bool showGstSplits = profile.gstPirippugal ?? false;
     final String templateName = showGstSplits ? 'sjs_gst_intra.html' : 'sjs_simple.html';
@@ -201,14 +205,26 @@ class PattuAchadippuHtmlUruvakki {
         commonHSN = item.hsnKuriyeedu;
       }
 
+      // Hot-swappable Bilingual Logic
+      final primaryName = item.mozhiMap.isNotEmpty 
+          ? IruMozhiPorulUdhavi.mudhanmaiPeyar(item.mozhiMap.cast<String, dynamic>(), mudhanmaiLang)
+          : item.porulPeyar;
+          
+      final secondaryName = item.mozhiMap.isNotEmpty 
+          ? IruMozhiPorulUdhavi.thunaiPeyar(item.mozhiMap.cast<String, dynamic>(), irandaamLang, isBilingual)
+          : (isBilingual ? item.porulPeyarEn : '');
+          
+      final displayPrimary = primaryName.isNotEmpty ? primaryName : item.porulPeyar;
+      final displaySecondary = secondaryName;
+
       // Build row using the EXACT same class names / structure as the template
       if (showGstSplits) {
         itemRows += '''
           <tr>
             <td class="inv-td inv-td-muted">$index</td>
             <td class="inv-td">
-              <div class="item-name">${item.porulPeyar}</div>
-              ${item.porulPeyarEn.isNotEmpty ? '<div class="item-name-sec">${item.porulPeyarEn}</div>' : ''}
+              <div class="item-name">$displayPrimary</div>
+              ${displaySecondary.isNotEmpty ? '<div class="item-name-sec">$displaySecondary</div>' : ''}
             </td>
             <td class="inv-td inv-td-center inv-td-muted">${item.hsnKuriyeedu}</td>
             <td class="inv-td inv-td-center">${item.alavu.toInt()}</td>
@@ -224,8 +240,8 @@ class PattuAchadippuHtmlUruvakki {
           <tr>
             <td class="inv-td inv-td-muted">$index</td>
             <td class="inv-td inv-td-name">
-              <div class="item-name">${item.porulPeyar}</div>
-              ${item.porulPeyarEn.isNotEmpty ? '<div class="item-name-sec">${item.porulPeyarEn}</div>' : ''}
+              <div class="item-name">$displayPrimary</div>
+              ${displaySecondary.isNotEmpty ? '<div class="item-name-sec">$displaySecondary</div>' : ''}
             </td>
             <td class="inv-td inv-td-center inv-td-muted">${item.hsnKuriyeedu}</td>
             <td class="inv-td inv-td-center">${item.alavu.toInt()}</td>

@@ -12,8 +12,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import '../../../../adippadai/achadippu/achadippu_html_uruvakki.dart';
 import '../../vadivangal/pattu_achadippu_html_uruvakki.dart';
+import '../../../../adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
 
-Future<void> _handlePrint(dynamic pattiyal, dynamic profile, WidgetRef ref) async {
+Future<void> _handlePrint(dynamic pattiyal, dynamic profile, WidgetRef ref, bool isBilingual, String mudhanmaiLang, String irandaamLang) async {
   bool isWindows = !kIsWeb && Platform.isWindows;
   
   // Fetch full client details from the database if vaangunarId exists
@@ -28,6 +29,9 @@ Future<void> _handlePrint(dynamic pattiyal, dynamic profile, WidgetRef ref) asyn
     profile: profile,
     client: client,
     isWindows: isWindows,
+    isBilingual: isBilingual,
+    mudhanmaiLang: mudhanmaiLang,
+    irandaamLang: irandaamLang,
   );
 
   if (isWindows) {
@@ -106,7 +110,16 @@ class PattuPattiyalPaarvai extends ConsumerWidget {
             icon: const Icon(Icons.print_outlined),
             tooltip: 'Print',
             onPressed: () {
-              if (profile != null) _handlePrint(pattiyal, profile, ref);
+              if (profile != null) {
+                _handlePrint(
+                  pattiyal, 
+                  profile, 
+                  ref,
+                  ref.read(bilingualProvider),
+                  ref.read(silkMudhanmaiMozhiProvider),
+                  ref.read(silkThunaiMozhiProvider),
+                );
+              }
             },
           ),
         ],
@@ -125,7 +138,18 @@ class PattuPattiyalPaarvai extends ConsumerWidget {
                   ),
                   const SizedBox(height: 24),
                   FilledButton.icon(
-                    onPressed: () => _handlePrint(pattiyal, profile, ref),
+                    onPressed: () {
+                      if (profile != null) {
+                        _handlePrint(
+                          pattiyal, 
+                          profile, 
+                          ref,
+                          ref.read(bilingualProvider),
+                          ref.read(silkMudhanmaiMozhiProvider),
+                          ref.read(silkThunaiMozhiProvider),
+                        );
+                      }
+                    },
                     icon: const Icon(Icons.print),
                     label: const Text('அச்சு முன்னோட்டம் (Print Preview)'),
                     style: FilledButton.styleFrom(
