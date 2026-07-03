@@ -40,8 +40,6 @@ class ElvanNavilEzhuthen {
     return {
       'en': enResult,
       'ta': taResult,
-      'English': enResult,
-      'Tamil': taResult,
     };
   }
 }

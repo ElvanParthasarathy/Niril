@@ -18,7 +18,7 @@ class SilkReceiptEditor extends ConsumerWidget {
     final currentLocale = ref.watch(localeProvider);
     final effectiveLang =
         currentLocale?.languageCode ?? Localizations.localeOf(context).languageCode;
-    final primaryLang = effectiveLang == 'ta' ? 'Tamil' : 'English';
+    final primaryLang = effectiveLang == 'ta' ? 'ta' : 'en';
 
     return PatruThiruthi(
       editingEntry: editingEntry,

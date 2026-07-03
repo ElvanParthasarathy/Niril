@@ -1,4 +1,4 @@
 class OruMozhi {
-  static const List<String> aadharikkappadumMozhigal = ['Tamil', 'English'];
-  static const String iyalbuMozhi = 'Tamil';
+  static const List<String> aadharikkappadumMozhigal = ['ta', 'en'];
+  static const String iyalbuMozhi = 'ta';
 }

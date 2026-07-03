@@ -27,7 +27,7 @@ class $PattuNiruvanaTharavugalTableTable extends PattuNiruvanaTharavugalTable
       'mudhan_mozhi', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultValue: const Constant('Tamil'));
+      defaultValue: const Constant('ta'));
   static const VerificationMeta _thunaiMozhiMeta =
       const VerificationMeta('thunaiMozhi');
   @override
@@ -35,7 +35,7 @@ class $PattuNiruvanaTharavugalTableTable extends PattuNiruvanaTharavugalTable
       'thunai_mozhi', aliasedName, false,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
-      defaultValue: const Constant('English'));
+      defaultValue: const Constant('en'));
   static const VerificationMeta _iruMozhiMeta =
       const VerificationMeta('iruMozhi');
   @override

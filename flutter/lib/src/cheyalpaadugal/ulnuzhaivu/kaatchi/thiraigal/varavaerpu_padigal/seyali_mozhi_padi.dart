@@ -73,7 +73,7 @@ class AppLanguageStep extends ConsumerWidget {
                       indent: 24,
                       endIndent: 24),
                   LanguageTile(
-                    title: 'English',
+                    title: 'en',
                     isSelected: currentLang == 'en',
                     textColor: textColor,
                     onTap: () {

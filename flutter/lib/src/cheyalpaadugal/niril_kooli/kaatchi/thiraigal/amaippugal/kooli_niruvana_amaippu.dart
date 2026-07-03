@@ -196,8 +196,8 @@ class _CoolieNiruvanaAmaippuPageState
 
   void _saveBilingualField(NiruvanaTharavugal profile, String fieldName) {
     final updatedProfile = profile.copyWith();
-    updatedProfile.setBilingual(fieldName, 'Tamil', _tempPrimary);
-    updatedProfile.setBilingual(fieldName, 'English', _tempSecondary);
+    updatedProfile.setBilingual(fieldName, 'ta', _tempPrimary);
+    updatedProfile.setBilingual(fieldName, 'en', _tempSecondary);
     ref.read(niruvanaTharavugalNotifierProvider).updateProfile(updatedProfile);
     setState(() => _editingSection = null);
     _showSuccessToast();
@@ -233,11 +233,11 @@ class _CoolieNiruvanaAmaippuPageState
     final profile = ref.watch(NiruvanaTharavugalProvider);
     final currentProfile = profile ?? NiruvanaTharavugal();
     
-    final niruvanathinPeyarPrimary = currentProfile.niruvanathinPeyar['Tamil'] ?? '';
-    final niruvanathinPeyarSecondary = currentProfile.niruvanathinPeyar['English'] ?? '';
+    final niruvanathinPeyarPrimary = currentProfile.niruvanathinPeyar['ta'] ?? '';
+    final niruvanathinPeyarSecondary = currentProfile.niruvanathinPeyar['en'] ?? '';
 
-    final adaimozhiPrimary = currentProfile.adaimozhi['Tamil'] ?? '';
-    final adaimozhiSecondary = currentProfile.adaimozhi['English'] ?? '';
+    final adaimozhiPrimary = currentProfile.adaimozhi['ta'] ?? '';
+    final adaimozhiSecondary = currentProfile.adaimozhi['en'] ?? '';
 
     return ElvanSubpageShell(
       title: title,

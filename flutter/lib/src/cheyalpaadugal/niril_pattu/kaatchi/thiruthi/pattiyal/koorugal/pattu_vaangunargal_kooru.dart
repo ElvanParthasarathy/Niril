@@ -251,10 +251,10 @@ class PattuVilippiIdam extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final mapValue = <String, String>{};
     if (placeOfSupply.isNotEmpty) {
-      mapValue['English'] = placeOfSupply;
+      mapValue['en'] = placeOfSupply;
     }
     if (placeOfSupplyTa.isNotEmpty) {
-      mapValue['Tamil'] = placeOfSupplyTa;
+      mapValue['ta'] = placeOfSupplyTa;
     }
 
     return ElvanIrumozhiAutocomplete(
@@ -262,8 +262,8 @@ class PattuVilippiIdam extends ConsumerWidget {
       value: mapValue,
       options: indhiyaMaanilangal,
       onChanged: (map) {
-        final en = map['en'] ?? map['English'] ?? '';
-        final ta = map['ta'] ?? map['Tamil'] ?? '';
+        final en = map['en'] ?? map['en'] ?? '';
+        final ta = map['ta'] ?? map['ta'] ?? '';
         
         if (en.isEmpty && ta.isEmpty) {
           onCleared();

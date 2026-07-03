@@ -23,7 +23,7 @@ class PorulPaarvai extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final primaryLang = achuMozhi;
-    final secondaryLang = primaryLang == 'Tamil' ? 'English' : 'Tamil';
+    final secondaryLang = primaryLang == 'ta' ? 'en' : 'ta';
     
     // Support both specific maps
     final String p1 = porul.porulPeyar[primaryLang] ?? porul.porulPeyar['ta'] ?? '';

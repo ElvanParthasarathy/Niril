@@ -9,7 +9,7 @@ class IruMozhiNiruvanamUdhavi {
     return (p.niruvanathinPeyar[primaryLang]?.isNotEmpty == true
             ? p.niruvanathinPeyar[primaryLang]
             : p.niruvanathinPeyar[secondaryLang]) ??
-        p.niruvanathinPeyar['Tamil'] ??
+        p.niruvanathinPeyar['ta'] ??
         p.niruvanathinPeyar.values.firstOrNull ??
         '';
   }
@@ -20,7 +20,7 @@ class IruMozhiNiruvanamUdhavi {
       NiruvanaTharavugal p, bool isBilingual, bool isSilk, String secondaryLang) {
     if (!isBilingual || !isSilk) return '';
     return p.niruvanathinPeyar[secondaryLang] ??
-        p.niruvanathinPeyar['English'] ??
+        p.niruvanathinPeyar['en'] ??
         '';
   }
 }

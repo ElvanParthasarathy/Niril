@@ -72,7 +72,7 @@ class KooliVaangunarKooru extends ConsumerWidget {
                   Builder(
                     builder: (context) {
                       final kooliLang = ref.watch(kooliAchuMozhiProvider);
-                      final thunaiLang = kooliLang == 'Tamil' ? 'English' : 'Tamil';
+                      final thunaiLang = kooliLang == 'ta' ? 'en' : 'ta';
                       
                       final primaryName = OruMozhiVaangunarUdhavi.mudhanmaiPeyar(selectedVaangunar!, kooliLang).isNotEmpty 
                               ? OruMozhiVaangunarUdhavi.mudhanmaiPeyar(selectedVaangunar!, kooliLang) 
@@ -148,16 +148,16 @@ class KooliVaangunarKooru extends ConsumerWidget {
   ) {
     final parts = <String>[];
     // Fallback to Tamil if requested key is empty
-    final oor = (v.oor[key]?.isNotEmpty == true ? v.oor[key] : v.oor['Tamil'] ?? '').trim();
-    final maavattam = (v.maavattam[key]?.isNotEmpty == true ? v.maavattam[key] : v.maavattam['Tamil'] ?? '').trim();
+    final oor = (v.oor[key]?.isNotEmpty == true ? v.oor[key] : v.oor['ta'] ?? '').trim();
+    final maavattam = (v.maavattam[key]?.isNotEmpty == true ? v.maavattam[key] : v.maavattam['ta'] ?? '').trim();
     final combined = [
       if (oor.isNotEmpty) oor,
       if (maavattam.isNotEmpty) maavattam,
     ].join(', ');
     if (combined.isNotEmpty) parts.add(combined);
 
-    final maanilam = (v.maanilam[key]?.isNotEmpty == true ? v.maanilam[key] : v.maanilam['Tamil'] ?? '').trim();
-    final naadu = (v.naadu[key]?.isNotEmpty == true ? v.naadu[key] : v.naadu['Tamil'] ?? '').trim();
+    final maanilam = (v.maanilam[key]?.isNotEmpty == true ? v.maanilam[key] : v.maanilam['ta'] ?? '').trim();
+    final naadu = (v.naadu[key]?.isNotEmpty == true ? v.naadu[key] : v.naadu['ta'] ?? '').trim();
     final stateLine = [
       if (maanilam.isNotEmpty) maanilam,
       if (naadu.isNotEmpty) naadu,

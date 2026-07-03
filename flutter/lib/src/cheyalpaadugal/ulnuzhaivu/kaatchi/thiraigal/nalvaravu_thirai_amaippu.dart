@@ -32,7 +32,7 @@ class NalvaravuWelcomePage extends ConsumerStatefulWidget {
 
 class _NalvaravuWelcomePageState extends ConsumerState<NalvaravuWelcomePage> {
   WelcomePhase _phase = WelcomePhase.greeting;
-  String _billingLanguage = 'Tamil'; // 'Tamil' or 'English'
+  String _billingLanguage = 'ta'; // 'Tamil' or 'English'
 
   @override
   void initState() {

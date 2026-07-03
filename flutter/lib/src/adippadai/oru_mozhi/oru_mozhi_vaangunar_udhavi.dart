@@ -7,8 +7,8 @@ class OruMozhiVaangunarUdhavi {
     if (v.peyar[kooliAchuMozhi]?.isNotEmpty == true) {
       return v.peyar[kooliAchuMozhi];
     }
-    if (v.peyar['Tamil']?.isNotEmpty == true) {
-      return v.peyar['Tamil'];
+    if (v.peyar['ta']?.isNotEmpty == true) {
+      return v.peyar['ta'];
     }
     return v.peyar.values.firstOrNull ?? '';
   }
@@ -18,8 +18,8 @@ class OruMozhiVaangunarUdhavi {
     if (peyar[kooliAchuMozhi]?.toString().isNotEmpty == true) {
       return peyar[kooliAchuMozhi].toString();
     }
-    if (peyar['Tamil']?.toString().isNotEmpty == true) {
-      return peyar['Tamil'].toString();
+    if (peyar['ta']?.toString().isNotEmpty == true) {
+      return peyar['ta'].toString();
     }
     return peyar.values.firstOrNull?.toString() ?? '';
   }

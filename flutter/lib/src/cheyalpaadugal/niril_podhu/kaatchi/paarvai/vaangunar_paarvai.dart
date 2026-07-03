@@ -25,7 +25,7 @@ class VaangunarPaarvai extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final primaryLang = achuMozhi;
-    final secondaryLang = primaryLang == 'Tamil' ? 'English' : 'Tamil';
+    final secondaryLang = primaryLang == 'ta' ? 'en' : 'ta';
     
     // We also support 'ta' and 'en' keys if they are coming from Pattu which uses locale directly
     final String p1 = v.peyar[primaryLang] ?? v.peyar['ta'] ?? '';

@@ -44,8 +44,8 @@ class ElvanSettingsSwitch extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 
 String _getLocalizedSettingsValue(BuildContext context, WidgetRef ref, String val) {
-  if (val == 'Tamil' || val == 'tamil') return K.tamil.tr(context, ref);
-  if (val == 'English' || val == 'english') return K.english.tr(context, ref);
+  if (val == 'ta' || val == 'tamil') return K.tamil.tr(context, ref);
+  if (val == 'en' || val == 'english') return K.english.tr(context, ref);
   return val;
 }
 

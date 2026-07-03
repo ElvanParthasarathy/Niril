@@ -261,9 +261,9 @@ void showNewProfileModal({
         }
 
         final newProfile = NiruvanaTharavugal();
-        newProfile.setBilingual('niruvanathinPeyar', 'Tamil', newNamePrimary);
+        newProfile.setBilingual('niruvanathinPeyar', 'ta', newNamePrimary);
         newProfile.setBilingual(
-            'niruvanathinPeyar', 'English', newNameSecondary);
+            'niruvanathinPeyar', 'en', newNameSecondary);
         ref.read(niruvanaTharavugalNotifierProvider).createProfile(newProfile);
         onSuccess();
       }

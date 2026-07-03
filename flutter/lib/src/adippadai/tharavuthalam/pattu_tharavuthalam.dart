@@ -16,8 +16,8 @@ class PattuNiruvanaTharavugalTable extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   // ── மொழி அமைப்பு (Language Config) ──
-  TextColumn get mudhanMozhi => text().withDefault(const Constant('Tamil'))();
-  TextColumn get thunaiMozhi => text().withDefault(const Constant('English'))();
+  TextColumn get mudhanMozhi => text().withDefault(const Constant('ta'))();
+  TextColumn get thunaiMozhi => text().withDefault(const Constant('en'))();
   BoolColumn get iruMozhi => boolean().withDefault(const Constant(false))();
   BoolColumn get gstPirippugal => boolean().withDefault(const Constant(false))();
 
@@ -274,7 +274,7 @@ class PattuDatabase extends _$PattuDatabase {
 
   @override
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -285,6 +285,39 @@ class PattuDatabase extends _$PattuDatabase {
           if (from < 3) {
             await m.addColumn(pattuNiruvanaTharavugalTable,
                 pattuNiruvanaTharavugalTable.gstPirippugal);
+          }
+          if (from < 4) {
+            // v4: Standardize language keys (Technical Debt Migration)
+            // Replace 'Tamil' -> 'ta' and 'English' -> 'en' across all JSON maps
+            
+            // For pattu_pattiyal_table
+            await customStatement("UPDATE pattu_pattiyal_table SET vaangunar_peyar = REPLACE(REPLACE(vaangunar_peyar, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_pattiyal_table SET vaangunar_munvari = REPLACE(REPLACE(vaangunar_munvari, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            
+            // For pattu_patrugal_table
+            await customStatement("UPDATE pattu_patrugal_table SET vaangunar_peyar = REPLACE(REPLACE(vaangunar_peyar, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_patrugal_table SET vaangunar_munvari = REPLACE(REPLACE(vaangunar_munvari, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            
+            // For pattu_porul_table
+            await customStatement("UPDATE pattu_porul_table SET porul_peyar = REPLACE(REPLACE(porul_peyar, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            
+            // For pattu_vaangunar_table
+            await customStatement("UPDATE pattu_vaangunar_table SET peyar = REPLACE(REPLACE(peyar, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_vaangunar_table SET oor = REPLACE(REPLACE(oor, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_vaangunar_table SET mugavari = REPLACE(REPLACE(mugavari, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_vaangunar_table SET maavattam = REPLACE(REPLACE(maavattam, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_vaangunar_table SET maanilam = REPLACE(REPLACE(maanilam, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_vaangunar_table SET naadu = REPLACE(REPLACE(naadu, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_vaangunar_table SET velinaad_mugavari = REPLACE(REPLACE(velinaad_mugavari, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            
+            // For pattu_niruvana_tharavugal_table
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET niruvanathin_peyar = REPLACE(REPLACE(niruvanathin_peyar, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET oor = REPLACE(REPLACE(oor, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET mugavari = REPLACE(REPLACE(mugavari, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET maavattam = REPLACE(REPLACE(maavattam, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET maanilam = REPLACE(REPLACE(maanilam, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET naadu = REPLACE(REPLACE(naadu, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET adaimozhi = REPLACE(REPLACE(adaimozhi, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
           }
         },
       );

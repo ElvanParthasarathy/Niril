@@ -42,8 +42,8 @@ class PattuPattiyalAttai extends ConsumerWidget {
     final effectiveLang =
         currentLocale?.languageCode ?? Localizations.localeOf(context).languageCode;
 
-    final primaryLang = effectiveLang == 'ta' ? 'Tamil' : 'English';
-    final secondaryLang = effectiveLang == 'ta' ? 'English' : 'Tamil';
+    final primaryLang = effectiveLang == 'ta' ? 'ta' : 'en';
+    final secondaryLang = effectiveLang == 'ta' ? 'en' : 'ta';
 
     return ElvanPothuAttai(
       onTap: onTap,

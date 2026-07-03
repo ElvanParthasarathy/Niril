@@ -153,8 +153,8 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
     if (_selectedProfile?.kurumPeyar.isNotEmpty == true) {
       bizShort = _selectedProfile!.kurumPeyar;
     } else {
-      final bizName = _selectedProfile?.niruvanathinPeyar['English'] ??
-          _selectedProfile?.niruvanathinPeyar['Tamil'] ??
+      final bizName = _selectedProfile?.niruvanathinPeyar['en'] ??
+          _selectedProfile?.niruvanathinPeyar['ta'] ??
           'BIZ';
       bizShort = bizName
           .split(' ')
@@ -195,7 +195,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       return;
     }
 
-    final peyarTamil = _vaangunarPeyarMap['Tamil'] ?? '';
+    final peyarTamil = _vaangunarPeyarMap['ta'] ?? '';
     if (peyarTamil.trim().isEmpty) {
       ElvanSnackbar.show(context, K.vaangunarPeyarThaevai.tr(context, ref));
       return;
@@ -441,8 +441,8 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
       if (_selectedProfile?.kurumPeyar.isNotEmpty == true) {
         bizShort = _selectedProfile!.kurumPeyar;
       } else {
-        final bizName = _selectedProfile?.niruvanathinPeyar['English'] ??
-            _selectedProfile?.niruvanathinPeyar['Tamil'] ??
+        final bizName = _selectedProfile?.niruvanathinPeyar['en'] ??
+            _selectedProfile?.niruvanathinPeyar['ta'] ??
             'BIZ';
         bizShort = bizName
             .split(' ')
@@ -544,7 +544,7 @@ class _PatruThiruthiState extends ConsumerState<PatruThiruthi> {
         children: [
           Expanded(
             child: Text(
-              _vaangunarPeyarMap['Tamil'] ?? '',
+              _vaangunarPeyarMap['ta'] ?? '',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,

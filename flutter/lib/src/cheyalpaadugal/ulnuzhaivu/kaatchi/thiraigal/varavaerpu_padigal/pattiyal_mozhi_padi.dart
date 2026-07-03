@@ -64,7 +64,7 @@ class BillingLanguageStep extends ConsumerWidget {
                 children: [
                   LanguageTile(
                     title: 'தமிழ்',
-                    isSelected: billingLanguage == 'Tamil',
+                    isSelected: billingLanguage == 'ta',
                     textColor: textColor,
                     onTap: () {
                       // We handle state outside, but in the old design it just called setState.
@@ -73,7 +73,7 @@ class BillingLanguageStep extends ConsumerWidget {
                       // but old design just let user pick, then hit continue.
                       // I need to change NalvaravuWelcomePage so it remembers the temp state.
                       // But the easiest way is to pass it back via onLanguageSelected instantly and let caller store it.
-                      onLanguageSelected('Tamil');
+                      onLanguageSelected('ta');
                     },
                   ),
                   Divider(
@@ -82,11 +82,11 @@ class BillingLanguageStep extends ConsumerWidget {
                       indent: 24,
                       endIndent: 24),
                   LanguageTile(
-                    title: 'English',
-                    isSelected: billingLanguage == 'English',
+                    title: 'en',
+                    isSelected: billingLanguage == 'en',
                     textColor: textColor,
                     onTap: () {
-                      onLanguageSelected('English');
+                      onLanguageSelected('en');
                     },
                   ),
                 ],

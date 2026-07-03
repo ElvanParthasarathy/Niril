@@ -67,23 +67,23 @@ class _VaangunarThaeduKooruState extends ConsumerState<VaangunarThaeduKooru> {
   /// Extracts the display name from a [VaangunarTharavuru], preferring Tamil.
   String _getDisplayName(VaangunarTharavuru entry) {
     final peyar = entry.peyar; // Map<String, String>
-    return peyar['Tamil'] ?? peyar['English'] ?? '';
+    return peyar['ta'] ?? peyar['en'] ?? '';
   }
 
   /// Extracts the secondary (alternate-language) name, or empty string.
   String _getSecondaryName(VaangunarTharavuru entry) {
     final peyar = entry.peyar;
     // If Tamil is the primary, show English as secondary (and vice versa).
-    if (peyar.containsKey('Tamil') && peyar['Tamil']!.isNotEmpty) {
-      return peyar['English'] ?? '';
+    if (peyar.containsKey('ta') && peyar['ta']!.isNotEmpty) {
+      return peyar['en'] ?? '';
     }
-    return peyar['Tamil'] ?? '';
+    return peyar['ta'] ?? '';
   }
 
   /// Extracts the city display text from the bilingual `oor` map.
   String _getOorDisplay(VaangunarTharavuru entry) {
     final oor = entry.oor;
-    return oor['Tamil'] ?? oor['English'] ?? '';
+    return oor['ta'] ?? oor['en'] ?? '';
   }
 
   /// Returns `true` if the entry matches the search [query] (case-insensitive).
@@ -91,9 +91,9 @@ class _VaangunarThaeduKooruState extends ConsumerState<VaangunarThaeduKooru> {
     final q = query.toLowerCase();
     final peyar = entry.peyar;
     final tamilMatch =
-        (peyar['Tamil'] ?? '').toLowerCase().contains(q);
+        (peyar['ta'] ?? '').toLowerCase().contains(q);
     final englishMatch =
-        (peyar['English'] ?? '').toLowerCase().contains(q);
+        (peyar['en'] ?? '').toLowerCase().contains(q);
     return tamilMatch || englishMatch;
   }
 

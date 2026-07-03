@@ -42,7 +42,7 @@ class ElvanVaangunarKeezhvirivuKooru extends ConsumerWidget {
     final kooliAchuMozhi = ref.watch(kooliAchuMozhiProvider);
 
     // Helpers to get Vaangunar fields
-    String _getDisplayString(Map<String, dynamic>? dataMap, String targetLang, {String fallbackLang = 'English'}) {
+    String _getDisplayString(Map<String, dynamic>? dataMap, String targetLang, {String fallbackLang = 'en'}) {
       if (dataMap == null) return '';
       if (dataMap[targetLang] != null && dataMap[targetLang].toString().trim().isNotEmpty) {
         return dataMap[targetLang].toString();

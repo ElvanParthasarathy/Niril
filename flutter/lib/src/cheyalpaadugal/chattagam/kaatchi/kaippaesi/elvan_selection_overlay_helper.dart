@@ -42,7 +42,7 @@ class SelectionOverlayHelper {
                 : ref.read(silkInvoicesSearchQueryProvider);
             final items = ref.read(pattiyalgalProvider).value ?? [];
             final primaryLang = ref.read(mode == AppMode.coolie ? kooliAchuMozhiProvider : silkMudhanmaiMozhiProvider);
-            final secondaryLang = primaryLang == 'Tamil' ? 'English' : 'Tamil';
+            final secondaryLang = primaryLang == 'ta' ? 'en' : 'ta';
             
             final filtered = query.isEmpty ? items : items.where((p) {
               final en = p.patrucheettuEn.toLowerCase();
@@ -75,7 +75,7 @@ class SelectionOverlayHelper {
                 : ref.read(silkReceiptsSearchQueryProvider);
             final items = ref.read(patrugalProvider).value ?? [];
             final primaryLang = ref.read(mode == AppMode.coolie ? kooliAchuMozhiProvider : silkMudhanmaiMozhiProvider);
-            final secondaryLang = primaryLang == 'Tamil' ? 'English' : 'Tamil';
+            final secondaryLang = primaryLang == 'ta' ? 'en' : 'ta';
             
             final filtered = query.isEmpty ? items : items.where((p) {
               final en = p.patruEn.toLowerCase();
@@ -109,7 +109,7 @@ class SelectionOverlayHelper {
               : ref.read(silkItemsSearchQueryProvider);
           final items = ref.read(porulgalProvider).value ?? [];
           final primaryLang = ref.read(mode == AppMode.coolie ? kooliAchuMozhiProvider : silkMudhanmaiMozhiProvider);
-            final secondaryLang = primaryLang == 'Tamil' ? 'English' : 'Tamil';
+            final secondaryLang = primaryLang == 'ta' ? 'en' : 'ta';
             
           final filtered = query.isEmpty ? items : items.where((p) {
             final peyarPrimary = (p.porulPeyar[primaryLang] ?? '').toLowerCase();
@@ -141,7 +141,7 @@ class SelectionOverlayHelper {
               : ref.read(silkMerchantsSearchQueryProvider);
           final items = ref.read(vaangunargalProvider).value ?? [];
           final primaryLang = ref.read(mode == AppMode.coolie ? kooliAchuMozhiProvider : silkMudhanmaiMozhiProvider);
-          final secondaryLang = primaryLang == 'Tamil' ? 'English' : 'Tamil';
+          final secondaryLang = primaryLang == 'ta' ? 'en' : 'ta';
             
           final filtered = query.isEmpty ? items : items.where((p) {
             final peyarPrimary = (p.peyar[primaryLang] ?? '').toLowerCase();

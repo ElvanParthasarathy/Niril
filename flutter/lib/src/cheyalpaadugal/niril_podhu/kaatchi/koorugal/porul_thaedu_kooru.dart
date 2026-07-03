@@ -108,8 +108,8 @@ class _PorulThaeduKooruState extends ConsumerState<PorulThaeduKooru> {
   bool _matchesQuery(PorulTharavuru entry, String query) {
     final q = query.toLowerCase();
     final peyar = entry.porulPeyar;
-    final tamilMatch = (peyar['Tamil'] ?? '').toLowerCase().contains(q);
-    final englishMatch = (peyar['English'] ?? '').toLowerCase().contains(q);
+    final tamilMatch = (peyar['ta'] ?? '').toLowerCase().contains(q);
+    final englishMatch = (peyar['en'] ?? '').toLowerCase().contains(q);
     final hsnMatch = entry.hsnCode.toLowerCase().contains(q);
     return tamilMatch || englishMatch || hsnMatch;
   }

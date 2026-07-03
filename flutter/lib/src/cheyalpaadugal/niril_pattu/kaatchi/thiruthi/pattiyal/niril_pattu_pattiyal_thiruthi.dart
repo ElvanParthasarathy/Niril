@@ -164,15 +164,15 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
           vaangunargal.where((v) => v.id == _selectedVaangunarId).firstOrNull;
       if (vaangunar != null) {
         setState(() {
-          _customerState = (vaangunar.maanilam['en'] ?? vaangunar.maanilam['English'] ??
+          _customerState = (vaangunar.maanilam['en'] ?? vaangunar.maanilam['en'] ??
                       vaangunar.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ??
                       '')
                   .trim()
                   .toLowerCase();
           
           if (_placeOfSupply.isEmpty) {
-            _placeOfSupply = (vaangunar.maanilam['en'] ?? vaangunar.maanilam['English'] ?? '').trim();
-            _placeOfSupplyTa = (vaangunar.maanilam['ta'] ?? vaangunar.maanilam['Tamil'] ?? vaangunar.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ?? '').trim();
+            _placeOfSupply = (vaangunar.maanilam['en'] ?? vaangunar.maanilam['en'] ?? '').trim();
+            _placeOfSupplyTa = (vaangunar.maanilam['ta'] ?? vaangunar.maanilam['ta'] ?? vaangunar.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ?? '').trim();
           }
         });
       }
@@ -209,7 +209,7 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
   void _recalculate() {
     String businessState = '';
     if (_selectedProfile != null) {
-      businessState = (_selectedProfile!.maanilam['English'] ??
+      businessState = (_selectedProfile!.maanilam['en'] ??
               _selectedProfile!.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ??
               '')
           .trim()
@@ -402,14 +402,14 @@ class _SilkInvoiceEditorState extends ConsumerState<SilkInvoiceEditor> {
                       _selectedVaangunarId = entry.id;
                       _selectedVaangunarPeyar =
                           entry.peyar[ref.read(silkMudhanmaiMozhiProvider)] ?? entry.peyar[ref.read(silkThunaiMozhiProvider)] ?? entry.peyar.values.firstOrNull ?? '';
-                      _customerState = (entry.maanilam['en'] ?? entry.maanilam['English'] ??
+                      _customerState = (entry.maanilam['en'] ?? entry.maanilam['en'] ??
                                   entry.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ??
                                   '')
                               .trim()
                               .toLowerCase();
                       
-                      _placeOfSupply = (entry.maanilam['en'] ?? entry.maanilam['English'] ?? '').trim();
-                      _placeOfSupplyTa = (entry.maanilam['ta'] ?? entry.maanilam['Tamil'] ?? entry.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ?? '').trim();
+                      _placeOfSupply = (entry.maanilam['en'] ?? entry.maanilam['en'] ?? '').trim();
+                      _placeOfSupplyTa = (entry.maanilam['ta'] ?? entry.maanilam['ta'] ?? entry.maanilam[ref.read(silkMudhanmaiMozhiProvider)] ?? '').trim();
                     });
                     _hasUnsavedChanges = true;
                     _recalculate();

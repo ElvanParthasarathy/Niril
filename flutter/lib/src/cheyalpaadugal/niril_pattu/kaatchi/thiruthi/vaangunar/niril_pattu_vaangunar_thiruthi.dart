@@ -65,8 +65,8 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
   bool get _isIndia {
     if (_naadu.isEmpty) return true; // Default: India
     // Check both key systems ('en'/'ta' from picker, 'Tamil'/'English' from DB)
-    final enName = (_naadu['en'] ?? _naadu['English'] ?? '').trim().toLowerCase();
-    final taName = (_naadu['ta'] ?? _naadu['Tamil'] ?? '').trim();
+    final enName = (_naadu['en'] ?? _naadu['en'] ?? '').trim().toLowerCase();
+    final taName = (_naadu['ta'] ?? _naadu['ta'] ?? '').trim();
     
     if (enName.isEmpty && taName.isEmpty) return true;
     return enName == 'india' || taName == K.india.tr(context, ref);
@@ -274,7 +274,7 @@ class _SilkMerchantEditorState extends ConsumerState<SilkMerchantEditor> {
                   onChanged: (map) => setState(() => _maanilam = map),
                   options: indhiyaMaanilangal,
                 ),
-                if (((_maanilam['en'] ?? _maanilam['English'] ?? '').trim() == 'Tamil Nadu') || ((_maanilam['ta'] ?? _maanilam['Tamil'] ?? '').trim() == 'தமிழ்நாடு'))
+                if (((_maanilam['en'] ?? _maanilam['en'] ?? '').trim() == 'Tamil Nadu') || ((_maanilam['ta'] ?? _maanilam['ta'] ?? '').trim() == 'தமிழ்நாடு'))
                   ElvanIrumozhiAutocomplete(
                     label: K.maavattam.tr(context, ref),
                     value: _maavattam,

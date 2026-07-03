@@ -5,7 +5,7 @@ class OruMozhiNiruvanamUdhavi {
   /// Returns the primary display name based on the Kooli achu mozhi.
   static String mudhanmaiPeyar(NiruvanaTharavugal p, String kooliAchuMozhi) {
     return p.niruvanathinPeyar[kooliAchuMozhi] ??
-        p.niruvanathinPeyar['Tamil'] ??
+        p.niruvanathinPeyar['ta'] ??
         p.niruvanathinPeyar.values.firstOrNull ??
         '';
   }

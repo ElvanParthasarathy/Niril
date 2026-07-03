@@ -57,8 +57,8 @@ class PatruPattiyalTheervuMaeladukku {
                 ? availableInvoices
                 : availableInvoices.where((inv) {
                     final q = searchQuery.toLowerCase();
-                    final pName = (inv.vaangunarPeyar['Tamil'] ??
-                            inv.vaangunarPeyar['English'] ??
+                    final pName = (inv.vaangunarPeyar['ta'] ??
+                            inv.vaangunarPeyar['en'] ??
                             '')
                         .toLowerCase();
                     return inv.patrucheettuEn.toLowerCase().contains(q) ||
@@ -94,7 +94,7 @@ class PatruPattiyalTheervuMaeladukku {
                                     locale: 'en_IN', symbol: '₹');
                                 final dateFmt = DateFormat('dd/MM/yyyy');
                                 final customer = customers.where((c) => c.id == inv.vaangunarId).firstOrNull;
-                                final oorText = customer?.oor['Tamil'] ?? customer?.oor['English'] ?? '';
+                                final oorText = customer?.oor['ta'] ?? customer?.oor['en'] ?? '';
                                 final amountText = oorText.isNotEmpty
                                     ? '$oorText • ${currFmt.format(inv.mothaThogai)}'
                                     : currFmt.format(inv.mothaThogai);
@@ -135,8 +135,8 @@ class PatruPattiyalTheervuMaeladukku {
                                       ),
                                     ],
                                   ),
-                                  subtitle: (inv.vaangunarPeyar['Tamil'] ??
-                                              inv.vaangunarPeyar['English'] ??
+                                  subtitle: (inv.vaangunarPeyar['ta'] ??
+                                              inv.vaangunarPeyar['en'] ??
                                               '')
                                           .isNotEmpty
                                       ? Column(
@@ -144,7 +144,7 @@ class PatruPattiyalTheervuMaeladukku {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                                inv.vaangunarPeyar['Tamil'] ??
+                                                inv.vaangunarPeyar['ta'] ??
                                                     inv.vaangunarPeyar[
                                                         'English'] ??
                                                     '',
@@ -270,7 +270,7 @@ class PatruPattiyalTheervuMaeladukku {
                                       locale: 'en_IN', symbol: '₹');
                                   final dateFmt = DateFormat('dd/MM/yyyy');
                                   final customer = customers.where((c) => c.id == inv.vaangunarId).firstOrNull;
-                                  final oorText = customer?.oor['Tamil'] ?? customer?.oor['English'] ?? '';
+                                  final oorText = customer?.oor['ta'] ?? customer?.oor['en'] ?? '';
                                   final amountText = oorText.isNotEmpty
                                       ? '$oorText • ${currFmt.format(inv.mothaThogai)}'
                                       : currFmt.format(inv.mothaThogai);
@@ -311,8 +311,8 @@ class PatruPattiyalTheervuMaeladukku {
                                         ),
                                       ],
                                     ),
-                                    subtitle: (inv.vaangunarPeyar['Tamil'] ??
-                                                inv.vaangunarPeyar['English'] ??
+                                    subtitle: (inv.vaangunarPeyar['ta'] ??
+                                                inv.vaangunarPeyar['en'] ??
                                                 '')
                                             .isNotEmpty
                                         ? Column(
@@ -320,7 +320,7 @@ class PatruPattiyalTheervuMaeladukku {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                  inv.vaangunarPeyar['Tamil'] ??
+                                                  inv.vaangunarPeyar['ta'] ??
                                                       inv.vaangunarPeyar[
                                                           'English'] ??
                                                       '',

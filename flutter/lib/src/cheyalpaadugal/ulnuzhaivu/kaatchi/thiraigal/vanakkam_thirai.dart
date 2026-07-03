@@ -52,7 +52,7 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
           NiruvanaTharavugal(
             niruvanathinPeyar: {widget.billingLanguage: _gstBusinessName},
             mudhanMozhi: widget.billingLanguage,
-            thunaiMozhi: widget.billingLanguage == 'English' ? 'Tamil' : 'English',
+            thunaiMozhi: widget.billingLanguage == 'en' ? 'ta' : 'en',
             iruMozhi: true,
             kurumPeyar: '',
             tholaipaesi1: '',
@@ -83,7 +83,7 @@ class _VanakkamPageState extends ConsumerState<VanakkamPage> {
           NiruvanaTharavugal(
             niruvanathinPeyar: {widget.billingLanguage: _coolieBusinessName},
             mudhanMozhi: widget.billingLanguage,
-            thunaiMozhi: widget.billingLanguage == 'English' ? 'Tamil' : 'English',
+            thunaiMozhi: widget.billingLanguage == 'en' ? 'ta' : 'en',
             iruMozhi: false,
             kurumPeyar: '',
             tholaipaesi1: '',

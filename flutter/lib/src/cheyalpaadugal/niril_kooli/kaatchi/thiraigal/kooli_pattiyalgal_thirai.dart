@@ -40,7 +40,7 @@ class CoolieInvoicesPage extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final primaryLang = ref.watch(kooliAchuMozhiProvider);
-    final secondaryLang = primaryLang == 'Tamil' ? 'English' : 'Tamil';
+    final secondaryLang = primaryLang == 'ta' ? 'en' : 'ta';
 
     return ElvanKooliTharavuPattiyal<PattiyalTharavuru>(
       dataAsync: pattiyalgalAsync,

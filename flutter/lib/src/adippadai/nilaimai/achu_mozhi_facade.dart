@@ -17,7 +17,7 @@ final secondaryLanguageProvider = Provider<String>((ref) {
   final mode = ref.watch(appModeProvider);
   if (mode == AppMode.coolie) {
     final kooliLang = ref.watch(kooliAchuMozhiProvider);
-    return kooliLang == 'Tamil' ? 'English' : 'Tamil';
+    return kooliLang == 'ta' ? 'en' : 'ta';
   }
   return ref.watch(silkThunaiMozhiProvider);
 });

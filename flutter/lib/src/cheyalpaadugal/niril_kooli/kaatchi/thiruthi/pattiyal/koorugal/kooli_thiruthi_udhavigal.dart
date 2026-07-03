@@ -21,7 +21,7 @@ Widget kooliChargeField(
 Widget kooliBankRow(BuildContext context, String label, dynamic value) {
   String text = '';
   if (value is Map) {
-    text = (value['Tamil'] ?? value['English'] ?? '').toString();
+    text = (value['ta'] ?? value['en'] ?? '').toString();
   } else {
     text = value?.toString() ?? '';
   }
