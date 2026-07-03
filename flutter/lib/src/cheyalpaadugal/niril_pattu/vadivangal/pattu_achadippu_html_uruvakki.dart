@@ -121,60 +121,62 @@ class PattuAchadippuHtmlUruvakki {
     final df = DateFormat('dd/MM/yyyy');
     final dateStr = df.format(pattiyal.pattiyalNaal);
 
+    String resolveHybridValue(dynamic field) {
+      if (field == null) return '';
+      Map<String, dynamic> parsedMap = {};
+      try {
+        parsedMap = Map<String, dynamic>.from(field);
+      } catch (e) {
+        return field.toString();
+      }
+      if (parsedMap.isEmpty) return '';
+      final langToUse = isBilingual ? irandaamLang : mudhanmaiLang;
+      return OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(parsedMap, langToUse);
+    }
+
     // Profile (business) details
     final companyNameTa = profile.niruvanathinPeyar != null
         ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-            profile.niruvanathinPeyar.cast<String, dynamic>(), 'ta')
+            profile.niruvanathinPeyar.cast<String, dynamic>(), mudhanmaiLang)
         : '';
-    final companyNameEn = profile.niruvanathinPeyar != null
-        ? (profile.niruvanathinPeyar['en'] ?? '')
-        : '';
-    final bizAddress1 = profile.mugavari != null
+    final companyNameEn = (isBilingual && profile.niruvanathinPeyar != null)
         ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-            profile.mugavari.cast<String, dynamic>(), 'ta')
+            profile.niruvanathinPeyar.cast<String, dynamic>(), irandaamLang)
         : '';
-    final bizAddress2 = profile.oor != null
-        ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-            profile.oor.cast<String, dynamic>(), 'ta')
-        : '';
+    final signatureName = isBilingual ? (companyNameEn.isNotEmpty ? companyNameEn : companyNameTa) : companyNameTa;
+
+    final bizAddress1 = resolveHybridValue(profile.mugavari);
+    final bizAddress2 = resolveHybridValue(profile.oor);
     final bizPhone = profile.tholaipaesi1 ?? '';
     final bizEmail = profile.minnanjal ?? '';
     final bizGstin = profile.gstin ?? '';
 
     // Client details
     final clientNameStr = client != null
-        ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-            client.peyar.cast<String, dynamic>(), 'ta')
-        : OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-            pattiyal.vaangunarPeyar.cast<String, dynamic>(), 'ta');
+        ? resolveHybridValue(client.peyar)
+        : resolveHybridValue(pattiyal.vaangunarPeyar);
+    
     final clientAddr1 = client != null
-        ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-            client.mugavari.cast<String, dynamic>(), 'ta')
-        : OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-            pattiyal.vaangunarMunvari.cast<String, dynamic>(), 'ta');
+        ? resolveHybridValue(client.mugavari)
+        : resolveHybridValue(pattiyal.vaangunarMunvari);
+        
     final clientAddr2 = client != null
         ? [
-            OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-                client.oor.cast<String, dynamic>(), 'ta'),
-            OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-                client.maavattam.cast<String, dynamic>(), 'ta'),
-            OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-                client.maanilam.cast<String, dynamic>(), 'ta'),
+            resolveHybridValue(client.oor),
+            resolveHybridValue(client.maavattam),
+            resolveHybridValue(client.maanilam),
             client.anjalKuriyeedu,
-          ].where((e) => e.isNotEmpty).join(', ')
+          ].where((e) => e != null && e.toString().isNotEmpty).join(', ')
         : '';
+        
     final clientGstin = client?.gstin ?? '';
     final clientPhone = client?.tholaipaesi ?? '';
     final clientState = client != null
-        ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-            client.maanilam.cast<String, dynamic>(), 'ta')
-        : 'தமிழ்நாடு';
+        ? resolveHybridValue(client.maanilam)
+        : (isBilingual ? (irandaamLang == 'ta' ? 'தமிழ்நாடு' : 'Tamil Nadu') : (mudhanmaiLang == 'ta' ? 'தமிழ்நாடு' : 'Tamil Nadu'));
 
     // Bank
-    final bankName = profile.vangiPeyar != null
-        ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-            profile.vangiPeyar.cast<String, dynamic>(), 'ta')
-        : '';
+    final bankName = resolveHybridValue(profile.vangiPeyar);
     final accountNo = profile.vangiKanakku ?? '';
     final ifsc = profile.ifsc ?? '';
 
@@ -266,7 +268,7 @@ class PattuAchadippuHtmlUruvakki {
     // Second occurrence of company name (signature block) — uses English
     html = html.replaceFirst('Sri Sivaram Silk Sarees', companyNameEn);
     // Signature block still has the English name
-    html = html.replaceFirst('Sri Sivaram Silk Sarees', companyNameEn);
+    html = html.replaceFirst('Sri Sivaram Silk Sarees', signatureName);
 
     // GSTIN (business)
     html = html.replaceFirst('33AABCS1234H1Z5', bizGstin);
