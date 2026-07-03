@@ -37,21 +37,9 @@ class PrintPreviewActivity : ComponentActivity() {
 
         val rawHtml = intent.getStringExtra("html_content") ?: "<h1>No Content</h1>"
 
-        // Wrap the HTML so it acts like a floating piece of A4 paper in a dark background.
-        // We use a fixed width of 794px for A4 paper styling.
-        htmlContentToLoad = """
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta name="viewport" content="width=850, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-            </head>
-            <body style="background: #121212; display: flex; justify-content: center; padding: 32px 0; margin: 0;">
-                <div style="background: white; width: 794px; min-height: 1123px; box-shadow: 0px 12px 24px rgba(0,0,0,0.6); border-radius: 8px; overflow: hidden; margin: 0 auto;">
-                    ${rawHtml.replace("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">", "")}
-                </div>
-            </body>
-            </html>
-        """.trimIndent()
+        // Do NOT double-wrap the HTML. The rawHtml already contains a fully formed <html> document
+        // with an A4 paper container. We just inject a dark background to match the Activity's dark theme.
+        htmlContentToLoad = rawHtml.replace("</head>", "<style>body { background-color: #121212 !important; padding: 20px 0; }</style></head>")
 
         setContent {
             MaterialTheme(colorScheme = darkColorScheme()) {
