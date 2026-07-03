@@ -68,7 +68,7 @@ class PattuAchadippuHtmlUruvakki {
       );
     }
     
-    // Fix Android print by constraining container to safe printable A4 height (282mm)
+    // Fix Footer to absolute bottom in print using Option 1
     finalCss += '''\n
     @media print {
       @page {
@@ -83,20 +83,23 @@ class PattuAchadippuHtmlUruvakki {
       }
       .invoice-preview-container {
         width: 210mm !important;
-        /* Force height to 282mm so it doesn't overflow to page 2 */
-        min-height: 282mm !important;
-        max-height: 282mm !important;
-        height: 282mm !important;
         margin: 0 auto !important;
         box-shadow: none !important;
         border: none !important;
-        page-break-after: avoid !important;
-        page-break-inside: avoid !important;
-        overflow: hidden !important;
+        min-height: 100% !important;
+        height: auto !important;
+        position: relative !important;
       }
-      /* Ensure Flexbox pushes the contact block to the bottom of the 282mm container */
       .inv-contact-block {
-        margin-top: auto !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        background: var(--accent-bg-light) !important;
+        z-index: 999 !important;
+      }
+      .unified-table-box {
+        margin-bottom: 80px !important; /* Prevent overlapping with fixed footer */
       }
     }
     ''';
