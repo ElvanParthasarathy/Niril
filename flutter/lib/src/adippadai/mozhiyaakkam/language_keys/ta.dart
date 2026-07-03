@@ -385,4 +385,6 @@ const Map<String, String> ta = {
   'patrucheettugalIllai': 'பற்றுச்சீட்டுகள் இல்லை',
   'pattiyalgalIllai': 'பட்டியல்கள் இல்லை',
   'pizhai': 'பிழை',
+  'ta': 'தமிழ்',
+  'en': 'ஆங்கிலம்',
 };

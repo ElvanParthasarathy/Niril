@@ -383,4 +383,6 @@ const Map<String, String> en = {
   'patrucheettugalIllai': 'No Receipts',
   'pattiyalgalIllai': 'No invoices yet',
   'pizhai': 'Error',
+  'ta': 'Tamil',
+  'en': 'English',
 };
