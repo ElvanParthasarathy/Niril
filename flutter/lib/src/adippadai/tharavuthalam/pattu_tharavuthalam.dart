@@ -274,7 +274,7 @@ class PattuDatabase extends _$PattuDatabase {
 
   @override
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -321,6 +321,24 @@ class PattuDatabase extends _$PattuDatabase {
           }
           if (from < 5) {
             // v5: Migrate the flat database columns that were missed in v4
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET mudhan_mozhi = 'ta' WHERE mudhan_mozhi = 'Tamil'");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET mudhan_mozhi = 'en' WHERE mudhan_mozhi = 'English'");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET thunai_mozhi = 'ta' WHERE thunai_mozhi = 'Tamil'");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET thunai_mozhi = 'en' WHERE thunai_mozhi = 'English'");
+          }
+          if (from < 6) {
+            // v6: Re-run v4 and v5 migrations to catch any 'Tamil' or 'English' data injected by the old seed generator
+            
+            // Re-run JSON map replacements
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET niruvanathin_peyar = REPLACE(REPLACE(niruvanathin_peyar, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET oor = REPLACE(REPLACE(oor, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET mugavari = REPLACE(REPLACE(mugavari, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET maavattam = REPLACE(REPLACE(maavattam, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET maanilam = REPLACE(REPLACE(maanilam, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET naadu = REPLACE(REPLACE(naadu, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE pattu_niruvana_tharavugal_table SET adaimozhi = REPLACE(REPLACE(adaimozhi, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+
+            // Re-run flat column updates
             await customStatement("UPDATE pattu_niruvana_tharavugal_table SET mudhan_mozhi = 'ta' WHERE mudhan_mozhi = 'Tamil'");
             await customStatement("UPDATE pattu_niruvana_tharavugal_table SET mudhan_mozhi = 'en' WHERE mudhan_mozhi = 'English'");
             await customStatement("UPDATE pattu_niruvana_tharavugal_table SET thunai_mozhi = 'ta' WHERE thunai_mozhi = 'Tamil'");

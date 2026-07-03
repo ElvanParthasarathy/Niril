@@ -309,7 +309,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 13;
+  int get schemaVersion => 14;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -502,6 +502,40 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 13) {
             // v13: Migrate the flat database columns that were missed in v12
+            await customStatement("UPDATE niruvana_tharavugal_table SET mudhan_mozhi = 'ta' WHERE mudhan_mozhi = 'Tamil'");
+            await customStatement("UPDATE niruvana_tharavugal_table SET mudhan_mozhi = 'en' WHERE mudhan_mozhi = 'English'");
+            await customStatement("UPDATE niruvana_tharavugal_table SET thunai_mozhi = 'ta' WHERE thunai_mozhi = 'Tamil'");
+            await customStatement("UPDATE niruvana_tharavugal_table SET thunai_mozhi = 'en' WHERE thunai_mozhi = 'English'");
+          }
+          if (from < 14) {
+            // v14: Re-run v12 and v13 migrations to catch any 'Tamil' or 'English' data injected by the old seed generator
+
+            // Re-run JSON map replacements
+            await customStatement("UPDATE patrucheettu_table SET vaangunar_peyar = REPLACE(REPLACE(vaangunar_peyar, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE patrucheettu_table SET vaangunar_munvari = REPLACE(REPLACE(vaangunar_munvari, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            
+            await customStatement("UPDATE patrugal_table SET vaangunar_peyar = REPLACE(REPLACE(vaangunar_peyar, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE patrugal_table SET vaangunar_munvari = REPLACE(REPLACE(vaangunar_munvari, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            
+            await customStatement("UPDATE porul_table SET porul_peyar = REPLACE(REPLACE(porul_peyar, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            
+            await customStatement("UPDATE vaangunar_table SET peyar = REPLACE(REPLACE(peyar, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE vaangunar_table SET oor = REPLACE(REPLACE(oor, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE vaangunar_table SET mugavari = REPLACE(REPLACE(mugavari, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE vaangunar_table SET maavattam = REPLACE(REPLACE(maavattam, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE vaangunar_table SET maanilam = REPLACE(REPLACE(maanilam, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE vaangunar_table SET naadu = REPLACE(REPLACE(naadu, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE vaangunar_table SET velinaad_mugavari = REPLACE(REPLACE(velinaad_mugavari, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            
+            await customStatement("UPDATE niruvana_tharavugal_table SET niruvanathin_peyar = REPLACE(REPLACE(niruvanathin_peyar, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE niruvana_tharavugal_table SET oor = REPLACE(REPLACE(oor, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE niruvana_tharavugal_table SET mugavari = REPLACE(REPLACE(mugavari, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE niruvana_tharavugal_table SET maavattam = REPLACE(REPLACE(maavattam, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE niruvana_tharavugal_table SET maanilam = REPLACE(REPLACE(maanilam, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE niruvana_tharavugal_table SET naadu = REPLACE(REPLACE(naadu, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+            await customStatement("UPDATE niruvana_tharavugal_table SET adaimozhi = REPLACE(REPLACE(adaimozhi, '\"Tamil\":', '\"ta\":'), '\"English\":', '\"en\":')");
+
+            // Re-run flat column updates
             await customStatement("UPDATE niruvana_tharavugal_table SET mudhan_mozhi = 'ta' WHERE mudhan_mozhi = 'Tamil'");
             await customStatement("UPDATE niruvana_tharavugal_table SET mudhan_mozhi = 'en' WHERE mudhan_mozhi = 'English'");
             await customStatement("UPDATE niruvana_tharavugal_table SET thunai_mozhi = 'ta' WHERE thunai_mozhi = 'Tamil'");
