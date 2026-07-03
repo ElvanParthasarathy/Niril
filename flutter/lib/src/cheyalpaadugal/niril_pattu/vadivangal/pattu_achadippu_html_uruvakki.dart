@@ -137,28 +137,18 @@ class PattuAchadippuHtmlUruvakki {
     final bizEmail = profile.minnanjal ?? '';
     final bizGstin = profile.gstin ?? '';
 
-    // Client details (Prioritize the snapshot stored in the bill over the live client profile)
-    final bool hasSnapshotName = pattiyal.vaangunarPeyar.isNotEmpty;
-    
-    final clientNameStr = hasSnapshotName
+    // Client details
+    final clientNameStr = client != null
         ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-            pattiyal.vaangunarPeyar.cast<String, dynamic>(), 'ta')
-        : (client != null
-            ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-                client.peyar.cast<String, dynamic>(), 'ta')
-            : '');
-            
-    final bool hasSnapshotAddr = pattiyal.vaangunarMunvari.isNotEmpty;
-    
-    final clientAddr1 = hasSnapshotAddr
+            client.peyar.cast<String, dynamic>(), 'ta')
+        : OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
+            pattiyal.vaangunarPeyar.cast<String, dynamic>(), 'ta');
+    final clientAddr1 = client != null
         ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-            pattiyal.vaangunarMunvari.cast<String, dynamic>(), 'ta')
-        : (client != null
-            ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
-                client.mugavari.cast<String, dynamic>(), 'ta')
-            : '');
-            
-    final clientAddr2 = client != null && !hasSnapshotAddr
+            client.mugavari.cast<String, dynamic>(), 'ta')
+        : OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
+            pattiyal.vaangunarMunvari.cast<String, dynamic>(), 'ta');
+    final clientAddr2 = client != null
         ? [
             OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
                 client.oor.cast<String, dynamic>(), 'ta'),
@@ -169,9 +159,8 @@ class PattuAchadippuHtmlUruvakki {
             client.anjalKuriyeedu,
           ].where((e) => e.isNotEmpty).join(', ')
         : '';
-        
-    final clientGstin = client != null ? (client.gstin ?? '') : '';
-    final clientPhone = client != null ? (client.tholaipaesi ?? '') : '';
+    final clientGstin = client?.gstin ?? '';
+    final clientPhone = client?.tholaipaesi ?? '';
     final clientState = client != null
         ? OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
             client.maanilam.cast<String, dynamic>(), 'ta')

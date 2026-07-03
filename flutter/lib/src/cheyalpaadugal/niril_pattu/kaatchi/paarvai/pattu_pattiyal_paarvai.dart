@@ -59,8 +59,10 @@ class PattuPattiyalPaarvai extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Get profile data
-    final profile = ref.watch(pattuNiruvanaTharavugalProvider);
+    // Get profile data specific to this bill, or fallback to active if missing
+    final profile = pattiyal.niruvanamId != null 
+        ? ref.watch(pattuNiruvanaTharavugalByIdProvider(pattiyal.niruvanamId))
+        : ref.watch(pattuNiruvanaTharavugalProvider);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF1F5F9),
@@ -89,7 +91,9 @@ class PattuPattiyalPaarvai extends ConsumerWidget {
             icon: const Icon(Icons.share_outlined),
             tooltip: 'Share',
             onPressed: () async {
-              final profile = ref.read(pattuNiruvanaTharavugalProvider);
+              final profile = pattiyal.niruvanamId != null 
+                  ? ref.read(pattuNiruvanaTharavugalByIdProvider(pattiyal.niruvanamId))
+                  : ref.read(pattuNiruvanaTharavugalProvider);
               if (profile == null) return;
               // No PDF share implemented yet natively, placeholder
               ScaffoldMessenger.of(context).showSnackBar(
