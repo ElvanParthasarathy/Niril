@@ -6,7 +6,7 @@ import html2canvas from 'html2canvas';
 import { useLanguage } from '../../../mozhi/LanguageContext';
 import { en } from '../../../mozhi/en';
 import { ta } from '../../../mozhi/ta';
-import { formatCurrency, numberToWords, getCountryConfig, getDynamicField, getBilingualStateName, getBilingualCountryName, getPrintHeadContent } from '../../../Payanpadu';
+import { formatCurrency, getDynamicField, getPrintHeadContent } from '../../../Payanpadu';
 import { Box, Paper, useTheme, useMediaQuery } from '@mui/material';
 import { ViewHeader } from '../../ViewHeader';
 import NativeDocument from '../../NativeDocument';
@@ -86,7 +86,7 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
     }
   };
 
-  const profileCurrency = getCountryConfig(profile?.country || 'India').currency;
+  const profileCurrency = getDynamicField(profile, 'naanayam', profile, true) || 'INR';
 
   const renderKey = (key, enDefault, taDefault) => {
     const p = profile?.mudhanMozhi ?? profile?.primaryDataLanguage ?? 'Tamil';
@@ -537,7 +537,7 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
                       return pStr || sStr;
                     }
 
-                    const words = numberToWords(receipt.amount, profile?.mudhanMozhi ?? profile?.primaryDataLanguage ?? 'Tamil', profile?.thunaiMozhi ?? profile?.secondaryDataLanguage ?? 'English', profile?.iruMozhi ?? (profile?.enableBilingual !== false));
+                    const words = getDynamicField(receipt, 'amountInWords', profile, isPrimary);
                     if (words.includes(' / ')) {
                       const [pStr, sStr] = words.split(' / ');
                       return (
@@ -573,11 +573,11 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
                 const addr1_tam = [getDynamicField(profile, 'mugavari', profile, true), getDynamicField(profile, 'oor', profile, true)].filter(Boolean).join(', ');
                 const addr1 = (addr1_eng || addr1_tam) + (profile?.pin ? ` - ${profile.pin}` : '');
                 
-                const country_eng = profile?.enableBilingual === false ? '' : (getBilingualCountryName(profile?.country, { ...profile, returnOnlySecondary: true, fallbackEnglishName: profile?.country_English }) || profile?.country_English || profile?.country);
-                const country_tam = getBilingualCountryName(profile?.country, { ...profile, returnOnlyPrimary: true }) || profile?.country;
+                const country_eng = getDynamicField(profile, 'naadu', profile, false) || profile?.country || '';
+                const country_tam = getDynamicField(profile, 'naadu', profile, true) || profile?.country || '';
 
-                const dist_eng = [getDynamicField(profile, 'maavattam', profile, false), getBilingualStateName(profile.maanilam, { ...profile, returnOnlySecondary: true, fallbackEnglishName: profile.maanilamEn }), country_eng].filter(Boolean).join(', ');
-                const dist_tam = [getDynamicField(profile, 'maavattam', profile, true), getBilingualStateName(profile.maanilam, { ...profile, returnOnlyPrimary: true }), country_tam].filter(Boolean).join(', ');
+                const dist_eng = [getDynamicField(profile, 'maavattam', profile, false), getDynamicField(profile, 'maanilam', profile, false), country_eng].filter(Boolean).join(', ');
+                const dist_tam = [getDynamicField(profile, 'maavattam', profile, true), getDynamicField(profile, 'maanilam', profile, true), country_tam].filter(Boolean).join(', ');
                 const dist = dist_eng || dist_tam;
                 const addr2 = dist;
                 
