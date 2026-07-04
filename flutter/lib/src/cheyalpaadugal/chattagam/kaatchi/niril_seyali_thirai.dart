@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../adippadai/tharavuru/seyali_murai.dart';
@@ -442,6 +443,14 @@ class _NirilSeyaliThiraiState extends ConsumerState<NirilSeyaliThirai> {
                         overlayWidget: overlayWidget,
                         navActions: [
                           const SizedBox(width: 7),
+                          ElvanTopBarIcon(
+                            icon: CupertinoIcons.lab_flask,
+                            onTap: () {
+                              const MethodChannel('com.elvan.niril/print')
+                                  .invokeMethod('testReactApp');
+                            },
+                          ),
+                          const SizedBox(width: 14),
                           ElvanTopBarIcon(
                             icon: CupertinoIcons.add,
                             onTap: _onAddPressed,

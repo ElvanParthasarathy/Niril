@@ -59,11 +59,14 @@ class SilkReceiptsPage extends ConsumerWidget {
       selectionModeProvider: patruSelectionModeProvider,
       selectedIdsProvider: selectedPatruIdsProvider,
       onItemTap: (context, patru) {
+        final profile = profilesAsync.where((prof) => prof.id == patru.niruvanamId).firstOrNull ?? 
+            (profilesAsync.isNotEmpty ? profilesAsync.first : null);
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => PatrucheettuPaarvai(
               patru: patru,
               achuMozhi: primaryLang,
+              profile: profile,
               onEdit: () {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(

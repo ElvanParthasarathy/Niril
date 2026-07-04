@@ -1,0 +1,67 @@
+@font-face {
+  font-family: 'Elvan Sans';
+  src: url('/fonts/ElvanSans-Regular.woff') format('woff'),
+       url('/fonts/ElvanSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Elvan Sans';
+  src: url('/fonts/ElvanSans-Italic.woff') format('woff'),
+       url('/fonts/ElvanSans-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Elvan Sans';
+  src: url('/fonts/ElvanSans-Medium.woff') format('woff'),
+       url('/fonts/ElvanSans-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Elvan Sans';
+  src: url('/fonts/ElvanSans-MediumItalic.woff') format('woff'),
+       url('/fonts/ElvanSans-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Elvan Sans';
+  src: url('/fonts/ElvanSans-SemiBold.woff') format('woff'),
+       url('/fonts/ElvanSans-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Elvan Sans';
+  src: url('/fonts/ElvanSans-SemiBoldItalic.woff') format('woff'),
+       url('/fonts/ElvanSans-SemiBoldItalic.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Elvan Sans';
+  src: url('/fonts/ElvanSans-Bold.woff') format('woff'),
+       url('/fonts/ElvanSans-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Elvan Sans';
+  src: url('/fonts/ElvanSans-BoldItalic.woff') format('woff'),
+       url('/fonts/ElvanSans-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: block;
+}
+
+html, body, #root, .receipt-box, .print-wrapper, .MuiPaper-root { font-family: 'Elvan Sans', -apple-system, BlinkMacSystemFont, sans-serif !important; }
+

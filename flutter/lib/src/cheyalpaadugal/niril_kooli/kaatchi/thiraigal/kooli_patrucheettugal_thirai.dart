@@ -60,11 +60,14 @@ class CoolieReceiptsPage extends ConsumerWidget {
       selectionModeProvider: patruSelectionModeProvider,
       selectedIdsProvider: selectedPatruIdsProvider,
       onItemTap: (context, p) {
+        final profile = profilesAsync.where((prof) => prof.id == p.niruvanamId).firstOrNull ?? 
+            (profilesAsync.isNotEmpty ? profilesAsync.first : null);
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => PatrucheettuPaarvai(
               patru: p,
               achuMozhi: primaryLang,
+              profile: profile,
               onEdit: () {
                 Navigator.of(context).pushReplacement(
                   MaterialPageRoute(

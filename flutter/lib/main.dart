@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cyclop/cyclop.dart';
 import 'src/koorugal/podhu_koorugal/elvan_nagarvu_panbu.dart';
@@ -218,13 +219,23 @@ class ElvanNirilApp extends ConsumerWidget {
     return MaterialApp(
       navigatorKey: globalRootNavigatorKey,
       builder: (context, child) {
+        final Brightness brightness = Theme.of(context).brightness;
+        final Color scaffoldColor = Theme.of(context).scaffoldBackgroundColor;
+        
         // Wrap EyeDrop in its own Overlay so it can be accessed globally without needing the Navigator's internal overlay.
-        Widget wrappedChild = Overlay(
-          initialEntries: [
-            OverlayEntry(
-              builder: (context) => EyeDrop(child: child!),
-            ),
-          ],
+        Widget wrappedChild = AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle(
+            systemNavigationBarColor: scaffoldColor,
+            systemNavigationBarIconBrightness:
+                brightness == Brightness.dark ? Brightness.light : Brightness.dark,
+          ),
+          child: Overlay(
+            initialEntries: [
+              OverlayEntry(
+                builder: (context) => EyeDrop(child: child!),
+              ),
+            ],
+          ),
         );
         
         if (kDebugMode) {

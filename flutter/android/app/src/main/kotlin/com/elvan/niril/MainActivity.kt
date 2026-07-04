@@ -20,6 +20,23 @@ class MainActivity : FlutterActivity() {
                 } else {
                     result.error("INVALID_ARGUMENT", "HTML string is null", null)
                 }
+            } else if (call.method == "viewReactApp") {
+                val page = call.argument<String>("page")
+                val payload = call.argument<String>("payload")
+                val profile = call.argument<String>("profile")
+                
+                if (page != null) {
+                    ReactDataHolder.payload = payload
+                    ReactDataHolder.profile = profile
+                    
+                    val intent = Intent(this, ReactAppActivity::class.java).apply {
+                        putExtra("page", page)
+                    }
+                    startActivity(intent)
+                    result.success(true)
+                } else {
+                    result.error("INVALID_ARGUMENT", "Page is null", null)
+                }
             } else {
                 result.notImplemented()
             }

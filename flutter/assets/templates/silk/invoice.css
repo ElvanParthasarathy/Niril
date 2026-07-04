@@ -27,7 +27,7 @@
   font-family: 'Elvan Sans';
   src: url('fonts/ElvanSans-Bold.woff') format('woff'),
        url('fonts/ElvanSans-Bold.ttf') format('truetype');
-  font-weight: 700;
+  font-weight: 400; white-space: nowrap;
   font-style: normal;
   font-display: block;
 }
@@ -89,7 +89,7 @@ h1, h2, h3, h4, p { margin: 0; }
 .text-dark    { color: var(--text-dark); }
 .text-muted   { color: var(--text-muted); }
 .text-primary { color: var(--text-primary); }
-.font-bold    { font-weight: 700; }
+.font-bold    { font-weight: 400; white-space: nowrap; }
 .font-semibold{ font-weight: 600; }
 .font-medium  { font-weight: 500; }
 
@@ -118,7 +118,7 @@ h1, h2, h3, h4, p { margin: 0; }
   padding: 0;
   margin-bottom: 4px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400; white-space: nowrap;
   color: var(--accent);
   letter-spacing: 0.5px;
 }
@@ -172,7 +172,7 @@ h1, h2, h3, h4, p { margin: 0; }
 
 .business-name {
   font-size: 1.35rem;
-  font-weight: 700;
+  font-weight: 400; white-space: nowrap;
   color: var(--accent);
   white-space: nowrap;
 }
@@ -194,7 +194,7 @@ h1, h2, h3, h4, p { margin: 0; }
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  font-weight: 700;
+  font-weight: 400; white-space: nowrap;
   font-size: 1.05rem;
   text-transform: capitalize;
   transform: translateY(3px);
@@ -230,7 +230,7 @@ h1, h2, h3, h4, p { margin: 0; }
 }
 .meta-item strong {
   color: #000;
-  font-weight: 700;
+  font-weight: 400; white-space: nowrap;
 }
 
 /* ========== Billing Parties ========== */
@@ -251,13 +251,13 @@ h1, h2, h3, h4, p { margin: 0; }
 }
 .inv-section-label {
   font-size: 0.65rem;
-  font-weight: 700;
+  font-weight: 400; white-space: nowrap;
   color: #94a3b8;
   margin-bottom: 0.5rem;
 }
 .inv-party-name {
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 400; white-space: nowrap;
   color: #0f172a;
   margin-bottom: 0.3rem;
 }
@@ -276,7 +276,7 @@ h1, h2, h3, h4, p { margin: 0; }
 
 /* Place of supply bilingual display */
 .pos-primary {
-  font-weight: 700;
+  font-weight: 400; white-space: nowrap;
   font-size: 1.1rem;
   color: var(--text-dark); /* #0f172a */
   margin-bottom: 2px;
@@ -309,7 +309,7 @@ h1, h2, h3, h4, p { margin: 0; }
 .inv-table th {
   background-color: var(--accent-bg);
   color: var(--accent) !important;
-  font-weight: 700;
+  font-weight: 400; white-space: nowrap;
   border-bottom: 1px solid rgba(0,0,0,0.05);
   border-right: 1px solid rgba(0,0,0,0.08);
   border-radius: 0;
@@ -327,22 +327,22 @@ h1, h2, h3, h4, p { margin: 0; }
 
 /* Table cells */
 .inv-table td {
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   border-right: 1px solid rgba(0,0,0,0.08);
   border-bottom: 1px dashed var(--border-sub);
-  padding: 0.25rem 0.5rem;
+  padding: 0.2rem 0.4rem;
   vertical-align: top;
 }
 .inv-table td:last-child    { border-right: none; }
 /* Bilingual OFF: taller cell padding */
 .inv-table.bilingual-off td {
-  padding: 0.65rem 0.5rem;
+  padding: 0.4rem 0.5rem;
 }
 .inv-table td.inv-td-center { text-align: center; }
-.inv-table td.inv-td-right  { text-align: right; }
+.inv-table td.inv-td-right  { text-align: right; white-space: nowrap; }
 .inv-table td.inv-td-muted  { color: #94a3b8; }
-.inv-table td.inv-td-name   { font-weight: 600; color: #1e293b; white-space: normal; word-wrap: break-word; overflow-wrap: break-word; }
-.inv-table td.inv-td-amount { text-align: right; font-weight: 600; color: #0f172a; white-space: nowrap; }
+.inv-table td.inv-td-name   { font-weight: 400; color: #1e293b; white-space: normal; word-wrap: break-word; overflow-wrap: break-word; }
+.inv-table td.inv-td-amount { text-align: right; font-weight: 400; color: #0f172a; white-space: nowrap; }
 .inv-table td:last-child    { border-right: none; }
 
 /* Even row striping — also support explicit class from React */
@@ -353,17 +353,18 @@ h1, h2, h3, h4, p { margin: 0; }
 
 /* Item name cells */
 .item-name {
-  font-weight: 500;
+  font-weight: 400;
+  font-size: 0.7rem;
 }
 .item-name-sec {
   font-size: 0.85em;
   color: #64748b;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 .item-desc {
   font-size: 0.8em;
   color: var(--text-light);
-  margin-top: 2px;
+  margin-top: 1px;
 }
 .item-desc-sec {
   font-size: 0.8em;
@@ -455,7 +456,7 @@ h1, h2, h3, h4, p { margin: 0; }
   color: var(--text-dark); /* #1e293b approx */
 }
 .grand-total-row {
-  font-weight: 700;
+  font-weight: 400; white-space: nowrap;
   color: var(--accent);
   margin-top: 0.35rem;
   padding-top: 0;
@@ -548,7 +549,7 @@ h1, h2, h3, h4, p { margin: 0; }
   gap: 4px;
 }
 .bank-label {
-  font-weight: 700;
+  font-weight: 400; white-space: nowrap;
   white-space: nowrap;
   font-size: 0.82rem;
   color: var(--accent);
@@ -580,7 +581,7 @@ h1, h2, h3, h4, p { margin: 0; }
   position: relative;
   z-index: 10;
   font-size: 1.05rem;
-  font-weight: 700;
+  font-weight: 400; white-space: nowrap;
   margin-bottom: 5px;
   line-height: 1;
 }
@@ -614,7 +615,7 @@ h1, h2, h3, h4, p { margin: 0; }
 .thank-you {
   font-family: inherit;
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 400; white-space: nowrap;
   color: var(--accent);
   line-height: 1;
 }
@@ -639,7 +640,7 @@ h1, h2, h3, h4, p { margin: 0; }
 }
 .contact-label {
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 400; white-space: nowrap;
   color: var(--accent);
   display: flex;
   align-items: center;

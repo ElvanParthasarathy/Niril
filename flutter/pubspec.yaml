@@ -57,6 +57,7 @@ dependencies:
   tamil_pdf_shaper: ^1.0.4
   htmltopdfwidgets: ^2.1.1
   webview_windows: ^0.4.0
+  webview_flutter: ^4.14.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

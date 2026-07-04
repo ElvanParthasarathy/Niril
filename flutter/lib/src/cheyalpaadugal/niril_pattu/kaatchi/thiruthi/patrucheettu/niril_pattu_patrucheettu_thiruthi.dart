@@ -6,6 +6,7 @@ import '../../../../niril_podhu/kaatchi/thiruthi/patru_thiruthi.dart';
 
 import '../../../../niril_podhu/kaatchi/paarvai/patrucheettu_paarvai.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
+import '../../../amaippugal/tharavu/pattu_niruvana_tharavugal_provider.dart';
 
 /// Silk Receipt Editor — thin wrapper around the shared PatruThiruthi.
 class SilkReceiptEditor extends ConsumerWidget {
@@ -16,6 +17,7 @@ class SilkReceiptEditor extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentLocale = ref.watch(localeProvider);
+    final profile = ref.watch(pattuNiruvanaTharavugalProvider);
     final effectiveLang =
         currentLocale?.languageCode ?? Localizations.localeOf(context).languageCode;
     final primaryLang = effectiveLang == 'ta' ? 'ta' : 'en';
@@ -28,6 +30,7 @@ class SilkReceiptEditor extends ConsumerWidget {
             builder: (_) => PatrucheettuPaarvai(
               patru: saved,
               achuMozhi: primaryLang,
+              profile: profile,
               onEdit: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(

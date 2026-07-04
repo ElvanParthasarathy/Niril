@@ -42,6 +42,10 @@
             android:name=".PrintPreviewActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ReactAppActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:screenOrientation="portrait" />
             
         <provider
             android:name="androidx.core.content.FileProvider"

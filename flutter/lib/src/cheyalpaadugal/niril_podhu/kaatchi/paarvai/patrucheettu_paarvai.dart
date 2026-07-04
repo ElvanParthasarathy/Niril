@@ -1,29 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/tharavuru/uruvugal.dart';
 import '../../../../adippadai/oru_mozhi/oru_mozhi_vaangunar_udhavi.dart';
 import '../../../niril_podhu/tharavuru/seluthi_vagai.dart';
+import '../../../amaippugal/tharavu/pattu_niruvana_tharavugal_provider.dart';
+import '../../../../adippadai/elvan_navil_ezhuthen/elvan_navil_ezhuthen.dart';
 import 'elvan_paarvai_oadu.dart';
+import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 
 class PatrucheettuPaarvai extends ConsumerWidget {
   const PatrucheettuPaarvai({
     super.key,
     required this.patru,
     required this.achuMozhi,
+    required this.profile,
     required this.onEdit,
   });
 
   final PatrugalTharavuru patru;
   final String achuMozhi;
+  final NiruvanaTharavugal? profile;
   final VoidCallback onEdit;
 
   static final _dateFormat = DateFormat('dd/MM/yyyy');
   static final _currencyFormat =
       NumberFormat.currency(locale: 'en_IN', symbol: '₹');
+  
+  static const MethodChannel _printChannel = MethodChannel('com.elvan.niril/print');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,14 +44,46 @@ class PatrucheettuPaarvai extends ConsumerWidget {
       achuMozhi
     );
         
-
-    
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final mode = SeluthiVagaiX.fromStored(p.seluthumMurai);
 
     return ElvanPaarvaiOadu(
       title: '${K.patrucheettu.tr(context, ref)} #${p.patruEn}',
       onEdit: onEdit,
+      onPrint: () async {
+        if (Platform.isAndroid || Platform.isIOS) {
+          final amountInWords = ElvanNavilEzhuthen.convertToMozhiMap(p.thogai);
+          
+          final receiptJson = {
+            'id': p.id,
+            'niruvanamId': p.niruvanamId,
+            'patruEn': p.patruEn,
+            'vanakkam': p.vanakkam,
+            'finYear': p.finYear,
+            'vaangunarId': p.vaangunarId,
+            'vaangunarPeyar': p.vaangunarPeyar,
+            'patruNaal': p.patruNaal.toIso8601String(),
+            'thogai': p.thogai,
+            'amountInWords': amountInWords,
+            'seluthumMurai': p.seluthumMurai,
+            'vangiPeyar': p.vangiPeyar,
+            'parivarthanaiEn': p.parivarthanaiEn,
+            'ullkurippu': p.ullkurippu,
+          };
+          
+          final profileJson = profile?.toJson() ?? {};
+          
+          try {
+            await _printChannel.invokeMethod('viewReactApp', {
+              'page': 'receipt.html',
+              'payload': jsonEncode(receiptJson),
+              'profile': jsonEncode(profileJson),
+            });
+          } catch (e) {
+            debugPrint("Failed to launch native React App activity: \$e");
+          }
+        }
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

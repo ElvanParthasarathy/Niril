@@ -122,7 +122,7 @@ class ElvanShell extends ConsumerStatefulWidget {
   /// If provided, this widget will be rendered as an overlay on top of the navbar
   /// using the same animation sequence as the search bar.
   final Widget? overlayWidget;
-  
+
   /// Whether the overlay sequence is currently active.
   final bool isOverlayActive;
 
@@ -139,7 +139,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
   bool _overlayStep1HideIcons = false;
   bool _overlayStep2ShowContainer = false;
   bool _overlayStep3ExpandContainer = false;
-  
+
   OverlayType _currentOverlayType = OverlayType.none;
 
   // Controls the fade and hit-testing of the entire Layer 3 bottom floating pill
@@ -271,8 +271,6 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
     });
   }
 
-
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -353,11 +351,13 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
   // ── Scroll direction listener ─────────────────────────────────────────
 
   bool _handleScrollNotification(ScrollNotification notification) {
-    if (notification is ScrollMetricsNotification || notification is ScrollUpdateNotification) {
+    if (notification is ScrollMetricsNotification ||
+        notification is ScrollUpdateNotification) {
       final metrics = notification.metrics;
       // Only show scrollbar if the scrollable content is MORE than 3x the screen height (extra is 2x).
       // This ensures the thumb size is at most 33% of the screen height when it appears.
-      final bool shouldShow = metrics.maxScrollExtent > (metrics.viewportDimension * 2.0);
+      final bool shouldShow =
+          metrics.maxScrollExtent > (metrics.viewportDimension * 2.0);
       if (_showScrollbarNotifier.value != shouldShow) {
         Future.microtask(() {
           if (mounted) _showScrollbarNotifier.value = shouldShow;
@@ -527,9 +527,17 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
     final backgroundColor =
         widget.backgroundColor ?? Theme.of(context).scaffoldBackgroundColor;
 
+    final double bottomSystemPadding = MediaQuery.paddingOf(context).bottom;
+    final bool isThreeButtonNav = bottomSystemPadding > 34.0;
+    
+    final double scaffoldBottomPadding = isThreeButtonNav ? bottomSystemPadding : 0.0;
+    final double floatingBottomPadding = isThreeButtonNav ? 0.0 : bottomSystemPadding;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: GestureDetector(
+      body: Padding(
+        padding: EdgeInsets.only(bottom: scaffoldBottomPadding),
+        child: GestureDetector(
         onTap: () {
           if (_isSearchActiveNotifier.value) {
             _searchFocusNode.unfocus();
@@ -564,7 +572,8 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
                     isSearchActiveNotifier: _isSearchActiveNotifier,
                     dynamicPillHeightNotifier: _dynamicPillHeightNotifier,
                     leadingWidget: widget.leadingWidget,
-                    showLeadingWidgetInExpandedBar: widget.showLeadingWidgetInExpandedBar,
+                    showLeadingWidgetInExpandedBar:
+                        widget.showLeadingWidgetInExpandedBar,
                   ),
                 ),
               ),
@@ -576,8 +585,10 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
                 left: 0,
                 right: 0,
                 bottom: 0,
-                height:
-                    _kFadeMaskHeight + _kNavbarHeight + _kNavbarBottomMargin,
+                height: _kFadeMaskHeight +
+                    _kNavbarHeight +
+                    _kNavbarBottomMargin +
+                    floatingBottomPadding,
                 child: IgnorePointer(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
@@ -650,7 +661,8 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
               Positioned(
                 left: 0,
                 right: 0,
-                bottom: _kNavbarBottomMargin,
+                bottom:
+                    _kNavbarBottomMargin + floatingBottomPadding,
                 child: Center(
                   child: FadeTransition(
                     opacity: _navbarOpacity,
@@ -752,9 +764,11 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
                                           widget.onSearchChanged
                                               ?.call(''); // Clear query
                                         },
-                                        isExpanded: _overlayStep3ExpandContainer,
+                                        isExpanded:
+                                            _overlayStep3ExpandContainer,
                                       )
-                                    : (_cachedOverlayWidget ?? const SizedBox.shrink()),
+                                    : (_cachedOverlayWidget ??
+                                        const SizedBox.shrink()),
                               ),
                             ),
                         ],
@@ -778,6 +792,7 @@ class _ElvanShellState extends ConsumerState<ElvanShell>
             ),
           ],
         ),
+      ),
       ),
     );
   }

@@ -85,4 +85,6 @@ dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     // Coroutines for WebView background tasks
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    // WebKit for WebViewAssetLoader (serves assets over https:// for Firebase compatibility)
+    implementation("androidx.webkit:webkit:1.11.0")
 }
