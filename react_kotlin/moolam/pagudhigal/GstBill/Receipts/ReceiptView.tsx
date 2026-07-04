@@ -28,7 +28,7 @@ const IconMail = ({ size = 14, className = '', style = {} }) => (
     </svg>
 );
 
-import { saveProfile } from '../../../Avanam';
+
 
 export default function ReceiptView({ receipt: receiptProp, profile: profileProp, onBack, onEdit }) {
   const profile = profileProp || {};
@@ -73,7 +73,13 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
   const handleSaveLogoPosition = async () => {
     try {
       const updatedProfile = { ...profile, wideLogoX: logoX, wideLogoY: logoY, wideLogoScale: logoScale };
-      await saveProfile(updatedProfile);
+      // Send the updated profile data back to Flutter
+      if (window.ReceiptBridge && window.ReceiptBridge.postMessage) {
+        window.ReceiptBridge.postMessage(JSON.stringify({
+          action: 'save_logo_layout',
+          data: updatedProfile
+        }));
+      }
       thagaval('Logo layout saved successfully!', 'success');
     } catch (e) {
       thagaval('Failed to save layout', 'error');

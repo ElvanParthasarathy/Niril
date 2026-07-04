@@ -89,7 +89,7 @@ export default defineConfig(({ command }) => ({
       workbox: {
         maximumFileSizeToCacheInBytes: 20000000,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
-        navigateFallback: '/index.html',
+        navigateFallback: '/receipt.html',
         navigateFallbackAllowlist: [/^\//],
         navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
@@ -117,7 +117,6 @@ export default defineConfig(({ command }) => ({
   build: {
     rollupOptions: {
       input: {
-        main: path.resolve(__dirname, 'index.html'),
         receipt: path.resolve(__dirname, 'receipt.html'),
       },
       output: {
