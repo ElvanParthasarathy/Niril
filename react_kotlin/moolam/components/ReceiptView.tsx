@@ -1,19 +1,19 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { ArrowLeft, Printer as PrintIcon, ShareNetwork, Spinner, DownloadSimple, PencilSimple, DotsThreeVertical } from '@phosphor-icons/react';
-import { FloatingBackButton } from '../../FloatingBackButton';
+import { FloatingBackButton } from './FloatingBackButton';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
-import { useLanguage } from '../../../mozhi/LanguageContext';
-import { en } from '../../../mozhi/en';
-import { ta } from '../../../mozhi/ta';
-import { formatCurrency, getDynamicField, getPrintHeadContent } from '../../../Payanpadu';
+import { useLanguage } from '../mozhi/LanguageContext';
+import { en } from '../mozhi/en';
+import { ta } from '../mozhi/ta';
+import { formatCurrency, getDynamicField, getPrintHeadContent } from '../utils';
 import { Box, Paper, useTheme, useMediaQuery } from '@mui/material';
-import { ViewHeader } from '../../ViewHeader';
-import NativeDocument from '../../NativeDocument';
+import { ViewHeader } from './ViewHeader';
+import NativeDocument from './NativeDocument';
 import { Capacitor } from '@capacitor/core';
-import { thagaval } from '../../Thagaval';
-import '../../CoolieBill/print.css';
-import { usePinchZoom } from '../../../hooks/usePinchZoom';
+import { thagaval } from './Thagaval';
+import '../styles/print.css';
+import { usePinchZoom } from '../hooks/usePinchZoom';
 
 const IconPhone = ({ size = 14, className = '', style = {} }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} style={style}>

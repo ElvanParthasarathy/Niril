@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
-import ReceiptView from './pagudhigal/GstBill/Receipts/ReceiptView';
+import ReceiptView from './components/ReceiptView';
 import { LanguageProvider } from './mozhi/LanguageContext';
 import './vadivu.css';
 
