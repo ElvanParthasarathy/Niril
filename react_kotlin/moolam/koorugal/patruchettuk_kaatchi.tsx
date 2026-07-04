@@ -1,19 +1,19 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { ArrowLeft, Printer as PrintIcon, ShareNetwork, Spinner, DownloadSimple, PencilSimple, DotsThreeVertical } from '@phosphor-icons/react';
-import { FloatingBackButton } from './FloatingBackButton';
+import { midhakkum_pinsel_pothaan } from './midhakkum_pinsel_pothaan';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { useLanguage } from '../mozhi/LanguageContext';
 import { en } from '../mozhi/en';
 import { ta } from '../mozhi/ta';
-import { formatCurrency, getDynamicField, getPrintHeadContent } from '../utils';
+import { formatCurrency, getDynamicField, getPrintHeadContent } from '../udhavigal';
 import { Box, Paper, useTheme, useMediaQuery } from '@mui/material';
-import { ViewHeader } from './ViewHeader';
-import NativeDocument from './NativeDocument';
+import { kaatchith_thalaippu } from './kaatchith_thalaippu';
+import thaai_avanam from './thaai_avanam';
 import { Capacitor } from '@capacitor/core';
 import { thagaval } from './Thagaval';
-import '../styles/print.css';
-import { usePinchZoom } from '../hooks/usePinchZoom';
+import '../vadivangal/achu.css';
+import { killi_peridhakkal } from '../kokkigal/killi_peridhakkal';
 
 const IconPhone = ({ size = 14, className = '', style = {} }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} style={style}>
@@ -30,7 +30,7 @@ const IconMail = ({ size = 14, className = '', style = {} }) => (
 
 
 
-export default function ReceiptView({ receipt: receiptProp, profile: profileProp, onBack, onEdit }) {
+export default function patruchettuk_kaatchi({ receipt: receiptProp, profile: profileProp, onBack, onEdit }) {
   const profile = profileProp || {};
   const receipt = {
     ...(receiptProp || {}),
@@ -54,7 +54,7 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
   const mbPercent = (1 - initialScale) * 141;
   const isNativeApp = typeof window !== 'undefined' && window.location.search.includes('native=true');
 
-  const { wrapperRef, contentRef, scale } = usePinchZoom({ minScale: 1, maxScale: 4 });
+  const { wrapperRef, contentRef, scale } = killi_peridhakkal({ minScale: 1, maxScale: 4 });
 
   // Dynamic logo layout states
   const [logoX, setLogoX] = useState(profile?.wideLogoX || 0);
@@ -184,7 +184,7 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
       try {
         setSaving(true);
         const fileName = `RCPT_${receipt.receiptNo.replace(/\//g, '-')}`;
-        await NativeDocument.printHtml({
+        await thaai_avanam.printHtml({
           html: htmlContent,
           baseUrl: "file:///android_asset/public/",
           filename: fileName
@@ -280,7 +280,7 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
       
       if (Capacitor.isNativePlatform()) {
         const pdfBase64 = pdf.output('datauristring').split(',')[1];
-        await NativeDocument.downloadPdf({
+        await thaai_avanam.downloadPdf({
           base64Data: pdfBase64,
           filename: fileName,
           appMode: 'Niril Silk',
@@ -317,7 +317,7 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
       
       if (Capacitor.isNativePlatform()) {
         const pdfBase64 = pdf.output('datauristring').split(',')[1];
-        await NativeDocument.sharePdf({
+        await thaai_avanam.sharePdf({
           base64Data: pdfBase64,
           filename: fileName
         });
@@ -356,7 +356,7 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
 
   return (
     <Box className="print-wrapper" sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', width: '100%', position: 'relative', bgcolor: isNativeApp ? 'transparent' : 'background.default', minHeight: '100vh', display: 'flex', flexDirection: 'column', '@media print': { bgcolor: 'white !important', minHeight: 'auto', py: 0, px: 0 } }}>
-      <ViewHeader 
+      <kaatchith_thalaippu 
         onEdit={onEdit ? () => onEdit(receipt) : undefined}
         onPrint={executePrint}
         onPDF={generatePDF}

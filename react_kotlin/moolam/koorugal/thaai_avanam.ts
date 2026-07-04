@@ -7,6 +7,6 @@ export interface NativeDocumentPlugin {
   printHtml(options: { html: string, baseUrl?: string, filename?: string }): Promise<void>;
 }
 
-const NativeDocument = registerPlugin<NativeDocumentPlugin>('NativeDocument');
+const thaai_avanam = registerPlugin<NativeDocumentPlugin>('thaai_avanam');
 
-export default NativeDocument;
+export default thaai_avanam;

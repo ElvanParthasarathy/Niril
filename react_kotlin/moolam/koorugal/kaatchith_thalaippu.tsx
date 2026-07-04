@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Box, Typography, IconButton, Tooltip, useMediaQuery, useTheme, Button } from '@mui/material';
 import { PencilSimple, Printer as PrintIcon, DownloadSimple, ShareNetwork, Spinner } from '@phosphor-icons/react';
-import { FloatingBackButton } from './FloatingBackButton';
+import { midhakkum_pinsel_pothaan } from './midhakkum_pinsel_pothaan';
 import { useLanguage } from '../mozhi/LanguageContext';
 import { Capacitor } from '@capacitor/core';
 
-export const ViewHeader = ({ onEdit, onPrint, onPDF, onShare, saving, sharing = false, title, onBack, className = '' }: any) => {
+export const kaatchith_thalaippu = ({ onEdit, onPrint, onPDF, onShare, saving, sharing = false, title, onBack, className = '' }: any) => {
   const { t } = useLanguage();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -52,7 +52,7 @@ export const ViewHeader = ({ onEdit, onPrint, onPDF, onShare, saving, sharing = 
     </Box>
   );
 
-  const backBtn = <FloatingBackButton onBack={onBack} label={(t('back') || 'Back') as string} className="back-pill" />;
+  const backBtn = <midhakkum_pinsel_pothaan onBack={onBack} label={(t('back') || 'Back') as string} className="back-pill" />;
 
   const mobileEditFab = isMobile && onEdit ? (
     <Button

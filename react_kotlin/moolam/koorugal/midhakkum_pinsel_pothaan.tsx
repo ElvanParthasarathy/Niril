@@ -10,7 +10,7 @@ interface FloatingBackButtonProps {
     onBack?: () => void;
 }
 
-export const FloatingBackButton: React.FC<FloatingBackButtonProps> = ({ label, className, onBack }) => {
+export const midhakkum_pinsel_pothaan: React.FC<FloatingBackButtonProps> = ({ label, className, onBack }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const { t } = useLanguage();

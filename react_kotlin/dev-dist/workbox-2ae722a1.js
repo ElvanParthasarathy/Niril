@@ -3019,7 +3019,7 @@ define(['exports'], (function (exports) { 'use strict';
      * request strategy.
      *
      * A cache first strategy is useful for assets that have been revisioned,
-     * such as URLs like `/styles/example.a8f5f1.css`, since they
+     * such as URLs like `/vadivangal/example.a8f5f1.css`, since they
      * can be cached for long periods of time.
      *
      * If the network request fails, and there is no cache match, this will throw

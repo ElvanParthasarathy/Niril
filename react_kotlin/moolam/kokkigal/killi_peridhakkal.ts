@@ -5,7 +5,7 @@ interface UsePinchZoomProps {
     maxScale?: number;
 }
 
-export function usePinchZoom({ minScale = 1, maxScale = 4 }: UsePinchZoomProps = {}) {
+export function killi_peridhakkal({ minScale = 1, maxScale = 4 }: UsePinchZoomProps = {}) {
     const [wrapperNode, setWrapperNode] = useState<HTMLDivElement | null>(null);
     const contentRef = useRef<HTMLDivElement>(null);
 

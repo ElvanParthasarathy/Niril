@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
-import ReceiptView from './components/ReceiptView';
+import patruchettuk_kaatchi from './koorugal/patruchettuk_kaatchi';
 import { LanguageProvider } from './mozhi/LanguageContext';
 import './vadivu.css';
 
@@ -65,7 +65,7 @@ function ReceiptApp() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <LanguageProvider>
-        <ReceiptView receipt={receipt} profile={profile} onBack={() => {}} onEdit={() => {}} />
+        <patruchettuk_kaatchi receipt={receipt} profile={profile} onBack={() => {}} onEdit={() => {}} />
       </LanguageProvider>
     </ThemeProvider>
   );
