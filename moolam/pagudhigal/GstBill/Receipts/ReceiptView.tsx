@@ -166,6 +166,13 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
       </html>
     `;
 
+    // @ts-ignore
+    if (window.FlutterBridge) {
+      // @ts-ignore
+      window.FlutterBridge.printReceipt();
+      return;
+    }
+
     if (Capacitor.isNativePlatform()) {
       try {
         setSaving(true);

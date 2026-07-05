@@ -16,6 +16,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
+import android.print.PrintManager
+import android.print.PrintAttributes
+import android.content.Context
 import org.json.JSONObject
 
 class CleanReceiptActivity : ComponentActivity() {
@@ -56,7 +59,7 @@ class CleanReceiptActivity : ComponentActivity() {
                             },
                             actions = {
                                 IconButton(onClick = { 
-                                    webView.evaluateJavascript("window.print();", null) 
+                                    printWebView(receiptNo) 
                                 }) {
                                     Text("🖨️")
                                 }
@@ -107,6 +110,13 @@ class CleanReceiptActivity : ComponentActivity() {
                                     fun closeReceipt() {
                                         finish()
                                     }
+                                    
+                                    @JavascriptInterface
+                                    fun printReceipt() {
+                                        runOnUiThread {
+                                            printWebView(receiptNo)
+                                        }
+                                    }
                                 }, "FlutterBridge")
                         
                                 webViewClient = WebViewClient()
@@ -130,5 +140,17 @@ class CleanReceiptActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun printWebView(receiptNo: String) {
+        val printManager = getSystemService(Context.PRINT_SERVICE) as PrintManager
+        val printAdapter = webView.createPrintDocumentAdapter("Receipt_$receiptNo")
+        val jobName = "Receipt_$receiptNo"
+        
+        printManager.print(
+            jobName,
+            printAdapter,
+            PrintAttributes.Builder().build()
+        )
     }
 }
