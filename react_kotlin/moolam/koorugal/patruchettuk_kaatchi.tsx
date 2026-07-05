@@ -369,7 +369,7 @@ export default function patruchettuk_kaatchi({ receipt: receiptProp, profile: pr
 
 
 
-      <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4, width: '100%', bgcolor: 'background.default', '@media print': { bgcolor: 'white !important' } }}>
+      <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4, width: '100%', bgcolor: isNativeApp ? 'transparent' : 'background.default', '@media print': { bgcolor: 'white !important' } }}>
         <div ref={isMobile && !isNativeApp ? wrapperRef : null} style={isMobile && !isNativeApp ? { width: "100%", overflow: "hidden", touchAction: "none", display: "flex", justifyContent: "center", padding: "0 16px", boxSizing: "border-box" } : { width: '100%', display: 'flex', justifyContent: 'center' }}>
           <div ref={isMobile && !isNativeApp ? contentRef : null} style={isMobile && !isNativeApp ? { transformOrigin: "top center", width: "100%" } : {}}>
             <Paper elevation={isMobile && !isNativeApp ? 8 : 0} className="invoice-paper print-wrapper" sx={{ 

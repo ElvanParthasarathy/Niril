@@ -64,4 +64,4 @@
 }
 
 html, body, #root, .receipt-box, .print-wrapper, .MuiPaper-root { font-family: 'Elvan Sans', -apple-system, BlinkMacSystemFont, sans-serif !important; }
-
+html, body, #root { background-color: transparent !important; }

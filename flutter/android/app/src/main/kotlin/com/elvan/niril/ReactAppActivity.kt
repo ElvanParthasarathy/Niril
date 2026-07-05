@@ -96,10 +96,10 @@ class ReactAppActivity : ComponentActivity() {
                                 }
                             },
                             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                                containerColor = Color(0xFF1E1E1E),
-                                titleContentColor = Color.White,
-                                actionIconContentColor = Color.White,
-                                navigationIconContentColor = Color.White
+                                containerColor = MaterialTheme.colorScheme.surface,
+                                titleContentColor = MaterialTheme.colorScheme.onSurface,
+                                actionIconContentColor = MaterialTheme.colorScheme.onSurface,
+                                navigationIconContentColor = MaterialTheme.colorScheme.onSurface
                             )
                         )
                     }
