@@ -6,7 +6,7 @@ import '../../../../niril_podhu/kaatchi/thiruthi/patru_thiruthi.dart';
 
 import '../../../../niril_podhu/kaatchi/paarvai/patrucheettu_paarvai.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../amaippugal/tharavu/pattu_niruvana_tharavugal_provider.dart';
+import '../../../../amaippugal/tharavu/pattu_niruvana_tharavugal_provider.dart';
 
 /// Silk Receipt Editor — thin wrapper around the shared PatruThiruthi.
 class SilkReceiptEditor extends ConsumerWidget {

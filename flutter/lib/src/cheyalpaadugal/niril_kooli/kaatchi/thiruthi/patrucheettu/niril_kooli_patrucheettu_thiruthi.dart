@@ -6,7 +6,7 @@ import '../../../../niril_podhu/kaatchi/thiruthi/patru_thiruthi.dart';
 
 import '../../../../niril_podhu/kaatchi/paarvai/patrucheettu_paarvai.dart';
 import 'package:elvan_niril/src/adippadai/nilaimai/achu_mozhi_facade.dart';
-import '../../../amaippugal/tharavu/kooli_niruvana_tharavugal_provider.dart';
+import '../../../../amaippugal/tharavu/kooli_niruvana_tharavugal_provider.dart';
 
 /// Coolie Receipt Editor — thin wrapper around the shared PatruThiruthi.
 class CoolieReceiptEditor extends ConsumerWidget {
