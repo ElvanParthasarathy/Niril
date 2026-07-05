@@ -17,21 +17,26 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/foundation.dart';
 
-Future<void> _handlePrint(dynamic pattiyal, dynamic profile) async {
-  bool isWindows = !kIsWeb && Platform.isWindows;
-  String html = await AchadippuHtmlUruvakki.generatePattiyalHtml(
-    pattiyal: pattiyal,
-    profile: profile,
-    isWindows: isWindows,
-    isKooli: true,
-  );
+import 'package:flutter/services.dart';
+import 'dart:convert';
 
-  if (isWindows) {
-    debugPrint('Windows print not fully hooked here yet.');
-  } else {
-    // Flutter Native PDF Generation coming soon
-    // (Kotlin PrintPreviewActivity has been purged)
-    debugPrint("Native Dart PDF generation coming soon: html length ${html.length}");
+const _printChannel = MethodChannel('com.elvan.niril/print');
+
+Future<void> _handlePrint(dynamic pattiyal, dynamic profile, bool isDark) async {
+  try {
+    final pattiyalJson = {
+      ...pattiyal.toMap(),
+      // Add any specific data required by CoolieInvoiceView if missing
+    };
+
+    await _printChannel.invokeMethod('printInvoice', {
+      'invoiceJson': jsonEncode(pattiyalJson),
+      'profileJson': jsonEncode(profile),
+      'isDark': isDark,
+      'invoiceType': 'COOLIE',
+    });
+  } catch (e) {
+    debugPrint("Failed to launch invoice: $e");
   }
 }
 
@@ -78,7 +83,7 @@ class KooliPattiyalPaarvai extends ConsumerWidget {
       onPrint: () {
         // Find Kooli profile if possible, fallback to empty object if not easily available
         // Actually we don't have Kooli profile provider fetched here. We can pass an empty dynamic object for now.
-        _handlePrint(pattiyal, {});
+        _handlePrint(pattiyal, {}, isDark);
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

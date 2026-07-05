@@ -44,6 +44,11 @@
             android:theme="@android:style/Theme.NoTitleBar"
             android:hardwareAccelerated="true" />
 
+        <activity 
+            android:name=".CleanInvoiceActivity"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:hardwareAccelerated="true" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

@@ -74,7 +74,8 @@ const pickTamilPart = (text) => {
 export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
     const { t } = useLanguage();
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const isNative = typeof window !== 'undefined' && (window as any).FlutterBridge && (window as any).FlutterBridge.isNativeApp && (window as any).FlutterBridge.isNativeApp();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm')) && !isNative;
     const initialScale = typeof window !== 'undefined' ? Math.min((window.innerWidth - 32) / 793.7, 1) : 0.43;
     const mbPercent = (1 - initialScale) * 141;
     const printRef = useRef(null);
@@ -146,6 +147,16 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
                 thagaval('Failed to print document.', 'error');
             } finally {
                 setSaving(false);
+            }
+            return;
+        }
+
+        // @ts-ignore
+        if (typeof window !== 'undefined' && window.FlutterBridge) {
+            // @ts-ignore
+            if (window.FlutterBridge.printInvoice) {
+                // @ts-ignore
+                window.FlutterBridge.printInvoice();
             }
             return;
         }
@@ -407,16 +418,18 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
 
     return (
         <Box className="print-wrapper" sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', width: '100%', position: 'relative', bgcolor: 'background.default', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-            <ViewHeader 
-                className="no-print"
-                onEdit={() => onEdit(bill)}
-                onPrint={handlePrint}
-                onPDF={generatePDF}
-                onShare={handleNativeShare}
-                saving={saving}
-                title={displayBillNo}
-                onBack={onClose}
-            />
+            {!isNative && (
+                <ViewHeader 
+                    className="no-print"
+                    onEdit={() => onEdit(bill)}
+                    onPrint={handlePrint}
+                    onPDF={generatePDF}
+                    onShare={handleNativeShare}
+                    saving={saving}
+                    title={displayBillNo}
+                    onBack={onClose}
+                />
+            )}
 
             {/* Centered Preview Container */}
             <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4, width: '100%' }}>

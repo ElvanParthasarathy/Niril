@@ -23,6 +23,20 @@ class MainActivity : FlutterActivity() {
                 }
                 startActivity(intent)
                 result.success(null)
+            } else if (call.method == "printInvoice") {
+                val invoiceJson = call.argument<String>("invoiceJson")
+                val profileJson = call.argument<String>("profileJson")
+                val isDark = call.argument<Boolean>("isDark") ?: false
+                val invoiceType = call.argument<String>("invoiceType") ?: "GST"
+
+                val intent = android.content.Intent(this, CleanInvoiceActivity::class.java).apply {
+                    putExtra("invoiceJson", invoiceJson)
+                    putExtra("profileJson", profileJson)
+                    putExtra("isDark", isDark)
+                    putExtra("invoiceType", invoiceType)
+                }
+                startActivity(intent)
+                result.success(null)
             } else {
                 result.notImplemented()
             }

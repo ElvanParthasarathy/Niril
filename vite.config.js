@@ -118,7 +118,8 @@ export default defineConfig(({ command }) => ({
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, 'index.html'),
-        patrucheettu: path.resolve(__dirname, 'moolam/patrucheettu.html')
+        patrucheettu: path.resolve(__dirname, 'moolam/patrucheettu.html'),
+        pattiyal: path.resolve(__dirname, 'moolam/pattiyal.html')
       },
       output: {
         manualChunks: {
