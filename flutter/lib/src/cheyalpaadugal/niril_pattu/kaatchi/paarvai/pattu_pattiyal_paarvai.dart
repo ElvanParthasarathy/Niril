@@ -39,13 +39,9 @@ Future<void> _handlePrint(dynamic pattiyal, dynamic profile, WidgetRef ref, bool
     // For now, we print a placeholder or trigger a known Windows print channel
     debugPrint('Windows print not fully hooked here yet.');
   } else {
-    // Android native Kotlin PrintPreviewActivity
-    try {
-      const MethodChannel _printChannel = MethodChannel('com.elvan.niril/print');
-      await _printChannel.invokeMethod('printHtml', {'html': html});
-    } on PlatformException catch (e) {
-      debugPrint("Failed to invoke native print: \${e.message}");
-    }
+    // Flutter Native PDF Generation coming soon
+    // (Kotlin PrintPreviewActivity has been purged)
+    debugPrint("Native Dart PDF generation coming soon: html length ${html.length}");
   }
 }
 

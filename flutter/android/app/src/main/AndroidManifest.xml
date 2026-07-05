@@ -38,15 +38,12 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".PrintPreviewActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ReactAppActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:screenOrientation="portrait" />
-            
+
+        <activity 
+            android:name=".CleanReceiptActivity"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:hardwareAccelerated="true" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

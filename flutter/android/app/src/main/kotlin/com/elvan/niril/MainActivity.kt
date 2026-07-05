@@ -1,54 +1,29 @@
 package com.elvan.niril
 
-import android.content.Intent
-import android.os.Bundle
 import io.flutter.embedding.android.FlutterActivity
-import io.flutter.embedding.engine.FlutterEngine
-import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
-    private val CHANNEL = "com.elvan.niril/print"
+    private val PRINT_CHANNEL = "com.elvan.niril/print"
 
-    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+    override fun configureFlutterEngine(flutterEngine: io.flutter.embedding.engine.FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
-            if (call.method == "printHtml") {
-                val html = call.argument<String>("html")
-                if (html != null) {
-                    printHtmlContent(html)
-                    result.success(true)
-                } else {
-                    result.error("INVALID_ARGUMENT", "HTML string is null", null)
+        
+        io.flutter.plugin.common.MethodChannel(flutterEngine.dartExecutor.binaryMessenger, PRINT_CHANNEL).setMethodCallHandler { call, result ->
+            if (call.method == "printReceipt") {
+                val receiptJson = call.argument<String>("receiptJson")
+                val profileJson = call.argument<String>("profileJson")
+                val isDark = call.argument<Boolean>("isDark") ?: false
+
+                val intent = android.content.Intent(this, CleanReceiptActivity::class.java).apply {
+                    putExtra("receiptJson", receiptJson)
+                    putExtra("profileJson", profileJson)
+                    putExtra("isDark", isDark)
                 }
-            } else if (call.method == "viewReactApp") {
-                val page = call.argument<String>("page")
-                val payload = call.argument<String>("payload")
-                val profile = call.argument<String>("profile")
-                
-                if (page != null) {
-                    ReactDataHolder.payload = payload
-                    ReactDataHolder.profile = profile
-                    
-                    val isDark = call.argument<Boolean>("isDark") ?: false
-                    
-                    val intent = Intent(this, ReactAppActivity::class.java).apply {
-                        putExtra("page", page)
-                        putExtra("isDark", isDark)
-                    }
-                    startActivity(intent)
-                    result.success(true)
-                } else {
-                    result.error("INVALID_ARGUMENT", "Page is null", null)
-                }
+                startActivity(intent)
+                result.success(null)
             } else {
                 result.notImplemented()
             }
         }
-    }
-
-    private fun printHtmlContent(html: String) {
-        val intent = Intent(this, PrintPreviewActivity::class.java)
-        intent.putExtra("html_content", html)
-        startActivity(intent)
     }
 }

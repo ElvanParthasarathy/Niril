@@ -56,32 +56,30 @@ class PatrucheettuPaarvai extends ConsumerWidget {
           
           final receiptJson = {
             'id': p.id,
-            'niruvanamId': p.niruvanamId,
-            'patruEn': p.patruEn,
-            'vanakkam': p.vanakkam,
-            'finYear': p.finYear,
-            'vaangunarId': p.vaangunarId,
-            'vaangunarPeyar': p.vaangunarPeyar,
-            'patruNaal': p.patruNaal.toIso8601String(),
-            'thogai': p.thogai,
-            'amountInWords': amountInWords,
-            'seluthumMurai': p.seluthumMurai,
-            'vangiPeyar': p.vangiPeyar,
-            'parivarthanaiEn': p.parivarthanaiEn,
-            'ullkurippu': p.ullkurippu,
+            'receiptNo': p.patruEn,
+            'date': p.patruNaal.toIso8601String(),
+            'clientName': mudhanmaiPeyar,
+            'amount': p.thogai,
+            'paymentMode': p.seluthumMurai,
+            'referenceNo': p.parivarthanaiEn,
+            'note': p.ullkurippu,
           };
           
           final profileJson = profile?.toJson() ?? {};
           
           try {
-            await _printChannel.invokeMethod('viewReactApp', {
-              'page': 'receipt.html',
-              'payload': jsonEncode(receiptJson),
-              'profile': jsonEncode(profileJson),
+            await _printChannel.invokeMethod('printReceipt', {
+              'receiptJson': jsonEncode(receiptJson),
+              'profileJson': jsonEncode(profileJson),
               'isDark': isDark,
             });
           } catch (e) {
-            debugPrint("Failed to launch native React App activity: \$e");
+            debugPrint("Failed to launch receipt: $e");
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Failed to launch receipt view: $e')),
+              );
+            }
           }
         }
       },

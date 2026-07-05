@@ -443,14 +443,7 @@ class _NirilSeyaliThiraiState extends ConsumerState<NirilSeyaliThirai> {
                         overlayWidget: overlayWidget,
                         navActions: [
                           const SizedBox(width: 7),
-                          ElvanTopBarIcon(
-                            icon: CupertinoIcons.lab_flask,
-                            onTap: () {
-                              const MethodChannel('com.elvan.niril/print')
-                                  .invokeMethod('testReactApp');
-                            },
-                          ),
-                          const SizedBox(width: 14),
+
                           ElvanTopBarIcon(
                             icon: CupertinoIcons.add,
                             onTap: _onAddPressed,
