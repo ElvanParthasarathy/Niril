@@ -59,7 +59,7 @@ class CleanReceiptActivity : ComponentActivity() {
                             },
                             actions = {
                                 IconButton(onClick = { 
-                                    printWebView(receiptNo) 
+                                    webView.evaluateJavascript("if (window.executePrintFromNative) { window.executePrintFromNative(); }", null)
                                 }) {
                                     Text("🖨️")
                                 }
@@ -113,8 +113,13 @@ class CleanReceiptActivity : ComponentActivity() {
                                     
                                     @JavascriptInterface
                                     fun printReceipt() {
+                                        // Fallback if needed
+                                    }
+
+                                    @JavascriptInterface
+                                    fun printHtml(html: String, fileName: String) {
                                         runOnUiThread {
-                                            printWebView(receiptNo)
+                                            doWebViewPrint(html, fileName)
                                         }
                                     }
                                 }, "FlutterBridge")
@@ -142,15 +147,26 @@ class CleanReceiptActivity : ComponentActivity() {
         }
     }
 
-    private fun printWebView(receiptNo: String) {
-        val printManager = getSystemService(Context.PRINT_SERVICE) as PrintManager
-        val printAdapter = webView.createPrintDocumentAdapter("Receipt_$receiptNo")
-        val jobName = "Receipt_$receiptNo"
-        
-        printManager.print(
-            jobName,
-            printAdapter,
-            PrintAttributes.Builder().build()
+    private fun doWebViewPrint(html: String, fileName: String) {
+        val printWebView = WebView(this)
+        printWebView.webViewClient = object : WebViewClient() {
+            override fun onPageFinished(view: WebView, url: String) {
+                val printManager = getSystemService(Context.PRINT_SERVICE) as PrintManager
+                val printAdapter = view.createPrintDocumentAdapter(fileName)
+                printManager.print(
+                    fileName,
+                    printAdapter,
+                    PrintAttributes.Builder().build()
+                )
+            }
+        }
+        // Load the HTML string with base URL pointing to the assets so logos and fonts load correctly
+        printWebView.loadDataWithBaseURL(
+            "file:///android_asset/react_app/", 
+            html, 
+            "text/html", 
+            "UTF-8", 
+            null
         )
     }
 }

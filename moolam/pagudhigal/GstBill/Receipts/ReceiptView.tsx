@@ -139,6 +139,11 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
     return pStr;
   };
 
+  useEffect(() => {
+    // @ts-ignore
+    window.executePrintFromNative = executePrint;
+  });
+
   const executePrint = async () => {
     const printContent = printRef.current;
     if (!printContent) return;
@@ -168,8 +173,9 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
 
     // @ts-ignore
     if (window.FlutterBridge) {
+      const fileName = `RCPT_${receipt.receiptNo.replace(/\//g, '-')}`;
       // @ts-ignore
-      window.FlutterBridge.printReceipt();
+      window.FlutterBridge.printHtml(htmlContent, fileName);
       return;
     }
 
