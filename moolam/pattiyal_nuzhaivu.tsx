@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { LanguageProvider } from './mozhi/LanguageContext';
 import CoolieInvoiceView from './pagudhigal/CoolieBill/CoolieInvoiceView';
+import InvoiceView from './pagudhigal/GstBill/InvoiceView';
 
 // Minimal theme without CssBaseline to ensure transparency
 const theme = createTheme({
@@ -27,6 +28,12 @@ function App() {
         const profileData = (window as any).FlutterBridge.getProfileData();
         const parsedBill = JSON.parse(invoiceData);
         parsedBill._companyProfile = JSON.parse(profileData);
+        
+        // Also handle the _client object that we attach from Flutter for Silk
+        if (parsedBill._client) {
+           parsedBill.client = parsedBill._client;
+        }
+
         setBill(parsedBill);
         setIsDark((window as any).FlutterBridge.isDarkMode());
         if ((window as any).FlutterBridge.getInvoiceType) {
@@ -53,7 +60,15 @@ function App() {
               onEdit={() => {}}
             />
           ) : (
-            <div style={{ padding: 20, textAlign: 'center' }}>Silk Invoice Component Not Wired Yet</div>
+            <InvoiceView 
+              bill={bill} 
+              onClose={() => {
+                if (typeof window !== 'undefined' && (window as any).FlutterBridge && (window as any).FlutterBridge.closeInvoice) {
+                  (window as any).FlutterBridge.closeInvoice();
+                }
+              }}
+              onEdit={() => {}}
+            />
           )}
         </div>
       </LanguageProvider>

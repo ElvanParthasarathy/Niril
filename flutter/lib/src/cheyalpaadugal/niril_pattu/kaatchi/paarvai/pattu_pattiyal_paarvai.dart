@@ -14,34 +14,33 @@ import '../../../../adippadai/achadippu/achadippu_html_uruvakki.dart';
 import '../../vadivangal/pattu_achadippu_html_uruvakki.dart';
 import '../../../../adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
 
-Future<void> _handlePrint(dynamic pattiyal, dynamic profile, WidgetRef ref, bool isBilingual, String mudhanmaiLang, String irandaamLang) async {
-  bool isWindows = !kIsWeb && Platform.isWindows;
-  
-  // Fetch full client details from the database if vaangunarId exists
-  VaangunarTharavuru? client;
-  if (pattiyal.vaangunarId != null) {
-    final kalanjiyam = ref.read(vaangunarKalanjiyamProvider);
-    client = await kalanjiyam.getVaangunarById(pattiyal.vaangunarId!);
-  }
+import 'package:flutter/services.dart';
+import 'dart:convert';
 
-  String html = await PattuAchadippuHtmlUruvakki.generatePattiyalHtml(
-    pattiyal: pattiyal,
-    profile: profile,
-    client: client,
-    isWindows: isWindows,
-    isBilingual: isBilingual,
-    mudhanmaiLang: mudhanmaiLang,
-    irandaamLang: irandaamLang,
-  );
+const _printChannel = MethodChannel('com.elvan.niril/print');
 
-  if (isWindows) {
-    // Windows logic (handled via webview_windows, if integrated in this view later)
-    // For now, we print a placeholder or trigger a known Windows print channel
-    debugPrint('Windows print not fully hooked here yet.');
-  } else {
-    // Flutter Native PDF Generation coming soon
-    // (Kotlin PrintPreviewActivity has been purged)
-    debugPrint("Native Dart PDF generation coming soon: html length ${html.length}");
+Future<void> _handlePrint(dynamic pattiyal, dynamic profile, WidgetRef ref, bool isBilingual, String mudhanmaiLang, String irandaamLang, bool isDark) async {
+  try {
+    // Fetch full client details from the database if vaangunarId exists
+    VaangunarTharavuru? client;
+    if (pattiyal.vaangunarId != null) {
+      final kalanjiyam = ref.read(vaangunarKalanjiyamProvider);
+      client = await kalanjiyam.getVaangunarById(pattiyal.vaangunarId!);
+    }
+
+    final pattiyalJson = {
+      ...pattiyal.toMap(),
+      '_client': client?.toMap(),
+    };
+
+    await _printChannel.invokeMethod('printInvoice', {
+      'invoiceJson': jsonEncode(pattiyalJson),
+      'profileJson': jsonEncode(profile),
+      'isDark': isDark,
+      'invoiceType': 'SILK',
+    });
+  } catch (e) {
+    debugPrint("Failed to launch invoice: $e");
   }
 }
 
@@ -114,6 +113,7 @@ class PattuPattiyalPaarvai extends ConsumerWidget {
                   ref.read(bilingualProvider),
                   ref.read(silkMudhanmaiMozhiProvider),
                   ref.read(silkThunaiMozhiProvider),
+                  isDark,
                 );
               }
             },
@@ -143,6 +143,7 @@ class PattuPattiyalPaarvai extends ConsumerWidget {
                           ref.read(bilingualProvider),
                           ref.read(silkMudhanmaiMozhiProvider),
                           ref.read(silkThunaiMozhiProvider),
+                          isDark,
                         );
                       }
                     },
