@@ -81,6 +81,13 @@ class CleanReceiptActivity : ComponentActivity() {
                                     allowFileAccess = true
                                     allowFileAccessFromFileURLs = true
                                     allowUniversalAccessFromFileURLs = true
+                                    
+                                    // Enable Native Android Zoom
+                                    setSupportZoom(true)
+                                    builtInZoomControls = true
+                                    displayZoomControls = false
+                                    useWideViewPort = true
+                                    loadWithOverviewMode = true
                                 }
                                 
                                 addJavascriptInterface(object : Any() {
@@ -92,6 +99,9 @@ class CleanReceiptActivity : ComponentActivity() {
                                     
                                     @JavascriptInterface
                                     fun isDarkMode(): Boolean = isDark
+                                    
+                                    @JavascriptInterface
+                                    fun isNativeApp(): Boolean = true
                                     
                                     @JavascriptInterface
                                     fun closeReceipt() {
