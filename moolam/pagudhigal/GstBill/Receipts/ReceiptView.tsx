@@ -543,7 +543,11 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
                 
                 const email = profile?.email || profile?.minnanjal || '';
                 const phoneArr = [];
-                if (profile?.tholaippaesi) phoneArr.push(...(Array.isArray(profile.tholaippaesi) ? profile.tholaippaesi : String(profile.tholaippaesi).split(',')));
+                // Dart profile model uses tholaipaesi1 and tholaipaesi2
+                if (profile?.tholaipaesi1) phoneArr.push(String(profile.tholaipaesi1).trim());
+                if (profile?.tholaipaesi2) phoneArr.push(String(profile.tholaipaesi2).trim());
+                // Fallbacks for other possible field names
+                if (!phoneArr.length && profile?.tholaippaesi) phoneArr.push(...(Array.isArray(profile.tholaippaesi) ? profile.tholaippaesi : String(profile.tholaippaesi).split(',')));
                 if (profile?.mobileNumber) phoneArr.push(...(Array.isArray(profile.mobileNumber) ? profile.mobileNumber : String(profile.mobileNumber).split(',')));
                 const phone = phoneArr.map(p => p.trim()).filter(Boolean);
 
