@@ -1,7 +1,6 @@
 package com.elvan.niril
 
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Bundle
 import android.print.PrintAttributes
 import android.print.PrintManager
@@ -75,7 +74,7 @@ class ReactAppActivity : ComponentActivity() {
             })
             .build()
 
-        val isDarkMode = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+        val isDarkMode = intent.getBooleanExtra("isDark", false)
 
         setContent {
             MaterialTheme(colorScheme = if (isDarkMode) darkColorScheme() else lightColorScheme()) {

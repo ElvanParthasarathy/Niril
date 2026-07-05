@@ -78,6 +78,7 @@ class PatrucheettuPaarvai extends ConsumerWidget {
               'page': 'receipt.html',
               'payload': jsonEncode(receiptJson),
               'profile': jsonEncode(profileJson),
+              'isDark': isDark,
             });
           } catch (e) {
             debugPrint("Failed to launch native React App activity: \$e");

@@ -29,8 +29,11 @@ class MainActivity : FlutterActivity() {
                     ReactDataHolder.payload = payload
                     ReactDataHolder.profile = profile
                     
+                    val isDark = call.argument<Boolean>("isDark") ?: false
+                    
                     val intent = Intent(this, ReactAppActivity::class.java).apply {
                         putExtra("page", page)
+                        putExtra("isDark", isDark)
                     }
                     startActivity(intent)
                     result.success(true)
