@@ -14,6 +14,7 @@ import '../../../amaippugal/tharavu/pattu_niruvana_tharavugal_provider.dart';
 import '../../../../adippadai/elvan_navil_ezhuthen/elvan_navil_ezhuthen.dart';
 import 'elvan_paarvai_oadu.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
+import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 
 class PatrucheettuPaarvai extends ConsumerWidget {
   const PatrucheettuPaarvai({
@@ -75,11 +76,15 @@ class PatrucheettuPaarvai extends ConsumerWidget {
           
           final profileJson = _adaptProfileForReact(profile);
           
+          final appMode = ref.read(appModeProvider);
+          final receiptType = appMode == AppMode.coolie ? 'COOLIE' : 'GST';
+          
           try {
             await _printChannel.invokeMethod('printReceipt', {
               'receiptJson': jsonEncode(receiptJson),
               'profileJson': jsonEncode(profileJson),
               'isDark': isDark,
+              'receiptType': receiptType,
             });
           } catch (e) {
             debugPrint("Failed to launch receipt: $e");

@@ -32,6 +32,7 @@ class CleanReceiptActivity : ComponentActivity() {
         val receiptJson = intent.getStringExtra("receiptJson") ?: "{}"
         val profileJson = intent.getStringExtra("profileJson") ?: "{}"
         val intentIsDark = intent.getBooleanExtra("isDark", false)
+        val receiptType = intent.getStringExtra("receiptType") ?: "GST"
         
         var receiptNo = "Receipt"
         try {
@@ -105,6 +106,9 @@ class CleanReceiptActivity : ComponentActivity() {
                                     
                                     @JavascriptInterface
                                     fun isNativeApp(): Boolean = true
+
+                                    @JavascriptInterface
+                                    fun getReceiptType(): String = receiptType
                                     
                                     @JavascriptInterface
                                     fun closeReceipt() {

@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { LanguageProvider } from './mozhi/LanguageContext';
 import ReceiptView from './pagudhigal/GstBill/Receipts/ReceiptView';
+import CoolieReceiptView from './pagudhigal/CoolieBill/CoolieReceiptView';
 
 // Minimal theme without CssBaseline to ensure transparency
 const theme = createTheme({
@@ -18,6 +19,7 @@ function App() {
   const [receipt, setReceipt] = useState({});
   const [profile, setProfile] = useState({});
   const [isDark, setIsDark] = useState(false);
+  const [receiptType, setReceiptType] = useState('GST');
 
   useEffect(() => {
     // Read data safely from the Kotlin bridge
@@ -28,8 +30,11 @@ function App() {
         setReceipt(JSON.parse(receiptData));
         setProfile(JSON.parse(profileData));
         setIsDark(window.FlutterBridge.isDarkMode());
+        if (window.FlutterBridge.getReceiptType) {
+          setReceiptType(window.FlutterBridge.getReceiptType());
+        }
       } catch (e) {
-        console.error("Error parsing bridge data", e);
+        console.error("Failed to parse bridge data", e);
       }
     } else {
       // Fallback for browser testing
@@ -37,20 +42,24 @@ function App() {
     }
   }, []);
 
-  const handleBack = () => {
-    if (window.FlutterBridge) {
-      window.FlutterBridge.closeReceipt();
-    }
-  };
-
   return (
     <ThemeProvider theme={theme}>
-      <LanguageProvider>
-        <ReceiptView 
-          receipt={receipt} 
-          profile={profile} 
-          onBack={handleBack}
-        />
+      <LanguageProvider initialProfile={profile}>
+        <div style={{ padding: 0, margin: 0, background: 'transparent' }}>
+          {receiptType === 'COOLIE' ? (
+            <CoolieReceiptView
+              receipt={receipt}
+              profile={profile}
+              isDark={isDark}
+            />
+          ) : (
+            <ReceiptView 
+              receipt={receipt}
+              profile={profile}
+              isDark={isDark}
+            />
+          )}
+        </div>
       </LanguageProvider>
     </ThemeProvider>
   );

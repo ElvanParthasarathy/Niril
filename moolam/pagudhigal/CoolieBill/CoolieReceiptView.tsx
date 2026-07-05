@@ -35,11 +35,13 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
   const printRef = useRef(null);
   const [sharing, setSharing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
   const [coolieProfile, setCoolieProfile] = useState<any>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isNative = typeof window !== 'undefined' && (window as any).FlutterBridge && (window as any).FlutterBridge.isNativeApp && (window as any).FlutterBridge.isNativeApp();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')) && !isNative;
   const initialScale = typeof window !== 'undefined' ? Math.min((window.innerWidth - 32) / 793.7, 1) : 0.43;
   const mbPercent = (1 - initialScale) * 141;
 
@@ -144,6 +146,13 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
       } finally {
         setSaving(false);
       }
+      return;
+    }
+
+    // @ts-ignore
+    if (typeof window !== 'undefined' && window.FlutterBridge) {
+      // @ts-ignore
+      window.FlutterBridge.printReceipt();
       return;
     }
 
@@ -309,16 +318,18 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
 
   return (
     <Box className="print-wrapper" sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', width: '100%', position: 'relative', bgcolor: 'background.default', minHeight: '100vh', display: 'flex', flexDirection: 'column', '@media print': { bgcolor: 'white !important', minHeight: 'auto', py: 0, px: 0 } }}>
-      <ViewHeader 
-        onEdit={onEdit ? () => onEdit(receipt) : undefined}
-        onPrint={executePrint}
-        onPDF={generatePDF}
-        onShare={handleNativeShare}
-        saving={saving}
-        sharing={sharing}
-        title={receipt?.receiptNo}
-        onBack={onBack}
-      />
+      {!isNative && (
+        <ViewHeader 
+          onEdit={onEdit ? () => onEdit(receipt) : undefined}
+          onPrint={executePrint}
+          onPDF={generatePDF}
+          onShare={handleNativeShare}
+          saving={saving}
+          sharing={sharing}
+          title={receipt?.receiptNo}
+          onBack={onBack}
+        />
+      )}
 
       <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4, width: '100%' }}>
         <div ref={isMobile ? wrapperRef : null} style={isMobile ? { width: "100%", overflow: "hidden", touchAction: "none", display: "flex", justifyContent: "center", padding: "0 16px", boxSizing: "border-box" } : { width: '100%', display: 'flex', justifyContent: 'center' }}>
