@@ -1,6 +1,7 @@
 package com.elvan.niril
 
 import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.print.PrintAttributes
 import android.print.PrintManager
@@ -74,8 +75,10 @@ class ReactAppActivity : ComponentActivity() {
             })
             .build()
 
+        val isDarkMode = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+
         setContent {
-            MaterialTheme(colorScheme = darkColorScheme()) {
+            MaterialTheme(colorScheme = if (isDarkMode) darkColorScheme() else lightColorScheme()) {
                 Scaffold(
                     topBar = {
                         CenterAlignedTopAppBar(
@@ -174,7 +177,7 @@ class ReactAppActivity : ComponentActivity() {
                                 }
                             },
                             update = { webView ->
-                                webView.loadUrl("https://appassets.androidplatform.net/assets/react_app/$pageToLoad?native=true")
+                                webView.loadUrl("https://appassets.androidplatform.net/assets/react_app/$pageToLoad?native=true&dark=$isDarkMode")
                             },
                             modifier = Modifier.fillMaxSize()
                         )

@@ -5,7 +5,13 @@ import patruchettuk_kaatchi from './koorugal/patruchettuk_kaatchi';
 import { LanguageProvider } from './mozhi/LanguageContext';
 import './vadivu.css';
 
-const theme = createTheme({});
+const isDarkMode = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('dark') === 'true';
+
+const theme = createTheme({
+  palette: {
+    mode: isDarkMode ? 'dark' : 'light',
+  },
+});
 
 declare global {
   interface Window {
