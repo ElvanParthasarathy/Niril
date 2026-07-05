@@ -353,9 +353,9 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
 
 
 
-      <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4, width: '100%' }}>
-        <div ref={isMobile ? wrapperRef : null} style={isMobile ? { width: "100%", overflow: "hidden", touchAction: "none", display: "flex", justifyContent: "center", padding: "0 16px", boxSizing: "border-box" } : { width: '100%', display: 'flex', justifyContent: 'center' }}>
-          <div ref={isMobile ? contentRef : null} style={isMobile ? { transformOrigin: "top center", width: "100%" } : {}}>
+      <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4, width: '100%', pt: isNative ? 0 : undefined }}>
+        <div ref={isMobile ? wrapperRef : null} style={isNative ? { width: "100%", display: "flex", justifyContent: "center" } : isMobile ? { width: "100%", overflow: "hidden", touchAction: "none", display: "flex", justifyContent: "center", padding: "0 16px", boxSizing: "border-box" } : { width: '100%', display: 'flex', justifyContent: 'center' }}>
+          <div ref={isMobile ? contentRef : null} style={isNative ? { transformOrigin: "top left", width: "100%" } : isMobile ? { transformOrigin: "top center", width: "100%" } : {}}>
             <Paper elevation={isMobile ? 8 : 3} className="invoice-paper print-wrapper" sx={{ 
               p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto', bgcolor: 'white', color: 'black',
               ...(isMobile ? {
@@ -543,7 +543,7 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
                 
                 const email = profile?.email || profile?.minnanjal || '';
                 const phoneArr = [];
-                if (profile?.tholaipesi) phoneArr.push(...(Array.isArray(profile.tholaipesi) ? profile.tholaipesi : String(profile.tholaipesi).split(',')));
+                if (profile?.tholaippaesi) phoneArr.push(...(Array.isArray(profile.tholaippaesi) ? profile.tholaippaesi : String(profile.tholaippaesi).split(',')));
                 if (profile?.mobileNumber) phoneArr.push(...(Array.isArray(profile.mobileNumber) ? profile.mobileNumber : String(profile.mobileNumber).split(',')));
                 const phone = phoneArr.map(p => p.trim()).filter(Boolean);
 
