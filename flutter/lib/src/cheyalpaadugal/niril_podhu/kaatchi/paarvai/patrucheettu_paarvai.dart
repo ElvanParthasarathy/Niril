@@ -54,18 +54,26 @@ class PatrucheettuPaarvai extends ConsumerWidget {
         if (Platform.isAndroid || Platform.isIOS) {
           final amountInWords = ElvanNavilEzhuthen.convertToMozhiMap(p.thogai);
           
+          // English name for bilingual receipts
+          final englishPeyar = OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
+            p.vaangunarPeyar.cast<String, dynamic>(), 
+            'en'
+          );
+          
           final receiptJson = {
             'id': p.id,
             'receiptNo': p.patruEn,
             'date': p.patruNaal.toIso8601String(),
             'clientName': mudhanmaiPeyar,
+            'clientNameEn': englishPeyar != mudhanmaiPeyar ? englishPeyar : null,
             'amount': p.thogai,
             'paymentMode': p.seluthumMurai,
             'referenceNo': p.parivarthanaiEn,
             'note': p.ullkurippu,
+            'againstInvoice': p.vanakkam,
           };
           
-          final profileJson = profile?.toJson() ?? {};
+          final profileJson = _adaptProfileForReact(profile);
           
           try {
             await _printChannel.invokeMethod('printReceipt', {
@@ -220,5 +228,89 @@ class PatrucheettuPaarvai extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  /// Transforms NiruvanaTharavugal.toJson() → flat JSON that React ReceiptView expects.
+  /// Maps Tanglish keys → English keys, flattens bilingual Maps into suffixed keys,
+  /// and converts language codes (ta→Tamil, en→English).
+  static Map<String, dynamic> _adaptProfileForReact(NiruvanaTharavugal? profile) {
+    if (profile == null) return {};
+
+    // Language code → React language name
+    const langMap = {
+      'ta': 'Tamil',
+      'en': 'English',
+      'hi': 'Hindi',
+      'te': 'Telugu',
+      'kn': 'Kannada',
+      'ml': 'Malayalam',
+      'mr': 'Marathi',
+      'gu': 'Gujarati',
+      'bn': 'Bengali',
+    };
+
+    final primaryLang = langMap[profile.mudhanMozhi] ?? 'Tamil';
+    final secondaryLang = langMap[profile.thunaiMozhi] ?? 'English';
+
+    final result = <String, dynamic>{
+      // Core settings
+      'enableBilingual': profile.iruMozhi,
+      'primaryDataLanguage': primaryLang,
+      'secondaryDataLanguage': secondaryLang,
+      
+      // Theme
+      'themeColor': profile.thoatraNiram,
+      
+      // Contact info (direct strings)
+      'tholaipaesi1': profile.tholaipaesi1,
+      'tholaipaesi2': profile.tholaipaesi2,
+      'minnanjal': profile.minnanjal,
+      'email': profile.minnanjal,
+      'gstin': profile.gstin,
+      'pin': profile.anjalKuriyeedu,
+      'upiId': profile.upiId,
+      
+      // Images
+      'logo': profile.oavuru,
+      'wideLogo': profile.agalaOavuru,
+      'billHeaderStyle': profile.thalaippuVadivu,
+      'signature': profile.kaiyoppam,
+      'authorizedSignatoryName': profile.oppamPeyar,
+    };
+
+    // Flatten bilingual Maps into suffixed keys: {fieldName}_{LangName}
+    void flattenBilingual(String reactKey, Map<String, String> bilingualMap) {
+      for (final entry in bilingualMap.entries) {
+        final langName = langMap[entry.key] ?? entry.key;
+        result['${reactKey}_$langName'] = entry.value;
+      }
+      // Also set a base value (primary language fallback)
+      if (bilingualMap.containsKey(profile.mudhanMozhi)) {
+        result[reactKey] = bilingualMap[profile.mudhanMozhi];
+      } else if (bilingualMap.isNotEmpty) {
+        result[reactKey] = bilingualMap.values.first;
+      }
+    }
+
+    flattenBilingual('niruvanathinPeyar', profile.niruvanathinPeyar);
+    flattenBilingual('mugavari', profile.mugavari);
+    flattenBilingual('oor', profile.oor);
+    flattenBilingual('maavattam', profile.maavattam);
+    flattenBilingual('maanilam', profile.maanilam);
+    flattenBilingual('naadu', profile.naadu);
+    flattenBilingual('vangiPeyar', profile.vangiPeyar);
+    flattenBilingual('kilai', profile.kilai);
+    flattenBilingual('adaimozhi', profile.adaimozhi);
+
+    // Also set English-named aliases for state/country that React uses
+    if (profile.maanilam.containsKey('en')) {
+      result['maanilamEn'] = profile.maanilam['en'];
+    }
+    if (profile.naadu.containsKey('en')) {
+      result['country'] = profile.naadu[profile.mudhanMozhi] ?? profile.naadu.values.first;
+      result['country_English'] = profile.naadu['en'];
+    }
+
+    return result;
   }
 }
