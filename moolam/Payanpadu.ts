@@ -5,8 +5,7 @@ import numberToWordsTamil from './mozhi/tamilNumbers';
 export const getPrintHeadContent = async () => {
   let headHtml = document.head.innerHTML;
   
-  // @ts-ignore
-  if (Capacitor.isNativePlatform() || window.FlutterBridge) {
+  if (Capacitor.isNativePlatform()) {
     let inlineStyles = '';
     const links = document.querySelectorAll('link[rel="stylesheet"]');
     for (const link of Array.from(links)) {
@@ -15,13 +14,7 @@ export const getPrintHeadContent = async () => {
           const response = await fetch(link.href);
           let cssText = await response.text();
           // Fix relative font URLs
-          // @ts-ignore
-          if (window.FlutterBridge) {
-            cssText = cssText.replace(/url\(\/([^)]+)\)/g, 'url(file:///android_asset/react_app/$1)');
-            cssText = cssText.replace(/url\(['"]?(?:\.\.\/|\.\/)?assets\/([^)'"]+)['"]?\)/g, 'url(file:///android_asset/react_app/assets/$1)');
-          } else {
-            cssText = cssText.replace(/url\(\/([^)]+)\)/g, 'url(file:///android_asset/public/$1)');
-          }
+          cssText = cssText.replace(/url\(\/([^)]+)\)/g, 'url(file:///android_asset/public/$1)');
           inlineStyles += cssText + '\n';
         } catch (e) {
           console.error('Failed to inline CSS', e);
@@ -39,13 +32,11 @@ export const getPrintHeadContent = async () => {
     // Fix all absolute paths in HTML elements
     const elementsWithSrc = doc.querySelectorAll('[src^="/"], [href^="/"]');
     elementsWithSrc.forEach(el => {
-      // @ts-ignore
-      const basePath = window.FlutterBridge ? 'file:///android_asset/react_app' : 'file:///android_asset/public';
       if (el.hasAttribute('src') && el.getAttribute('src').startsWith('/')) {
-        el.setAttribute('src', basePath + el.getAttribute('src'));
+        el.setAttribute('src', 'file:///android_asset/public' + el.getAttribute('src'));
       }
       if (el.hasAttribute('href') && el.getAttribute('href').startsWith('/')) {
-        el.setAttribute('href', basePath + el.getAttribute('href'));
+        el.setAttribute('href', 'file:///android_asset/public' + el.getAttribute('href'));
       }
     });
 
