@@ -15,6 +15,7 @@ import '../../../../adippadai/elvan_navil_ezhuthen/elvan_navil_ezhuthen.dart';
 import 'elvan_paarvai_oadu.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
+import '../../../../adippadai/tharavuru/seyali_murai.dart';
 
 class PatrucheettuPaarvai extends ConsumerWidget {
   const PatrucheettuPaarvai({

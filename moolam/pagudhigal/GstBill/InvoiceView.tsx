@@ -35,10 +35,12 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
     const savedLocal = localStorage.getItem('elvanniril_invoiceOptions');
     const local = savedLocal ? JSON.parse(savedLocal) : {};
     setDisplayOptions(local);
-    getInvoiceDisplayOptions().then(serverOpts => {
-      if (serverOpts) setDisplayOptions(prev => ({ ...prev, ...serverOpts }));
-    });
-  }, []);
+    if (!isNative) {
+      getInvoiceDisplayOptions().then(serverOpts => {
+        if (serverOpts) setDisplayOptions(prev => ({ ...prev, ...serverOpts }));
+      });
+    }
+  }, [isNative]);
 
   if (!bill) return null;
 

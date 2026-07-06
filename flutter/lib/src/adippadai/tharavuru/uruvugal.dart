@@ -147,6 +147,42 @@ class PattiyalTharavuru {
 
   // Helper method for legacy compatibility with UI (PatrucheettuEntry fallback)
   int get patrucheettuId => id;
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'niruvanamId': niruvanamId,
+      'patrucheettuEn': patrucheettuEn,
+      'finYear': finYear,
+      'vanakkam': vanakkam,
+      'pattiyalVagai': pattiyalVagai,
+      'vaangunarId': vaangunarId,
+      'vaangunarPeyar': vaangunarPeyar,
+      'vaangunarMunvari': vaangunarMunvari,
+      'pattiyalNaal': pattiyalNaal.toIso8601String(),
+      'tharavugal': tharavugal,
+      'mothaThogai': mothaThogai,
+      'thallupadi': thallupadi,
+      'variThogai': variThogai,
+      'variTharavugal': variTharavugal,
+      'podhuThallupadiMathippu': podhuThallupadiMathippu,
+      'podhuThallupadiVagai': podhuThallupadiVagai,
+      'podhuThallupadiThogai': podhuThallupadiThogai,
+      'mothaEdai': mothaEdai,
+      'setharamGrams': setharamGrams,
+      'thabaalThogai': thabaalThogai,
+      'ahimsaPattuThogai': ahimsaPattuThogai,
+      'piravariVugal': piravariVugal,
+      'sonthaViruppangal': sonthaViruppangal,
+      'nibandhanaigal': nibandhanaigal,
+      'ullkurippu': ullkurippu,
+      'vangiTharavugal': vangiTharavugal,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      'isDeleted': isDeleted,
+      'deletedAt': deletedAt?.toIso8601String(),
+    };
+  }
 }
 
 class PatrugalTharavuru {

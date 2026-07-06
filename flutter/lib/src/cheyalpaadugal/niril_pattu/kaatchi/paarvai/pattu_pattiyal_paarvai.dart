@@ -13,6 +13,9 @@ import 'package:flutter/foundation.dart';
 import '../../../../adippadai/achadippu/achadippu_html_uruvakki.dart';
 import '../../vadivangal/pattu_achadippu_html_uruvakki.dart';
 import '../../../../adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
+import '../../../../adippadai/oru_mozhi/oru_mozhi_vaangunar_udhavi.dart';
+import '../../../niril_podhu/kaatchi/paarvai/elvan_paarvai_oadu.dart';
+import 'package:intl/intl.dart';
 
 import 'package:flutter/services.dart';
 import 'dart:convert';
@@ -28,9 +31,21 @@ Future<void> _handlePrint(dynamic pattiyal, dynamic profile, WidgetRef ref, bool
       client = await kalanjiyam.getVaangunarById(pattiyal.vaangunarId!);
     }
 
-    final pattiyalJson = {
+    final pattiyalJson = <String, dynamic>{
       ...pattiyal.toMap(),
-      '_client': client?.toMap(),
+      '_client': client != null ? {
+        'peyar': client.peyar,
+        'mugavari': client.mugavari,
+        'oor': client.oor,
+        'maavattam': client.maavattam,
+        'maanilam': client.maanilam,
+        'naadu': client.naadu,
+        'velinaadMugavari': client.velinaadMugavari,
+        'anjalKuriyeedu': client.anjalKuriyeedu,
+        'gstin': client.gstin,
+        'minnanjal': client.minnanjal,
+        'tholaipaesi': client.tholaipaesi,
+      } : null,
     };
 
     await _printChannel.invokeMethod('printInvoice', {
@@ -56,106 +71,172 @@ class PattuPattiyalPaarvai extends ConsumerWidget {
 
   final PattiyalTharavuru pattiyal;
 
+  static final _dateFormat = DateFormat('dd/MM/yyyy');
+  static final _currencyFormat = NumberFormat.currency(locale: 'en_IN', symbol: '₹');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Get profile data specific to this bill, or fallback to active if missing
     final profile = pattiyal.niruvanamId != null 
         ? ref.watch(pattuNiruvanaTharavugalByIdProvider(pattiyal.niruvanamId))
         : ref.watch(pattuNiruvanaTharavugalProvider);
+        
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final mudhanmaiLang = ref.watch(silkMudhanmaiMozhiProvider);
+    final isBilingual = ref.watch(bilingualProvider);
+    final irandaamLang = ref.watch(silkThunaiMozhiProvider);
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF1F5F9),
-      appBar: AppBar(
-        title: Text(
-          '${K.pattiyal.tr(context, ref)} #${pattiyal.patrucheettuEn}',
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-        actions: [
-          // Edit button
-          IconButton(
-            icon: const Icon(Icons.edit_outlined),
-            tooltip: K.maatru.tr(context, ref),
-            onPressed: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (_) => SilkInvoiceEditor(
-                    editingEntry: pattiyal,
+    final p = pattiyal;
+    final mudhanmaiPeyar = OruMozhiVaangunarUdhavi.mudhanmaiPeyarFromMap(
+      p.vaangunarPeyar.cast<String, dynamic>(), 
+      mudhanmaiLang
+    );
+
+    return ElvanPaarvaiOadu(
+      title: '${K.pattiyal.tr(context, ref)} #${pattiyal.patrucheettuEn}',
+      onEdit: () {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => SilkInvoiceEditor(
+              editingEntry: pattiyal,
+            ),
+          ),
+        );
+      },
+      onPrint: () async {
+        if (profile != null) {
+          await _handlePrint(
+            pattiyal, 
+            profile, 
+            ref,
+            isBilingual,
+            mudhanmaiLang,
+            irandaamLang,
+            isDark,
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Profile not found')),
+          );
+        }
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Customer & Date Header
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: isDark 
+                ? Colors.white.withValues(alpha: 0.05) 
+                : Colors.black.withValues(alpha: 0.02),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        mudhanmaiPeyar,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.2,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              );
-            },
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      _dateFormat.format(p.pattiyalNaal),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          // Share button
-          IconButton(
-            icon: const Icon(Icons.share_outlined),
-            tooltip: 'Share',
-            onPressed: () async {
-              final profile = pattiyal.niruvanamId != null 
-                  ? ref.read(pattuNiruvanaTharavugalByIdProvider(pattiyal.niruvanamId))
-                  : ref.read(pattuNiruvanaTharavugalProvider);
-              if (profile == null) return;
-              // No PDF share implemented yet natively, placeholder
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Sharing not implemented natively yet')),
-              );
-            },
-          ),
-          // Print / Download
-          IconButton(
-            icon: const Icon(Icons.print_outlined),
-            tooltip: 'Print',
-            onPressed: () {
-              if (profile != null) {
-                _handlePrint(
-                  pattiyal, 
-                  profile, 
-                  ref,
-                  ref.read(bilingualProvider),
-                  ref.read(silkMudhanmaiMozhiProvider),
-                  ref.read(silkThunaiMozhiProvider),
-                  isDark,
-                );
-              }
-            },
-          ),
-        ],
-      ),
-      body: profile == null
-          ? const Center(child: Text('Profile not found'))
-          : Center(
+          
+          const SizedBox(height: 24),
+          
+          // Totals
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.blue.withValues(alpha: 0.1) : Colors.blue.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isDark ? Colors.blue.withValues(alpha: 0.3) : Colors.blue.withValues(alpha: 0.2),
+                )
+              ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Icon(Icons.description, size: 80, color: Colors.grey),
-                  const SizedBox(height: 16),
                   Text(
-                    'பட்டியல் (Invoice) #${pattiyal.patrucheettuEn}',
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    K.perumMotham.tr(context, ref),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: isDark ? Colors.blue.shade200 : Colors.blue.shade800,
+                    ),
                   ),
-                  const SizedBox(height: 24),
-                  FilledButton.icon(
-                    onPressed: () {
-                      if (profile != null) {
-                        _handlePrint(
-                          pattiyal, 
-                          profile, 
-                          ref,
-                          ref.read(bilingualProvider),
-                          ref.read(silkMudhanmaiMozhiProvider),
-                          ref.read(silkThunaiMozhiProvider),
-                          isDark,
-                        );
-                      }
-                    },
-                    icon: const Icon(Icons.print),
-                    label: const Text('அச்சு முன்னோட்டம் (Print Preview)'),
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  const SizedBox(height: 8),
+                  Text(
+                    _currencyFormat.format(p.mothaThogai),
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? Colors.blue.shade300 : Colors.blue.shade700,
                     ),
                   ),
                 ],
               ),
             ),
+          ),
+          
+          if (p.ullkurippu.isNotEmpty) ...[
+            const SizedBox(height: 24),
+            Text(
+              K.kurippu.tr(context, ref),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: isDark ? Colors.white24 : Colors.black12,
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                p.ullkurippu,
+                style: const TextStyle(
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          ],
+          
+          const SizedBox(height: 48),
+        ],
+      ),
     );
   }
 }

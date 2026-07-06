@@ -41,6 +41,8 @@ class CleanInvoiceActivity : ComponentActivity() {
                 invoiceNo = "#" + obj.getString("bill_no")
             } else if (obj.has("invoiceNo")) {
                 invoiceNo = "#" + obj.getString("invoiceNo")
+            } else if (obj.has("patrucheettuEn")) {
+                invoiceNo = "#" + obj.getString("patrucheettuEn")
             }
         } catch (e: Exception) {}
 
@@ -54,7 +56,7 @@ class CleanInvoiceActivity : ComponentActivity() {
                 Scaffold(
                     topBar = {
                         TopAppBar(
-                            title = { Text(receiptNo, style = MaterialTheme.typography.titleLarge) },
+                            title = { Text(invoiceNo, style = MaterialTheme.typography.titleLarge) },
                             navigationIcon = {
                                 IconButton(onClick = { finish() }) {
                                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -78,9 +80,16 @@ class CleanInvoiceActivity : ComponentActivity() {
                         factory = { context ->
                             WebView(context).apply {
                                 webView = this
+                                setBackgroundColor(android.graphics.Color.TRANSPARENT)
                                 settings.apply {
                                     javaScriptEnabled = true
                                     domStorageEnabled = true
+                                    allowFileAccess = true
+                                    allowFileAccessFromFileURLs = true
+                                    allowUniversalAccessFromFileURLs = true
+                                    
+                                    // Enable Native Android Zoom
+                                    setSupportZoom(true)
                                     builtInZoomControls = true
                                     displayZoomControls = false
                                     useWideViewPort = true
@@ -117,15 +126,7 @@ class CleanInvoiceActivity : ComponentActivity() {
                                 }, "FlutterBridge")
                         
                                 webViewClient = WebViewClient()
-                                val am = context.assets
-                                val html = am.open("react_app/pattiyal.html").bufferedReader().readText()
-                                loadDataWithBaseURL(
-                                    "file:///android_asset/react_app/",
-                                    html,
-                                    "text/html",
-                                    "UTF-8",
-                                    null
-                                )
+                                loadUrl("file:///android_asset/react_app/pattiyal.html")
                             }
                         },
                         modifier = Modifier

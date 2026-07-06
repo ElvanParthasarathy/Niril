@@ -24,7 +24,7 @@ const _printChannel = MethodChannel('com.elvan.niril/print');
 
 Future<void> _handlePrint(dynamic pattiyal, dynamic profile, bool isDark) async {
   try {
-    final pattiyalJson = {
+    final pattiyalJson = <String, dynamic>{
       ...pattiyal.toMap(),
       // Add any specific data required by CoolieInvoiceView if missing
     };
