@@ -4,7 +4,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { LanguageProvider } from './mozhi/LanguageContext';
 import CoolieInvoiceView from './pagudhigal/CoolieBill/CoolieInvoiceView';
 import InvoiceView from './pagudhigal/GstBill/InvoiceView';
-import './vadivam.css';
+import './fonts.css';
 
 // Minimal theme without CssBaseline to ensure transparency
 const theme = createTheme({

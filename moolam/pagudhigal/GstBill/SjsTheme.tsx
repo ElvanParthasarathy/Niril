@@ -19,6 +19,7 @@ const IconMail = ({ size = 14, className = '', style = {} }) => (
 import { numberToWords, formatCurrency, INVOICE_TYPES, getCountryConfig, CURRENCY_NAMES, formatExchangeRateLine, getAccountById, getBilingualStateName, getBilingualCountryName, getDynamicField } from '../../Payanpadu';
 import { en } from '../../mozhi/en';
 import { ta } from '../../mozhi/ta';
+import './SjsTheme.css';
 
 const SjsTheme = React.forwardRef(({ profile = {}, client = {}, details = {}, items = [], totals = {}, invoiceType = 'tax-invoice', customTerms, options = {} }, ref) => {
   const { t } = useLanguage();
