@@ -132,7 +132,7 @@ const ReceiptTheme = React.forwardRef(({ profile = {}, client = {}, details = {}
       fontFamily: profile.themeFont || 'Inter, sans-serif'
     }}>
       <style>{`
-        .receipt-box { max-width: 210mm; margin: 2rem auto; padding: 2rem; background: #fff; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); border-radius: 12px; border: 1px solid #e2e8f0; min-height: 140mm; display: flex; flexDirection: column; }
+        .receipt-box { width: 100%; background: transparent; display: flex; flex-direction: column; flex-grow: 1; padding: 1rem; }
         .receipt-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 2px solid ${profile.themeColor ? `${profile.themeColor}30` : '#e2e8f0'}; position: relative; }
         .header-left { display: flex; align-items: center; gap: 1rem; flex: 1; }
         .header-right { text-align: right; }
@@ -205,25 +205,25 @@ const ReceiptTheme = React.forwardRef(({ profile = {}, client = {}, details = {}
         </div>
       </div>
       
-      <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#388e3c' }}>{renderKey('receiptNoLabel', 'Receipt No:', 'ரசீது எண்:')}</span><span className="receipt-value">{receipt.invoiceNumber || receipt.receiptNo}</span></div>
-      <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#388e3c' }}>{renderKey('dateLabel', 'Date:', 'தேதி:')}</span><span className="receipt-value">{new Date(receipt.invoiceDate || receipt.date).toLocaleDateString('en-IN')}</span></div>
+      <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#388e3c' }}>{renderKey('receiptNoLabel', 'Receipt No:', 'ரசீது எண்:')}</span><span className="receipt-value">{receipt.details?.invoiceNumber}</span></div>
+      <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#388e3c' }}>{renderKey('dateLabel', 'Date:', 'தேதி:')}</span><span className="receipt-value">{new Date(receipt.details?.invoiceDate || new Date()).toLocaleDateString('en-IN')}</span></div>
       <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#388e3c' }}>{renderKey('receivedFromLabel', 'Received From:', 'பெறப்பட்டது:')}</span><span className="receipt-value">
-        {profile?.enableBilingual !== false && receipt.clientNameEn ? (
+        {profile?.enableBilingual !== false && (receipt.client?.nameEn || receipt.client?.name_English) ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-            <span>{receipt.clientName}</span>
-            <span style={{ fontSize: '0.6em', fontWeight: 500, opacity: 0.85, letterSpacing: '0.02em', marginTop: '-1px' }}>{receipt.clientNameEn}</span>
+            <span>{receipt.client?.peyar || receipt.client?.name}</span>
+            <span style={{ fontSize: '0.6em', fontWeight: 500, opacity: 0.85, letterSpacing: '0.02em', marginTop: '-1px' }}>{receipt.client?.nameEn || receipt.client?.name_English}</span>
           </div>
-        ) : receipt.clientName}
+        ) : (receipt.client?.peyar || receipt.client?.name)}
       </span></div>
-      <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#388e3c' }}>{renderKey('paymentModeLabel', 'Payment Mode:', 'செலுத்தும் முறை:')}</span><span className="receipt-value">{renderPaymentMode(receipt.paymentMode)}</span></div>
-      {receipt.referenceNo && <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#388e3c' }}>{renderKey('referenceNoLabel', 'Reference No:', 'குறிப்பு எண்:')}</span><span className="receipt-value">{receipt.referenceNo}</span></div>}
-      {receipt.againstInvoice && <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#388e3c' }}>{renderKey('againstInvoiceLabel', 'Against Invoice:', 'விலைப்பட்டியலுக்கு எதிராக:')}</span><span className="receipt-value">{receipt.againstInvoice}</span></div>}
+      <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#388e3c' }}>{renderKey('paymentModeLabel', 'Payment Mode:', 'செலுத்தும் முறை:')}</span><span className="receipt-value">{renderPaymentMode(receipt.invoiceOptions?.paymentMode || receipt.details?.paymentMode || 'Cash')}</span></div>
+      {(receipt.invoiceOptions?.referenceNo || receipt.details?.referenceNo) && <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#388e3c' }}>{renderKey('referenceNoLabel', 'Reference No:', 'குறிப்பு எண்:')}</span><span className="receipt-value">{receipt.invoiceOptions?.referenceNo || receipt.details?.referenceNo}</span></div>}
+      {(receipt.invoiceOptions?.againstInvoice || receipt.details?.againstInvoice) && <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#388e3c' }}>{renderKey('againstInvoiceLabel', 'Against Invoice:', 'விலைப்பட்டியலுக்கு எதிராக:')}</span><span className="receipt-value">{receipt.invoiceOptions?.againstInvoice || receipt.details?.againstInvoice}</span></div>}
       
       <div style={{ marginTop: 'auto', marginBottom: 'auto' }}>
-        <div className="receipt-amount" style={{ color: profile.themeColor || '#388e3c', backgroundColor: profile.themeColor ? `${profile.themeColor}15` : '#e8f5e9' }}>{formatCurrency(receipt.amount || receipt.totals?.total, profileCurrency)}</div>
+        <div className="receipt-amount" style={{ color: profile.themeColor || '#388e3c', backgroundColor: profile.themeColor ? `${profile.themeColor}15` : '#e8f5e9' }}>{formatCurrency(receipt.totals?.total || 0, profileCurrency)}</div>
         <div className="receipt-words" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           {(() => {
-            const words = numberToWords(receipt.amount || receipt.totals?.total || 0, profile?.primaryDataLanguage || 'English', profile?.secondaryDataLanguage || 'English', profile?.enableBilingual !== false);
+            const words = numberToWords(receipt.totals?.total || 0, profile?.primaryDataLanguage || 'English', profile?.secondaryDataLanguage || 'English', profile?.enableBilingual !== false);
             if (words.includes(' / ')) {
               const [pStr, sStr] = words.split(' / ');
               return (
@@ -238,7 +238,7 @@ const ReceiptTheme = React.forwardRef(({ profile = {}, client = {}, details = {}
         </div>
       </div>
       
-      {receipt.note && <p style={{ fontSize: '0.85rem', color: '#64748b' }}>{renderKey('noteLabel', 'Note:', 'குறிப்பு:')} {receipt.note}</p>}
+      {receipt.customTerms && <p style={{ fontSize: '0.85rem', color: '#64748b' }}>{renderKey('noteLabel', 'Note:', 'குறிப்பு:')} {receipt.customTerms}</p>}
       
       <div className="receipt-footer">
         <div className="preview-footer-right">
