@@ -573,7 +573,7 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
                             {getDynamicField(p, 'Amount in words:', 'எழுத்தில் மொத்தத் தொகை:', 'எழுத்தில் மொத்தத் தொகை / Amount in words:')}
                         </span>
                         <span className="words-line">
-                            {numberToWords(totalRs, p.primaryDataLanguage || 'Tamil', p.secondaryDataLanguage || 'English', p.enableBilingual !== false)}
+                            {numberToWords(totalRs, isEng ? 'English' : 'Tamil', isEng ? 'English' : 'Tamil', false)}
                         </span>
                     </div>
                 )}  <div style={{ flexGrow: 1 }}></div>
