@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 /// Renders an image from either a file path or a base64-encoded string.
 ///
 /// Detection logic:
-/// - If the value contains `/` or `\`, it's treated as a file path → [Image.file]
-/// - Otherwise, it's treated as a base64 string → [Image.memory]
+/// - If the value contains `/` or `\`, it's treated as a file path → [Image.file] or [SvgPicture.file]
+/// - Otherwise, it's treated as a base64 string → [Image.memory] or [SvgPicture.memory]
 class ElvanOavuruKaatchi extends StatelessWidget {
   const ElvanOavuruKaatchi({
     super.key,
@@ -28,6 +29,14 @@ class ElvanOavuruKaatchi extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (_isFilePath) {
+      if (value.toLowerCase().endsWith('.svg')) {
+        return SvgPicture.file(
+          File(value),
+          height: height,
+          fit: fit,
+          alignment: alignment,
+        );
+      }
       return Image.file(
         File(value),
         height: height,
@@ -39,7 +48,27 @@ class ElvanOavuruKaatchi extends StatelessWidget {
 
     // Base64 decode
     try {
-      final bytes = base64Decode(value);
+      String cleanBase64 = value;
+      bool isBase64Svg = false;
+      
+      if (value.startsWith('data:image/svg+xml;base64,')) {
+        isBase64Svg = true;
+        cleanBase64 = value.split(',').last;
+      } else if (value.contains(',')) {
+        cleanBase64 = value.split(',').last;
+      }
+
+      final bytes = base64Decode(cleanBase64);
+      
+      if (isBase64Svg) {
+        return SvgPicture.memory(
+          bytes,
+          height: height,
+          fit: fit,
+          alignment: alignment,
+        );
+      }
+      
       return Image.memory(
         bytes,
         height: height,

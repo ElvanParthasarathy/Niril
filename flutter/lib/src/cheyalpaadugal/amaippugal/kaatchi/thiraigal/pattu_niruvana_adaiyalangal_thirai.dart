@@ -196,15 +196,17 @@ class _SilkNiruvanaAdaiyalangalPageState
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                image: hasImage
-                    ? DecorationImage(
-                        image: FileImage(File(imagePath)),
-                        fit: BoxFit.contain,
-                      )
-                    : null,
               ),
               child: hasImage
-                  ? null
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: ElvanOavuruKaatchi(
+                        value: imagePath,
+                        height: 120,
+                        fit: BoxFit.contain,
+                        alignment: Alignment.center,
+                      ),
+                    )
                   : Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
