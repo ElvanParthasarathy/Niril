@@ -418,7 +418,7 @@ export default function CoolieReceiptView({ receipt: receiptProp, profile: profi
               {receipt.againstInvoice && <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('againstInvoiceLabel', 'Against Invoice:', 'விலைப்பட்டியலுக்கு எதிராக:')}</span><span className="receipt-value">{receipt.againstInvoice}</span></div>}
               <div style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                 <div className="receipt-amount" style={{ color: profile.themeColor || '#1e3a8a', backgroundColor: profile.themeColor ? `${profile.themeColor}15` : '#f0f9ff' }}>{formatCurrency(receipt.amount, profileCurrency)}</div>
-                <p className="receipt-words">{numberToWords(receipt.amount, (profile?.receiptLanguage || 'ta') === 'ta' ? 'Tamil' : 'English', (profile?.receiptLanguage || 'ta') === 'ta' ? 'Tamil' : 'English', false)}</p>
+                <p className="receipt-words">{numberToWords(receipt.amount, profile?.primaryDataLanguage || 'Tamil', profile?.secondaryDataLanguage || 'English', profile?.enableBilingual !== false)}</p>
               </div>
               {receipt.note && <p style={{ fontSize: '0.85rem', color: '#64748b' }}>{renderKey('noteLabel', 'Note:', 'குறிப்பு:')} {receipt.note}</p>}
               <div className="receipt-footer">

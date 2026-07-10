@@ -12,9 +12,7 @@ import NativeDocument from '../NativeDocument';
 import { Capacitor } from '@capacitor/core';
 import { useLanguage } from '../../mozhi/LanguageContext';
 import './print.css'; // The exact print.css copied from Kananam
-import { getPrintHeadContent } from '../../Payanpadu';
-import numberToWordsTamil from '../../mozhi/tamilNumbers';
-import numberToWordsEnglish from '../../mozhi/englishNumbers';
+import { getPrintHeadContent, numberToWords, getDynamicField } from '../../Payanpadu';
 
 const IconPhone = ({ size = 14, className = '', style = {} }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} style={style}>
@@ -572,10 +570,10 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
                 {totalRs > 0 && (
                     <div className="amount-in-words font-tamil mt-3 text-center">
                         <span className="words-label" style={{ fontSize: '12px', fontWeight: '600', color: 'var(--bill-text)', marginRight: '6px' }}>
-                            {isEng ? 'Amount in words:' : 'எழுத்தில் மொத்தத் தொகை:'}
+                            {getDynamicField(p, 'Amount in words:', 'எழுத்தில் மொத்தத் தொகை:', 'எழுத்தில் மொத்தத் தொகை / Amount in words:')}
                         </span>
                         <span className="words-line">
-                            {isEng ? numberToWordsEnglish(totalRs) : numberToWordsTamil(totalRs)}
+                            {numberToWords(totalRs, p.primaryDataLanguage || 'Tamil', p.secondaryDataLanguage || 'English', p.enableBilingual !== false)}
                         </span>
                     </div>
                 )}  <div style={{ flexGrow: 1 }}></div>
