@@ -28,7 +28,7 @@ const IconMail = ({ size = 14, className = '', style = {} }) => (
     </svg>
 );
 
-export default function CoolieReceiptView({ receipt: receiptProp, profile: profileProp, onBack, onEdit }) {
+export default function SharedReceiptView({ receipt: receiptProp, profile: profileProp, onBack, onEdit }) {
   const receipt = receiptProp || {};
   const { t } = useLanguage();
   const printRef = useRef(null);

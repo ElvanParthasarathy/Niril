@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { LanguageProvider } from './mozhi/LanguageContext';
-import ReceiptView from './pagudhigal/GstBill/Receipts/ReceiptView';
-import CoolieReceiptView from './pagudhigal/CoolieBill/CoolieReceiptView';
+import SharedReceiptView from './pagudhigal/Shared/SharedReceiptView';
 import './fonts.css';
 
 // Minimal theme without CssBaseline to ensure transparency
@@ -34,7 +33,7 @@ function App() {
         setReceiptType(recType);
 
         if (recType !== 'COOLIE') {
-            // Map Silk receipt properties to the flat structure used by CoolieReceiptView
+            // Map Silk receipt properties to the flat structure used by SharedReceiptView
             const client = parsedReceipt._client || {};
             
             parsedReceipt.receiptNo = parsedReceipt.patrucheettuEn || '';
@@ -73,7 +72,7 @@ function App() {
     <ThemeProvider theme={theme}>
       <LanguageProvider initialProfile={(receipt as any)._companyProfile || {}}>
         <div style={{ padding: 0, margin: 0, background: 'transparent' }}>
-          <CoolieReceiptView
+          <SharedReceiptView
             receipt={receipt}
             profile={(receipt as any)._companyProfile || {}}
             isDark={isDark}
