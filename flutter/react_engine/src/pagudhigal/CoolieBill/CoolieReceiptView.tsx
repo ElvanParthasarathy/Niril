@@ -322,8 +322,8 @@ export default function CoolieReceiptView({ receipt: receiptProp, profile: profi
       )}
 
       <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4, width: '100%' }}>
-        <div ref={isMobile ? wrapperRef : null} style={isMobile ? { width: "100%", overflow: "hidden", touchAction: "none", display: "flex", justifyContent: "center", padding: "0 16px", boxSizing: "border-box" } : { width: '100%', display: 'flex', justifyContent: 'center' }}>
-          <div ref={isMobile ? contentRef : null} style={isMobile ? { transformOrigin: "top center", width: "100%" } : {}}>
+        <div ref={isMobile && !isNative ? wrapperRef : null} style={isMobile ? { width: "100%", overflow: "hidden", touchAction: isNative ? "auto" : "none", display: "flex", justifyContent: "center", padding: "0 16px", boxSizing: "border-box" } : { width: '100%', display: 'flex', justifyContent: 'center' }}>
+          <div ref={isMobile && !isNative ? contentRef : null} style={isMobile ? { transformOrigin: "top center", width: "100%" } : {}}>
             <Paper elevation={isMobile ? 8 : 3} className="invoice-paper print-wrapper" sx={{ 
               p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto', bgcolor: 'white', color: 'black',
               ...(isMobile ? {

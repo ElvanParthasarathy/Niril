@@ -31,6 +31,7 @@ export function PrintableViewWrapper({ data, typeConfig, onBack, onEdit, childre
   const initialScale = typeof window !== 'undefined' ? Math.min((window.innerWidth - 32) / 793.7, 1) : 0.43;
   const mbPercent = (1 - initialScale) * 141;
 
+  // Only use JS pinch-zoom for web; native WebView has its own builtInZoomControls
   const { wrapperRef, contentRef, scale } = usePinchZoom({ minScale: 1, maxScale: 4 });
 
   useEffect(() => {
@@ -309,8 +310,8 @@ export function PrintableViewWrapper({ data, typeConfig, onBack, onEdit, childre
       {/* Centered Preview Container */}
       <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4, width: '100%' }}>
         {isMobile ? (
-          <div ref={wrapperRef} style={{ width: "100%", overflow: "hidden", touchAction: "none", display: "flex", justifyContent: "center", padding: "0 16px", boxSizing: "border-box" }}>
-            <div ref={contentRef} style={{ transformOrigin: "top center", width: "100%" }}>
+          <div ref={isNative ? null : wrapperRef} style={{ width: "100%", overflow: "hidden", touchAction: isNative ? "auto" : "none", display: "flex", justifyContent: "center", padding: "0 16px", boxSizing: "border-box" }}>
+            <div ref={isNative ? null : contentRef} style={{ transformOrigin: "top center", width: "100%" }}>
               <Paper elevation={isNative ? 3 : 8} className="invoice-paper print-wrapper" sx={{ 
                                 p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto', bgcolor: 'white', color: 'black',
                                 zoom: 'none',
