@@ -34,74 +34,26 @@ function App() {
         setReceiptType(recType);
 
         if (recType !== 'COOLIE') {
-            // Transform Silk invoice flat format to nested React format expected by SjsTheme
-            let items = [];
-            try {
-                items = typeof parsedReceipt.tharavugal === 'string' ? JSON.parse(parsedReceipt.tharavugal) : (parsedReceipt.tharavugal || []);
-            } catch(e) {}
+            // Map Silk receipt properties to the flat structure used by CoolieReceiptView
+            const client = parsedReceipt._client || {};
+            
+            parsedReceipt.receiptNo = parsedReceipt.patrucheettuEn || '';
+            parsedReceipt.date = parsedReceipt.naal || '';
+            parsedReceipt.clientName = client.peyar || client.name || '';
+            parsedReceipt.clientNameEn = client.peyarEn || client.nameEn || client.name_English || '';
+            parsedReceipt.amount = Number(parsedReceipt.mothaThogai) || Number(parsedReceipt.thogai) || Number(parsedReceipt.perappattaThogai) || 0;
             
             let options = {};
             try {
                 options = typeof parsedReceipt.sonthaViruppangal === 'string' ? JSON.parse(parsedReceipt.sonthaViruppangal) : (parsedReceipt.sonthaViruppangal || {});
             } catch(e) {}
-
-            const mappedItems = items.map((it: any, i: number) => {
-                const qty = Number(it.alavu) || 0;
-                const rate = Number(it.vilai) || 0;
-                const baseAmt = qty * rate;
-                const thallupadi = Number(it.thallupadi) || 0;
-                const discAmt = it.thallupadiVagai === '%' ? baseAmt * (thallupadi / 100) : thallupadi;
-
-                return {
-                    id: String(i),
-                    name: it.porulPeyar || '',
-                    name_Tamil: it.porulPeyar || '',
-                    name_English: it.porulPeyarEn || '',
-                    description: '',
-                    qty: qty,
-                    quantity: qty,
-                    rate: rate,
-                    unit: it.alagu || 'Nos',
-                    hsn: it.hsnKuriyeedu || '',
-                    taxPercent: Number(it.variVizhukkaadu) || 0,
-                    discount: discAmt,
-                };
-            });
-
-            // Reconstruct totals
-            const total = Number(parsedReceipt.mothaThogai) || 0;
-            const subtotal = mappedItems.reduce((acc: number, it: any) => acc + (it.qty * it.rate), 0);
-            const totalDiscount = mappedItems.reduce((acc: number, it: any) => acc + it.discount, 0);
-
-            // Reconstruct client
-            const client = parsedReceipt._client || {};
-
-            parsedReceipt.data = {
-                profile: parsedReceipt._companyProfile,
-                client: client,
-                details: {
-                    invoiceNumber: parsedReceipt.patrucheettuEn || '',
-                    invoiceDate: parsedReceipt.naal || '',
-                    invoiceType: parsedReceipt.pattiyalVagai || 'receipt',
-                    placeOfSupply: options.placeOfSupply || client.maanilam || ''
-                },
-                items: mappedItems,
-                totals: {
-                    total: total,
-                    subtotal: subtotal,
-                    totalDiscount: totalDiscount,
-                    cgst: 0,
-                    sgst: 0,
-                    igst: 0,
-                    cess: 0,
-                    taxInclusive: false
-                },
-                invoiceType: parsedReceipt.pattiyalVagai || 'receipt',
-                customTerms: parsedReceipt.ullkurippu || '',
-                invoiceOptions: options
-            };
+            
+            parsedReceipt.paymentMode = options.paymentMode || parsedReceipt.seluthumMurai || 'Cash';
+            parsedReceipt.referenceNo = options.referenceNo || '';
+            parsedReceipt.againstInvoice = options.againstInvoice || parsedReceipt.pattiyalEn || '';
+            parsedReceipt.note = parsedReceipt.ullkurippu || '';
+            parsedReceipt.isSilk = true; // Flag for bilingual mode
         } else {
-            // Also handle the _client object that we attach from Flutter for Coolie if any
             if (parsedReceipt._client) {
                parsedReceipt.client = parsedReceipt._client;
             }
@@ -113,7 +65,6 @@ function App() {
         console.error("Failed to parse bridge data", e);
       }
     } else {
-      // Fallback for browser testing
       console.warn("FlutterBridge not found.");
     }
   }, []);
@@ -122,19 +73,11 @@ function App() {
     <ThemeProvider theme={theme}>
       <LanguageProvider initialProfile={(receipt as any)._companyProfile || {}}>
         <div style={{ padding: 0, margin: 0, background: 'transparent' }}>
-          {receiptType === 'COOLIE' ? (
-            <CoolieReceiptView
-              receipt={receipt}
-              profile={(receipt as any)._companyProfile || {}}
-              isDark={isDark}
-            />
-          ) : (
-            <ReceiptView 
-              receipt={receipt}
-              profile={(receipt as any)._companyProfile || {}}
-              isDark={isDark}
-            />
-          )}
+          <CoolieReceiptView
+            receipt={receipt}
+            profile={(receipt as any)._companyProfile || {}}
+            isDark={isDark}
+          />
         </div>
       </LanguageProvider>
     </ThemeProvider>

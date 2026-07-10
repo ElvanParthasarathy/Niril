@@ -54,9 +54,22 @@ export default function CoolieReceiptView({ receipt: receiptProp, profile: profi
   const profileCurrency = getCountryConfig(profile?.country || 'India').currency;
 
   const renderKey = (key, enDefault, taDefault) => {
-    const rLangCode = profile?.receiptLanguage || 'ta';
-    const lang = rLangCode === 'ta' ? 'Tamil' : 'English';
-    return getLangStr(lang, key, enDefault, taDefault) || getLangStr('English', key, enDefault, taDefault) || key;
+    const p = profile?.primaryDataLanguage || 'Tamil';
+    const s = profile?.secondaryDataLanguage || 'English';
+    const b = profile?.enableBilingual !== false && receipt.isSilk;
+
+    const pStr = getLangStr(receipt.isSilk ? p : ((profile?.receiptLanguage || 'ta') === 'ta' ? 'Tamil' : 'English'), key, enDefault, taDefault);
+    const sStr = getLangStr(s, key, enDefault, taDefault);
+
+    if (b && pStr !== sStr) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <span>{pStr}</span>
+          <span style={{ fontSize: '0.65em', fontWeight: 500, opacity: 0.85, letterSpacing: '0.02em', marginTop: '-1px' }}>{sStr}</span>
+        </div>
+      );
+    }
+    return pStr;
   };
 
   const RECEIPT_LABELS = {
@@ -89,9 +102,21 @@ export default function CoolieReceiptView({ receipt: receiptProp, profile: profi
       'Gujarati': { 'Cash': 'રોકડ', 'UPI': 'UPI', 'Bank Transfer': 'બેંક ટ્રાન્સફર', 'Cheque': 'ચેક', 'Card': 'કાર્ડ', 'Other': 'અન્ય' },
       'Bengali': { 'Cash': 'নগদ', 'UPI': 'UPI', 'Bank Transfer': 'ব্যাঙ্ক ট্রান্সফার', 'Cheque': 'চেক', 'Card': 'কার্ড', 'Other': 'অন্য' }
     };
-    const rLangCode = profile?.receiptLanguage || 'ta';
-    const primaryLang = rLangCode === 'ta' ? 'Tamil' : 'English';
-    return (dictionaries[primaryLang] || {})[mode] || mode;
+    const primaryLang = receipt.isSilk ? (profile?.primaryDataLanguage || 'Tamil') : ((profile?.receiptLanguage || 'ta') === 'ta' ? 'Tamil' : 'English');
+    const secondaryLang = profile?.secondaryDataLanguage || 'English';
+    
+    const pStr = (dictionaries[primaryLang] || {})[mode] || mode;
+    const sStr = secondaryLang === 'English' ? mode : ((dictionaries[secondaryLang] || {})[mode] || mode);
+
+    if (profile?.enableBilingual !== false && receipt.isSilk && pStr !== sStr) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+          <span>{pStr}</span>
+          <span style={{ fontSize: '0.6em', fontWeight: 500, opacity: 0.85, letterSpacing: '0.02em', marginTop: '-1px' }}>{sStr}</span>
+        </div>
+      );
+    }
+    return pStr;
   };
 
   const executePrint = async () => {
@@ -405,20 +430,50 @@ export default function CoolieReceiptView({ receipt: receiptProp, profile: profi
                     </div>
                   </div>
                   <div className="header-right">
-                    <div className="bill-type-badge font-tamil" style={{ color: profile.themeColor || '#1e3a8a' }}>
-                      {getLangStr((profile?.receiptLanguage || 'ta') === 'ta' ? 'Tamil' : 'English', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது')}
+                    <div className="font-tamil" style={{ color: profile.themeColor || '#1e3a8a', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', fontWeight: 700, fontSize: '1.2rem' }}>
+                      {profile.enableBilingual !== false && receipt.isSilk && getLangStr(profile?.primaryDataLanguage || 'Tamil', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது') !== getLangStr(profile?.secondaryDataLanguage || 'English', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது') ? (
+                        <>
+                          <div>{getLangStr(profile?.primaryDataLanguage || 'Tamil', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது')}</div>
+                          <div style={{ fontSize: '0.55em', fontWeight: 500, opacity: 0.85, letterSpacing: '0.02em', marginTop: '2px' }}>{getLangStr(profile?.secondaryDataLanguage || 'English', 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது')}</div>
+                        </>
+                      ) : (
+                        getLangStr(receipt.isSilk ? (profile?.primaryDataLanguage || 'Tamil') : ((profile?.receiptLanguage || 'ta') === 'ta' ? 'Tamil' : 'English'), 'hc_paymentReceipt', 'PAYMENT RECEIPT', 'பண ரசீது')
+                      )}
                     </div>
                   </div>
                 </div>
               <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('receiptNoLabel', 'Receipt No:', 'ரசீது எண்:')}</span><span className="receipt-value">{receipt.receiptNo}</span></div>
               <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('dateLabel', 'Date:', 'தேதி:')}</span><span className="receipt-value">{new Date(receipt.date).toLocaleDateString('en-IN')}</span></div>
-              <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('receivedFromLabel', 'Received From:', 'பெறப்பட்டது:')}</span><span className="receipt-value">{((profile?.receiptLanguage || 'ta') === 'ta') ? (receipt.clientName || receipt.clientNameEn) : (receipt.clientNameEn || receipt.clientName)}</span></div>
+              <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('receivedFromLabel', 'Received From:', 'பெறப்பட்டது:')}</span><span className="receipt-value">
+                {profile?.enableBilingual !== false && receipt.isSilk && receipt.clientNameEn ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                    <span>{receipt.clientName}</span>
+                    <span style={{ fontSize: '0.6em', fontWeight: 500, opacity: 0.85, letterSpacing: '0.02em', marginTop: '-1px' }}>{receipt.clientNameEn}</span>
+                  </div>
+                ) : receipt.clientName}
+              </span></div>
               <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('paymentModeLabel', 'Payment Mode:', 'செலுத்தும் முறை:')}</span><span className="receipt-value">{renderPaymentMode(receipt.paymentMode)}</span></div>
 
               {receipt.againstInvoice && <div className="receipt-row"><span className="receipt-label" style={{ color: profile.themeColor || '#1e3a8a' }}>{renderKey('againstInvoiceLabel', 'Against Invoice:', 'விலைப்பட்டியலுக்கு எதிராக:')}</span><span className="receipt-value">{receipt.againstInvoice}</span></div>}
               <div style={{ marginTop: 'auto', marginBottom: 'auto' }}>
                 <div className="receipt-amount" style={{ color: profile.themeColor || '#1e3a8a', backgroundColor: profile.themeColor ? `${profile.themeColor}15` : '#f0f9ff' }}>{formatCurrency(receipt.amount, profileCurrency)}</div>
-                <p className="receipt-words">{numberToWords(receipt.amount, (profile?.receiptLanguage || 'ta') === 'ta' ? 'Tamil' : 'English', (profile?.receiptLanguage || 'ta') === 'ta' ? 'Tamil' : 'English', false)}</p>
+                <div className="receipt-words" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', color: '#64748b', fontStyle: 'italic', marginBottom: '2rem', fontSize: '0.9rem' }}>
+                  {(() => {
+                    const primaryLang = receipt.isSilk ? (profile?.primaryDataLanguage || 'Tamil') : ((profile?.receiptLanguage || 'ta') === 'ta' ? 'Tamil' : 'English');
+                    const isBilingual = profile?.enableBilingual !== false && receipt.isSilk;
+                    const words = numberToWords(receipt.amount || 0, primaryLang, profile?.secondaryDataLanguage || 'English', isBilingual);
+                    if (words.includes(' / ')) {
+                      const [pStr, sStr] = words.split(' / ');
+                      return (
+                        <>
+                          <span>{pStr}</span>
+                          <span style={{ fontSize: '0.65em', fontWeight: 400, opacity: 0.85, letterSpacing: '0.02em', marginTop: '3px' }}>{sStr}</span>
+                        </>
+                      );
+                    }
+                    return words;
+                  })()}
+                </div>
               </div>
               {receipt.note && <p style={{ fontSize: '0.85rem', color: '#64748b' }}>{renderKey('noteLabel', 'Note:', 'குறிப்பு:')} {receipt.note}</p>}
               <div className="receipt-footer">
