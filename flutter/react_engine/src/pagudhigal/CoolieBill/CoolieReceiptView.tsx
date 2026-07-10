@@ -39,7 +39,7 @@ export default function CoolieReceiptView({ receipt: receiptProp, profile: profi
 
   const theme = useTheme();
   const isNative = typeof window !== 'undefined' && (window as any).FlutterBridge && (window as any).FlutterBridge.isNativeApp && (window as any).FlutterBridge.isNativeApp();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')) && !isNative;
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')) || isNative;
   const initialScale = typeof window !== 'undefined' ? Math.min((window.innerWidth - 32) / 793.7, 1) : 0.43;
   const mbPercent = (1 - initialScale) * 141;
 
