@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
+import 'package:elvan_niril/src/cheyalpaadugal/niril_podhu/kaatchi/paarvai/paarvai_udhavi.dart';
 import 'dart:io';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
@@ -75,7 +76,11 @@ class PatrucheettuPaarvai extends ConsumerWidget {
             'againstInvoice': p.vanakkam,
           };
           
-          final profileJson = _adaptProfileForReact(profile);
+          NiruvanaTharavugal? updatedProfile;
+          if (profile != null) {
+            updatedProfile = await PaarvaiUdhavi.convertProfileImagesToBase64(profile!);
+          }
+          final profileJson = _adaptProfileForReact(updatedProfile);
           
           final appMode = ref.read(appModeProvider);
           final receiptType = appMode == AppMode.coolie ? 'COOLIE' : 'GST';

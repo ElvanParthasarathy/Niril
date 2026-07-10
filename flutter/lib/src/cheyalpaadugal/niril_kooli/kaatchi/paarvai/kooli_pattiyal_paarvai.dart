@@ -19,6 +19,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:flutter/services.dart';
 import 'dart:convert';
+import 'package:elvan_niril/src/cheyalpaadugal/niril_podhu/kaatchi/paarvai/paarvai_udhavi.dart';
 
 const _printChannel = MethodChannel('com.elvan.niril/print');
 
@@ -29,9 +30,12 @@ Future<void> _handlePrint(dynamic pattiyal, dynamic profile, bool isDark) async 
       // Add any specific data required by CoolieInvoiceView if missing
     };
 
+    final profileJsonConverted = profile != null 
+        ? (await PaarvaiUdhavi.convertProfileImagesToBase64(profile!)).toJson() 
+        : <String, dynamic>{};
     await _printChannel.invokeMethod('printInvoice', {
       'invoiceJson': jsonEncode(pattiyalJson),
-      'profileJson': jsonEncode(profile),
+      'profileJson': jsonEncode(profileJsonConverted),
       'isDark': isDark,
       'invoiceType': 'COOLIE',
     });
