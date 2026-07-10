@@ -124,17 +124,7 @@ class CleanReceiptActivity : ComponentActivity() {
                                 }, "FlutterBridge")
                         
                                 webViewClient = WebViewClient()
-                                // loadDataWithBaseURL explicitly sets the base so ./assets/ resolves to
-                                // file:///android_asset/react_app/assets/ instead of file:///android_asset/assets/
-                                val am = context.assets
-                                val html = am.open("react_app/patrucheettu.html").bufferedReader().readText()
-                                loadDataWithBaseURL(
-                                    "file:///android_asset/react_app/",
-                                    html,
-                                    "text/html",
-                                    "UTF-8",
-                                    null
-                                )
+                                loadUrl("file:///android_asset/react_app/patrucheettu.html")
                             }
                         },
                         modifier = Modifier

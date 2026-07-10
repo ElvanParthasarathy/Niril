@@ -87,12 +87,7 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
 
   useEffect(() => {
         if (!companyProfile && bill?.company_id) {
-            getAllCoolieProfiles().then(profiles => {
-                const p = profiles.find(pr => pr.id === bill.company_id) || profiles[0];
-                setCompanyProfile(p);
-                if (p?.defaultPrintLanguage) setPrintLang(p.defaultPrintLanguage);
-                setIsLoadingProfile(false);
-            });
+            setCompanyProfile(bill._companyProfile || {}); if (bill._companyProfile?.defaultPrintLanguage) setPrintLang(bill._companyProfile.defaultPrintLanguage); setIsLoadingProfile(false);
         } else {
             setIsLoadingProfile(false);
         }
@@ -135,7 +130,7 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
         if (Capacitor.isNativePlatform()) {
             try {
                 setSaving(true);
-                const fileName = `${displayBillNo.replace(/\//g, '-')}`;
+                const fileName = `${(displayBillNo || '').replace(/\//g, '-')}`;
                 await NativeDocument.printHtml({
                     html: htmlContent,
                     baseUrl: "file:///android_asset/public/",
@@ -242,7 +237,7 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
       try {
         setSaving(true);
         const pdf = await buildPDF();
-        const fileName = `${displayBillNo.replace(/\//g, '-')}.pdf`;
+        const fileName = `${(displayBillNo || '').replace(/\//g, '-')}.pdf`;
         
         if (Capacitor.isNativePlatform()) {
           const pdfBase64 = pdf.output('datauristring').split(',')[1];
@@ -278,7 +273,7 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
       setSaving(true);
       try {
         const pdf = await buildPDF();
-        const fileName = `${displayBillNo.replace(/\//g, '-')}.pdf`;
+        const fileName = `${(displayBillNo || '').replace(/\//g, '-')}.pdf`;
         
         if (Capacitor.isNativePlatform()) {
           const pdfBase64 = pdf.output('datauristring').split(',')[1];
@@ -663,3 +658,4 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
         </Box>
     );
 }
+

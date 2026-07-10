@@ -28,13 +28,12 @@ const IconMail = ({ size = 14, className = '', style = {} }) => (
     </svg>
 );
 
-export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit }) {
+export default function CoolieReceiptView({ receipt: receiptProp, profile: profileProp, onBack, onEdit }) {
   const receipt = receiptProp || {};
   const { t } = useLanguage();
   const printRef = useRef(null);
   const [sharing, setSharing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const navigate = useNavigate();
   const [coolieProfile, setCoolieProfile] = useState<any>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
 
@@ -47,15 +46,7 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
   const { wrapperRef, contentRef, scale } = usePinchZoom({ minScale: 1, maxScale: 4 });
 
   React.useEffect(() => {
-    getAllCoolieProfiles().then(profiles => {
-      if (profiles && profiles.length > 0) {
-        const p = profiles.find(pr => receipt.company_id && pr.id === receipt.company_id) 
-               || profiles.find(pr => pr.shortBusinessName && receipt.receiptNo?.includes(pr.shortBusinessName)) 
-               || profiles[0];
-        setCoolieProfile(p);
-      }
-      setIsLoadingProfile(false);
-    });
+    setCoolieProfile(profileProp || {}); setIsLoadingProfile(false);
   }, [receipt.company_id, receipt.receiptNo]);
 
   const profile = coolieProfile || {};
@@ -133,7 +124,7 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
     if (Capacitor.isNativePlatform()) {
       try {
         setSaving(true);
-        const fileName = `RCPT_${receipt.receiptNo.replace(/\//g, '-')}`;
+        const fileName = `RCPT_${(receipt.receiptNo || '').replace(/\//g, '-')}`;
         await NativeDocument.printHtml({
           html: htmlContent,
           baseUrl: "file:///android_asset/public/",
@@ -233,7 +224,7 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
     try {
       setSaving(true);
       const pdf = await buildPDF();
-      const fileName = `RCPT_${receipt.receiptNo.replace(/\//g, '-')}.pdf`;
+      const fileName = `RCPT_${(receipt.receiptNo || '').replace(/\//g, '-')}.pdf`;
       
       if (Capacitor.isNativePlatform()) {
         const pdfBase64 = pdf.output('datauristring').split(',')[1];
@@ -270,7 +261,7 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
     setSharing(true);
     try {
       const pdf = await buildPDF();
-      const fileName = `RCPT_${receipt.receiptNo.replace(/\//g, '-')}.pdf`;
+      const fileName = `RCPT_${(receipt.receiptNo || '').replace(/\//g, '-')}.pdf`;
       
       if (Capacitor.isNativePlatform()) {
         const pdfBase64 = pdf.output('datauristring').split(',')[1];
@@ -499,3 +490,6 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
     </Box>
   );
 }
+
+
+

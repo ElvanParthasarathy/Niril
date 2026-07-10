@@ -121,7 +121,7 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
     try {
       setSaving(true);
       const pdf = await buildPDF();
-      const fileName = `${typeConfig.prefix}_${details.invoiceNumber.replace(/\//g, '-')}.pdf`;
+      const fileName = `${typeConfig.prefix}_${(details.invoiceNumber || '').replace(/\//g, '-')}.pdf`;
       
       if (Capacitor.isNativePlatform()) {
         const pdfBase64 = pdf.output('datauristring').split(',')[1];
@@ -157,7 +157,7 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
     setSaving(true);
     try {
       const pdf = await buildPDF();
-      const fileName = `${typeConfig.prefix}_${details.invoiceNumber.replace(/\//g, '-')}.pdf`;
+      const fileName = `${typeConfig.prefix}_${(details.invoiceNumber || '').replace(/\//g, '-')}.pdf`;
       
       if (Capacitor.isNativePlatform()) {
         const pdfBase64 = pdf.output('datauristring').split(',')[1];
@@ -237,7 +237,7 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
     if (Capacitor.isNativePlatform()) {
       try {
         setSaving(true);
-        const fileName = `${typeConfig.prefix}_${details.invoiceNumber.replace(/\//g, '-')}`;
+        const fileName = `${typeConfig.prefix}_${(details.invoiceNumber || '').replace(/\//g, '-')}`;
         await NativeDocument.printHtml({
           html: htmlContent,
           baseUrl: "file:///android_asset/public/",
@@ -363,3 +363,4 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
     </Box>
   );
 }
+

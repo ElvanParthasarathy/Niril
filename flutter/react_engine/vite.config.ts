@@ -15,7 +15,7 @@ export default defineConfig({
       },
       output: {
         manualChunks: {
-          'vendor': ['react', 'react-dom'],
+          'vendor': ['react', 'react-dom', '@mui/material', '@emotion/react', '@emotion/styled', '@phosphor-icons/react'],
           'icons': ['lucide-react']
         }
       }
