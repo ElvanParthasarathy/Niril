@@ -1,6 +1,4 @@
-import 'package:elvan_niril/src/adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../cheyalpaadugal/amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../cheyalpaadugal/amaippugal/tharavu/pattu_niruvana_tharavugal_provider.dart';
 import 'iru_mozhi.dart';
 

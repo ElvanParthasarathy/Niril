@@ -9,15 +9,10 @@ import '../../../../adippadai/oru_mozhi/oru_mozhi_vazhanguthigal.dart';
 import '../../../../adippadai/oru_mozhi/oru_mozhi_vaangunar_udhavi.dart';
 import '../../../niril_podhu/kaatchi/paarvai/elvan_paarvai_oadu.dart';
 import '../thiruthi/pattiyal/niril_kooli_pattiyal_thiruthi.dart';
-import '../thiruthi/pattiyal/koorugal/kooli_pattiyal_udhavi.dart';
 import '../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
-import '../../../../adippadai/achadippu/achadippu_html_uruvakki.dart';
-import 'dart:io' show Platform;
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/foundation.dart';
 
-import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:elvan_niril/src/cheyalpaadugal/niril_podhu/kaatchi/paarvai/paarvai_udhavi.dart';
 

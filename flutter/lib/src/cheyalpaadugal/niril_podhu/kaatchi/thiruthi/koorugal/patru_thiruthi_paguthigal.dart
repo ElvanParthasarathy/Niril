@@ -1,4 +1,3 @@
-import 'package:elvan_niril/src/adippadai/vazhikaattal/niril_nav.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_pothan.dart';
 import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_thalaippu.dart';
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';

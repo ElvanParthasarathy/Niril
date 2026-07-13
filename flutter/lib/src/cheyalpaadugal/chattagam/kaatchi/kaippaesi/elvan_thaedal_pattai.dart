@@ -3,7 +3,6 @@ import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../adippadai/panigal/urai_thervu_karuvi.dart';
 
 import '../../../../koorugal/ulleedugal/elvan_thooiya_ulleedu.dart';
 

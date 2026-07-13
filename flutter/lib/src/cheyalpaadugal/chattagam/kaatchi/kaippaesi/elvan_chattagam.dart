@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'thalaippu_nilaimai.dart';
 import '../../../../koorugal/podhu_koorugal/elvan_menmai_nagarvu.dart';
-import '../../../../koorugal/podhu_koorugal/elvan_kavanam.dart';
 
 export 'elvan_kizh_pattai.dart';
 import 'elvan_kizh_pattai.dart';

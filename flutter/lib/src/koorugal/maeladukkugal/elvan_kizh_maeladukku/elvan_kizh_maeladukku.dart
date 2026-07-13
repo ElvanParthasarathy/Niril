@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'koorugal/elvan_maeladukku_pudhiya_pothan.dart';
 import 'koorugal/elvan_maeladukku_thaedal.dart';
-import 'koorugal/elvan_maeladukku_thalaipu.dart';
 import 'koorugal/elvan_maeladukku_urupadi.dart';
 import '../elvan_kizh_maeladukku.dart' as legacy;
 import 'package:elvan_niril/src/adippadai/vazhikaattal/niril_nav.dart';

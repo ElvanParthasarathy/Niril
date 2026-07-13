@@ -1,4 +1,3 @@
-import 'iru_mozhi_vazhanguthigal.dart';
 
 /// Helper to unify the bilingual display logic for Porul UI components in Silk
 class IruMozhiPorulUdhavi {

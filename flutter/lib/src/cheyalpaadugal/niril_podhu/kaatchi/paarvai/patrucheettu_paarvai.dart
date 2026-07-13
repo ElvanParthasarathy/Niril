@@ -1,3 +1,4 @@
+import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +9,6 @@ import 'dart:io';
 
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
-import '../../../../adippadai/tharavuru/uruvugal.dart';
 import '../../../../adippadai/oru_mozhi/oru_mozhi_vaangunar_udhavi.dart';
 import '../../../niril_podhu/tharavuru/seluthi_vagai.dart';
 import '../../../amaippugal/tharavu/pattu_niruvana_tharavugal_provider.dart';

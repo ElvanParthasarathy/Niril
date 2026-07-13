@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../tharavuru/seyali_murai.dart';
 import '../viruppangal_paniyagam.dart';
 import '../../cheyalpaadugal/amaippugal/tharavu/niruvana_tharavugal.dart';
-import '../../cheyalpaadugal/amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../cheyalpaadugal/amaippugal/tharavu/pattu_niruvana_tharavugal_provider.dart';
 import '../../cheyalpaadugal/amaippugal/tharavu/kooli_niruvana_tharavugal_provider.dart';
 

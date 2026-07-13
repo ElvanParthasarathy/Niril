@@ -7,7 +7,6 @@ import '../../../../adippadai/tharavuru/uruvugal.dart';
 import '../../../amaippugal/tharavu/pattu_niruvana_tharavugal_provider.dart';
 import '../thiruthi/pattiyal/niril_pattu_pattiyal_thiruthi.dart';
 import '../../../niril_podhu/kalanjiyam/vaangunar_nilaimai.dart';
-import 'dart:io' show Platform;
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import '../../../../adippadai/achadippu/achadippu_html_uruvakki.dart';

@@ -1,4 +1,3 @@
-import 'oru_mozhi_vazhanguthigal.dart';
 
 /// Helper to unify the monolingual display logic for Porul UI components in Kooli
 class OruMozhiPorulUdhavi {

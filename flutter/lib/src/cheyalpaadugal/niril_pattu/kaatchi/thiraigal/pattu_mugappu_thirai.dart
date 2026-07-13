@@ -1,8 +1,9 @@
+import 'package:elvan_niril/src/adippadai/vazhikaattal/navigation_destination.dart';
+import 'package:flutter/cupertino.dart';
 import '../../../amaippugal/tharavu/pattu_niruvana_tharavugal_provider.dart';
 import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../koorugal/pattu_mugappu_attai.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,7 +14,6 @@ import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../adippadai/nilaimai/seyali_nilaimai.dart';
 import '../../../../adippadai/tharavuthalam/seyali_tharavuthalam.dart';
 import '../../../../adippadai/vazhikaattal/navigation_provider.dart';
-import '../../../../adippadai/vazhikaattal/navigation_destination.dart';
 import '../../../../adippadai/vazhikaattal/niril_nav.dart';
 import '../../../niril_podhu/kalanjiyam/pattiyal_nilaimai.dart';
 import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';

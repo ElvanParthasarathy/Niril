@@ -1,8 +1,6 @@
-import 'package:elvan_niril/src/adippadai/vazhikaattal/niril_nav.dart';
 import 'package:elvan_niril/src/adippadai/iru_mozhi/iru_mozhi_vazhanguthigal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:elvan_niril/src/adippadai/nilaimai/seyali_nilaimai.dart';
 import 'package:elvan_niril/src/koorugal/pulan_koorugal/elvan_irumozhi_pulan.dart';
 import 'package:elvan_niril/src/koorugal/pulan_koorugal/elvan_irumozhi_autocomplete.dart';
 import 'package:elvan_niril/src/koorugal/pulan_koorugal/elvan_kooli_irumozhi_pulan.dart';

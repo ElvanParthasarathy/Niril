@@ -4,13 +4,11 @@ import 'package:elvan_niril/src/koorugal/ulleedugal/elvan_thiruthi_thalaippu.dar
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../koorugal/podhu_koorugal/elvan_siruseidhi.dart';
 import 'koorugal/elvan_thiruthi_paguthi.dart';
 import 'koorugal/elvan_thiruthi_keezhvirivu.dart';
-import '../../../../koorugal/podhu_koorugal/elvan_thiruthi_attai_kooru.dart';
 import '../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_oadu.dart';
 import '../../../niril_podhu/kaatchi/thiruthi/elvan_thiruthi_niruvanam_oadu.dart';
 import '../../../niril_podhu/kalanjiyam/patru_nilaimai.dart';
@@ -19,7 +17,6 @@ import '../../../niril_podhu/tharavuru/seluthi_vagai.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal.dart';
 import 'koorugal/patru_pattiyal_theervu_maeladukku.dart';
 import 'koorugal/patru_thiruthi_paguthigal.dart';
-import '../koorugal/elvan_vaangunar_keezhvirivu_kooru.dart';
 import '../koorugal/pattiyal_naal_kooru.dart';
 import '../../../amaippugal/tharavu/niruvana_tharavugal_provider.dart';
 import '../../../../koorugal/ulleedugal/elvan_aavana_enn_kooru.dart';

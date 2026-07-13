@@ -7,7 +7,6 @@ import 'package:elvan_niril/src/koorugal/podhu_koorugal/elvan_kavanam.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../../koorugal/maeladukkugal/elvan_kizh_maeladukku/elvan_kizh_maeladukku.dart';
-import '../../../../koorugal/ulleedugal/elvan_ulleedu.dart';
 import 'package:elvan_niril/src/adippadai/mozhiyaakkam/k.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -1,11 +1,8 @@
-import 'package:elvan_niril/src/adippadai/tharavuru/uruvugal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
-import '../../../../adippadai/mozhiyaakkam/k.dart';
-import '../../../../adippadai/mozhiyaakkam/mozhi_vazhanguthi.dart';
 import '../../../chattagam/kaatchi/koorugal/elvan_uyir_valai.dart';
 
 /// A generic list component for Kooli data that handles AsyncValue states,
