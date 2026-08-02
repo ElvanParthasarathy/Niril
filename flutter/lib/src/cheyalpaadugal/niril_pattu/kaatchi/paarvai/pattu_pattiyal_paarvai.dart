@@ -19,6 +19,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
 import 'package:elvan_niril/src/cheyalpaadugal/niril_podhu/kaatchi/paarvai/paarvai_udhavi.dart';
+import 'package:elvan_niril/src/cheyalpaadugal/niril_podhu/kaatchi/paarvai/react_palam_maatri.dart';
 
 const _printChannel = MethodChannel('com.elvan.niril/print');
 
@@ -48,8 +49,12 @@ Future<void> _handlePrint(dynamic pattiyal, dynamic profile, WidgetRef ref, bool
       } : null,
     };
 
-    final profileJsonConverted = profile != null 
-        ? (await PaarvaiUdhavi.convertProfileImagesToBase64(profile!)).toJson() 
+    final convertedProfile = profile != null 
+        ? await PaarvaiUdhavi.convertProfileImagesToBase64(profile) 
+        : null;
+
+    final profileJsonConverted = convertedProfile != null 
+        ? ReactPalamMaatri.profileToReact(convertedProfile)
         : <String, dynamic>{};
     await _printChannel.invokeMethod('printInvoice', {
       'invoiceJson': jsonEncode(pattiyalJson),

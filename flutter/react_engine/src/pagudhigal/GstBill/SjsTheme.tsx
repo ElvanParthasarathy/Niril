@@ -59,7 +59,7 @@ const SjsTheme = React.forwardRef(({ profile = {}, client = {}, details = {}, it
   const showItemizedTax = devGstOverride !== null ? devGstOverride : (options['showItemizedTax'] === true); // Off by default
   const showDiscount = opt('showDiscount');
   const showBankDetails = opt('showBankDetails');
-  const showUPI = opt('showUPI');
+  const showUPI = opt('showUPI', false);
   const showLogo = opt('showLogo');
   const showSignature = opt('showSignature');
   const showSignatoryText = opt('showSignatoryText');

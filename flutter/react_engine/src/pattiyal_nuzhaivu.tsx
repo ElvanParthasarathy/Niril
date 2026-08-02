@@ -68,10 +68,11 @@ function App() {
                 };
             });
 
-            // Reconstruct totals
+            // Reconstruct totals directly from Flutter's payload
             const total = Number(parsedBill.mothaThogai) || 0;
-            const subtotal = mappedItems.reduce((acc: number, it: any) => acc + (it.qty * it.rate), 0);
-            const totalDiscount = mappedItems.reduce((acc: number, it: any) => acc + it.discount, 0);
+            const subtotal = Number(parsedBill.adippadaiMothangal) || 0;
+            const totalDiscount = Number(parsedBill.thallupadiMothangal) || 0;
+            const roundOff = Number(parsedBill.suttruOff) || 0;
 
             // Reconstruct client
             const client = parsedBill._client || {};
@@ -90,10 +91,11 @@ function App() {
                     total: total,
                     subtotal: subtotal,
                     totalDiscount: totalDiscount,
-                    cgst: 0,
-                    sgst: 0,
-                    igst: 0,
-                    cess: 0,
+                    roundOff: roundOff,
+                    cgst: Number(parsedBill.cgst) || 0,
+                    sgst: Number(parsedBill.sgst) || 0,
+                    igst: Number(parsedBill.igst) || 0,
+                    cess: Number(parsedBill.cess) || 0,
                     taxInclusive: false
                 },
                 invoiceType: parsedBill.pattiyalVagai || 'tax-invoice',
@@ -121,6 +123,7 @@ function App() {
         <div style={{ padding: 0, margin: 0, background: 'transparent' }}>
           {invoiceType === 'COOLIE' ? (
             <CoolieInvoiceView 
+              profile={bill?.data?.profile || {}}
               bill={bill} 
               onClose={() => {
                 if (typeof window !== 'undefined' && (window as any).FlutterBridge && (window as any).FlutterBridge.closeInvoice) {
@@ -131,6 +134,7 @@ function App() {
             />
           ) : (
             <InvoiceView 
+              profile={bill?.data?.profile || {}}
               bill={bill} 
               onClose={() => {
                 if (typeof window !== 'undefined' && (window as any).FlutterBridge && (window as any).FlutterBridge.closeInvoice) {

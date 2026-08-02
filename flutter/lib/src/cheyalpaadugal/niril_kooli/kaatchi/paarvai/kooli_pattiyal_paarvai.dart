@@ -12,9 +12,11 @@ import '../thiruthi/pattiyal/niril_kooli_pattiyal_thiruthi.dart';
 import '../../../niril_podhu/tharavuru/pattiyal_tharavuru.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
+import '../../../amaippugal/tharavu/kooli_niruvana_tharavugal_provider.dart';
 
 import 'dart:convert';
 import 'package:elvan_niril/src/cheyalpaadugal/niril_podhu/kaatchi/paarvai/paarvai_udhavi.dart';
+import 'package:elvan_niril/src/cheyalpaadugal/niril_podhu/kaatchi/paarvai/react_palam_maatri.dart';
 
 const _printChannel = MethodChannel('com.elvan.niril/print');
 
@@ -25,8 +27,12 @@ Future<void> _handlePrint(dynamic pattiyal, dynamic profile, bool isDark) async 
       // Add any specific data required by CoolieInvoiceView if missing
     };
 
-    final profileJsonConverted = profile != null 
-        ? (await PaarvaiUdhavi.convertProfileImagesToBase64(profile!)).toJson() 
+    final convertedProfile = profile != null && profile is! Map
+        ? await PaarvaiUdhavi.convertProfileImagesToBase64(profile) 
+        : null;
+
+    final profileJsonConverted = convertedProfile != null 
+        ? ReactPalamMaatri.profileToReact(convertedProfile)
         : <String, dynamic>{};
     await _printChannel.invokeMethod('printInvoice', {
       'invoiceJson': jsonEncode(pattiyalJson),
@@ -80,9 +86,12 @@ class KooliPattiyalPaarvai extends ConsumerWidget {
         );
       },
       onPrint: () {
-        // Find Kooli profile if possible, fallback to empty object if not easily available
-        // Actually we don't have Kooli profile provider fetched here. We can pass an empty dynamic object for now.
-        _handlePrint(pattiyal, {}, isDark);
+        final profiles = ref.read(kooliNiruvanaTharavugalListProvider);
+        final defaultProfile = ref.read(kooliNiruvanaTharavugalProvider);
+        final profile = pattiyal.niruvanamId != null && profiles.isNotEmpty
+            ? profiles.firstWhere((p) => p.id == pattiyal.niruvanamId, orElse: () => defaultProfile ?? profiles.first)
+            : defaultProfile;
+        _handlePrint(pattiyal, profile ?? {}, isDark);
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
