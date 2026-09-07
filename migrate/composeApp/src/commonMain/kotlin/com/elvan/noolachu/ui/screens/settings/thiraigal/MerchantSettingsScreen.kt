@@ -41,6 +41,7 @@ import com.elvan.noolachu.ui.navigation.MaterialSymbols
  */
 @Composable
 fun MerchantSettingsScreen(
+    onNavigateToManageProfiles: () -> Unit = {},
     scrollState: LazyListState = rememberLazyListState(),
     colors: ShellColors = rememberShellColors()
 ) {
@@ -69,8 +70,6 @@ fun MerchantSettingsScreen(
         showExtraPhone = false
         ElvanSnackbar.show(saveSuccessMsg)
     }
-
-    var showManageModal by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -104,7 +103,7 @@ fun MerchantSettingsScreen(
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = ShellDefaults.ripple(colors, bounded = true),
-                                onClick = { showManageModal = true }
+                                onClick = onNavigateToManageProfiles
                             ),
                         shape = CircleShape,
                         color = colors.surface,
@@ -487,14 +486,6 @@ fun MerchantSettingsScreen(
             }
         }
     }
-
-        // Hoisted Modals
-        if (showManageModal) {
-            ManageProfilesModal(
-                mode = currentMode,
-                onDismissRequest = { showManageModal = false },
-                colors = colors
-            )
-        }
     }
 }
+

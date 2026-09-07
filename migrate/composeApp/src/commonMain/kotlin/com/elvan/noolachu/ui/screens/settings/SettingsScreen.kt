@@ -41,7 +41,9 @@ fun SettingsScreen(
     val subpageScrollStates = remember { mutableStateMapOf<SettingsRoute, LazyListState>() }
 
     val handleBack: () -> Unit = {
-        if (currentRoute != SettingsRoute.Hub) {
+        if (currentRoute == SettingsRoute.ManageProfiles) {
+            currentRoute = SettingsRoute.Merchant
+        } else if (currentRoute != SettingsRoute.Hub) {
             currentRoute = SettingsRoute.Hub
         } else {
             onBack()
@@ -63,17 +65,29 @@ fun SettingsScreen(
                 .fillMaxSize()
                 .background(colors.background),
             transitionSpec = {
-                val isForward = targetState != SettingsRoute.Hub
-                if (isForward) {
+                if (targetState == SettingsRoute.ManageProfiles) {
                     slideIntoContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        towards = AnimatedContentTransitionScope.SlideDirection.Up,
                         animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = Spring.DampingRatioNoBouncy)
                     ) togetherWith fadeOut(targetAlpha = 0.9f, animationSpec = tween(durationMillis = 50))
-                } else {
+                } else if (initialState == SettingsRoute.ManageProfiles) {
                     fadeIn(initialAlpha = 0.9f) togetherWith slideOutOfContainer(
-                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        towards = AnimatedContentTransitionScope.SlideDirection.Down,
                         animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = Spring.DampingRatioNoBouncy)
                     )
+                } else {
+                    val isForward = targetState != SettingsRoute.Hub
+                    if (isForward) {
+                        slideIntoContainer(
+                            towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                            animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = Spring.DampingRatioNoBouncy)
+                        ) togetherWith fadeOut(targetAlpha = 0.9f, animationSpec = tween(durationMillis = 50))
+                    } else {
+                        fadeIn(initialAlpha = 0.9f) togetherWith slideOutOfContainer(
+                            towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                            animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = Spring.DampingRatioNoBouncy)
+                        )
+                    }
                 }
             },
             label = "SettingsRouteTransition"
@@ -84,48 +98,54 @@ fun SettingsScreen(
                 SettingsRoute.Display -> K.thoatram.tr()
                 SettingsRoute.Language -> K.cheyaliMozhi.tr()
                 SettingsRoute.Merchant -> K.niruvanam.tr()
-            SettingsRoute.KooliIdentity -> K.kooliNiruvanaAdaiyaalangal.tr()
-            SettingsRoute.PattuIdentity -> K.pattuNiruvanaAdaiyaalangal.tr()
-            SettingsRoute.Address -> K.mugavari.tr()
-            SettingsRoute.Bank -> K.vangi.tr()
-            SettingsRoute.InvoiceCreation -> K.uruvaakkuPtn.tr()
-            SettingsRoute.UserProfile -> K.payanar.tr()
-            SettingsRoute.StorageBackup -> K.chaemippuMatrumKaappu.tr()
-            SettingsRoute.Security -> K.paadhugaappu.tr()
-            SettingsRoute.AboutDeveloper -> K.menporulVadivaalar.tr()
-            SettingsRoute.AboutApp -> K.cheyaliPatri.tr()
-            SettingsRoute.ElvanNavil -> K.elvanNavilPatri.tr()
-        }
+                SettingsRoute.ManageProfiles -> K.kaiyaalu.tr()
+                SettingsRoute.KooliIdentity -> K.kooliNiruvanaAdaiyaalangal.tr()
+                SettingsRoute.PattuIdentity -> K.pattuNiruvanaAdaiyaalangal.tr()
+                SettingsRoute.Address -> K.mugavari.tr()
+                SettingsRoute.Bank -> K.vangi.tr()
+                SettingsRoute.InvoiceCreation -> K.uruvaakkuPtn.tr()
+                SettingsRoute.UserProfile -> K.payanar.tr()
+                SettingsRoute.StorageBackup -> K.chaemippuMatrumKaappu.tr()
+                SettingsRoute.Security -> K.paadhugaappu.tr()
+                SettingsRoute.AboutDeveloper -> K.menporulVadivaalar.tr()
+                SettingsRoute.AboutApp -> K.cheyaliPatri.tr()
+                SettingsRoute.ElvanNavil -> K.elvanNavilPatri.tr()
+            }
 
-        ElvanSubShell(
-            title = pageTitle,
-            onBack = handleBack,
-            scrollState = scrollState
-        ) {
-            when (route) {
-                SettingsRoute.Hub -> SettingsHubScreen(
-                    onNavigate = { currentRoute = it },
-                    onSignOutClick = { showSignOutDialog = true },
-                    scrollState = scrollState,
-                    colors = colors
-                )
-                SettingsRoute.Display -> DisplaySettingsScreen(scrollState = scrollState, colors = colors)
-                SettingsRoute.Language -> LanguageSettingsScreen(scrollState = scrollState, colors = colors)
-                SettingsRoute.Merchant -> MerchantSettingsScreen(scrollState = scrollState, colors = colors)
-                SettingsRoute.KooliIdentity -> KooliIdentityScreen(scrollState = scrollState, colors = colors)
-                SettingsRoute.PattuIdentity -> PattuIdentityScreen(scrollState = scrollState, colors = colors)
-                SettingsRoute.Address -> AddressSettingsScreen(scrollState = scrollState, colors = colors)
-                SettingsRoute.Bank -> BankSettingsScreen(scrollState = scrollState, colors = colors)
-                SettingsRoute.InvoiceCreation -> InvoiceCreationSettingsScreen(scrollState = scrollState, colors = colors)
-                SettingsRoute.UserProfile -> UserProfileSettingsScreen(scrollState = scrollState, colors = colors)
-                SettingsRoute.StorageBackup -> StorageBackupSettingsScreen(scrollState = scrollState, colors = colors)
-                SettingsRoute.Security -> SecuritySettingsScreen(scrollState = scrollState, colors = colors)
-                SettingsRoute.AboutDeveloper -> AboutDeveloperScreen(scrollState = scrollState, colors = colors)
-                SettingsRoute.AboutApp -> AboutAppScreen(scrollState = scrollState, colors = colors)
-                SettingsRoute.ElvanNavil -> ElvanNavilThirai(scrollState = scrollState, colors = colors)
+            ElvanSubShell(
+                title = pageTitle,
+                onBack = handleBack,
+                scrollState = scrollState
+            ) {
+                when (route) {
+                    SettingsRoute.Hub -> SettingsHubScreen(
+                        onNavigate = { currentRoute = it },
+                        onSignOutClick = { showSignOutDialog = true },
+                        scrollState = scrollState,
+                        colors = colors
+                    )
+                    SettingsRoute.Display -> DisplaySettingsScreen(scrollState = scrollState, colors = colors)
+                    SettingsRoute.Language -> LanguageSettingsScreen(scrollState = scrollState, colors = colors)
+                    SettingsRoute.Merchant -> MerchantSettingsScreen(
+                        onNavigateToManageProfiles = { currentRoute = SettingsRoute.ManageProfiles },
+                        scrollState = scrollState,
+                        colors = colors
+                    )
+                    SettingsRoute.ManageProfiles -> ManageProfilesScreen(scrollState = scrollState, colors = colors)
+                    SettingsRoute.KooliIdentity -> KooliIdentityScreen(scrollState = scrollState, colors = colors)
+                    SettingsRoute.PattuIdentity -> PattuIdentityScreen(scrollState = scrollState, colors = colors)
+                    SettingsRoute.Address -> AddressSettingsScreen(scrollState = scrollState, colors = colors)
+                    SettingsRoute.Bank -> BankSettingsScreen(scrollState = scrollState, colors = colors)
+                    SettingsRoute.InvoiceCreation -> InvoiceCreationSettingsScreen(scrollState = scrollState, colors = colors)
+                    SettingsRoute.UserProfile -> UserProfileSettingsScreen(scrollState = scrollState, colors = colors)
+                    SettingsRoute.StorageBackup -> StorageBackupSettingsScreen(scrollState = scrollState, colors = colors)
+                    SettingsRoute.Security -> SecuritySettingsScreen(scrollState = scrollState, colors = colors)
+                    SettingsRoute.AboutDeveloper -> AboutDeveloperScreen(scrollState = scrollState, colors = colors)
+                    SettingsRoute.AboutApp -> AboutAppScreen(scrollState = scrollState, colors = colors)
+                    SettingsRoute.ElvanNavil -> ElvanNavilThirai(scrollState = scrollState, colors = colors)
+                }
             }
         }
-    }
 
     if (showSignOutDialog) {
         ElvanActionSheet(
