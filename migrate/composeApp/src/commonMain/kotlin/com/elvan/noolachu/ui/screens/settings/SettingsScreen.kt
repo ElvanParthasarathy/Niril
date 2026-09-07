@@ -7,10 +7,11 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,7 @@ fun SettingsScreen(
     val billingConfig = AchuMozhiManager.getConfig(currentMode)
     val colors = rememberShellColors()
     val ff = LocalAppFontFamily.current
+    var showSignOutDialog by remember { mutableStateOf(false) }
 
     LazyColumn(
         state = scrollState,
@@ -235,5 +237,40 @@ fun SettingsScreen(
                 }
             }
         }
+
+        // 7. Settings Group: வெளியேறு (Sign Out)
+        item(key = "signout_group") {
+            ElvanSectionContainer {
+                ElvanSettingsSection(
+                    colors = colors
+                ) {
+                    ElvanSettingsRow(
+                        icon = MaterialSymbols.Rounded.Logout,
+                        title = K.veliyaeru.tr(),
+                        description = K.veliyaeruVilakkam.tr(),
+                        onClick = { showSignOutDialog = true },
+                        titleColor = Color(0xFFBA1A1A),
+                        iconTint = Color(0xFFBA1A1A),
+                        colors = colors
+                    )
+                }
+            }
+        }
+    }
+
+    // Sign Out Action Sheet Popup (Matching Neram)
+    if (showSignOutDialog) {
+        ElvanActionSheet(
+            title = K.veliyaeruUrudhi.tr(),
+            cancelText = K.kaividu.tr(),
+            confirmText = K.veliyaeru.tr(),
+            onDismissRequest = { showSignOutDialog = false },
+            onConfirm = {
+                showSignOutDialog = false
+                onBack()
+            },
+            confirmColor = Color(0xFFBA1A1A),
+            colors = colors
+        )
     }
 }
