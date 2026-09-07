@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -113,11 +114,11 @@ fun ManageProfilesScreen(
             }
         }
 
-        // Floating Action Button to add new profile
+        // Floating Action Button to add new profile (squircle shape)
         if (profiles.size < NiruvanaTharavugalRepository.MAX_PROFILES) {
             FloatingActionButton(
                 onClick = { showNewProfileSheet = true },
-                shape = CircleShape,
+                shape = RoundedCornerShape(16.dp),
                 containerColor = colors.textPrimary,
                 contentColor = colors.surface,
                 modifier = Modifier
