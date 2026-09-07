@@ -1,6 +1,7 @@
 package com.elvan.noolachu.ui.screens.settings
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -13,6 +14,7 @@ import com.elvan.noolachu.localization.tr
 import com.elvan.noolachu.theme.Transitions
 import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.components.shell.ElvanActionSheet
+import com.elvan.noolachu.ui.components.shell.ElvanSnackbarHost
 import com.elvan.noolachu.ui.components.shell.ElvanSubShell
 import com.elvan.noolachu.ui.screens.settings.thiraigal.*
 
@@ -42,20 +44,21 @@ fun SettingsScreen(
         handleBack()
     }
 
-    AnimatedContent(
-        targetState = currentRoute,
-        modifier = Modifier.fillMaxSize(),
-        transitionSpec = {
-            Transitions.sharedAxisX(forward = targetState != SettingsRoute.Hub)
-        },
-        label = "SettingsRouteTransition"
-    ) { route ->
-        val scrollState = if (route == SettingsRoute.Hub) hubScrollState else subpageScrollStates.getOrPut(route) { LazyListState() }
-        val pageTitle = when (route) {
-            SettingsRoute.Hub -> K.amaippugal.tr()
-            SettingsRoute.Display -> K.thoatram.tr()
-            SettingsRoute.Language -> K.cheyaliMozhi.tr()
-            SettingsRoute.Merchant -> K.niruvanaAmaippugal.tr()
+    Box(modifier = Modifier.fillMaxSize()) {
+        AnimatedContent(
+            targetState = currentRoute,
+            modifier = Modifier.fillMaxSize(),
+            transitionSpec = {
+                Transitions.sharedAxisX(forward = targetState != SettingsRoute.Hub)
+            },
+            label = "SettingsRouteTransition"
+        ) { route ->
+            val scrollState = if (route == SettingsRoute.Hub) hubScrollState else subpageScrollStates.getOrPut(route) { LazyListState() }
+            val pageTitle = when (route) {
+                SettingsRoute.Hub -> K.amaippugal.tr()
+                SettingsRoute.Display -> K.thoatram.tr()
+                SettingsRoute.Language -> K.cheyaliMozhi.tr()
+                SettingsRoute.Merchant -> K.niruvanam.tr()
             SettingsRoute.KooliIdentity -> K.kooliNiruvanaAdaiyaalangal.tr()
             SettingsRoute.PattuIdentity -> K.pattuNiruvanaAdaiyaalangal.tr()
             SettingsRoute.Address -> K.mugavari.tr()
@@ -110,5 +113,8 @@ fun SettingsScreen(
             confirmColor = Color(0xFFBA1A1A),
             colors = colors
         )
+    }
+
+    ElvanSnackbarHost(colors = colors)
     }
 }

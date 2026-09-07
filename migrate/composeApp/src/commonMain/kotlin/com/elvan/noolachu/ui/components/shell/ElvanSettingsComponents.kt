@@ -582,6 +582,7 @@ fun ElvanSettingsEditContainer(
     modifier: Modifier = Modifier,
     cancelText: String? = null,
     saveText: String? = null,
+    extraAction: (@Composable () -> Unit)? = null,
     colors: ShellColors = rememberShellColors(),
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -614,6 +615,10 @@ fun ElvanSettingsEditContainer(
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            if (extraAction != null) {
+                extraAction()
+                Spacer(modifier = Modifier.width(8.dp))
+            }
             TextButton(
                 onClick = onCancel,
                 shape = RoundedCornerShape(50)
@@ -664,6 +669,7 @@ fun ElvanSettingsTextField(
     prefixText: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     singleLine: Boolean = true,
+    maxLength: Int? = null,
     readOnly: Boolean = false,
     onClick: (() -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
@@ -671,6 +677,7 @@ fun ElvanSettingsTextField(
 ) {
     val ff = LocalAppFontFamily.current
     val fieldBg = colors.iconBg
+    val shapeRadius = if (singleLine) 100.dp else 16.dp
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -691,20 +698,22 @@ fun ElvanSettingsTextField(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
-                .clip(RoundedCornerShape(100))
+                .then(
+                    if (singleLine) Modifier.height(48.dp) else Modifier.heightIn(min = 48.dp)
+                )
+                .clip(RoundedCornerShape(shapeRadius))
                 .then(
                     if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier
                 ),
-            shape = RoundedCornerShape(100),
+            shape = RoundedCornerShape(shapeRadius),
             color = fieldBg,
             shadowElevation = 0.dp
         ) {
             Row(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 20.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = if (singleLine) 0.dp else 12.dp),
+                verticalAlignment = if (singleLine) Alignment.CenterVertically else Alignment.Top
             ) {
                 if (prefixText != null) {
                     Text(
@@ -715,13 +724,13 @@ fun ElvanSettingsTextField(
                             fontWeight = FontWeight.Normal
                         ),
                         color = colors.textPrimary.copy(alpha = 0.6f),
-                        modifier = Modifier.padding(end = 4.dp)
+                        modifier = Modifier.padding(end = 4.dp, top = if (singleLine) 0.dp else 2.dp)
                     )
                 }
 
                 Box(
                     modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.CenterStart
+                    contentAlignment = if (singleLine) Alignment.CenterStart else Alignment.TopStart
                 ) {
                     if (value.isEmpty() && placeholder.isNotEmpty()) {
                         Text(
@@ -744,14 +753,20 @@ fun ElvanSettingsTextField(
                                 fontWeight = FontWeight.Normal
                             ),
                             color = colors.textPrimary,
-                            maxLines = 1,
+                            maxLines = if (singleLine) 1 else 4,
                             overflow = TextOverflow.Ellipsis
                         )
                     } else {
                         BasicTextField(
                             value = value,
-                            onValueChange = onValueChange,
+                            onValueChange = { newVal ->
+                                if (maxLength == null || newVal.length <= maxLength) {
+                                    onValueChange(newVal)
+                                }
+                            },
                             singleLine = singleLine,
+                            minLines = if (singleLine) 1 else 2,
+                            maxLines = if (singleLine) 1 else 4,
                             keyboardOptions = keyboardOptions,
                             textStyle = TextStyle(
                                 fontFamily = ff,

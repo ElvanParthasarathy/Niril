@@ -54,6 +54,7 @@ fun InvoiceCreationSettingsScreen(
 
     var isEditingTheme by remember { mutableStateOf(false) }
     var tempThemeColor by remember { mutableStateOf(profile.thoatraNiram.ifEmpty { "#388e3c" }) }
+    val saveSuccessMsg = K.thannuruChaemikkappattadhu.tr()
 
     @Composable
     fun getThemeName(hex: String): String {
@@ -148,6 +149,7 @@ fun InvoiceCreationSettingsScreen(
                                     updated.thunaiMozhi = tempSecondaryLang
                                     NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
                                     isEditingLanguages = false
+                                    ElvanSnackbar.show(saveSuccessMsg)
                                 },
                                 colors = colors
                             ) {
@@ -179,34 +181,35 @@ fun InvoiceCreationSettingsScreen(
                                     )
                                 }
 
-                                Spacer(modifier = Modifier.height(16.dp))
-
-                                // Secondary Language Picker
-                                Text(
-                                    text = K.irandaamMozhi.tr(),
-                                    style = TextStyle(fontFamily = ff, fontSize = 12.sp, color = colors.textPrimary.copy(alpha = 0.5f)),
-                                    modifier = Modifier.padding(start = 8.dp, bottom = 6.dp)
-                                )
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                ) {
-                                    FilterChip(
-                                        selected = tempSecondaryLang == "ta",
-                                        onClick = {
-                                            tempSecondaryLang = "ta"
-                                            if (tempPrimaryLang == "ta") tempPrimaryLang = "en"
-                                        },
-                                        label = { Text(K.thamizh.tr()) }
+                                if (profile.iruMozhi) {
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    // Secondary Language Picker
+                                    Text(
+                                        text = K.irandaamMozhi.tr(),
+                                        style = TextStyle(fontFamily = ff, fontSize = 12.sp, color = colors.textPrimary.copy(alpha = 0.5f)),
+                                        modifier = Modifier.padding(start = 8.dp, bottom = 6.dp)
                                     )
-                                    FilterChip(
-                                        selected = tempSecondaryLang == "en",
-                                        onClick = {
-                                            tempSecondaryLang = "en"
-                                            if (tempPrimaryLang == "en") tempPrimaryLang = "ta"
-                                        },
-                                        label = { Text(K.aangilam.tr()) }
-                                    )
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                    ) {
+                                        FilterChip(
+                                            selected = tempSecondaryLang == "ta",
+                                            onClick = {
+                                                tempSecondaryLang = "ta"
+                                                if (tempPrimaryLang == "ta") tempPrimaryLang = "en"
+                                            },
+                                            label = { Text(K.thamizh.tr()) }
+                                        )
+                                        FilterChip(
+                                            selected = tempSecondaryLang == "en",
+                                            onClick = {
+                                                tempSecondaryLang = "en"
+                                                if (tempPrimaryLang == "en") tempPrimaryLang = "ta"
+                                            },
+                                            label = { Text(K.aangilam.tr()) }
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -227,6 +230,7 @@ fun InvoiceCreationSettingsScreen(
                                     val updated = profile.copy()
                                     updated.iruMozhi = it
                                     NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
+                                    ElvanSnackbar.show(saveSuccessMsg)
                                 },
                                 colors = colors
                             )
@@ -245,6 +249,7 @@ fun InvoiceCreationSettingsScreen(
                                     val updated = profile.copy()
                                     updated.gstPirippugal = it
                                     NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
+                                    ElvanSnackbar.show(saveSuccessMsg)
                                 },
                                 colors = colors
                             )
@@ -302,6 +307,7 @@ fun InvoiceCreationSettingsScreen(
                                     updated.mudhanMozhi = tempPrimaryLang
                                     NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
                                     isEditingLanguages = false
+                                    ElvanSnackbar.show(saveSuccessMsg)
                                 },
                                 colors = colors
                             ) {
@@ -404,6 +410,7 @@ fun InvoiceCreationSettingsScreen(
                                     updated.thoatraNiram = tempThemeColor
                                     NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
                                     isEditingTheme = false
+                                    ElvanSnackbar.show(saveSuccessMsg)
                                 },
                                 colors = colors
                             ) {

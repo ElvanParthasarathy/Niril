@@ -40,6 +40,7 @@ fun AddressSettingsScreen(
 
     val primaryLangLabel = if (profile.mudhanMozhi.lowercase().startsWith("ta")) K.thamizh.tr() else K.aangilam.tr()
     val secondaryLangLabel = if (profile.thunaiMozhi.lowercase().startsWith("ta")) K.thamizh.tr() else K.aangilam.tr()
+    val saveSuccessMsg = K.thannuruChaemikkappattadhu.tr()
 
     fun beginEdit(section: String, primary: String, secondary: String = "") {
         editingSection = section
@@ -53,6 +54,7 @@ fun AddressSettingsScreen(
         updated.setBilingual(fieldName, profile.thunaiMozhi, tempSecondary)
         NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
         editingSection = null
+        ElvanSnackbar.show(saveSuccessMsg)
     }
 
     fun saveSingle(action: (String) -> Unit) {
@@ -60,6 +62,7 @@ fun AddressSettingsScreen(
         action(tempPrimary)
         NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
         editingSection = null
+        ElvanSnackbar.show(saveSuccessMsg)
     }
 
     LazyColumn(
@@ -283,6 +286,7 @@ fun AddressSettingsScreen(
                                     value = tempPrimary,
                                     onValueChange = { if (it.length <= 6 && it.all { c -> c.isDigit() }) tempPrimary = it },
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                    maxLength = 6,
                                     colors = colors
                                 )
                             }
@@ -433,6 +437,7 @@ fun AddressSettingsScreen(
                                     value = tempPrimary,
                                     onValueChange = { if (it.length <= 6 && it.all { c -> c.isDigit() }) tempPrimary = it },
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                    maxLength = 6,
                                     colors = colors
                                 )
                             }

@@ -18,6 +18,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.core.mode.LocalAppMode
 import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
@@ -53,12 +57,14 @@ fun MerchantSettingsScreen(
 
     val isBilingual = profile.iruMozhi
     val isPattu = currentMode == AppMode.PATTU
+    val saveSuccessMsg = K.thannuruChaemikkappattadhu.tr()
 
     fun saveField(action: () -> Unit) {
         action()
         NiruvanaTharavugalRepository.updateProfile(currentMode, profile)
         editingSection = null
         showExtraPhone = false
+        ElvanSnackbar.show(saveSuccessMsg)
     }
 
     LazyColumn(
@@ -76,62 +82,118 @@ fun MerchantSettingsScreen(
             Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
         }
 
-        // ── Top Profile Switcher Pill ──
-        item(key = "profile_pill") {
-            Surface(
+        // ── Top Profile Switcher Row (matching Flutter's _buildProfileSwitcher) ──
+        item(key = "profile_switcher") {
+            var showManageModal by remember { mutableStateOf(false) }
+
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp)),
-                shape = RoundedCornerShape(20.dp),
-                color = colors.surface,
-                shadowElevation = 0.dp
+                    .padding(bottom = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
+                // Circular Briefcase Button (aspectRatio 1.0)
+                Surface(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = ShellDefaults.ripple(colors, bounded = true),
+                            onClick = { showManageModal = true }
+                        ),
+                    shape = CircleShape,
+                    color = colors.surface,
+                    shadowElevation = 0.dp
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(44.dp)
-                            .clip(CircleShape)
-                            .background(colors.iconBg),
-                        contentAlignment = Alignment.Center
-                    ) {
+                    Box(contentAlignment = Alignment.Center) {
                         Icon(
-                            imageVector = MaterialSymbols.Rounded.Description,
+                            imageVector = MaterialSymbols.Rounded.BusinessCenter,
                             contentDescription = null,
-                            tint = colors.textPrimary,
-                            modifier = Modifier.size(22.dp)
+                            tint = colors.textPrimary.copy(alpha = 0.7f),
+                            modifier = Modifier.size(24.dp)
                         )
                     }
+                }
 
-                    Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
-                    Column(modifier = Modifier.weight(1f)) {
+                // Profile Dropdown Pill (ElvanNiruvanamKeezhvirivuKooru)
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp)
+                        .clip(RoundedCornerShape(100))
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = ShellDefaults.ripple(colors, bounded = true),
+                            onClick = { showManageModal = true }
+                        ),
+                    shape = RoundedCornerShape(100),
+                    color = colors.surface,
+                    shadowElevation = 0.dp
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 20.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
                             text = profile.getPrimary("niruvanathinPeyar").ifEmpty { K.tharpoadhaiyaNiruvanam.tr() },
                             style = TextStyle(
                                 fontFamily = ff,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.SemiBold
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium
                             ),
                             color = colors.textPrimary,
-                            maxLines = 1
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f)
                         )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = if (isPattu) K.nirilPattu.tr() else K.nirilKooli.tr(),
-                            style = TextStyle(
-                                fontFamily = ff,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Normal
-                            ),
-                            color = colors.textPrimary.copy(alpha = 0.5f)
+                        Icon(
+                            imageVector = MaterialSymbols.Rounded.KeyboardArrowDown,
+                            contentDescription = null,
+                            tint = colors.textPrimary.copy(alpha = 0.7f),
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 }
+            }
+
+            if (showManageModal) {
+                ElvanActionSheet(
+                    title = profile.getPrimary("niruvanathinPeyar").ifEmpty { K.tharpoadhaiyaNiruvanam.tr() },
+                    cancelText = K.kaividu.tr(),
+                    confirmText = K.urudhi.tr(),
+                    onDismissRequest = { showManageModal = false },
+                    onConfirm = { showManageModal = false },
+                    customContent = {
+                        Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+                            Text(
+                                text = if (isPattu) K.nirilPattu.tr() else K.nirilKooli.tr(),
+                                style = TextStyle(
+                                    fontFamily = ff,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Normal,
+                                    color = colors.textPrimary.copy(alpha = 0.6f)
+                                ),
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                            if (profile.kurumPeyar.isNotEmpty()) {
+                                Text(
+                                    text = "${K.kurugiyaNiruvanaPeyar.tr()}: ${profile.kurumPeyar}",
+                                    style = TextStyle(
+                                        fontFamily = ff,
+                                        fontSize = 13.sp,
+                                        color = colors.textPrimary.copy(alpha = 0.8f)
+                                    )
+                                )
+                            }
+                        }
+                    },
+                    colors = colors
+                )
             }
         }
 
@@ -293,6 +355,24 @@ fun MerchantSettingsScreen(
                     editContent = {
                         ElvanSettingsEditContainer(
                             title = K.paesiEnkal.tr(),
+                            extraAction = if (!showExtraPhone) {
+                                {
+                                    TextButton(
+                                        onClick = { showExtraPhone = true },
+                                        shape = RoundedCornerShape(50)
+                                    ) {
+                                        Text(
+                                            text = "+ ${K.chaer.tr()}",
+                                            style = TextStyle(
+                                                fontFamily = ff,
+                                                fontSize = 13.sp,
+                                                fontWeight = FontWeight.Medium,
+                                                color = colors.accent
+                                            )
+                                        )
+                                    }
+                                }
+                            } else null,
                             onCancel = {
                                 editingSection = null
                                 showExtraPhone = false
@@ -309,6 +389,8 @@ fun MerchantSettingsScreen(
                                 label = K.paesiEn.tr(),
                                 value = tempPrimary,
                                 onValueChange = { tempPrimary = it },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                                maxLength = 13,
                                 colors = colors
                             )
                             if (showExtraPhone) {
@@ -317,24 +399,26 @@ fun MerchantSettingsScreen(
                                     label = K.maatruPaesiEn.tr(),
                                     value = tempSecondary,
                                     onValueChange = { tempSecondary = it },
+                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                                    maxLength = 13,
+                                    trailingIcon = {
+                                        IconButton(
+                                            onClick = {
+                                                tempSecondary = ""
+                                                showExtraPhone = false
+                                            },
+                                            modifier = Modifier.size(28.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = MaterialSymbols.Rounded.Close,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(18.dp),
+                                                tint = colors.textPrimary.copy(alpha = 0.6f)
+                                            )
+                                        }
+                                    },
                                     colors = colors
                                 )
-                            } else {
-                                Spacer(modifier = Modifier.height(8.dp))
-                                TextButton(
-                                    onClick = { showExtraPhone = true },
-                                    shape = RoundedCornerShape(50)
-                                ) {
-                                    Text(
-                                        text = "+ ${K.chaer.tr()} (${K.maatruPaesiEn.tr()})",
-                                        style = TextStyle(
-                                            fontFamily = ff,
-                                            fontSize = 13.sp,
-                                            fontWeight = FontWeight.Medium,
-                                            color = colors.accent
-                                        )
-                                    )
-                                }
                             }
                         }
                     }
@@ -371,6 +455,7 @@ fun MerchantSettingsScreen(
                                 label = K.minnanjal.tr(),
                                 value = tempPrimary,
                                 onValueChange = { tempPrimary = it },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                                 colors = colors
                             )
                         }
@@ -408,7 +493,9 @@ fun MerchantSettingsScreen(
                                 ElvanSettingsTextField(
                                     label = K.gstinVariAdaiyaalaEn.tr(),
                                     value = tempPrimary,
-                                    onValueChange = { tempPrimary = it },
+                                    onValueChange = { tempPrimary = it.uppercase() },
+                                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters),
+                                    maxLength = 15,
                                     colors = colors
                                 )
                             }

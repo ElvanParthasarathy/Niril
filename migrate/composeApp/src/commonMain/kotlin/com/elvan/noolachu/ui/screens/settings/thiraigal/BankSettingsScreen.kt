@@ -41,6 +41,7 @@ fun BankSettingsScreen(
 
     val primaryLangLabel = if (profile.mudhanMozhi.lowercase().startsWith("ta")) K.thamizh.tr() else K.aangilam.tr()
     val secondaryLangLabel = if (profile.thunaiMozhi.lowercase().startsWith("ta")) K.thamizh.tr() else K.aangilam.tr()
+    val saveSuccessMsg = K.thannuruChaemikkappattadhu.tr()
 
     fun beginEdit(section: String, primary: String, secondary: String = "") {
         editingSection = section
@@ -54,6 +55,7 @@ fun BankSettingsScreen(
         updated.setBilingual(fieldName, profile.thunaiMozhi, tempSecondary)
         NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
         editingSection = null
+        ElvanSnackbar.show(saveSuccessMsg)
     }
 
     fun saveSingle(action: (String) -> Unit) {
@@ -61,6 +63,7 @@ fun BankSettingsScreen(
         action(tempPrimary)
         NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
         editingSection = null
+        ElvanSnackbar.show(saveSuccessMsg)
     }
 
     val vangiPeyarPrimary = profile.getPrimary("vangiPeyar")
@@ -187,6 +190,7 @@ fun BankSettingsScreen(
                                 value = tempPrimary,
                                 onValueChange = { if (it.length <= 18 && it.all { c -> c.isDigit() }) tempPrimary = it },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                maxLength = 18,
                                 colors = colors
                             )
                         }
@@ -218,6 +222,7 @@ fun BankSettingsScreen(
                                 value = tempPrimary,
                                 onValueChange = { if (it.length <= 11) tempPrimary = it.uppercase() },
                                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters),
+                                maxLength = 11,
                                 colors = colors
                             )
                         }

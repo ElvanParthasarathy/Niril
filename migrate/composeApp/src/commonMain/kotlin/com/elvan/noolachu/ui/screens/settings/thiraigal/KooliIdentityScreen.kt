@@ -49,6 +49,7 @@ fun KooliIdentityScreen(
     val logoPath = profile.oavuru.ifEmpty { null }
     val signaturePath = profile.kaiyoppam.ifEmpty { null }
     val signatoryName = profile.oppamPeyar
+    val saveSuccessMsg = K.thannuruChaemikkappattadhu.tr()
 
     LazyColumn(
         state = scrollState,
@@ -90,6 +91,7 @@ fun KooliIdentityScreen(
                                 updated.oavuru = tempImagePath ?: ""
                                 NiruvanaTharavugalRepository.updateProfile(AppMode.KOOLI, updated)
                                 editingSection = null
+                                ElvanSnackbar.show(saveSuccessMsg)
                             },
                             colors = colors
                         ) {
@@ -129,6 +131,7 @@ fun KooliIdentityScreen(
                                 updated.oppamPeyar = tempSignatoryName
                                 NiruvanaTharavugalRepository.updateProfile(AppMode.KOOLI, updated)
                                 editingSection = null
+                                ElvanSnackbar.show(saveSuccessMsg)
                             },
                             colors = colors
                         ) {

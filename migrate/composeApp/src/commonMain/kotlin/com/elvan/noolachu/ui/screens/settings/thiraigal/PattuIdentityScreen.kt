@@ -56,6 +56,7 @@ fun PattuIdentityScreen(
 
     val smallLabel = K.chiriyaOavuruPeyar.tr()
     val wideLabel = K.agalamaanaOavuruMattum.tr()
+    val saveSuccessMsg = K.thannuruChaemikkappattadhu.tr()
 
     LazyColumn(
         state = scrollState,
@@ -97,6 +98,7 @@ fun PattuIdentityScreen(
                                 updated.oavuru = tempImagePath ?: ""
                                 NiruvanaTharavugalRepository.updateProfile(AppMode.PATTU, updated)
                                 editingSection = null
+                                ElvanSnackbar.show(saveSuccessMsg)
                             },
                             colors = colors
                         ) {
@@ -117,7 +119,7 @@ fun PattuIdentityScreen(
                     displayContent = {
                         ElvanSettingsDisplayRow(
                             title = K.agalamaanaoavuru.tr(),
-                            primaryValue = if (wideLogoPath != null) K.agalamaanaOavuruMattum.tr() else K.illai.tr(),
+                            primaryValue = if (wideLogoPath != null) K.agalamaanaoavuru.tr() else K.oavuruIllai.tr(),
                             onEdit = {
                                 tempWideImagePath = wideLogoPath
                                 editingSection = "wide_logo"
@@ -134,6 +136,7 @@ fun PattuIdentityScreen(
                                 updated.agalaOavuru = tempWideImagePath ?: ""
                                 NiruvanaTharavugalRepository.updateProfile(AppMode.PATTU, updated)
                                 editingSection = null
+                                ElvanSnackbar.show(saveSuccessMsg)
                             },
                             colors = colors
                         ) {
@@ -171,6 +174,7 @@ fun PattuIdentityScreen(
                                 updated.thalaippuVadivu = tempHeaderStyle
                                 NiruvanaTharavugalRepository.updateProfile(AppMode.PATTU, updated)
                                 editingSection = null
+                                ElvanSnackbar.show(saveSuccessMsg)
                             },
                             colors = colors
                         ) {
@@ -219,6 +223,7 @@ fun PattuIdentityScreen(
                                 updated.oppamPeyar = tempSignatoryName
                                 NiruvanaTharavugalRepository.updateProfile(AppMode.PATTU, updated)
                                 editingSection = null
+                                ElvanSnackbar.show(saveSuccessMsg)
                             },
                             colors = colors
                         ) {
