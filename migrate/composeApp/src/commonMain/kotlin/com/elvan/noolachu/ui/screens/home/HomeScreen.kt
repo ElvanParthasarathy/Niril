@@ -53,7 +53,6 @@ fun HomeScreen() {
     val currentMode = LocalAppMode.current
     val billingConfig = AchuMozhiManager.getConfig(currentMode)
     val scrollState = rememberLazyListState()
-    val settingsScrollState = rememberLazyListState()
     var selectedTab by remember { mutableStateOf(NavTab.Home) }
     var isSettingsOpen by remember { mutableStateOf(false) }
     var isRefreshing by remember { mutableStateOf(false) }
@@ -61,19 +60,9 @@ fun HomeScreen() {
     val colors = rememberShellColors()
 
     if (isSettingsOpen) {
-        AppBackHandler(enabled = true) {
-            isSettingsOpen = false
-        }
-        ElvanSubShell(
-            title = K.amaippugal.tr(),
-            onBack = { isSettingsOpen = false },
-            scrollState = settingsScrollState
-        ) {
-            SettingsScreen(
-                onBack = { isSettingsOpen = false },
-                scrollState = settingsScrollState
-            )
-        }
+        SettingsScreen(
+            onBack = { isSettingsOpen = false }
+        )
         return
     }
 

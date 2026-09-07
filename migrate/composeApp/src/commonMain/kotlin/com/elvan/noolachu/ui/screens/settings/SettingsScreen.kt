@@ -1,264 +1,87 @@
 package com.elvan.noolachu.ui.screens.settings
 
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.elvan.noolachu.core.mode.AppMode
-import com.elvan.noolachu.core.mode.LocalAppMode
-import com.elvan.noolachu.core.mode.ModeManager
-import com.elvan.noolachu.data.database.DatabaseProvider
-import com.elvan.noolachu.localization.*
-import com.elvan.noolachu.theme.*
-import com.elvan.noolachu.ui.components.shell.*
-import com.elvan.noolachu.ui.navigation.MaterialSymbols
+import com.elvan.noolachu.core.platform.AppBackHandler
+import com.elvan.noolachu.localization.K
+import com.elvan.noolachu.localization.tr
+import com.elvan.noolachu.theme.rememberShellColors
+import com.elvan.noolachu.ui.components.shell.ElvanActionSheet
+import com.elvan.noolachu.ui.components.shell.ElvanSubShell
+import com.elvan.noolachu.ui.screens.settings.thiraigal.*
 
 /**
- * One UI styled Settings Screen matching Neram's settings layout.
+ * Master One UI Settings Screen with subpage routing and Brick Wall architecture.
  */
 @Composable
 fun SettingsScreen(
-    onBack: () -> Unit = {},
-    scrollState: LazyListState = LocalElvanScrollState.current ?: rememberLazyListState()
+    onBack: () -> Unit = {}
 ) {
-    val currentMode = LocalAppMode.current
-    val billingConfig = AchuMozhiManager.getConfig(currentMode)
-    val colors = rememberShellColors()
-    val ff = LocalAppFontFamily.current
+    var currentRoute by remember { mutableStateOf<SettingsRoute>(SettingsRoute.Hub) }
     var showSignOutDialog by remember { mutableStateOf(false) }
+    val colors = rememberShellColors()
 
-    LazyColumn(
-        state = scrollState,
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = Dimens.SubpageContentPaddingBottom),
-        verticalArrangement = Arrangement.spacedBy(Dimens.SectionSpacing)
-    ) {
-        item(key = "spacer_top") {
-            Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
-        }
+    val hubScrollState = rememberLazyListState()
+    val subpageScrollState = rememberLazyListState()
 
-        // 1. Mode Switcher & Database Capsule Card (Big Pill)
-        item(key = "mode_pill_card") {
-            ElvanSectionContainer {
-                ElvanProfilePillCard(
-                    title = currentMode.displayName(),
-                    subtitle = "${K.tharavuthalam.tr()}: ${DatabaseProvider.currentDatabaseName()}",
-                    onClick = { ModeManager.toggleMode() },
-                    iconWidget = {
-                        Box(
-                            modifier = Modifier
-                                .size(32.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .border(1.5.dp, colors.textPrimary, RoundedCornerShape(8.dp)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = if (currentMode == AppMode.KOOLI) "கூ" else "ப",
-                                color = colors.textPrimary,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.offset(y = (-1).dp)
-                            )
-                        }
-                    },
-                    trailing = {
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(100))
-                                .border(1.dp, colors.accent.copy(alpha = 0.5f), RoundedCornerShape(100))
-                                .padding(horizontal = 12.dp, vertical = 6.dp)
-                        ) {
-                            Text(
-                                text = "${K.maatru.tr()} ⇄",
-                                style = TextStyle(
-                                    fontFamily = ff,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = colors.accent
-                                )
-                            )
-                        }
-                    },
-                    colors = colors
-                )
-            }
-        }
-
-        // 2. Settings Group: தோற்றம் (Appearance / Theme)
-        item(key = "appearance_group") {
-            ElvanSectionContainer {
-                ElvanSettingsSection(
-                    title = K.thoatram.tr(),
-                    colors = colors
-                ) {
-                    ElvanRadioSettingsRow(
-                        title = K.thaaniyangki.tr(),
-                        description = K.thaaniyangkiVilakkam.tr(),
-                        value = ThemeMode.SYSTEM,
-                        groupValue = ThemeManager.currentThemeMode,
-                        onSelected = { ThemeManager.setThemeMode(it) },
-                        colors = colors
-                    )
-                    ElvanSettingsDivider(colors = colors)
-                    ElvanRadioSettingsRow(
-                        title = K.olirNilai.tr(),
-                        value = ThemeMode.LIGHT,
-                        groupValue = ThemeManager.currentThemeMode,
-                        onSelected = { ThemeManager.setThemeMode(it) },
-                        colors = colors
-                    )
-                    ElvanSettingsDivider(colors = colors)
-                    ElvanRadioSettingsRow(
-                        title = K.irulNilai.tr(),
-                        value = ThemeMode.DARK,
-                        groupValue = ThemeManager.currentThemeMode,
-                        onSelected = { ThemeManager.setThemeMode(it) },
-                        colors = colors
-                    )
-                }
-            }
-        }
-
-        // 3. Settings Group: செயலி மொழி (UI Language - Screen only)
-        item(key = "ui_language_group") {
-            ElvanSectionContainer {
-                ElvanSettingsSection(
-                    title = K.cheyaliMozhi.tr(),
-                    colors = colors
-                ) {
-                    Language.entries.forEachIndexed { index, lang ->
-                        if (index > 0) ElvanSettingsDivider(colors = colors)
-                        ElvanRadioSettingsRow(
-                            title = lang.displayName,
-                            description = if (lang == Language.TAMIL) K.senthamizh.tr() else K.aangilam.tr(),
-                            value = lang,
-                            groupValue = LanguageManager.currentLanguage,
-                            onSelected = { LanguageManager.setLanguage(it) },
-                            colors = colors
-                        )
-                    }
-                }
-            }
-        }
-
-        // 4. Settings Group: பட்டியல் / அச்சு மொழி (Print & Billing Language - Brick Wall Decoupled)
-        item(key = "billing_language_group") {
-            ElvanSectionContainer {
-                ElvanSettingsSection(
-                    title = "${K.pattiyalmozhi.tr()} (${currentMode.displayName()})",
-                    colors = colors
-                ) {
-                    BillingLanguage.entries.forEachIndexed { index, bLang ->
-                        if (index > 0) ElvanSettingsDivider(colors = colors)
-                        ElvanRadioSettingsRow(
-                            title = bLang.displayName,
-                            description = "${K.munvaraivu.tr()}: ${if (bLang == BillingLanguage.TAMIL) "பட்டியல்" else "Invoice"}",
-                            value = bLang,
-                            groupValue = billingConfig.primaryLanguage,
-                            onSelected = { AchuMozhiManager.setPrimaryLanguage(currentMode, it) },
-                            colors = colors
-                        )
-                    }
-                }
-            }
-        }
-
-        // 5. Settings Group: தரவுத்தளம் (Database & Storage)
-        item(key = "database_group") {
-            ElvanSectionContainer {
-                ElvanSettingsSection(
-                    title = K.tharavuthalam.tr(),
-                    colors = colors
-                ) {
-                    ElvanSettingsRow(
-                        icon = MaterialSymbols.Rounded.Storage,
-                        title = "${K.thanithTharavuthalam.tr()} (${currentMode.displayName()})",
-                        description = DatabaseProvider.currentDatabaseName(),
-                        onClick = {},
-                        colors = colors
-                    )
-                    ElvanSettingsDivider(colors = colors)
-                    ElvanSettingsRow(
-                        icon = MaterialSymbols.Rounded.SwapHoriz,
-                        title = K.endhachCheyalmurai.tr(),
-                        description = K.thanithTharavuVilakkam.tr(),
-                        onClick = { ModeManager.toggleMode() },
-                        customTrailing = {
-                            Text(
-                                text = if (ModeManager.isKooli) K.noolachuPattu.tr() else K.noolachuKooli.tr(),
-                                style = TextStyle(
-                                    fontFamily = ff,
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = colors.accent
-                                )
-                            )
-                        },
-                        colors = colors
-                    )
-                }
-            }
-        }
-
-        // 6. Settings Group: செயலி குறித்து (About & Brand)
-        item(key = "about_group") {
-            ElvanSectionContainer {
-                ElvanSettingsSection(
-                    title = K.kurithu.tr(),
-                    colors = colors
-                ) {
-                    ElvanSettingsRow(
-                        icon = MaterialSymbols.Rounded.Info,
-                        title = K.appPeyar.tr(),
-                        description = "${K.pathippu.tr()} 1.0.0",
-                        onClick = {},
-                        colors = colors
-                    )
-                    ElvanSettingsDivider(colors = colors)
-                    ElvanSettingsRow(
-                        icon = MaterialSymbols.Rounded.Palette,
-                        title = K.elvanSansFont.tr(),
-                        description = K.senthamizhKolkaei.tr(),
-                        onClick = {},
-                        colors = colors
-                    )
-                }
-            }
-        }
-
-        // 7. Settings Group: வெளியேறு (Sign Out)
-        item(key = "signout_group") {
-            ElvanSectionContainer {
-                ElvanSettingsSection(
-                    colors = colors
-                ) {
-                    ElvanSettingsRow(
-                        icon = MaterialSymbols.Rounded.Logout,
-                        title = K.veliyaeru.tr(),
-                        description = K.veliyaeruVilakkam.tr(),
-                        onClick = { showSignOutDialog = true },
-                        titleColor = Color(0xFFBA1A1A),
-                        iconTint = Color(0xFFBA1A1A),
-                        colors = colors
-                    )
-                }
-            }
+    val handleBack: () -> Unit = {
+        if (currentRoute != SettingsRoute.Hub) {
+            currentRoute = SettingsRoute.Hub
+        } else {
+            onBack()
         }
     }
 
-    // Sign Out Action Sheet Popup (Matching Neram)
+    AppBackHandler(enabled = true) {
+        handleBack()
+    }
+
+    val pageTitle = when (currentRoute) {
+        SettingsRoute.Hub -> K.amaippugal.tr()
+        SettingsRoute.Display -> K.thoatram.tr()
+        SettingsRoute.Language -> K.cheyaliMozhi.tr()
+        SettingsRoute.Merchant -> K.niruvanaAmaippugal.tr()
+        SettingsRoute.KooliIdentity -> K.kooliNiruvanaAdaiyaalangal.tr()
+        SettingsRoute.PattuIdentity -> K.pattuNiruvanaAdaiyaalangal.tr()
+        SettingsRoute.Address -> K.mugavari.tr()
+        SettingsRoute.Bank -> K.vangi.tr()
+        SettingsRoute.InvoiceCreation -> K.uruvaakkuPtn.tr()
+        SettingsRoute.UserProfile -> K.payanar.tr()
+        SettingsRoute.StorageBackup -> K.chaemippuMatrumKaappu.tr()
+        SettingsRoute.Security -> K.paadhugaappu.tr()
+        SettingsRoute.AboutDeveloper -> K.menporulVadivaalar.tr()
+        SettingsRoute.AboutApp -> K.cheyaliPatri.tr()
+    }
+
+    ElvanSubShell(
+        title = pageTitle,
+        onBack = handleBack,
+        scrollState = if (currentRoute == SettingsRoute.Hub) hubScrollState else subpageScrollState
+    ) {
+        when (currentRoute) {
+            SettingsRoute.Hub -> SettingsHubScreen(
+                onNavigate = { currentRoute = it },
+                onSignOutClick = { showSignOutDialog = true },
+                scrollState = hubScrollState,
+                colors = colors
+            )
+            SettingsRoute.Display -> DisplaySettingsScreen(colors)
+            SettingsRoute.Language -> LanguageSettingsScreen(colors)
+            SettingsRoute.Merchant -> MerchantSettingsScreen(colors)
+            SettingsRoute.KooliIdentity -> KooliIdentityScreen(colors)
+            SettingsRoute.PattuIdentity -> PattuIdentityScreen(colors)
+            SettingsRoute.Address -> AddressSettingsScreen(colors)
+            SettingsRoute.Bank -> BankSettingsScreen(colors)
+            SettingsRoute.InvoiceCreation -> InvoiceCreationSettingsScreen(colors)
+            SettingsRoute.UserProfile -> UserProfileSettingsScreen(colors)
+            SettingsRoute.StorageBackup -> StorageBackupSettingsScreen(colors)
+            SettingsRoute.Security -> SecuritySettingsScreen(colors)
+            SettingsRoute.AboutDeveloper -> AboutDeveloperScreen(colors)
+            SettingsRoute.AboutApp -> AboutAppScreen(colors)
+        }
+    }
+
     if (showSignOutDialog) {
         ElvanActionSheet(
             title = K.veliyaeruUrudhi.tr(),

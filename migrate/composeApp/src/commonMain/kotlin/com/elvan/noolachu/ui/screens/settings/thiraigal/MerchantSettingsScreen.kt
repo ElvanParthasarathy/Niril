@@ -1,0 +1,408 @@
+package com.elvan.noolachu.ui.screens.settings.thiraigal
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.elvan.noolachu.core.mode.AppMode
+import com.elvan.noolachu.core.mode.LocalAppMode
+import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
+import com.elvan.noolachu.localization.K
+import com.elvan.noolachu.localization.tr
+import com.elvan.noolachu.theme.LocalAppFontFamily
+import com.elvan.noolachu.theme.ShellColors
+import com.elvan.noolachu.theme.ShellDefaults
+import com.elvan.noolachu.theme.rememberShellColors
+import com.elvan.noolachu.ui.components.shell.*
+import com.elvan.noolachu.ui.navigation.MaterialSymbols
+
+/**
+ * Company Settings (நிறுவன அமைப்புகள்) Screen matching Flutter's `niruvana_amaippugal_thirai.dart` 1:1.
+ * Supports smooth accordion edit expand/collapse with bilingual values and live repository updates.
+ */
+@Composable
+fun MerchantSettingsScreen(
+    colors: ShellColors = rememberShellColors()
+) {
+    val currentMode = LocalAppMode.current
+    val profile = NiruvanaTharavugalRepository.getProfile(currentMode)
+    val ff = LocalAppFontFamily.current
+
+    var editingSection by remember { mutableStateOf<String?>(null) }
+
+    // Temporary editing states
+    var tempPrimary by remember { mutableStateOf("") }
+    var tempSecondary by remember { mutableStateOf("") }
+    var showExtraPhone by remember { mutableStateOf(false) }
+
+    val isBilingual = profile.iruMozhi
+    val isPattu = currentMode == AppMode.PATTU
+
+    fun saveField(action: () -> Unit) {
+        val updated = profile.copy()
+        action()
+        NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
+        editingSection = null
+        showExtraPhone = false
+    }
+
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // ── Top Profile Switcher Pill ──
+        item {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(20.dp)),
+                shape = RoundedCornerShape(20.dp),
+                color = colors.surface,
+                shadowElevation = 0.dp
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .clip(CircleShape)
+                            .background(colors.iconBg),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = MaterialSymbols.Rounded.Description,
+                            contentDescription = null,
+                            tint = colors.textPrimary,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = profile.getPrimary("niruvanathinPeyar").ifEmpty { K.tharpoadhaiyaNiruvanam.tr() },
+                            style = TextStyle(
+                                fontFamily = ff,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                            color = colors.textPrimary,
+                            maxLines = 1
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = if (isPattu) K.nirilPattu.tr() else K.nirilKooli.tr(),
+                            style = TextStyle(
+                                fontFamily = ff,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Normal
+                            ),
+                            color = colors.textPrimary.copy(alpha = 0.5f)
+                        )
+                    }
+                }
+            }
+        }
+
+        // ── Form Section ──
+        item {
+            ElvanSettingsSection(colors = colors) {
+                // 1. Business Name (நிறுவனத்தின் பெயர்)
+                ElvanSettingsAnimatedExpand(
+                    isEditing = editingSection == "niruvanathinPeyar",
+                    displayContent = {
+                        ElvanSettingsDisplayRow(
+                            title = K.niruvanathinPeyar.tr(),
+                            primaryValue = profile.getPrimary("niruvanathinPeyar"),
+                            secondaryValue = if (isBilingual) profile.getSecondary("niruvanathinPeyar") else null,
+                            onEdit = {
+                                tempPrimary = profile.getPrimary("niruvanathinPeyar")
+                                tempSecondary = profile.getSecondary("niruvanathinPeyar")
+                                editingSection = "niruvanathinPeyar"
+                            },
+                            colors = colors
+                        )
+                    },
+                    editContent = {
+                        ElvanSettingsEditContainer(
+                            title = K.niruvanathinPeyar.tr(),
+                            onCancel = { editingSection = null },
+                            onSave = {
+                                saveField {
+                                    profile.setBilingual("niruvanathinPeyar", "ta", tempPrimary)
+                                    profile.setBilingual("niruvanathinPeyar", "en", tempSecondary)
+                                }
+                            },
+                            colors = colors
+                        ) {
+                            ElvanSettingsTextField(
+                                label = "${K.niruvanathinPeyar.tr()} (${K.thamizh.tr()})",
+                                value = tempPrimary,
+                                onValueChange = { tempPrimary = it },
+                                colors = colors
+                            )
+                            if (isBilingual) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                ElvanSettingsTextField(
+                                    label = "${K.niruvanathinPeyar.tr()} (${K.aangilam.tr()})",
+                                    value = tempSecondary,
+                                    onValueChange = { tempSecondary = it },
+                                    colors = colors
+                                )
+                            }
+                        }
+                    }
+                )
+
+                ElvanSettingsDivider(colors = colors)
+
+                // 2. Short Business Name (குறுகிய நிறுவனப் பெயர்)
+                ElvanSettingsAnimatedExpand(
+                    isEditing = editingSection == "kurumPeyar",
+                    displayContent = {
+                        ElvanSettingsDisplayRow(
+                            title = K.kurugiyaNiruvanaPeyar.tr(),
+                            primaryValue = profile.kurumPeyar,
+                            onEdit = {
+                                tempPrimary = profile.kurumPeyar
+                                editingSection = "kurumPeyar"
+                            },
+                            colors = colors
+                        )
+                    },
+                    editContent = {
+                        ElvanSettingsEditContainer(
+                            title = K.kurugiyaNiruvanaPeyar.tr(),
+                            onCancel = { editingSection = null },
+                            onSave = {
+                                saveField {
+                                    profile.kurumPeyar = tempPrimary
+                                }
+                            },
+                            colors = colors
+                        ) {
+                            ElvanSettingsTextField(
+                                label = K.kurugiyaNiruvanaPeyar.tr(),
+                                value = tempPrimary,
+                                onValueChange = { tempPrimary = it },
+                                colors = colors
+                            )
+                        }
+                    }
+                )
+
+                ElvanSettingsDivider(colors = colors)
+
+                // 3. Tagline (அடைமொழி)
+                ElvanSettingsAnimatedExpand(
+                    isEditing = editingSection == "adaimozhi",
+                    displayContent = {
+                        ElvanSettingsDisplayRow(
+                            title = K.adaimozhi.tr(),
+                            primaryValue = profile.getPrimary("adaimozhi"),
+                            secondaryValue = if (isBilingual) profile.getSecondary("adaimozhi") else null,
+                            onEdit = {
+                                tempPrimary = profile.getPrimary("adaimozhi")
+                                tempSecondary = profile.getSecondary("adaimozhi")
+                                editingSection = "adaimozhi"
+                            },
+                            colors = colors
+                        )
+                    },
+                    editContent = {
+                        ElvanSettingsEditContainer(
+                            title = K.adaimozhi.tr(),
+                            onCancel = { editingSection = null },
+                            onSave = {
+                                saveField {
+                                    profile.setBilingual("adaimozhi", "ta", tempPrimary)
+                                    profile.setBilingual("adaimozhi", "en", tempSecondary)
+                                }
+                            },
+                            colors = colors
+                        ) {
+                            ElvanSettingsTextField(
+                                label = if (isBilingual) "${K.adaimozhi.tr()} (${K.thamizh.tr()})" else K.adaimozhi.tr(),
+                                value = tempPrimary,
+                                onValueChange = { tempPrimary = it },
+                                colors = colors
+                            )
+                            if (isBilingual) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                ElvanSettingsTextField(
+                                    label = "${K.adaimozhi.tr()} (${K.aangilam.tr()})",
+                                    value = tempSecondary,
+                                    onValueChange = { tempSecondary = it },
+                                    colors = colors
+                                )
+                            }
+                        }
+                    }
+                )
+
+                ElvanSettingsDivider(colors = colors)
+
+                // 4. Phone Numbers (பேசி எண்கள்)
+                ElvanSettingsAnimatedExpand(
+                    isEditing = editingSection == "tholaipesigal",
+                    displayContent = {
+                        ElvanSettingsDisplayRow(
+                            title = K.paesiEnkal.tr(),
+                            primaryValue = profile.tholaipaesi1,
+                            secondaryValue = profile.tholaipaesi2.ifEmpty { null },
+                            onEdit = {
+                                tempPrimary = profile.tholaipaesi1
+                                tempSecondary = profile.tholaipaesi2
+                                showExtraPhone = profile.tholaipaesi2.isNotEmpty()
+                                editingSection = "tholaipesigal"
+                            },
+                            colors = colors
+                        )
+                    },
+                    editContent = {
+                        ElvanSettingsEditContainer(
+                            title = K.paesiEnkal.tr(),
+                            onCancel = {
+                                editingSection = null
+                                showExtraPhone = false
+                            },
+                            onSave = {
+                                saveField {
+                                    profile.tholaipaesi1 = tempPrimary
+                                    profile.tholaipaesi2 = if (showExtraPhone) tempSecondary else ""
+                                }
+                            },
+                            colors = colors
+                        ) {
+                            ElvanSettingsTextField(
+                                label = K.paesiEn.tr(),
+                                value = tempPrimary,
+                                onValueChange = { tempPrimary = it },
+                                colors = colors
+                            )
+                            if (showExtraPhone) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                ElvanSettingsTextField(
+                                    label = K.maatruPaesiEn.tr(),
+                                    value = tempSecondary,
+                                    onValueChange = { tempSecondary = it },
+                                    colors = colors
+                                )
+                            } else {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                TextButton(
+                                    onClick = { showExtraPhone = true },
+                                    shape = RoundedCornerShape(50)
+                                ) {
+                                    Text(
+                                        text = "+ ${K.chaer.tr()} (${K.maatruPaesiEn.tr()})",
+                                        style = TextStyle(
+                                            fontFamily = ff,
+                                            fontSize = 13.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            color = colors.accent
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+                )
+
+                ElvanSettingsDivider(colors = colors)
+
+                // 5. Email (மின்னஞ்சல்)
+                ElvanSettingsAnimatedExpand(
+                    isEditing = editingSection == "minnanjal",
+                    displayContent = {
+                        ElvanSettingsDisplayRow(
+                            title = K.minnanjal.tr(),
+                            primaryValue = profile.minnanjal,
+                            onEdit = {
+                                tempPrimary = profile.minnanjal
+                                editingSection = "minnanjal"
+                            },
+                            colors = colors
+                        )
+                    },
+                    editContent = {
+                        ElvanSettingsEditContainer(
+                            title = K.minnanjal.tr(),
+                            onCancel = { editingSection = null },
+                            onSave = {
+                                saveField {
+                                    profile.minnanjal = tempPrimary
+                                }
+                            },
+                            colors = colors
+                        ) {
+                            ElvanSettingsTextField(
+                                label = K.minnanjal.tr(),
+                                value = tempPrimary,
+                                onValueChange = { tempPrimary = it },
+                                colors = colors
+                            )
+                        }
+                    }
+                )
+
+                // 6. GSTIN (Pattu only)
+                if (isPattu) {
+                    ElvanSettingsDivider(colors = colors)
+
+                    ElvanSettingsAnimatedExpand(
+                        isEditing = editingSection == "gstin",
+                        displayContent = {
+                            ElvanSettingsDisplayRow(
+                                title = K.gstinVariAdaiyaalaEn.tr(),
+                                primaryValue = profile.gstin,
+                                onEdit = {
+                                    tempPrimary = profile.gstin
+                                    editingSection = "gstin"
+                                },
+                                colors = colors
+                            )
+                        },
+                        editContent = {
+                            ElvanSettingsEditContainer(
+                                title = K.gstinVariAdaiyaalaEn.tr(),
+                                onCancel = { editingSection = null },
+                                onSave = {
+                                    saveField {
+                                        profile.gstin = tempPrimary.uppercase()
+                                    }
+                                },
+                                colors = colors
+                            ) {
+                                ElvanSettingsTextField(
+                                    label = K.gstinVariAdaiyaalaEn.tr(),
+                                    value = tempPrimary,
+                                    onValueChange = { tempPrimary = it },
+                                    colors = colors
+                                )
+                            }
+                        }
+                    )
+                }
+            }
+        }
+    }
+}

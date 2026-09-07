@@ -456,7 +456,8 @@ fun ElvanSettingsAnimatedExpand(
 @Composable
 fun ElvanSettingsDisplayRow(
     title: String,
-    primaryValue: String,
+    primaryValue: String = "",
+    value: String = primaryValue,
     modifier: Modifier = Modifier,
     secondaryValue: String? = null,
     onEdit: (() -> Unit)? = null,
@@ -468,6 +469,7 @@ fun ElvanSettingsDisplayRow(
 ) {
     val ff = LocalAppFontFamily.current
     val defaultIconBg = colors.iconBg
+    val effectiveValue = if (value.isNotEmpty()) value else primaryValue
 
     Surface(
         modifier = modifier
@@ -506,9 +508,9 @@ fun ElvanSettingsDisplayRow(
                     primaryWidget()
                     Spacer(modifier = Modifier.height(4.dp))
                 }
-                if (primaryWidget == null || primaryValue.isNotEmpty()) {
+                if (primaryWidget == null || effectiveValue.isNotEmpty()) {
                     Text(
-                        text = if (primaryValue.isEmpty()) "-" else primaryValue,
+                        text = if (effectiveValue.isEmpty()) "-" else effectiveValue,
                         style = TextStyle(
                             fontFamily = ff,
                             fontSize = 14.sp,
@@ -771,3 +773,73 @@ fun ElvanSettingsTextField(
         }
     }
 }
+
+/**
+ * ElvanSimpleSettingsRow — A generic row with title, description, and trailing widget matching Flutter's `ElvanSimpleSettingsRow`.
+ */
+@Composable
+fun ElvanSimpleSettingsRow(
+    title: String,
+    modifier: Modifier = Modifier,
+    description: String? = null,
+    trailing: (@Composable () -> Unit)? = null,
+    onClick: (() -> Unit)? = null,
+    colors: ShellColors = rememberShellColors()
+) {
+    val ff = LocalAppFontFamily.current
+
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .then(
+                if (onClick != null) Modifier.clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = ShellDefaults.ripple(colors, bounded = true),
+                    onClick = onClick
+                ) else Modifier
+            ),
+        color = Color.Transparent
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = title,
+                    style = TextStyle(
+                        fontFamily = ff,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
+                        lineHeight = 20.sp
+                    ),
+                    color = colors.textPrimary
+                )
+                if (!description.isNullOrEmpty()) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = description,
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Normal,
+                            lineHeight = 16.sp
+                        ),
+                        color = colors.textPrimary.copy(alpha = 0.5f)
+                    )
+                }
+            }
+
+            if (trailing != null) {
+                Spacer(modifier = Modifier.width(16.dp))
+                trailing()
+            }
+        }
+    }
+}
+

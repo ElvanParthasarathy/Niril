@@ -3,17 +3,20 @@ package com.elvan.noolachu.localization
 import androidx.compose.runtime.*
 import com.elvan.noolachu.localization.language_keys.en
 import com.elvan.noolachu.localization.language_keys.ta
+import com.elvan.noolachu.localization.language_keys.taLatn
 
 /**
  * Supported UI Language codes: Tamil and English.
  */
 enum class Language(val code: String, val displayName: String) {
+    SYSTEM("system", "தானியங்கி அமைப்பு"),
     TAMIL("ta", "தமிழ்"),
-    ENGLISH("en", "English");
+    ENGLISH("en", "English"),
+    TAMIL_LATIN("ta-Latn", "Tamil Latin");
 
     companion object {
         fun fromCode(code: String): Language =
-            entries.firstOrNull { it.code == code } ?: TAMIL
+            entries.firstOrNull { it.code == code } ?: SYSTEM
     }
 }
 
@@ -73,6 +76,7 @@ fun String.trWithLang(langCode: String): String {
     return when (langCode) {
         "ta" -> ta[this] ?: this
         "en" -> en[this] ?: this
+        "ta-Latn" -> taLatn[this] ?: ta[this] ?: this
         else -> ta[this] ?: en[this] ?: this
     }
 }
