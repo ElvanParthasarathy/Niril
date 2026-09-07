@@ -1,0 +1,71 @@
+package com.elvan.noolachu.localization.language_keys
+
+import com.elvan.noolachu.localization.K
+
+val ta: Map<String, String> = mapOf(
+    // App & Modes
+    K.appPeyar to "நூலச்சு",
+    K.noolachu to "நூலச்சு",
+    K.noolachuKooli to "நூலச்சு கூலி",
+    K.noolachuPattu to "நூலச்சு பட்டு",
+    K.kooli to "கூலி",
+    K.pattu to "பட்டு",
+    K.endhachCheyalmurai to "செயல்முறைத் தேர்வு",
+
+    // System, Database & Language
+    K.tharavuthalam to "தரவுத்தளம்",
+    K.cheyaliMozhi to "செயலி மொழி",
+    K.pattiyalmozhi to "பட்டியல் / அச்சு மொழி",
+    K.mozhi to "மொழி",
+    K.iruMozhi to "இருமொழி முறை",
+
+    // Navigation & Common Actions
+    K.mugappu to "முகப்பு",
+    K.amaippugal to "அமைப்புகள்",
+    K.thaedu to "தேடுக",
+    K.chaemi to "சேமி",
+    K.azhi to "அழி",
+    K.thiruthu to "திருத்து",
+    K.kaividu to "கைவிடு",
+    K.urudhi to "உறுதிசெய்",
+    K.aetrugiradhu to "ஏற்றுகிறது...",
+    K.pizhai to "ஏதோ தவறு நிகழ்ந்தது",
+    K.meendumMuyal to "மீண்டும் முயற்சி",
+    K.tharavuIllai to "தரவு இல்லை",
+    K.irulNilai to "இருள் நிலை",
+    K.olirNilai to "ஒளிர் நிலை",
+    K.thaaniyangki to "தானியங்கி",
+    K.thaaniyangkiVilakkam to "சாதனத்தின் அமைப்புக்கேற்ப மாறும்",
+    K.thoatram to "தோற்றம்",
+    K.kurithu to "குறித்து",
+    K.pinchel to "பின்செல்",
+    K.patti to "பட்டி",
+    K.melum to "மேலும்",
+    K.thanithTharavuthalam to "தனித்த தரவுத்தளம்",
+    K.thanithTharavuVilakkam to "கூலி மற்றும் பட்டு தரவுகள் தனித்தனியாகப் பிரிக்கப்பட்டுள்ளன",
+    K.cheyaliMozhiVilakkam to "செயலி திரை இடைமுக மொழி",
+    K.pattiyalmozhiVilakkam to "அச்சு மற்றும் பகிர்வு மொழி (தனித்த பிரிப்பு)",
+    K.senthamizh to "செந்தமிழ்",
+    K.aangilam to "ஆங்கிலம்",
+    K.pathippu to "பதிப்பு",
+    K.elvanSansFont to "எல்வன் சான்சு எழுத்துரு",
+    K.senthamizhKolkaei to "செந்தமிழ்க் கொள்கை (வடசொல் கலப்பற்ற தூய தமிழ்)",
+    K.tharavuKappagam to "தரவுக் காப்பகம்",
+    K.maatru to "மாற்று",
+
+    // Invoicing, Goods & Labor
+    K.pattiyal to "பட்டியல்",
+    K.patrucheettu to "பற்றுச்சீட்டு",
+    K.vaangunar to "வாங்குநர்",
+    K.porul to "பொருள்",
+    K.thogai to "தொகை",
+    K.vilai to "விலை",
+    K.alavu to "அளவு",
+    K.alavuVagai to "அளவு வகை",
+    K.alagu to "அலகு",
+    K.edai to "எடை",
+    K.naal to "நாள்",
+    K.thalaippu to "தலைப்பு",
+    K.munvaraivu to "முன்வரைவு",
+    K.gstVeedham to "GST வீதம்",
+)

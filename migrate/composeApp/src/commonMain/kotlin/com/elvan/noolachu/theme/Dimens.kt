@@ -1,0 +1,32 @@
+package com.elvan.noolachu.theme
+
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+
+object Dimens {
+    val ContentPadding = 16.dp
+    val SectionSpacing = 16.dp
+
+    val ContentPaddingBottom: Dp
+        @Composable
+        get() {
+            val navBarsPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+            return 110.dp + navBarsPadding
+        }
+
+    val SubpageContentPaddingBottom: Dp
+        @Composable
+        get() {
+            val navBarsPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+            return 32.dp + navBarsPadding
+        }
+
+    val ContentPaddingTop = 85.dp
+    val HeaderMarginTop = 20.dp
+    val HeaderGap = 8.dp
+    val HeaderPillPadding = 12.dp
+}

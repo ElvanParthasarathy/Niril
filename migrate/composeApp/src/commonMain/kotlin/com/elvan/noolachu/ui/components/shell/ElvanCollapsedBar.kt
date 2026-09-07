@@ -1,0 +1,142 @@
+package com.elvan.noolachu.ui.components.shell
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
+import com.elvan.noolachu.localization.K
+import com.elvan.noolachu.localization.tr
+import com.elvan.noolachu.theme.LocalAppFontFamily
+import com.elvan.noolachu.theme.ShellColors
+import com.elvan.noolachu.theme.preventBrokenLigatures
+import com.elvan.noolachu.ui.navigation.MaterialSymbols
+
+@Composable
+fun ElvanTopBarIconButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier.size(40.dp)
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun ElvanCollapsedBar(
+    scrollOffset: Float,
+    collisionOffsetPx: Float,
+    colors: ShellColors,
+    expandedHeight: Dp = 280.dp,
+    title: String? = null,
+    onBack: (() -> Unit)? = null,
+    navOpacity: Float = 1.0f,
+    hasActions: Boolean = false,
+    actions: @Composable RowScope.() -> Unit = {}
+) {
+    val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    val ceiling = statusBarHeight + 20.dp
+    val density = LocalDensity.current
+    val ceilingPx = with(density) { ceiling.toPx() }
+
+    val expandedHeightPx = with(density) { expandedHeight.toPx() }
+    val currentHeightPx = expandedHeightPx - scrollOffset
+    val currentTopPx = currentHeightPx - with(density) { 64.dp.toPx() }
+
+    val isPinned = currentTopPx <= ceilingPx
+    val finalTopPx = if (isPinned) ceilingPx else currentTopPx
+    val finalTopDp = with(density) { finalTopPx.toDp() }
+
+    val liftStartOffsetPx = collisionOffsetPx - with(density) { 4.dp.toPx() }
+    val liftProgress = if (scrollOffset > liftStartOffsetPx) {
+        ((scrollOffset - liftStartOffsetPx) / with(density) { 12.dp.toPx() }).coerceIn(0f, 1f)
+    } else {
+        0f
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = finalTopDp, start = 16.dp, end = 16.dp)
+            .zIndex(150f)
+            .graphicsLayer {
+                this.alpha = navOpacity
+            },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        // Left side (Back Button / Title)
+        if (onBack != null || title != null) {
+            Row(
+                modifier = Modifier.weight(1f, fill = false),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (onBack != null) {
+                    ElvanPill(liftProgress = liftProgress, colors = colors, modifier = Modifier.size(50.dp)) {
+                        ElvanTopBarIconButton(onClick = onBack) {
+                            Icon(
+                                imageVector = MaterialSymbols.Rounded.ArrowBack,
+                                contentDescription = K.pinchel.tr(),
+                                tint = colors.textPrimary,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+                    }
+                }
+                if (title != null) {
+                    Text(
+                        text = title.preventBrokenLigatures(),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = TextStyle(
+                            fontFamily = LocalAppFontFamily.current,
+                            fontSize = 22.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.textPrimary
+                        ),
+                        modifier = Modifier
+                            .padding(start = if (onBack != null) 12.dp else 8.dp, end = if (hasActions) 8.dp else 0.dp)
+                            .graphicsLayer {
+                                this.alpha = liftProgress
+                            }
+                    )
+                }
+            }
+        } else {
+            Spacer(modifier = Modifier.weight(1f, fill = false))
+        }
+
+        // Right side (Action Buttons Pill) - ONLY if hasActions is true!
+        if (hasActions) {
+            ElvanPill(liftProgress = liftProgress, colors = colors) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    actions()
+                }
+            }
+        }
+    }
+}
+

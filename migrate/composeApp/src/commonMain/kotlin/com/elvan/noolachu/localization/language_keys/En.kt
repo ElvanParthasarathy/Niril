@@ -1,0 +1,71 @@
+package com.elvan.noolachu.localization.language_keys
+
+import com.elvan.noolachu.localization.K
+
+val en: Map<String, String> = mapOf(
+    // App & Modes
+    K.appPeyar to "Noolachu",
+    K.noolachu to "Noolachu",
+    K.noolachuKooli to "Noolachu Coolie",
+    K.noolachuPattu to "Noolachu Silk",
+    K.kooli to "Coolie",
+    K.pattu to "Silk",
+    K.endhachCheyalmurai to "Select Mode",
+
+    // System, Database & Language
+    K.tharavuthalam to "Database",
+    K.cheyaliMozhi to "App UI Language",
+    K.pattiyalmozhi to "Billing / Print Language",
+    K.mozhi to "Language",
+    K.iruMozhi to "Bilingual Mode",
+
+    // Navigation & Common Actions
+    K.mugappu to "Home",
+    K.amaippugal to "Settings",
+    K.thaedu to "Search",
+    K.chaemi to "Save",
+    K.azhi to "Delete",
+    K.thiruthu to "Edit",
+    K.kaividu to "Cancel",
+    K.urudhi to "Confirm",
+    K.aetrugiradhu to "Loading...",
+    K.pizhai to "Something went wrong",
+    K.meendumMuyal to "Retry",
+    K.tharavuIllai to "No data available",
+    K.irulNilai to "Dark Mode",
+    K.olirNilai to "Light Mode",
+    K.thaaniyangki to "System Default",
+    K.thaaniyangkiVilakkam to "Follow device appearance",
+    K.thoatram to "Appearance",
+    K.kurithu to "About",
+    K.pinchel to "Back",
+    K.patti to "Menu",
+    K.melum to "More",
+    K.thanithTharavuthalam to "Isolated Database",
+    K.thanithTharavuVilakkam to "Coolie and Silk databases are strictly separated",
+    K.cheyaliMozhiVilakkam to "App UI language for screens",
+    K.pattiyalmozhiVilakkam to "Print & Share language (decoupled)",
+    K.senthamizh to "Pure Tamil",
+    K.aangilam to "English",
+    K.pathippu to "Version",
+    K.elvanSansFont to "Elvan Sans Typography",
+    K.senthamizhKolkaei to "Pure Senthamizh Linguistic Policy",
+    K.tharavuKappagam to "Storage & Data",
+    K.maatru to "Switch",
+
+    // Invoicing, Goods & Labor
+    K.pattiyal to "Invoice",
+    K.patrucheettu to "Receipt",
+    K.vaangunar to "Customer",
+    K.porul to "Product",
+    K.thogai to "Amount",
+    K.vilai to "Price",
+    K.alavu to "Quantity",
+    K.alavuVagai to "Measure Type",
+    K.alagu to "Unit",
+    K.edai to "Weight",
+    K.naal to "Date",
+    K.thalaippu to "Header",
+    K.munvaraivu to "Preview",
+    K.gstVeedham to "GST Rate",
+)

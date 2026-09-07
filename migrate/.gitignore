@@ -1,0 +1,7 @@
+.gradle/
+build/
+.kotlin/
+composeApp/build/
+local.properties
+.idea/
+*.hprof
