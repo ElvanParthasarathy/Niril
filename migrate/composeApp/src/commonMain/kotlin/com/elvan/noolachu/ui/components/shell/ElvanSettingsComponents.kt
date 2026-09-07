@@ -7,7 +7,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -23,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.ShellColors
+import com.elvan.noolachu.theme.ShellDefaults
 import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
 
@@ -42,8 +42,7 @@ fun ElvanSettingsSection(
     colors: ShellColors = rememberShellColors(),
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val isDark = colors.isDark
-    val finalCardColor = cardColor ?: if (isDark) Color(0xFF111111) else Color.White
+    val finalCardColor = cardColor ?: colors.surface
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -104,18 +103,16 @@ fun ElvanSettingsRow(
     descColor: Color? = null,
     colors: ShellColors = rememberShellColors()
 ) {
-    val isDark = colors.isDark
-    val defaultIconBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.06f)
+    val defaultIconBg = iconBgColor ?: colors.iconBg
     val defaultIconTint = iconTint ?: (titleColor ?: colors.textPrimary)
     val ff = LocalAppFontFamily.current
-    val rippleColor = if (isDark) Color.White.copy(alpha = 0.16f) else Color.Black.copy(alpha = 0.08f)
 
     Surface(
         modifier = modifier
             .fillMaxWidth()
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(color = rippleColor, bounded = true),
+                indication = ShellDefaults.ripple(colors, bounded = true),
                 onClick = onClick
             ),
         color = Color.Transparent
@@ -207,13 +204,10 @@ fun ElvanSettingsDivider(
     endIndent: Dp = 20.dp,
     colors: ShellColors = rememberShellColors()
 ) {
-    val isDark = colors.isDark
-    val dividerColor = if (isDark) Color.White.copy(alpha = 0.04f) else Color.Black.copy(alpha = 0.04f)
-
     HorizontalDivider(
         modifier = modifier.padding(start = indent, end = endIndent),
         thickness = 1.dp,
-        color = dividerColor
+        color = colors.divider
     )
 }
 
@@ -265,11 +259,9 @@ fun ElvanProfilePillCard(
     trailing: (@Composable () -> Unit)? = null,
     colors: ShellColors = rememberShellColors()
 ) {
-    val isDark = colors.isDark
-    val cardColor = if (isDark) Color(0xFF111111) else Color.White
-    val avatarBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.06f)
+    val cardColor = colors.surface
+    val avatarBg = colors.iconBg
     val ff = LocalAppFontFamily.current
-    val rippleColor = if (isDark) Color.White.copy(alpha = 0.16f) else Color.Black.copy(alpha = 0.08f)
 
     Surface(
         modifier = modifier
@@ -277,7 +269,7 @@ fun ElvanProfilePillCard(
             .clip(RoundedCornerShape(999.dp))
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(color = rippleColor, bounded = true),
+                indication = ShellDefaults.ripple(colors, bounded = true),
                 onClick = onClick
             ),
         shape = RoundedCornerShape(999.dp),
@@ -362,15 +354,13 @@ fun <T> ElvanRadioSettingsRow(
 ) {
     val isSelected = value == groupValue
     val ff = LocalAppFontFamily.current
-    val isDark = colors.isDark
-    val rippleColor = if (isDark) Color.White.copy(alpha = 0.16f) else Color.Black.copy(alpha = 0.08f)
 
     Surface(
         modifier = modifier
             .fillMaxWidth()
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(color = rippleColor, bounded = true),
+                indication = ShellDefaults.ripple(colors, bounded = true),
                 onClick = { onSelected(value) }
             ),
         color = Color.Transparent

@@ -125,7 +125,7 @@ fun ElvanShell(
 
                 // 2. Dragging DOWN: Expand header when list is at top
                 if (delta > 0f && isListAtTop && headerCollapsePx > 0f) {
-                    if (source == NestedScrollSource.Drag) {
+                    if (source == NestedScrollSource.UserInput) {
                         isHeaderExpanded = true
                         val newCollapse = (headerCollapsePx - delta).coerceIn(0f, handoffShrinkOffsetPx)
                         val consumedY = -(newCollapse - headerCollapsePx)
@@ -137,7 +137,7 @@ fun ElvanShell(
                 }
 
                 // 3. Brick Wall Brake
-                if (delta > 0f && source != NestedScrollSource.Drag) {
+                if (delta > 0f && source != NestedScrollSource.UserInput) {
                     if (isListAtTop && headerCollapsePx >= handoffShrinkOffsetPx) {
                         return Offset(0f, delta)
                     }
@@ -146,7 +146,7 @@ fun ElvanShell(
                 // 4. Navbar hide/show logic
                 if (delta > 1f && !isNavbarVisible) {
                     isNavbarVisible = true
-                } else if (delta < -2f && isNavbarVisible && isFlinging && source == NestedScrollSource.Fling) {
+                } else if (delta < -2f && isNavbarVisible && isFlinging && source == NestedScrollSource.SideEffect) {
                     val reachedPill = !isItem0 || currentScrollOffset >= (collisionOffsetPx - with(density) { 4.dp.toPx() })
                     if (reachedPill) {
                         isNavbarVisible = false
@@ -159,7 +159,7 @@ fun ElvanShell(
                 val isItem0 = scrollState.firstVisibleItemIndex == 0
                 val isListAtTop = isItem0 && scrollState.firstVisibleItemScrollOffset == 0
                 if (available.y > 0f && isListAtTop && headerCollapsePx > 0f) {
-                    if (source == NestedScrollSource.Drag) {
+                    if (source == NestedScrollSource.UserInput) {
                         val newCollapse = (headerCollapsePx - available.y).coerceIn(0f, handoffShrinkOffsetPx)
                         val consumedY = -(newCollapse - headerCollapsePx)
                         headerCollapsePx = newCollapse
@@ -362,8 +362,27 @@ fun ElvanShell(
                 )
             }
 
-            // Layer 4: Bottom Navigation Bar or Subpage Bottom Shadow Fade Mask
+            // Layer 4: Bottom Fade Mask and Navbar
+            val navBarsPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
             if (showNavbar) {
+                // Fade mask is ALWAYS present when showNavbar is true
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(96.dp + 60.dp + 16.dp + navBarsPadding)
+                        .zIndex(180f)
+                        .background(
+                            Brush.verticalGradient(
+                                0.0f to Color.Transparent,
+                                0.3f to colors.background.copy(alpha = 0.16f),
+                                0.65f to colors.background.copy(alpha = 0.55f),
+                                1.0f to colors.background
+                            )
+                        )
+                )
+
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
@@ -375,12 +394,13 @@ fun ElvanShell(
                     navbar()
                 }
             } else {
-                val navBarsPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+                // Subpages: Bottom Shadow Fade Mask above System Navigation Bar
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
                         .height(48.dp + navBarsPadding)
+                        .zIndex(180f)
                         .background(
                             Brush.verticalGradient(
                                 0.0f to Color.Transparent,

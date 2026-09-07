@@ -9,7 +9,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -29,6 +28,7 @@ import androidx.compose.ui.window.PopupProperties
 import com.elvan.noolachu.core.extensions.cssShadow
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.ShellColors
+import com.elvan.noolachu.theme.ShellDefaults
 
 object ElvanMenuState {
     var isMenuOpen by mutableStateOf(false)
@@ -64,8 +64,6 @@ fun ElvanPopupMenu(
     }
 
     if (!expanded) return
-
-    val isDark = colors.isDark || colors.background == Color.Black || colors.background.red < 0.2f
 
     var isVisible by remember { mutableStateOf(false) }
 
@@ -104,13 +102,12 @@ fun ElvanPopupMenu(
                     offsetY = 4.dp
                 )
                 .background(
-                    color = (if (isDark) Color(0xFF1E1E1E) else Color(0xFFFFFFFF)).copy(alpha = 0.92f),
+                    color = colors.floatingBg.copy(alpha = 0.92f),
                     shape = RoundedCornerShape(24.dp)
                 )
                 .border(
                     width = 0.5.dp,
-                    color = if (isDark) Color(0xFF333333).copy(alpha = 0.25f)
-                            else Color(0xFFFFFFFF).copy(alpha = 0.6f),
+                    color = colors.floatingBorder.copy(alpha = if (colors.isDark) 0.25f else 0.6f),
                     shape = RoundedCornerShape(24.dp)
                 )
                 .width(IntrinsicSize.Max)
@@ -118,8 +115,6 @@ fun ElvanPopupMenu(
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                val rippleColor = if (isDark) Color.White.copy(alpha = 0.16f) else Color.Black.copy(alpha = 0.08f)
-
                 items.forEachIndexed { index, item ->
                     val isFirst = index == 0
                     val isLast = index == items.size - 1
@@ -137,7 +132,7 @@ fun ElvanPopupMenu(
                             .clip(shape)
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
-                                indication = rememberRipple(color = rippleColor, bounded = true),
+                                indication = ShellDefaults.ripple(colors, bounded = true),
                                 onClick = {
                                     onDismissRequest()
                                     item.onClick()
@@ -149,7 +144,7 @@ fun ElvanPopupMenu(
                         Icon(
                             imageVector = item.icon,
                             contentDescription = item.title,
-                            tint = if (isDark) Color.White else Color(0xFF1A1A1A),
+                            tint = colors.textPrimary,
                             modifier = Modifier.size(22.dp)
                         )
                         Spacer(modifier = Modifier.width(12.dp))
@@ -157,7 +152,7 @@ fun ElvanPopupMenu(
                             text = item.title,
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Medium,
-                            color = if (isDark) Color.White else Color(0xFF1A1A1A),
+                            color = colors.textPrimary,
                             fontFamily = LocalAppFontFamily.current
                         )
                         Spacer(modifier = Modifier.width(16.dp))

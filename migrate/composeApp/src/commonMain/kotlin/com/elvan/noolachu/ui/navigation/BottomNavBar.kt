@@ -25,7 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.elvan.noolachu.core.extensions.cssShadow
 import com.elvan.noolachu.theme.LocalAppFontFamily
-import com.elvan.noolachu.theme.ThemeManager
+import com.elvan.noolachu.theme.ShellColors
+import com.elvan.noolachu.theme.rememberShellColors
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.floor
@@ -46,7 +47,8 @@ fun BottomNavBar(
 ) {
     val tabs = NavTab.entries
     val coroutineScope = rememberCoroutineScope()
-    val isDark = ThemeManager.isDark()
+    val colors = rememberShellColors()
+    val isDark = colors.isDark
 
     val itemCount = tabs.size
     val layoutWidth = if (itemCount <= 4) 67.dp else 61.dp
@@ -145,14 +147,12 @@ fun BottomNavBar(
                 .matchParentSize()
                 .cssShadow(color = Color.Black, alpha = 0.05f, blurRadius = 16.dp, offsetY = 4.dp)
                 .background(
-                    color = if (isDark) Color(0xFF1E1E1E).copy(alpha = 0.88f)
-                            else Color(0xFFFFFFFF).copy(alpha = 0.88f),
+                    color = colors.floatingBg.copy(alpha = 0.88f),
                     shape = CircleShape
                 )
                 .border(
                     width = 0.5.dp,
-                    color = if (isDark) Color(0xFF333333).copy(alpha = 0.15f)
-                            else Color(0xFFFFFFFF).copy(alpha = 0.6f),
+                    color = colors.floatingBorder.copy(alpha = if (isDark) 0.15f else 0.6f),
                     shape = CircleShape
                 )
         )
@@ -251,11 +251,7 @@ fun BottomNavBar(
                 ) {
                     tabs.forEachIndexed { index, tab ->
                         val isActive = index == activeVisualIndex
-                        val color = if (isActive) {
-                            if (isDark) Color.White else Color(0xFF1A1A1A)
-                        } else {
-                            if (isDark) Color(0xFF9E9E9E) else Color(0xFF7C7C80)
-                        }
+                        val color = if (isActive) colors.textPrimary else colors.textSecondary
 
                         Column(
                             modifier = Modifier

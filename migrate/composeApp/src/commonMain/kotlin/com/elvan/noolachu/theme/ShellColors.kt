@@ -16,7 +16,13 @@ data class ShellColors(
     val border: Color,
     val glassBorder: Color,
     val pillBackground: Color,
-    val pillBorder: Color
+    val pillBorder: Color,
+    // Centralized tokens (eliminate duplication)
+    val ripple: Color,
+    val floatingBg: Color,
+    val floatingBorder: Color,
+    val iconBg: Color,
+    val divider: Color,
 )
 
 @Composable
@@ -33,8 +39,13 @@ fun rememberShellColors(): ShellColors {
                 textSecondary = Color(0xFF9CA3AF),
                 border = Color(0x1AFFFFFF),
                 glassBorder = Color(0x1AFFFFFF),
-                pillBackground = Color(0xFF2C2C2E),
-                pillBorder = Color(0xFF333333)
+                pillBackground = Color(0xFF1E1E1E),
+                pillBorder = Color(0xFF333333),
+                ripple = Color.White,
+                floatingBg = Color(0xFF1E1E1E),
+                floatingBorder = Color(0xFF333333),
+                iconBg = Color.White.copy(alpha = 0.08f),
+                divider = Color.White.copy(alpha = 0.04f),
             )
         } else {
             ShellColors(
@@ -46,8 +57,13 @@ fun rememberShellColors(): ShellColors {
                 textSecondary = Color(0xFF6B7280),
                 border = Color(0x14000000),
                 glassBorder = Color(0x14000000),
-                pillBackground = Color(0xFFE5E5EA),
-                pillBorder = Color(0x33000000)
+                pillBackground = Color.White,
+                pillBorder = Color.White,
+                ripple = Color.Black,
+                floatingBg = Color.White,
+                floatingBorder = Color.White,
+                iconBg = Color.Black.copy(alpha = 0.06f),
+                divider = Color.Black.copy(alpha = 0.04f),
             )
         }
     }

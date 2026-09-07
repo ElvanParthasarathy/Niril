@@ -1,16 +1,14 @@
 package com.elvan.noolachu.theme
 
 import androidx.compose.foundation.LocalIndication
-import androidx.compose.material.ripple.LocalRippleTheme
-import androidx.compose.material.ripple.RippleAlpha
-import androidx.compose.material.ripple.RippleTheme
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
@@ -48,31 +46,6 @@ private val DarkColorScheme = darkColorScheme(
     error = ErrorDark
 )
 
-@Immutable
-private class NoolachuRippleTheme(
-    private val isDark: Boolean
-) : RippleTheme {
-    @Composable
-    override fun defaultColor(): Color =
-        if (isDark) Color.White else Color.Black
-
-    @Composable
-    override fun rippleAlpha(): RippleAlpha =
-        if (isDark) {
-            RippleAlpha(
-                draggedAlpha = 0.20f,
-                focusedAlpha = 0.16f,
-                hoveredAlpha = 0.10f,
-                pressedAlpha = 0.16f
-            )
-        } else {
-            RippleTheme.defaultRippleAlpha(
-                Color.Black,
-                lightTheme = true
-            )
-        }
-}
-
 @Composable
 fun NoolachuTheme(
     darkTheme: Boolean = ThemeManager.isDark(),
@@ -81,6 +54,8 @@ fun NoolachuTheme(
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val rippleColor = if (darkTheme) Color.White else Color.Black
 
+    // Fix for devices with large default font/display scaling
+    // We force the font scale to be at most 1.0f to maintain the intended design
     val currentDensity = LocalDensity.current
     val density = if (currentDensity.fontScale > 1.0f) {
         Density(currentDensity.density, fontScale = 1.0f)
@@ -96,12 +71,10 @@ fun NoolachuTheme(
             typography = NoolachuTypography,
             shapes = NoolachuShapes
         ) {
+            @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
             CompositionLocalProvider(
-                LocalRippleTheme provides NoolachuRippleTheme(isDark = darkTheme),
-                LocalIndication provides rememberRipple(
-                    bounded = true,
-                    color = rippleColor
-                )
+                LocalIndication provides ripple(color = rippleColor, bounded = true),
+                LocalRippleConfiguration provides RippleConfiguration(color = rippleColor)
             ) {
                 content()
             }
