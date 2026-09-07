@@ -62,19 +62,18 @@ fun PattuIdentityScreen(
         state = scrollState,
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(
-            start = Dimens.ContentPadding,
-            end = Dimens.ContentPadding,
             bottom = Dimens.SubpageContentPaddingBottom
         ),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens.SectionSpacing)
     ) {
         // Top spacer driven by One UI collapsible header
         item(key = "shell_top_spacer") {
             Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
         }
 
-        item {
-            ElvanSettingsSection(colors = colors) {
+        item(key = "identity_section") {
+            ElvanSectionContainer {
+                ElvanSettingsSection(colors = colors) {
                 // 1. Logo (Square / Icon)
                 ElvanSettingsAnimatedExpand(
                     isEditing = editingSection == "logo",
@@ -247,6 +246,7 @@ fun PattuIdentityScreen(
             }
         }
     }
+}
 }
 
 @Composable

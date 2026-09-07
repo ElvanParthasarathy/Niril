@@ -58,6 +58,10 @@ fun MerchantSettingsScreen(
     val isBilingual = profile.iruMozhi
     val isPattu = currentMode == AppMode.PATTU
     val saveSuccessMsg = K.thannuruChaemikkappattadhu.tr()
+    val defaultProfileName = K.tharpoadhaiyaNiruvanam.tr()
+    val selectCompanyTitle = K.niruvanaththaithThaernhedu.tr()
+    val addNewLabel = K.pudhiyaChaerkkai.tr()
+    val bottomSheet = LocalElvanBottomSheetController.current
 
     fun saveField(action: () -> Unit) {
         action()
@@ -67,135 +71,117 @@ fun MerchantSettingsScreen(
         ElvanSnackbar.show(saveSuccessMsg)
     }
 
-    LazyColumn(
-        state = scrollState,
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(
-            start = Dimens.ContentPadding,
-            end = Dimens.ContentPadding,
-            bottom = Dimens.SubpageContentPaddingBottom
-        ),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        // Top spacer driven by One UI collapsible header
-        item(key = "shell_top_spacer") {
-            Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
-        }
+    var showManageModal by remember { mutableStateOf(false) }
+    var showNewProfileSheet by remember { mutableStateOf(false) }
 
-        // ── Top Profile Switcher Row (matching Flutter's _buildProfileSwitcher) ──
-        item(key = "profile_switcher") {
-            var showManageModal by remember { mutableStateOf(false) }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Circular Briefcase Button (aspectRatio 1.0)
-                Surface(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = ShellDefaults.ripple(colors, bounded = true),
-                            onClick = { showManageModal = true }
-                        ),
-                    shape = CircleShape,
-                    color = colors.surface,
-                    shadowElevation = 0.dp
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = MaterialSymbols.Rounded.BusinessCenter,
-                            contentDescription = null,
-                            tint = colors.textPrimary.copy(alpha = 0.7f),
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                // Profile Dropdown Pill (ElvanNiruvanamKeezhvirivuKooru)
-                Surface(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp)
-                        .clip(RoundedCornerShape(100))
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = ShellDefaults.ripple(colors, bounded = true),
-                            onClick = { showManageModal = true }
-                        ),
-                    shape = RoundedCornerShape(100),
-                    color = colors.surface,
-                    shadowElevation = 0.dp
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 20.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = profile.getPrimary("niruvanathinPeyar").ifEmpty { K.tharpoadhaiyaNiruvanam.tr() },
-                            style = TextStyle(
-                                fontFamily = ff,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Medium
-                            ),
-                            color = colors.textPrimary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Icon(
-                            imageVector = MaterialSymbols.Rounded.KeyboardArrowDown,
-                            contentDescription = null,
-                            tint = colors.textPrimary.copy(alpha = 0.7f),
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            state = scrollState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
+                start = Dimens.ContentPadding,
+                end = Dimens.ContentPadding,
+                bottom = Dimens.SubpageContentPaddingBottom
+            ),
+            verticalArrangement = Arrangement.spacedBy(Dimens.SectionSpacing)
+        ) {
+            // Top spacer driven by One UI collapsible header
+            item(key = "shell_top_spacer") {
+                Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
             }
 
-            if (showManageModal) {
-                ElvanActionSheet(
-                    title = profile.getPrimary("niruvanathinPeyar").ifEmpty { K.tharpoadhaiyaNiruvanam.tr() },
-                    cancelText = K.kaividu.tr(),
-                    confirmText = K.urudhi.tr(),
-                    onDismissRequest = { showManageModal = false },
-                    onConfirm = { showManageModal = false },
-                    customContent = {
-                        Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+            // ── Top Profile Switcher Row (matching Flutter's _buildProfileSwitcher) ──
+            item(key = "profile_switcher") {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Circular Briefcase Button (aspectRatio 1.0)
+                    Surface(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = ShellDefaults.ripple(colors, bounded = true),
+                                onClick = { showManageModal = true }
+                            ),
+                        shape = CircleShape,
+                        color = colors.surface,
+                        shadowElevation = 0.dp
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = MaterialSymbols.Rounded.BusinessCenter,
+                                contentDescription = null,
+                                tint = colors.textPrimary.copy(alpha = 0.7f),
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    // Profile Dropdown Pill (ElvanNiruvanamKeezhvirivuKooru)
+                    Surface(
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp)
+                            .clip(RoundedCornerShape(100))
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = ShellDefaults.ripple(colors, bounded = true),
+                                onClick = {
+                                    bottomSheet.showSelection(
+                                        title = selectCompanyTitle,
+                                        items = NiruvanaTharavugalRepository.getAllProfiles(currentMode),
+                                        currentValue = profile,
+                                        itemLabelBuilder = { it.getPrimary("niruvanathinPeyar").ifEmpty { defaultProfileName } },
+                                        subtitleBuilder = { if (it.iruMozhi) it.getSecondary("niruvanathinPeyar") else null },
+                                        onRequestAddNew = { showNewProfileSheet = true },
+                                        addNewLabel = addNewLabel,
+                                        onSelected = { selected ->
+                                            if (selected.id != null) {
+                                                NiruvanaTharavugalRepository.setActiveProfile(currentMode, selected.id!!)
+                                            }
+                                        }
+                                    )
+                                }
+                            ),
+                        shape = RoundedCornerShape(100),
+                        color = colors.surface,
+                        shadowElevation = 0.dp
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 20.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Text(
-                                text = if (isPattu) K.nirilPattu.tr() else K.nirilKooli.tr(),
+                                text = profile.getPrimary("niruvanathinPeyar").ifEmpty { K.tharpoadhaiyaNiruvanam.tr() },
                                 style = TextStyle(
                                     fontFamily = ff,
                                     fontSize = 14.sp,
-                                    fontWeight = FontWeight.Normal,
-                                    color = colors.textPrimary.copy(alpha = 0.6f)
+                                    fontWeight = FontWeight.Medium
                                 ),
-                                modifier = Modifier.padding(bottom = 8.dp)
+                                color = colors.textPrimary,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f)
                             )
-                            if (profile.kurumPeyar.isNotEmpty()) {
-                                Text(
-                                    text = "${K.kurugiyaNiruvanaPeyar.tr()}: ${profile.kurumPeyar}",
-                                    style = TextStyle(
-                                        fontFamily = ff,
-                                        fontSize = 13.sp,
-                                        color = colors.textPrimary.copy(alpha = 0.8f)
-                                    )
-                                )
-                            }
+                            Icon(
+                                imageVector = MaterialSymbols.Rounded.KeyboardArrowDown,
+                                contentDescription = null,
+                                tint = colors.textPrimary.copy(alpha = 0.7f),
+                                modifier = Modifier.size(20.dp)
+                            )
                         }
-                    },
-                    colors = colors
-                )
+                    }
+                }
             }
-        }
 
         // ── Form Section ──
         item {
@@ -503,6 +489,25 @@ fun MerchantSettingsScreen(
                     )
                 }
             }
+        }
+    }
+
+        // Hoisted Modals
+        if (showManageModal) {
+            ManageProfilesModal(
+                mode = currentMode,
+                onDismissRequest = { showManageModal = false },
+                colors = colors
+            )
+        }
+
+        if (showNewProfileSheet) {
+            NewProfileBottomSheet(
+                mode = currentMode,
+                onDismissRequest = { showNewProfileSheet = false },
+                onSuccess = { showNewProfileSheet = false },
+                colors = colors
+            )
         }
     }
 }

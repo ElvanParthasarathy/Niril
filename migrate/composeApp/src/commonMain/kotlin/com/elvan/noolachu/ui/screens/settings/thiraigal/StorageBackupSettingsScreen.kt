@@ -76,7 +76,7 @@ fun StorageBackupSettingsScreen(
             end = Dimens.ContentPadding,
             bottom = Dimens.SubpageContentPaddingBottom
         ),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens.SectionSpacing)
     ) {
         // Top spacer driven by One UI collapsible header
         item(key = "shell_top_spacer") {
@@ -156,7 +156,7 @@ fun StorageBackupSettingsScreen(
             ElvanSettingsSection(colors = colors) {
                 // Used Storage
                 ElvanSettingsRow(
-                    icon = MaterialSymbols.Rounded.Storage,
+                    icon = MaterialSymbols.Rounded.Folder,
                     title = K.payanpaduthiyaChaemippu.tr(),
                     description = "${formatBytes(totalDbSize)} ${K.tharavuthalam.tr()}\n${formatBytes(backupSize)} ${K.kaappu.tr()}",
                     onClick = {},
@@ -176,7 +176,7 @@ fun StorageBackupSettingsScreen(
 
                 // Backup Data Button
                 ElvanSettingsRow(
-                    icon = MaterialSymbols.Rounded.Backup,
+                    icon = MaterialSymbols.Rounded.CloudUpload,
                     title = K.tharavuKaappuChei.tr(),
                     description = K.ungalTharavaiChaemikkavum.tr(),
                     onClick = { showBackupConfirm = true },

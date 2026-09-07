@@ -1,13 +1,18 @@
 package com.elvan.noolachu.ui.screens.settings.thiraigal
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -19,10 +24,15 @@ import com.elvan.noolachu.theme.Dimens
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.ShellColors
 import com.elvan.noolachu.theme.rememberShellColors
+import com.elvan.noolachu.ui.components.shell.ElvanSettingsDivider
+import com.elvan.noolachu.ui.components.shell.ElvanSettingsRow
+import com.elvan.noolachu.ui.components.shell.ElvanSettingsSection
 import com.elvan.noolachu.ui.components.shell.LocalElvanTopSpacerHeight
+import com.elvan.noolachu.ui.navigation.MaterialSymbols
 
 /**
- * About App Screen matching Flutter's `seyali_patri_thirai.dart` 1:1.
+ * செயலி பற்றி திரை — About App Screen.
+ * Adapted from Neram's AboutAppScreen.kt to use the CMP shell system.
  */
 @Composable
 fun AboutAppScreen(
@@ -30,38 +40,142 @@ fun AboutAppScreen(
     colors: ShellColors = rememberShellColors()
 ) {
     val ff = LocalAppFontFamily.current
+
     LazyColumn(
         state = scrollState,
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(
-            start = 32.dp,
-            end = 32.dp,
+            start = Dimens.ContentPadding,
+            end = Dimens.ContentPadding,
             bottom = Dimens.SubpageContentPaddingBottom
         ),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens.SectionSpacing)
     ) {
-        // Top spacer driven by One UI collapsible header
         item(key = "shell_top_spacer") {
             Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
         }
 
-        item {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 40.dp),
-                contentAlignment = Alignment.Center
+        // ── App Header: Logo + Name + Tagline ──
+        item(key = "app_header") {
+            ElvanSettingsSection(colors = colors) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    val logoBg = if (colors.isDark) colors.textPrimary.copy(alpha = 0.08f)
+                    else colors.textPrimary.copy(alpha = 0.06f)
+
+                    Box(
+                        modifier = Modifier
+                            .size(88.dp)
+                            .clip(RoundedCornerShape(24.dp))
+                            .background(logoBg),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = MaterialSymbols.Rounded.Notes,
+                            contentDescription = K.cheyaliPatri.tr(),
+                            tint = colors.textPrimary,
+                            modifier = Modifier.size(50.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = "நூலாசு",
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = colors.textPrimary
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = K.elvanNavilDesc.tr(),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 13.5.sp,
+                            fontWeight = FontWeight.Normal
+                        ),
+                        color = colors.textSecondary.copy(alpha = 0.85f)
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = "v1.0.0",
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium
+                        ),
+                        color = colors.textSecondary.copy(alpha = 0.6f)
+                    )
+                }
+            }
+        }
+
+        // ── Features Section ──
+        item(key = "features_section") {
+            ElvanSettingsSection(
+                title = "தகுதிகள்",
+                colors = colors
             ) {
+                ElvanSettingsRow(
+                    icon = MaterialSymbols.Rounded.Description,
+                    title = "பட்டியல் / பற்றுச்சீட்டு",
+                    description = "இலகுவான பட்டியல் & பற்றுச்சீட்டு உருவாக்கம்",
+                    onClick = {},
+                    colors = colors
+                )
+                ElvanSettingsDivider(colors = colors)
+                ElvanSettingsRow(
+                    icon = MaterialSymbols.Rounded.BusinessCenter,
+                    title = "வாங்குனர்கள்",
+                    description = "வாங்குனர் தரவுகள் நிர்வாகம்",
+                    onClick = {},
+                    colors = colors
+                )
+                ElvanSettingsDivider(colors = colors)
+                ElvanSettingsRow(
+                    icon = MaterialSymbols.Rounded.Inventory2,
+                    title = "பொருட்கள்",
+                    description = "பொருட்கள் சேர்க்கை & நிர்வாகம்",
+                    onClick = {},
+                    colors = colors
+                )
+                ElvanSettingsDivider(colors = colors)
+                ElvanSettingsRow(
+                    icon = MaterialSymbols.Rounded.Storage,
+                    title = "ஒருங்கிணைந்த தரவு",
+                    description = "ஒரே தரவுத்தளத்தில் முழு வணிகத் தரவு",
+                    onClick = {},
+                    colors = colors
+                )
+            }
+        }
+
+        // ── Version Footer ──
+        item(key = "version_footer") {
+            ElvanSettingsSection(colors = colors) {
                 Text(
-                    text = K.cheyaliPatriMaadhiri.tr(),
+                    text = "நூலாசு v1.0.0",
                     style = TextStyle(
                         fontFamily = ff,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Medium,
-                        textAlign = TextAlign.Center,
-                        lineHeight = 22.sp
+                        fontSize = 12.5.sp,
+                        fontWeight = FontWeight.Normal
                     ),
-                    color = colors.textPrimary
+                    color = colors.textPrimary.copy(alpha = 0.35f),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, bottom = 24.dp),
+                    textAlign = TextAlign.Center
                 )
             }
         }

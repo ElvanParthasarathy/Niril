@@ -41,11 +41,20 @@ import kotlinx.coroutines.launch
 
 import com.elvan.noolachu.core.platform.AppBackHandler
 import com.elvan.noolachu.ui.components.shell.ElvanSubShell
+import com.elvan.noolachu.ui.components.shell.ElvanSectionContainer
 import com.elvan.noolachu.ui.components.shell.ElvanSettingsSection
 import com.elvan.noolachu.ui.components.shell.ElvanSettingsRow
 import com.elvan.noolachu.ui.components.shell.ElvanPopupMenu
 import com.elvan.noolachu.ui.components.shell.ElvanPopupMenuItem
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import com.elvan.noolachu.theme.Transitions
 import com.elvan.noolachu.ui.screens.settings.SettingsScreen
 
@@ -61,14 +70,31 @@ fun HomeScreen() {
     val scope = rememberCoroutineScope()
     val colors = rememberShellColors()
 
-    AnimatedContent(
-        targetState = isSettingsOpen,
-        modifier = Modifier.fillMaxSize(),
-        transitionSpec = {
-            Transitions.sharedAxisX(forward = targetState)
-        },
-        label = "HomeToSettingsTransition"
-    ) { settingsOpen ->
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colors.background)
+    ) {
+        AnimatedContent(
+            targetState = isSettingsOpen,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(colors.background),
+            transitionSpec = {
+                if (targetState) {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = Spring.DampingRatioNoBouncy)
+                    ) togetherWith fadeOut(targetAlpha = 0.9f, animationSpec = tween(durationMillis = 50))
+                } else {
+                    fadeIn(initialAlpha = 0.9f) togetherWith slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = Spring.DampingRatioNoBouncy)
+                    )
+                }
+            },
+            label = "HomeToSettingsTransition"
+        ) { settingsOpen ->
         if (settingsOpen) {
             SettingsScreen(
                 onBack = { isSettingsOpen = false }
@@ -191,8 +217,10 @@ fun HomeScreen() {
             LazyColumn(
                 state = scrollState,
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 20.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                contentPadding = PaddingValues(
+                    bottom = Dimens.ContentPaddingBottom
+                ),
+                verticalArrangement = Arrangement.spacedBy(Dimens.SectionSpacing)
             ) {
                 // Top spacer driven by One UI collapsible header
                 item {
@@ -201,254 +229,276 @@ fun HomeScreen() {
 
                 // 1. Mode Banner Card (Isolated DB)
                 item {
-                    val bannerShape = RoundedCornerShape(20.dp)
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(bannerShape)
-                            .border(0.5.dp, colors.border, bannerShape)
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = ShellDefaults.ripple(colors, bounded = true),
-                                onClick = { ModeManager.toggleMode() }
-                            ),
-                        shape = bannerShape,
-                        color = colors.surface,
-                        shadowElevation = 0.dp
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(20.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                    ElvanSectionContainer {
+                        val bannerShape = RoundedCornerShape(20.dp)
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(bannerShape)
+                                .border(0.5.dp, colors.border, bannerShape)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = ShellDefaults.ripple(colors, bounded = true),
+                                    onClick = { ModeManager.toggleMode() }
+                                ),
+                            shape = bannerShape,
+                            color = colors.surface,
+                            shadowElevation = 0.dp
                         ) {
-                            Text(
-                                text = currentMode.displayName().preventBrokenLigatures(),
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = colors.textPrimary
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "${K.tharavuthalam.tr()}: ${DatabaseProvider.currentDatabaseName()} (${K.maatru.tr()})",
-                                fontSize = 13.sp,
-                                color = colors.textSecondary
-                            )
+                            Column(
+                                modifier = Modifier.padding(20.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = currentMode.displayName().preventBrokenLigatures(),
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colors.textPrimary
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "${K.tharavuthalam.tr()}: ${DatabaseProvider.currentDatabaseName()} (${K.maatru.tr()})",
+                                    fontSize = 13.sp,
+                                    color = colors.textSecondary
+                                )
+                            }
                         }
                     }
                 }
 
-            // 2. Mode Selector (Kooli vs Pattu)
-            item {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        text = "${K.endhachCheyalmurai.tr()}:",
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp
-                    )
+                // 2. Mode Selector (Kooli vs Pattu)
+                item {
+                    ElvanSectionContainer {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(
+                                text = "${K.endhachCheyalmurai.tr()}:",
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 14.sp
+                            )
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        AppMode.entries.forEach { mode ->
-                            val isSelected = currentMode == mode
-                            if (isSelected) {
-                                Button(
-                                    onClick = { ModeManager.setMode(mode) },
-                                    modifier = Modifier.weight(1f),
-                                    shape = RoundedCornerShape(14.dp)
-                                ) {
-                                    Text(mode.displayName())
-                                }
-                            } else {
-                                OutlinedButton(
-                                    onClick = { ModeManager.setMode(mode) },
-                                    modifier = Modifier.weight(1f),
-                                    shape = RoundedCornerShape(14.dp)
-                                ) {
-                                    Text(mode.displayName())
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                AppMode.entries.forEach { mode ->
+                                    val isSelected = currentMode == mode
+                                    if (isSelected) {
+                                        Button(
+                                            onClick = { ModeManager.setMode(mode) },
+                                            modifier = Modifier.weight(1f),
+                                            shape = RoundedCornerShape(14.dp)
+                                        ) {
+                                            Text(mode.displayName())
+                                        }
+                                    } else {
+                                        OutlinedButton(
+                                            onClick = { ModeManager.setMode(mode) },
+                                            modifier = Modifier.weight(1f),
+                                            shape = RoundedCornerShape(14.dp)
+                                        ) {
+                                            Text(mode.displayName())
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            item { HorizontalDivider() }
-
-            // 3. UI Language Selector (Screen only)
-            item {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        text = "${K.cheyaliMozhi.tr()}:",
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Language.entries.forEach { lang ->
-                            val isSelected = LanguageManager.currentLanguage == lang
-                            FilterChip(
-                                selected = isSelected,
-                                onClick = { LanguageManager.setLanguage(lang) },
-                                label = { Text(lang.displayName) }
-                            )
-                        }
+                item {
+                    ElvanSectionContainer {
+                        HorizontalDivider(color = colors.divider)
                     }
                 }
-            }
 
-            // Theme Mode Selector (System, Light, Dark)
-            item {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        text = "${K.thoatram.tr()}:",
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        ThemeMode.entries.forEach { mode ->
-                            val isSelected = ThemeManager.currentThemeMode == mode
-                            val label = when (mode) {
-                                ThemeMode.SYSTEM -> K.thaaniyangki.tr()
-                                ThemeMode.LIGHT -> K.olirNilai.tr()
-                                ThemeMode.DARK -> K.irulNilai.tr()
+                // 3. UI Language Selector (Screen only)
+                item {
+                    ElvanSectionContainer {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(
+                                text = "${K.cheyaliMozhi.tr()}:",
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 14.sp
+                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Language.entries.forEach { lang ->
+                                    val isSelected = LanguageManager.currentLanguage == lang
+                                    FilterChip(
+                                        selected = isSelected,
+                                        onClick = { LanguageManager.setLanguage(lang) },
+                                        label = { Text(lang.displayName) }
+                                    )
+                                }
                             }
-                            FilterChip(
-                                selected = isSelected,
-                                onClick = { ThemeManager.setThemeMode(mode) },
-                                label = { Text(label) }
-                            )
                         }
                     }
                 }
-            }
 
-            // 4. Print / Billing Language Selector (Brick Wall)
-            item {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(
-                        text = "${K.pattiyalmozhi.tr()}:",
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 14.sp
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        BillingLanguage.entries.forEach { bLang ->
-                            val isSelected = billingConfig.primaryLanguage == bLang
-                            FilterChip(
-                                selected = isSelected,
-                                onClick = { AchuMozhiManager.setPrimaryLanguage(currentMode, bLang) },
-                                label = { Text(bLang.displayName) }
+                // Theme Mode Selector (System, Light, Dark)
+                item {
+                    ElvanSectionContainer {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(
+                                text = "${K.thoatram.tr()}:",
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 14.sp
                             )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                ThemeMode.entries.forEach { mode ->
+                                    val isSelected = ThemeManager.currentThemeMode == mode
+                                    val label = when (mode) {
+                                        ThemeMode.SYSTEM -> K.thaaniyangki.tr()
+                                        ThemeMode.LIGHT -> K.olirNilai.tr()
+                                        ThemeMode.DARK -> K.irulNilai.tr()
+                                    }
+                                    FilterChip(
+                                        selected = isSelected,
+                                        onClick = { ThemeManager.setThemeMode(mode) },
+                                        label = { Text(label) }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
-            }
 
-            // 5. Live Bill Output Preview
-            item {
-                val previewShape = RoundedCornerShape(20.dp)
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(previewShape)
-                        .border(0.5.dp, colors.border, previewShape),
-                    shape = previewShape,
-                    color = colors.surface,
-                    shadowElevation = 0.dp
-                ) {
-                    Column(modifier = Modifier.padding(18.dp)) {
+                // 4. Print / Billing Language Selector (Brick Wall)
+                item {
+                    ElvanSectionContainer {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(
+                                text = "${K.pattiyalmozhi.tr()}:",
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 14.sp
+                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                BillingLanguage.entries.forEach { bLang ->
+                                    val isSelected = billingConfig.primaryLanguage == bLang
+                                    FilterChip(
+                                        selected = isSelected,
+                                        onClick = { AchuMozhiManager.setPrimaryLanguage(currentMode, bLang) },
+                                        label = { Text(bLang.displayName) }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // 5. Live Bill Output Preview
+                item {
+                    ElvanSectionContainer {
+                        val previewShape = RoundedCornerShape(20.dp)
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(previewShape)
+                                .border(0.5.dp, colors.border, previewShape),
+                            shape = previewShape,
+                            color = colors.surface,
+                            shadowElevation = 0.dp
+                        ) {
+                            Column(modifier = Modifier.padding(18.dp)) {
+                                Text(
+                                    text = "${K.munvaraivu.tr()} (${K.pattiyalmozhi.tr()}):",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 14.sp,
+                                    color = colors.accent
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "• ${K.thalaippu.tr()}: ${AchuMozhiManager.printTr(K.pattiyal, currentMode)}",
+                                    fontSize = 13.sp,
+                                    color = colors.textPrimary
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = "• ${K.vaangunar.tr()}: ${AchuMozhiManager.printTr(K.vaangunar, currentMode)}",
+                                    fontSize = 13.sp,
+                                    color = colors.textPrimary
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = "• ${K.thogai.tr()}: ${AchuMozhiManager.printTr(K.thogai, currentMode)}",
+                                    fontSize = 13.sp,
+                                    color = colors.textPrimary
+                                )
+                            }
+                        }
+                    }
+                }
+
+                item {
+                    ElvanSectionContainer {
+                        HorizontalDivider(color = colors.divider)
+                    }
+                }
+
+                // 6. Mode-Specific Components (Kooli vs Pattu)
+                item {
+                    ElvanSectionContainer {
                         Text(
-                            text = "${K.munvaraivu.tr()} (${K.pattiyalmozhi.tr()}):",
-                            fontWeight = FontWeight.Bold,
+                            text = "${currentMode.displayName().preventBrokenLigatures()} ${K.porul.tr()}:",
+                            fontWeight = FontWeight.SemiBold,
                             fontSize = 14.sp,
-                            color = colors.accent
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "• ${K.thalaippu.tr()}: ${AchuMozhiManager.printTr(K.pattiyal, currentMode)}",
-                            fontSize = 13.sp,
-                            color = colors.textPrimary
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = "• ${K.vaangunar.tr()}: ${AchuMozhiManager.printTr(K.vaangunar, currentMode)}",
-                            fontSize = 13.sp,
-                            color = colors.textPrimary
-                        )
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = "• ${K.thogai.tr()}: ${AchuMozhiManager.printTr(K.thogai, currentMode)}",
-                            fontSize = 13.sp,
                             color = colors.textPrimary
                         )
                     }
                 }
-            }
 
-            item { HorizontalDivider(color = colors.divider) }
+                item {
+                    ElvanSectionContainer {
+                        if (currentMode == AppMode.KOOLI) {
+                            KooliLaborItemCard(
+                                workName = K.kooli.tr(),
+                                wageRate = "45.00",
+                                units = "120",
+                                total = "5,400.00",
+                                colors = colors,
+                                onClick = { ModeManager.toggleMode() }
+                            )
+                        } else {
+                            PattuSilkProductCard(
+                                productName = K.pattu.tr(),
+                                hsnCode = "5007",
+                                weightGrams = "650",
+                                gstRate = "5",
+                                price = "12,500.00",
+                                colors = colors,
+                                onClick = { ModeManager.toggleMode() }
+                            )
+                        }
+                    }
+                }
 
-            // 6. Mode-Specific Components (Kooli vs Pattu)
-            item {
-                Text(
-                    text = "${currentMode.displayName().preventBrokenLigatures()} ${K.porul.tr()}:",
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp,
-                    color = colors.textPrimary
-                )
-            }
-
-            item {
-                if (currentMode == AppMode.KOOLI) {
-                    KooliLaborItemCard(
-                        workName = K.kooli.tr(),
-                        wageRate = "45.00",
-                        units = "120",
-                        total = "5,400.00",
-                        colors = colors,
-                        onClick = { ModeManager.toggleMode() }
-                    )
-                } else {
-                    PattuSilkProductCard(
-                        productName = K.pattu.tr(),
-                        hsnCode = "5007",
-                        weightGrams = "650",
-                        gstRate = "5",
-                        price = "12,500.00",
-                        colors = colors,
-                        onClick = { ModeManager.toggleMode() }
-                    )
+                // 7. Settings Hub Entry
+                item {
+                    ElvanSectionContainer {
+                        ElvanSettingsSection(colors = colors) {
+                            ElvanSettingsRow(
+                                icon = MaterialSymbols.Rounded.Settings,
+                                title = K.amaippugal.tr(),
+                                description = "${K.thoatram.tr()} • ${K.cheyaliMozhi.tr()} • ${K.pattiyalmozhi.tr()} • ${K.tharavuthalam.tr()}",
+                                onClick = { isSettingsOpen = true },
+                                colors = colors
+                            )
+                        }
+                    }
                 }
             }
-
-            // 7. Settings Hub Entry
-            item {
-                ElvanSettingsSection(colors = colors) {
-                    ElvanSettingsRow(
-                        icon = MaterialSymbols.Rounded.Settings,
-                        title = K.amaippugal.tr(),
-                        description = "${K.thoatram.tr()} • ${K.cheyaliMozhi.tr()} • ${K.pattiyalmozhi.tr()} • ${K.tharavuthalam.tr()}",
-                        onClick = { isSettingsOpen = true },
-                        colors = colors
-                    )
-                }
-            }
-
-            // Bottom navigation bar clearance
-            item {
-                Spacer(modifier = Modifier.height(Dimens.ContentPaddingBottom))
-            }
-        }
     }
 }
         }
     }
+}
 }
 

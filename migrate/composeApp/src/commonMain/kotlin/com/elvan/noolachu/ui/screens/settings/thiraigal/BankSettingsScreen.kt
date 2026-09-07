@@ -79,7 +79,7 @@ fun BankSettingsScreen(
             end = Dimens.ContentPadding,
             bottom = Dimens.SubpageContentPaddingBottom
         ),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens.SectionSpacing)
     ) {
         // Top spacer driven by One UI collapsible header
         item(key = "shell_top_spacer") {

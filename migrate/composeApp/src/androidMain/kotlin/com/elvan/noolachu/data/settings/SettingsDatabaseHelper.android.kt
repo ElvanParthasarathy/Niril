@@ -241,6 +241,34 @@ class AndroidSettingsDatabaseHelper : SettingsDatabaseHelper {
         }
     }
 
+    override fun deleteProfile(mode: AppMode, profileId: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_niruvana_tharavugal_table" else "pattu_niruvana_tharavugal_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return false
+
+        var db: SQLiteDatabase? = null
+        try {
+            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            val values = ContentValues().apply {
+                put("is_deleted", 1)
+                put("updated_at", System.currentTimeMillis() / 1000)
+            }
+            val rows = db.update(tableName, values, "id = ?", arrayOf(profileId.toString()))
+            try {
+                val backupFile = File("/sdcard/$dbName")
+                if (backupFile.exists() && backupFile.canWrite()) {
+                    copyFile(dbFile, backupFile)
+                }
+            } catch (_: Exception) {}
+            return rows > 0
+        } catch (e: Exception) {
+            Log.e(tag, "Error deleting profile $profileId from $tableName: ${e.message}", e)
+            return false
+        } finally {
+            db?.close()
+        }
+    }
+
     private fun cursorToProfile(cursor: Cursor, mode: AppMode): NiruvanaTharavugal {
         fun getString(col: String): String {
             val idx = cursor.getColumnIndex(col)

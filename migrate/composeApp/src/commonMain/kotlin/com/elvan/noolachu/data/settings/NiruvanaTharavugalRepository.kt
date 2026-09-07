@@ -116,6 +116,11 @@ object NiruvanaTharavugalRepository {
         )
     )
 
+    const val MAX_PROFILES = 5
+
+    private var kooliProfilesState by mutableStateOf<List<NiruvanaTharavugal>>(emptyList())
+    private var pattuProfilesState by mutableStateOf<List<NiruvanaTharavugal>>(emptyList())
+
     init {
         refreshFromDatabase()
     }
@@ -124,13 +129,40 @@ object NiruvanaTharavugalRepository {
         try {
             val helper = getSettingsDatabaseHelper()
             helper.scanAndSync()
-            helper.loadProfile(AppMode.KOOLI)?.let { kooliProfile ->
-                kooliProfileState = kooliProfile
+
+            val kooliProfiles = helper.loadAllProfiles(AppMode.KOOLI)
+            if (kooliProfiles.isNotEmpty()) {
+                kooliProfilesState = kooliProfiles
+                val currentId = kooliProfileState.id
+                val matching = kooliProfiles.find { it.id == currentId }
+                kooliProfileState = matching ?: kooliProfiles.first()
+            } else {
+                helper.loadProfile(AppMode.KOOLI)?.let { kooliProfile ->
+                    kooliProfileState = kooliProfile
+                    kooliProfilesState = listOf(kooliProfile)
+                }
             }
-            helper.loadProfile(AppMode.PATTU)?.let { pattuProfile ->
-                pattuProfileState = pattuProfile
+
+            val pattuProfiles = helper.loadAllProfiles(AppMode.PATTU)
+            if (pattuProfiles.isNotEmpty()) {
+                pattuProfilesState = pattuProfiles
+                val currentId = pattuProfileState.id
+                val matching = pattuProfiles.find { it.id == currentId }
+                pattuProfileState = matching ?: pattuProfiles.first()
+            } else {
+                helper.loadProfile(AppMode.PATTU)?.let { pattuProfile ->
+                    pattuProfileState = pattuProfile
+                    pattuProfilesState = listOf(pattuProfile)
+                }
             }
         } catch (_: Exception) {}
+    }
+
+    fun getAllProfiles(mode: AppMode): List<NiruvanaTharavugal> {
+        return when (mode) {
+            AppMode.KOOLI -> if (kooliProfilesState.isNotEmpty()) kooliProfilesState else listOf(kooliProfileState)
+            AppMode.PATTU -> if (pattuProfilesState.isNotEmpty()) pattuProfilesState else listOf(pattuProfileState)
+        }
     }
 
     fun getProfile(mode: AppMode): NiruvanaTharavugal {
@@ -138,6 +170,57 @@ object NiruvanaTharavugalRepository {
             AppMode.KOOLI -> kooliProfileState
             AppMode.PATTU -> pattuProfileState
         }
+    }
+
+    fun setActiveProfile(mode: AppMode, id: Long) {
+        val profiles = getAllProfiles(mode)
+        val selected = profiles.find { it.id == id } ?: return
+        when (mode) {
+            AppMode.KOOLI -> kooliProfileState = selected
+            AppMode.PATTU -> pattuProfileState = selected
+        }
+    }
+
+    fun createProfile(mode: AppMode, profile: NiruvanaTharavugal): Boolean {
+        val currentProfiles = getAllProfiles(mode)
+        if (currentProfiles.size >= MAX_PROFILES) {
+            return false
+        }
+        val helper = getSettingsDatabaseHelper()
+        val success = helper.saveProfile(mode, profile)
+        if (success) {
+            refreshFromDatabase()
+            if (profile.id != null) {
+                setActiveProfile(mode, profile.id!!)
+            } else {
+                val updatedProfiles = getAllProfiles(mode)
+                updatedProfiles.lastOrNull()?.let {
+                    setActiveProfile(mode, it.id ?: 1L)
+                }
+            }
+        }
+        return success
+    }
+
+    fun deleteProfile(mode: AppMode, id: Long): Boolean {
+        val helper = getSettingsDatabaseHelper()
+        val success = helper.deleteProfile(mode, id)
+        if (success) {
+            refreshFromDatabase()
+            val remaining = getAllProfiles(mode)
+            val currentActiveId = when (mode) {
+                AppMode.KOOLI -> kooliProfileState.id
+                AppMode.PATTU -> pattuProfileState.id
+            }
+            if (currentActiveId == id && remaining.isNotEmpty()) {
+                val newActive = remaining.first()
+                when (mode) {
+                    AppMode.KOOLI -> kooliProfileState = newActive
+                    AppMode.PATTU -> pattuProfileState = newActive
+                }
+            }
+        }
+        return success
     }
 
     fun updateProfile(mode: AppMode, profile: NiruvanaTharavugal) {
@@ -148,6 +231,7 @@ object NiruvanaTharavugalRepository {
         }
         try {
             getSettingsDatabaseHelper().saveProfile(mode, updated)
+            refreshFromDatabase()
         } catch (_: Exception) {}
     }
 }

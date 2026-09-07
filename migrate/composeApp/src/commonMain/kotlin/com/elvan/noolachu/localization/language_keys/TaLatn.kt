@@ -400,4 +400,8 @@ val taLatn: Map<String, String> = mapOf(
     K.senthamizhKolkaei to "Senthamizh Kolkaei",
     K.tharavuKappagam to "Tharavu Kappagam",
     K.pathippu to "Pathippu",
+    K.elvanNavil to "Elvan Navil",
+    K.elvanNavilPatri to "Elvan Navil",
+    K.elvanNavilDesc to "Ich Cheyal Kadaippidum Niruvanam",
+    K.allRightsReserved to "© Anaithum Urimaigalum Kaakkappattavai",
 )

@@ -117,30 +117,57 @@ class DesktopSettingsDatabaseHelper : SettingsDatabaseHelper {
         try {
             getConnection(file).use { conn ->
                 val isPattu = mode == AppMode.PATTU
-                val sql = if (isPattu) {
-                    """
-                    UPDATE $tableName SET
-                        mudhan_mozhi = ?, thunai_mozhi = ?, iru_mozhi = ?, gst_pirippugal = ?,
-                        niruvanathin_peyar = ?, kurum_peyar = ?, tholaipaesi1 = ?, tholaipaesi2 = ?,
-                        minnanjal = ?, gstin = ?, mugavari = ?, oor = ?, maavattam = ?, maanilam = ?,
-                        naadu = ?, anjal_kuriyeedu = ?, vangi_peyar = ?, kilai = ?, vangi_kanakku = ?,
-                        ifsc = ?, oavuru = ?, agala_oavuru = ?, thalaippu_vadivu = ?, kaiyoppam = ?,
-                        oppam_peyar = ?, adaimozhi = ?, upi_id = ?, thoatra_niram = ?, updated_at = ?
-                    WHERE id = ?
-                    """.trimIndent()
+                val isUpdate = profile.id != null
+
+                val sql = if (isUpdate) {
+                    if (isPattu) {
+                        """
+                        UPDATE $tableName SET
+                            mudhan_mozhi = ?, thunai_mozhi = ?, iru_mozhi = ?, gst_pirippugal = ?,
+                            niruvanathin_peyar = ?, kurum_peyar = ?, tholaipaesi1 = ?, tholaipaesi2 = ?,
+                            minnanjal = ?, gstin = ?, mugavari = ?, oor = ?, maavattam = ?, maanilam = ?,
+                            naadu = ?, anjal_kuriyeedu = ?, vangi_peyar = ?, kilai = ?, vangi_kanakku = ?,
+                            ifsc = ?, oavuru = ?, agala_oavuru = ?, thalaippu_vadivu = ?, kaiyoppam = ?,
+                            oppam_peyar = ?, adaimozhi = ?, upi_id = ?, thoatra_niram = ?, updated_at = ?
+                        WHERE id = ?
+                        """.trimIndent()
+                    } else {
+                        """
+                        UPDATE $tableName SET
+                            niruvanathin_peyar = ?, kurum_peyar = ?, tholaipaesi1 = ?, tholaipaesi2 = ?,
+                            minnanjal = ?, gstin = ?, mugavari = ?, oor = ?, maavattam = ?, maanilam = ?,
+                            naadu = ?, anjal_kuriyeedu = ?, vangi_peyar = ?, kilai = ?, vangi_kanakku = ?,
+                            ifsc = ?, oavuru = ?, agala_oavuru = ?, thalaippu_vadivu = ?, kaiyoppam = ?,
+                            oppam_peyar = ?, adaimozhi = ?, upi_id = ?, thoatra_niram = ?, updated_at = ?
+                        WHERE id = ?
+                        """.trimIndent()
+                    }
                 } else {
-                    """
-                    UPDATE $tableName SET
-                        niruvanathin_peyar = ?, kurum_peyar = ?, tholaipaesi1 = ?, tholaipaesi2 = ?,
-                        minnanjal = ?, gstin = ?, mugavari = ?, oor = ?, maavattam = ?, maanilam = ?,
-                        naadu = ?, anjal_kuriyeedu = ?, vangi_peyar = ?, kilai = ?, vangi_kanakku = ?,
-                        ifsc = ?, oavuru = ?, agala_oavuru = ?, thalaippu_vadivu = ?, kaiyoppam = ?,
-                        oppam_peyar = ?, adaimozhi = ?, upi_id = ?, thoatra_niram = ?, updated_at = ?
-                    WHERE id = ?
-                    """.trimIndent()
+                    if (isPattu) {
+                        """
+                        INSERT INTO $tableName (
+                            mudhan_mozhi, thunai_mozhi, iru_mozhi, gst_pirippugal,
+                            niruvanathin_peyar, kurum_peyar, tholaipaesi1, tholaipaesi2,
+                            minnanjal, gstin, mugavari, oor, maavattam, maanilam,
+                            naadu, anjal_kuriyeedu, vangi_peyar, kilai, vangi_kanakku,
+                            ifsc, oavuru, agala_oavuru, thalaippu_vadivu, kaiyoppam,
+                            oppam_peyar, adaimozhi, upi_id, thoatra_niram, updated_at
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """.trimIndent()
+                    } else {
+                        """
+                        INSERT INTO $tableName (
+                            niruvanathin_peyar, kurum_peyar, tholaipaesi1, tholaipaesi2,
+                            minnanjal, gstin, mugavari, oor, maavattam, maanilam,
+                            naadu, anjal_kuriyeedu, vangi_peyar, kilai, vangi_kanakku,
+                            ifsc, oavuru, agala_oavuru, thalaippu_vadivu, kaiyoppam,
+                            oppam_peyar, adaimozhi, upi_id, thoatra_niram, updated_at
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """.trimIndent()
+                    }
                 }
 
-                conn.prepareStatement(sql).use { stmt ->
+                conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS).use { stmt ->
                     var idx = 1
                     if (isPattu) {
                         stmt.setString(idx++, profile.mudhanMozhi)
@@ -173,14 +200,45 @@ class DesktopSettingsDatabaseHelper : SettingsDatabaseHelper {
                     stmt.setString(idx++, profile.upiId)
                     stmt.setString(idx++, profile.thoatraNiram)
                     stmt.setLong(idx++, System.currentTimeMillis() / 1000)
-                    stmt.setLong(idx++, profile.id ?: 1L)
 
+                    if (isUpdate) {
+                        stmt.setLong(idx++, profile.id ?: 1L)
+                    }
+
+                    val affected = stmt.executeUpdate()
+                    if (!isUpdate && affected > 0) {
+                        stmt.generatedKeys.use { gks ->
+                            if (gks.next()) {
+                                profile.id = gks.getLong(1)
+                            }
+                        }
+                    }
+                    return affected > 0
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error saving profile to $tableName: ${e.message}")
+            return false
+        }
+    }
+
+    override fun deleteProfile(mode: AppMode, profileId: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_niruvana_tharavugal_table" else "pattu_niruvana_tharavugal_table"
+        val file = resolveActiveDatabase(dbName) ?: return false
+
+        try {
+            getConnection(file).use { conn ->
+                val sql = "UPDATE $tableName SET is_deleted = 1, updated_at = ? WHERE id = ?"
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setLong(1, System.currentTimeMillis() / 1000)
+                    stmt.setLong(2, profileId)
                     val updated = stmt.executeUpdate()
                     return updated > 0
                 }
             }
         } catch (e: Exception) {
-            println("Desktop error saving profile to $tableName: ${e.message}")
+            println("Desktop error deleting profile $profileId from $tableName: ${e.message}")
             return false
         }
     }

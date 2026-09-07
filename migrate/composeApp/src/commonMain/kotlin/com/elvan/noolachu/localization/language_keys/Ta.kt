@@ -400,4 +400,8 @@ val ta: Map<String, String> = mapOf(
     K.senthamizhKolkaei to "தூய தமிழ் கொள்கை",
     K.tharavuKappagam to "தரவு காப்பகம்",
     K.pathippu to "பதிப்பு",
+    K.elvanNavil to "எல்வன் நவில்",
+    K.elvanNavilPatri to "எல்வன் நவில்",
+    K.elvanNavilDesc to "இச்செயலின் கடைப்பிடியான நிறுவனம்",
+    K.allRightsReserved to "© அனைத்து உரிமைகளும் காக்கப்பட்டவை",
 )

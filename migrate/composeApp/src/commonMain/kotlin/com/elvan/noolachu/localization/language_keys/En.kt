@@ -400,4 +400,8 @@ val en: Map<String, String> = mapOf(
     K.senthamizhKolkaei to "Pure Tamil Policy",
     K.tharavuKappagam to "Data Repository",
     K.pathippu to "Version",
+    K.elvanNavil to "Elvan Navil",
+    K.elvanNavilPatri to "Elvan Navil",
+    K.elvanNavilDesc to "The studio behind this app",
+    K.allRightsReserved to "© All rights reserved",
 )

@@ -52,15 +52,17 @@ fun InvoiceCreationSettingsScreen(
     var tempPrimaryLang by remember { mutableStateOf(profile.mudhanMozhi) }
     var tempSecondaryLang by remember { mutableStateOf(profile.thunaiMozhi) }
 
-    var isEditingTheme by remember { mutableStateOf(false) }
-    var tempThemeColor by remember { mutableStateOf(profile.thoatraNiram.ifEmpty { "#388e3c" }) }
+    val bottomSheet = LocalElvanBottomSheetController.current
+    val pdfThemeTitle = K.pdfThoatram.tr()
     val saveSuccessMsg = K.thannuruChaemikkappattadhu.tr()
 
-    @Composable
+    val greenLabel = K.pachai.tr()
+    val purpleLabel = K.oodhaa.tr()
+
     fun getThemeName(hex: String): String {
         return when (hex.lowercase()) {
-            "#388e3c" -> K.pachai.tr()
-            "#6a1b9a" -> K.oodhaa.tr()
+            "#388e3c" -> greenLabel
+            "#6a1b9a" -> purpleLabel
             else -> hex
         }
     }
@@ -74,15 +76,16 @@ fun InvoiceCreationSettingsScreen(
         }
     }
 
-    LazyColumn(
-        state = scrollState,
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            state = scrollState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
             start = Dimens.ContentPadding,
             end = Dimens.ContentPadding,
             bottom = Dimens.SubpageContentPaddingBottom
         ),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens.SectionSpacing)
     ) {
         // Top spacer driven by One UI collapsible header
         item(key = "shell_top_spacer") {
@@ -335,156 +338,78 @@ fun InvoiceCreationSettingsScreen(
                     val currentThemeColorHex = profile.thoatraNiram.ifEmpty { "#388e3c" }
                     val currentColor = parseColor(currentThemeColorHex)
 
-                    ElvanSettingsAnimatedExpand(
-                        isEditing = isEditingTheme,
-                        displayContent = {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 14.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = K.pdfThoatram.tr(),
-                                        style = TextStyle(
-                                            fontFamily = ff,
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.Medium
-                                        ),
-                                        color = colors.textPrimary
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(12.dp)
-                                                .clip(CircleShape)
-                                                .background(currentColor)
-                                        )
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text(
-                                            text = getThemeName(currentThemeColorHex),
-                                            style = TextStyle(
-                                                fontFamily = ff,
-                                                fontSize = 13.sp,
-                                                fontWeight = FontWeight.Normal
-                                            ),
-                                            color = colors.textPrimary.copy(alpha = 0.6f)
-                                        )
-                                    }
-                                }
-
-                                Surface(
-                                    shape = CircleShape,
-                                    color = colors.iconBg,
+                    ElvanSettingsDisplayRow(
+                        title = K.pdfThoatram.tr(),
+                        primaryValue = getThemeName(currentThemeColorHex),
+                        primaryWidget = {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Box(
                                     modifier = Modifier
-                                        .size(40.dp)
+                                        .size(14.dp)
                                         .clip(CircleShape)
-                                        .clickable(
-                                            interactionSource = remember { MutableInteractionSource() },
-                                            indication = ShellDefaults.ripple(colors, bounded = true),
-                                            onClick = {
-                                                tempThemeColor = currentThemeColorHex
-                                                isEditingTheme = true
-                                            }
-                                        )
-                                ) {
-                                    Box(contentAlignment = Alignment.Center) {
-                                        Icon(
-                                            imageVector = MaterialSymbols.Rounded.Edit,
-                                            contentDescription = K.thiruthu.tr(),
-                                            tint = colors.textPrimary.copy(alpha = 0.6f),
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                    }
-                                }
+                                        .background(currentColor)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = getThemeName(currentThemeColorHex),
+                                    style = TextStyle(
+                                        fontFamily = ff,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Medium
+                                    ),
+                                    color = colors.textPrimary
+                                )
                             }
                         },
-                        editContent = {
-                            ElvanSettingsEditContainer(
-                                title = K.pdfThoatram.tr(),
-                                onCancel = { isEditingTheme = false },
-                                onSave = {
-                                    val updated = profile.copy()
-                                    updated.thoatraNiram = tempThemeColor
-                                    NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
-                                    isEditingTheme = false
-                                    ElvanSnackbar.show(saveSuccessMsg)
+                        onEdit = {
+                            bottomSheet.showSelection(
+                                title = pdfThemeTitle,
+                                items = listOf("#388e3c", "#6a1b9a"),
+                                currentValue = profile.thoatraNiram.ifEmpty { "#388e3c" },
+                                itemLabelBuilder = { getThemeName(it) },
+                                leadingBuilder = { colorHex ->
+                                    Box(
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .clip(CircleShape)
+                                            .background(parseColor(colorHex))
+                                    )
                                 },
-                                colors = colors
-                            ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                                ) {
-                                    // Green Option (#388e3c)
-                                    val isGreenSelected = tempThemeColor.equals("#388e3c", ignoreCase = true)
-                                    Surface(
-                                        shape = RoundedCornerShape(12.dp),
-                                        color = if (isGreenSelected) colors.iconBg else Color.Transparent,
-                                        modifier = Modifier
-                                            .border(
-                                                width = if (isGreenSelected) 1.5.dp else 1.dp,
-                                                color = if (isGreenSelected) colors.accent else colors.border,
-                                                shape = RoundedCornerShape(12.dp)
-                                            )
-                                            .clip(RoundedCornerShape(12.dp))
-                                            .clickable { tempThemeColor = "#388e3c" }
-                                            .padding(horizontal = 16.dp, vertical = 10.dp)
-                                    ) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Box(
-                                                modifier = Modifier
-                                                    .size(16.dp)
-                                                    .clip(CircleShape)
-                                                    .background(Color(0xFF388E3C))
-                                            )
-                                            Spacer(modifier = Modifier.width(8.dp))
-                                            Text(
-                                                text = K.pachai.tr(),
-                                                style = TextStyle(fontFamily = ff, fontSize = 14.sp, fontWeight = FontWeight.Medium),
-                                                color = colors.textPrimary
-                                            )
-                                        }
-                                    }
-
-                                    // Purple Option (#6a1b9a)
-                                    val isPurpleSelected = tempThemeColor.equals("#6a1b9a", ignoreCase = true)
-                                    Surface(
-                                        shape = RoundedCornerShape(12.dp),
-                                        color = if (isPurpleSelected) colors.iconBg else Color.Transparent,
-                                        modifier = Modifier
-                                            .border(
-                                                width = if (isPurpleSelected) 1.5.dp else 1.dp,
-                                                color = if (isPurpleSelected) colors.accent else colors.border,
-                                                shape = RoundedCornerShape(12.dp)
-                                            )
-                                            .clip(RoundedCornerShape(12.dp))
-                                            .clickable { tempThemeColor = "#6a1b9a" }
-                                            .padding(horizontal = 16.dp, vertical = 10.dp)
-                                    ) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Box(
-                                                modifier = Modifier
-                                                    .size(16.dp)
-                                                    .clip(CircleShape)
-                                                    .background(Color(0xFF6A1B9A))
-                                            )
-                                            Spacer(modifier = Modifier.width(8.dp))
-                                            Text(
-                                                text = K.oodhaa.tr(),
-                                                style = TextStyle(fontFamily = ff, fontSize = 14.sp, fontWeight = FontWeight.Medium),
-                                                color = colors.textPrimary
-                                            )
-                                        }
-                                    }
+                                onSelected = { selectedColor ->
+                                    val updated = profile.copy()
+                                    updated.thoatraNiram = selectedColor
+                                    NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
+                                    ElvanSnackbar.show(saveSuccessMsg)
                                 }
-                            }
-                        }
+                            )
+                        },
+                        onTap = {
+                            bottomSheet.showSelection(
+                                title = pdfThemeTitle,
+                                items = listOf("#388e3c", "#6a1b9a"),
+                                currentValue = profile.thoatraNiram.ifEmpty { "#388e3c" },
+                                itemLabelBuilder = { getThemeName(it) },
+                                leadingBuilder = { colorHex ->
+                                    Box(
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .clip(CircleShape)
+                                            .background(parseColor(colorHex))
+                                    )
+                                },
+                                onSelected = { selectedColor ->
+                                    val updated = profile.copy()
+                                    updated.thoatraNiram = selectedColor
+                                    NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
+                                    ElvanSnackbar.show(saveSuccessMsg)
+                                }
+                            )
+                        },
+                        colors = colors
                     )
                 }
             }
         }
     }
+}
 }

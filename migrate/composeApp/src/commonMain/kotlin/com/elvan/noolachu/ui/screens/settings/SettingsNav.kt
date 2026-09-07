@@ -15,4 +15,5 @@ sealed interface SettingsRoute {
     data object Security : SettingsRoute
     data object AboutDeveloper : SettingsRoute
     data object AboutApp : SettingsRoute
+    data object ElvanNavil : SettingsRoute
 }

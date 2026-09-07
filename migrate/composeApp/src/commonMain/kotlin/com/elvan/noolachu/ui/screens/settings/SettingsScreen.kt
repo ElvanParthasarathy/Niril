@@ -1,6 +1,14 @@
 package com.elvan.noolachu.ui.screens.settings
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
@@ -44,12 +52,29 @@ fun SettingsScreen(
         handleBack()
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colors.background)
+    ) {
         AnimatedContent(
             targetState = currentRoute,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(colors.background),
             transitionSpec = {
-                Transitions.sharedAxisX(forward = targetState != SettingsRoute.Hub)
+                val isForward = targetState != SettingsRoute.Hub
+                if (isForward) {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                        animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = Spring.DampingRatioNoBouncy)
+                    ) togetherWith fadeOut(targetAlpha = 0.9f, animationSpec = tween(durationMillis = 50))
+                } else {
+                    fadeIn(initialAlpha = 0.9f) togetherWith slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                        animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = Spring.DampingRatioNoBouncy)
+                    )
+                }
             },
             label = "SettingsRouteTransition"
         ) { route ->
@@ -69,6 +94,7 @@ fun SettingsScreen(
             SettingsRoute.Security -> K.paadhugaappu.tr()
             SettingsRoute.AboutDeveloper -> K.menporulVadivaalar.tr()
             SettingsRoute.AboutApp -> K.cheyaliPatri.tr()
+            SettingsRoute.ElvanNavil -> K.elvanNavilPatri.tr()
         }
 
         ElvanSubShell(
@@ -96,6 +122,7 @@ fun SettingsScreen(
                 SettingsRoute.Security -> SecuritySettingsScreen(scrollState = scrollState, colors = colors)
                 SettingsRoute.AboutDeveloper -> AboutDeveloperScreen(scrollState = scrollState, colors = colors)
                 SettingsRoute.AboutApp -> AboutAppScreen(scrollState = scrollState, colors = colors)
+                SettingsRoute.ElvanNavil -> ElvanNavilThirai(scrollState = scrollState, colors = colors)
             }
         }
     }

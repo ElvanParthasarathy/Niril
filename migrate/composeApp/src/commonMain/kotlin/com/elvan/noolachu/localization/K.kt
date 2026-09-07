@@ -400,4 +400,8 @@ object K {
     const val senthamizhKolkaei = "senthamizhKolkaei"
     const val tharavuKappagam = "tharavuKappagam"
     const val pathippu = "pathippu"
+    const val elvanNavil = "elvanNavil"
+    const val elvanNavilPatri = "elvanNavilPatri"
+    const val elvanNavilDesc = "elvanNavilDesc"
+    const val allRightsReserved = "allRightsReserved"
 }

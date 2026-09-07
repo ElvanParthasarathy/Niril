@@ -54,7 +54,7 @@ fun SettingsHubScreen(
         contentPadding = PaddingValues(
             bottom = Dimens.SubpageContentPaddingBottom
         ),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens.SectionSpacing)
     ) {
         // Top spacer driven by One UI collapsible header
         item(key = "shell_top_spacer") {
@@ -155,7 +155,7 @@ fun SettingsHubScreen(
                 ElvanSettingsSection(colors = colors) {
                     if (currentMode == AppMode.KOOLI) {
                         ElvanSettingsRow(
-                            icon = MaterialSymbols.Rounded.Palette,
+                            icon = MaterialSymbols.Rounded.BusinessCenter,
                             title = K.adaiyaalam.tr(),
                             description = K.kooliNiruvanaAdaiyaalangal.tr(),
                             onClick = { onNavigate(SettingsRoute.KooliIdentity) },
@@ -163,7 +163,7 @@ fun SettingsHubScreen(
                         )
                     } else {
                         ElvanSettingsRow(
-                            icon = MaterialSymbols.Rounded.Palette,
+                            icon = MaterialSymbols.Rounded.BusinessCenter,
                             title = K.adaiyaalam.tr(),
                             description = K.pattuNiruvanaAdaiyaalangal.tr(),
                             onClick = { onNavigate(SettingsRoute.PattuIdentity) },
@@ -174,7 +174,7 @@ fun SettingsHubScreen(
                     ElvanSettingsDivider(colors = colors)
 
                     ElvanSettingsRow(
-                        icon = MaterialSymbols.Rounded.Home,
+                        icon = MaterialSymbols.Rounded.LocationOn,
                         title = K.mugavari.tr(),
                         description = K.mugavaritharavugal.tr(),
                         onClick = { onNavigate(SettingsRoute.Address) },
@@ -189,7 +189,7 @@ fun SettingsHubScreen(
             ElvanSectionContainer {
                 ElvanSettingsSection(colors = colors) {
                     ElvanSettingsRow(
-                        icon = MaterialSymbols.Rounded.Description,
+                        icon = MaterialSymbols.Rounded.CreditCard,
                         title = K.vangi.tr(),
                         description = K.kanakkuEnIfsc.tr(),
                         onClick = { onNavigate(SettingsRoute.Bank) },
@@ -214,7 +214,7 @@ fun SettingsHubScreen(
             ElvanSectionContainer {
                 ElvanSettingsSection(colors = colors) {
                     ElvanSettingsRow(
-                        icon = MaterialSymbols.Rounded.Home,
+                        icon = MaterialSymbols.Rounded.Person,
                         title = K.payanar.tr(),
                         description = K.payanarAmaippugal.tr(),
                         onClick = { onNavigate(SettingsRoute.UserProfile) },
@@ -249,7 +249,7 @@ fun SettingsHubScreen(
                     ElvanSettingsDivider(colors = colors)
 
                     ElvanSettingsRow(
-                        icon = MaterialSymbols.Rounded.Storage,
+                        icon = MaterialSymbols.Rounded.Folder,
                         title = K.chaemippuMatrumKaappu.tr(),
                         description = K.tharavuthalangalKaappaikKaiyaalu.tr(),
                         onClick = { onNavigate(SettingsRoute.StorageBackup) },
@@ -259,7 +259,7 @@ fun SettingsHubScreen(
                     ElvanSettingsDivider(colors = colors)
 
                     ElvanSettingsRow(
-                        icon = MaterialSymbols.Rounded.Logout,
+                        icon = MaterialSymbols.Rounded.Lock,
                         title = K.paadhugaappu.tr(),
                         description = K.thaekkagathaiazhi.tr(),
                         onClick = { onNavigate(SettingsRoute.Security) },
@@ -274,7 +274,7 @@ fun SettingsHubScreen(
             ElvanSectionContainer {
                 ElvanSettingsSection(colors = colors) {
                     ElvanSettingsRow(
-                        icon = MaterialSymbols.Rounded.Info,
+                        icon = MaterialSymbols.Rounded.Code,
                         title = K.menporulVadivaalar.tr(),
                         description = K.elvanPatriMaelumAriga.tr(),
                         onClick = { onNavigate(SettingsRoute.AboutDeveloper) },
@@ -288,6 +288,16 @@ fun SettingsHubScreen(
                         title = K.cheyaliPatri.tr(),
                         description = K.cheyalipadhippu.tr(),
                         onClick = { onNavigate(SettingsRoute.AboutApp) },
+                        colors = colors
+                    )
+
+                    ElvanSettingsDivider(colors = colors)
+
+                    ElvanSettingsRow(
+                        icon = MaterialSymbols.Rounded.AutoAwesome,
+                        title = K.elvanNavil.tr(),
+                        description = K.elvanNavilDesc.tr(),
+                        onClick = { onNavigate(SettingsRoute.ElvanNavil) },
                         colors = colors
                     )
                 }

@@ -50,9 +50,17 @@ class MainActivity : ComponentActivity() {
         com.elvan.noolachu.core.platform.AppContext.context = applicationContext
         com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository.refreshFromDatabase()
 
-        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val isSystemDark = (resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES
+        val isInitialDark = when (ThemeManager.currentThemeMode) {
+            com.elvan.noolachu.theme.ThemeMode.LIGHT -> false
+            com.elvan.noolachu.theme.ThemeMode.DARK -> true
+            com.elvan.noolachu.theme.ThemeMode.SYSTEM -> isSystemDark
+        }
+        val initialBg = if (isInitialDark) Color.BLACK else Color.parseColor("#F5F5F7")
+        window.setBackgroundDrawable(ColorDrawable(initialBg))
         window.statusBarColor = Color.TRANSPARENT
         window.navigationBarColor = Color.TRANSPARENT
+        window.decorView.setBackgroundColor(initialBg)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.isNavigationBarContrastEnforced = false
@@ -80,8 +88,11 @@ class MainActivity : ComponentActivity() {
                     }
                 )
 
+                val currentBg = if (isDark) Color.BLACK else Color.parseColor("#F5F5F7")
+                window.setBackgroundDrawable(ColorDrawable(currentBg))
                 window.statusBarColor = Color.TRANSPARENT
                 window.navigationBarColor = Color.TRANSPARENT
+                window.decorView.setBackgroundColor(currentBg)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     window.isNavigationBarContrastEnforced = false
                     window.isStatusBarContrastEnforced = false

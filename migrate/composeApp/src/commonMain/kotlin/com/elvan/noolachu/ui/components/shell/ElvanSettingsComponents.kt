@@ -638,8 +638,8 @@ fun ElvanSettingsEditContainer(
                 onClick = onSave,
                 shape = RoundedCornerShape(50),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = colors.accent,
-                    contentColor = Color.White
+                    containerColor = colors.textPrimary,
+                    contentColor = colors.surface
                 ),
                 elevation = ButtonDefaults.buttonElevation(0.dp)
             ) {
