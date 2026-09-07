@@ -18,10 +18,16 @@ import com.elvan.noolachu.core.mode.LocalAppMode
 import com.elvan.noolachu.core.mode.ModeManager
 import com.elvan.noolachu.data.database.DatabaseProvider
 import com.elvan.noolachu.localization.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import com.elvan.noolachu.theme.Dimens
+import com.elvan.noolachu.theme.ShellDefaults
 import com.elvan.noolachu.theme.ThemeManager
 import com.elvan.noolachu.theme.ThemeMode
+import com.elvan.noolachu.theme.preventBrokenLigatures
 import com.elvan.noolachu.theme.rememberShellColors
+import com.elvan.noolachu.ui.components.ExpressivePullToRefreshBox
+import kotlinx.coroutines.delay
 import com.elvan.noolachu.ui.components.kooli.KooliLaborItemCard
 import com.elvan.noolachu.ui.components.pattu.PattuSilkProductCard
 import com.elvan.noolachu.ui.components.shell.ElvanShell
@@ -50,6 +56,7 @@ fun HomeScreen() {
     val settingsScrollState = rememberLazyListState()
     var selectedTab by remember { mutableStateOf(NavTab.Home) }
     var isSettingsOpen by remember { mutableStateOf(false) }
+    var isRefreshing by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val colors = rememberShellColors()
 
@@ -173,45 +180,64 @@ fun HomeScreen() {
             )
         }
     ) {
-        LazyColumn(
-            state = scrollState,
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ExpressivePullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = {
+                scope.launch {
+                    isRefreshing = true
+                    delay(800)
+                    isRefreshing = false
+                }
+            },
+            colors = colors
         ) {
-            // Top spacer driven by One UI collapsible header
-            item {
-                Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
-            }
+            LazyColumn(
+                state = scrollState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(horizontal = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Top spacer driven by One UI collapsible header
+                item {
+                    Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
+                }
 
-            // 1. Mode Banner Card (Isolated DB)
-            item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                // 1. Mode Banner Card (Isolated DB)
+                item {
+                    val bannerShape = RoundedCornerShape(20.dp)
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(bannerShape)
+                            .border(0.5.dp, colors.border, bannerShape)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = ShellDefaults.ripple(colors, bounded = true),
+                                onClick = { ModeManager.toggleMode() }
+                            ),
+                        shape = bannerShape,
+                        color = colors.surface,
+                        shadowElevation = 0.dp
                     ) {
-                        Text(
-                            text = currentMode.displayName(),
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "${K.tharavuthalam.tr()}: ${DatabaseProvider.currentDatabaseName()}",
-                            fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
-                        )
+                        Column(
+                            modifier = Modifier.padding(20.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = currentMode.displayName().preventBrokenLigatures(),
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.textPrimary
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "${K.tharavuthalam.tr()}: ${DatabaseProvider.currentDatabaseName()} (${K.maatru.tr()})",
+                                fontSize = 13.sp,
+                                color = colors.textSecondary
+                            )
+                        }
                     }
                 }
-            }
 
             // 2. Mode Selector (Kooli vs Pattu)
             item {
@@ -331,48 +357,54 @@ fun HomeScreen() {
 
             // 5. Live Bill Output Preview
             item {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
-                    )
+                val previewShape = RoundedCornerShape(20.dp)
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(previewShape)
+                        .border(0.5.dp, colors.border, previewShape),
+                    shape = previewShape,
+                    color = colors.surface,
+                    shadowElevation = 0.dp
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
+                    Column(modifier = Modifier.padding(18.dp)) {
                         Text(
                             text = "${K.munvaraivu.tr()} (${K.pattiyalmozhi.tr()}):",
                             fontWeight = FontWeight.Bold,
-                            fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                            fontSize = 14.sp,
+                            color = colors.accent
                         )
-                        Spacer(modifier = Modifier.height(6.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = "• ${K.thalaippu.tr()}: ${AchuMozhiManager.printTr(K.pattiyal, currentMode)}",
                             fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                            color = colors.textPrimary
                         )
+                        Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = "• ${K.vaangunar.tr()}: ${AchuMozhiManager.printTr(K.vaangunar, currentMode)}",
                             fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                            color = colors.textPrimary
                         )
+                        Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = "• ${K.thogai.tr()}: ${AchuMozhiManager.printTr(K.thogai, currentMode)}",
                             fontSize = 13.sp,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                            color = colors.textPrimary
                         )
                     }
                 }
             }
 
-            item { HorizontalDivider() }
+            item { HorizontalDivider(color = colors.divider) }
 
             // 6. Mode-Specific Components (Kooli vs Pattu)
             item {
                 Text(
-                    text = "${currentMode.displayName()} ${K.porul.tr()}:",
+                    text = "${currentMode.displayName().preventBrokenLigatures()} ${K.porul.tr()}:",
                     fontWeight = FontWeight.SemiBold,
-                    fontSize = 14.sp
+                    fontSize = 14.sp,
+                    color = colors.textPrimary
                 )
             }
 
@@ -382,7 +414,9 @@ fun HomeScreen() {
                         workName = K.kooli.tr(),
                         wageRate = "45.00",
                         units = "120",
-                        total = "5,400.00"
+                        total = "5,400.00",
+                        colors = colors,
+                        onClick = { ModeManager.toggleMode() }
                     )
                 } else {
                     PattuSilkProductCard(
@@ -390,7 +424,9 @@ fun HomeScreen() {
                         hsnCode = "5007",
                         weightGrams = "650",
                         gstRate = "5",
-                        price = "12,500.00"
+                        price = "12,500.00",
+                        colors = colors,
+                        onClick = { ModeManager.toggleMode() }
                     )
                 }
             }
@@ -415,3 +451,5 @@ fun HomeScreen() {
         }
     }
 }
+}
+

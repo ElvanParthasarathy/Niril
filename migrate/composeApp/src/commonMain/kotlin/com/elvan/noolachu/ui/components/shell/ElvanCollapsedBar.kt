@@ -5,8 +5,8 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -34,9 +34,16 @@ fun ElvanTopBarIconButton(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-    IconButton(
-        onClick = onClick,
-        modifier = modifier.size(40.dp)
+    Box(
+        modifier = modifier
+            .size(40.dp)
+            .clip(CircleShape)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = ripple(bounded = true, radius = 20.dp),
+                onClick = onClick
+            ),
+        contentAlignment = Alignment.Center
     ) {
         content()
     }
