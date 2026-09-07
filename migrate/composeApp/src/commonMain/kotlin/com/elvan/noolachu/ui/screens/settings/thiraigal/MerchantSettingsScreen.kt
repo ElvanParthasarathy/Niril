@@ -55,9 +55,8 @@ fun MerchantSettingsScreen(
     val isPattu = currentMode == AppMode.PATTU
 
     fun saveField(action: () -> Unit) {
-        val updated = profile.copy()
         action()
-        NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
+        NiruvanaTharavugalRepository.updateProfile(currentMode, profile)
         editingSection = null
         showExtraPhone = false
     }

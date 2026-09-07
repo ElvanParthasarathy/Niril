@@ -47,6 +47,9 @@ fun updateSystemBarsAppearance(window: Window, isDark: Boolean) {
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        com.elvan.noolachu.core.platform.AppContext.context = applicationContext
+        com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository.refreshFromDatabase()
+
         window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         window.statusBarColor = Color.TRANSPARENT
         window.navigationBarColor = Color.TRANSPARENT

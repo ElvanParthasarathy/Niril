@@ -116,6 +116,23 @@ object NiruvanaTharavugalRepository {
         )
     )
 
+    init {
+        refreshFromDatabase()
+    }
+
+    fun refreshFromDatabase() {
+        try {
+            val helper = getSettingsDatabaseHelper()
+            helper.scanAndSync()
+            helper.loadProfile(AppMode.KOOLI)?.let { kooliProfile ->
+                kooliProfileState = kooliProfile
+            }
+            helper.loadProfile(AppMode.PATTU)?.let { pattuProfile ->
+                pattuProfileState = pattuProfile
+            }
+        } catch (_: Exception) {}
+    }
+
     fun getProfile(mode: AppMode): NiruvanaTharavugal {
         return when (mode) {
             AppMode.KOOLI -> kooliProfileState
@@ -124,9 +141,13 @@ object NiruvanaTharavugalRepository {
     }
 
     fun updateProfile(mode: AppMode, profile: NiruvanaTharavugal) {
+        val updated = profile.copy()
         when (mode) {
-            AppMode.KOOLI -> kooliProfileState = profile.copy()
-            AppMode.PATTU -> pattuProfileState = profile.copy()
+            AppMode.KOOLI -> kooliProfileState = updated
+            AppMode.PATTU -> pattuProfileState = updated
         }
+        try {
+            getSettingsDatabaseHelper().saveProfile(mode, updated)
+        } catch (_: Exception) {}
     }
 }

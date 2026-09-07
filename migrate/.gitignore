@@ -5,3 +5,4 @@ composeApp/build/
 local.properties
 .idea/
 *.hprof
+*.db
