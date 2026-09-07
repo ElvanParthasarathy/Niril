@@ -57,6 +57,7 @@ fun ElvanCollapsedBar(
     expandedHeight: Dp = 280.dp,
     title: String? = null,
     onBack: (() -> Unit)? = null,
+    leadingIcon: androidx.compose.ui.graphics.vector.ImageVector? = null,
     navOpacity: Float = 1.0f,
     hasActions: Boolean = false,
     actions: @Composable RowScope.() -> Unit = {}
@@ -102,8 +103,8 @@ fun ElvanCollapsedBar(
                     ElvanPill(liftProgress = liftProgress, colors = colors, modifier = Modifier.size(50.dp)) {
                         ElvanTopBarIconButton(onClick = onBack) {
                             Icon(
-                                imageVector = MaterialSymbols.Rounded.ArrowBack,
-                                contentDescription = K.pinchel.tr(),
+                                imageVector = leadingIcon ?: MaterialSymbols.Rounded.ArrowBack,
+                                contentDescription = if (leadingIcon != null) K.kaividu.tr() else K.pinchel.tr(),
                                 tint = colors.textPrimary,
                                 modifier = Modifier.size(22.dp)
                             )

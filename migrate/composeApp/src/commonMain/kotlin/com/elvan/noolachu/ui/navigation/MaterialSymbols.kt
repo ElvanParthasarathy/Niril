@@ -83,6 +83,7 @@ object MaterialSymbols {
         val Storage: ImageVector get() = LibSymbols.RoundedFilled.Storage
         val Inventory2: ImageVector get() = LibSymbols.RoundedFilled.Inventory_2
         val Email: ImageVector get() = LibSymbols.RoundedFilled.Mail
+        val Delete: ImageVector get() = LibSymbols.RoundedFilled.Delete
         val DeleteForever: ImageVector get() = LibSymbols.RoundedFilled.Delete_forever
         val CloudUpload: ImageVector get() = LibSymbols.RoundedFilled.Cloud_upload
         val Backup: ImageVector get() = LibSymbols.RoundedFilled.Backup

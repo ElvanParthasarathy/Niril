@@ -50,7 +50,7 @@ fun ManageProfilesScreen(
             state = scrollState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
-                bottom = Dimens.SubpageContentPaddingBottom + 72.dp
+                bottom = 48.dp + 72.dp
             ),
             verticalArrangement = Arrangement.spacedBy(Dimens.SectionSpacing)
         ) {
@@ -84,19 +84,14 @@ fun ManageProfilesScreen(
                                 val isActive = profileItem.id == activeProfile.id
                                 val primaryName = profileItem.getPrimary("niruvanathinPeyar")
                                     .ifEmpty { K.tharpoadhaiyaNiruvanam.tr() }
-                                val secondaryName = if (profileItem.iruMozhi) {
-                                    profileItem.getSecondary("niruvanathinPeyar")
-                                } else null
 
                                 ElvanSettingsDisplayRow(
                                     title = if (isActive) K.tharpoadhaiyaNiruvanam.tr() else "",
                                     primaryValue = primaryName,
-                                    secondaryValue = secondaryName,
-                                    icon = MaterialSymbols.Rounded.DeleteForever,
-                                    iconColor = if (!isActive) MaterialTheme.colorScheme.error else null,
-                                    onEdit = if (!isActive) {
-                                        { profileToDelete = profileItem }
-                                    } else null,
+                                    secondaryValue = null,
+                                    icon = MaterialSymbols.Rounded.Delete,
+                                    iconColor = null,
+                                    onEdit = { profileToDelete = profileItem },
                                     onTap = if (!isActive && profileItem.id != null) {
                                         {
                                             NiruvanaTharavugalRepository.setActiveProfile(currentMode, profileItem.id!!)
@@ -114,7 +109,7 @@ fun ManageProfilesScreen(
             }
         }
 
-        // Floating Action Button to add new profile (squircle shape)
+        // Floating Action Button to add new profile (squircle shape with 48.dp bottom padding)
         if (profiles.size < NiruvanaTharavugalRepository.MAX_PROFILES) {
             FloatingActionButton(
                 onClick = { showNewProfileSheet = true },
@@ -123,7 +118,7 @@ fun ManageProfilesScreen(
                 contentColor = colors.surface,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(bottom = Dimens.SubpageContentPaddingBottom, end = 20.dp)
+                    .padding(bottom = 48.dp, end = 20.dp)
             ) {
                 Icon(
                     imageVector = MaterialSymbols.Rounded.Add,

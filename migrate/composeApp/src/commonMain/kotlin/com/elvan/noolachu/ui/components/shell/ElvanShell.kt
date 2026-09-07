@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -45,6 +46,7 @@ fun ElvanShell(
     useNewDesign: Boolean = true,
     showNavbar: Boolean = true,
     onBack: (() -> Unit)? = null,
+    leadingIcon: ImageVector? = null,
     hasActions: Boolean = false,
     actions: @Composable RowScope.() -> Unit = {},
     navbar: @Composable () -> Unit = {},
@@ -344,6 +346,7 @@ fun ElvanShell(
                     expandedHeight = expandedHeight,
                     title = if (useNewDesign) null else title,
                     onBack = onBack,
+                    leadingIcon = leadingIcon,
                     navOpacity = effectiveNavOpacity,
                     hasActions = hasActions,
                     actions = actions
@@ -356,6 +359,7 @@ fun ElvanShell(
                     expandedHeight = expandedHeight,
                     title = title,
                     onBack = onBack,
+                    leadingIcon = leadingIcon,
                     navOpacity = effectiveNavOpacity,
                     hasActions = hasActions,
                     actions = actions

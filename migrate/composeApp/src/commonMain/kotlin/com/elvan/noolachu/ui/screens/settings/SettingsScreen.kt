@@ -24,6 +24,7 @@ import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.components.shell.ElvanActionSheet
 import com.elvan.noolachu.ui.components.shell.ElvanSnackbarHost
 import com.elvan.noolachu.ui.components.shell.ElvanSubShell
+import com.elvan.noolachu.ui.navigation.MaterialSymbols
 import com.elvan.noolachu.ui.screens.settings.thiraigal.*
 
 /**
@@ -112,9 +113,16 @@ fun SettingsScreen(
                 SettingsRoute.ElvanNavil -> K.elvanNavilPatri.tr()
             }
 
+            val leadingIcon = if (route == SettingsRoute.ManageProfiles) {
+                MaterialSymbols.Rounded.Close
+            } else {
+                null
+            }
+
             ElvanSubShell(
                 title = pageTitle,
                 onBack = handleBack,
+                leadingIcon = leadingIcon,
                 scrollState = scrollState
             ) {
                 when (route) {
