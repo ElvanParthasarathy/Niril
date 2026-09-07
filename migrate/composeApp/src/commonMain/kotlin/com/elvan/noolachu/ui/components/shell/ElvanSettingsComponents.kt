@@ -7,6 +7,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -107,11 +108,16 @@ fun ElvanSettingsRow(
     val defaultIconBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.06f)
     val defaultIconTint = iconTint ?: (titleColor ?: colors.textPrimary)
     val ff = LocalAppFontFamily.current
+    val rippleColor = if (isDark) Color.White.copy(alpha = 0.16f) else Color.Black.copy(alpha = 0.08f)
 
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick),
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple(color = rippleColor, bounded = true),
+                onClick = onClick
+            ),
         color = Color.Transparent
     ) {
         Row(
@@ -263,12 +269,17 @@ fun ElvanProfilePillCard(
     val cardColor = if (isDark) Color(0xFF111111) else Color.White
     val avatarBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.06f)
     val ff = LocalAppFontFamily.current
+    val rippleColor = if (isDark) Color.White.copy(alpha = 0.16f) else Color.Black.copy(alpha = 0.08f)
 
     Surface(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(999.dp))
-            .clickable(onClick = onClick),
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple(color = rippleColor, bounded = true),
+                onClick = onClick
+            ),
         shape = RoundedCornerShape(999.dp),
         color = cardColor,
         shadowElevation = 0.dp
@@ -351,11 +362,17 @@ fun <T> ElvanRadioSettingsRow(
 ) {
     val isSelected = value == groupValue
     val ff = LocalAppFontFamily.current
+    val isDark = colors.isDark
+    val rippleColor = if (isDark) Color.White.copy(alpha = 0.16f) else Color.Black.copy(alpha = 0.08f)
 
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = { onSelected(value) }),
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple(color = rippleColor, bounded = true),
+                onClick = { onSelected(value) }
+            ),
         color = Color.Transparent
     ) {
         Row(

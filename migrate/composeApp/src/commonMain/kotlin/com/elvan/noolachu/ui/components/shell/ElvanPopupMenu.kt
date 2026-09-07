@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -117,6 +118,8 @@ fun ElvanPopupMenu(
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
+                val rippleColor = if (isDark) Color.White.copy(alpha = 0.16f) else Color.Black.copy(alpha = 0.08f)
+
                 items.forEachIndexed { index, item ->
                     val isFirst = index == 0
                     val isLast = index == items.size - 1
@@ -133,6 +136,8 @@ fun ElvanPopupMenu(
                             .height(50.dp)
                             .clip(shape)
                             .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = rememberRipple(color = rippleColor, bounded = true),
                                 onClick = {
                                     onDismissRequest()
                                     item.onClick()
