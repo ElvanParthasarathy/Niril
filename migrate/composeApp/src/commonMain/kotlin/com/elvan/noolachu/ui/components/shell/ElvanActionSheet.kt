@@ -16,6 +16,7 @@ import com.elvan.noolachu.localization.K
 import com.elvan.noolachu.localization.tr
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.ShellColors
+import com.elvan.noolachu.core.platform.ConfigureDialogWindow
 import com.elvan.noolachu.theme.rememberShellColors
 
 /**
@@ -58,6 +59,7 @@ fun ElvanActionSheet(
         scrimColor = Color.Black.copy(alpha = 0.45f),
         dragHandle = null
     ) {
+        ConfigureDialogWindow(isDark = isDark)
         Box(
             modifier = modifier
                 .fillMaxWidth()

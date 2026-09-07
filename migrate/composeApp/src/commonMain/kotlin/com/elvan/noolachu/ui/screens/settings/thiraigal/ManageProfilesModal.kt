@@ -25,6 +25,7 @@ import com.elvan.noolachu.localization.tr
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.ShellColors
 import com.elvan.noolachu.theme.rememberShellColors
+import com.elvan.noolachu.core.platform.ConfigureDialogWindow
 import com.elvan.noolachu.ui.components.shell.*
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
 
@@ -55,6 +56,7 @@ fun ManageProfilesModal(
         onDismissRequest = onDismissRequest,
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
+        ConfigureDialogWindow(isDark = colors.isDark)
         Scaffold(
             containerColor = colors.background,
             floatingActionButton = {

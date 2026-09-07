@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.elvan.noolachu.localization.tr
 import com.elvan.noolachu.theme.ShellColors
 import com.elvan.noolachu.theme.rememberShellColors
+import com.elvan.noolachu.core.platform.ConfigureDialogWindow
 import com.elvan.noolachu.ui.components.shell.maeladukkugal.*
 
 /**
@@ -66,6 +67,7 @@ fun <T> ElvanSelectionBottomSheet(
         dragHandle = { BottomSheetDefaults.DragHandle() },
         modifier = modifier
     ) {
+        ConfigureDialogWindow(isDark = isDark)
         Column(
             modifier = Modifier
                 .fillMaxWidth()

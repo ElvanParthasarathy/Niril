@@ -71,6 +71,18 @@ class ReactPalamMaatri {
       'upiId': profile.upiId,
       // React uses 'themeColor' instead of Flutter's 'thoatraNiram'
       'themeColor': profile.thoatraNiram,
+      'defaultPrintLanguage': profile.mudhanMozhi,
+      'receiptLanguage': profile.mudhanMozhi,
+      'logoHeight': 120,
+      'wideLogoX': 0,
+      'wideLogoY': 0,
+      'wideLogoScale': 1,
+      'pan': profile.gstin.length >= 12 ? profile.gstin.substring(2, 12) : '',
+      'tholaipaesi1': profile.tholaipaesi1,
+      'tholaipaesi2': profile.tholaipaesi2,
+      'minnanjal': profile.minnanjal,
+      'country': profile.naadu['en'] ?? profile.naadu['ta'] ?? '',
+      'country_English': profile.naadu['en'] ?? '',
     };
   }
 

@@ -67,58 +67,26 @@ fun SettingsHubScreen(
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(999.dp)),
+                        .clip(RoundedCornerShape(999.dp))
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = ShellDefaults.ripple(colors, bounded = true),
+                            onClick = { onNavigate(SettingsRoute.Merchant) }
+                        ),
                     shape = RoundedCornerShape(999.dp),
                     color = colors.surface,
                     shadowElevation = 0.dp
                 ) {
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        // The main pill body (Navigates to Merchant Settings)
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = ShellDefaults.ripple(colors, bounded = true),
-                                    onClick = { onNavigate(SettingsRoute.Merchant) }
-                                )
-                                .padding(start = 92.dp, end = 24.dp, top = 14.dp, bottom = 14.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(64.dp),
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = K.niruvanaAmaippugal.tr(),
-                                    style = TextStyle(
-                                        fontFamily = ff,
-                                        fontSize = 18.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        lineHeight = 22.sp
-                                    ),
-                                    color = colors.textPrimary
-                                )
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = if (currentMode == AppMode.KOOLI) K.nirilKooli.tr() else K.nirilPattu.tr(),
-                                    style = TextStyle(
-                                        fontFamily = ff,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.SemiBold
-                                    ),
-                                    color = colors.textPrimary.copy(alpha = 0.5f)
-                                )
-                            }
-                        }
-
-                        // The circular Mode Switcher on the left (diameter 64dp)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 14.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // The circular Mode Switcher on the left (diameter 56dp, matching Neram's ElvanProfilePillCard avatar)
                         Box(
                             modifier = Modifier
-                                .padding(14.dp)
-                                .size(64.dp)
+                                .size(56.dp)
                                 .clip(CircleShape)
                                 .background(colors.iconBg)
                                 .clickable(
@@ -130,7 +98,7 @@ fun SettingsHubScreen(
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(34.dp)
+                                    .size(30.dp)
                                     .clip(RoundedCornerShape(8.dp))
                                     .border(1.5.dp, colors.textPrimary, RoundedCornerShape(8.dp)),
                                 contentAlignment = Alignment.Center
@@ -138,11 +106,40 @@ fun SettingsHubScreen(
                                 Text(
                                     text = if (currentMode == AppMode.KOOLI) "கூ" else "ப",
                                     color = colors.textPrimary,
-                                    fontSize = 18.sp,
+                                    fontSize = 16.sp,
                                     fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.offset(y = (-1).dp)
+                                    modifier = Modifier.offset(y = (-0.5).dp)
                                 )
                             }
+                        }
+
+                        Spacer(modifier = Modifier.width(16.dp))
+
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text(
+                                text = K.niruvanaAmaippugal.tr(),
+                                style = TextStyle(
+                                    fontFamily = ff,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    lineHeight = 22.sp
+                                ),
+                                color = colors.textPrimary
+                            )
+                            Spacer(modifier = Modifier.height(3.dp))
+                            Text(
+                                text = if (currentMode == AppMode.KOOLI) K.nirilKooli.tr() else K.nirilPattu.tr(),
+                                style = TextStyle(
+                                    fontFamily = ff,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium
+                                ),
+                                color = colors.textPrimary.copy(alpha = 0.5f),
+                                maxLines = 1
+                            )
                         }
                     }
                 }

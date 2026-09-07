@@ -78,7 +78,7 @@ flutter:
   assets:
     - assets/fonts/ElvanSans-Regular.woff
     - assets/fonts/ElvanSans-Bold.woff
-    - lib/src/cheyalpaadugal/niril_pattu/vadivangal/
+
     - assets/templates/silk/
     - assets/templates/silk/fonts/
 

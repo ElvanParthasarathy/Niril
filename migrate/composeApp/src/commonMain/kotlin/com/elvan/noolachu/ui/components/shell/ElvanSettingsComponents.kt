@@ -218,7 +218,7 @@ fun ElvanSettingsDivider(
 }
 
 /**
- * ElvanSettingsSwitch — One UI styled switch matching Neram.
+ * ElvanSettingsSwitch — Material 3 styled switch with refined monochrome design.
  */
 @Composable
 fun ElvanSettingsSwitch(
@@ -235,18 +235,18 @@ fun ElvanSettingsSwitch(
         enabled = enabled,
         modifier = modifier,
         colors = SwitchDefaults.colors(
-            checkedThumbColor = Color.White,
-            checkedTrackColor = colors.accent,
-            uncheckedThumbColor = if (isDark) Color.White.copy(alpha = 0.6f) else Color.Black.copy(alpha = 0.6f),
-            uncheckedTrackColor = if (isDark) Color.White.copy(alpha = 0.1f) else Color.Black.copy(alpha = 0.1f),
-            disabledCheckedThumbColor = Color.White.copy(alpha = 0.6f),
-            disabledCheckedTrackColor = (if (isDark) Color.White else Color.Black).copy(alpha = 0.15f),
-            disabledUncheckedThumbColor = (if (isDark) Color.White else Color.Black).copy(alpha = 0.3f),
-            disabledUncheckedTrackColor = (if (isDark) Color.White else Color.Black).copy(alpha = 0.06f),
+            checkedThumbColor = if (isDark) Color.Black else Color.White,
+            checkedTrackColor = if (isDark) Color.White else Color.Black,
             checkedBorderColor = Color.Transparent,
-            uncheckedBorderColor = Color.Transparent,
+            uncheckedThumbColor = if (isDark) Color(0xFF9E9E9E) else Color(0xFF757575),
+            uncheckedTrackColor = if (isDark) Color(0xFF2C2C2E) else Color(0xFFE5E5EA),
+            uncheckedBorderColor = if (isDark) Color(0xFF48484A) else Color(0xFFC7C7CC),
+            disabledCheckedThumbColor = (if (isDark) Color.Black else Color.White).copy(alpha = 0.6f),
+            disabledCheckedTrackColor = (if (isDark) Color.White else Color.Black).copy(alpha = 0.38f),
+            disabledUncheckedThumbColor = (if (isDark) Color(0xFF9E9E9E) else Color(0xFF757575)).copy(alpha = 0.38f),
+            disabledUncheckedTrackColor = (if (isDark) Color(0xFF2C2C2E) else Color(0xFFE5E5EA)).copy(alpha = 0.38f),
             disabledCheckedBorderColor = Color.Transparent,
-            disabledUncheckedBorderColor = Color.Transparent
+            disabledUncheckedBorderColor = (if (isDark) Color(0xFF48484A) else Color(0xFFC7C7CC)).copy(alpha = 0.38f)
         )
     )
 }

@@ -22,9 +22,31 @@ const _printChannel = MethodChannel('com.elvan.niril/print');
 
 Future<void> _handlePrint(dynamic pattiyal, dynamic profile, bool isDark) async {
   try {
+    List<dynamic> items = [];
+    try {
+      items = jsonDecode(pattiyal.tharavugal);
+    } catch (_) {}
+
+    final mappedItems = items.map((it) => {
+      'item_name': it['porulPeyar'] ?? '',
+      'item_name_en': it['porulPeyarEn'] ?? '',
+      'kg': it['edai'] ?? 0,
+      'coolie': it['vilai'] ?? 0,
+    }).toList();
+
     final pattiyalJson = <String, dynamic>{
       ...pattiyal.toMap(),
-      // Add any specific data required by CoolieInvoiceView if missing
+      'bill_no': pattiyal.patrucheettuEn,
+      'date': DateFormat('dd/MM/yyyy').format(pattiyal.pattiyalNaal),
+      'customer_name': pattiyal.vaangunarPeyar['ta'] ?? pattiyal.vaangunarPeyar['en'] ?? '',
+      'customer_name_en': pattiyal.vaangunarPeyar['en'] ?? '',
+      'address': pattiyal.vaangunarMunvari['ta'] ?? pattiyal.vaangunarMunvari['en'] ?? '',
+      'address_en': pattiyal.vaangunarMunvari['en'] ?? '',
+      'items': mappedItems,
+      'setharam_grams': pattiyal.setharamGrams,
+      'courier_rs': pattiyal.thabaalThogai,
+      'ahimsa_silk_rs': pattiyal.ahimsaPattuThogai,
+      'custom_charge_name': pattiyal.piravariVugal,
     };
 
     final convertedProfile = profile != null && profile is! Map

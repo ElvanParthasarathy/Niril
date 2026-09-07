@@ -60,7 +60,6 @@ fun MerchantSettingsScreen(
     val saveSuccessMsg = K.thannuruChaemikkappattadhu.tr()
     val defaultProfileName = K.tharpoadhaiyaNiruvanam.tr()
     val selectCompanyTitle = K.niruvanaththaithThaernhedu.tr()
-    val addNewLabel = K.pudhiyaChaerkkai.tr()
     val bottomSheet = LocalElvanBottomSheetController.current
 
     fun saveField(action: () -> Unit) {
@@ -72,7 +71,6 @@ fun MerchantSettingsScreen(
     }
 
     var showManageModal by remember { mutableStateOf(false) }
-    var showNewProfileSheet by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -140,8 +138,6 @@ fun MerchantSettingsScreen(
                                         currentValue = profile,
                                         itemLabelBuilder = { it.getPrimary("niruvanathinPeyar").ifEmpty { defaultProfileName } },
                                         subtitleBuilder = { if (it.iruMozhi) it.getSecondary("niruvanathinPeyar") else null },
-                                        onRequestAddNew = { showNewProfileSheet = true },
-                                        addNewLabel = addNewLabel,
                                         onSelected = { selected ->
                                             if (selected.id != null) {
                                                 NiruvanaTharavugalRepository.setActiveProfile(currentMode, selected.id!!)
@@ -497,15 +493,6 @@ fun MerchantSettingsScreen(
             ManageProfilesModal(
                 mode = currentMode,
                 onDismissRequest = { showManageModal = false },
-                colors = colors
-            )
-        }
-
-        if (showNewProfileSheet) {
-            NewProfileBottomSheet(
-                mode = currentMode,
-                onDismissRequest = { showNewProfileSheet = false },
-                onSuccess = { showNewProfileSheet = false },
                 colors = colors
             )
         }

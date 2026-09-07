@@ -1,22 +1,20 @@
 package com.elvan.noolachu.ui.screens.settings.thiraigal
 
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -34,9 +32,9 @@ import com.elvan.noolachu.ui.components.shell.*
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
 
 /**
- * Display Settings Screen matching Flutter's `kaatchi_amaippugal_thirai.dart` and
- * `elvan_thoatra_thaervu.dart` 1:1 pixel-perfect.
- * Features realistic Light & Dark mockup preview cards and Auto-Theme switch.
+ * Display Settings Screen matching Neram's `DisplaySettingsScreen.kt` 1:1 pixel-perfect.
+ * Features realistic Light & Dark mockup preview cards with Material 3 Expressive ripple,
+ * horizontal pill capsule option rows, and Auto-Theme switch with full row ripple.
  */
 @Composable
 fun DisplaySettingsScreen(
@@ -55,90 +53,93 @@ fun DisplaySettingsScreen(
         verticalArrangement = Arrangement.spacedBy(Dimens.SectionSpacing)
     ) {
         // Top spacer driven by One UI collapsible header
-        item(key = "shell_top_spacer") {
+        item(key = "spacer_top") {
             Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
         }
 
         item(key = "theme_section") {
             ElvanSectionContainer {
                 ElvanSettingsSection(colors = colors) {
-                // ── Preview Boxes Row ──
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 24.dp, horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Light Mode Preview Option
-                    ThemeOptionBox(
-                        title = K.oliNilai.tr(),
-                        isSelected = currentMode == ThemeMode.LIGHT,
-                        isDarkModeDesign = false,
-                        onTap = { ThemeManager.setThemeMode(ThemeMode.LIGHT) },
-                        colors = colors
-                    )
+                    // Light & Dark theme options row
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 24.dp, horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        // Light Mode Option
+                        ThemeOptionBox(
+                            title = K.oliNilai.tr(),
+                            isSelected = currentMode == ThemeMode.LIGHT,
+                            isDarkModeDesign = false,
+                            onClick = { ThemeManager.setThemeMode(ThemeMode.LIGHT) },
+                            colors = colors
+                        )
 
-                    // Dark Mode Preview Option
-                    ThemeOptionBox(
-                        title = K.irulNilai.tr(),
-                        isSelected = currentMode == ThemeMode.DARK,
-                        isDarkModeDesign = true,
-                        onTap = { ThemeManager.setThemeMode(ThemeMode.DARK) },
-                        colors = colors
-                    )
-                }
+                        // Dark Mode Option
+                        ThemeOptionBox(
+                            title = K.irulNilai.tr(),
+                            isSelected = currentMode == ThemeMode.DARK,
+                            isDarkModeDesign = true,
+                            onClick = { ThemeManager.setThemeMode(ThemeMode.DARK) },
+                            colors = colors
+                        )
+                    }
 
-                // Divider
-                ElvanSettingsDivider(colors = colors)
+                    ElvanSettingsDivider(colors = colors)
 
-                // ── Auto Mode Row ──
-                val isSystem = currentMode == ThemeMode.SYSTEM
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = {
+                    // Auto Mode Switch Row
+                    val isSystem = currentMode == ThemeMode.SYSTEM
+                    val autoRippleColor = if (colors.isDark) Color.White.copy(alpha = 0.16f) else Color.Black.copy(alpha = 0.08f)
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = ripple(color = autoRippleColor, bounded = true)
+                            ) {
                                 if (isSystem) {
                                     ThemeManager.setThemeMode(if (colors.isDark) ThemeMode.DARK else ThemeMode.LIGHT)
                                 } else {
                                     ThemeManager.setThemeMode(ThemeMode.SYSTEM)
                                 }
-                            }
-                        )
-                        .padding(horizontal = 20.dp, vertical = 14.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = K.thaaniyangiAmaippu.tr(),
-                        style = TextStyle(
-                            fontFamily = ff,
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            lineHeight = 20.sp
-                        ),
-                        color = colors.textPrimary,
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    ElvanSettingsSwitch(
-                        checked = isSystem,
-                        onCheckedChange = { checked ->
-                            if (checked) {
-                                ThemeManager.setThemeMode(ThemeMode.SYSTEM)
-                            } else {
-                                ThemeManager.setThemeMode(if (colors.isDark) ThemeMode.DARK else ThemeMode.LIGHT)
-                            }
-                        },
-                        colors = colors
-                    )
+                            },
+                        color = Color.Transparent
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp, vertical = 12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = K.thaaniyangiAmaippu.tr(),
+                                style = TextStyle(
+                                    fontFamily = ff,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    lineHeight = 20.sp
+                                ),
+                                color = colors.textPrimary
+                            )
+                            ElvanSettingsSwitch(
+                                checked = isSystem,
+                                onCheckedChange = { isChecked ->
+                                    if (isChecked) {
+                                        ThemeManager.setThemeMode(ThemeMode.SYSTEM)
+                                    } else {
+                                        ThemeManager.setThemeMode(if (colors.isDark) ThemeMode.DARK else ThemeMode.LIGHT)
+                                    }
+                                },
+                                colors = colors
+                            )
+                        }
+                    }
                 }
             }
         }
     }
-}
 }
 
 @Composable
@@ -146,119 +147,110 @@ private fun ThemeOptionBox(
     title: String,
     isSelected: Boolean,
     isDarkModeDesign: Boolean,
-    onTap: () -> Unit,
+    onClick: () -> Unit,
     colors: ShellColors
 ) {
+    val isDark = colors.isDark
     val ff = LocalAppFontFamily.current
-    val scale by animateFloatAsState(targetValue = if (isSelected) 1.02f else 1.0f)
 
     val boxBgColor = if (isDarkModeDesign) Color(0xFF1E1E1E) else Color(0xFFF5F5F5)
     val borderColor = if (isSelected) {
         if (isDarkModeDesign) Color(0xFF888888) else Color(0xFF555555)
     } else {
-        if (colors.isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.08f)
+        if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.08f)
     }
 
     val bar1Color = if (isDarkModeDesign) Color.White.copy(alpha = 0.8f) else Color.Black.copy(alpha = 0.7f)
-    val bar2Color = if (isDarkModeDesign) Color(0xFF444444) else Color(0xFFCFCFCF)
+    val bar2Color = if (isDarkModeDesign) Color(0xFF444444) else Color(0xCFCFCFCF)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onTap
-            )
+        modifier = Modifier.padding(horizontal = 4.dp)
     ) {
-        // Mockup Screen Box
+        // Preview Box (110dp x 85dp, 24dp rounded corners) with Material 3 Expressive Ripple
         Surface(
+            onClick = onClick,
+            shape = RoundedCornerShape(24.dp),
+            color = boxBgColor,
+            border = BorderStroke(1.dp, borderColor),
             modifier = Modifier
                 .width(110.dp)
                 .height(85.dp)
-                .scale(scale)
-                .border(width = 1.dp, color = borderColor, shape = RoundedCornerShape(24.dp))
-                .clip(RoundedCornerShape(24.dp)),
-            shape = RoundedCornerShape(24.dp),
-            color = boxBgColor
+                .clip(RoundedCornerShape(24.dp))
         ) {
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start
+                    .padding(16.dp)
             ) {
-                // Bar 1 (Accent header)
-                Box(
-                    modifier = Modifier
-                        .width(32.dp)
-                        .height(8.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(bar1Color)
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                // Bar 2 (Full line)
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(bar2Color)
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                // Bar 3 (Half line)
-                Box(
-                    modifier = Modifier
-                        .width(48.dp)
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(bar2Color)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Title
-        Text(
-            text = title,
-            style = TextStyle(
-                fontFamily = ff,
-                fontSize = 14.sp,
-                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium
-            ),
-            color = if (isSelected) colors.textPrimary else colors.textPrimary.copy(alpha = 0.5f)
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Radio Checkmark Circle
-        Surface(
-            shape = CircleShape,
-            color = if (isSelected) (if (isDarkModeDesign) Color.White else Color.Black) else Color.Transparent,
-            modifier = Modifier
-                .size(22.dp)
-                .border(
-                    width = if (isSelected) 0.dp else 1.5.dp,
-                    color = Color(0xFF888888),
-                    shape = CircleShape
-                )
-        ) {
-            if (isSelected) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = MaterialSymbols.Rounded.Check,
-                        contentDescription = null,
-                        tint = if (isDarkModeDesign) Color.Black else Color.White,
-                        modifier = Modifier.size(14.dp)
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    // Bar 1 (32dp x 8dp)
+                    Box(
+                        modifier = Modifier
+                            .width(32.dp)
+                            .height(8.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(bar1Color)
+                    )
+                    // Bar 2 (Full width x 6dp)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(bar2Color)
+                    )
+                    // Bar 3 (48dp x 6dp)
+                    Box(
+                        modifier = Modifier
+                            .width(48.dp)
+                            .height(6.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(bar2Color)
                     )
                 }
             }
+        }
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // Bottom label & radio button with ripple
+        val optionRippleColor = if (isDark) Color.White.copy(alpha = 0.16f) else Color.Black.copy(alpha = 0.08f)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .clip(RoundedCornerShape(999.dp))
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = ripple(color = optionRippleColor, bounded = true),
+                    onClick = onClick
+                )
+                .padding(horizontal = 10.dp, vertical = 4.dp)
+        ) {
+            Icon(
+                imageVector = if (isSelected) MaterialSymbols.Rounded.CheckCircleFill else MaterialSymbols.Rounded.RadioButtonUnchecked,
+                contentDescription = null,
+                tint = if (isSelected) {
+                    if (isDark) Color.White else Color.Black
+                } else {
+                    Color(0xFF888888)
+                },
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = title,
+                style = TextStyle(
+                    fontFamily = ff,
+                    fontSize = 14.sp,
+                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium
+                ),
+                color = if (isSelected) colors.textPrimary else colors.textPrimary.copy(alpha = 0.5f)
+            )
         }
     }
 }

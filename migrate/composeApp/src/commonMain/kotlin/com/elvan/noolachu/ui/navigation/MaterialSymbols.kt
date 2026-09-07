@@ -63,6 +63,8 @@ object MaterialSymbols {
         val Handyman: ImageVector get() = LibSymbols.Rounded.Handyman
         val CalendarToday: ImageVector get() = LibSymbols.Rounded.Calendar_today
         val AddCircle: ImageVector get() = LibSymbols.Rounded.Add_circle
+        val CheckCircleFill: ImageVector get() = LibSymbols.RoundedFilled.Check_circle
+        val RadioButtonUnchecked: ImageVector get() = LibSymbols.Rounded.Radio_button_unchecked
 
         // ── Settings Categories & Badges (Filled / Solid as per old Flutter design) ──
         val BusinessCenter: ImageVector get() = LibSymbols.RoundedFilled.Business_center

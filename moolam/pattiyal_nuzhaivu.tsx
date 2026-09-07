@@ -81,7 +81,7 @@ function App() {
                 client: client,
                 details: {
                     invoiceNumber: parsedBill.patrucheettuEn || '',
-                    invoiceDate: parsedBill.naal || '',
+                    invoiceDate: parsedBill.pattiyalNaal || '',
                     invoiceType: parsedBill.pattiyalVagai || 'tax-invoice',
                     placeOfSupply: options.placeOfSupply || client.maanilam || ''
                 },

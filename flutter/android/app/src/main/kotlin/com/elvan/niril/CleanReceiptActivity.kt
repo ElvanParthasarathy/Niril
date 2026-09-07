@@ -8,14 +8,16 @@ import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.Alignment
 import android.print.PrintManager
 import android.print.PrintAttributes
 import android.content.Context
@@ -42,9 +44,50 @@ class CleanReceiptActivity : ComponentActivity() {
             }
         } catch (e: Exception) {}
 
+        var currentReceiptJson = receiptJson
+        
         setContent {
-            // Use Android system dark theme or flutter's intent flag
             val isDark = isSystemInDarkTheme() || intentIsDark
+            var showSettings by remember { mutableStateOf(false) }
+            
+            // State for options
+            var hideBankDetails by remember { mutableStateOf(false) }
+            var hideIfsc by remember { mutableStateOf(false) }
+            var hideLogo by remember { mutableStateOf(false) }
+            var hideDigitalSignature by remember { mutableStateOf(false) }
+
+            LaunchedEffect(Unit) {
+                try {
+                    val obj = JSONObject(currentReceiptJson)
+                    if (obj.has("sonthaViruppangal") && obj.getString("sonthaViruppangal").isNotEmpty()) {
+                        val opts = JSONObject(obj.getString("sonthaViruppangal"))
+                        hideBankDetails = opts.optBoolean("hideBankDetails", false)
+                        hideIfsc = opts.optBoolean("hideIfsc", false)
+                        hideLogo = opts.optBoolean("hideLogo", false)
+                        hideDigitalSignature = opts.optBoolean("hideDigitalSignature", false)
+                    }
+                } catch (e: Exception) {}
+            }
+
+            fun updateReceipt() {
+                try {
+                    val obj = JSONObject(currentReceiptJson)
+                    val opts = JSONObject()
+                    opts.put("hideBankDetails", hideBankDetails)
+                    opts.put("hideIfsc", hideIfsc)
+                    opts.put("hideLogo", hideLogo)
+                    opts.put("hideDigitalSignature", hideDigitalSignature)
+                    
+                    obj.put("sonthaViruppangal", opts.toString())
+                    
+                    // Also update coolie fields just in case
+                    obj.put("show_bank_details", !hideBankDetails)
+                    obj.put("show_ifsc", !hideIfsc)
+                    
+                    currentReceiptJson = obj.toString()
+                    webView.reload()
+                } catch (e: Exception) {}
+            }
 
             MaterialTheme(
                 colorScheme = if (isDark) darkColorScheme(background = androidx.compose.ui.graphics.Color.Black) else lightColorScheme(background = androidx.compose.ui.graphics.Color.White)
@@ -59,6 +102,9 @@ class CleanReceiptActivity : ComponentActivity() {
                                 }
                             },
                             actions = {
+                                IconButton(onClick = { showSettings = true }) {
+                                    Icon(Icons.Filled.Settings, contentDescription = "Settings")
+                                }
                                 IconButton(onClick = { 
                                     printWebView(receiptNo) 
                                 }) {
@@ -96,7 +142,7 @@ class CleanReceiptActivity : ComponentActivity() {
                                 
                                 addJavascriptInterface(object : Any() {
                                     @JavascriptInterface
-                                    fun getReceiptData(): String = receiptJson
+                                    fun getReceiptData(): String = currentReceiptJson
                         
                                     @JavascriptInterface
                                     fun getProfileData(): String = profileJson
@@ -131,6 +177,36 @@ class CleanReceiptActivity : ComponentActivity() {
                             .fillMaxSize()
                             .padding(innerPadding)
                     )
+                }
+                
+                if (showSettings) {
+                    ModalBottomSheet(onDismissRequest = { showSettings = false }) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
+                            Text("அமைப்புகள் (Settings)", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(bottom = 16.dp))
+                            
+                            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                                Text("வங்கித் தரவுகளை மறைக்க", modifier = Modifier.weight(1f))
+                                Switch(checked = hideBankDetails, onCheckedChange = { hideBankDetails = it; updateReceipt() })
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                                Text("IFSC மறைக்க", modifier = Modifier.weight(1f))
+                                Switch(checked = hideIfsc, onCheckedChange = { hideIfsc = it; updateReceipt() })
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                                Text("ஓவுரு மறைக்க (Hide Logo)", modifier = Modifier.weight(1f))
+                                Switch(checked = hideLogo, onCheckedChange = { hideLogo = it; updateReceipt() })
+                            }
+                            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                                Text("கையொப்பம் மறைக்க", modifier = Modifier.weight(1f))
+                                Switch(checked = hideDigitalSignature, onCheckedChange = { hideDigitalSignature = it; updateReceipt() })
+                            }
+                            Spacer(modifier = Modifier.height(32.dp))
+                        }
+                    }
                 }
             }
         }
