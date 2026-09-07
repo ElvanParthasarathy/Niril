@@ -596,18 +596,6 @@ fun ElvanSettingsEditContainer(
             .padding(16.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        if (!title.isNullOrBlank()) {
-            Text(
-                text = title,
-                style = TextStyle(
-                    fontFamily = ff,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold
-                ),
-                color = colors.textPrimary
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
         content()
         Spacer(modifier = Modifier.height(16.dp))
         Row(
