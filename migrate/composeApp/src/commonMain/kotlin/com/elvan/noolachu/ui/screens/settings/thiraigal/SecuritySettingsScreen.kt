@@ -2,6 +2,8 @@ package com.elvan.noolachu.ui.screens.settings.thiraigal
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -13,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.elvan.noolachu.localization.K
 import com.elvan.noolachu.localization.tr
+import com.elvan.noolachu.theme.Dimens
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.ShellColors
 import com.elvan.noolachu.theme.rememberShellColors
@@ -28,6 +31,7 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun SecuritySettingsScreen(
+    scrollState: LazyListState = rememberLazyListState(),
     colors: ShellColors = rememberShellColors()
 ) {
     val ff = LocalAppFontFamily.current
@@ -45,10 +49,20 @@ fun SecuritySettingsScreen(
     var passwordInput by remember { mutableStateOf("") }
 
     LazyColumn(
+        state = scrollState,
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 20.dp),
+        contentPadding = PaddingValues(
+            start = Dimens.ContentPadding,
+            end = Dimens.ContentPadding,
+            bottom = Dimens.SubpageContentPaddingBottom
+        ),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // Top spacer driven by One UI collapsible header
+        item(key = "shell_top_spacer") {
+            Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
+        }
+
         item {
             ElvanSettingsSection(colors = colors) {
                 // 1. Sync App (Orunginai Cheyali)

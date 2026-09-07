@@ -45,6 +45,8 @@ import com.elvan.noolachu.ui.components.shell.ElvanSettingsSection
 import com.elvan.noolachu.ui.components.shell.ElvanSettingsRow
 import com.elvan.noolachu.ui.components.shell.ElvanPopupMenu
 import com.elvan.noolachu.ui.components.shell.ElvanPopupMenuItem
+import androidx.compose.animation.AnimatedContent
+import com.elvan.noolachu.theme.Transitions
 import com.elvan.noolachu.ui.screens.settings.SettingsScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,14 +61,20 @@ fun HomeScreen() {
     val scope = rememberCoroutineScope()
     val colors = rememberShellColors()
 
-    if (isSettingsOpen) {
-        SettingsScreen(
-            onBack = { isSettingsOpen = false }
-        )
-        return
-    }
-
-    ElvanShell(
+    AnimatedContent(
+        targetState = isSettingsOpen,
+        modifier = Modifier.fillMaxSize(),
+        transitionSpec = {
+            Transitions.sharedAxisX(forward = targetState)
+        },
+        label = "HomeToSettingsTransition"
+    ) { settingsOpen ->
+        if (settingsOpen) {
+            SettingsScreen(
+                onBack = { isSettingsOpen = false }
+            )
+        } else {
+            ElvanShell(
         scrollState = scrollState,
         title = currentMode.displayName(),
         hasActions = true,
@@ -440,5 +448,7 @@ fun HomeScreen() {
         }
     }
 }
+        }
+    }
 }
 

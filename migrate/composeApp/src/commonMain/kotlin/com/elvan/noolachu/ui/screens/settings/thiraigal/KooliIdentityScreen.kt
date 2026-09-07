@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -21,6 +23,7 @@ import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
 import com.elvan.noolachu.localization.K
 import com.elvan.noolachu.localization.tr
+import com.elvan.noolachu.theme.Dimens
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.ShellColors
 import com.elvan.noolachu.theme.rememberShellColors
@@ -33,6 +36,7 @@ import com.elvan.noolachu.ui.navigation.MaterialSymbols
  */
 @Composable
 fun KooliIdentityScreen(
+    scrollState: LazyListState = rememberLazyListState(),
     colors: ShellColors = rememberShellColors()
 ) {
     val profile = NiruvanaTharavugalRepository.getProfile(AppMode.KOOLI)
@@ -47,10 +51,20 @@ fun KooliIdentityScreen(
     val signatoryName = profile.oppamPeyar
 
     LazyColumn(
+        state = scrollState,
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 20.dp),
+        contentPadding = PaddingValues(
+            start = Dimens.ContentPadding,
+            end = Dimens.ContentPadding,
+            bottom = Dimens.SubpageContentPaddingBottom
+        ),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // Top spacer driven by One UI collapsible header
+        item(key = "shell_top_spacer") {
+            Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
+        }
+
         item {
             ElvanSettingsSection(colors = colors) {
                 // 1. Logo (Niruvanathin Oavuru)
@@ -59,7 +73,7 @@ fun KooliIdentityScreen(
                     displayContent = {
                         ElvanSettingsDisplayRow(
                             title = K.niruvanathinOavuru.tr(),
-                            primaryValue = if (logoPath != null) "லோகோ பதிவேற்றப்பட்டது" else K.oavuruIllai.tr(),
+                            primaryValue = if (logoPath != null) K.niruvanathinOavuru.tr() else K.oavuruIllai.tr(),
                             onEdit = {
                                 tempImagePath = logoPath
                                 editingSection = "logo"

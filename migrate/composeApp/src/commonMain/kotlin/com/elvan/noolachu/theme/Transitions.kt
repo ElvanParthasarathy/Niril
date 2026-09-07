@@ -15,11 +15,8 @@ object Transitions {
      * Used for hierarchical navigation (Forward/Backward)
      */
     fun sharedAxisX(forward: Boolean): ContentTransform {
-        val targetOffsetX = if (forward) 300 else -300
-        val initialOffsetX = if (forward) 300 else -300
-        
         return (slideInHorizontally(
-            initialOffsetX = { initialOffsetX },
+            initialOffsetX = { fullWidth -> if (forward) fullWidth else -fullWidth / 4 },
             animationSpec = tween(
                 durationMillis = MotionTokens.DurationLong,
                 easing = MotionTokens.EmphasizedDecelerate
@@ -30,7 +27,7 @@ object Transitions {
                 easing = MotionTokens.StandardDecelerate
             )
         )) togetherWith (slideOutHorizontally(
-            targetOffsetX = { -targetOffsetX / 4 }, // Parallax effect
+            targetOffsetX = { fullWidth -> if (forward) -fullWidth / 4 else fullWidth }, // Parallax effect
             animationSpec = tween(
                 durationMillis = MotionTokens.DurationLong,
                 easing = MotionTokens.EmphasizedAccelerate

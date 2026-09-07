@@ -26,6 +26,7 @@ import com.elvan.noolachu.core.mode.LocalAppMode
 import com.elvan.noolachu.core.mode.ModeManager
 import com.elvan.noolachu.localization.K
 import com.elvan.noolachu.localization.tr
+import com.elvan.noolachu.theme.Dimens
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.ShellColors
 import com.elvan.noolachu.theme.ShellDefaults
@@ -51,11 +52,15 @@ fun SettingsHubScreen(
         state = scrollState,
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(
-            top = 16.dp,
-            bottom = 48.dp
+            bottom = Dimens.SubpageContentPaddingBottom
         ),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
+        // Top spacer driven by One UI collapsible header
+        item(key = "shell_top_spacer") {
+            Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
+        }
+
         // ── 0. Mode Switcher & Merchant Settings (Big Pill - borderRadius 999.dp) ──
         item(key = "mode_pill_card") {
             ElvanSectionContainer {
