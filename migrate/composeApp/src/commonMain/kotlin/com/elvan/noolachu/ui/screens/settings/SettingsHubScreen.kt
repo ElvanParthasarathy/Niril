@@ -80,13 +80,14 @@ fun SettingsHubScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 14.dp),
+                            .height(84.dp)
+                            .padding(start = 8.dp, end = 16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // The circular Mode Switcher on the left (diameter 56dp, matching Neram's ElvanProfilePillCard avatar)
+                        // The circular Mode Switcher on the left (diameter 68dp, concentric with 84dp pill)
                         Box(
                             modifier = Modifier
-                                .size(56.dp)
+                                .size(68.dp)
                                 .clip(CircleShape)
                                 .background(colors.iconBg)
                                 .clickable(
@@ -98,15 +99,15 @@ fun SettingsHubScreen(
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(30.dp)
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .border(1.5.dp, colors.textPrimary, RoundedCornerShape(8.dp)),
+                                    .size(38.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .border(1.8.dp, colors.textPrimary, RoundedCornerShape(10.dp)),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
                                     text = if (currentMode == AppMode.KOOLI) "கூ" else "ப",
                                     color = colors.textPrimary,
-                                    fontSize = 16.sp,
+                                    fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold,
                                     modifier = Modifier.offset(y = (-0.5).dp)
                                 )
