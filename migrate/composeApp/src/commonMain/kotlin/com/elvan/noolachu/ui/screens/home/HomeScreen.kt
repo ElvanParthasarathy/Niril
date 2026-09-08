@@ -33,6 +33,7 @@ import com.elvan.noolachu.ui.navigation.BottomNavBar
 import com.elvan.noolachu.ui.navigation.ElvanThaedalPattai
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
 import com.elvan.noolachu.ui.navigation.NavTab
+import com.elvan.noolachu.ui.screens.meetpagam.MeetpagamScreen
 import com.elvan.noolachu.ui.screens.porul.PorulScreen
 import com.elvan.noolachu.ui.screens.settings.SettingsScreen
 import com.elvan.noolachu.ui.screens.thiruthi.patrucheettu.PatrucheettuThiruthiScreen
@@ -46,6 +47,7 @@ import kotlinx.coroutines.launch
 
 sealed class ActiveSubpage {
     data object Settings : ActiveSubpage()
+    data object RecycleBin : ActiveSubpage()
     data class ItemEditor(val item: PorulTharavuru? = null) : ActiveSubpage()
     data class MerchantEditor(val merchant: VaangunarTharavuru? = null) : ActiveSubpage()
     data class InvoiceEditor(val invoice: PattiyalTharavuru? = null) : ActiveSubpage()
@@ -69,14 +71,25 @@ fun HomeScreen() {
     var isRefreshing by remember { mutableStateOf(false) }
     var isSearchActive by remember { mutableStateOf(false) }
     var menuExpanded by remember { mutableStateOf(false) }
+    var isSelectionMode by remember { mutableStateOf(false) }
+    var selectedItemIds by remember { mutableStateOf<Set<Long>>(emptySet()) }
 
     val scope = rememberCoroutineScope()
     val colors = rememberShellColors()
 
-    // Intercept hardware/system back when a subpage is open or search is active
-    AppBackHandler(enabled = activeSubpage != null || isSearchActive) {
+    val porulDeletedMsg = K.porulAzhikkappattadhu.tr()
+    val vaangunarDeletedMsg = K.vaangunarAzhikkappattadhu.tr()
+    val pattiyalgalLabel = K.pattiyalgal.tr()
+    val patrucheettugalLabel = K.patrucheettugal.tr()
+    val azhikkiradhuLabel = K.azhikkiradhu.tr()
+
+    // Intercept hardware/system back when a subpage is open, selection mode is active, or search is active
+    AppBackHandler(enabled = activeSubpage != null || isSelectionMode || isSearchActive) {
         if (activeSubpage != null) {
             activeSubpage = null
+        } else if (isSelectionMode) {
+            isSelectionMode = false
+            selectedItemIds = emptySet()
         } else if (isSearchActive) {
             isSearchActive = false
             PattiyalRepository.searchQuery = ""
@@ -95,9 +108,11 @@ fun HomeScreen() {
         NiruvanaTharavugalRepository.refreshFromDatabase()
     }
 
-    // Reset search state on tab switch
+    // Reset search and selection state on tab switch
     LaunchedEffect(selectedTab) {
         isSearchActive = false
+        isSelectionMode = false
+        selectedItemIds = emptySet()
         PattiyalRepository.searchQuery = ""
         PatrugalRepository.searchQuery = ""
         PorulRepository.searchQuery = ""
@@ -149,6 +164,11 @@ fun HomeScreen() {
                         onBack = { activeSubpage = null }
                     )
                 }
+                is ActiveSubpage.RecycleBin -> {
+                    MeetpagamScreen(
+                        onBack = { activeSubpage = null }
+                    )
+                }
                 is ActiveSubpage.ItemEditor -> {
                     PorulThiruthiScreen(
                         item = subpage.item,
@@ -179,9 +199,7 @@ fun HomeScreen() {
                         title = selectedTab.getLocalizedHeader(),
                         hasActions = !isSearchActive,
                         actions = {
-                            val hasSearchAndAdd = selectedTab != NavTab.Home
-
-                            if (hasSearchAndAdd) {
+                            if (selectedTab != NavTab.Home) {
                                 // Search Icon Button
                                 ElvanTopBarIconButton(
                                     onClick = { isSearchActive = true }
@@ -193,38 +211,40 @@ fun HomeScreen() {
                                         modifier = Modifier.size(22.dp)
                                     )
                                 }
-
-                                // Add (+) Button
-                                ElvanTopBarIconButton(
-                                    onClick = {
-                                        when (selectedTab) {
-                                            NavTab.Products -> {
-                                                activeSubpage = ActiveSubpage.ItemEditor(null)
-                                            }
-                                            NavTab.Customers -> {
-                                                activeSubpage = ActiveSubpage.MerchantEditor(null)
-                                            }
-                                            NavTab.Create -> {
-                                                if (uruvakkuSegment == 0) {
-                                                    activeSubpage = ActiveSubpage.InvoiceEditor(null)
-                                                } else {
-                                                    activeSubpage = ActiveSubpage.ReceiptEditor(null)
-                                                }
-                                            }
-                                            else -> {}
-                                        }
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = MaterialSymbols.Rounded.Add,
-                                        contentDescription = K.chaer.tr(),
-                                        tint = colors.textPrimary,
-                                        modifier = Modifier.size(22.dp)
-                                    )
-                                }
                             }
 
-                            // 3-Dot More Menu (மேலும்) (26dp)
+                            // Add (+) Button — Available across all tabs including Home
+                            ElvanTopBarIconButton(
+                                onClick = {
+                                    when (selectedTab) {
+                                        NavTab.Home -> {
+                                            activeSubpage = ActiveSubpage.InvoiceEditor(null)
+                                        }
+                                        NavTab.Products -> {
+                                            activeSubpage = ActiveSubpage.ItemEditor(null)
+                                        }
+                                        NavTab.Customers -> {
+                                            activeSubpage = ActiveSubpage.MerchantEditor(null)
+                                        }
+                                        NavTab.Create -> {
+                                            if (uruvakkuSegment == 0) {
+                                                activeSubpage = ActiveSubpage.InvoiceEditor(null)
+                                            } else {
+                                                activeSubpage = ActiveSubpage.ReceiptEditor(null)
+                                            }
+                                        }
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = MaterialSymbols.Rounded.Add,
+                                    contentDescription = K.chaer.tr(),
+                                    tint = colors.textPrimary,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+
+                            // 3-Dot More Menu (மேலும்)
                             Box {
                                 ElvanTopBarIconButton(
                                     onClick = { menuExpanded = true }
@@ -256,7 +276,7 @@ fun HomeScreen() {
                                             icon = MaterialSymbols.Rounded.Delete,
                                             onClick = {
                                                 menuExpanded = false
-                                                ElvanSnackbar.show(meetpagamLabel)
+                                                activeSubpage = ActiveSubpage.RecycleBin
                                             }
                                         )
                                     )
@@ -267,7 +287,7 @@ fun HomeScreen() {
                                                 icon = MaterialSymbols.Rounded.CheckCircleFill,
                                                 onClick = {
                                                     menuExpanded = false
-                                                    ElvanSnackbar.show(thaerndheduLabel)
+                                                    isSelectionMode = true
                                                 }
                                             )
                                         )
@@ -284,52 +304,106 @@ fun HomeScreen() {
                         navbar = {
                             val shellController = LocalElvanShellController.current
 
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                BottomNavBar(
-                                    selectedTab = selectedTab,
-                                    hideContent = isSearchActive,
-                                    onTabSelected = { tab, _ ->
-                                        if (selectedTab == tab) {
-                                            shellController.toggleHeader()
-                                        } else {
-                                            selectedTab = tab
-                                        }
-                                    }
-                                )
-
-                                ElvanThaedalPattai(
-                                    visible = isSearchActive,
-                                    query = currentSearchQuery,
-                                    onQueryChange = { newQuery ->
-                                        when (selectedTab) {
-                                            NavTab.Create -> {
-                                                if (uruvakkuSegment == 0) {
-                                                    PattiyalRepository.searchQuery = newQuery
-                                                } else {
-                                                    PatrugalRepository.searchQuery = newQuery
+                            if (isSelectionMode) {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    ElvanThervuPattai(
+                                        selectedCount = selectedItemIds.size,
+                                        onSelectAll = {
+                                            val allIds: Set<Long> = when (selectedTab) {
+                                                NavTab.Products -> PorulRepository.filteredItems.map { it.id }.toSet()
+                                                NavTab.Customers -> VaangunarRepository.filteredMerchants.map { it.id }.toSet()
+                                                NavTab.Create -> {
+                                                    if (uruvakkuSegment == 0) {
+                                                        PattiyalRepository.filteredInvoices.map { it.id }.toSet()
+                                                    } else {
+                                                        PatrugalRepository.filteredReceipts.map { it.id }.toSet()
+                                                    }
                                                 }
+                                                else -> emptySet()
                                             }
-                                            NavTab.Products -> {
-                                                PorulRepository.searchQuery = newQuery
+                                            selectedItemIds = if (selectedItemIds.size == allIds.size) emptySet() else allIds
+                                        },
+                                        onDelete = {
+                                            when (selectedTab) {
+                                                NavTab.Products -> {
+                                                    selectedItemIds.forEach { PorulRepository.delete(it, currentMode) }
+                                                    ElvanSnackbar.show(porulDeletedMsg)
+                                                }
+                                                NavTab.Customers -> {
+                                                    selectedItemIds.forEach { VaangunarRepository.delete(it, currentMode) }
+                                                    ElvanSnackbar.show(vaangunarDeletedMsg)
+                                                }
+                                                NavTab.Create -> {
+                                                    if (uruvakkuSegment == 0) {
+                                                        selectedItemIds.forEach { PattiyalRepository.delete(it, currentMode) }
+                                                        ElvanSnackbar.show("${selectedItemIds.size} $pattiyalgalLabel $azhikkiradhuLabel")
+                                                    } else {
+                                                        selectedItemIds.forEach { PatrugalRepository.delete(it, currentMode) }
+                                                        ElvanSnackbar.show("${selectedItemIds.size} $patrucheettugalLabel $azhikkiradhuLabel")
+                                                    }
+                                                }
+                                                else -> {}
                                             }
-                                            NavTab.Customers -> {
-                                                VaangunarRepository.searchQuery = newQuery
-                                            }
-                                            else -> {}
+                                            isSelectionMode = false
+                                            selectedItemIds = emptySet()
+                                        },
+                                        onCancel = {
+                                            isSelectionMode = false
+                                            selectedItemIds = emptySet()
                                         }
-                                    },
-                                    onClose = {
-                                        isSearchActive = false
-                                        PattiyalRepository.searchQuery = ""
-                                        PatrugalRepository.searchQuery = ""
-                                        PorulRepository.searchQuery = ""
-                                        VaangunarRepository.searchQuery = ""
-                                    },
-                                    colors = colors
-                                )
+                                    )
+                                }
+                            } else {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    BottomNavBar(
+                                        selectedTab = selectedTab,
+                                        hideContent = isSearchActive,
+                                        onTabSelected = { tab, _ ->
+                                            if (selectedTab == tab) {
+                                                shellController.toggleHeader()
+                                            } else {
+                                                selectedTab = tab
+                                            }
+                                        }
+                                    )
+
+                                    ElvanThaedalPattai(
+                                        visible = isSearchActive,
+                                        query = currentSearchQuery,
+                                        onQueryChange = { newQuery ->
+                                            when (selectedTab) {
+                                                NavTab.Create -> {
+                                                    if (uruvakkuSegment == 0) {
+                                                        PattiyalRepository.searchQuery = newQuery
+                                                    } else {
+                                                        PatrugalRepository.searchQuery = newQuery
+                                                    }
+                                                }
+                                                NavTab.Products -> {
+                                                    PorulRepository.searchQuery = newQuery
+                                                }
+                                                NavTab.Customers -> {
+                                                    VaangunarRepository.searchQuery = newQuery
+                                                }
+                                                else -> {}
+                                            }
+                                        },
+                                        onClose = {
+                                            isSearchActive = false
+                                            PattiyalRepository.searchQuery = ""
+                                            PatrugalRepository.searchQuery = ""
+                                            PorulRepository.searchQuery = ""
+                                            VaangunarRepository.searchQuery = ""
+                                        },
+                                        colors = colors
+                                    )
+                                }
                             }
                         }
                     ) {
@@ -410,7 +484,12 @@ fun HomeScreen() {
                                 ) {
                                     PorulScreen(
                                         scrollState = productsScrollState,
-                                        onItemClick = { activeSubpage = ActiveSubpage.ItemEditor(it) }
+                                        onItemClick = { activeSubpage = ActiveSubpage.ItemEditor(it) },
+                                        isSelectionMode = isSelectionMode,
+                                        selectedItemIds = selectedItemIds,
+                                        onToggleSelect = { id ->
+                                            selectedItemIds = if (selectedItemIds.contains(id)) selectedItemIds - id else selectedItemIds + id
+                                        }
                                     )
                                 }
                             }
@@ -430,7 +509,12 @@ fun HomeScreen() {
                                 ) {
                                     VaangunarScreen(
                                         scrollState = customersScrollState,
-                                        onMerchantClick = { activeSubpage = ActiveSubpage.MerchantEditor(it) }
+                                        onMerchantClick = { activeSubpage = ActiveSubpage.MerchantEditor(it) },
+                                        isSelectionMode = isSelectionMode,
+                                        selectedItemIds = selectedItemIds,
+                                        onToggleSelect = { id ->
+                                            selectedItemIds = if (selectedItemIds.contains(id)) selectedItemIds - id else selectedItemIds + id
+                                        }
                                     )
                                 }
                             }

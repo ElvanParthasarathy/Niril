@@ -32,7 +32,7 @@ import com.elvan.noolachu.ui.navigation.MaterialSymbols
 fun ElvanTopBarIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    size: Dp = 40.dp,
+    size: Dp = 38.dp,
     content: @Composable () -> Unit
 ) {
     Box(
@@ -143,7 +143,7 @@ fun ElvanCollapsedBar(
             ElvanPill(liftProgress = liftProgress, colors = colors) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                    horizontalArrangement = Arrangement.spacedBy(1.dp)
                 ) {
                     actions()
                 }

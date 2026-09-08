@@ -16,6 +16,9 @@ object VaangunarRepository {
     var merchants by mutableStateOf<List<VaangunarTharavuru>>(emptyList())
         private set
 
+    var deletedMerchants by mutableStateOf<List<VaangunarTharavuru>>(emptyList())
+        private set
+
     var searchQuery by mutableStateOf("")
 
     val filteredMerchants: List<VaangunarTharavuru>
@@ -71,10 +74,60 @@ object VaangunarRepository {
             val success = helper.deleteMerchant(mode, id)
             if (success) {
                 loadAll(mode)
+                loadDeleted(mode)
             }
             success
         } catch (_: Exception) {
             false
+        }
+    }
+
+    fun loadDeleted(mode: AppMode = ModeManager.currentMode) {
+        try {
+            val helper = getBusinessDatabaseHelper()
+            deletedMerchants = helper.loadDeletedMerchants(mode)
+        } catch (_: Exception) {
+            deletedMerchants = emptyList()
+        }
+    }
+
+    fun restore(id: Long, mode: AppMode = ModeManager.currentMode): Boolean {
+        return try {
+            val helper = getBusinessDatabaseHelper()
+            val success = helper.restoreMerchant(mode, id)
+            if (success) {
+                loadAll(mode)
+                loadDeleted(mode)
+            }
+            success
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    fun permanentDelete(id: Long, mode: AppMode = ModeManager.currentMode): Boolean {
+        return try {
+            val helper = getBusinessDatabaseHelper()
+            val success = helper.permanentDeleteMerchant(mode, id)
+            if (success) {
+                loadDeleted(mode)
+            }
+            success
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    fun purgeExpired(days: Int = 30, mode: AppMode = ModeManager.currentMode): Int {
+        return try {
+            val helper = getBusinessDatabaseHelper()
+            val count = helper.purgeExpiredMerchants(mode, days)
+            if (count > 0) {
+                loadDeleted(mode)
+            }
+            count
+        } catch (_: Exception) {
+            0
         }
     }
 

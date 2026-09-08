@@ -156,12 +156,10 @@ fun DummySplashLogo(
 }
 
 /**
- * Animated Splash Screen copied 1:1 from Neram (`MainActivity.kt`),
- * with a dummy placeholder in place of `ic_splash_logo` and
- * language-aware "Elvan Navil" / "எல்வன் நவில்" footer branding.
+ * SplashContent — Foreground logo and footer branding that can fade out independently.
  */
 @Composable
-fun SplashScreen(
+fun SplashContent(
     modifier: Modifier = Modifier,
     isDarkTheme: Boolean = ThemeManager.isDark(),
     language: String = LocalAppLanguage.current
@@ -169,10 +167,7 @@ fun SplashScreen(
     val textPrimary = if (isDarkTheme) Color.White else Color(0xFF1A1A1A)
     val ff = LocalAppFontFamily.current
 
-    SplashBackground(
-        modifier = modifier,
-        isDark = isDarkTheme
-    ) {
+    Box(modifier = modifier.fillMaxSize()) {
         // Centered Content: Dummy Logo
         Column(
             modifier = Modifier.align(Alignment.Center),
@@ -208,3 +203,26 @@ fun SplashScreen(
         }
     }
 }
+
+/**
+ * Animated Splash Screen copied 1:1 from Neram (`MainActivity.kt`),
+ * with a dummy placeholder in place of `ic_splash_logo` and
+ * language-aware "Elvan Navil" / "எல்வன் நவில்" footer branding.
+ */
+@Composable
+fun SplashScreen(
+    modifier: Modifier = Modifier,
+    isDarkTheme: Boolean = ThemeManager.isDark(),
+    language: String = LocalAppLanguage.current
+) {
+    SplashBackground(
+        modifier = modifier,
+        isDark = isDarkTheme
+    ) {
+        SplashContent(
+            isDarkTheme = isDarkTheme,
+            language = language
+        )
+    }
+}
+

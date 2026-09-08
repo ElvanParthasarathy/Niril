@@ -45,7 +45,10 @@ fun PorulScreen(
     modifier: Modifier = Modifier,
     scrollState: LazyListState = rememberLazyListState(),
     mode: AppMode = LocalAppMode.current,
-    colors: ShellColors = rememberShellColors()
+    colors: ShellColors = rememberShellColors(),
+    isSelectionMode: Boolean = false,
+    selectedItemIds: Set<Long> = emptySet(),
+    onToggleSelect: ((Long) -> Unit)? = null
 ) {
     val items = PorulRepository.filteredItems
     val ff = LocalAppFontFamily.current
@@ -128,19 +131,31 @@ fun PorulScreen(
             }
 
             itemsIndexed(items, key = { _, item -> item.id }) { index, item ->
+                val isSelected = selectedItemIds.contains(item.id)
+                val onCardClick: () -> Unit = {
+                    if (isSelectionMode) {
+                        onToggleSelect?.invoke(item.id)
+                    } else {
+                        onItemClick(item)
+                    }
+                }
                 if (mode == AppMode.KOOLI) {
                     CooliePorulCard(
                         index = index,
                         porul = item,
-                        onClick = { onItemClick(item) },
-                        colors = colors
+                        onClick = onCardClick,
+                        colors = colors,
+                        isSelectionMode = isSelectionMode,
+                        isSelected = isSelected
                     )
                 } else {
                     SilkPorulCard(
                         index = index,
                         porul = item,
-                        onClick = { onItemClick(item) },
-                        colors = colors
+                        onClick = onCardClick,
+                        colors = colors,
+                        isSelectionMode = isSelectionMode,
+                        isSelected = isSelected
                     )
                 }
             }
@@ -157,7 +172,9 @@ private fun CooliePorulCard(
     index: Int,
     porul: PorulTharavuru,
     onClick: () -> Unit,
-    colors: ShellColors
+    colors: ShellColors,
+    isSelectionMode: Boolean = false,
+    isSelected: Boolean = false
 ) {
     val ff = LocalAppFontFamily.current
     val currentLang = LocalAppLanguage.current
@@ -180,27 +197,37 @@ private fun CooliePorulCard(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top
         ) {
-            // Index circle (28x28)
+            // Index circle or Selection Checkbox (28x28)
             Box(
                 modifier = Modifier
                     .size(28.dp)
                     .clip(CircleShape)
                     .background(
-                        if (isDark) Color.White.copy(alpha = 0.12f)
+                        if (isSelectionMode && isSelected) colors.accent
+                        else if (isDark) Color.White.copy(alpha = 0.12f)
                         else Color.Black.copy(alpha = 0.08f)
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = (index + 1).toString().padStart(2, '0'),
-                    style = TextStyle(
-                        fontFamily = ff,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 11.2.sp,
-                        color = if (isDark) Color.White else Color.Black,
-                        lineHeight = 11.2.sp
+                if (isSelectionMode) {
+                    Icon(
+                        imageVector = if (isSelected) MaterialSymbols.Rounded.Check else MaterialSymbols.Rounded.CheckBoxOutlineBlank,
+                        contentDescription = null,
+                        tint = if (isSelected) Color.White else colors.textSecondary,
+                        modifier = Modifier.size(16.dp)
                     )
-                )
+                } else {
+                    Text(
+                        text = (index + 1).toString().padStart(2, '0'),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 11.2.sp,
+                            color = if (isDark) Color.White else Color.Black,
+                            lineHeight = 11.2.sp
+                        )
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -250,7 +277,9 @@ private fun SilkPorulCard(
     index: Int,
     porul: PorulTharavuru,
     onClick: () -> Unit,
-    colors: ShellColors
+    colors: ShellColors,
+    isSelectionMode: Boolean = false,
+    isSelected: Boolean = false
 ) {
     val ff = LocalAppFontFamily.current
     val currentLang = LocalAppLanguage.current
@@ -273,27 +302,37 @@ private fun SilkPorulCard(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top
         ) {
-            // Index circle (28x28)
+            // Index circle or Selection Checkbox (28x28)
             Box(
                 modifier = Modifier
                     .size(28.dp)
                     .clip(CircleShape)
                     .background(
-                        if (isDark) Color.White.copy(alpha = 0.12f)
+                        if (isSelectionMode && isSelected) colors.accent
+                        else if (isDark) Color.White.copy(alpha = 0.12f)
                         else Color.Black.copy(alpha = 0.08f)
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = (index + 1).toString().padStart(2, '0'),
-                    style = TextStyle(
-                        fontFamily = ff,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 11.2.sp,
-                        color = if (isDark) Color.White else Color.Black,
-                        lineHeight = 11.2.sp
+                if (isSelectionMode) {
+                    Icon(
+                        imageVector = if (isSelected) MaterialSymbols.Rounded.Check else MaterialSymbols.Rounded.CheckBoxOutlineBlank,
+                        contentDescription = null,
+                        tint = if (isSelected) Color.White else colors.textSecondary,
+                        modifier = Modifier.size(16.dp)
                     )
-                )
+                } else {
+                    Text(
+                        text = (index + 1).toString().padStart(2, '0'),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 11.2.sp,
+                            color = if (isDark) Color.White else Color.Black,
+                            lineHeight = 11.2.sp
+                        )
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(12.dp))

@@ -289,6 +289,92 @@ class DesktopBusinessDatabaseHelper : BusinessDatabaseHelper {
         }
     }
 
+    override fun loadDeletedMerchants(mode: AppMode): List<VaangunarTharavuru> {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_vaangunar_table" else "pattu_vaangunar_table"
+        val file = resolveActiveDatabase(dbName)
+
+        val list = mutableListOf<VaangunarTharavuru>()
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val sql = "SELECT * FROM $tableName WHERE is_deleted = 1 ORDER BY deleted_at DESC, id DESC"
+                conn.createStatement().use { stmt ->
+                    stmt.executeQuery(sql).use { rs ->
+                        while (rs.next()) {
+                            list.add(rsToMerchant(rs))
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error loading deleted merchants from $tableName: ${e.message}")
+        }
+        return list
+    }
+
+    override fun restoreMerchant(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_vaangunar_table" else "pattu_vaangunar_table"
+        val file = resolveActiveDatabase(dbName)
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val sql = "UPDATE $tableName SET is_deleted = 0, deleted_at = NULL, updated_at = ? WHERE id = ?"
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setLong(1, System.currentTimeMillis() / 1000)
+                    stmt.setLong(2, id)
+                    return stmt.executeUpdate() > 0
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error restoring merchant $id: ${e.message}")
+            return false
+        }
+    }
+
+    override fun permanentDeleteMerchant(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_vaangunar_table" else "pattu_vaangunar_table"
+        val file = resolveActiveDatabase(dbName)
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val sql = "DELETE FROM $tableName WHERE id = ?"
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setLong(1, id)
+                    return stmt.executeUpdate() > 0
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error permanently deleting merchant $id: ${e.message}")
+            return false
+        }
+    }
+
+    override fun purgeExpiredMerchants(mode: AppMode, days: Int): Int {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_vaangunar_table" else "pattu_vaangunar_table"
+        val file = resolveActiveDatabase(dbName)
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val cutoffSec = (System.currentTimeMillis() / 1000) - (days * 86400L)
+                val sql = "DELETE FROM $tableName WHERE is_deleted = 1 AND deleted_at < ?"
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setLong(1, cutoffSec)
+                    return stmt.executeUpdate()
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error purging expired merchants: ${e.message}")
+            return 0
+        }
+    }
+
     override fun loadAllItems(mode: AppMode): List<PorulTharavuru> {
         val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
         val tableName = if (mode == AppMode.KOOLI) "kooli_porul_table" else "pattu_porul_table"
@@ -407,6 +493,92 @@ class DesktopBusinessDatabaseHelper : BusinessDatabaseHelper {
         } catch (e: Exception) {
             println("Desktop error deleting item $id from $tableName: ${e.message}")
             return false
+        }
+    }
+
+    override fun loadDeletedItems(mode: AppMode): List<PorulTharavuru> {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_porul_table" else "pattu_porul_table"
+        val file = resolveActiveDatabase(dbName)
+
+        val list = mutableListOf<PorulTharavuru>()
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val sql = "SELECT * FROM $tableName WHERE is_deleted = 1 ORDER BY deleted_at DESC, id DESC"
+                conn.createStatement().use { stmt ->
+                    stmt.executeQuery(sql).use { rs ->
+                        while (rs.next()) {
+                            list.add(rsToItem(rs))
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error loading deleted items from $tableName: ${e.message}")
+        }
+        return list
+    }
+
+    override fun restoreItem(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_porul_table" else "pattu_porul_table"
+        val file = resolveActiveDatabase(dbName)
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val sql = "UPDATE $tableName SET is_deleted = 0, deleted_at = NULL, updated_at = ? WHERE id = ?"
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setLong(1, System.currentTimeMillis() / 1000)
+                    stmt.setLong(2, id)
+                    return stmt.executeUpdate() > 0
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error restoring item $id: ${e.message}")
+            return false
+        }
+    }
+
+    override fun permanentDeleteItem(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_porul_table" else "pattu_porul_table"
+        val file = resolveActiveDatabase(dbName)
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val sql = "DELETE FROM $tableName WHERE id = ?"
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setLong(1, id)
+                    return stmt.executeUpdate() > 0
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error permanently deleting item $id: ${e.message}")
+            return false
+        }
+    }
+
+    override fun purgeExpiredItems(mode: AppMode, days: Int): Int {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_porul_table" else "pattu_porul_table"
+        val file = resolveActiveDatabase(dbName)
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val cutoffSec = (System.currentTimeMillis() / 1000) - (days * 86400L)
+                val sql = "DELETE FROM $tableName WHERE is_deleted = 1 AND deleted_at < ?"
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setLong(1, cutoffSec)
+                    return stmt.executeUpdate()
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error purging expired items: ${e.message}")
+            return 0
         }
     }
 

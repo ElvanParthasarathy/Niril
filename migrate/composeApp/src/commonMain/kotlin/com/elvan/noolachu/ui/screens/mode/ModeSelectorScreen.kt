@@ -33,11 +33,11 @@ import com.elvan.noolachu.theme.ThemeManager
 import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.navigation.AppSvgs
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
+import com.elvan.noolachu.ui.screens.splash.SplashBackground
 import kotlinx.coroutines.delay
 
 /**
- * ModeSelectorScreen — Full screen app mode switcher copied pixel-perfect from Flutter's
- * `ModeSelectorScreen` (`muraimai_thaervu_thirai.dart`) and `AuthLayout` (`ullnuzhaivu_koorugal.dart`).
+ * ModeSelectorScreen — Full screen app mode switcher with continuous SplashBackground canvas.
  */
 @Composable
 fun ModeSelectorScreen(
@@ -50,113 +50,33 @@ fun ModeSelectorScreen(
     }
 
     val isDark = ThemeManager.isDark()
+
+    SplashBackground(isDark = isDark) {
+        ModeSelectorContent(
+            onModeSelected = onModeSelected,
+            onDismiss = onDismiss,
+            canDismiss = canDismiss
+        )
+    }
+}
+
+/**
+ * ModeSelectorContent — Foreground mode switcher UI without its own canvas.
+ */
+@Composable
+fun ModeSelectorContent(
+    onModeSelected: (AppMode) -> Unit,
+    onDismiss: (() -> Unit)? = null,
+    canDismiss: Boolean = false,
+    modifier: Modifier = Modifier
+) {
+    val isDark = ThemeManager.isDark()
     val colors = rememberShellColors()
     val ff = LocalAppFontFamily.current
 
-    val bgColor = if (isDark) Color(0xFF0A0A0A) else Color(0xFFFAFAFA)
-    val shapeColor = if (isDark) Color.White.copy(alpha = 0.03f) else Color(0xFFEAEAEA)
-
-    // Infinite transitions for animated background shapes
-    val infiniteTransition = rememberInfiniteTransition(label = "AuthLayoutBackground")
-
-    // Shape 1: Top Right, Large Rounded Square (60s linear rotation)
-    val rotate1 by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 60000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "rotate1"
-    )
-
-    // Shape 2: Bottom Left, Circle (4s ease-in-out float up/down)
-    val float1 by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 30f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 4000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "float1"
-    )
-
-    // Shape 3: Top Left, Small Rounded Square (40s linear reverse rotation)
-    val rotate2 by infiniteTransition.animateFloat(
-        initialValue = 360f,
-        targetValue = 0f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 40000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "rotate2"
-    )
-
-    // Shape 4: Center Right, Small Circle (5s ease-in-out float)
-    val float2 by infiniteTransition.animateFloat(
-        initialValue = 30f,
-        targetValue = 0f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 5000, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "float2"
-    )
-
-    BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(bgColor)
+    Box(
+        modifier = modifier.fillMaxSize()
     ) {
-        val screenWidth = maxWidth
-        val screenHeight = maxHeight
-
-        // Shape 1: Top Right, Large Rounded Square
-        Box(
-            modifier = Modifier
-                .offset(
-                    x = screenWidth * 0.6f,
-                    y = screenHeight * 0.02f
-                )
-                .size(screenWidth * 0.5f)
-                .graphicsLayer { rotationZ = rotate1 }
-                .background(shapeColor, RoundedCornerShape(80.dp))
-        )
-
-        // Shape 2: Bottom Left, Circle
-        Box(
-            modifier = Modifier
-                .offset(
-                    x = -screenWidth * 0.1f,
-                    y = screenHeight * 0.75f + float1.dp
-                )
-                .size(screenWidth * 0.7f)
-                .background(shapeColor, CircleShape)
-        )
-
-        // Shape 3: Top Left, Small Rounded Square
-        Box(
-            modifier = Modifier
-                .offset(
-                    x = screenWidth * 0.05f,
-                    y = screenHeight * 0.15f
-                )
-                .size(screenWidth * 0.2f)
-                .graphicsLayer { rotationZ = rotate2 }
-                .background(shapeColor, RoundedCornerShape(30.dp))
-        )
-
-        // Shape 4: Center Right, Small Circle
-        Box(
-            modifier = Modifier
-                .offset(
-                    x = screenWidth * 0.85f,
-                    y = screenHeight * 0.55f + float2.dp
-                )
-                .size(screenWidth * 0.15f)
-                .background(shapeColor, CircleShape)
-        )
-
         // Dismiss / Close Button at Top Left (if allowed)
         if (canDismiss && onDismiss != null) {
             Surface(
@@ -231,17 +151,17 @@ fun ModeSelectorScreen(
                     horizontalArrangement = Arrangement.spacedBy(28.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Kooli Profile Card
+                    // Kooli Profile Card (Pure "கூலி" label)
                     NetflixProfileCard(
-                        title = K.nirilKooli.tr(),
+                        title = K.kooli.tr(),
                         icon = AppSvgs.coolieMode,
                         isDark = isDark,
                         onClick = { onModeSelected(AppMode.KOOLI) }
                     )
 
-                    // Pattu Profile Card
+                    // Pattu Profile Card (Pure "பட்டு" label)
                     NetflixProfileCard(
-                        title = K.nirilPattu.tr(),
+                        title = K.pattu.tr(),
                         icon = AppSvgs.silkMode,
                         isDark = isDark,
                         onClick = { onModeSelected(AppMode.PATTU) }
@@ -304,7 +224,7 @@ private fun AuthAnimatedElement(
 }
 
 /**
- * NetflixProfileCard — Tactile animated 120dp circular avatar card matching Flutter.
+ * NetflixProfileCard — 120dp circular avatar card with circular ripple and no bounce.
  */
 @Composable
 private fun NetflixProfileCard(
@@ -314,36 +234,16 @@ private fun NetflixProfileCard(
     onClick: () -> Unit
 ) {
     val ff = LocalAppFontFamily.current
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) 0.94f else 1.0f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessMedium
-        ),
-        label = "cardScale"
-    )
+    val colors = rememberShellColors()
 
     val boxColor = if (isDark) Color(0xFF222222) else Color.White
     val iconColor = if (isDark) Color.White else Color(0xFF111111)
     val textColor = if (isDark) Color(0xFF9E9E9E) else Color(0xFF757575)
 
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-            }
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null,
-                onClick = onClick
-            )
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 120dp Circle Avatar Box with shadow
+        // 120dp Circle Avatar Box with shadow and circular ripple
         Box(
             modifier = Modifier
                 .size(120.dp)
@@ -355,7 +255,12 @@ private fun NetflixProfileCard(
                     offsetY = 8.dp
                 )
                 .clip(CircleShape)
-                .background(boxColor),
+                .background(boxColor)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = ShellDefaults.ripple(colors, bounded = true),
+                    onClick = onClick
+                ),
             contentAlignment = Alignment.Center
         ) {
             Icon(

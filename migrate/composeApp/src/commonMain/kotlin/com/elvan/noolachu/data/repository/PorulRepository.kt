@@ -16,6 +16,9 @@ object PorulRepository {
     var items by mutableStateOf<List<PorulTharavuru>>(emptyList())
         private set
 
+    var deletedItems by mutableStateOf<List<PorulTharavuru>>(emptyList())
+        private set
+
     var searchQuery by mutableStateOf("")
 
     val filteredItems: List<PorulTharavuru>
@@ -67,10 +70,60 @@ object PorulRepository {
             val success = helper.deleteItem(mode, id)
             if (success) {
                 loadAll(mode)
+                loadDeleted(mode)
             }
             success
         } catch (_: Exception) {
             false
+        }
+    }
+
+    fun loadDeleted(mode: AppMode = ModeManager.currentMode) {
+        try {
+            val helper = getBusinessDatabaseHelper()
+            deletedItems = helper.loadDeletedItems(mode)
+        } catch (_: Exception) {
+            deletedItems = emptyList()
+        }
+    }
+
+    fun restore(id: Long, mode: AppMode = ModeManager.currentMode): Boolean {
+        return try {
+            val helper = getBusinessDatabaseHelper()
+            val success = helper.restoreItem(mode, id)
+            if (success) {
+                loadAll(mode)
+                loadDeleted(mode)
+            }
+            success
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    fun permanentDelete(id: Long, mode: AppMode = ModeManager.currentMode): Boolean {
+        return try {
+            val helper = getBusinessDatabaseHelper()
+            val success = helper.permanentDeleteItem(mode, id)
+            if (success) {
+                loadDeleted(mode)
+            }
+            success
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    fun purgeExpired(days: Int = 30, mode: AppMode = ModeManager.currentMode): Int {
+        return try {
+            val helper = getBusinessDatabaseHelper()
+            val count = helper.purgeExpiredItems(mode, days)
+            if (count > 0) {
+                loadDeleted(mode)
+            }
+            count
+        } catch (_: Exception) {
+            0
         }
     }
 

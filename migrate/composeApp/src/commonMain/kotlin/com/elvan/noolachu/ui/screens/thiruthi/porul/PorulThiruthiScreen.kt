@@ -26,14 +26,20 @@ import com.elvan.noolachu.localization.K
 import com.elvan.noolachu.localization.tr
 import com.elvan.noolachu.theme.Dimens
 import com.elvan.noolachu.theme.LocalAppFontFamily
+import com.elvan.noolachu.theme.preventBrokenLigatures
 import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.components.shell.*
 import com.elvan.noolachu.ui.components.shell.maeladukkugal.ElvanAzhippuUrudhiMaeladukku
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
+import com.elvan.noolachu.ui.screens.thiruthi.ElvanEditorSection
+import com.elvan.noolachu.ui.screens.thiruthi.ElvanIrumozhiPulan
+import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiAttai
+import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiKeezhvirivu
+import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiUlleedu
 
 /**
  * PorulThiruthiScreen — Full subpage to create or edit a product/service item.
- * Supports Coolie & Silk modes.
+ * Supports Coolie & Silk modes using Flutter's boxed card editor layout.
  */
 @Composable
 fun PorulThiruthiScreen(
@@ -45,8 +51,9 @@ fun PorulThiruthiScreen(
     val ff = LocalAppFontFamily.current
     val isEditing = item != null && item.id > 0L
 
-    var nameTa by remember { mutableStateOf(item?.porulPeyar?.get("ta") ?: "") }
-    var nameEn by remember { mutableStateOf(item?.porulPeyar?.get("en") ?: "") }
+    var porulPeyarMap by remember {
+        mutableStateOf(item?.porulPeyar ?: emptyMap())
+    }
     var hsnCode by remember { mutableStateOf(item?.hsnCode ?: "") }
     var vilai by remember {
         mutableStateOf(
@@ -75,21 +82,17 @@ fun PorulThiruthiScreen(
     val confirmDeleteTitle = K.nirandharaAzhippuUrudhi.tr()
 
     fun handleSave() {
-        if (nameTa.trim().isEmpty() && nameEn.trim().isEmpty()) {
+        if (porulPeyarMap.values.none { it.isNotBlank() }) {
             validationError = nameRequiredMsg
             ElvanSnackbar.show(nameRequiredMsg)
             return
         }
 
-        val nameMap = mutableMapOf<String, String>()
-        if (nameTa.isNotBlank()) nameMap["ta"] = nameTa.trim()
-        if (nameEn.isNotBlank()) nameMap["en"] = nameEn.trim()
-
         val unit = if (alavuVagai == "weight") "kg" else "Nos"
 
         val itemToSave = PorulTharavuru(
             id = item?.id ?: 0L,
-            porulPeyar = nameMap,
+            porulPeyar = porulPeyarMap.filterValues { it.isNotBlank() },
             hsnCode = if (currentMode == AppMode.PATTU) hsnCode.trim() else "",
             vilai = if (currentMode == AppMode.PATTU) (vilai.trim().toDoubleOrNull() ?: 0.0) else 0.0,
             variVeetham = if (currentMode == AppMode.PATTU) (variVeetham.trim().toDoubleOrNull() ?: 0.0) else 0.0,
@@ -112,9 +115,12 @@ fun PorulThiruthiScreen(
         onBack()
     }
 
+    val scrollState = rememberLazyListState()
+
     ElvanSubShell(
         title = pageTitle,
         onBack = onBack,
+        scrollState = scrollState,
         hasActions = true,
         actions = {
             ElvanCheyalPothan(
@@ -123,243 +129,132 @@ fun PorulThiruthiScreen(
             )
         }
     ) {
-        val scrollState = rememberLazyListState()
-
         LazyColumn(
             state = scrollState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
+                start = 16.dp,
+                end = 16.dp,
                 bottom = Dimens.SubpageContentPaddingBottom
             ),
-            verticalArrangement = Arrangement.spacedBy(Dimens.SectionSpacing)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Top spacer driven by One UI collapsible header
             item(key = "top_spacer") {
                 Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
             }
 
-            // Section 1: Bilingual Product Name
+            // Section 1: Product Details (பொருள் தரவுகள்)
             item(key = "product_name_section") {
-                ElvanSectionContainer {
-                    ElvanSettingsSection(
-                        title = K.porulTharavugal.tr(),
-                        colors = colors
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            ElvanSettingsTextField(
-                                label = "${K.porul.tr()} (${K.thamizh.tr()})",
-                                value = nameTa,
-                                onValueChange = {
-                                    nameTa = it
-                                    validationError = null
-                                },
-                                placeholder = K.porul.tr(),
-                                colors = colors
-                            )
+                ElvanEditorSection(
+                    index = 0,
+                    title = K.porulTharavugal.tr()
+                ) {
+                    ElvanThiruthiAttai {
+                        ElvanIrumozhiPulan(
+                            label = K.porul.tr(),
+                            value = porulPeyarMap,
+                            onChanged = {
+                                porulPeyarMap = it
+                                validationError = null
+                            },
+                            placeholder = K.porul.tr()
+                        )
 
-                            ElvanSettingsTextField(
-                                label = "${K.porul.tr()} (${K.aangilam.tr()})",
-                                value = nameEn,
-                                onValueChange = {
-                                    nameEn = it
-                                    validationError = null
-                                },
-                                placeholder = "Product / Service name",
-                                colors = colors
+                        if (validationError != null) {
+                            Text(
+                                text = validationError!!,
+                                style = TextStyle(
+                                    fontFamily = ff,
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.error
+                                ),
+                                modifier = Modifier.padding(start = 4.dp)
                             )
+                        }
 
-                            if (validationError != null) {
-                                Text(
-                                    text = validationError!!,
-                                    style = TextStyle(
-                                        fontFamily = ff,
-                                        fontSize = 12.sp,
-                                        color = MaterialTheme.colorScheme.error
-                                    ),
-                                    modifier = Modifier.padding(start = 16.dp)
-                                )
-                            }
+                        // In Silk mode: Measurement method selector
+                        if (currentMode == AppMode.PATTU) {
+                            ElvanThiruthiKeezhvirivu(
+                                label = K.alaveeduMurai.tr(),
+                                selectedText = if (alavuVagai == "weight") "${K.edai.tr()} (kg)" else "${K.alavu.tr()} (Nos)",
+                                items = listOf(
+                                    "quantity" to "${K.alavu.tr()} (Nos)",
+                                    "weight" to "${K.edai.tr()} (kg)"
+                                ),
+                                onSelected = { alavuVagai = it }
+                            )
                         }
                     }
                 }
             }
 
-            // Silk Mode: Measurement & Price / Tax sections
+            // Section 2: Price & Tax (விலை மற்றும் வரி) - Pattu only
             if (currentMode == AppMode.PATTU) {
-                // Section: Measurement method
-                item(key = "measurement_section") {
-                    ElvanSectionContainer {
-                        ElvanSettingsSection(
-                            title = K.alaveeduMurai.tr(),
-                            colors = colors
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                item(key = "price_tax_section") {
+                    ElvanEditorSection(
+                        index = 1,
+                        title = K.vilaiMatrumVari.tr()
+                    ) {
+                        ElvanThiruthiAttai {
+                            // HSN Code
+                            ElvanThiruthiUlleedu(
+                                label = K.hsnSacKuriyeedu.tr(),
+                                value = hsnCode,
+                                onValueChange = { hsnCode = it },
+                                placeholder = "50020010",
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                            )
+
+                            // Quick HSN Chips
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Text(
-                                    text = K.alavuVagai.tr(),
-                                    style = TextStyle(
-                                        fontFamily = ff,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Medium
-                                    ),
-                                    color = colors.textPrimary.copy(alpha = 0.5f),
-                                    modifier = Modifier.padding(start = 4.dp)
-                                )
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                ) {
-                                    // Quantity option (Nos)
-                                    val isQty = alavuVagai != "weight"
-                                    Surface(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .height(44.dp)
-                                            .clip(RoundedCornerShape(100))
-                                            .clickable { alavuVagai = "quantity" },
-                                        shape = RoundedCornerShape(100),
-                                        color = if (isQty) colors.accent else colors.iconBg
-                                    ) {
-                                        Box(
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Text(
-                                                text = "${K.alavu.tr()} (Nos)",
-                                                style = TextStyle(
-                                                    fontFamily = ff,
-                                                    fontSize = 13.sp,
-                                                    fontWeight = if (isQty) FontWeight.Bold else FontWeight.Normal,
-                                                    color = if (isQty) Color.White else colors.textPrimary
-                                                )
-                                            )
-                                        }
-                                    }
-
-                                    // Weight option (kg)
-                                    val isWeight = alavuVagai == "weight"
-                                    Surface(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .height(44.dp)
-                                            .clip(RoundedCornerShape(100))
-                                            .clickable { alavuVagai = "weight" },
-                                        shape = RoundedCornerShape(100),
-                                        color = if (isWeight) colors.accent else colors.iconBg
-                                    ) {
-                                        Box(
-                                            modifier = Modifier.fillMaxSize(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Text(
-                                                text = "${K.edai.tr()} (kg)",
-                                                style = TextStyle(
-                                                    fontFamily = ff,
-                                                    fontSize = 13.sp,
-                                                    fontWeight = if (isWeight) FontWeight.Bold else FontWeight.Normal,
-                                                    color = if (isWeight) Color.White else colors.textPrimary
-                                                )
-                                            )
-                                        }
-                                    }
+                                listOf("50020010", "50040010", "50072010").forEach { code ->
+                                    val isSelected = hsnCode.trim() == code
+                                    FilterChip(
+                                        selected = isSelected,
+                                        onClick = { hsnCode = code },
+                                        label = { Text(code) },
+                                        shape = RoundedCornerShape(100)
+                                    )
                                 }
                             }
-                        }
-                    }
-                }
 
-                // Section: Price, Tax & HSN
-                item(key = "price_tax_section") {
-                    ElvanSectionContainer {
-                        ElvanSettingsSection(
-                            title = K.vilaiMatrumVari.tr(),
-                            colors = colors
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
+                            // Price
+                            ElvanThiruthiUlleedu(
+                                label = K.vilai.tr(),
+                                value = vilai,
+                                onValueChange = { vilai = it },
+                                placeholder = "0.00",
+                                prefixText = "₹ ",
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                            )
+
+                            // GST %
+                            ElvanThiruthiUlleedu(
+                                label = K.gstVeedham.tr(),
+                                value = variVeetham,
+                                onValueChange = { variVeetham = it },
+                                placeholder = "5",
+                                suffixText = "%",
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                            )
+
+                            // Quick GST rate pills
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                ElvanSettingsTextField(
-                                    label = K.hsnSacKuriyeedu.tr(),
-                                    value = hsnCode,
-                                    onValueChange = { hsnCode = it },
-                                    placeholder = "50020010",
-                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                    colors = colors
-                                )
-
-                                // Suggested HSN Chips
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    listOf("50020010", "50040010", "50072010").forEach { code ->
-                                        val isSelected = hsnCode.trim() == code
-                                        FilterChip(
-                                            selected = isSelected,
-                                            onClick = { hsnCode = code },
-                                            label = { Text(code) },
-                                            shape = RoundedCornerShape(100)
-                                        )
-                                    }
-                                }
-
-                                ElvanSettingsTextField(
-                                    label = K.vilai.tr(),
-                                    value = vilai,
-                                    onValueChange = { vilai = it },
-                                    placeholder = "0.00",
-                                    prefixText = "₹ ",
-                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                                    colors = colors
-                                )
-
-                                ElvanSettingsTextField(
-                                    label = K.gstVeedham.tr(),
-                                    value = variVeetham,
-                                    onValueChange = { variVeetham = it },
-                                    placeholder = "5",
-                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                    trailingIcon = {
-                                        Text(
-                                            text = "%",
-                                            style = TextStyle(
-                                                fontFamily = ff,
-                                                fontSize = 14.sp,
-                                                fontWeight = FontWeight.Bold,
-                                                color = colors.textSecondary
-                                            )
-                                        )
-                                    },
-                                    colors = colors
-                                )
-
-                                // Quick GST rate pills
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    listOf("0", "5", "12", "18").forEach { rate ->
-                                        val isSelected = variVeetham.trim() == rate
-                                        FilterChip(
-                                            selected = isSelected,
-                                            onClick = { variVeetham = rate },
-                                            label = { Text("$rate%") },
-                                            shape = RoundedCornerShape(100)
-                                        )
-                                    }
+                                listOf("0", "5", "12", "18").forEach { rate ->
+                                    val isSelected = variVeetham.trim() == rate
+                                    FilterChip(
+                                        selected = isSelected,
+                                        onClick = { variVeetham = rate },
+                                        label = { Text("$rate%") },
+                                        shape = RoundedCornerShape(100)
+                                    )
                                 }
                             }
                         }
@@ -370,16 +265,30 @@ fun PorulThiruthiScreen(
             // Delete Card (if editing existing)
             if (isEditing && item != null) {
                 item(key = "delete_section") {
-                    ElvanSectionContainer {
-                        ElvanSettingsSection(colors = colors) {
-                            ElvanSettingsRow(
-                                title = K.azhi.tr(),
-                                icon = MaterialSymbols.Rounded.Delete,
-                                iconTint = MaterialTheme.colorScheme.error,
-                                iconBgColor = MaterialTheme.colorScheme.error.copy(alpha = 0.12f),
-                                titleColor = MaterialTheme.colorScheme.error,
-                                onClick = { showDeleteConfirm = true },
-                                colors = colors
+                    ElvanThiruthiAttai(
+                        onClick = { showDeleteConfirm = true },
+                        backgroundColor = MaterialTheme.colorScheme.error.copy(alpha = 0.08f)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = MaterialSymbols.Rounded.Delete,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = K.azhi.tr().preventBrokenLigatures(),
+                                style = TextStyle(
+                                    fontFamily = ff,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.error
+                                )
                             )
                         }
                     }

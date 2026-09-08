@@ -330,6 +330,93 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
         }
     }
 
+    override fun loadDeletedMerchants(mode: AppMode): List<VaangunarTharavuru> {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_vaangunar_table" else "pattu_vaangunar_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return emptyList()
+
+        val list = mutableListOf<VaangunarTharavuru>()
+        var db: SQLiteDatabase? = null
+        var cursor: Cursor? = null
+        try {
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
+            ensureTables(db, mode)
+            val sql = "SELECT * FROM $tableName WHERE is_deleted = 1 ORDER BY deleted_at DESC, id DESC"
+            cursor = db.rawQuery(sql, null)
+            while (cursor.moveToNext()) {
+                list.add(cursorToMerchant(cursor))
+            }
+        } catch (e: Exception) {
+            Log.e(tag, "Error loading deleted merchants from $tableName: ${e.message}", e)
+        } finally {
+            cursor?.close()
+            db?.close()
+        }
+        return list
+    }
+
+    override fun restoreMerchant(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_vaangunar_table" else "pattu_vaangunar_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return false
+
+        var db: SQLiteDatabase? = null
+        try {
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
+            ensureTables(db, mode)
+            val values = ContentValues().apply {
+                put("is_deleted", 0)
+                putNull("deleted_at")
+                put("updated_at", System.currentTimeMillis() / 1000)
+            }
+            val rows = db.update(tableName, values, "id = ?", arrayOf(id.toString()))
+            return rows > 0
+        } catch (e: Exception) {
+            Log.e(tag, "Error restoring merchant $id: ${e.message}", e)
+            return false
+        } finally {
+            db?.close()
+        }
+    }
+
+    override fun permanentDeleteMerchant(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_vaangunar_table" else "pattu_vaangunar_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return false
+
+        var db: SQLiteDatabase? = null
+        try {
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
+            ensureTables(db, mode)
+            val rows = db.delete(tableName, "id = ?", arrayOf(id.toString()))
+            return rows > 0
+        } catch (e: Exception) {
+            Log.e(tag, "Error permanently deleting merchant $id: ${e.message}", e)
+            return false
+        } finally {
+            db?.close()
+        }
+    }
+
+    override fun purgeExpiredMerchants(mode: AppMode, days: Int): Int {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_vaangunar_table" else "pattu_vaangunar_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return 0
+
+        var db: SQLiteDatabase? = null
+        try {
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
+            ensureTables(db, mode)
+            val cutoffSec = (System.currentTimeMillis() / 1000) - (days * 86400L)
+            return db.delete(tableName, "is_deleted = 1 AND deleted_at < ?", arrayOf(cutoffSec.toString()))
+        } catch (e: Exception) {
+            Log.e(tag, "Error purging expired merchants: ${e.message}", e)
+            return 0
+        } finally {
+            db?.close()
+        }
+    }
+
     override fun loadAllItems(mode: AppMode): List<PorulTharavuru> {
         val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
         val tableName = if (mode == AppMode.KOOLI) "kooli_porul_table" else "pattu_porul_table"
@@ -437,6 +524,93 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
         } catch (e: Exception) {
             Log.e(tag, "Error deleting item $id from $tableName: ${e.message}", e)
             return false
+        } finally {
+            db?.close()
+        }
+    }
+
+    override fun loadDeletedItems(mode: AppMode): List<PorulTharavuru> {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_porul_table" else "pattu_porul_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return emptyList()
+
+        val list = mutableListOf<PorulTharavuru>()
+        var db: SQLiteDatabase? = null
+        var cursor: Cursor? = null
+        try {
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
+            ensureTables(db, mode)
+            val sql = "SELECT * FROM $tableName WHERE is_deleted = 1 ORDER BY deleted_at DESC, id DESC"
+            cursor = db.rawQuery(sql, null)
+            while (cursor.moveToNext()) {
+                list.add(cursorToItem(cursor))
+            }
+        } catch (e: Exception) {
+            Log.e(tag, "Error loading deleted items from $tableName: ${e.message}", e)
+        } finally {
+            cursor?.close()
+            db?.close()
+        }
+        return list
+    }
+
+    override fun restoreItem(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_porul_table" else "pattu_porul_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return false
+
+        var db: SQLiteDatabase? = null
+        try {
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
+            ensureTables(db, mode)
+            val values = ContentValues().apply {
+                put("is_deleted", 0)
+                putNull("deleted_at")
+                put("updated_at", System.currentTimeMillis() / 1000)
+            }
+            val rows = db.update(tableName, values, "id = ?", arrayOf(id.toString()))
+            return rows > 0
+        } catch (e: Exception) {
+            Log.e(tag, "Error restoring item $id: ${e.message}", e)
+            return false
+        } finally {
+            db?.close()
+        }
+    }
+
+    override fun permanentDeleteItem(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_porul_table" else "pattu_porul_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return false
+
+        var db: SQLiteDatabase? = null
+        try {
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
+            ensureTables(db, mode)
+            val rows = db.delete(tableName, "id = ?", arrayOf(id.toString()))
+            return rows > 0
+        } catch (e: Exception) {
+            Log.e(tag, "Error permanently deleting item $id: ${e.message}", e)
+            return false
+        } finally {
+            db?.close()
+        }
+    }
+
+    override fun purgeExpiredItems(mode: AppMode, days: Int): Int {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_porul_table" else "pattu_porul_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return 0
+
+        var db: SQLiteDatabase? = null
+        try {
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
+            ensureTables(db, mode)
+            val cutoffSec = (System.currentTimeMillis() / 1000) - (days * 86400L)
+            return db.delete(tableName, "is_deleted = 1 AND deleted_at < ?", arrayOf(cutoffSec.toString()))
+        } catch (e: Exception) {
+            Log.e(tag, "Error purging expired items: ${e.message}", e)
+            return 0
         } finally {
             db?.close()
         }

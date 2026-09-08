@@ -45,7 +45,10 @@ fun VaangunarScreen(
     modifier: Modifier = Modifier,
     scrollState: LazyListState = rememberLazyListState(),
     mode: AppMode = LocalAppMode.current,
-    colors: ShellColors = rememberShellColors()
+    colors: ShellColors = rememberShellColors(),
+    isSelectionMode: Boolean = false,
+    selectedItemIds: Set<Long> = emptySet(),
+    onToggleSelect: ((Long) -> Unit)? = null
 ) {
     val merchants = VaangunarRepository.filteredMerchants
     val ff = LocalAppFontFamily.current
@@ -128,19 +131,31 @@ fun VaangunarScreen(
             }
 
             itemsIndexed(merchants, key = { _, merchant -> merchant.id }) { index, merchant ->
+                val isSelected = selectedItemIds.contains(merchant.id)
+                val onCardClick: () -> Unit = {
+                    if (isSelectionMode) {
+                        onToggleSelect?.invoke(merchant.id)
+                    } else {
+                        onMerchantClick(merchant)
+                    }
+                }
                 if (mode == AppMode.KOOLI) {
                     CoolieVaangunarCard(
                         index = index,
                         merchant = merchant,
-                        onClick = { onMerchantClick(merchant) },
-                        colors = colors
+                        onClick = onCardClick,
+                        colors = colors,
+                        isSelectionMode = isSelectionMode,
+                        isSelected = isSelected
                     )
                 } else {
                     SilkVaangunarCard(
                         index = index,
                         merchant = merchant,
-                        onClick = { onMerchantClick(merchant) },
-                        colors = colors
+                        onClick = onCardClick,
+                        colors = colors,
+                        isSelectionMode = isSelectionMode,
+                        isSelected = isSelected
                     )
                 }
             }
@@ -157,7 +172,9 @@ private fun CoolieVaangunarCard(
     index: Int,
     merchant: VaangunarTharavuru,
     onClick: () -> Unit,
-    colors: ShellColors
+    colors: ShellColors,
+    isSelectionMode: Boolean = false,
+    isSelected: Boolean = false
 ) {
     val ff = LocalAppFontFamily.current
     val currentLang = LocalAppLanguage.current
@@ -188,27 +205,37 @@ private fun CoolieVaangunarCard(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top
         ) {
-            // Index circle (28x28)
+            // Index circle or Selection Checkbox (28x28)
             Box(
                 modifier = Modifier
                     .size(28.dp)
                     .clip(CircleShape)
                     .background(
-                        if (isDark) Color.White.copy(alpha = 0.12f)
+                        if (isSelectionMode && isSelected) colors.accent
+                        else if (isDark) Color.White.copy(alpha = 0.12f)
                         else Color.Black.copy(alpha = 0.08f)
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = (index + 1).toString().padStart(2, '0'),
-                    style = TextStyle(
-                        fontFamily = ff,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 11.2.sp,
-                        color = if (isDark) Color.White else Color.Black,
-                        lineHeight = 11.2.sp
+                if (isSelectionMode) {
+                    Icon(
+                        imageVector = if (isSelected) MaterialSymbols.Rounded.Check else MaterialSymbols.Rounded.CheckBoxOutlineBlank,
+                        contentDescription = null,
+                        tint = if (isSelected) Color.White else colors.textSecondary,
+                        modifier = Modifier.size(16.dp)
                     )
-                )
+                } else {
+                    Text(
+                        text = (index + 1).toString().padStart(2, '0'),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 11.2.sp,
+                            color = if (isDark) Color.White else Color.Black,
+                            lineHeight = 11.2.sp
+                        )
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -286,7 +313,9 @@ private fun SilkVaangunarCard(
     index: Int,
     merchant: VaangunarTharavuru,
     onClick: () -> Unit,
-    colors: ShellColors
+    colors: ShellColors,
+    isSelectionMode: Boolean = false,
+    isSelected: Boolean = false
 ) {
     val ff = LocalAppFontFamily.current
     val currentLang = LocalAppLanguage.current
@@ -320,27 +349,37 @@ private fun SilkVaangunarCard(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top
         ) {
-            // Index circle (28x28)
+            // Index circle or Selection Checkbox (28x28)
             Box(
                 modifier = Modifier
                     .size(28.dp)
                     .clip(CircleShape)
                     .background(
-                        if (isDark) Color.White.copy(alpha = 0.12f)
+                        if (isSelectionMode && isSelected) colors.accent
+                        else if (isDark) Color.White.copy(alpha = 0.12f)
                         else Color.Black.copy(alpha = 0.08f)
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = (index + 1).toString().padStart(2, '0'),
-                    style = TextStyle(
-                        fontFamily = ff,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 11.2.sp,
-                        color = if (isDark) Color.White else Color.Black,
-                        lineHeight = 11.2.sp
+                if (isSelectionMode) {
+                    Icon(
+                        imageVector = if (isSelected) MaterialSymbols.Rounded.Check else MaterialSymbols.Rounded.CheckBoxOutlineBlank,
+                        contentDescription = null,
+                        tint = if (isSelected) Color.White else colors.textSecondary,
+                        modifier = Modifier.size(16.dp)
                     )
-                )
+                } else {
+                    Text(
+                        text = (index + 1).toString().padStart(2, '0'),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 11.2.sp,
+                            color = if (isDark) Color.White else Color.Black,
+                            lineHeight = 11.2.sp
+                        )
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(12.dp))

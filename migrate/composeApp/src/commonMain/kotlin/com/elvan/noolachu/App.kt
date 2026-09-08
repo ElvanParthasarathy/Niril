@@ -20,7 +20,10 @@ import com.elvan.noolachu.ui.components.shell.ElvanBottomSheetHost
 import com.elvan.noolachu.ui.components.shell.LocalElvanBottomSheetController
 import com.elvan.noolachu.ui.screens.home.HomeScreen
 import com.elvan.noolachu.ui.screens.mode.ModeSelectorScreen
-import com.elvan.noolachu.ui.screens.splash.SplashScreen
+import com.elvan.noolachu.theme.ThemeManager
+import com.elvan.noolachu.ui.screens.mode.ModeSelectorContent
+import com.elvan.noolachu.ui.screens.splash.SplashBackground
+import com.elvan.noolachu.ui.screens.splash.SplashContent
 import kotlinx.coroutines.delay
 
 @Composable
@@ -46,12 +49,23 @@ fun App() {
                             .background(colors.background)
                     ) {
                         if (!ModeManager.hasSelectedModeAtStartup) {
-                            ModeSelectorScreen(
-                                onModeSelected = { selectedMode ->
-                                    ModeManager.setMode(selectedMode)
-                                },
-                                canDismiss = false
-                            )
+                            SplashBackground(isDark = ThemeManager.isDark()) {
+                                ModeSelectorContent(
+                                    onModeSelected = { selectedMode ->
+                                        ModeManager.setMode(selectedMode)
+                                    },
+                                    canDismiss = false
+                                )
+
+                                AnimatedVisibility(
+                                    visible = isSplashVisible,
+                                    modifier = Modifier.fillMaxSize().zIndex(200f),
+                                    enter = fadeIn(),
+                                    exit = fadeOut(animationSpec = tween(durationMillis = 400))
+                                ) {
+                                    SplashContent()
+                                }
+                            }
                         } else {
                             HomeScreen()
 
@@ -71,19 +85,21 @@ fun App() {
                                     canDismiss = true
                                 )
                             }
+
+                            // Animated Splash Screen overlay for already-selected mode startup
+                            AnimatedVisibility(
+                                visible = isSplashVisible,
+                                modifier = Modifier.zIndex(200f),
+                                enter = fadeIn(),
+                                exit = fadeOut(animationSpec = tween(durationMillis = 400))
+                            ) {
+                                SplashBackground(isDark = ThemeManager.isDark()) {
+                                    SplashContent()
+                                }
+                            }
                         }
 
                         ElvanBottomSheetHost(bottomSheetController)
-
-                        // Animated Splash Screen overlay with smooth fade out
-                        AnimatedVisibility(
-                            visible = isSplashVisible,
-                            modifier = Modifier.zIndex(200f),
-                            enter = fadeIn(),
-                            exit = fadeOut(animationSpec = tween(durationMillis = 400))
-                        ) {
-                            SplashScreen()
-                        }
                     }
                 }
             }

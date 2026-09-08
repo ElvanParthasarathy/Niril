@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,28 +53,27 @@ fun VanakkamPill(
         if (mode == AppMode.KOOLI) "நிரல் கூலி" else "நிரல் பட்டு"
     }
 
-    val pillShape = CircleShape
+    val pillShape = RoundedCornerShape(999.dp)
 
     Box(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
+            .height(84.dp)
             .clip(pillShape)
-            .background(if (isDark) Color(0xFF111111) else Color.White)
-            .padding(start = 14.dp, top = 12.dp, bottom = 12.dp, end = 24.dp)
+            .background(colors.surface)
+            .padding(start = 11.dp, end = 16.dp)
     ) {
         Row(
+            modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Mode Circular Button
+            // Mode Circular Button (62dp concentric with 84dp pill, starting cleanly after the curve)
             Box(
                 modifier = Modifier
-                    .size(56.dp)
+                    .size(62.dp)
                     .clip(CircleShape)
-                    .background(
-                        if (isDark) Color.White.copy(alpha = 0.08f)
-                        else Color.Black.copy(alpha = 0.06f)
-                    )
+                    .background(colors.iconBg)
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = ShellDefaults.ripple(colors, bounded = true),
@@ -84,8 +84,8 @@ fun VanakkamPill(
                 Icon(
                     imageVector = if (mode == AppMode.KOOLI) AppSvgs.coolieMode else AppSvgs.silkMode,
                     contentDescription = mode.displayName(),
-                    tint = if (isDark) Color.White else Color.Black,
-                    modifier = Modifier.size(28.dp)
+                    tint = colors.textPrimary,
+                    modifier = Modifier.size(30.dp)
                 )
             }
 

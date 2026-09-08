@@ -1,9 +1,11 @@
 package com.elvan.noolachu.ui.screens.thiruthi.patrucheettu
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -33,10 +35,14 @@ import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.components.shell.*
 import com.elvan.noolachu.ui.components.shell.maeladukkugal.ElvanAzhippuUrudhiMaeladukku
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
+import com.elvan.noolachu.ui.screens.thiruthi.ElvanEditorSection
+import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiAttai
+import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiKeezhvirivu
+import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiUlleedu
 
 /**
  * Receipt Editor Screen (பற்றுச்சீட்டு திருத்தி)
- * Handles creating and editing payment receipts with One UI styling.
+ * Handles creating and editing payment receipts with Flutter's 1:1 boxed card layout and synced scroll state.
  */
 @Composable
 fun PatrucheettuThiruthiScreen(
@@ -62,6 +68,8 @@ fun PatrucheettuThiruthiScreen(
         mutableStateOf(receipt?.vaangunarMunvari ?: emptyMap())
     }
 
+    var customerSearchQuery by remember { mutableStateOf("") }
+
     var patruNaal by remember { mutableStateOf(receipt?.patruNaal ?: System.currentTimeMillis()) }
     var patruEn by remember {
         mutableStateOf(
@@ -82,15 +90,13 @@ fun PatrucheettuThiruthiScreen(
     var ullkurippu by remember { mutableStateOf(receipt?.ullkurippu ?: "") }
 
     var showDeleteConfirm by remember { mutableStateOf(false) }
-    var showMerchantPicker by remember { mutableStateOf(false) }
-    var showProfilePicker by remember { mutableStateOf(false) }
     var validationError by remember { mutableStateOf<String?>(null) }
 
     val pageTitle = if (isEditing) K.maatriyamai.tr() else K.pudhiyaPatrucheettuPtn.tr()
     val thogaiRequiredMsg = K.thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum.tr()
     val saveSuccessMsg = K.chaemippuvetri.tr()
     val saveFailedMsg = K.chaemikkaIyalavillai.tr()
-    val deleteSuccessMsg = K.azhippuvetri.tr()
+    val deletedMsg = K.azhippuvetri.tr()
     val confirmDeleteTitle = K.nirandharaAzhippuUrudhi.tr()
 
     fun handleSave() {
@@ -101,11 +107,17 @@ fun PatrucheettuThiruthiScreen(
             return
         }
 
+        val finalPeyarMap = if (selectedVaangunarPeyarMap.isNotEmpty()) {
+            selectedVaangunarPeyarMap
+        } else {
+            mapOf("ta" to "பொது வாடிக்கையாளர்", "en" to "General Customer")
+        }
+
         val entryToSave = PatrugalTharavuru(
             id = receipt?.id ?: 0L,
             niruvanamId = selectedNiruvanamId,
             vaangunarId = selectedVaangunarId,
-            vaangunarPeyar = selectedVaangunarPeyarMap,
+            vaangunarPeyar = finalPeyarMap,
             vaangunarMunvari = selectedVaangunarMunvariMap,
             patruNaal = patruNaal,
             patruEn = patruEn.trim(),
@@ -150,254 +162,309 @@ fun PatrucheettuThiruthiScreen(
             state = scrollState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
+                start = 16.dp,
+                end = 16.dp,
                 bottom = Dimens.SubpageContentPaddingBottom
             ),
-            verticalArrangement = Arrangement.spacedBy(Dimens.SectionSpacing)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             // Top spacer driven by One UI collapsible header
             item(key = "top_spacer") {
                 Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
             }
 
-            // Section 1: Business Profile Selection
-            item(key = "profile_section") {
-                ElvanSectionContainer {
-                    ElvanSettingsSection(
-                        title = K.niruvanam.tr(),
-                        colors = colors
-                    ) {
-                        val activeProfile = profiles.find { it.id == selectedNiruvanamId }
-                        val profileDisplayName = if (activeProfile != null) {
-                            if (activeProfile.kurumPeyar.isNotEmpty()) activeProfile.kurumPeyar
-                            else activeProfile.niruvanathinPeyar.values.firstOrNull().orEmpty()
-                        } else {
-                            K.niruvanaththaithThaernhedu.tr()
-                        }
+            // Section 1: Customer (பெறுநர்)
+            item(key = "customer_section") {
+                ElvanEditorSection(
+                    index = 0,
+                    title = K.vaangunar.tr()
+                ) {
+                    val hasCustomer = selectedVaangunarId != null || selectedVaangunarPeyarMap.isNotEmpty()
 
-                        ElvanSettingsRow(
-                            title = profileDisplayName,
-                            description = activeProfile?.tholaipaesi1,
-                            icon = MaterialSymbols.Rounded.BusinessCenter,
-                            onClick = {
-                                if (profiles.size > 1) {
-                                    showProfilePicker = true
+                    if (hasCustomer) {
+                        val customerName = selectedVaangunarPeyarMap.values.firstOrNull()?.ifEmpty { null }
+                            ?: K.vaangunar.tr()
+                        val customerAddress = selectedVaangunarMunvariMap.values.firstOrNull()?.ifEmpty { null }
+
+                        ElvanThiruthiAttai {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.Top
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = K.chaemiththaTharavugal.tr().preventBrokenLigatures(),
+                                        style = TextStyle(
+                                            fontFamily = ff,
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = colors.textSecondary
+                                        )
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = customerName.preventBrokenLigatures(),
+                                        style = TextStyle(
+                                            fontFamily = ff,
+                                            fontSize = 16.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = colors.textPrimary
+                                        )
+                                    )
+                                    if (!customerAddress.isNullOrBlank()) {
+                                        Spacer(modifier = Modifier.height(2.dp))
+                                        Text(
+                                            text = customerAddress.preventBrokenLigatures(),
+                                            style = TextStyle(
+                                                fontFamily = ff,
+                                                fontSize = 13.sp,
+                                                color = colors.textSecondary
+                                            )
+                                        )
+                                    }
                                 }
-                            },
-                            customTrailing = if (profiles.size > 1) {
-                                {
+
+                                Box(
+                                    modifier = Modifier
+                                        .size(32.dp)
+                                        .clip(CircleShape)
+                                        .background(colors.iconBg)
+                                        .clickable {
+                                            selectedVaangunarId = null
+                                            selectedVaangunarPeyarMap = emptyMap()
+                                            selectedVaangunarMunvariMap = emptyMap()
+                                            customerSearchQuery = ""
+                                        },
+                                    contentAlignment = Alignment.Center
+                                ) {
                                     Icon(
-                                        imageVector = MaterialSymbols.Rounded.ChevronRight,
+                                        imageVector = MaterialSymbols.Rounded.Close,
+                                        contentDescription = K.kaividuPtn.tr(),
+                                        tint = colors.textSecondary,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        ElvanThiruthiAttai {
+                            ElvanThiruthiUlleedu(
+                                label = K.vaangunarPeyarThaedu.tr(),
+                                value = customerSearchQuery,
+                                onValueChange = { customerSearchQuery = it },
+                                placeholder = K.vaangunarPeyarThaedu.tr(),
+                                prefixIcon = {
+                                    Icon(
+                                        imageVector = MaterialSymbols.Rounded.Search,
                                         contentDescription = null,
                                         tint = colors.textSecondary,
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
-                            } else null,
-                            colors = colors
-                        )
+                            )
+
+                            val filteredMerchants = if (customerSearchQuery.isBlank()) {
+                                merchants.take(4)
+                            } else {
+                                merchants.filter { m ->
+                                    m.peyar.values.any { it.contains(customerSearchQuery, ignoreCase = true) } ||
+                                    m.oor.values.any { it.contains(customerSearchQuery, ignoreCase = true) }
+                                }.take(6)
+                            }
+
+                            if (filteredMerchants.isNotEmpty()) {
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    filteredMerchants.forEach { m ->
+                                        val mName = m.peyar.values.firstOrNull().orEmpty()
+                                        val mOor = m.oor.values.firstOrNull().orEmpty()
+
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .clip(RoundedCornerShape(12.dp))
+                                                .background(colors.iconBg)
+                                                .clickable {
+                                                    selectedVaangunarId = m.id
+                                                    selectedVaangunarPeyarMap = m.peyar
+                                                    selectedVaangunarMunvariMap = m.oor
+                                                }
+                                                .padding(horizontal = 14.dp, vertical = 10.dp),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Column {
+                                                Text(
+                                                    text = mName.preventBrokenLigatures(),
+                                                    style = TextStyle(
+                                                        fontFamily = ff,
+                                                        fontSize = 14.sp,
+                                                        fontWeight = FontWeight.SemiBold,
+                                                        color = colors.textPrimary
+                                                    )
+                                                )
+                                                if (mOor.isNotBlank()) {
+                                                    Text(
+                                                        text = mOor.preventBrokenLigatures(),
+                                                        style = TextStyle(
+                                                            fontFamily = ff,
+                                                            fontSize = 12.sp,
+                                                            color = colors.textSecondary
+                                                        )
+                                                    )
+                                                }
+                                            }
+
+                                            Icon(
+                                                imageVector = MaterialSymbols.Rounded.ChevronRight,
+                                                contentDescription = null,
+                                                tint = colors.textSecondary,
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
 
-            // Section 2: Customer (Vaangunar) Selection
-            item(key = "customer_section") {
-                ElvanSectionContainer {
-                    ElvanSettingsSection(
-                        title = K.vaangunar.tr(),
-                        colors = colors
-                    ) {
-                        val customerName = selectedVaangunarPeyarMap.values.firstOrNull()?.ifEmpty { null }
-                            ?: K.vaangunarPeyarThaedu.tr()
-                        val customerOor = selectedVaangunarMunvariMap.values.firstOrNull()
+            // Section 2: Receipt Metadata (பற்றுச்சீட்டு விவரங்கள்)
+            item(key = "metadata_section") {
+                ElvanEditorSection(
+                    index = 1,
+                    title = K.patrucheettu.tr()
+                ) {
+                    ElvanThiruthiAttai {
+                        if (profiles.size > 1) {
+                            val activeProfile = profiles.find { it.id == selectedNiruvanamId }
+                            val profileDisplayName = activeProfile?.kurumPeyar?.ifEmpty {
+                                activeProfile.niruvanathinPeyar.values.firstOrNull().orEmpty()
+                            } ?: K.niruvanaththaithThaernhedu.tr()
 
-                        ElvanSettingsRow(
-                            title = customerName,
-                            description = customerOor,
-                            icon = MaterialSymbols.CustomNav.Customers,
-                            onClick = { showMerchantPicker = true },
-                            customTrailing = {
+                            ElvanThiruthiKeezhvirivu(
+                                label = K.niruvanam.tr(),
+                                selectedText = profileDisplayName,
+                                items = profiles.map { p ->
+                                    val name = p.kurumPeyar.ifEmpty { p.niruvanathinPeyar.values.firstOrNull().orEmpty() }
+                                    p.id.toString() to name
+                                },
+                                onSelected = { selectedNiruvanamId = it.toLongOrNull() }
+                            )
+                        }
+
+                        ElvanThiruthiUlleedu(
+                            label = K.en.tr(),
+                            value = patruEn,
+                            onValueChange = { patruEn = it },
+                            placeholder = "PR-001"
+                        )
+
+                        ElvanThiruthiUlleedu(
+                            label = K.pirandhaThaedhi.tr(),
+                            value = DateUtils.formatEpochMillis(patruNaal),
+                            onValueChange = {},
+                            enabled = false,
+                            suffixIcon = {
                                 Icon(
-                                    imageVector = MaterialSymbols.Rounded.ChevronRight,
+                                    imageVector = MaterialSymbols.Rounded.CalendarToday,
                                     contentDescription = null,
                                     tint = colors.textSecondary,
                                     modifier = Modifier.size(20.dp)
                                 )
-                            },
-                            colors = colors
+                            }
                         )
                     }
                 }
             }
 
-            // Section 3: Receipt Metadata (Number and Date)
-            item(key = "metadata_section") {
-                ElvanSectionContainer {
-                    ElvanSettingsSection(
-                        title = K.tharavuthalam.tr(),
-                        colors = colors
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            ElvanSettingsTextField(
-                                label = K.en.tr(),
-                                value = patruEn,
-                                onValueChange = { patruEn = it },
-                                placeholder = "PR-001",
-                                colors = colors
-                            )
-
-                            ElvanSettingsRow(
-                                title = DateUtils.formatEpochMillis(patruNaal),
-                                description = K.pirandhaThaedhi.tr(),
-                                icon = MaterialSymbols.Rounded.CalendarToday,
-                                onClick = {
-                                    patruNaal = System.currentTimeMillis()
-                                },
-                                colors = colors
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Section 4: Amount & Payment Method
+            // Section 3: Payment Details (செலுத்துதல் விவரங்கள்)
             item(key = "payment_details_section") {
-                ElvanSectionContainer {
-                    ElvanSettingsSection(
-                        title = K.vilaiMatrumVari.tr(),
-                        colors = colors
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            ElvanSettingsTextField(
-                                label = "${K.motham.tr()} *",
-                                value = thogai,
-                                onValueChange = {
-                                    thogai = it
-                                    validationError = null
-                                },
-                                placeholder = "0.00",
-                                prefixText = "₹ ",
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                                colors = colors
-                            )
+                ElvanEditorSection(
+                    index = 2,
+                    title = "செலுத்துதல் விவரங்கள்"
+                ) {
+                    ElvanThiruthiAttai {
+                        ElvanThiruthiUlleedu(
+                            label = K.thogai.tr(),
+                            value = thogai,
+                            onValueChange = {
+                                thogai = it
+                                validationError = null
+                            },
+                            placeholder = "0.00",
+                            prefixText = "₹ ",
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            errorMessage = validationError
+                        )
 
-                            if (validationError != null) {
-                                Text(
-                                    text = validationError!!,
-                                    style = TextStyle(fontFamily = ff, fontSize = 12.sp, color = MaterialTheme.colorScheme.error),
-                                    modifier = Modifier.padding(start = 16.dp, top = 2.dp)
-                                )
-                            }
+                        ElvanThiruthiKeezhvirivu(
+                            label = "செலுத்தும் முறை",
+                            selectedText = when (seluthumMurai) {
+                                "roakkam" -> "ரொக்கம்"
+                                "cheque" -> K.kaasoalai.tr()
+                                "upi" -> "UPI"
+                                else -> "வங்கி மாற்றம்"
+                            },
+                            items = listOf(
+                                "vangiMaatram" to "வங்கி மாற்றம்",
+                                "roakkam" to "ரொக்கம்",
+                                "cheque" to K.kaasoalai.tr(),
+                                "upi" to "UPI"
+                            ),
+                            onSelected = { seluthumMurai = it }
+                        )
 
-                            Text(
-                                text = K.endhachCheyalmurai.tr().preventBrokenLigatures(),
-                                style = TextStyle(
-                                    fontFamily = ff,
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = colors.textSecondary
-                                )
-                            )
+                        ElvanThiruthiUlleedu(
+                            label = "பரிவர்த்தனை எண்",
+                            value = parivarthanaiEn,
+                            onValueChange = { parivarthanaiEn = it },
+                            placeholder = "TRX12345678"
+                        )
 
-                            // Payment mode selector chips
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                val methods = listOf(
-                                    "vangiMaatram" to K.vangiParimaatram.tr(),
-                                    "rokkam" to K.kaasu.tr(),
-                                    "kaasoalaimurai" to K.kaasoalai.tr()
-                                )
-
-                                methods.forEach { (key, label) ->
-                                    val isSelected = seluthumMurai == key
-                                    FilterChip(
-                                        selected = isSelected,
-                                        onClick = { seluthumMurai = key },
-                                        label = {
-                                            Text(
-                                                text = label.preventBrokenLigatures(),
-                                                style = TextStyle(
-                                                    fontFamily = ff,
-                                                    fontSize = 13.sp,
-                                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                                                )
-                                            )
-                                        },
-                                        shape = RoundedCornerShape(100),
-                                        colors = FilterChipDefaults.filterChipColors(
-                                            selectedContainerColor = colors.accent,
-                                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
-                                            containerColor = colors.iconBg,
-                                            labelColor = colors.textPrimary
-                                        )
-                                    )
-                                }
-                            }
-
-                            // Optional Transaction ID
-                            if (seluthumMurai != "rokkam") {
-                                ElvanSettingsTextField(
-                                    label = K.kurippuEnParimaatraEn.tr(),
-                                    value = parivarthanaiEn,
-                                    onValueChange = { parivarthanaiEn = it },
-                                    placeholder = "UTR / Ref No",
-                                    colors = colors
-                                )
-                            }
-                        }
+                        ElvanThiruthiUlleedu(
+                            label = K.kurippu.tr(),
+                            value = ullkurippu,
+                            onValueChange = { ullkurippu = it },
+                            placeholder = K.kurippu.tr(),
+                            singleLine = false,
+                            maxLines = 3
+                        )
                     }
                 }
             }
 
-            // Section 5: Internal Notes
-            item(key = "notes_section") {
-                ElvanSectionContainer {
-                    ElvanSettingsSection(
-                        title = K.kurippu.tr(),
-                        colors = colors
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        ) {
-                            ElvanSettingsTextField(
-                                label = K.kurippu.tr(),
-                                value = ullkurippu,
-                                onValueChange = { ullkurippu = it },
-                                placeholder = "...",
-                                singleLine = false,
-                                colors = colors
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Delete Action Section (if editing)
+            // Delete Card (if editing existing)
             if (isEditing && receipt != null) {
                 item(key = "delete_section") {
-                    ElvanSectionContainer {
-                        ElvanSettingsSection(colors = colors) {
-                            ElvanSettingsRow(
-                                title = K.azhi.tr(),
-                                icon = MaterialSymbols.Rounded.Delete,
-                                iconTint = MaterialTheme.colorScheme.error,
-                                iconBgColor = MaterialTheme.colorScheme.error.copy(alpha = 0.12f),
-                                titleColor = MaterialTheme.colorScheme.error,
-                                onClick = { showDeleteConfirm = true },
-                                colors = colors
+                    ElvanThiruthiAttai(
+                        onClick = { showDeleteConfirm = true },
+                        backgroundColor = MaterialTheme.colorScheme.error.copy(alpha = 0.08f)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = MaterialSymbols.Rounded.Delete,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = K.azhi.tr().preventBrokenLigatures(),
+                                style = TextStyle(
+                                    fontFamily = ff,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = MaterialTheme.colorScheme.error
+                                )
                             )
                         }
                     }
@@ -406,135 +473,13 @@ fun PatrucheettuThiruthiScreen(
         }
     }
 
-    // Customer Picker Modal
-    if (showMerchantPicker) {
-        AlertDialog(
-            onDismissRequest = { showMerchantPicker = false },
-            title = {
-                Text(
-                    text = K.vaangunar.tr().preventBrokenLigatures(),
-                    style = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                )
-            },
-            text = {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 350.dp)
-                ) {
-                    if (merchants.isEmpty()) {
-                        item {
-                            Text(
-                                text = K.vaangunarTharavugal.tr(),
-                                style = TextStyle(fontFamily = ff, color = colors.textSecondary)
-                            )
-                        }
-                    } else {
-                        items(merchants.size) { idx ->
-                            val m = merchants[idx]
-                            val mName = m.peyar.values.firstOrNull() ?: ""
-                            val mOor = m.oor.values.firstOrNull() ?: ""
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .clickable {
-                                        selectedVaangunarId = m.id
-                                        selectedVaangunarPeyarMap = m.peyar
-                                        selectedVaangunarMunvariMap = m.oor
-                                        showMerchantPicker = false
-                                    }
-                                    .padding(vertical = 10.dp, horizontal = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column(modifier = Modifier.weight(1f)) {
-                                    Text(
-                                        text = mName.preventBrokenLigatures(),
-                                        style = TextStyle(fontFamily = ff, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
-                                    )
-                                    if (mOor.isNotEmpty()) {
-                                        Text(
-                                            text = mOor.preventBrokenLigatures(),
-                                            style = TextStyle(fontFamily = ff, color = colors.textSecondary, fontSize = 12.sp)
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showMerchantPicker = false }) {
-                    Text(K.kaividuPtn.tr(), style = TextStyle(fontFamily = ff))
-                }
-            },
-            containerColor = colors.surface,
-            titleContentColor = colors.textPrimary,
-            textContentColor = colors.textPrimary
-        )
-    }
-
-    // Business Profile Picker Modal
-    if (showProfilePicker) {
-        AlertDialog(
-            onDismissRequest = { showProfilePicker = false },
-            title = {
-                Text(
-                    text = K.niruvanam.tr().preventBrokenLigatures(),
-                    style = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                )
-            },
-            text = {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    profiles.forEach { profile ->
-                        val pName = if (profile.kurumPeyar.isNotEmpty()) profile.kurumPeyar
-                        else profile.niruvanathinPeyar.values.firstOrNull().orEmpty()
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(12.dp))
-                                .clickable {
-                                    selectedNiruvanamId = profile.id
-                                    showProfilePicker = false
-                                }
-                                .padding(vertical = 12.dp, horizontal = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = pName.preventBrokenLigatures(),
-                                style = TextStyle(
-                                    fontFamily = ff,
-                                    fontWeight = if (selectedNiruvanamId == profile.id) FontWeight.Bold else FontWeight.Normal,
-                                    fontSize = 15.sp,
-                                    color = if (selectedNiruvanamId == profile.id) colors.accent else colors.textPrimary
-                                )
-                            )
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showProfilePicker = false }) {
-                    Text(K.kaividuPtn.tr(), style = TextStyle(fontFamily = ff))
-                }
-            },
-            containerColor = colors.surface,
-            titleContentColor = colors.textPrimary,
-            textContentColor = colors.textPrimary
-        )
-    }
-
-    // Delete Confirmation Modal
     if (showDeleteConfirm && receipt != null) {
         ElvanAzhippuUrudhiMaeladukku(
             title = confirmDeleteTitle,
             onConfirm = {
                 showDeleteConfirm = false
                 PatrugalRepository.delete(receipt.id, currentMode)
-                ElvanSnackbar.show(deleteSuccessMsg)
+                ElvanSnackbar.show(deletedMsg)
                 onBack()
             },
             onDismissRequest = { showDeleteConfirm = false },
