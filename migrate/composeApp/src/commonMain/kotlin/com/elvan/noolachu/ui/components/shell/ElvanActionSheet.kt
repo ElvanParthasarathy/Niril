@@ -100,17 +100,12 @@ fun ElvanActionSheet(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     if (tertiaryText == null) {
-                        // Side-by-side action buttons
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            // Cancel button
+                        if (confirmText.isBlank()) {
+                            // Single Cancel button
                             TextButton(
                                 onClick = onDismissRequest,
                                 modifier = Modifier
-                                    .weight(1f)
+                                    .fillMaxWidth()
                                     .height(44.dp),
                                 shape = RoundedCornerShape(50)
                             ) {
@@ -124,52 +119,78 @@ fun ElvanActionSheet(
                                     color = colors.textPrimary.copy(alpha = 0.6f)
                                 )
                             }
-
-                            // Confirm button
-                            if (isConfirmFilled) {
-                                Button(
-                                    onClick = {
-                                        onDismissRequest()
-                                        onConfirm()
-                                    },
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .height(44.dp),
-                                    shape = RoundedCornerShape(50),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = mainColor,
-                                        contentColor = Color.White
-                                    )
-                                ) {
-                                    Text(
-                                        text = confirmText,
-                                        style = TextStyle(
-                                            fontFamily = ff,
-                                            fontSize = 16.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    )
-                                }
-                            } else {
+                        } else {
+                            // Side-by-side action buttons
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                // Cancel button
                                 TextButton(
-                                    onClick = {
-                                        onDismissRequest()
-                                        onConfirm()
-                                    },
+                                    onClick = onDismissRequest,
                                     modifier = Modifier
                                         .weight(1f)
                                         .height(44.dp),
                                     shape = RoundedCornerShape(50)
                                 ) {
                                     Text(
-                                        text = confirmText,
+                                        text = cancelText,
                                         style = TextStyle(
                                             fontFamily = ff,
                                             fontSize = 16.sp,
-                                            fontWeight = FontWeight.Bold
+                                            fontWeight = FontWeight.SemiBold
                                         ),
-                                        color = mainColor
+                                        color = colors.textPrimary.copy(alpha = 0.6f)
                                     )
+                                }
+
+                                // Confirm button
+                                if (isConfirmFilled) {
+                                    Button(
+                                        onClick = {
+                                            onDismissRequest()
+                                            onConfirm()
+                                        },
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .height(44.dp),
+                                        shape = RoundedCornerShape(50),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = mainColor,
+                                            contentColor = Color.White
+                                        )
+                                    ) {
+                                        Text(
+                                            text = confirmText,
+                                            style = TextStyle(
+                                                fontFamily = ff,
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        )
+                                    }
+                                } else {
+                                    TextButton(
+                                        onClick = {
+                                            onDismissRequest()
+                                            onConfirm()
+                                        },
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .height(44.dp),
+                                        shape = RoundedCornerShape(50)
+                                    ) {
+                                        Text(
+                                            text = confirmText,
+                                            style = TextStyle(
+                                                fontFamily = ff,
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Bold
+                                            ),
+                                            color = mainColor
+                                        )
+                                    }
                                 }
                             }
                         }

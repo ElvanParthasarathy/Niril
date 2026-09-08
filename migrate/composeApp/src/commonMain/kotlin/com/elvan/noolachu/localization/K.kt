@@ -61,6 +61,7 @@ object K {
     const val kilaipPeyar = "kilaipPeyar"
     const val koriyar = "koriyar"
     const val koriyarKattanam = "koriyarKattanam"
+    const val koappugal = "koappugal"
     const val kurippu = "kurippu"
     const val kurugiyaNiruvanaPeyar = "kurugiyaNiruvanaPeyar"
     const val maanilam = "maanilam"

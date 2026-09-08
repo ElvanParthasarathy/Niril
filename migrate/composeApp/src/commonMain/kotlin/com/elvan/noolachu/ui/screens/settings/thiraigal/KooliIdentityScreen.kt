@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -45,6 +46,15 @@ fun KooliIdentityScreen(
     var editingSection by remember { mutableStateOf<String?>(null) }
     var tempImagePath by remember { mutableStateOf<String?>(null) }
     var tempSignatoryName by remember { mutableStateOf("") }
+    var activePickerField by remember { mutableStateOf<String?>(null) }
+
+    val imagePicker = rememberImagePicker { path ->
+        when (activePickerField) {
+            "logo" -> tempImagePath = path
+            "kaiyoppam" -> tempImagePath = path
+        }
+        activePickerField = null
+    }
 
     val logoPath = profile.oavuru.ifEmpty { null }
     val signaturePath = profile.kaiyoppam.ifEmpty { null }
@@ -73,7 +83,16 @@ fun KooliIdentityScreen(
                     displayContent = {
                         ElvanSettingsDisplayRow(
                             title = K.niruvanathinOavuru.tr(),
-                            primaryValue = if (logoPath != null) K.niruvanathinOavuru.tr() else K.oavuruIllai.tr(),
+                            primaryValue = if (logoPath != null) "" else K.oavuruIllai.tr(),
+                            primaryWidget = if (logoPath != null) {
+                                {
+                                    ElvanOavuruKaatchi(
+                                        value = logoPath,
+                                        modifier = Modifier.height(36.dp).clip(RoundedCornerShape(6.dp)),
+                                        contentScale = ContentScale.Fit
+                                    )
+                                }
+                            } else null,
                             onEdit = {
                                 tempImagePath = logoPath
                                 editingSection = "logo"
@@ -96,7 +115,7 @@ fun KooliIdentityScreen(
                         ) {
                             ImageUploadBox(
                                 imagePath = tempImagePath,
-                                onPick = { tempImagePath = "content://media/logo_sample.png" },
+                                onPick = { activePickerField = "logo" },
                                 onClear = { tempImagePath = null },
                                 colors = colors
                             )
@@ -111,7 +130,16 @@ fun KooliIdentityScreen(
                     displayContent = {
                         ElvanSettingsDisplayRow(
                             title = K.kaiyoppam.tr(),
-                            primaryValue = if (signaturePath != null) signatoryName.ifEmpty { "கையொப்பம் உள்ளது" } else K.kaiyoppamIllai.tr(),
+                            primaryValue = if (signaturePath != null) signatoryName else K.kaiyoppamIllai.tr(),
+                            primaryWidget = if (signaturePath != null) {
+                                {
+                                    ElvanOavuruKaatchi(
+                                        value = signaturePath,
+                                        modifier = Modifier.height(48.dp).clip(RoundedCornerShape(6.dp)),
+                                        contentScale = ContentScale.Fit
+                                    )
+                                }
+                            } else null,
                             onEdit = {
                                 tempImagePath = signaturePath
                                 tempSignatoryName = signatoryName
@@ -136,7 +164,7 @@ fun KooliIdentityScreen(
                         ) {
                             ImageUploadBox(
                                 imagePath = tempImagePath,
-                                onPick = { tempImagePath = "content://media/sig_sample.png" },
+                                onPick = { activePickerField = "kaiyoppam" },
                                 onClear = { tempImagePath = null },
                                 colors = colors
                             )
@@ -155,6 +183,15 @@ fun KooliIdentityScreen(
         }
     }
 }
+
+    if (activePickerField != null) {
+        ElvanImagePickerSheet(
+            onDismissRequest = { activePickerField = null },
+            onPickGallery = { imagePicker.launchGallery() },
+            onPickFiles = { imagePicker.launchFiles() },
+            colors = colors
+        )
+    }
 }
 
 @Composable
@@ -177,9 +214,13 @@ private fun ImageUploadBox(
         contentAlignment = Alignment.Center
     ) {
         if (hasImage) {
-            Text(
-                text = "படம் பதிவேற்றப்பட்டது ($imagePath)",
-                style = TextStyle(fontFamily = ff, fontSize = 13.sp, color = colors.textPrimary)
+            ElvanOavuruKaatchi(
+                value = imagePath,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(16.dp))
+                    .padding(8.dp),
+                contentScale = ContentScale.Fit
             )
             // Delete button at top-right
             Surface(

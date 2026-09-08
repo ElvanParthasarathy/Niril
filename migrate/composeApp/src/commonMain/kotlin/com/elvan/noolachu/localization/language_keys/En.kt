@@ -61,6 +61,7 @@ val en: Map<String, String> = mapOf(
     K.kilaipPeyar to "Branch Name",
     K.koriyar to "Courier",
     K.koriyarKattanam to "Courier (₹)",
+    K.koappugal to "Files",
     K.kurippu to "Remarks",
     K.kurugiyaNiruvanaPeyar to "Short Company Name",
     K.maanilam to "State",

@@ -61,6 +61,7 @@ val taLatn: Map<String, String> = mapOf(
     K.kilaipPeyar to "Kilaip Peyar",
     K.koriyar to "Koriyar",
     K.koriyarKattanam to "Koriyar (₹)",
+    K.koappugal to "Koappugal",
     K.kurippu to "Kurippu",
     K.kurugiyaNiruvanaPeyar to "Kurugiya Niruvanap Peyar",
     K.maanilam to "Maanilam",

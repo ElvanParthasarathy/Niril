@@ -61,6 +61,7 @@ val ta: Map<String, String> = mapOf(
     K.kilaipPeyar to "கிளைப் பெயர்",
     K.koriyar to "கொரியர்",
     K.koriyarKattanam to "கொரியர் (₹)",
+    K.koappugal to "கோப்புகள்",
     K.kurippu to "குறிப்பு",
     K.kurugiyaNiruvanaPeyar to "குறுகிய நிறுவனப் பெயர்",
     K.maanilam to "மாநிலம்",

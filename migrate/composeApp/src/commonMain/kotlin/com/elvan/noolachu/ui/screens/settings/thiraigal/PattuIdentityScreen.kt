@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -48,6 +49,16 @@ fun PattuIdentityScreen(
     var tempWideImagePath by remember { mutableStateOf<String?>(null) }
     var tempHeaderStyle by remember { mutableStateOf(profile.thalaippuVadivu.ifEmpty { "small" }) }
     var tempSignatoryName by remember { mutableStateOf("") }
+    var activePickerField by remember { mutableStateOf<String?>(null) }
+
+    val imagePicker = rememberImagePicker { path ->
+        when (activePickerField) {
+            "logo" -> tempImagePath = path
+            "wide_logo" -> tempWideImagePath = path
+            "kaiyoppam" -> tempImagePath = path
+        }
+        activePickerField = null
+    }
 
     val logoPath = profile.oavuru.ifEmpty { null }
     val wideLogoPath = profile.agalaOavuru.ifEmpty { null }
@@ -83,7 +94,16 @@ fun PattuIdentityScreen(
                     displayContent = {
                         ElvanSettingsDisplayRow(
                             title = K.niruvanathinOavuru.tr(),
-                            primaryValue = if (logoPath != null) K.niruvanathinOavuru.tr() else K.oavuruIllai.tr(),
+                            primaryValue = if (logoPath != null) "" else K.oavuruIllai.tr(),
+                            primaryWidget = if (logoPath != null) {
+                                {
+                                    ElvanOavuruKaatchi(
+                                        value = logoPath,
+                                        modifier = Modifier.height(36.dp).clip(RoundedCornerShape(6.dp)),
+                                        contentScale = ContentScale.Fit
+                                    )
+                                }
+                            } else null,
                             onEdit = {
                                 tempImagePath = logoPath
                                 editingSection = "logo"
@@ -106,7 +126,7 @@ fun PattuIdentityScreen(
                         ) {
                             ImageUploadBox(
                                 imagePath = tempImagePath,
-                                onPick = { tempImagePath = "content://media/logo_sample.png" },
+                                onPick = { activePickerField = "logo" },
                                 onClear = { tempImagePath = null },
                                 colors = colors
                             )
@@ -121,7 +141,16 @@ fun PattuIdentityScreen(
                     displayContent = {
                         ElvanSettingsDisplayRow(
                             title = K.agalamaanaoavuru.tr(),
-                            primaryValue = if (wideLogoPath != null) K.agalamaanaoavuru.tr() else K.oavuruIllai.tr(),
+                            primaryValue = if (wideLogoPath != null) "" else K.illai.tr(),
+                            primaryWidget = if (wideLogoPath != null) {
+                                {
+                                    ElvanOavuruKaatchi(
+                                        value = wideLogoPath,
+                                        modifier = Modifier.height(36.dp).clip(RoundedCornerShape(6.dp)),
+                                        contentScale = ContentScale.Fit
+                                    )
+                                }
+                            } else null,
                             onEdit = {
                                 tempWideImagePath = wideLogoPath
                                 editingSection = "wide_logo"
@@ -144,7 +173,7 @@ fun PattuIdentityScreen(
                         ) {
                             ImageUploadBox(
                                 imagePath = tempWideImagePath,
-                                onPick = { tempWideImagePath = "content://media/wide_logo_sample.png" },
+                                onPick = { activePickerField = "wide_logo" },
                                 onClear = { tempWideImagePath = null },
                                 colors = colors
                             )
@@ -235,7 +264,16 @@ fun PattuIdentityScreen(
                     displayContent = {
                         ElvanSettingsDisplayRow(
                             title = K.kaiyoppam.tr(),
-                            primaryValue = if (signaturePath != null) signatoryName.ifEmpty { "கையொப்பம் உள்ளது" } else K.kaiyoppamIllai.tr(),
+                            primaryValue = if (signaturePath != null) signatoryName else K.kaiyoppamIllai.tr(),
+                            primaryWidget = if (signaturePath != null) {
+                                {
+                                    ElvanOavuruKaatchi(
+                                        value = signaturePath,
+                                        modifier = Modifier.height(48.dp).clip(RoundedCornerShape(6.dp)),
+                                        contentScale = ContentScale.Fit
+                                    )
+                                }
+                            } else null,
                             onEdit = {
                                 tempImagePath = signaturePath
                                 tempSignatoryName = signatoryName
@@ -260,7 +298,7 @@ fun PattuIdentityScreen(
                         ) {
                             ImageUploadBox(
                                 imagePath = tempImagePath,
-                                onPick = { tempImagePath = "content://media/sig_sample.png" },
+                                onPick = { activePickerField = "kaiyoppam" },
                                 onClear = { tempImagePath = null },
                                 colors = colors
                             )
@@ -279,6 +317,15 @@ fun PattuIdentityScreen(
         }
     }
 }
+
+    if (activePickerField != null) {
+        ElvanImagePickerSheet(
+            onDismissRequest = { activePickerField = null },
+            onPickGallery = { imagePicker.launchGallery() },
+            onPickFiles = { imagePicker.launchFiles() },
+            colors = colors
+        )
+    }
 }
 
 @Composable
@@ -301,9 +348,13 @@ private fun ImageUploadBox(
         contentAlignment = Alignment.Center
     ) {
         if (hasImage) {
-            Text(
-                text = "படம் பதிவேற்றப்பட்டது ($imagePath)",
-                style = TextStyle(fontFamily = ff, fontSize = 13.sp, color = colors.textPrimary)
+            ElvanOavuruKaatchi(
+                value = imagePath,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(16.dp))
+                    .padding(8.dp),
+                contentScale = ContentScale.Fit
             )
             Surface(
                 shape = CircleShape,

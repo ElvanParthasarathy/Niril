@@ -91,6 +91,9 @@ object MaterialSymbols {
         val Logout: ImageVector get() = LibSymbols.RoundedFilled.Logout
         val Settings: ImageVector get() = LibSymbols.RoundedFilled.Settings
         val EventList: ImageVector get() = LibSymbols.RoundedFilled.List
+        val BrokenImage: ImageVector get() = LibSymbols.Rounded.Broken_image
+        val PhotoLibrary: ImageVector get() = LibSymbols.Rounded.Photo_library
+        val FolderOpen: ImageVector get() = LibSymbols.Rounded.Folder_open
     }
 
     /**
