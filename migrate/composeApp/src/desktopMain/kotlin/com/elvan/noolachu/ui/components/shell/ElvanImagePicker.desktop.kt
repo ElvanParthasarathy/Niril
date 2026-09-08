@@ -27,6 +27,10 @@ actual fun rememberImagePicker(onImagePicked: (String) -> Unit): ImagePickerLaun
                 }
             }
 
+            override fun launch() {
+                openChooser()
+            }
+
             override fun launchGallery() {
                 openChooser()
             }

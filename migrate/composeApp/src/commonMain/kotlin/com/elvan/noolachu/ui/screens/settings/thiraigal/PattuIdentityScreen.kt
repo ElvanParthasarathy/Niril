@@ -126,7 +126,10 @@ fun PattuIdentityScreen(
                         ) {
                             ImageUploadBox(
                                 imagePath = tempImagePath,
-                                onPick = { activePickerField = "logo" },
+                                onPick = {
+                                    activePickerField = "logo"
+                                    imagePicker.launch()
+                                },
                                 onClear = { tempImagePath = null },
                                 colors = colors
                             )
@@ -173,7 +176,10 @@ fun PattuIdentityScreen(
                         ) {
                             ImageUploadBox(
                                 imagePath = tempWideImagePath,
-                                onPick = { activePickerField = "wide_logo" },
+                                onPick = {
+                                    activePickerField = "wide_logo"
+                                    imagePicker.launch()
+                                },
                                 onClear = { tempWideImagePath = null },
                                 colors = colors
                             )
@@ -298,7 +304,10 @@ fun PattuIdentityScreen(
                         ) {
                             ImageUploadBox(
                                 imagePath = tempImagePath,
-                                onPick = { activePickerField = "kaiyoppam" },
+                                onPick = {
+                                    activePickerField = "kaiyoppam"
+                                    imagePicker.launch()
+                                },
                                 onClear = { tempImagePath = null },
                                 colors = colors
                             )
@@ -317,15 +326,6 @@ fun PattuIdentityScreen(
         }
     }
 }
-
-    if (activePickerField != null) {
-        ElvanImagePickerSheet(
-            onDismissRequest = { activePickerField = null },
-            onPickGallery = { imagePicker.launchGallery() },
-            onPickFiles = { imagePicker.launchFiles() },
-            colors = colors
-        )
-    }
 }
 
 @Composable

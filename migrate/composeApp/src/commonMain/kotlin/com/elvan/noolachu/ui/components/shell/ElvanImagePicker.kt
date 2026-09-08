@@ -6,8 +6,9 @@ import androidx.compose.runtime.Composable
  * Platform image picker launcher supporting Gallery and Files.
  */
 interface ImagePickerLauncher {
-    fun launchGallery()
-    fun launchFiles()
+    fun launch()
+    fun launchGallery() = launch()
+    fun launchFiles() = launch()
 }
 
 @Composable

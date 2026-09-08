@@ -115,7 +115,10 @@ fun KooliIdentityScreen(
                         ) {
                             ImageUploadBox(
                                 imagePath = tempImagePath,
-                                onPick = { activePickerField = "logo" },
+                                onPick = {
+                                    activePickerField = "logo"
+                                    imagePicker.launch()
+                                },
                                 onClear = { tempImagePath = null },
                                 colors = colors
                             )
@@ -164,7 +167,10 @@ fun KooliIdentityScreen(
                         ) {
                             ImageUploadBox(
                                 imagePath = tempImagePath,
-                                onPick = { activePickerField = "kaiyoppam" },
+                                onPick = {
+                                    activePickerField = "kaiyoppam"
+                                    imagePicker.launch()
+                                },
                                 onClear = { tempImagePath = null },
                                 colors = colors
                             )
@@ -183,15 +189,6 @@ fun KooliIdentityScreen(
         }
     }
 }
-
-    if (activePickerField != null) {
-        ElvanImagePickerSheet(
-            onDismissRequest = { activePickerField = null },
-            onPickGallery = { imagePicker.launchGallery() },
-            onPickFiles = { imagePicker.launchFiles() },
-            colors = colors
-        )
-    }
 }
 
 @Composable
