@@ -139,8 +139,8 @@ fun SettingsHubScreen(
             }
         }
 
-        // ── Section 1: Business Profile & Identity ──
-        item(key = "identity_section") {
+        // ── Section 1: Business Identity & Finance (3 items) ──
+        item(key = "business_identity_section") {
             ElvanSectionContainer {
                 ElvanSettingsSection(colors = colors) {
                     if (currentMode == AppMode.KOOLI) {
@@ -170,14 +170,9 @@ fun SettingsHubScreen(
                         onClick = { onNavigate(SettingsRoute.Address) },
                         colors = colors
                     )
-                }
-            }
-        }
 
-        // ── Section 2: Finance & Creation ──
-        item(key = "finance_creation_section") {
-            ElvanSectionContainer {
-                ElvanSettingsSection(colors = colors) {
+                    ElvanSettingsDivider(colors = colors)
+
                     ElvanSettingsRow(
                         icon = MaterialSymbols.Rounded.CreditCard,
                         title = K.vangi.tr(),
@@ -185,29 +180,19 @@ fun SettingsHubScreen(
                         onClick = { onNavigate(SettingsRoute.Bank) },
                         colors = colors
                     )
+                }
+            }
+        }
 
-                    ElvanSettingsDivider(colors = colors)
-
+        // ── Section 2: Invoicing & Interface (3 items) ──
+        item(key = "invoicing_interface_section") {
+            ElvanSectionContainer {
+                ElvanSettingsSection(colors = colors) {
                     ElvanSettingsRow(
                         icon = MaterialSymbols.Rounded.Description,
                         title = K.uruvaakkuPtn.tr(),
                         description = K.pilVadivamaippuViruppangal.tr(),
                         onClick = { onNavigate(SettingsRoute.InvoiceCreation) },
-                        colors = colors
-                    )
-                }
-            }
-        }
-
-        // ── Section 3: User & Display ──
-        item(key = "user_display_section") {
-            ElvanSectionContainer {
-                ElvanSettingsSection(colors = colors) {
-                    ElvanSettingsRow(
-                        icon = MaterialSymbols.Rounded.Person,
-                        title = K.payanar.tr(),
-                        description = K.payanarAmaippugal.tr(),
-                        onClick = { onNavigate(SettingsRoute.UserProfile) },
                         colors = colors
                     )
 
@@ -220,19 +205,29 @@ fun SettingsHubScreen(
                         onClick = { onNavigate(SettingsRoute.Display) },
                         colors = colors
                     )
-                }
-            }
-        }
 
-        // ── Section 4: Language & Security ──
-        item(key = "language_security_section") {
-            ElvanSectionContainer {
-                ElvanSettingsSection(colors = colors) {
+                    ElvanSettingsDivider(colors = colors)
+
                     ElvanSettingsRow(
                         icon = MaterialSymbols.Rounded.Translate,
                         title = K.cheyaliMozhi.tr(),
                         description = K.thamizhAangilamThaaniyangu.tr(),
                         onClick = { onNavigate(SettingsRoute.Language) },
+                        colors = colors
+                    )
+                }
+            }
+        }
+
+        // ── Section 3: User Account, Data & Security (3 items) ──
+        item(key = "account_data_security_section") {
+            ElvanSectionContainer {
+                ElvanSettingsSection(colors = colors) {
+                    ElvanSettingsRow(
+                        icon = MaterialSymbols.Rounded.Person,
+                        title = K.payanar.tr(),
+                        description = K.payanarAmaippugal.tr(),
+                        onClick = { onNavigate(SettingsRoute.UserProfile) },
                         colors = colors
                     )
 
@@ -259,8 +254,8 @@ fun SettingsHubScreen(
             }
         }
 
-        // ── Section 5: System & About ──
-        item(key = "about_section") {
+        // ── Section 4: About & Engine (3 items) ──
+        item(key = "about_engine_section") {
             ElvanSectionContainer {
                 ElvanSettingsSection(colors = colors) {
                     ElvanSettingsRow(
