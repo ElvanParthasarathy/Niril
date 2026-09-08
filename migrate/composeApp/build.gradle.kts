@@ -14,7 +14,11 @@ kotlin {
         }
     }
     
-    jvm("desktop")
+    jvm("desktop") {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
+    }
     
     sourceSets {
         val desktopMain by getting
@@ -36,6 +40,7 @@ kotlin {
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation("org.jetbrains.skiko:skiko-awt-runtime-windows-x64:0.9.22.2")
             implementation("org.xerial:sqlite-jdbc:3.45.1.0")
         }
     }
@@ -71,6 +76,7 @@ android {
 compose.desktop {
     application {
         mainClass = "MainKt"
+        javaHome = "C:/Users/Elvan/.gradle/jdks/eclipse_adoptium-17-amd64-windows.2"
 
         nativeDistributions {
             targetFormats(TargetFormat.Msi, TargetFormat.Exe)
