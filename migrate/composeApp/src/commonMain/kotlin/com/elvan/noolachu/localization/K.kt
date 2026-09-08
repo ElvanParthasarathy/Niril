@@ -225,6 +225,7 @@ object K {
     const val kaapputhTharavuThaedal = "kaapputhTharavuThaedal"
     const val kadaisiThaaniyakkaKaappu = "kadaisiThaaniyakkaKaappu"
     const val language = "language"
+    const val languageInfo = "languageInfo"
     const val mozhiThaervu = "mozhiThaervu"
     const val mudhanmaiMozhi = "mudhanmaiMozhi"
     const val niruvanaAmaippugal = "niruvanaAmaippugal"

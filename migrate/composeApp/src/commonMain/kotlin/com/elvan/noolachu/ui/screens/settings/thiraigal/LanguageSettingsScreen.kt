@@ -4,18 +4,35 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.elvan.noolachu.localization.*
 import com.elvan.noolachu.theme.Dimens
+import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.ShellColors
 import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.components.shell.*
 
+private data class LanguageSettingItem(
+    val language: Language,
+    val title: String,
+    val descriptionKey: String?
+)
+
+private val languageSettingsOptions = listOf(
+    LanguageSettingItem(Language.SYSTEM, "", null),
+    LanguageSettingItem(Language.TAMIL, "தமிழ்", K.tamil),
+    LanguageSettingItem(Language.TAMIL_LATIN, "Thamizh", K.tamilLatin),
+    LanguageSettingItem(Language.ENGLISH, "English", K.english),
+)
+
 /**
- * Language Settings Screen matching Flutter's `mozhi_amaippugal_thirai.dart` 1:1.
- * Features 4 radio options: Automatic (தானியங்கி அமைப்பு), தமிழ், English, and Tamil Latin.
+ * Language Settings Screen matching Neram's `LanguageSettingsScreen.kt` 1:1.
+ * Features native script titles paired with localized subtitles and live updates.
  */
 @Composable
 fun LanguageSettingsScreen(
@@ -23,6 +40,7 @@ fun LanguageSettingsScreen(
     colors: ShellColors = rememberShellColors()
 ) {
     val currentLang = LanguageManager.currentLanguage
+    val ff = LocalAppFontFamily.current
 
     LazyColumn(
         state = scrollState,
@@ -40,45 +58,39 @@ fun LanguageSettingsScreen(
         item(key = "language_section") {
             ElvanSectionContainer {
                 ElvanSettingsSection(colors = colors) {
-                    // 1. Automatic (தானியங்கி அமைப்பு)
-                    ElvanRadioSettingsRow(
-                        title = K.thaaniyangiAmaippu.tr(),
-                        value = Language.SYSTEM,
-                        groupValue = currentLang,
-                        onSelected = { LanguageManager.setLanguage(it) },
-                        colors = colors
-                    )
-                    ElvanSettingsDivider(colors = colors)
+                    languageSettingsOptions.forEachIndexed { index, option ->
+                        val title = if (option.language == Language.SYSTEM) K.thaaniyangiAmaippu.tr() else option.title
+                        val description = option.descriptionKey?.let { it.tr() }
 
-                    // 2. Tamil (தமிழ்)
-                    ElvanRadioSettingsRow(
-                        title = K.thamizh.tr(),
-                        value = Language.TAMIL,
-                        groupValue = currentLang,
-                        onSelected = { LanguageManager.setLanguage(it) },
-                        colors = colors
-                    )
-                    ElvanSettingsDivider(colors = colors)
+                        ElvanRadioSettingsRow(
+                            title = title,
+                            description = description,
+                            value = option.language,
+                            groupValue = currentLang,
+                            onSelected = { LanguageManager.setLanguage(it) },
+                            colors = colors
+                        )
 
-                    // 3. English (English)
-                    ElvanRadioSettingsRow(
-                        title = K.aangilam.tr(),
-                        value = Language.ENGLISH,
-                        groupValue = currentLang,
-                        onSelected = { LanguageManager.setLanguage(it) },
-                        colors = colors
-                    )
-                    ElvanSettingsDivider(colors = colors)
-
-                    // 4. Tamil Latin (Tamil Latin)
-                    ElvanRadioSettingsRow(
-                        title = K.tamilLatin.tr(),
-                        value = Language.TAMIL_LATIN,
-                        groupValue = currentLang,
-                        onSelected = { LanguageManager.setLanguage(it) },
-                        colors = colors
-                    )
+                        if (index < languageSettingsOptions.size - 1) {
+                            ElvanSettingsDivider(colors = colors)
+                        }
+                    }
                 }
+            }
+        }
+
+        item(key = "info_text") {
+            ElvanSectionContainer {
+                Text(
+                    text = K.languageInfo.tr(),
+                    style = TextStyle(
+                        fontFamily = ff,
+                        fontSize = 13.sp,
+                        lineHeight = 18.sp
+                    ),
+                    color = colors.textPrimary.copy(alpha = 0.5f),
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
             }
         }
     }

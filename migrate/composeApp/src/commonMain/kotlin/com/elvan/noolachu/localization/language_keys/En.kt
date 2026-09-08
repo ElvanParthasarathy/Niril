@@ -225,6 +225,7 @@ val en: Map<String, String> = mapOf(
     K.kaapputhTharavuThaedal to "Checking for backups...",
     K.kadaisiThaaniyakkaKaappu to "Last Auto-Backup",
     K.language to "Language",
+    K.languageInfo to "Language change applies immediately across all pages, navigation, and settings.",
     K.mozhiThaervu to "Select Language",
     K.mudhanmaiMozhi to "Primary Language",
     K.niruvanaAmaippugal to "Company Settings",

@@ -164,7 +164,6 @@ fun AddressSettingsScreen(
                         primaryValue = maanilamPrimary,
                         secondaryValue = if (isBilingual) maanilamSecondary else null,
                         onEdit = openStateSelection,
-                        onTap = openStateSelection,
                         colors = colors
                     )
                     ElvanSettingsDivider(colors = colors)
@@ -180,7 +179,6 @@ fun AddressSettingsScreen(
                             primaryValue = maavattamPrimary,
                             secondaryValue = if (isBilingual) maavattamSecondary else null,
                             onEdit = openDistrictSelection,
-                            onTap = openDistrictSelection,
                             colors = colors
                         )
                     } else {
@@ -427,7 +425,6 @@ fun AddressSettingsScreen(
                         primaryValue = maavattamPrimary,
                         secondaryValue = maavattamSecondary,
                         onEdit = openDistrictSelection,
-                        onTap = openDistrictSelection,
                         colors = colors
                     )
                     ElvanSettingsDivider(colors = colors)

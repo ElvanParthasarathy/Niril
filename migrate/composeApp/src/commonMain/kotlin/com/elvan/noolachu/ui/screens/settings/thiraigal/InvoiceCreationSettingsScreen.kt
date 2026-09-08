@@ -58,6 +58,12 @@ fun InvoiceCreationSettingsScreen(
 
     val greenLabel = K.pachai.tr()
     val purpleLabel = K.oodhaa.tr()
+    val tamilLabel = K.thamizh.tr()
+    val englishLabel = K.aangilam.tr()
+
+    fun getLanguageName(code: String): String {
+        return if (code.lowercase().startsWith("ta")) tamilLabel else englishLabel
+    }
 
     fun getThemeName(hex: String): String {
         return when (hex.lowercase()) {
@@ -101,7 +107,7 @@ fun InvoiceCreationSettingsScreen(
                             Column {
                                 ElvanSimpleSettingsRow(
                                     title = K.mudhanmaiMozhi.tr(),
-                                    description = if (profile.mudhanMozhi.lowercase().startsWith("ta")) K.thamizh.tr() else K.aangilam.tr(),
+                                    description = getLanguageName(profile.mudhanMozhi),
                                     trailing = {
                                         Surface(
                                             shape = CircleShape,
@@ -136,7 +142,7 @@ fun InvoiceCreationSettingsScreen(
                                     ElvanSettingsDivider(colors = colors)
                                     ElvanSimpleSettingsRow(
                                         title = K.irandaamMozhi.tr(),
-                                        description = if (profile.thunaiMozhi.lowercase().startsWith("ta")) K.thamizh.tr() else K.aangilam.tr(),
+                                        description = getLanguageName(profile.thunaiMozhi),
                                         colors = colors
                                     )
                                 }
@@ -144,7 +150,6 @@ fun InvoiceCreationSettingsScreen(
                         },
                         editContent = {
                             ElvanSettingsEditContainer(
-                                title = K.mudhanmaiMozhi.tr(),
                                 onCancel = { isEditingLanguages = false },
                                 onSave = {
                                     val updated = profile.copy()
@@ -156,63 +161,37 @@ fun InvoiceCreationSettingsScreen(
                                 },
                                 colors = colors
                             ) {
-                                // Primary Language Picker
-                                Text(
-                                    text = K.mudhanmaiMozhi.tr(),
-                                    style = TextStyle(fontFamily = ff, fontSize = 12.sp, color = colors.textPrimary.copy(alpha = 0.5f)),
-                                    modifier = Modifier.padding(start = 8.dp, bottom = 6.dp)
+                                // Primary Language Dropdown (Pill triggering bottom sheet)
+                                ElvanSettingsDropdown(
+                                    label = K.mudhanmaiMozhi.tr(),
+                                    value = tempPrimaryLang,
+                                    items = listOf("ta", "en"),
+                                    itemLabelBuilder = { getLanguageName(it) },
+                                    onChanged = { selectedLang ->
+                                        if (selectedLang == tempSecondaryLang) {
+                                            tempSecondaryLang = tempPrimaryLang
+                                        }
+                                        tempPrimaryLang = selectedLang
+                                    },
+                                    colors = colors
                                 )
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                ) {
-                                    FilterChip(
-                                        selected = tempPrimaryLang == "ta",
-                                        onClick = {
-                                            tempPrimaryLang = "ta"
-                                            if (tempSecondaryLang == "ta") tempSecondaryLang = "en"
-                                        },
-                                        label = { Text(K.thamizh.tr()) }
-                                    )
-                                    FilterChip(
-                                        selected = tempPrimaryLang == "en",
-                                        onClick = {
-                                            tempPrimaryLang = "en"
-                                            if (tempSecondaryLang == "en") tempSecondaryLang = "ta"
-                                        },
-                                        label = { Text(K.aangilam.tr()) }
-                                    )
-                                }
 
                                 if (profile.iruMozhi) {
                                     Spacer(modifier = Modifier.height(16.dp))
-                                    // Secondary Language Picker
-                                    Text(
-                                        text = K.irandaamMozhi.tr(),
-                                        style = TextStyle(fontFamily = ff, fontSize = 12.sp, color = colors.textPrimary.copy(alpha = 0.5f)),
-                                        modifier = Modifier.padding(start = 8.dp, bottom = 6.dp)
+                                    // Secondary Language Dropdown (Pill triggering bottom sheet)
+                                    ElvanSettingsDropdown(
+                                        label = K.irandaamMozhi.tr(),
+                                        value = tempSecondaryLang,
+                                        items = listOf("ta", "en"),
+                                        itemLabelBuilder = { getLanguageName(it) },
+                                        onChanged = { selectedLang ->
+                                            if (selectedLang == tempPrimaryLang) {
+                                                tempPrimaryLang = tempSecondaryLang
+                                            }
+                                            tempSecondaryLang = selectedLang
+                                        },
+                                        colors = colors
                                     )
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                    ) {
-                                        FilterChip(
-                                            selected = tempSecondaryLang == "ta",
-                                            onClick = {
-                                                tempSecondaryLang = "ta"
-                                                if (tempPrimaryLang == "ta") tempPrimaryLang = "en"
-                                            },
-                                            label = { Text(K.thamizh.tr()) }
-                                        )
-                                        FilterChip(
-                                            selected = tempSecondaryLang == "en",
-                                            onClick = {
-                                                tempSecondaryLang = "en"
-                                                if (tempPrimaryLang == "en") tempPrimaryLang = "ta"
-                                            },
-                                            label = { Text(K.aangilam.tr()) }
-                                        )
-                                    }
                                 }
                             }
                         }
@@ -271,7 +250,7 @@ fun InvoiceCreationSettingsScreen(
                         displayContent = {
                             ElvanSimpleSettingsRow(
                                 title = K.pattiyalPatrucheettuMozhi.tr(),
-                                description = if (profile.mudhanMozhi.lowercase().startsWith("ta")) K.thamizh.tr() else K.aangilam.tr(),
+                                description = getLanguageName(profile.mudhanMozhi),
                                 trailing = {
                                     Surface(
                                         shape = CircleShape,
@@ -303,7 +282,6 @@ fun InvoiceCreationSettingsScreen(
                         },
                         editContent = {
                             ElvanSettingsEditContainer(
-                                title = K.pattiyalPatrucheettuMozhi.tr(),
                                 onCancel = { isEditingLanguages = false },
                                 onSave = {
                                     val updated = profile.copy()
@@ -314,21 +292,14 @@ fun InvoiceCreationSettingsScreen(
                                 },
                                 colors = colors
                             ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                ) {
-                                    FilterChip(
-                                        selected = tempPrimaryLang == "ta",
-                                        onClick = { tempPrimaryLang = "ta" },
-                                        label = { Text(K.thamizh.tr()) }
-                                    )
-                                    FilterChip(
-                                        selected = tempPrimaryLang == "en",
-                                        onClick = { tempPrimaryLang = "en" },
-                                        label = { Text(K.aangilam.tr()) }
-                                    )
-                                }
+                                ElvanSettingsDropdown(
+                                    label = K.pattiyalPatrucheettuMozhi.tr(),
+                                    value = tempPrimaryLang,
+                                    items = listOf("ta", "en"),
+                                    itemLabelBuilder = { getLanguageName(it) },
+                                    onChanged = { tempPrimaryLang = it },
+                                    colors = colors
+                                )
                             }
                         }
                     )
@@ -362,28 +333,6 @@ fun InvoiceCreationSettingsScreen(
                             }
                         },
                         onEdit = {
-                            bottomSheet.showSelection(
-                                title = pdfThemeTitle,
-                                items = listOf("#388e3c", "#6a1b9a"),
-                                currentValue = profile.thoatraNiram.ifEmpty { "#388e3c" },
-                                itemLabelBuilder = { getThemeName(it) },
-                                leadingBuilder = { colorHex ->
-                                    Box(
-                                        modifier = Modifier
-                                            .size(24.dp)
-                                            .clip(CircleShape)
-                                            .background(parseColor(colorHex))
-                                    )
-                                },
-                                onSelected = { selectedColor ->
-                                    val updated = profile.copy()
-                                    updated.thoatraNiram = selectedColor
-                                    NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
-                                    ElvanSnackbar.show(saveSuccessMsg)
-                                }
-                            )
-                        },
-                        onTap = {
                             bottomSheet.showSelection(
                                 title = pdfThemeTitle,
                                 items = listOf("#388e3c", "#6a1b9a"),

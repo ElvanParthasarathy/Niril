@@ -34,6 +34,7 @@ import com.elvan.noolachu.ui.components.shell.ElvanShell
 import com.elvan.noolachu.ui.components.shell.ElvanTopBarIconButton
 import com.elvan.noolachu.ui.components.shell.LocalElvanShellController
 import com.elvan.noolachu.ui.components.shell.LocalElvanTopSpacerHeight
+import com.elvan.noolachu.ui.navigation.AppSvgs
 import com.elvan.noolachu.ui.navigation.BottomNavBar
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
 import com.elvan.noolachu.ui.navigation.NavTab
@@ -109,21 +110,12 @@ fun HomeScreen() {
             ElvanTopBarIconButton(
                 onClick = { ModeManager.toggleMode() }
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clip(RoundedCornerShape(6.dp))
-                        .border(1.5.dp, colors.textPrimary, RoundedCornerShape(6.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = if (ModeManager.isKooli) "கூ" else "ப",
-                        color = colors.textPrimary,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.offset(y = (-0.5).dp)
-                    )
-                }
+                Icon(
+                    imageVector = if (ModeManager.isKooli) AppSvgs.coolieMode else AppSvgs.silkMode,
+                    contentDescription = currentMode.displayName(),
+                    tint = colors.textPrimary,
+                    modifier = Modifier.size(22.dp)
+                )
             }
 
             // Button 2: Theme Toggle (Light ⇄ Dark)

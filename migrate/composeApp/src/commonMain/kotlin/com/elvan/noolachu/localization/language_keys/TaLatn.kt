@@ -225,6 +225,7 @@ val taLatn: Map<String, String> = mapOf(
     K.kaapputhTharavuThaedal to "Kaapputh Tharavu Thaedappadugiradhu...",
     K.kadaisiThaaniyakkaKaappu to "Kadaisi Thaaniyakka Kaappu",
     K.language to "Mozhi",
+    K.languageInfo to "Mozhi maattrum anaithup pakkangal, vazhiseluthal matrum amaippugalilum udanadiyaaga nadaimuraipaduthappadum.",
     K.mozhiThaervu to "Mozhiyaith Thaerndhedu",
     K.mudhanmaiMozhi to "Mudhanmai Mozhi",
     K.niruvanaAmaippugal to "Niruvana Amaippugal",

@@ -225,6 +225,7 @@ val ta: Map<String, String> = mapOf(
     K.kaapputhTharavuThaedal to "காப்புத் தரவு தேடப்படுகிறது...",
     K.kadaisiThaaniyakkaKaappu to "கடைசி தானியக்கக் காப்பு",
     K.language to "மொழி",
+    K.languageInfo to "மொழி மாற்றம் அனைத்துப் பக்கங்கள், வழிசெலுத்தல் மற்றும் அமைப்புகளிலும் உடனடியாக நடைமுறைப்படுத்தப்படும்.",
     K.mozhiThaervu to "மொழியைத் தேர்ந்தெடு",
     K.mudhanmaiMozhi to "முதன்மை மொழி",
     K.niruvanaAmaippugal to "நிறுவன அமைப்புகள்",

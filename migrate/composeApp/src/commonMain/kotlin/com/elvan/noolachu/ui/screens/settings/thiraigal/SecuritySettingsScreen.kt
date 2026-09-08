@@ -4,15 +4,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
 import com.elvan.noolachu.localization.K
 import com.elvan.noolachu.localization.tr
 import com.elvan.noolachu.theme.Dimens
@@ -34,7 +29,6 @@ fun SecuritySettingsScreen(
     scrollState: LazyListState = rememberLazyListState(),
     colors: ShellColors = rememberShellColors()
 ) {
-    val ff = LocalAppFontFamily.current
     val scope = rememberCoroutineScope()
 
     var showSyncLoading by remember { mutableStateOf(false) }
@@ -47,6 +41,10 @@ fun SecuritySettingsScreen(
 
     var emailInput by remember { mutableStateOf("") }
     var passwordInput by remember { mutableStateOf("") }
+
+    val syncSuccessMsg = K.orunginaikkappattadhu.tr()
+    val signOutSuccessMsg = K.veliyaetramvetri.tr()
+    val eraseSuccessMsg = K.azhippuvetri.tr()
 
     LazyColumn(
         state = scrollState,
@@ -73,8 +71,12 @@ fun SecuritySettingsScreen(
                     onClick = {
                         showSyncLoading = true
                         scope.launch {
+                            try {
+                                NiruvanaTharavugalRepository.refreshFromDatabase()
+                            } catch (_: Exception) {}
                             delay(800)
                             showSyncLoading = false
+                            ElvanSnackbar.show(syncSuccessMsg)
                         }
                     },
                     colors = colors
@@ -111,30 +113,9 @@ fun SecuritySettingsScreen(
 
     // ── Sync Loading Modal ──
     if (showSyncLoading) {
-        AlertDialog(
-            onDismissRequest = {},
-            confirmButton = {},
-            text = {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    CircularProgressIndicator(
-                        color = colors.textPrimary,
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.5.dp
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(
-                        text = K.orunginaikkiRadhu.tr(),
-                        style = TextStyle(fontFamily = ff, fontSize = 14.sp),
-                        color = colors.textPrimary
-                    )
-                }
-            },
-            shape = RoundedCornerShape(20.dp),
-            containerColor = colors.surface
+        ElvanLoadingOverlay(
+            text = K.orunginaikkiRadhu.tr(),
+            colors = colors
         )
     }
 
@@ -152,6 +133,7 @@ fun SecuritySettingsScreen(
                 scope.launch {
                     delay(1000)
                     showSignOutLoading = false
+                    ElvanSnackbar.show(signOutSuccessMsg)
                 }
             },
             colors = colors
@@ -159,30 +141,9 @@ fun SecuritySettingsScreen(
     }
 
     if (showSignOutLoading) {
-        AlertDialog(
-            onDismissRequest = {},
-            confirmButton = {},
-            text = {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    CircularProgressIndicator(
-                        color = colors.textPrimary,
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.5.dp
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(
-                        text = K.veliyaerugiradhu.tr(),
-                        style = TextStyle(fontFamily = ff, fontSize = 14.sp),
-                        color = colors.textPrimary
-                    )
-                }
-            },
-            shape = RoundedCornerShape(20.dp),
-            containerColor = colors.surface
+        ElvanLoadingOverlay(
+            text = K.veliyaerugiradhu.tr(),
+            colors = colors
         )
     }
 
@@ -233,6 +194,7 @@ fun SecuritySettingsScreen(
                 scope.launch {
                     delay(1500)
                     showEraseLoading = false
+                    ElvanSnackbar.show(eraseSuccessMsg)
                 }
             },
             colors = colors
@@ -240,30 +202,9 @@ fun SecuritySettingsScreen(
     }
 
     if (showEraseLoading) {
-        AlertDialog(
-            onDismissRequest = {},
-            confirmButton = {},
-            text = {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    CircularProgressIndicator(
-                        color = Color(0xFFBA1A1A),
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.5.dp
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(
-                        text = K.azhikkiradhu.tr(),
-                        style = TextStyle(fontFamily = ff, fontSize = 14.sp),
-                        color = colors.textPrimary
-                    )
-                }
-            },
-            shape = RoundedCornerShape(20.dp),
-            containerColor = colors.surface
+        ElvanLoadingOverlay(
+            text = K.azhikkiradhu.tr(),
+            colors = colors
         )
     }
 }

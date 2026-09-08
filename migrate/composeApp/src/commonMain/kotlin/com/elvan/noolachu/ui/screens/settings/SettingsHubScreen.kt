@@ -32,6 +32,7 @@ import com.elvan.noolachu.theme.ShellColors
 import com.elvan.noolachu.theme.ShellDefaults
 import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.components.shell.*
+import com.elvan.noolachu.ui.navigation.AppSvgs
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
 
 /**
@@ -81,13 +82,13 @@ fun SettingsHubScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(84.dp)
-                            .padding(start = 8.dp, end = 16.dp),
+                            .padding(start = 11.dp, end = 16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // The circular Mode Switcher on the left (diameter 68dp, concentric with 84dp pill)
+                        // The circular Mode Switcher on the left (diameter 62dp, concentric with 84dp pill)
                         Box(
                             modifier = Modifier
-                                .size(68.dp)
+                                .size(62.dp)
                                 .clip(CircleShape)
                                 .background(colors.iconBg)
                                 .clickable(
@@ -97,21 +98,12 @@ fun SettingsHubScreen(
                                 ),
                             contentAlignment = Alignment.Center
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(38.dp)
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .border(1.8.dp, colors.textPrimary, RoundedCornerShape(10.dp)),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = if (currentMode == AppMode.KOOLI) "கூ" else "ப",
-                                    color = colors.textPrimary,
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.offset(y = (-0.5).dp)
-                                )
-                            }
+                            Icon(
+                                imageVector = if (currentMode == AppMode.KOOLI) AppSvgs.coolieMode else AppSvgs.silkMode,
+                                contentDescription = if (currentMode == AppMode.KOOLI) K.nirilKooli.tr() else K.nirilPattu.tr(),
+                                tint = colors.textPrimary,
+                                modifier = Modifier.size(30.dp)
+                            )
                         }
 
                         Spacer(modifier = Modifier.width(16.dp))

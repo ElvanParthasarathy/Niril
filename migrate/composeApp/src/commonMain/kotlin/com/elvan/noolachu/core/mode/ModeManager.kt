@@ -23,6 +23,12 @@ object ModeManager {
     var currentMode by mutableStateOf(AppMode.KOOLI)
         private set
 
+    /** Tracks whether the user has chosen their workspace mode during startup */
+    var hasSelectedModeAtStartup by mutableStateOf(false)
+
+    /** Tracks whether the full-screen mode switcher overlay is open */
+    var isModeSelectorOpen by mutableStateOf(false)
+
     /** Database file name for the current mode */
     val currentDatabaseName: String
         get() = currentMode.databaseName
@@ -35,16 +41,26 @@ object ModeManager {
     val storageDir: String
         get() = "noolachu_${currentMode.key}"
 
+    fun openModeSelector() {
+        isModeSelectorOpen = true
+    }
+
+    fun closeModeSelector() {
+        isModeSelectorOpen = false
+    }
+
     /**
      * Switch the app to a different mode.
      * This will cause the entire UI to re-compose with the new mode's data.
      */
     fun setMode(mode: AppMode) {
         currentMode = mode
+        hasSelectedModeAtStartup = true
+        isModeSelectorOpen = false
     }
 
     fun toggleMode() {
-        currentMode = if (currentMode == AppMode.KOOLI) AppMode.PATTU else AppMode.KOOLI
+        openModeSelector()
     }
 
     /** Check if we are in Kooli mode */
