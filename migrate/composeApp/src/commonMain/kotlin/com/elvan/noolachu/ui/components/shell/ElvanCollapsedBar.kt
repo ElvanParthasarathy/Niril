@@ -1,5 +1,8 @@
 package com.elvan.noolachu.ui.components.shell
 
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -8,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -140,12 +144,24 @@ fun ElvanCollapsedBar(
 
         // Right side (Action Buttons Pill) - ONLY if hasActions is true!
         if (hasActions) {
-            ElvanPill(liftProgress = liftProgress, colors = colors) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(1.dp)
-                ) {
-                    actions()
+            val actionsAlpha by animateFloatAsState(
+                targetValue = if (ElvanMenuState.isMenuOpen) 0f else 1f,
+                animationSpec = tween(150, easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f)),
+                label = "actionsAlpha"
+            )
+
+            Box(
+                modifier = Modifier.graphicsLayer {
+                    alpha = actionsAlpha
+                }
+            ) {
+                ElvanPill(liftProgress = liftProgress, colors = colors) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(1.dp)
+                    ) {
+                        actions()
+                    }
                 }
             }
         }

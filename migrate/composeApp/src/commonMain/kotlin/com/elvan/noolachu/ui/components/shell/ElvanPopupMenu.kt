@@ -54,7 +54,7 @@ fun ElvanPopupMenu(
     items: List<ElvanPopupMenuItem>,
     modifier: Modifier = Modifier
 ) {
-    LaunchedEffect(expanded) {
+    SideEffect {
         ElvanMenuState.isMenuOpen = expanded
     }
     DisposableEffect(Unit) {
@@ -80,7 +80,10 @@ fun ElvanPopupMenu(
     Popup(
         alignment = Alignment.TopEnd,
         offset = IntOffset(x = 8, y = -16),
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = {
+            ElvanMenuState.isMenuOpen = false
+            onDismissRequest()
+        },
         properties = PopupProperties(
             focusable = true,
             dismissOnClickOutside = true,

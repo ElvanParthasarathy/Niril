@@ -247,7 +247,10 @@ fun HomeScreen() {
                             // 3-Dot More Menu (மேலும்)
                             Box {
                                 ElvanTopBarIconButton(
-                                    onClick = { menuExpanded = true }
+                                    onClick = {
+                                        ElvanMenuState.isMenuOpen = true
+                                        menuExpanded = true
+                                    }
                                 ) {
                                     Icon(
                                         imageVector = MaterialSymbols.Rounded.MoreVert,
@@ -265,6 +268,7 @@ fun HomeScreen() {
                                             title = settingsLabel,
                                             icon = MaterialSymbols.Rounded.Settings,
                                             onClick = {
+                                                ElvanMenuState.isMenuOpen = false
                                                 menuExpanded = false
                                                 activeSubpage = ActiveSubpage.Settings
                                             }
@@ -275,6 +279,7 @@ fun HomeScreen() {
                                             title = meetpagamLabel,
                                             icon = MaterialSymbols.Rounded.Delete,
                                             onClick = {
+                                                ElvanMenuState.isMenuOpen = false
                                                 menuExpanded = false
                                                 activeSubpage = ActiveSubpage.RecycleBin
                                             }
@@ -286,6 +291,7 @@ fun HomeScreen() {
                                                 title = thaerndheduLabel,
                                                 icon = MaterialSymbols.Rounded.CheckCircleFill,
                                                 onClick = {
+                                                    ElvanMenuState.isMenuOpen = false
                                                     menuExpanded = false
                                                     isSelectionMode = true
                                                 }
@@ -295,7 +301,10 @@ fun HomeScreen() {
                                 }
                                 ElvanPopupMenu(
                                     expanded = menuExpanded,
-                                    onDismissRequest = { menuExpanded = false },
+                                    onDismissRequest = {
+                                        ElvanMenuState.isMenuOpen = false
+                                        menuExpanded = false
+                                    },
                                     colors = colors,
                                     items = menuItems
                                 )

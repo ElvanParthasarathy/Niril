@@ -1,9 +1,11 @@
 package com.elvan.noolachu
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,7 +33,7 @@ fun App() {
     var isSplashVisible by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
-        delay(1600)
+        delay(600)
         isSplashVisible = false
     }
 
@@ -50,20 +52,24 @@ fun App() {
                     ) {
                         if (!ModeManager.hasSelectedModeAtStartup) {
                             SplashBackground(isDark = ThemeManager.isDark()) {
-                                ModeSelectorContent(
-                                    onModeSelected = { selectedMode ->
-                                        ModeManager.setMode(selectedMode)
+                                AnimatedContent(
+                                    targetState = isSplashVisible,
+                                    transitionSpec = {
+                                        fadeIn(animationSpec = tween(280)) togetherWith
+                                            fadeOut(animationSpec = tween(200))
                                     },
-                                    canDismiss = false
-                                )
-
-                                AnimatedVisibility(
-                                    visible = isSplashVisible,
-                                    modifier = Modifier.fillMaxSize().zIndex(200f),
-                                    enter = fadeIn(),
-                                    exit = fadeOut(animationSpec = tween(durationMillis = 400))
-                                ) {
-                                    SplashContent()
+                                    label = "splash_to_mode_selector"
+                                ) { showSplash ->
+                                    if (showSplash) {
+                                        SplashContent()
+                                    } else {
+                                        ModeSelectorContent(
+                                            onModeSelected = { selectedMode ->
+                                                ModeManager.setMode(selectedMode)
+                                            },
+                                            canDismiss = false
+                                        )
+                                    }
                                 }
                             }
                         } else {
@@ -91,7 +97,7 @@ fun App() {
                                 visible = isSplashVisible,
                                 modifier = Modifier.zIndex(200f),
                                 enter = fadeIn(),
-                                exit = fadeOut(animationSpec = tween(durationMillis = 400))
+                                exit = fadeOut(animationSpec = tween(durationMillis = 280))
                             ) {
                                 SplashBackground(isDark = ThemeManager.isDark()) {
                                     SplashContent()

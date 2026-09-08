@@ -128,19 +128,27 @@ fun BottomNavBar(
         label = "pillX"
     )
 
-    Box(
-        modifier = modifier
-            .windowInsetsPadding(WindowInsets.navigationBars)
-            .padding(bottom = 16.dp)
-            .graphicsLayer {
-                scaleX = containerScale
-                scaleY = containerScale
-                clip = false
-            }
-            .height(60.dp)
-            .width(totalWidth),
-        contentAlignment = Alignment.Center
-    ) {
+    val navBarAlpha by animateFloatAsState(
+        targetValue = if (hideContent) 0f else 1f,
+        animationSpec = tween(200, easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f)),
+        label = "navBarAlpha"
+    )
+
+    if (navBarAlpha > 0f) {
+        Box(
+            modifier = modifier
+                .windowInsetsPadding(WindowInsets.navigationBars)
+                .padding(bottom = 16.dp)
+                .graphicsLayer {
+                    scaleX = containerScale
+                    scaleY = containerScale
+                    alpha = navBarAlpha
+                    clip = false
+                }
+                .height(60.dp)
+                .width(totalWidth),
+            contentAlignment = Alignment.Center
+        ) {
         // Layer 1: Background Capsule & Border
         Box(
             modifier = Modifier
@@ -286,4 +294,5 @@ fun BottomNavBar(
             }
         }
     }
+}
 }
