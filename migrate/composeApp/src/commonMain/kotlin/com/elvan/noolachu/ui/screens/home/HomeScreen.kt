@@ -46,11 +46,17 @@ import com.elvan.noolachu.ui.navigation.MaterialSymbols
 import com.elvan.noolachu.ui.navigation.NavTab
 import com.elvan.noolachu.ui.screens.porul.PorulScreen
 import com.elvan.noolachu.ui.screens.settings.SettingsScreen
-import com.elvan.noolachu.ui.screens.thiruthi.porul.ItemEditorModal
-import com.elvan.noolachu.ui.screens.thiruthi.vaangunar.MerchantEditorModal
+import com.elvan.noolachu.ui.screens.thiruthi.porul.PorulThiruthiScreen
+import com.elvan.noolachu.ui.screens.thiruthi.vaangunar.VaangunarThiruthiScreen
 import com.elvan.noolachu.ui.screens.vaangunar.VaangunarScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+sealed class ActiveSubpage {
+    data object Settings : ActiveSubpage()
+    data class ItemEditor(val item: PorulTharavuru? = null) : ActiveSubpage()
+    data class MerchantEditor(val merchant: VaangunarTharavuru? = null) : ActiveSubpage()
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,18 +71,18 @@ fun HomeScreen() {
     val customersScrollState = rememberLazyListState()
 
     var selectedTab by remember { mutableStateOf(NavTab.Home) }
-    var isSettingsOpen by remember { mutableStateOf(false) }
+    var activeSubpage by remember { mutableStateOf<ActiveSubpage?>(null) }
     var isRefreshing by remember { mutableStateOf(false) }
     var isSearchActive by remember { mutableStateOf(false) }
-
-    // Editor modal states
-    var editingItem by remember { mutableStateOf<PorulTharavuru?>(null) }
-    var showAddItemModal by remember { mutableStateOf(false) }
-    var editingMerchant by remember { mutableStateOf<VaangunarTharavuru?>(null) }
-    var showAddMerchantModal by remember { mutableStateOf(false) }
+    var menuExpanded by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
     val colors = rememberShellColors()
+
+    // Intercept hardware/system back when a subpage is open
+    AppBackHandler(enabled = activeSubpage != null) {
+        activeSubpage = null
+    }
 
     // Load repositories on launch and when currentMode changes
     LaunchedEffect(currentMode) {
@@ -104,12 +110,12 @@ fun HomeScreen() {
             .background(colors.background)
     ) {
         AnimatedContent(
-            targetState = isSettingsOpen,
+            targetState = activeSubpage,
             modifier = Modifier
                 .fillMaxSize()
                 .background(colors.background),
             transitionSpec = {
-                if (targetState) {
+                if (targetState != null) {
                     slideIntoContainer(
                         towards = AnimatedContentTransitionScope.SlideDirection.Left,
                         animationSpec = spring(stiffness = Spring.StiffnessLow, dampingRatio = Spring.DampingRatioNoBouncy)
@@ -121,18 +127,32 @@ fun HomeScreen() {
                     )
                 }
             },
-            label = "HomeToSettingsTransition"
-        ) { settingsOpen ->
-            if (settingsOpen) {
-                SettingsScreen(
-                    onBack = { isSettingsOpen = false }
-                )
-            } else {
-                ElvanShell(
-                    scrollState = currentScrollState,
-                    title = selectedTab.getLocalizedHeader(),
-                    hasActions = true,
-                    actions = {
+            label = "HomeToSubpageTransition"
+        ) { subpage ->
+            when (subpage) {
+                is ActiveSubpage.Settings -> {
+                    SettingsScreen(
+                        onBack = { activeSubpage = null }
+                    )
+                }
+                is ActiveSubpage.ItemEditor -> {
+                    PorulThiruthiScreen(
+                        item = subpage.item,
+                        onBack = { activeSubpage = null }
+                    )
+                }
+                is ActiveSubpage.MerchantEditor -> {
+                    VaangunarThiruthiScreen(
+                        merchant = subpage.merchant,
+                        onBack = { activeSubpage = null }
+                    )
+                }
+                null -> {
+                    ElvanShell(
+                        scrollState = currentScrollState,
+                        title = selectedTab.getLocalizedHeader(),
+                        hasActions = true,
+                        actions = {
                         val isProductsOrCustomers = selectedTab == NavTab.Products || selectedTab == NavTab.Customers
 
                         if (isProductsOrCustomers) {
@@ -230,9 +250,9 @@ fun HomeScreen() {
                                 ElvanTopBarIconButton(
                                     onClick = {
                                         if (selectedTab == NavTab.Products) {
-                                            showAddItemModal = true
+                                            activeSubpage = ActiveSubpage.ItemEditor(null)
                                         } else {
-                                            showAddMerchantModal = true
+                                            activeSubpage = ActiveSubpage.MerchantEditor(null)
                                         }
                                     }
                                 ) {
@@ -246,32 +266,7 @@ fun HomeScreen() {
                             }
                         }
 
-                        // Button: Mode Switch (கூலி ⇄ பட்டு)
-                        ElvanTopBarIconButton(
-                            onClick = { ModeManager.toggleMode() }
-                        ) {
-                            Icon(
-                                imageVector = if (ModeManager.isKooli) AppSvgs.coolieMode else AppSvgs.silkMode,
-                                contentDescription = currentMode.displayName(),
-                                tint = colors.textPrimary,
-                                modifier = Modifier.size(22.dp)
-                            )
-                        }
-
-                        // Button: Theme Toggle (Light ⇄ Dark)
-                        ElvanTopBarIconButton(
-                            onClick = { ThemeManager.toggleTheme() }
-                        ) {
-                            Icon(
-                                imageVector = if (ThemeManager.isDark()) MaterialSymbols.Rounded.LightMode else MaterialSymbols.Rounded.DarkMode,
-                                contentDescription = K.thoatram.tr(),
-                                tint = colors.textPrimary,
-                                modifier = Modifier.size(22.dp)
-                            )
-                        }
-
                         // Button: 3-Dot More Menu (மேலும்)
-                        var menuExpanded by remember { mutableStateOf(false) }
                         Box {
                             ElvanTopBarIconButton(
                                 onClick = { menuExpanded = true }
@@ -283,32 +278,48 @@ fun HomeScreen() {
                                     modifier = Modifier.size(22.dp)
                                 )
                             }
+                            val settingsLabel = K.amaippugal.tr()
+                            val meetpagamLabel = K.meetpagam.tr()
+                            val thaerndheduLabel = K.thaerndhedu.tr()
+                            val menuItems = buildList {
+                                add(
+                                    ElvanPopupMenuItem(
+                                        title = settingsLabel,
+                                        icon = MaterialSymbols.Rounded.Settings,
+                                        onClick = {
+                                            menuExpanded = false
+                                            activeSubpage = ActiveSubpage.Settings
+                                        }
+                                    )
+                                )
+                                add(
+                                    ElvanPopupMenuItem(
+                                        title = meetpagamLabel,
+                                        icon = MaterialSymbols.Rounded.Delete,
+                                        onClick = {
+                                            menuExpanded = false
+                                            ElvanSnackbar.show(meetpagamLabel)
+                                        }
+                                    )
+                                )
+                                if (selectedTab != NavTab.Home) {
+                                    add(
+                                        ElvanPopupMenuItem(
+                                            title = thaerndheduLabel,
+                                            icon = MaterialSymbols.Rounded.CheckCircleFill,
+                                            onClick = {
+                                                menuExpanded = false
+                                                ElvanSnackbar.show(thaerndheduLabel)
+                                            }
+                                        )
+                                    )
+                                }
+                            }
                             ElvanPopupMenu(
                                 expanded = menuExpanded,
                                 onDismissRequest = { menuExpanded = false },
                                 colors = colors,
-                                items = listOf(
-                                    ElvanPopupMenuItem(
-                                        title = K.amaippugal.tr(),
-                                        icon = MaterialSymbols.Rounded.Settings,
-                                        onClick = { isSettingsOpen = true }
-                                    ),
-                                    ElvanPopupMenuItem(
-                                        title = K.cheyaliMozhi.tr(),
-                                        icon = MaterialSymbols.Rounded.Translate,
-                                        onClick = { LanguageManager.toggleLanguage() }
-                                    ),
-                                    ElvanPopupMenuItem(
-                                        title = K.tharavuthalam.tr(),
-                                        icon = MaterialSymbols.Rounded.Storage,
-                                        onClick = { isSettingsOpen = true }
-                                    ),
-                                    ElvanPopupMenuItem(
-                                        title = K.kurithu.tr(),
-                                        icon = MaterialSymbols.Rounded.Info,
-                                        onClick = { isSettingsOpen = true }
-                                    )
-                                )
+                                items = menuItems
                             )
                         }
                     },
@@ -613,7 +624,7 @@ fun HomeScreen() {
                                                     icon = MaterialSymbols.Rounded.Settings,
                                                     title = K.amaippugal.tr(),
                                                     description = "${K.thoatram.tr()} • ${K.cheyaliMozhi.tr()} • ${K.pattiyalmozhi.tr()} • ${K.tharavuthalam.tr()}",
-                                                    onClick = { isSettingsOpen = true },
+                                                    onClick = { activeSubpage = ActiveSubpage.Settings },
                                                     colors = colors
                                                 )
                                             }
@@ -671,7 +682,7 @@ fun HomeScreen() {
                                                 icon = MaterialSymbols.Rounded.Inventory2,
                                                 title = K.porulaichChaerPtn.tr(),
                                                 description = K.porulTharavugal.tr(),
-                                                onClick = { showAddItemModal = true },
+                                                onClick = { activeSubpage = ActiveSubpage.ItemEditor(null) },
                                                 colors = colors
                                             )
                                             ElvanSettingsDivider(colors = colors)
@@ -679,7 +690,7 @@ fun HomeScreen() {
                                                 icon = MaterialSymbols.Rounded.Person,
                                                 title = K.vaangunaraichChaer.tr(),
                                                 description = K.vaangunarTharavugal.tr(),
-                                                onClick = { showAddMerchantModal = true },
+                                                onClick = { activeSubpage = ActiveSubpage.MerchantEditor(null) },
                                                 colors = colors
                                             )
                                         }
@@ -691,48 +702,20 @@ fun HomeScreen() {
                         NavTab.Products -> {
                             PorulScreen(
                                 scrollState = productsScrollState,
-                                onItemClick = { editingItem = it }
+                                onItemClick = { activeSubpage = ActiveSubpage.ItemEditor(it) }
                             )
                         }
 
                         NavTab.Customers -> {
                             VaangunarScreen(
                                 scrollState = customersScrollState,
-                                onMerchantClick = { editingMerchant = it }
+                                onMerchantClick = { activeSubpage = ActiveSubpage.MerchantEditor(it) }
                             )
                         }
                     }
                 }
             }
         }
-
-        // Modals
-        if (showAddItemModal) {
-            ItemEditorModal(
-                item = null,
-                onDismiss = { showAddItemModal = false }
-            )
-        }
-
-        if (editingItem != null) {
-            ItemEditorModal(
-                item = editingItem,
-                onDismiss = { editingItem = null }
-            )
-        }
-
-        if (showAddMerchantModal) {
-            MerchantEditorModal(
-                merchant = null,
-                onDismiss = { showAddMerchantModal = false }
-            )
-        }
-
-        if (editingMerchant != null) {
-            MerchantEditorModal(
-                merchant = editingMerchant,
-                onDismiss = { editingMerchant = null }
-            )
-        }
     }
+}
 }
