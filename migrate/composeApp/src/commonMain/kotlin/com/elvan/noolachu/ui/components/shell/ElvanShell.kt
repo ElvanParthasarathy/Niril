@@ -390,10 +390,12 @@ fun ElvanShell(
                 Box(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
                         .zIndex(200f)
                         .graphicsLayer {
                             alpha = effectiveNavOpacity
-                        }
+                        },
+                    contentAlignment = Alignment.BottomCenter
                 ) {
                     navbar()
                 }

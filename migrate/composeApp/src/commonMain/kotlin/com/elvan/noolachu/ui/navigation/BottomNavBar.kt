@@ -162,8 +162,10 @@ fun BottomNavBar(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = horizontalPadding, vertical = verticalPadding)
-                .pointerInput(Unit) {
-                    awaitEachGesture {
+                .then(
+                    if (!hideContent) {
+                        Modifier.pointerInput(hideContent) {
+                            awaitEachGesture {
                         val down = awaitFirstDown(requireUnconsumed = false)
                         isInteracting = true
                         currentOnInteraction(true)
@@ -210,7 +212,9 @@ fun BottomNavBar(
                             }
                         }
                     }
-                },
+                }
+            } else Modifier
+        ),
             contentAlignment = Alignment.CenterStart
         ) {
             Box(

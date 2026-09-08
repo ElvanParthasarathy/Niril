@@ -1,24 +1,19 @@
 package com.elvan.noolachu.ui.screens.vaangunar
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -34,15 +29,15 @@ import com.elvan.noolachu.localization.tr
 import com.elvan.noolachu.theme.Dimens
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.ShellColors
-import com.elvan.noolachu.theme.ShellDefaults
 import com.elvan.noolachu.theme.preventBrokenLigatures
 import com.elvan.noolachu.theme.rememberShellColors
+import com.elvan.noolachu.ui.components.ElvanPothuAttai
 import com.elvan.noolachu.ui.components.shell.LocalElvanTopSpacerHeight
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
 
 /**
  * VaangunarScreen — Displays list of customers using VaangunarRepository.filteredMerchants.
- * Supports mode-aware merchant cards: Coolie (80dp) and Silk (100dp).
+ * Supports mode-aware customer cards: Coolie and Silk matching Flutter 1:1.
  */
 @Composable
 fun VaangunarScreen(
@@ -60,8 +55,8 @@ fun VaangunarScreen(
             state = scrollState,
             modifier = modifier.fillMaxSize(),
             contentPadding = PaddingValues(
-                start = Dimens.ContentPadding,
-                end = Dimens.ContentPadding,
+                start = 16.dp,
+                end = 16.dp,
                 bottom = Dimens.ContentPaddingBottom
             )
         ) {
@@ -122,25 +117,27 @@ fun VaangunarScreen(
             state = scrollState,
             modifier = modifier.fillMaxSize(),
             contentPadding = PaddingValues(
-                start = Dimens.ContentPadding,
-                end = Dimens.ContentPadding,
+                start = 16.dp,
+                end = 16.dp,
                 bottom = Dimens.ContentPaddingBottom
             ),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item(key = "top_spacer") {
                 Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
             }
 
-            items(merchants, key = { it.id }) { merchant ->
+            itemsIndexed(merchants, key = { _, merchant -> merchant.id }) { index, merchant ->
                 if (mode == AppMode.KOOLI) {
-                    CoolieMerchantCard(
+                    CoolieVaangunarCard(
+                        index = index,
                         merchant = merchant,
                         onClick = { onMerchantClick(merchant) },
                         colors = colors
                     )
                 } else {
-                    SilkMerchantCard(
+                    SilkVaangunarCard(
+                        index = index,
                         merchant = merchant,
                         onClick = { onMerchantClick(merchant) },
                         colors = colors
@@ -152,17 +149,19 @@ fun VaangunarScreen(
 }
 
 /**
- * Coolie merchant card (80dp height): circular avatar with initial letter, customer name, town/city (oor).
+ * Coolie customer card: 28dp index badge, name, secondary name, town/city.
+ * Exact 1:1 port of Flutter's _CoolieVaangunargalCard.
  */
 @Composable
-private fun CoolieMerchantCard(
+private fun CoolieVaangunarCard(
+    index: Int,
     merchant: VaangunarTharavuru,
     onClick: () -> Unit,
     colors: ShellColors
 ) {
     val ff = LocalAppFontFamily.current
     val currentLang = LocalAppLanguage.current
-    val shape = RoundedCornerShape(20.dp)
+    val isDark = colors.isDark
 
     val primaryName = merchant.peyar[currentLang]
         ?: merchant.peyar["ta"]
@@ -178,180 +177,43 @@ private fun CoolieMerchantCard(
         ?: merchant.oor.values.firstOrNull()
         ?: ""
 
-    val initialLetter = primaryName.trim().firstOrNull()?.toString()?.uppercase() ?: "V"
+    val secondaryCity = if (currentLang == "ta") merchant.oor["en"] ?: "" else merchant.oor["ta"] ?: ""
 
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .clip(shape)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = ShellDefaults.ripple(colors, bounded = true),
-                onClick = onClick
-            ),
-        shape = shape,
-        color = colors.surface,
-        border = BorderStroke(0.5.dp, colors.border),
-        shadowElevation = 0.dp
+    ElvanPothuAttai(
+        onClick = onClick,
+        padding = PaddingValues(16.dp),
+        borderRadius = 24.dp
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top
         ) {
-            // Circular Avatar with initial letter
+            // Index circle (28x28)
             Box(
                 modifier = Modifier
-                    .size(44.dp)
+                    .size(28.dp)
                     .clip(CircleShape)
-                    .background(colors.accent.copy(alpha = 0.12f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = initialLetter,
-                    style = TextStyle(
-                        fontFamily = ff,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = colors.accent
-                    )
-                )
-            }
-
-            Spacer(modifier = Modifier.width(14.dp))
-
-            // Merchant Name and City
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = primaryName.preventBrokenLigatures(),
-                    style = TextStyle(
-                        fontFamily = ff,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = colors.textPrimary
+                    .background(
+                        if (isDark) Color.White.copy(alpha = 0.12f)
+                        else Color.Black.copy(alpha = 0.08f)
                     ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-
-                if (secondaryName.isNotBlank() && secondaryName != primaryName) {
-                    Spacer(modifier = Modifier.height(1.dp))
-                    Text(
-                        text = secondaryName.preventBrokenLigatures(),
-                        style = TextStyle(
-                            fontFamily = ff,
-                            fontSize = 12.5.sp,
-                            color = colors.textSecondary
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                if (primaryCity.isNotBlank()) {
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = primaryCity.preventBrokenLigatures(),
-                        style = TextStyle(
-                            fontFamily = ff,
-                            fontSize = 12.5.sp,
-                            color = colors.textSecondary.copy(alpha = 0.8f)
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-
-            Icon(
-                imageVector = MaterialSymbols.Rounded.ChevronRight,
-                contentDescription = null,
-                tint = colors.textSecondary.copy(alpha = 0.4f),
-                modifier = Modifier.size(20.dp)
-            )
-        }
-    }
-}
-
-/**
- * Silk merchant card (100dp height): circular avatar, customer name, town/city, GSTIN badge (if present), phone (if present).
- */
-@Composable
-private fun SilkMerchantCard(
-    merchant: VaangunarTharavuru,
-    onClick: () -> Unit,
-    colors: ShellColors
-) {
-    val ff = LocalAppFontFamily.current
-    val currentLang = LocalAppLanguage.current
-    val shape = RoundedCornerShape(20.dp)
-
-    val primaryName = merchant.peyar[currentLang]
-        ?: merchant.peyar["ta"]
-        ?: merchant.peyar["en"]
-        ?: merchant.peyar.values.firstOrNull()
-        ?: ""
-
-    val secondaryName = if (currentLang == "ta") merchant.peyar["en"] ?: "" else merchant.peyar["ta"] ?: ""
-
-    val primaryCity = merchant.oor[currentLang]
-        ?: merchant.oor["ta"]
-        ?: merchant.oor["en"]
-        ?: merchant.oor.values.firstOrNull()
-        ?: ""
-
-    val initialLetter = primaryName.trim().firstOrNull()?.toString()?.uppercase() ?: "V"
-    val hasGstin = merchant.gstin.isNotBlank()
-    val hasPhone = merchant.tholaipaesi.isNotBlank()
-
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-            .clip(shape)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = ShellDefaults.ripple(colors, bounded = true),
-                onClick = onClick
-            ),
-        shape = shape,
-        color = colors.surface,
-        border = BorderStroke(0.5.dp, colors.border),
-        shadowElevation = 0.dp
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Circular Avatar with initial letter
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .clip(CircleShape)
-                    .background(colors.accent.copy(alpha = 0.12f)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = initialLetter,
+                    text = (index + 1).toString().padStart(2, '0'),
                     style = TextStyle(
                         fontFamily = ff,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = colors.accent
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 11.2.sp,
+                        color = if (isDark) Color.White else Color.Black,
+                        lineHeight = 11.2.sp
                     )
                 )
             }
 
-            Spacer(modifier = Modifier.width(14.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
-            // Details Column
+            // Content Column
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
@@ -369,12 +231,14 @@ private fun SilkMerchantCard(
                 )
 
                 if (secondaryName.isNotBlank() && secondaryName != primaryName) {
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = secondaryName.preventBrokenLigatures(),
                         style = TextStyle(
                             fontFamily = ff,
-                            fontSize = 12.sp,
-                            color = colors.textSecondary
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = if (isDark) Color.White.copy(alpha = 0.54f) else Color.Black.copy(alpha = 0.54f)
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -382,72 +246,180 @@ private fun SilkMerchantCard(
                 }
 
                 if (primaryCity.isNotBlank()) {
-                    Spacer(modifier = Modifier.height(1.dp))
+                    Spacer(modifier = Modifier.height(3.dp))
                     Text(
                         text = primaryCity.preventBrokenLigatures(),
                         style = TextStyle(
                             fontFamily = ff,
-                            fontSize = 12.sp,
-                            color = colors.textSecondary.copy(alpha = 0.75f)
+                            fontSize = 13.6.sp,
+                            color = if (isDark) Color.White.copy(alpha = 0.38f) else Color.Black.copy(alpha = 0.38f)
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
 
-                if (hasGstin || hasPhone) {
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        if (hasGstin) {
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(6.dp))
-                                    .background(colors.iconBg)
-                                    .padding(horizontal = 6.dp, vertical = 2.dp)
-                            ) {
-                                Text(
-                                    text = merchant.gstin,
-                                    style = TextStyle(
-                                        fontFamily = ff,
-                                        fontSize = 10.5.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        color = colors.textSecondary
-                                    )
-                                )
-                            }
-                        }
-
-                        if (hasPhone) {
-                            Box(
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(6.dp))
-                                    .background(colors.iconBg)
-                                    .padding(horizontal = 6.dp, vertical = 2.dp)
-                            ) {
-                                Text(
-                                    text = merchant.tholaipaesi,
-                                    style = TextStyle(
-                                        fontFamily = ff,
-                                        fontSize = 10.5.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        color = colors.textSecondary
-                                    )
-                                )
-                            }
-                        }
-                    }
+                if (secondaryCity.isNotBlank() && secondaryCity != primaryCity) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = secondaryCity.preventBrokenLigatures(),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 12.8.sp,
+                            color = if (isDark) Color.White.copy(alpha = 0.24f) else Color.Black.copy(alpha = 0.24f)
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
+        }
+    }
+}
 
-            Icon(
-                imageVector = MaterialSymbols.Rounded.ChevronRight,
-                contentDescription = null,
-                tint = colors.textSecondary.copy(alpha = 0.4f),
-                modifier = Modifier.size(20.dp)
-            )
+/**
+ * Silk customer card: 28dp index badge, name, secondary name, town/city, GSTIN and phone.
+ * Exact 1:1 port of Flutter's _PattuVaangunargalCard.
+ */
+@Composable
+private fun SilkVaangunarCard(
+    index: Int,
+    merchant: VaangunarTharavuru,
+    onClick: () -> Unit,
+    colors: ShellColors
+) {
+    val ff = LocalAppFontFamily.current
+    val currentLang = LocalAppLanguage.current
+    val isDark = colors.isDark
+
+    val primaryName = merchant.peyar[currentLang]
+        ?: merchant.peyar["ta"]
+        ?: merchant.peyar["en"]
+        ?: merchant.peyar.values.firstOrNull()
+        ?: ""
+
+    val secondaryName = if (currentLang == "ta") merchant.peyar["en"] ?: "" else merchant.peyar["ta"] ?: ""
+
+    val primaryCity = merchant.oor[currentLang]
+        ?: merchant.oor["ta"]
+        ?: merchant.oor["en"]
+        ?: merchant.oor.values.firstOrNull()
+        ?: ""
+
+    val secondaryCity = if (currentLang == "ta") merchant.oor["en"] ?: "" else merchant.oor["ta"] ?: ""
+
+    val gstin = merchant.gstin.trim()
+    val phone = merchant.tholaipaesi.trim()
+
+    ElvanPothuAttai(
+        onClick = onClick,
+        padding = PaddingValues(16.dp),
+        borderRadius = 24.dp
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top
+        ) {
+            // Index circle (28x28)
+            Box(
+                modifier = Modifier
+                    .size(28.dp)
+                    .clip(CircleShape)
+                    .background(
+                        if (isDark) Color.White.copy(alpha = 0.12f)
+                        else Color.Black.copy(alpha = 0.08f)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = (index + 1).toString().padStart(2, '0'),
+                    style = TextStyle(
+                        fontFamily = ff,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 11.2.sp,
+                        color = if (isDark) Color.White else Color.Black,
+                        lineHeight = 11.2.sp
+                    )
+                )
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // Content Column
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = primaryName.preventBrokenLigatures(),
+                    style = TextStyle(
+                        fontFamily = ff,
+                        fontSize = 15.2.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.textPrimary
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                if (secondaryName.isNotBlank() && secondaryName != primaryName) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = secondaryName.preventBrokenLigatures(),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = if (isDark) Color.White.copy(alpha = 0.54f) else Color.Black.copy(alpha = 0.54f)
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                if (primaryCity.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(3.dp))
+                    Text(
+                        text = primaryCity.preventBrokenLigatures(),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 13.6.sp,
+                            color = if (isDark) Color.White.copy(alpha = 0.38f) else Color.Black.copy(alpha = 0.38f)
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                if (secondaryCity.isNotBlank() && secondaryCity != primaryCity) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = secondaryCity.preventBrokenLigatures(),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 12.8.sp,
+                            color = if (isDark) Color.White.copy(alpha = 0.24f) else Color.Black.copy(alpha = 0.24f)
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                if (gstin.isNotBlank() || phone.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    val gstinPhoneText = listOf(gstin, phone).filter { it.isNotBlank() }.joinToString(" · ")
+                    Text(
+                        text = gstinPhoneText,
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 13.6.sp,
+                            color = if (isDark) Color.White.copy(alpha = 0.38f) else Color.Black.copy(alpha = 0.38f)
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
         }
     }
 }

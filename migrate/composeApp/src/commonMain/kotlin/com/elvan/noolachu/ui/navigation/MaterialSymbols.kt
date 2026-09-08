@@ -51,6 +51,7 @@ object MaterialSymbols {
         }
         val ArrowForward: ImageVector get() = LibSymbols.Rounded.Arrow_forward
         val Close: ImageVector get() = LibSymbols.Rounded.Close
+        val Cancel: ImageVector get() = LibSymbols.RoundedFilled.Cancel
         val Check: ImageVector get() = LibSymbols.Rounded.Check
         val Add: ImageVector get() = LibSymbols.Rounded.Add
         val Search: ImageVector get() = LibSymbols.Rounded.Search

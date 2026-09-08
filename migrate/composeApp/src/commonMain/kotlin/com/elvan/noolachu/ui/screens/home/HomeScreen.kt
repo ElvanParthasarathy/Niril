@@ -42,6 +42,7 @@ import com.elvan.noolachu.ui.components.pattu.PattuSilkProductCard
 import com.elvan.noolachu.ui.components.shell.*
 import com.elvan.noolachu.ui.navigation.AppSvgs
 import com.elvan.noolachu.ui.navigation.BottomNavBar
+import com.elvan.noolachu.ui.navigation.ElvanThaedalPattai
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
 import com.elvan.noolachu.ui.navigation.NavTab
 import com.elvan.noolachu.ui.screens.porul.PorulScreen
@@ -79,9 +80,15 @@ fun HomeScreen() {
     val scope = rememberCoroutineScope()
     val colors = rememberShellColors()
 
-    // Intercept hardware/system back when a subpage is open
-    AppBackHandler(enabled = activeSubpage != null) {
-        activeSubpage = null
+    // Intercept hardware/system back when a subpage is open or search is active
+    AppBackHandler(enabled = activeSubpage != null || isSearchActive) {
+        if (activeSubpage != null) {
+            activeSubpage = null
+        } else if (isSearchActive) {
+            isSearchActive = false
+            PorulRepository.searchQuery = ""
+            VaangunarRepository.searchQuery = ""
+        }
     }
 
     // Load repositories on launch and when currentMode changes
@@ -151,90 +158,12 @@ fun HomeScreen() {
                     ElvanShell(
                         scrollState = currentScrollState,
                         title = selectedTab.getLocalizedHeader(),
-                        hasActions = true,
+                        hasActions = !isSearchActive,
                         actions = {
-                        val isProductsOrCustomers = selectedTab == NavTab.Products || selectedTab == NavTab.Customers
+                            val isProductsOrCustomers = selectedTab == NavTab.Products || selectedTab == NavTab.Customers
 
-                        if (isProductsOrCustomers) {
-                            AnimatedVisibility(
-                                visible = isSearchActive,
-                                enter = fadeIn() + expandHorizontally(),
-                                exit = fadeOut() + shrinkHorizontally()
-                            ) {
-                                val query = if (selectedTab == NavTab.Products) PorulRepository.searchQuery else VaangunarRepository.searchQuery
-                                Row(
-                                    modifier = Modifier
-                                        .height(38.dp)
-                                        .widthIn(min = 150.dp, max = 220.dp)
-                                        .clip(CircleShape)
-                                        .background(colors.iconBg)
-                                        .padding(horizontal = 10.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        imageVector = MaterialSymbols.Rounded.Search,
-                                        contentDescription = null,
-                                        tint = colors.textSecondary,
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Box(modifier = Modifier.weight(1f)) {
-                                        if (query.isEmpty()) {
-                                            Text(
-                                                text = K.thaeduga.tr(),
-                                                style = TextStyle(
-                                                    fontFamily = ff,
-                                                    fontSize = 13.sp,
-                                                    color = colors.textSecondary.copy(alpha = 0.6f)
-                                                )
-                                            )
-                                        }
-                                        BasicTextField(
-                                            value = query,
-                                            onValueChange = {
-                                                if (selectedTab == NavTab.Products) {
-                                                    PorulRepository.searchQuery = it
-                                                } else {
-                                                    VaangunarRepository.searchQuery = it
-                                                }
-                                            },
-                                            textStyle = TextStyle(
-                                                fontFamily = ff,
-                                                fontSize = 13.sp,
-                                                color = colors.textPrimary
-                                            ),
-                                            singleLine = true,
-                                            cursorBrush = SolidColor(colors.accent),
-                                            modifier = Modifier.fillMaxWidth()
-                                        )
-                                    }
-
-                                    IconButton(
-                                        onClick = {
-                                            if (query.isNotEmpty()) {
-                                                if (selectedTab == NavTab.Products) {
-                                                    PorulRepository.searchQuery = ""
-                                                } else {
-                                                    VaangunarRepository.searchQuery = ""
-                                                }
-                                            } else {
-                                                isSearchActive = false
-                                            }
-                                        },
-                                        modifier = Modifier.size(24.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = MaterialSymbols.Rounded.Close,
-                                            contentDescription = K.kaividu.tr(),
-                                            tint = colors.textPrimary,
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                    }
-                                }
-                            }
-
-                            if (!isSearchActive) {
-                                // Search Icon Button
+                            if (isProductsOrCustomers) {
+                                // Search Icon Button (26dp)
                                 ElvanTopBarIconButton(
                                     onClick = { isSearchActive = true }
                                 ) {
@@ -246,7 +175,7 @@ fun HomeScreen() {
                                     )
                                 }
 
-                                // Add (+) Button
+                                // Add (+) Button (26dp)
                                 ElvanTopBarIconButton(
                                     onClick = {
                                         if (selectedTab == NavTab.Products) {
@@ -264,79 +193,108 @@ fun HomeScreen() {
                                     )
                                 }
                             }
-                        }
 
-                        // Button: 3-Dot More Menu (மேலும்)
-                        Box {
-                            ElvanTopBarIconButton(
-                                onClick = { menuExpanded = true }
-                            ) {
-                                Icon(
-                                    imageVector = MaterialSymbols.Rounded.MoreVert,
-                                    contentDescription = K.melum.tr(),
-                                    tint = colors.textPrimary,
-                                    modifier = Modifier.size(22.dp)
-                                )
-                            }
-                            val settingsLabel = K.amaippugal.tr()
-                            val meetpagamLabel = K.meetpagam.tr()
-                            val thaerndheduLabel = K.thaerndhedu.tr()
-                            val menuItems = buildList {
-                                add(
-                                    ElvanPopupMenuItem(
-                                        title = settingsLabel,
-                                        icon = MaterialSymbols.Rounded.Settings,
-                                        onClick = {
-                                            menuExpanded = false
-                                            activeSubpage = ActiveSubpage.Settings
-                                        }
+                            // Button: 3-Dot More Menu (மேலும்) (26dp)
+                            Box {
+                                ElvanTopBarIconButton(
+                                    onClick = { menuExpanded = true }
+                                ) {
+                                    Icon(
+                                        imageVector = MaterialSymbols.Rounded.MoreVert,
+                                        contentDescription = K.melum.tr(),
+                                        tint = colors.textPrimary,
+                                        modifier = Modifier.size(22.dp)
                                     )
-                                )
-                                add(
-                                    ElvanPopupMenuItem(
-                                        title = meetpagamLabel,
-                                        icon = MaterialSymbols.Rounded.Delete,
-                                        onClick = {
-                                            menuExpanded = false
-                                            ElvanSnackbar.show(meetpagamLabel)
-                                        }
-                                    )
-                                )
-                                if (selectedTab != NavTab.Home) {
+                                }
+                                val settingsLabel = K.amaippugal.tr()
+                                val meetpagamLabel = K.meetpagam.tr()
+                                val thaerndheduLabel = K.thaerndhedu.tr()
+                                val menuItems = buildList {
                                     add(
                                         ElvanPopupMenuItem(
-                                            title = thaerndheduLabel,
-                                            icon = MaterialSymbols.Rounded.CheckCircleFill,
+                                            title = settingsLabel,
+                                            icon = MaterialSymbols.Rounded.Settings,
                                             onClick = {
                                                 menuExpanded = false
-                                                ElvanSnackbar.show(thaerndheduLabel)
+                                                activeSubpage = ActiveSubpage.Settings
                                             }
                                         )
                                     )
+                                    add(
+                                        ElvanPopupMenuItem(
+                                            title = meetpagamLabel,
+                                            icon = MaterialSymbols.Rounded.Delete,
+                                            onClick = {
+                                                menuExpanded = false
+                                                ElvanSnackbar.show(meetpagamLabel)
+                                            }
+                                        )
+                                    )
+                                    if (selectedTab != NavTab.Home) {
+                                        add(
+                                            ElvanPopupMenuItem(
+                                                title = thaerndheduLabel,
+                                                icon = MaterialSymbols.Rounded.CheckCircleFill,
+                                                onClick = {
+                                                    menuExpanded = false
+                                                    ElvanSnackbar.show(thaerndheduLabel)
+                                                }
+                                            )
+                                        )
+                                    }
                                 }
+                                ElvanPopupMenu(
+                                    expanded = menuExpanded,
+                                    onDismissRequest = { menuExpanded = false },
+                                    colors = colors,
+                                    items = menuItems
+                                )
                             }
-                            ElvanPopupMenu(
-                                expanded = menuExpanded,
-                                onDismissRequest = { menuExpanded = false },
-                                colors = colors,
-                                items = menuItems
-                            )
+                        },
+                        navbar = {
+                            val shellController = LocalElvanShellController.current
+                            val currentQuery = if (selectedTab == NavTab.Products) {
+                                PorulRepository.searchQuery
+                            } else {
+                                VaangunarRepository.searchQuery
+                            }
+
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                BottomNavBar(
+                                    selectedTab = selectedTab,
+                                    hideContent = isSearchActive,
+                                    onTabSelected = { tab, _ ->
+                                        if (selectedTab == tab) {
+                                            shellController.toggleHeader()
+                                        } else {
+                                            selectedTab = tab
+                                        }
+                                    }
+                                )
+
+                                ElvanThaedalPattai(
+                                    visible = isSearchActive,
+                                    query = currentQuery,
+                                    onQueryChange = {
+                                        if (selectedTab == NavTab.Products) {
+                                            PorulRepository.searchQuery = it
+                                        } else {
+                                            VaangunarRepository.searchQuery = it
+                                        }
+                                    },
+                                    onClose = {
+                                        isSearchActive = false
+                                        PorulRepository.searchQuery = ""
+                                        VaangunarRepository.searchQuery = ""
+                                    },
+                                    colors = colors
+                                )
+                            }
                         }
-                    },
-                    navbar = {
-                        val shellController = LocalElvanShellController.current
-                        BottomNavBar(
-                            selectedTab = selectedTab,
-                            onTabSelected = { tab, _ ->
-                                if (selectedTab == tab) {
-                                    shellController.toggleHeader()
-                                } else {
-                                    selectedTab = tab
-                                }
-                            }
-                        )
-                    }
-                ) {
+                    ) {
                     when (selectedTab) {
                         NavTab.Home -> {
                             ExpressivePullToRefreshBox(

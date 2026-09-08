@@ -35,8 +35,9 @@ fun ElvanTopBarIconButton(
     content: @Composable () -> Unit
 ) {
     Box(
-        modifier = modifier
-            .size(40.dp)
+        modifier = Modifier
+            .size(26.dp)
+            .then(modifier)
             .clip(CircleShape)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -101,7 +102,10 @@ fun ElvanCollapsedBar(
             ) {
                 if (onBack != null) {
                     ElvanPill(liftProgress = liftProgress, colors = colors, modifier = Modifier.size(50.dp)) {
-                        ElvanTopBarIconButton(onClick = onBack) {
+                        ElvanTopBarIconButton(
+                            onClick = onBack,
+                            modifier = Modifier.size(50.dp)
+                        ) {
                             Icon(
                                 imageVector = leadingIcon ?: MaterialSymbols.Rounded.ArrowBack,
                                 contentDescription = if (leadingIcon != null) K.kaividu.tr() else K.pinchel.tr(),
@@ -139,7 +143,8 @@ fun ElvanCollapsedBar(
             ElvanPill(liftProgress = liftProgress, colors = colors) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                    modifier = Modifier.padding(horizontal = 7.dp)
                 ) {
                     actions()
                 }
