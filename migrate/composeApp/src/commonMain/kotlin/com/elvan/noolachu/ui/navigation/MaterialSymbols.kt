@@ -43,6 +43,8 @@ object MaterialSymbols {
         val CalendarFill: ImageVector get() = LibSymbols.RoundedFilled.Calendar_month
         val Notifications: ImageVector get() = LibSymbols.Rounded.Notifications
         val NotificationsFill: ImageVector get() = LibSymbols.RoundedFilled.Notifications
+        val ReceiptLong: ImageVector get() = LibSymbols.Rounded.Receipt_long
+        val ReceiptLongFill: ImageVector get() = LibSymbols.RoundedFilled.Receipt_long
 
         // ── Action & UI Controls (Line/Outline for clean buttons) ──
         // Neram's exact Chevron back button SVG path
@@ -69,6 +71,10 @@ object MaterialSymbols {
 
         // ── Settings Categories & Badges (Filled / Solid as per old Flutter design) ──
         val BusinessCenter: ImageVector get() = LibSymbols.RoundedFilled.Business_center
+        val Apartment: ImageVector get() = LibSymbols.RoundedFilled.Business_center
+        val CurrencyRupee: ImageVector by lazy {
+            symbol("CurrencyRupee", "M280-160v-80h164q38-16 62-49t26-79H280v-80h252q-11-46-45.5-73.5T402-550H280v-80h380v80h-94q25 18 41 45.5t21 58.5H680v80h-48q-4 69-45 119.5T478-240h-34v80H280Z")
+        }
         val LocationOn: ImageVector get() = LibSymbols.RoundedFilled.Location_on
         val CreditCard: ImageVector get() = LibSymbols.RoundedFilled.Credit_card
         val Person: ImageVector get() = LibSymbols.RoundedFilled.Person

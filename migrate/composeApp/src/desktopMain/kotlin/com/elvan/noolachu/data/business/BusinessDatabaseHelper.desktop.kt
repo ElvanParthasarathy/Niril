@@ -1,6 +1,8 @@
 package com.elvan.noolachu.data.business
 
 import com.elvan.noolachu.core.mode.AppMode
+import com.elvan.noolachu.data.model.PattiyalTharavuru
+import com.elvan.noolachu.data.model.PatrugalTharavuru
 import com.elvan.noolachu.data.model.PorulTharavuru
 import com.elvan.noolachu.data.model.VaangunarTharavuru
 import com.elvan.noolachu.data.settings.MozhiJsonConverter
@@ -52,6 +54,8 @@ class DesktopBusinessDatabaseHelper : BusinessDatabaseHelper {
     private fun ensureTables(conn: Connection, mode: AppMode) {
         val vaangunarTable = if (mode == AppMode.KOOLI) "kooli_vaangunar_table" else "pattu_vaangunar_table"
         val porulTable = if (mode == AppMode.KOOLI) "kooli_porul_table" else "pattu_porul_table"
+        val pattiyalTable = if (mode == AppMode.KOOLI) "kooli_pattiyal_table" else "pattu_pattiyal_table"
+        val patrugalTable = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
 
         val createVaangunarSql = """
             CREATE TABLE IF NOT EXISTS "$vaangunarTable" (
@@ -90,9 +94,70 @@ class DesktopBusinessDatabaseHelper : BusinessDatabaseHelper {
             )
         """.trimIndent()
 
+        val createPattiyalSql = """
+            CREATE TABLE IF NOT EXISTS "$pattiyalTable" (
+                "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                "niruvanam_id" INTEGER NULL,
+                "patrucheettu_en" TEXT NOT NULL,
+                "fin_year" INTEGER NOT NULL,
+                "vanakkam" INTEGER NOT NULL DEFAULT 1,
+                "pattiyal_vagai" TEXT NOT NULL DEFAULT 'tax-invoice',
+                "vaangunar_id" INTEGER NULL,
+                "vaangunar_peyar" TEXT NOT NULL DEFAULT '{}',
+                "vaangunar_munvari" TEXT NOT NULL DEFAULT '{}',
+                "pattiyal_naal" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "tharavugal" TEXT NOT NULL DEFAULT '[]',
+                "motha_thogai" REAL NOT NULL DEFAULT 0.0,
+                "thallupadi" REAL NOT NULL DEFAULT 0.0,
+                "podhu_thallupadi_mathippu" REAL NOT NULL DEFAULT 0.0,
+                "podhu_thallupadi_vagai" TEXT NOT NULL DEFAULT '%',
+                "podhu_thallupadi_thogai" REAL NOT NULL DEFAULT 0.0,
+                "vari_thogai" REAL NOT NULL DEFAULT 0.0,
+                "vari_tharavugal" TEXT NOT NULL DEFAULT '{}',
+                "motha_edai" REAL NOT NULL DEFAULT 0.0,
+                "setharam_grams" REAL NOT NULL DEFAULT 0.0,
+                "thabaal_thogai" REAL NOT NULL DEFAULT 0.0,
+                "ahimsa_pattu_thogai" REAL NOT NULL DEFAULT 0.0,
+                "piravari_vugal" TEXT NOT NULL DEFAULT '[]',
+                "sontha_viruppangal" TEXT NOT NULL DEFAULT '{}',
+                "nibandhanaigal" TEXT NOT NULL DEFAULT '',
+                "ullkurippu" TEXT NOT NULL DEFAULT '',
+                "vangi_tharavugal" TEXT NOT NULL DEFAULT '{}',
+                "created_at" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "updated_at" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "is_deleted" INTEGER NOT NULL DEFAULT 0 CHECK ("is_deleted" IN (0, 1)),
+                "deleted_at" INTEGER NULL
+            )
+        """.trimIndent()
+
+        val createPatrugalSql = """
+            CREATE TABLE IF NOT EXISTS "$patrugalTable" (
+                "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                "niruvanam_id" INTEGER NULL,
+                "patru_en" TEXT NOT NULL,
+                "fin_year" TEXT NOT NULL DEFAULT '',
+                "vanakkam" INTEGER NOT NULL DEFAULT 1,
+                "vaangunar_id" INTEGER NULL,
+                "vaangunar_peyar" TEXT NOT NULL DEFAULT '{}',
+                "vaangunar_munvari" TEXT NOT NULL DEFAULT '{}',
+                "patru_naal" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "thogai" REAL NOT NULL DEFAULT 0.0,
+                "seluthum_murai" TEXT NOT NULL DEFAULT 'cash',
+                "vangi_peyar" TEXT NULL,
+                "parivarthanai_en" TEXT NULL,
+                "ullkurippu" TEXT NOT NULL DEFAULT '',
+                "created_at" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "updated_at" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "is_deleted" INTEGER NOT NULL DEFAULT 0 CHECK ("is_deleted" IN (0, 1)),
+                "deleted_at" INTEGER NULL
+            )
+        """.trimIndent()
+
         conn.createStatement().use { stmt ->
             stmt.execute(createVaangunarSql)
             stmt.execute(createPorulSql)
+            stmt.execute(createPattiyalSql)
+            stmt.execute(createPatrugalSql)
         }
     }
 
@@ -345,6 +410,291 @@ class DesktopBusinessDatabaseHelper : BusinessDatabaseHelper {
         }
     }
 
+    override fun loadAllInvoices(mode: AppMode): List<PattiyalTharavuru> {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_pattiyal_table" else "pattu_pattiyal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        val list = mutableListOf<PattiyalTharavuru>()
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val sql = "SELECT * FROM $tableName WHERE is_deleted = 0 ORDER BY pattiyal_naal DESC, id DESC"
+                conn.createStatement().use { stmt ->
+                    stmt.executeQuery(sql).use { rs ->
+                        while (rs.next()) {
+                            list.add(rsToInvoice(rs))
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error loading invoices from $tableName: ${e.message}")
+        }
+        return list
+    }
+
+    override fun saveInvoice(mode: AppMode, invoice: PattiyalTharavuru): Long {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_pattiyal_table" else "pattu_pattiyal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val nowSec = System.currentTimeMillis() / 1000
+                val naalSec = if (invoice.pattiyalNaal > 10000000000L) invoice.pattiyalNaal / 1000 else invoice.pattiyalNaal
+                val isUpdate = invoice.id > 0L
+
+                val sql = if (isUpdate) {
+                    """
+                    UPDATE $tableName SET
+                        niruvanam_id = ?, patrucheettu_en = ?, fin_year = ?, vanakkam = ?, pattiyal_vagai = ?,
+                        vaangunar_id = ?, vaangunar_peyar = ?, vaangunar_munvari = ?, pattiyal_naal = ?,
+                        tharavugal = ?, motha_thogai = ?, thallupadi = ?, podhu_thallupadi_mathippu = ?,
+                        podhu_thallupadi_vagai = ?, podhu_thallupadi_thogai = ?, vari_thogai = ?, vari_tharavugal = ?,
+                        motha_edai = ?, setharam_grams = ?, thabaal_thogai = ?, ahimsa_pattu_thogai = ?,
+                        piravari_vugal = ?, sontha_viruppangal = ?, nibandhanaigal = ?, ullkurippu = ?,
+                        vangi_tharavugal = ?, updated_at = ?, is_deleted = ?, deleted_at = ?
+                    WHERE id = ?
+                    """.trimIndent()
+                } else {
+                    """
+                    INSERT INTO $tableName (
+                        niruvanam_id, patrucheettu_en, fin_year, vanakkam, pattiyal_vagai,
+                        vaangunar_id, vaangunar_peyar, vaangunar_munvari, pattiyal_naal,
+                        tharavugal, motha_thogai, thallupadi, podhu_thallupadi_mathippu,
+                        podhu_thallupadi_vagai, podhu_thallupadi_thogai, vari_thogai, vari_tharavugal,
+                        motha_edai, setharam_grams, thabaal_thogai, ahimsa_pattu_thogai,
+                        piravari_vugal, sontha_viruppangal, nibandhanaigal, ullkurippu,
+                        vangi_tharavugal, created_at, updated_at, is_deleted, deleted_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """.trimIndent()
+                }
+
+                conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS).use { stmt ->
+                    var idx = 1
+                    if (invoice.niruvanamId != null) stmt.setLong(idx++, invoice.niruvanamId) else stmt.setNull(idx++, Types.INTEGER)
+                    stmt.setString(idx++, invoice.patrucheettuEn)
+                    stmt.setInt(idx++, invoice.finYear)
+                    stmt.setInt(idx++, invoice.vanakkam)
+                    stmt.setString(idx++, invoice.pattiyalVagai)
+                    if (invoice.vaangunarId != null) stmt.setLong(idx++, invoice.vaangunarId) else stmt.setNull(idx++, Types.INTEGER)
+                    stmt.setString(idx++, MozhiJsonConverter.stringify(invoice.vaangunarPeyar))
+                    stmt.setString(idx++, MozhiJsonConverter.stringify(invoice.vaangunarMunvari))
+                    stmt.setLong(idx++, naalSec)
+                    stmt.setString(idx++, invoice.tharavugal)
+                    stmt.setDouble(idx++, invoice.mothaThogai)
+                    stmt.setDouble(idx++, invoice.thallupadi)
+                    stmt.setDouble(idx++, invoice.podhuThallupadiMathippu)
+                    stmt.setString(idx++, invoice.podhuThallupadiVagai)
+                    stmt.setDouble(idx++, invoice.podhuThallupadiThogai)
+                    stmt.setDouble(idx++, invoice.variThogai)
+                    stmt.setString(idx++, invoice.variTharavugal)
+                    stmt.setDouble(idx++, invoice.mothaEdai)
+                    stmt.setDouble(idx++, invoice.setharamGrams)
+                    stmt.setDouble(idx++, invoice.thabaalThogai)
+                    stmt.setDouble(idx++, invoice.ahimsaPattuThogai)
+                    stmt.setString(idx++, invoice.piravariVugal)
+                    stmt.setString(idx++, invoice.sonthaViruppangal)
+                    stmt.setString(idx++, invoice.nibandhanaigal)
+                    stmt.setString(idx++, invoice.ullkurippu)
+                    stmt.setString(idx++, invoice.vangiTharavugal)
+
+                    if (!isUpdate) {
+                        val createdSec = if (invoice.createdAt > 10000000000L) invoice.createdAt / 1000 else if (invoice.createdAt > 0L) invoice.createdAt else nowSec
+                        stmt.setLong(idx++, createdSec)
+                    }
+
+                    stmt.setLong(idx++, nowSec)
+                    stmt.setInt(idx++, if (invoice.isDeleted) 1 else 0)
+
+                    if (invoice.deletedAt != null) {
+                        val delSec = if (invoice.deletedAt > 10000000000L) invoice.deletedAt / 1000 else invoice.deletedAt
+                        stmt.setLong(idx++, delSec)
+                    } else {
+                        stmt.setNull(idx++, Types.INTEGER)
+                    }
+
+                    if (isUpdate) {
+                        stmt.setLong(idx++, invoice.id)
+                    }
+
+                    val affected = stmt.executeUpdate()
+                    if (isUpdate) {
+                        return if (affected > 0) invoice.id else -1L
+                    } else {
+                        stmt.generatedKeys.use { gks ->
+                            if (gks.next()) {
+                                return gks.getLong(1)
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error saving invoice to $tableName: ${e.message}")
+        }
+        return -1L
+    }
+
+    override fun deleteInvoice(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_pattiyal_table" else "pattu_pattiyal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val sql = "UPDATE $tableName SET is_deleted = 1, deleted_at = ?, updated_at = ? WHERE id = ?"
+                conn.prepareStatement(sql).use { stmt ->
+                    val nowSec = System.currentTimeMillis() / 1000
+                    stmt.setLong(1, nowSec)
+                    stmt.setLong(2, nowSec)
+                    stmt.setLong(3, id)
+                    val updated = stmt.executeUpdate()
+                    return updated > 0
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error deleting invoice $id from $tableName: ${e.message}")
+            return false
+        }
+    }
+
+    override fun loadAllReceipts(mode: AppMode): List<PatrugalTharavuru> {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        val list = mutableListOf<PatrugalTharavuru>()
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val sql = "SELECT * FROM $tableName WHERE is_deleted = 0 ORDER BY patru_naal DESC, id DESC"
+                conn.createStatement().use { stmt ->
+                    stmt.executeQuery(sql).use { rs ->
+                        while (rs.next()) {
+                            list.add(rsToReceipt(rs))
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error loading receipts from $tableName: ${e.message}")
+        }
+        return list
+    }
+
+    override fun saveReceipt(mode: AppMode, receipt: PatrugalTharavuru): Long {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val nowSec = System.currentTimeMillis() / 1000
+                val naalSec = if (receipt.patruNaal > 10000000000L) receipt.patruNaal / 1000 else receipt.patruNaal
+                val isUpdate = receipt.id > 0L
+
+                val sql = if (isUpdate) {
+                    """
+                    UPDATE $tableName SET
+                        niruvanam_id = ?, patru_en = ?, fin_year = ?, vanakkam = ?,
+                        vaangunar_id = ?, vaangunar_peyar = ?, vaangunar_munvari = ?, patru_naal = ?,
+                        thogai = ?, seluthum_murai = ?, vangi_peyar = ?, parivarthanai_en = ?, ullkurippu = ?,
+                        updated_at = ?, is_deleted = ?, deleted_at = ?
+                    WHERE id = ?
+                    """.trimIndent()
+                } else {
+                    """
+                    INSERT INTO $tableName (
+                        niruvanam_id, patru_en, fin_year, vanakkam,
+                        vaangunar_id, vaangunar_peyar, vaangunar_munvari, patru_naal,
+                        thogai, seluthum_murai, vangi_peyar, parivarthanai_en, ullkurippu,
+                        created_at, updated_at, is_deleted, deleted_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """.trimIndent()
+                }
+
+                conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS).use { stmt ->
+                    var idx = 1
+                    if (receipt.niruvanamId != null) stmt.setLong(idx++, receipt.niruvanamId) else stmt.setNull(idx++, Types.INTEGER)
+                    stmt.setString(idx++, receipt.patruEn)
+                    stmt.setString(idx++, receipt.finYear)
+                    stmt.setInt(idx++, receipt.vanakkam)
+                    if (receipt.vaangunarId != null) stmt.setLong(idx++, receipt.vaangunarId) else stmt.setNull(idx++, Types.INTEGER)
+                    stmt.setString(idx++, MozhiJsonConverter.stringify(receipt.vaangunarPeyar))
+                    stmt.setString(idx++, MozhiJsonConverter.stringify(receipt.vaangunarMunvari))
+                    stmt.setLong(idx++, naalSec)
+                    stmt.setDouble(idx++, receipt.thogai)
+                    stmt.setString(idx++, receipt.seluthumMurai)
+                    if (receipt.vangiPeyar != null) stmt.setString(idx++, receipt.vangiPeyar) else stmt.setNull(idx++, Types.VARCHAR)
+                    if (receipt.parivarthanaiEn != null) stmt.setString(idx++, receipt.parivarthanaiEn) else stmt.setNull(idx++, Types.VARCHAR)
+                    stmt.setString(idx++, receipt.ullkurippu)
+
+                    if (!isUpdate) {
+                        val createdSec = if (receipt.createdAt > 10000000000L) receipt.createdAt / 1000 else if (receipt.createdAt > 0L) receipt.createdAt else nowSec
+                        stmt.setLong(idx++, createdSec)
+                    }
+
+                    stmt.setLong(idx++, nowSec)
+                    stmt.setInt(idx++, if (receipt.isDeleted) 1 else 0)
+
+                    if (receipt.deletedAt != null) {
+                        val delSec = if (receipt.deletedAt > 10000000000L) receipt.deletedAt / 1000 else receipt.deletedAt
+                        stmt.setLong(idx++, delSec)
+                    } else {
+                        stmt.setNull(idx++, Types.INTEGER)
+                    }
+
+                    if (isUpdate) {
+                        stmt.setLong(idx++, receipt.id)
+                    }
+
+                    val affected = stmt.executeUpdate()
+                    if (isUpdate) {
+                        return if (affected > 0) receipt.id else -1L
+                    } else {
+                        stmt.generatedKeys.use { gks ->
+                            if (gks.next()) {
+                                return gks.getLong(1)
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error saving receipt to $tableName: ${e.message}")
+        }
+        return -1L
+    }
+
+    override fun deleteReceipt(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val sql = "UPDATE $tableName SET is_deleted = 1, deleted_at = ?, updated_at = ? WHERE id = ?"
+                conn.prepareStatement(sql).use { stmt ->
+                    val nowSec = System.currentTimeMillis() / 1000
+                    stmt.setLong(1, nowSec)
+                    stmt.setLong(2, nowSec)
+                    stmt.setLong(3, id)
+                    val updated = stmt.executeUpdate()
+                    return updated > 0
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error deleting receipt $id from $tableName: ${e.message}")
+            return false
+        }
+    }
+
     private fun rsToMerchant(rs: ResultSet): VaangunarTharavuru {
         fun getString(col: String): String {
             return try { rs.getString(col) ?: "" } catch (_: Exception) { "" }
@@ -420,6 +770,118 @@ class DesktopBusinessDatabaseHelper : BusinessDatabaseHelper {
             variVeetham = getDouble("vari_veetham"),
             alavuVagai = getString("alavu_vagai").ifEmpty { "quantity" },
             alagu = getString("alagu").ifEmpty { "Nos" },
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            isDeleted = getInt("is_deleted", 0) == 1,
+            deletedAt = deletedAt
+        )
+    }
+
+    private fun rsToInvoice(rs: ResultSet): PattiyalTharavuru {
+        fun getString(col: String): String {
+            return try { rs.getString(col) ?: "" } catch (_: Exception) { "" }
+        }
+        fun getLong(col: String, defaultVal: Long = 0L): Long {
+            return try { val v = rs.getLong(col); if (rs.wasNull()) defaultVal else v } catch (_: Exception) { defaultVal }
+        }
+        fun getNullableLong(col: String): Long? {
+            return try { val v = rs.getLong(col); if (rs.wasNull()) null else v } catch (_: Exception) { null }
+        }
+        fun getInt(col: String, defaultVal: Int = 0): Int {
+            return try { val v = rs.getInt(col); if (rs.wasNull()) defaultVal else v } catch (_: Exception) { defaultVal }
+        }
+        fun getDouble(col: String, defaultVal: Double = 0.0): Double {
+            return try { val v = rs.getDouble(col); if (rs.wasNull()) defaultVal else v } catch (_: Exception) { defaultVal }
+        }
+
+        val rawNaal = getLong("pattiyal_naal")
+        val pattiyalNaal = if (rawNaal in 1..9999999999L) rawNaal * 1000 else if (rawNaal > 0L) rawNaal else System.currentTimeMillis()
+        val rawCreatedAt = getLong("created_at")
+        val createdAt = if (rawCreatedAt in 1..9999999999L) rawCreatedAt * 1000 else rawCreatedAt
+        val rawUpdatedAt = getLong("updated_at")
+        val updatedAt = if (rawUpdatedAt in 1..9999999999L) rawUpdatedAt * 1000 else rawUpdatedAt
+        val rawDeletedAt = getNullableLong("deleted_at")
+        val deletedAt = if (rawDeletedAt != null && rawDeletedAt in 1..9999999999L) rawDeletedAt * 1000 else rawDeletedAt
+
+        return PattiyalTharavuru(
+            id = getLong("id"),
+            niruvanamId = getNullableLong("niruvanam_id"),
+            patrucheettuEn = getString("patrucheettu_en"),
+            finYear = getInt("fin_year"),
+            vanakkam = getInt("vanakkam", 1),
+            pattiyalVagai = getString("pattiyal_vagai").ifEmpty { "tax-invoice" },
+            vaangunarId = getNullableLong("vaangunar_id"),
+            vaangunarPeyar = MozhiJsonConverter.parse(getString("vaangunar_peyar")),
+            vaangunarMunvari = MozhiJsonConverter.parse(getString("vaangunar_munvari")),
+            pattiyalNaal = pattiyalNaal,
+            tharavugal = getString("tharavugal").ifEmpty { "[]" },
+            mothaThogai = getDouble("motha_thogai"),
+            thallupadi = getDouble("thallupadi"),
+            podhuThallupadiMathippu = getDouble("podhu_thallupadi_mathippu"),
+            podhuThallupadiVagai = getString("podhu_thallupadi_vagai").ifEmpty { "%" },
+            podhuThallupadiThogai = getDouble("podhu_thallupadi_thogai"),
+            variThogai = getDouble("vari_thogai"),
+            variTharavugal = getString("vari_tharavugal").ifEmpty { "{}" },
+            mothaEdai = getDouble("motha_edai"),
+            setharamGrams = getDouble("setharam_grams"),
+            thabaalThogai = getDouble("thabaal_thogai"),
+            ahimsaPattuThogai = getDouble("ahimsa_pattu_thogai"),
+            piravariVugal = getString("piravari_vugal").ifEmpty { "[]" },
+            sonthaViruppangal = getString("sontha_viruppangal").ifEmpty { "{}" },
+            nibandhanaigal = getString("nibandhanaigal"),
+            ullkurippu = getString("ullkurippu"),
+            vangiTharavugal = getString("vangi_tharavugal").ifEmpty { "{}" },
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            isDeleted = getInt("is_deleted", 0) == 1,
+            deletedAt = deletedAt
+        )
+    }
+
+    private fun rsToReceipt(rs: ResultSet): PatrugalTharavuru {
+        fun getString(col: String): String {
+            return try { rs.getString(col) ?: "" } catch (_: Exception) { "" }
+        }
+        fun getNullableString(col: String): String? {
+            return try { rs.getString(col) } catch (_: Exception) { null }
+        }
+        fun getLong(col: String, defaultVal: Long = 0L): Long {
+            return try { val v = rs.getLong(col); if (rs.wasNull()) defaultVal else v } catch (_: Exception) { defaultVal }
+        }
+        fun getNullableLong(col: String): Long? {
+            return try { val v = rs.getLong(col); if (rs.wasNull()) null else v } catch (_: Exception) { null }
+        }
+        fun getInt(col: String, defaultVal: Int = 0): Int {
+            return try { val v = rs.getInt(col); if (rs.wasNull()) defaultVal else v } catch (_: Exception) { defaultVal }
+        }
+        fun getDouble(col: String, defaultVal: Double = 0.0): Double {
+            return try { val v = rs.getDouble(col); if (rs.wasNull()) defaultVal else v } catch (_: Exception) { defaultVal }
+        }
+
+        val rawNaal = getLong("patru_naal")
+        val patruNaal = if (rawNaal in 1..9999999999L) rawNaal * 1000 else if (rawNaal > 0L) rawNaal else System.currentTimeMillis()
+        val rawCreatedAt = getLong("created_at")
+        val createdAt = if (rawCreatedAt in 1..9999999999L) rawCreatedAt * 1000 else rawCreatedAt
+        val rawUpdatedAt = getLong("updated_at")
+        val updatedAt = if (rawUpdatedAt in 1..9999999999L) rawUpdatedAt * 1000 else rawUpdatedAt
+        val rawDeletedAt = getNullableLong("deleted_at")
+        val deletedAt = if (rawDeletedAt != null && rawDeletedAt in 1..9999999999L) rawDeletedAt * 1000 else rawDeletedAt
+
+        return PatrugalTharavuru(
+            id = getLong("id"),
+            niruvanamId = getNullableLong("niruvanam_id"),
+            patruEn = getString("patru_en"),
+            finYear = getString("fin_year"),
+            vanakkam = getInt("vanakkam", 1),
+            vaangunarId = getNullableLong("vaangunar_id"),
+            vaangunarPeyar = MozhiJsonConverter.parse(getString("vaangunar_peyar")),
+            vaangunarMunvari = MozhiJsonConverter.parse(getString("vaangunar_munvari")),
+            patruNaal = patruNaal,
+            thogai = getDouble("thogai"),
+            seluthumMurai = getString("seluthum_murai").ifEmpty { "cash" },
+            vangiPeyar = getNullableString("vangi_peyar"),
+            parivarthanaiEn = getNullableString("parivarthanai_en"),
+            ullkurippu = getString("ullkurippu"),
             createdAt = createdAt,
             updatedAt = updatedAt,
             isDeleted = getInt("is_deleted", 0) == 1,

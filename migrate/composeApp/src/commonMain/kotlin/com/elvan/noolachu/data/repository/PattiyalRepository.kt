@@ -1,0 +1,136 @@
+package com.elvan.noolachu.data.repository
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.elvan.noolachu.core.mode.AppMode
+import com.elvan.noolachu.core.mode.ModeManager
+import com.elvan.noolachu.data.business.getBusinessDatabaseHelper
+import com.elvan.noolachu.data.model.PattiyalTharavuru
+import com.elvan.noolachu.data.settings.NiruvanaTharavugal
+
+data class CompanyInvoiceStat(
+    val id: Long,
+    val name: String,
+    val total: Double,
+    val count: Int
+)
+
+/**
+ * Reactive repository managing invoices (Pattiyal) for both Coolie and Silk modes.
+ */
+object PattiyalRepository {
+
+    var invoices by mutableStateOf<List<PattiyalTharavuru>>(emptyList())
+        private set
+
+    var searchQuery by mutableStateOf("")
+
+    val filteredInvoices: List<PattiyalTharavuru>
+        get() {
+            val q = searchQuery.trim().lowercase()
+            if (q.isEmpty()) return invoices
+
+            return invoices.filter { invoice ->
+                val enMatches = invoice.patrucheettuEn.lowercase().contains(q)
+                val peyarMatches = invoice.vaangunarPeyar.values.any { it.lowercase().contains(q) }
+                val oorMatches = invoice.vaangunarMunvari.values.any { it.lowercase().contains(q) }
+                enMatches || peyarMatches || oorMatches
+            }
+        }
+
+    val recentInvoices: List<PattiyalTharavuru>
+        get() = invoices.take(8)
+
+    val overallTotal: Double
+        get() = invoices.sumOf { it.mothaThogai }
+
+    init {
+        loadAll()
+    }
+
+    fun loadAll(mode: AppMode = ModeManager.currentMode) {
+        try {
+            val helper = getBusinessDatabaseHelper()
+            invoices = helper.loadAllInvoices(mode)
+        } catch (_: Exception) {
+            invoices = emptyList()
+        }
+    }
+
+    fun save(invoice: PattiyalTharavuru, mode: AppMode = ModeManager.currentMode): Long {
+        return try {
+            val helper = getBusinessDatabaseHelper()
+            val id = helper.saveInvoice(mode, invoice)
+            if (id > 0L) {
+                loadAll(mode)
+            }
+            id
+        } catch (_: Exception) {
+            -1L
+        }
+    }
+
+    fun delete(id: Long, mode: AppMode = ModeManager.currentMode): Boolean {
+        return try {
+            val helper = getBusinessDatabaseHelper()
+            val success = helper.deleteInvoice(mode, id)
+            if (success) {
+                loadAll(mode)
+            }
+            success
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    fun getById(id: Long): PattiyalTharavuru? {
+        return invoices.find { it.id == id }
+    }
+
+    fun computeActiveCompanies(profiles: List<NiruvanaTharavugal>): List<CompanyInvoiceStat> {
+        val byCompany = mutableMapOf<Long, CompanyInvoiceStat>()
+
+        for (p in profiles) {
+            val pId = p.id ?: continue
+            val cName = p.kurumPeyar.ifEmpty {
+                p.niruvanathinPeyar.values.firstOrNull().orEmpty()
+            }
+            byCompany[pId] = CompanyInvoiceStat(id = pId, name = cName, total = 0.0, count = 0)
+        }
+
+        for (inv in invoices) {
+            val cId = inv.niruvanamId
+            if (cId != null && byCompany.containsKey(cId)) {
+                val prev = byCompany[cId]!!
+                byCompany[cId] = prev.copy(
+                    total = prev.total + inv.mothaThogai,
+                    count = prev.count + 1
+                )
+            }
+        }
+
+        return byCompany.values.filter { it.count > 0 }
+    }
+
+    fun getCompaniesSummary(profiles: List<NiruvanaTharavugal>): String {
+        val active = computeActiveCompanies(profiles)
+        return if (active.isEmpty()) {
+            if (profiles.isNotEmpty()) {
+                val p = profiles.first()
+                p.kurumPeyar.ifEmpty { p.niruvanathinPeyar.values.firstOrNull().orEmpty() }.ifEmpty { "—" }
+            } else "—"
+        } else {
+            active.joinToString(", ") { it.name }
+        }
+    }
+
+    fun getInvoiceCountSummary(profiles: List<NiruvanaTharavugal>): String {
+        val active = computeActiveCompanies(profiles)
+        return when {
+            active.size == 1 -> "${active[0].count} · ${active[0].name}"
+            active.size > 1 -> active.joinToString("  +  ") { "${it.count} · ${it.name}" } + "  =  ${invoices.size}"
+            else -> invoices.size.toString()
+        }
+    }
+}
