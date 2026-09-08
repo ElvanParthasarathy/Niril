@@ -7,9 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.zIndex
 import com.elvan.noolachu.core.mode.ModeManager
@@ -22,9 +20,18 @@ import com.elvan.noolachu.ui.components.shell.ElvanBottomSheetHost
 import com.elvan.noolachu.ui.components.shell.LocalElvanBottomSheetController
 import com.elvan.noolachu.ui.screens.home.HomeScreen
 import com.elvan.noolachu.ui.screens.mode.ModeSelectorScreen
+import com.elvan.noolachu.ui.screens.splash.SplashScreen
+import kotlinx.coroutines.delay
 
 @Composable
 fun App() {
+    var isSplashVisible by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        delay(1600)
+        isSplashVisible = false
+    }
+
     NoolachuTheme {
         ProvideAppLanguage {
             ProvideModeContext {
@@ -67,6 +74,16 @@ fun App() {
                         }
 
                         ElvanBottomSheetHost(bottomSheetController)
+
+                        // Animated Splash Screen overlay with smooth fade out
+                        AnimatedVisibility(
+                            visible = isSplashVisible,
+                            modifier = Modifier.zIndex(200f),
+                            enter = fadeIn(),
+                            exit = fadeOut(animationSpec = tween(durationMillis = 400))
+                        ) {
+                            SplashScreen()
+                        }
                     }
                 }
             }
