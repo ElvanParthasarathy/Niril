@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.elvan.noolachu.core.mode.LocalAppMode
 import com.elvan.noolachu.core.platform.AppBackHandler
+import com.elvan.noolachu.data.model.PatrugalTharavuru
+import com.elvan.noolachu.data.model.PattiyalTharavuru
 import com.elvan.noolachu.data.model.PorulTharavuru
 import com.elvan.noolachu.data.model.VaangunarTharavuru
 import com.elvan.noolachu.data.repository.PattiyalRepository
@@ -33,6 +35,8 @@ import com.elvan.noolachu.ui.navigation.MaterialSymbols
 import com.elvan.noolachu.ui.navigation.NavTab
 import com.elvan.noolachu.ui.screens.porul.PorulScreen
 import com.elvan.noolachu.ui.screens.settings.SettingsScreen
+import com.elvan.noolachu.ui.screens.thiruthi.patrucheettu.PatrucheettuThiruthiScreen
+import com.elvan.noolachu.ui.screens.thiruthi.pattiyal.PattiyalThiruthiScreen
 import com.elvan.noolachu.ui.screens.thiruthi.porul.PorulThiruthiScreen
 import com.elvan.noolachu.ui.screens.thiruthi.vaangunar.VaangunarThiruthiScreen
 import com.elvan.noolachu.ui.screens.uruvakku.UruvakkuScreen
@@ -44,6 +48,8 @@ sealed class ActiveSubpage {
     data object Settings : ActiveSubpage()
     data class ItemEditor(val item: PorulTharavuru? = null) : ActiveSubpage()
     data class MerchantEditor(val merchant: VaangunarTharavuru? = null) : ActiveSubpage()
+    data class InvoiceEditor(val invoice: PattiyalTharavuru? = null) : ActiveSubpage()
+    data class ReceiptEditor(val receipt: PatrugalTharavuru? = null) : ActiveSubpage()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -155,6 +161,18 @@ fun HomeScreen() {
                         onBack = { activeSubpage = null }
                     )
                 }
+                is ActiveSubpage.InvoiceEditor -> {
+                    PattiyalThiruthiScreen(
+                        invoice = subpage.invoice,
+                        onBack = { activeSubpage = null }
+                    )
+                }
+                is ActiveSubpage.ReceiptEditor -> {
+                    PatrucheettuThiruthiScreen(
+                        receipt = subpage.receipt,
+                        onBack = { activeSubpage = null }
+                    )
+                }
                 null -> {
                     ElvanShell(
                         scrollState = currentScrollState,
@@ -164,7 +182,7 @@ fun HomeScreen() {
                             val hasSearchAndAdd = selectedTab != NavTab.Home
 
                             if (hasSearchAndAdd) {
-                                // Search Icon Button (26dp)
+                                // Search Icon Button
                                 ElvanTopBarIconButton(
                                     onClick = { isSearchActive = true }
                                 ) {
@@ -176,9 +194,7 @@ fun HomeScreen() {
                                     )
                                 }
 
-                                // Add (+) Button (26dp)
-                                val pudhiyaPattiyalLabel = K.pudhiyaPattiyal.tr()
-                                val patrucheettuLabel = K.patrucheettu.tr()
+                                // Add (+) Button
                                 ElvanTopBarIconButton(
                                     onClick = {
                                         when (selectedTab) {
@@ -190,9 +206,9 @@ fun HomeScreen() {
                                             }
                                             NavTab.Create -> {
                                                 if (uruvakkuSegment == 0) {
-                                                    ElvanSnackbar.show(pudhiyaPattiyalLabel)
+                                                    activeSubpage = ActiveSubpage.InvoiceEditor(null)
                                                 } else {
-                                                    ElvanSnackbar.show(patrucheettuLabel)
+                                                    activeSubpage = ActiveSubpage.ReceiptEditor(null)
                                                 }
                                             }
                                             else -> {}
@@ -340,7 +356,7 @@ fun HomeScreen() {
                                             uruvakkuSegment = 0
                                         },
                                         onInvoiceClick = { invoice ->
-                                            ElvanSnackbar.show("${invoice.patrucheettuEn}")
+                                            activeSubpage = ActiveSubpage.InvoiceEditor(invoice)
                                         }
                                     )
                                 }
@@ -370,10 +386,10 @@ fun HomeScreen() {
                                             PatrugalRepository.searchQuery = ""
                                         },
                                         onInvoiceClick = { invoice ->
-                                            ElvanSnackbar.show("${invoice.patrucheettuEn}")
+                                            activeSubpage = ActiveSubpage.InvoiceEditor(invoice)
                                         },
                                         onReceiptClick = { receipt ->
-                                            ElvanSnackbar.show("${receipt.patruEn}")
+                                            activeSubpage = ActiveSubpage.ReceiptEditor(receipt)
                                         }
                                     )
                                 }

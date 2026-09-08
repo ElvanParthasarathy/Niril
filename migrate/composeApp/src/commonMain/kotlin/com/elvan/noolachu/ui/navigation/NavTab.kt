@@ -12,26 +12,26 @@ enum class NavTab(
     val headerTitleKey: String = titleKey
 ) {
     Home(
-        icon = MaterialSymbols.Rounded.Home,
-        activeIcon = MaterialSymbols.Rounded.HomeFill,
+        icon = MaterialSymbols.CustomNav.Home,
+        activeIcon = MaterialSymbols.CustomNav.HomeFill,
         titleKey = K.mugappu,
         headerTitleKey = K.niril
     ),
     Create(
-        icon = MaterialSymbols.Rounded.AddCircle,
-        activeIcon = MaterialSymbols.Rounded.AddCircle,
+        icon = MaterialSymbols.CustomNav.Create,
+        activeIcon = MaterialSymbols.CustomNav.CreateFill,
         titleKey = K.aakku,
         headerTitleKey = K.uruvaakkuPtn
     ),
     Products(
-        icon = MaterialSymbols.Rounded.Inventory2,
-        activeIcon = MaterialSymbols.Rounded.Inventory2,
+        icon = MaterialSymbols.CustomNav.Products,
+        activeIcon = MaterialSymbols.CustomNav.ProductsFill,
         titleKey = K.porul,
         headerTitleKey = K.porutkal
     ),
     Customers(
-        icon = MaterialSymbols.Rounded.Person,
-        activeIcon = MaterialSymbols.Rounded.Person,
+        icon = MaterialSymbols.CustomNav.Customers,
+        activeIcon = MaterialSymbols.CustomNav.CustomersFill,
         titleKey = K.vaangunar,
         headerTitleKey = K.vaangunargal
     );

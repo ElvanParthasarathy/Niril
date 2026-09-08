@@ -32,16 +32,16 @@ import com.elvan.noolachu.ui.navigation.MaterialSymbols
 fun ElvanTopBarIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    size: Dp = 40.dp,
     content: @Composable () -> Unit
 ) {
     Box(
-        modifier = Modifier
-            .size(26.dp)
-            .then(modifier)
+        modifier = modifier
+            .size(size)
             .clip(CircleShape)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = ripple(bounded = true, radius = 20.dp),
+                indication = ripple(bounded = true, radius = size / 2),
                 onClick = onClick
             ),
         contentAlignment = Alignment.Center
@@ -104,7 +104,7 @@ fun ElvanCollapsedBar(
                     ElvanPill(liftProgress = liftProgress, colors = colors, modifier = Modifier.size(50.dp)) {
                         ElvanTopBarIconButton(
                             onClick = onBack,
-                            modifier = Modifier.size(50.dp)
+                            size = 44.dp
                         ) {
                             Icon(
                                 imageVector = leadingIcon ?: MaterialSymbols.Rounded.ArrowBack,
@@ -143,8 +143,7 @@ fun ElvanCollapsedBar(
             ElvanPill(liftProgress = liftProgress, colors = colors) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(14.dp),
-                    modifier = Modifier.padding(horizontal = 7.dp)
+                    horizontalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
                     actions()
                 }

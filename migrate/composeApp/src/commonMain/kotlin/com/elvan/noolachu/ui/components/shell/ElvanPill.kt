@@ -45,7 +45,7 @@ fun ElvanPill(
         Box(
             modifier = Modifier
                 .fillMaxHeight()
-                .padding(horizontal = 5.dp),
+                .padding(horizontal = 4.dp),
             contentAlignment = Alignment.Center
         ) {
             content()
