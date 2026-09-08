@@ -57,76 +57,71 @@ fun AboutAppScreen(
 
         // ── App Header: Logo + Name + Tagline ──
         item(key = "app_header") {
-            ElvanSettingsSection(colors = colors) {
-                Column(
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                val logoBg = if (colors.isDark) colors.textPrimary.copy(alpha = 0.08f)
+                else colors.textPrimary.copy(alpha = 0.06f)
+
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .size(88.dp)
+                        .clip(RoundedCornerShape(24.dp))
+                        .background(logoBg),
+                    contentAlignment = Alignment.Center
                 ) {
-                    val logoBg = if (colors.isDark) colors.textPrimary.copy(alpha = 0.08f)
-                    else colors.textPrimary.copy(alpha = 0.06f)
-
-                    Box(
-                        modifier = Modifier
-                            .size(88.dp)
-                            .clip(RoundedCornerShape(24.dp))
-                            .background(logoBg),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = MaterialSymbols.Rounded.Notes,
-                            contentDescription = K.cheyaliPatri.tr(),
-                            tint = colors.textPrimary,
-                            modifier = Modifier.size(50.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Text(
-                        text = "நூலாசு",
-                        style = TextStyle(
-                            fontFamily = ff,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        color = colors.textPrimary
-                    )
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = K.elvanNavilDesc.tr(),
-                        style = TextStyle(
-                            fontFamily = ff,
-                            fontSize = 13.5.sp,
-                            fontWeight = FontWeight.Normal
-                        ),
-                        color = colors.textSecondary.copy(alpha = 0.85f)
-                    )
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = "v1.0.0",
-                        style = TextStyle(
-                            fontFamily = ff,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium
-                        ),
-                        color = colors.textSecondary.copy(alpha = 0.6f)
+                    Icon(
+                        imageVector = MaterialSymbols.Rounded.Notes,
+                        contentDescription = K.cheyaliPatri.tr(),
+                        tint = colors.textPrimary,
+                        modifier = Modifier.size(50.dp)
                     )
                 }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Text(
+                    text = "நூலாசு",
+                    style = TextStyle(
+                        fontFamily = ff,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    color = colors.textPrimary
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = K.elvanNavilDesc.tr(),
+                    style = TextStyle(
+                        fontFamily = ff,
+                        fontSize = 13.5.sp,
+                        fontWeight = FontWeight.Normal
+                    ),
+                    color = colors.textSecondary.copy(alpha = 0.85f)
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "v1.0.0",
+                    style = TextStyle(
+                        fontFamily = ff,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium
+                    ),
+                    color = colors.textSecondary.copy(alpha = 0.6f)
+                )
             }
         }
 
         // ── Features Section ──
         item(key = "features_section") {
-            ElvanSettingsSection(
-                title = "தகுதிகள்",
-                colors = colors
-            ) {
+            ElvanSettingsSection(colors = colors) {
                 ElvanSettingsRow(
                     icon = MaterialSymbols.Rounded.Description,
                     title = "பட்டியல் / பற்றுச்சீட்டு",
@@ -157,25 +152,6 @@ fun AboutAppScreen(
                     description = "ஒரே தரவுத்தளத்தில் முழு வணிகத் தரவு",
                     onClick = {},
                     colors = colors
-                )
-            }
-        }
-
-        // ── Version Footer ──
-        item(key = "version_footer") {
-            ElvanSettingsSection(colors = colors) {
-                Text(
-                    text = "நூலாசு v1.0.0",
-                    style = TextStyle(
-                        fontFamily = ff,
-                        fontSize = 12.5.sp,
-                        fontWeight = FontWeight.Normal
-                    ),
-                    color = colors.textPrimary.copy(alpha = 0.35f),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp, bottom = 24.dp),
-                    textAlign = TextAlign.Center
                 )
             }
         }

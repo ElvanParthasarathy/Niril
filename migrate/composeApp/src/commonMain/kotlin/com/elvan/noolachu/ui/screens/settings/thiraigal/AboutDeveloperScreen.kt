@@ -130,10 +130,7 @@ fun AboutDeveloperScreen(
         // ── Contact Links & Social Section ──
         item(key = "contact_section") {
             ElvanSectionContainer {
-                ElvanSettingsSection(
-                    title = "Connect",
-                    colors = colors
-                ) {
+                ElvanSettingsSection(colors = colors) {
                     ElvanSettingsRow(
                         icon = MaterialSymbols.Rounded.Email,
                         title = "மின்னஞ்சல்",

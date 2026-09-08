@@ -29,6 +29,7 @@ import com.elvan.noolachu.theme.ShellColors
 import com.elvan.noolachu.theme.ShellDefaults
 import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.components.shell.*
+import com.elvan.noolachu.ui.navigation.AppSvgs
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -203,7 +204,7 @@ fun StorageBackupSettingsScreen(
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
-                                    imageVector = MaterialSymbols.Rounded.Handyman,
+                                    imageVector = AppSvgs.coolieMode,
                                     contentDescription = null,
                                     tint = colors.textPrimary,
                                     modifier = Modifier.size(18.dp)
@@ -253,7 +254,7 @@ fun StorageBackupSettingsScreen(
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
-                                    imageVector = MaterialSymbols.Rounded.Inventory2,
+                                    imageVector = AppSvgs.silkMode,
                                     contentDescription = null,
                                     tint = colors.textPrimary,
                                     modifier = Modifier.size(18.dp)

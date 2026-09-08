@@ -51,6 +51,7 @@ fun InvoiceCreationSettingsScreen(
     var isEditingLanguages by remember { mutableStateOf(false) }
     var tempPrimaryLang by remember { mutableStateOf(profile.mudhanMozhi) }
     var tempSecondaryLang by remember { mutableStateOf(profile.thunaiMozhi) }
+    var dummyGstSplit by remember { mutableStateOf(false) }
 
     val bottomSheet = LocalElvanBottomSheetController.current
     val pdfThemeTitle = K.pdfThoatram.tr()
@@ -208,9 +209,8 @@ fun InvoiceCreationSettingsScreen(
                         trailing = {
                             ElvanSettingsSwitch(
                                 checked = profile.iruMozhi,
-                                onCheckedChange = {
-                                    val updated = profile.copy()
-                                    updated.iruMozhi = it
+                                onCheckedChange = { isChecked ->
+                                    val updated = profile.copy(iruMozhi = isChecked)
                                     NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
                                     ElvanSnackbar.show(saveSuccessMsg)
                                 },
@@ -221,17 +221,14 @@ fun InvoiceCreationSettingsScreen(
                     )
                     ElvanSettingsDivider(colors = colors)
 
-                    // GST Split Toggle
+                    // GST Split Toggle (Dummy)
                     ElvanSimpleSettingsRow(
                         title = K.gstpirippugal.tr(),
                         trailing = {
                             ElvanSettingsSwitch(
-                                checked = profile.gstPirippugal,
+                                checked = dummyGstSplit,
                                 onCheckedChange = {
-                                    val updated = profile.copy()
-                                    updated.gstPirippugal = it
-                                    NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
-                                    ElvanSnackbar.show(saveSuccessMsg)
+                                    dummyGstSplit = it
                                 },
                                 colors = colors
                             )
@@ -311,7 +308,7 @@ fun InvoiceCreationSettingsScreen(
 
                     ElvanSettingsDisplayRow(
                         title = K.pdfThoatram.tr(),
-                        primaryValue = getThemeName(currentThemeColorHex),
+                        primaryValue = "",
                         primaryWidget = {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Box(

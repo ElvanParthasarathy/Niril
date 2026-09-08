@@ -173,6 +173,35 @@ class AndroidSettingsDatabaseHelper : SettingsDatabaseHelper {
         return list
     }
 
+    private fun ensureColumns(db: SQLiteDatabase, tableName: String) {
+        try {
+            val columns = mutableSetOf<String>()
+            db.rawQuery("PRAGMA table_info($tableName)", null).use { cursor ->
+                val nameIdx = cursor.getColumnIndex("name")
+                while (cursor.moveToNext()) {
+                    if (nameIdx >= 0) columns.add(cursor.getString(nameIdx).lowercase())
+                }
+            }
+            if (!columns.contains("mudhan_mozhi")) {
+                db.execSQL("ALTER TABLE $tableName ADD COLUMN mudhan_mozhi TEXT DEFAULT 'ta'")
+            }
+            if (!columns.contains("thunai_mozhi")) {
+                db.execSQL("ALTER TABLE $tableName ADD COLUMN thunai_mozhi TEXT DEFAULT 'en'")
+            }
+            if (!columns.contains("iru_mozhi")) {
+                db.execSQL("ALTER TABLE $tableName ADD COLUMN iru_mozhi INTEGER DEFAULT 1")
+            }
+            if (!columns.contains("gst_pirippugal")) {
+                db.execSQL("ALTER TABLE $tableName ADD COLUMN gst_pirippugal INTEGER DEFAULT 0")
+            }
+            if (!columns.contains("thoatra_niram")) {
+                db.execSQL("ALTER TABLE $tableName ADD COLUMN thoatra_niram TEXT DEFAULT '#388e3c'")
+            }
+        } catch (e: Exception) {
+            Log.w(tag, "ensureColumns failed on $tableName: ${e.message}")
+        }
+    }
+
     override fun saveProfile(mode: AppMode, profile: NiruvanaTharavugal): Boolean {
         val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
         val tableName = if (mode == AppMode.KOOLI) "kooli_niruvana_tharavugal_table" else "pattu_niruvana_tharavugal_table"
@@ -181,6 +210,8 @@ class AndroidSettingsDatabaseHelper : SettingsDatabaseHelper {
         var db: SQLiteDatabase? = null
         try {
             db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            ensureColumns(db, tableName)
+
             val values = ContentValues().apply {
                 put("niruvanathin_peyar", MozhiJsonConverter.stringify(profile.niruvanathinPeyar))
                 put("kurum_peyar", profile.kurumPeyar)
@@ -216,12 +247,20 @@ class AndroidSettingsDatabaseHelper : SettingsDatabaseHelper {
                 }
             }
 
-            val rowsAffected = if (profile.id != null) {
+            var rowsAffected = if (profile.id != null) {
                 db.update(tableName, values, "id = ?", arrayOf(profile.id.toString()))
-            } else {
+            } else 0
+
+            if (rowsAffected == 0) {
+                rowsAffected = db.update(tableName, values, null, null)
+            }
+
+            if (rowsAffected == 0) {
                 val newId = db.insert(tableName, null, values)
-                profile.id = newId
-                if (newId > 0) 1 else 0
+                if (newId > 0) {
+                    profile.id = newId
+                    rowsAffected = 1
+                }
             }
 
             // Sync back to /sdcard/ backup if accessible

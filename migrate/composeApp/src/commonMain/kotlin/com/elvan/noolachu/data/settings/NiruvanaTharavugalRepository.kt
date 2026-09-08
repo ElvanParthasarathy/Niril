@@ -230,8 +230,10 @@ object NiruvanaTharavugalRepository {
             AppMode.PATTU -> pattuProfileState = updated
         }
         try {
-            getSettingsDatabaseHelper().saveProfile(mode, updated)
-            refreshFromDatabase()
+            val saved = getSettingsDatabaseHelper().saveProfile(mode, updated)
+            if (saved) {
+                refreshFromDatabase()
+            }
         } catch (_: Exception) {}
     }
 }
