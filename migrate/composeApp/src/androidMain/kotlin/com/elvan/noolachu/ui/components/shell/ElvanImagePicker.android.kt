@@ -62,13 +62,13 @@ actual fun rememberImagePicker(onImagePicked: (String) -> Unit): ImagePickerLaun
     return remember(galleryLauncher, filesLauncher) {
         object : ImagePickerLauncher {
             override fun launch() {
-                galleryLauncher.launch(
-                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                )
+                filesLauncher.launch("image/*")
             }
 
             override fun launchGallery() {
-                launch()
+                galleryLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
             }
 
             override fun launchFiles() {
