@@ -33,6 +33,7 @@ import com.elvan.noolachu.theme.ThemeManager
 import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.navigation.AppSvgs
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
+import kotlinx.coroutines.delay
 
 /**
  * ModeSelectorScreen — Full screen app mode switcher copied pixel-perfect from Flutter's
@@ -192,79 +193,113 @@ fun ModeSelectorScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // AuthHeader
-            Text(
-                text = K.endhachCheyalmurai.tr(),
-                style = TextStyle(
-                    fontFamily = ff,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = (-0.5).sp,
-                    textAlign = TextAlign.Center
-                ),
-                color = if (isDark) Color.White else Color(0xFF1A1A1A)
-            )
+            // AuthHeader (delayIndex: 1 -> 100ms)
+            AuthAnimatedElement(delayMillis = 100) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = K.endhachCheyalmurai.tr(),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            letterSpacing = (-0.5).sp,
+                            textAlign = TextAlign.Center
+                        ),
+                        color = if (isDark) Color.White else Color(0xFF1A1A1A)
+                    )
 
-            Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = K.ungalCheyalmuraiyaithThaerndhedukkavum.tr(),
-                style = TextStyle(
-                    fontFamily = ff,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Normal,
-                    textAlign = TextAlign.Center
-                ),
-                color = if (isDark) Color.White.copy(alpha = 0.5f) else Color.Black.copy(alpha = 0.5f)
-            )
+                    Text(
+                        text = K.ungalCheyalmuraiyaithThaerndhedukkavum.tr(),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal,
+                            textAlign = TextAlign.Center
+                        ),
+                        color = if (isDark) Color.White.copy(alpha = 0.5f) else Color.Black.copy(alpha = 0.5f)
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(60.dp))
 
-            // Netflix Profile Cards Row
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(28.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Kooli Profile Card
-                NetflixProfileCard(
-                    title = K.nirilKooli.tr(),
-                    icon = AppSvgs.coolieMode,
-                    isDark = isDark,
-                    onClick = { onModeSelected(AppMode.KOOLI) }
-                )
+            // Netflix Profile Cards Row (delayIndex: 2 -> 200ms)
+            AuthAnimatedElement(delayMillis = 200) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(28.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Kooli Profile Card
+                    NetflixProfileCard(
+                        title = K.nirilKooli.tr(),
+                        icon = AppSvgs.coolieMode,
+                        isDark = isDark,
+                        onClick = { onModeSelected(AppMode.KOOLI) }
+                    )
 
-                // Pattu Profile Card
-                NetflixProfileCard(
-                    title = K.nirilPattu.tr(),
-                    icon = AppSvgs.silkMode,
-                    isDark = isDark,
-                    onClick = { onModeSelected(AppMode.PATTU) }
-                )
+                    // Pattu Profile Card
+                    NetflixProfileCard(
+                        title = K.nirilPattu.tr(),
+                        icon = AppSvgs.silkMode,
+                        isDark = isDark,
+                        onClick = { onModeSelected(AppMode.PATTU) }
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(40.dp))
         }
+    }
+}
 
-        // Global Branding Signature at Bottom
-        Box(
-            modifier = Modifier
-                .navigationBarsPadding()
-                .padding(bottom = 32.dp)
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = K.elvanParthasarathy.tr(),
-                style = TextStyle(
-                    fontFamily = ff,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Normal,
-                    letterSpacing = 1.2.sp
-                ),
-                color = if (isDark) Color.White.copy(alpha = 0.4f) else Color.Black.copy(alpha = 0.4f)
-            )
-        }
+/**
+ * Staggered entrance animation matching Flutter's `AuthAnimatedElement` 1:1.
+ * Moves upward from +20dp to 0dp with Curves.easeOutBack spring overshoot and fades in over 800ms.
+ */
+@Composable
+private fun AuthAnimatedElement(
+    delayMillis: Int,
+    durationMillis: Int = 800,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    var isStarted by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        delay(delayMillis.toLong())
+        isStarted = true
+    }
+
+    val easeOutBack = remember { CubicBezierEasing(0.175f, 0.885f, 0.32f, 1.275f) }
+
+    val offsetY by animateFloatAsState(
+        targetValue = if (isStarted) 0f else 20f,
+        animationSpec = tween(
+            durationMillis = durationMillis,
+            easing = easeOutBack
+        ),
+        label = "authElementOffsetY"
+    )
+
+    val alpha by animateFloatAsState(
+        targetValue = if (isStarted) 1f else 0f,
+        animationSpec = tween(
+            durationMillis = durationMillis,
+            easing = FastOutSlowInEasing
+        ),
+        label = "authElementAlpha"
+    )
+
+    Box(
+        modifier = modifier
+            .graphicsLayer {
+                translationY = offsetY * density
+                this.alpha = alpha
+            }
+    ) {
+        content()
     }
 }
 
