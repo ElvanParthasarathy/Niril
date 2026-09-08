@@ -49,13 +49,19 @@ fun AddressSettingsScreen(
 
     val bottomSheet = LocalElvanBottomSheetController.current
 
+    fun beginEdit(section: String, primary: String, secondary: String = "") {
+        editingSection = section
+        tempPrimary = primary
+        tempSecondary = secondary
+    }
+
     val openStateSelection = {
         bottomSheet.showSelection(
             title = stateTitle,
             items = indhiyaMaanilangal,
             currentValue = indhiyaMaanilangal.find {
                 it.ta == profile.getPrimary("maanilam") || it.en == profile.getPrimary("maanilam")
-            },
+            } ?: if (profile.getPrimary("maanilam").isNotBlank()) indhiyaMaanilangal.lastOrNull() else null,
             itemLabelBuilder = { if (profile.mudhanMozhi == "ta") it.ta else it.en },
             subtitleBuilder = { if (isBilingual) (if (profile.mudhanMozhi == "ta") it.en else it.ta) else null },
             showSearch = true,
@@ -63,14 +69,23 @@ fun AddressSettingsScreen(
                 item.ta.contains(query, ignoreCase = true) || item.en.contains(query, ignoreCase = true)
             },
             onSelected = { stateItem ->
-                val p = if (profile.mudhanMozhi == "ta") stateItem.ta else stateItem.en
-                val s = if (profile.mudhanMozhi == "ta") stateItem.en else stateItem.ta
-                val updated = profile.copy()
-                updated.setBilingual("maanilam", profile.mudhanMozhi, p)
-                updated.setBilingual("maanilam", profile.thunaiMozhi, s)
-                NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
-                editingSection = null
-                ElvanSnackbar.show(saveSuccessMsg)
+                if (stateItem.en == "Custom" || stateItem.ta == "தனிப்பயன்") {
+                    val currP = profile.getPrimary("maanilam")
+                    val currS = profile.getSecondary("maanilam")
+                    val isAlreadyPreset = indhiyaMaanilangal.any { (it.ta == currP || it.en == currP) && it.en != "Custom" && it.ta != "தனிப்பயன்" }
+                    val initialP = if (isAlreadyPreset || currP == "Custom" || currP == "தனிப்பயன்") "" else currP
+                    val initialS = if (isAlreadyPreset || currS == "Custom" || currS == "தனிப்பயன்") "" else currS
+                    beginEdit("maanilam", initialP, initialS)
+                } else {
+                    val p = if (profile.mudhanMozhi == "ta") stateItem.ta else stateItem.en
+                    val s = if (profile.mudhanMozhi == "ta") stateItem.en else stateItem.ta
+                    val updated = profile.copy()
+                    updated.setBilingual("maanilam", profile.mudhanMozhi, p)
+                    updated.setBilingual("maanilam", profile.thunaiMozhi, s)
+                    NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
+                    editingSection = null
+                    ElvanSnackbar.show(saveSuccessMsg)
+                }
             }
         )
     }
@@ -81,7 +96,7 @@ fun AddressSettingsScreen(
             items = tamizhnaattuMaavattangal,
             currentValue = tamizhnaattuMaavattangal.find {
                 it.ta == profile.getPrimary("maavattam") || it.en == profile.getPrimary("maavattam")
-            },
+            } ?: if (profile.getPrimary("maavattam").isNotBlank()) tamizhnaattuMaavattangal.lastOrNull() else null,
             itemLabelBuilder = { if (profile.mudhanMozhi == "ta") it.ta else it.en },
             subtitleBuilder = { if (isBilingual) (if (profile.mudhanMozhi == "ta") it.en else it.ta) else null },
             showSearch = true,
@@ -89,22 +104,25 @@ fun AddressSettingsScreen(
                 item.ta.contains(query, ignoreCase = true) || item.en.contains(query, ignoreCase = true)
             },
             onSelected = { districtItem ->
-                val p = if (profile.mudhanMozhi == "ta") districtItem.ta else districtItem.en
-                val s = if (profile.mudhanMozhi == "ta") districtItem.en else districtItem.ta
-                val updated = profile.copy()
-                updated.setBilingual("maavattam", profile.mudhanMozhi, p)
-                updated.setBilingual("maavattam", profile.thunaiMozhi, s)
-                NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
-                editingSection = null
-                ElvanSnackbar.show(saveSuccessMsg)
+                if (districtItem.en == "Custom" || districtItem.ta == "தனிப்பயன்") {
+                    val currP = profile.getPrimary("maavattam")
+                    val currS = profile.getSecondary("maavattam")
+                    val isAlreadyPreset = tamizhnaattuMaavattangal.any { (it.ta == currP || it.en == currP) && it.en != "Custom" && it.ta != "தனிப்பயன்" }
+                    val initialP = if (isAlreadyPreset || currP == "Custom" || currP == "தனிப்பயன்") "" else currP
+                    val initialS = if (isAlreadyPreset || currS == "Custom" || currS == "தனிப்பயன்") "" else currS
+                    beginEdit("maavattam", initialP, initialS)
+                } else {
+                    val p = if (profile.mudhanMozhi == "ta") districtItem.ta else districtItem.en
+                    val s = if (profile.mudhanMozhi == "ta") districtItem.en else districtItem.ta
+                    val updated = profile.copy()
+                    updated.setBilingual("maavattam", profile.mudhanMozhi, p)
+                    updated.setBilingual("maavattam", profile.thunaiMozhi, s)
+                    NiruvanaTharavugalRepository.updateProfile(currentMode, updated)
+                    editingSection = null
+                    ElvanSnackbar.show(saveSuccessMsg)
+                }
             }
         )
-    }
-
-    fun beginEdit(section: String, primary: String, secondary: String = "") {
-        editingSection = section
-        tempPrimary = primary
-        tempSecondary = secondary
     }
 
     fun saveBilingual(fieldName: String) {
@@ -159,12 +177,41 @@ fun AddressSettingsScreen(
                     // 2. State (Maanilam)
                     val maanilamPrimary = profile.getPrimary("maanilam")
                     val maanilamSecondary = profile.getSecondary("maanilam")
-                    ElvanSettingsDisplayRow(
-                        title = K.maanilam.tr(),
-                        primaryValue = maanilamPrimary,
-                        secondaryValue = if (isBilingual) maanilamSecondary else null,
-                        onEdit = openStateSelection,
-                        colors = colors
+                    ElvanSettingsAnimatedExpand(
+                        isEditing = editingSection == "maanilam",
+                        displayContent = {
+                            ElvanSettingsDisplayRow(
+                                title = K.maanilam.tr(),
+                                primaryValue = maanilamPrimary,
+                                secondaryValue = if (isBilingual) maanilamSecondary else null,
+                                onEdit = openStateSelection,
+                                colors = colors
+                            )
+                        },
+                        editContent = {
+                            ElvanSettingsEditContainer(
+                                title = K.maanilam.tr(),
+                                onCancel = { editingSection = null },
+                                onSave = { saveBilingual("maanilam") },
+                                colors = colors
+                            ) {
+                                ElvanSettingsTextField(
+                                    label = "${K.maanilam.tr()} ($primaryLangLabel)",
+                                    value = tempPrimary,
+                                    onValueChange = { tempPrimary = it },
+                                    colors = colors
+                                )
+                                if (isBilingual) {
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    ElvanSettingsTextField(
+                                        label = "${K.maanilam.tr()} ($secondaryLangLabel)",
+                                        value = tempSecondary,
+                                        onValueChange = { tempSecondary = it },
+                                        colors = colors
+                                    )
+                                }
+                            }
+                        }
                     )
                     ElvanSettingsDivider(colors = colors)
 
@@ -173,52 +220,42 @@ fun AddressSettingsScreen(
                     val maavattamSecondary = profile.getSecondary("maavattam")
                     val isTamilNadu = maanilamPrimary.trim() in listOf("Tamil Nadu", "தமிழ்நாடு") || maanilamSecondary.trim() in listOf("Tamil Nadu", "தமிழ்நாடு")
 
-                    if (isTamilNadu) {
-                        ElvanSettingsDisplayRow(
-                            title = K.maavattam.tr(),
-                            primaryValue = maavattamPrimary,
-                            secondaryValue = if (isBilingual) maavattamSecondary else null,
-                            onEdit = openDistrictSelection,
-                            colors = colors
-                        )
-                    } else {
-                        ElvanSettingsAnimatedExpand(
-                            isEditing = editingSection == "maavattam",
-                            displayContent = {
-                                ElvanSettingsDisplayRow(
-                                    title = K.maavattam.tr(),
-                                    primaryValue = maavattamPrimary,
-                                    secondaryValue = if (isBilingual) maavattamSecondary else null,
-                                    onEdit = { beginEdit("maavattam", maavattamPrimary, maavattamSecondary) },
+                    ElvanSettingsAnimatedExpand(
+                        isEditing = editingSection == "maavattam",
+                        displayContent = {
+                            ElvanSettingsDisplayRow(
+                                title = K.maavattam.tr(),
+                                primaryValue = maavattamPrimary,
+                                secondaryValue = if (isBilingual) maavattamSecondary else null,
+                                onEdit = if (isTamilNadu) openDistrictSelection else { { beginEdit("maavattam", maavattamPrimary, maavattamSecondary) } },
+                                colors = colors
+                            )
+                        },
+                        editContent = {
+                            ElvanSettingsEditContainer(
+                                title = K.maavattam.tr(),
+                                onCancel = { editingSection = null },
+                                onSave = { saveBilingual("maavattam") },
+                                colors = colors
+                            ) {
+                                ElvanSettingsTextField(
+                                    label = "${K.maavattam.tr()} ($primaryLangLabel)",
+                                    value = tempPrimary,
+                                    onValueChange = { tempPrimary = it },
                                     colors = colors
                                 )
-                            },
-                            editContent = {
-                                ElvanSettingsEditContainer(
-                                    title = K.maavattam.tr(),
-                                    onCancel = { editingSection = null },
-                                    onSave = { saveBilingual("maavattam") },
-                                    colors = colors
-                                ) {
+                                if (isBilingual) {
+                                    Spacer(modifier = Modifier.height(12.dp))
                                     ElvanSettingsTextField(
-                                        label = "${K.maavattam.tr()} ($primaryLangLabel)",
-                                        value = tempPrimary,
-                                        onValueChange = { tempPrimary = it },
+                                        label = "${K.maavattam.tr()} ($secondaryLangLabel)",
+                                        value = tempSecondary,
+                                        onValueChange = { tempSecondary = it },
                                         colors = colors
                                     )
-                                    if (isBilingual) {
-                                        Spacer(modifier = Modifier.height(12.dp))
-                                        ElvanSettingsTextField(
-                                            label = "${K.maavattam.tr()} ($secondaryLangLabel)",
-                                            value = tempSecondary,
-                                            onValueChange = { tempSecondary = it },
-                                            colors = colors
-                                        )
-                                    }
                                 }
                             }
-                        )
-                    }
+                        }
+                    )
                     ElvanSettingsDivider(colors = colors)
 
                     // 4. City (Oor)
@@ -420,12 +457,39 @@ fun AddressSettingsScreen(
                     // 3. District (Maavattam)
                     val maavattamPrimary = profile.getPrimary("maavattam")
                     val maavattamSecondary = profile.getSecondary("maavattam")
-                    ElvanSettingsDisplayRow(
-                        title = K.maavattam.tr(),
-                        primaryValue = maavattamPrimary,
-                        secondaryValue = maavattamSecondary,
-                        onEdit = openDistrictSelection,
-                        colors = colors
+                    ElvanSettingsAnimatedExpand(
+                        isEditing = editingSection == "maavattam",
+                        displayContent = {
+                            ElvanSettingsDisplayRow(
+                                title = K.maavattam.tr(),
+                                primaryValue = maavattamPrimary,
+                                secondaryValue = maavattamSecondary,
+                                onEdit = openDistrictSelection,
+                                colors = colors
+                            )
+                        },
+                        editContent = {
+                            ElvanSettingsEditContainer(
+                                title = K.maavattam.tr(),
+                                onCancel = { editingSection = null },
+                                onSave = { saveBilingual("maavattam") },
+                                colors = colors
+                            ) {
+                                ElvanSettingsTextField(
+                                    label = "${K.maavattam.tr()} ($primaryLangLabel)",
+                                    value = tempPrimary,
+                                    onValueChange = { tempPrimary = it },
+                                    colors = colors
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+                                ElvanSettingsTextField(
+                                    label = "${K.maavattam.tr()} ($secondaryLangLabel)",
+                                    value = tempSecondary,
+                                    onValueChange = { tempSecondary = it },
+                                    colors = colors
+                                )
+                            }
+                        }
                     )
                     ElvanSettingsDivider(colors = colors)
 
