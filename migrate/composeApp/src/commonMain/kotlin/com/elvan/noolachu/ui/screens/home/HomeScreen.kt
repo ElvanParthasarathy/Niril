@@ -240,7 +240,7 @@ fun HomeScreen() {
                                     imageVector = MaterialSymbols.Rounded.Add,
                                     contentDescription = K.chaer.tr(),
                                     tint = colors.textPrimary,
-                                    modifier = Modifier.size(22.dp)
+                                    modifier = Modifier.size(24.dp)
                                 )
                             }
 

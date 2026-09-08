@@ -265,6 +265,11 @@ fun BottomNavBar(
                         val isActive = index == activeVisualIndex
                         val color = if (isActive) colors.textPrimary else colors.textSecondary
 
+                        val iconSize = when (tab) {
+                            NavTab.Create, NavTab.Products -> 25.dp
+                            else -> 23.5.dp
+                        }
+
                         Column(
                             modifier = Modifier
                                 .fillMaxHeight()
@@ -276,7 +281,7 @@ fun BottomNavBar(
                                 imageVector = if (isActive) tab.activeIcon else tab.icon,
                                 contentDescription = tab.getLocalizedLabel(),
                                 tint = color,
-                                modifier = Modifier.size(23.dp)
+                                modifier = Modifier.size(iconSize)
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
