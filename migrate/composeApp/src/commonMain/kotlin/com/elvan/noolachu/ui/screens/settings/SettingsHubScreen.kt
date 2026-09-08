@@ -94,7 +94,7 @@ fun SettingsHubScreen(
                                 .clickable(
                                     interactionSource = remember { MutableInteractionSource() },
                                     indication = ShellDefaults.ripple(colors, bounded = true),
-                                    onClick = { ModeManager.toggleMode() }
+                                    onClick = { ModeManager.openModeSelector() }
                                 ),
                             contentAlignment = Alignment.Center
                         ) {

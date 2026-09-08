@@ -49,6 +49,7 @@ fun StorageBackupSettingsScreen(
     var showBackupConfirm by remember { mutableStateOf(false) }
     var isBackingUp by remember { mutableStateOf(false) }
     var lastBackupTime by remember { mutableStateOf<String?>(null) }
+    val backupSuccessMsg = K.tharavuchaemippuvetri.tr()
 
     // Mock live database sizes & counts matching Flutter
     val totalDbSize = 512 * 1024L // 512 KB
@@ -303,6 +304,7 @@ fun StorageBackupSettingsScreen(
                     delay(800)
                     isBackingUp = false
                     lastBackupTime = "இன்று"
+                    ElvanSnackbar.show(backupSuccessMsg)
                 }
             },
             colors = colors
@@ -310,30 +312,9 @@ fun StorageBackupSettingsScreen(
     }
 
     if (isBackingUp) {
-        AlertDialog(
-            onDismissRequest = {},
-            confirmButton = {},
-            text = {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    CircularProgressIndicator(
-                        color = colors.textPrimary,
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.5.dp
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(
-                        text = K.chaemikkappadugiradhu.tr(),
-                        style = TextStyle(fontFamily = ff, fontSize = 14.sp),
-                        color = colors.textPrimary
-                    )
-                }
-            },
-            shape = RoundedCornerShape(20.dp),
-            containerColor = colors.surface
+        ElvanLoadingOverlay(
+            text = K.chaemikkappadugiradhu.tr(),
+            colors = colors
         )
     }
 }

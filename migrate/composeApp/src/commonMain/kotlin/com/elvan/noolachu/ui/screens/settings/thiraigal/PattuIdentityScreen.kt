@@ -26,6 +26,7 @@ import com.elvan.noolachu.localization.tr
 import com.elvan.noolachu.theme.Dimens
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.ShellColors
+import com.elvan.noolachu.theme.ShellDefaults
 import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.components.shell.*
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
@@ -57,6 +58,8 @@ fun PattuIdentityScreen(
     val smallLabel = K.chiriyaOavuruPeyar.tr()
     val wideLabel = K.agalamaanaOavuruMattum.tr()
     val saveSuccessMsg = K.thannuruChaemikkappattadhu.tr()
+    val headerStyleTitle = K.chinnathinVadivam.tr()
+    val bottomSheet = LocalElvanBottomSheetController.current
 
     LazyColumn(
         state = scrollState,
@@ -177,20 +180,49 @@ fun PattuIdentityScreen(
                             },
                             colors = colors
                         ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(48.dp)
+                                    .clip(RoundedCornerShape(100))
+                                    .background(colors.textPrimary.copy(alpha = 0.08f))
+                                    .clickable(
+                                        interactionSource = remember { MutableInteractionSource() },
+                                        indication = ShellDefaults.ripple(colors, bounded = true),
+                                        onClick = {
+                                            bottomSheet.showSelection(
+                                                title = headerStyleTitle,
+                                                items = listOf("small", "wide"),
+                                                currentValue = tempHeaderStyle,
+                                                itemLabelBuilder = { if (it == "wide") wideLabel else smallLabel },
+                                                onSelected = { tempHeaderStyle = it }
+                                            )
+                                        }
+                                    )
+                                    .padding(horizontal = 20.dp),
+                                contentAlignment = Alignment.CenterStart
                             ) {
-                                FilterChip(
-                                    selected = tempHeaderStyle == "small",
-                                    onClick = { tempHeaderStyle = "small" },
-                                    label = { Text(smallLabel) }
-                                )
-                                FilterChip(
-                                    selected = tempHeaderStyle == "wide",
-                                    onClick = { tempHeaderStyle = "wide" },
-                                    label = { Text(wideLabel) }
-                                )
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = if (tempHeaderStyle == "wide") wideLabel else smallLabel,
+                                        style = TextStyle(
+                                            fontFamily = ff,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Normal
+                                        ),
+                                        color = colors.textPrimary
+                                    )
+                                    Icon(
+                                        imageVector = MaterialSymbols.Rounded.KeyboardArrowDown,
+                                        contentDescription = null,
+                                        tint = colors.textPrimary.copy(alpha = 0.6f),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
                             }
                         }
                     }

@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.zIndex
 import com.elvan.noolachu.core.mode.ModeManager
 import com.elvan.noolachu.core.mode.ProvideModeContext
 import com.elvan.noolachu.localization.ProvideAppLanguage
@@ -49,6 +50,7 @@ fun App() {
 
                             AnimatedVisibility(
                                 visible = ModeManager.isModeSelectorOpen,
+                                modifier = Modifier.zIndex(100f),
                                 enter = fadeIn(animationSpec = tween(300)),
                                 exit = fadeOut(animationSpec = tween(250))
                             ) {
