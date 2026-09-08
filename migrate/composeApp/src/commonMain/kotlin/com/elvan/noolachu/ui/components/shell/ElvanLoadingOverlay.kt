@@ -1,6 +1,5 @@
 package com.elvan.noolachu.ui.components.shell
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -45,8 +44,7 @@ fun ElvanLoadingOverlay(
 ) {
     val ff = LocalAppFontFamily.current
     val isDark = colors.isDark
-    val bgLoader = if (isDark) Color(0xFF151515).copy(alpha = 0.88f) else Color.White.copy(alpha = 0.92f)
-    val borderColor = if (isDark) Color.White.copy(alpha = 0.10f) else Color.Black.copy(alpha = 0.08f)
+    val cardBg = if (isDark) Color(0xFF161616) else Color(0xFFFAFAFA)
 
     @Composable
     fun LoadingContent() {
@@ -90,11 +88,11 @@ fun ElvanLoadingOverlay(
         ) {
             Surface(
                 shape = RoundedCornerShape(32.dp),
-                color = bgLoader,
+                color = cardBg,
+                shadowElevation = 0.dp,
                 modifier = Modifier
                     .widthIn(max = 480.dp)
                     .fillMaxWidth()
-                    .border(0.5.dp, borderColor, RoundedCornerShape(32.dp))
             ) {
                 LoadingContent()
             }
@@ -112,14 +110,14 @@ fun ElvanLoadingOverlay(
                 modifier = Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
+                    .imePadding()
                     .padding(start = 16.dp, end = 16.dp, bottom = 24.dp)
             ) {
                 Surface(
                     shape = RoundedCornerShape(32.dp),
-                    color = bgLoader,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(0.5.dp, borderColor, RoundedCornerShape(32.dp))
+                    color = cardBg,
+                    shadowElevation = 0.dp,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     LoadingContent()
                 }
