@@ -8,24 +8,37 @@ import com.elvan.noolachu.localization.tr
 enum class NavTab(
     val icon: ImageVector,
     val activeIcon: ImageVector,
-    val titleKey: String
+    val titleKey: String,
+    val headerTitleKey: String = titleKey
 ) {
     Home(
         icon = MaterialSymbols.Rounded.Home,
         activeIcon = MaterialSymbols.Rounded.HomeFill,
-        titleKey = K.mugappu
+        titleKey = K.mugappu,
+        headerTitleKey = K.niril
     ),
-    Invoices(
-        icon = MaterialSymbols.Rounded.Description,
-        activeIcon = MaterialSymbols.Rounded.DescriptionFill,
-        titleKey = K.pattiyal
+    Create(
+        icon = MaterialSymbols.Rounded.AddCircle,
+        activeIcon = MaterialSymbols.Rounded.AddCircle,
+        titleKey = K.aakku,
+        headerTitleKey = K.uruvaakkuPtn
     ),
-    Receipts(
-        icon = MaterialSymbols.Rounded.Notes,
-        activeIcon = MaterialSymbols.Rounded.NotesFill,
-        titleKey = K.patrucheettu
+    Products(
+        icon = MaterialSymbols.Rounded.Inventory2,
+        activeIcon = MaterialSymbols.Rounded.Inventory2,
+        titleKey = K.porul,
+        headerTitleKey = K.porutkal
+    ),
+    Customers(
+        icon = MaterialSymbols.Rounded.Person,
+        activeIcon = MaterialSymbols.Rounded.Person,
+        titleKey = K.vaangunar,
+        headerTitleKey = K.vaangunargal
     );
 
     @Composable
     fun getLocalizedLabel(): String = titleKey.tr()
+
+    @Composable
+    fun getLocalizedHeader(): String = headerTitleKey.tr()
 }

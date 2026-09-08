@@ -1,0 +1,80 @@
+package com.elvan.noolachu.data.repository
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.elvan.noolachu.core.mode.AppMode
+import com.elvan.noolachu.core.mode.ModeManager
+import com.elvan.noolachu.data.business.getBusinessDatabaseHelper
+import com.elvan.noolachu.data.model.PorulTharavuru
+
+/**
+ * Reactive repository managing products/items (Porul) for both Kooli and Pattu modes.
+ */
+object PorulRepository {
+
+    var items by mutableStateOf<List<PorulTharavuru>>(emptyList())
+        private set
+
+    var searchQuery by mutableStateOf("")
+
+    val filteredItems: List<PorulTharavuru>
+        get() {
+            val q = searchQuery.trim().lowercase()
+            if (q.isEmpty()) return items
+
+            val mode = ModeManager.currentMode
+            return items.filter { item ->
+                val nameMatches = item.porulPeyar.values.any { it.lowercase().contains(q) }
+                if (mode == AppMode.KOOLI) {
+                    nameMatches
+                } else {
+                    val hsnMatches = item.hsnCode.lowercase().contains(q)
+                    nameMatches || hsnMatches
+                }
+            }
+        }
+
+    init {
+        loadAll()
+    }
+
+    fun loadAll(mode: AppMode = ModeManager.currentMode) {
+        try {
+            val helper = getBusinessDatabaseHelper()
+            items = helper.loadAllItems(mode)
+        } catch (_: Exception) {
+            items = emptyList()
+        }
+    }
+
+    fun save(item: PorulTharavuru, mode: AppMode = ModeManager.currentMode): Long {
+        return try {
+            val helper = getBusinessDatabaseHelper()
+            val id = helper.saveItem(mode, item)
+            if (id > 0L) {
+                loadAll(mode)
+            }
+            id
+        } catch (_: Exception) {
+            -1L
+        }
+    }
+
+    fun delete(id: Long, mode: AppMode = ModeManager.currentMode): Boolean {
+        return try {
+            val helper = getBusinessDatabaseHelper()
+            val success = helper.deleteItem(mode, id)
+            if (success) {
+                loadAll(mode)
+            }
+            success
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    fun getById(id: Long): PorulTharavuru? {
+        return items.find { it.id == id }
+    }
+}
