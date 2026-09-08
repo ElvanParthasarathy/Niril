@@ -65,11 +65,13 @@ fun UruvakkuScreen(
     val shifterItems = listOf(
         PillShifterItem(
             label = K.pattiyalgal.tr(),
-            icon = MaterialSymbols.Rounded.Description
+            icon = MaterialSymbols.Rounded.Description,
+            activeIcon = MaterialSymbols.Rounded.DescriptionFill
         ),
         PillShifterItem(
             label = K.patrucheettugal.tr(),
-            icon = MaterialSymbols.Rounded.ReceiptLong
+            icon = MaterialSymbols.Rounded.ReceiptLong,
+            activeIcon = MaterialSymbols.Rounded.ReceiptLongFill
         )
     )
 
@@ -88,12 +90,17 @@ fun UruvakkuScreen(
 
         // Segmented Pill Shifter
         item(key = "pill_shifter") {
-            ElvanPillShifter(
-                items = shifterItems,
-                selectedIndex = selectedSegment,
-                onIndexSelected = onSegmentSelected,
-                colors = colors
-            )
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                ElvanPillShifter(
+                    items = shifterItems,
+                    selectedIndex = selectedSegment,
+                    onIndexSelected = onSegmentSelected,
+                    colors = colors
+                )
+            }
         }
 
         if (selectedSegment == 0) {

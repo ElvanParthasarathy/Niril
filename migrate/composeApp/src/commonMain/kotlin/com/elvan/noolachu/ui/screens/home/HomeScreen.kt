@@ -396,17 +396,43 @@ fun HomeScreen() {
                             }
 
                             NavTab.Products -> {
-                                PorulScreen(
-                                    scrollState = productsScrollState,
-                                    onItemClick = { activeSubpage = ActiveSubpage.ItemEditor(it) }
-                                )
+                                ExpressivePullToRefreshBox(
+                                    isRefreshing = isRefreshing,
+                                    onRefresh = {
+                                        scope.launch {
+                                            isRefreshing = true
+                                            PorulRepository.loadAll(currentMode)
+                                            delay(600)
+                                            isRefreshing = false
+                                        }
+                                    },
+                                    colors = colors
+                                ) {
+                                    PorulScreen(
+                                        scrollState = productsScrollState,
+                                        onItemClick = { activeSubpage = ActiveSubpage.ItemEditor(it) }
+                                    )
+                                }
                             }
 
                             NavTab.Customers -> {
-                                VaangunarScreen(
-                                    scrollState = customersScrollState,
-                                    onMerchantClick = { activeSubpage = ActiveSubpage.MerchantEditor(it) }
-                                )
+                                ExpressivePullToRefreshBox(
+                                    isRefreshing = isRefreshing,
+                                    onRefresh = {
+                                        scope.launch {
+                                            isRefreshing = true
+                                            VaangunarRepository.loadAll(currentMode)
+                                            delay(600)
+                                            isRefreshing = false
+                                        }
+                                    },
+                                    colors = colors
+                                ) {
+                                    VaangunarScreen(
+                                        scrollState = customersScrollState,
+                                        onMerchantClick = { activeSubpage = ActiveSubpage.MerchantEditor(it) }
+                                    )
+                                }
                             }
                         }
                     }
