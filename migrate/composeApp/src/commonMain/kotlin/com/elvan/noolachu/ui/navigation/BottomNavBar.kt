@@ -265,10 +265,8 @@ fun BottomNavBar(
                         val isActive = index == activeVisualIndex
                         val color = if (isActive) colors.textPrimary else colors.textSecondary
 
-                        val iconSize = when (tab) {
-                            NavTab.Create, NavTab.Products -> 25.dp
-                            else -> 23.5.dp
-                        }
+                        // Uniform Apple pattern matching Flutter 1:1: large icons, small labels
+                        val iconSize = 23.dp
 
                         Column(
                             modifier = Modifier
