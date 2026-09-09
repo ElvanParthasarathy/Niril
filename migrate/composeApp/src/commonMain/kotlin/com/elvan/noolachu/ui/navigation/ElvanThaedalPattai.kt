@@ -66,10 +66,14 @@ fun ElvanThaedalPattai(
         }
     }
 
+    val imeBottom = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
+    val navBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val isImeOpen = imeBottom > 0.dp
+    val effectiveBottomPadding = if (isImeOpen) maxOf(navBottom + 16.dp, imeBottom + 20.dp) else navBottom + 16.dp
+
     BoxWithConstraints(
         modifier = modifier
-            .windowInsetsPadding(WindowInsets.navigationBars)
-            .padding(bottom = 16.dp),
+            .padding(bottom = effectiveBottomPadding),
         contentAlignment = Alignment.Center
     ) {
         val screenWidth = maxWidth

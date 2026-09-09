@@ -297,7 +297,11 @@ fun ElvanShell(
                 .nestedScroll(nestedScrollConnection)
         ) {
             // Layer 1: Content
-            Box(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .then(if (!showNavbar) Modifier.imePadding() else Modifier)
+            ) {
                 content()
             }
 

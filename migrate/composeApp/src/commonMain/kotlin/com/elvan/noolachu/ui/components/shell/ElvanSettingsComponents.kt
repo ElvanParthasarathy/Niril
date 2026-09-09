@@ -20,10 +20,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.style.TextOverflow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import com.elvan.noolachu.localization.K
 import com.elvan.noolachu.localization.tr
 import com.elvan.noolachu.theme.LocalAppFontFamily
@@ -647,6 +654,7 @@ fun ElvanSettingsEditContainer(
 /**
  * ElvanSettingsTextField — Pill-shaped text field with dynamic fill color matching Flutter / Neram's `ElvanSettingsTextField`.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ElvanSettingsTextField(
     label: String,
@@ -666,9 +674,13 @@ fun ElvanSettingsTextField(
     val ff = LocalAppFontFamily.current
     val fieldBg = colors.iconBg
     val shapeRadius = if (singleLine) 100.dp else 16.dp
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .bringIntoViewRequester(bringIntoViewRequester),
         horizontalAlignment = Alignment.Start
     ) {
         Text(
@@ -763,7 +775,18 @@ fun ElvanSettingsTextField(
                                 color = colors.textPrimary
                             ),
                             cursorBrush = SolidColor(colors.textPrimary),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .onFocusChanged { focusState ->
+                                    if (focusState.isFocused) {
+                                        coroutineScope.launch {
+                                            delay(150)
+                                            try {
+                                                bringIntoViewRequester.bringIntoView()
+                                            } catch (_: Exception) {}
+                                        }
+                                    }
+                                }
                         )
                     }
                 }
