@@ -37,6 +37,7 @@ import com.elvan.noolachu.ui.screens.meetpagam.MeetpagamScreen
 import com.elvan.noolachu.ui.screens.porul.PorulScreen
 import com.elvan.noolachu.ui.screens.settings.SettingsScreen
 import com.elvan.noolachu.ui.screens.thiruthi.patrucheettu.PatrucheettuThiruthiScreen
+import com.elvan.noolachu.ui.screens.thiruthi.pattiyal.KooliPattiyalThiruthiScreen
 import com.elvan.noolachu.ui.screens.thiruthi.pattiyal.PattiyalThiruthiScreen
 import com.elvan.noolachu.ui.screens.thiruthi.pattiyal.PattuPattiyalThiruthiScreen
 import com.elvan.noolachu.ui.screens.thiruthi.porul.PorulThiruthiScreen
@@ -195,9 +196,15 @@ fun HomeScreen() {
                             }
                         )
                     } else {
-                        PattiyalThiruthiScreen(
+                        KooliPattiyalThiruthiScreen(
                             invoice = subpage.invoice,
-                            onBack = { activeSubpage = null }
+                            onBack = { activeSubpage = null },
+                            onRequestAddNewCustomer = {
+                                activeSubpage = ActiveSubpage.MerchantEditor(null)
+                            },
+                            onRequestAddNewProduct = {
+                                activeSubpage = ActiveSubpage.ItemEditor(null)
+                            }
                         )
                     }
                 }

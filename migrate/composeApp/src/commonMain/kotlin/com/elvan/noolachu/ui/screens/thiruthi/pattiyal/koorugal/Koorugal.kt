@@ -12,3 +12,8 @@ package com.elvan.noolachu.ui.screens.thiruthi.pattiyal.koorugal
 // 8. PattuThallupadiKooru (Global discount with % / ₹ toggle)
 // 9. PattuMothangalKooru (Totals summary card)
 // 10. PattuPattiyalVagaiKooru (Invoice type picker)
+// 11. KooliKanakku & KooliUrupadi & PiraVarivu & KooliMothangal (Coolie calculation engine & models)
+// 12. KooliUrupadiAttai (Weight-based line item card with product picker & add buttons)
+// 13. KooliPiraVarivuAttai (Dynamic other charge card)
+// 14. KooliMelthogaiKooru (Setharam, Ahimsa silk, Courier bento grid)
+// 15. KooliMothangalKooru (Coolie totals breakdown card)
