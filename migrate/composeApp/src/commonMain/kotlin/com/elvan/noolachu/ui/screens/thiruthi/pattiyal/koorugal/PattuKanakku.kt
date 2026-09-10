@@ -1,5 +1,6 @@
 package com.elvan.noolachu.ui.screens.thiruthi.pattiyal.koorugal
 
+import com.elvan.noolachu.data.settings.MozhiJsonConverter
 import kotlin.math.round
 
 /**
@@ -143,5 +144,167 @@ object PattuKanakku {
             suttruOff = suttruOff,
             mothaMothangal = roundedTotal
         )
+    }
+
+    private fun escapeJson(s: String): String {
+        return s.replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("\t", "\\t")
+    }
+
+    fun pattuListToJson(items: List<PattuUrupadi>): String {
+        if (items.isEmpty()) return "[]"
+        val sb = StringBuilder("[")
+        items.forEachIndexed { idx, item ->
+            if (idx > 0) sb.append(",")
+            sb.append("{")
+            sb.append("\"porulId\":").append(if (item.porulId != null) "\"${escapeJson(item.porulId)}\"" else "null").append(",")
+            sb.append("\"porulPeyar\":\"${escapeJson(item.porulPeyar)}\",")
+            sb.append("\"porulPeyarEn\":\"${escapeJson(item.porulPeyarEn)}\",")
+            sb.append("\"hsnKuriyeedu\":\"${escapeJson(item.hsnKuriyeedu)}\",")
+            sb.append("\"alavu\":${item.alavu},")
+            sb.append("\"alagu\":\"${escapeJson(item.alagu)}\",")
+            sb.append("\"vilai\":${item.vilai},")
+            sb.append("\"variVizhukkaadu\":${item.variVizhukkaadu},")
+            sb.append("\"thallupadi\":${item.thallupadi},")
+            sb.append("\"thallupadiVagai\":\"${escapeJson(item.thallupadiVagai)}\",")
+            sb.append("\"thallupadiThogai\":${item.thallupadiThogai},")
+            sb.append("\"mozhiMap\":${MozhiJsonConverter.stringify(item.mozhiMap)}")
+            sb.append("}")
+        }
+        sb.append("]")
+        return sb.toString()
+    }
+
+    fun pattuListFromJson(json: String?): List<PattuUrupadi> {
+        if (json.isNullOrBlank() || json.trim() == "[]" || json.trim() == "null") return emptyList()
+        val objects = splitJsonObjects(json)
+        return objects.mapNotNull { body ->
+            try {
+                val porulId = Regex(""""porulId"\s*:\s*(?:"([^"]*)"|null)""").find(body)?.let {
+                    if (it.groupValues[1].isNotEmpty()) it.groupValues[1] else null
+                }
+                val porulPeyar = Regex(""""porulPeyar"\s*:\s*"((?:\\.|[^"\\])*)"""").find(body)?.groupValues?.get(1)
+                    ?.replace("\\\"", "\"")?.replace("\\\\", "\\") ?: ""
+                val porulPeyarEn = Regex(""""porulPeyarEn"\s*:\s*"((?:\\.|[^"\\])*)"""").find(body)?.groupValues?.get(1)
+                    ?.replace("\\\"", "\"")?.replace("\\\\", "\\") ?: ""
+                val hsnKuriyeedu = Regex(""""hsnKuriyeedu"\s*:\s*"((?:\\.|[^"\\])*)"""").find(body)?.groupValues?.get(1)
+                    ?.replace("\\\"", "\"")?.replace("\\\\", "\\") ?: ""
+                val alavu = Regex(""""alavu"\s*:\s*([0-9.]+)""").find(body)?.groupValues?.get(1)?.toDoubleOrNull() ?: 1.0
+                val alagu = Regex(""""alagu"\s*:\s*"((?:\\.|[^"\\])*)"""").find(body)?.groupValues?.get(1)
+                    ?.replace("\\\"", "\"")?.replace("\\\\", "\\") ?: "Nos"
+                val vilai = Regex(""""vilai"\s*:\s*([0-9.]+)""").find(body)?.groupValues?.get(1)?.toDoubleOrNull() ?: 0.0
+                val variVizhukkaadu = Regex(""""variVizhukkaadu"\s*:\s*([0-9.]+)""").find(body)?.groupValues?.get(1)?.toDoubleOrNull() ?: 0.0
+                val thallupadi = Regex(""""thallupadi"\s*:\s*([0-9.]+)""").find(body)?.groupValues?.get(1)?.toDoubleOrNull() ?: 0.0
+                val thallupadiVagai = Regex(""""thallupadiVagai"\s*:\s*"((?:\\.|[^"\\])*)"""").find(body)?.groupValues?.get(1)
+                    ?.replace("\\\"", "\"")?.replace("\\\\", "\\") ?: "%"
+
+                val mozhiMapMatch = Regex(""""mozhiMap"\s*:\s*(\{[^}]*\})""").find(body)?.groupValues?.get(1)
+                val mozhiMap = MozhiJsonConverter.parse(mozhiMapMatch)
+
+                PattuUrupadi(
+                    porulId = porulId,
+                    porulPeyar = porulPeyar,
+                    porulPeyarEn = porulPeyarEn,
+                    hsnKuriyeedu = hsnKuriyeedu,
+                    alavu = alavu,
+                    alagu = alagu,
+                    vilai = vilai,
+                    variVizhukkaadu = variVizhukkaadu,
+                    thallupadi = thallupadi,
+                    thallupadiVagai = thallupadiVagai,
+                    mozhiMap = mozhiMap
+                )
+            } catch (_: Exception) {
+                null
+            }
+        }
+    }
+
+    fun variToJson(totals: PattuMothangal): String {
+        return "{\"cgst\":${totals.cgst},\"sgst\":${totals.sgst},\"igst\":${totals.igst}}"
+    }
+
+    data class PattuViruppangal(
+        val globalDiscountValue: Double = 0.0,
+        val globalDiscountType: String = "%",
+        val placeOfSupply: String = "Tamil Nadu",
+        val placeOfSupplyTa: String = "தமிழ்நாடு"
+    )
+
+    fun viruppangalToJson(viruppangal: PattuViruppangal): String {
+        return "{" +
+            "\"globalDiscountValue\":${viruppangal.globalDiscountValue}," +
+            "\"globalDiscountType\":\"${escapeJson(viruppangal.globalDiscountType)}\"," +
+            "\"placeOfSupply\":\"${escapeJson(viruppangal.placeOfSupply)}\"," +
+            "\"placeOfSupplyTa\":\"${escapeJson(viruppangal.placeOfSupplyTa)}\"" +
+            "}"
+    }
+
+    fun viruppangalFromJson(json: String?): PattuViruppangal {
+        if (json.isNullOrBlank() || json.trim() == "{}" || json.trim() == "null") {
+            return PattuViruppangal()
+        }
+        val discountValue = Regex(""""globalDiscountValue"\s*:\s*([0-9.]+)""").find(json)?.groupValues?.get(1)?.toDoubleOrNull() ?: 0.0
+        val discountType = Regex(""""globalDiscountType"\s*:\s*"((?:\\.|[^"\\])*)"""").find(json)?.groupValues?.get(1)
+            ?.replace("\\\"", "\"")?.replace("\\\\", "\\") ?: "%"
+        val placeOfSupply = Regex(""""placeOfSupply"\s*:\s*"((?:\\.|[^"\\])*)"""").find(json)?.groupValues?.get(1)
+            ?.replace("\\\"", "\"")?.replace("\\\\", "\\") ?: "Tamil Nadu"
+        val placeOfSupplyTa = Regex(""""placeOfSupplyTa"\s*:\s*"((?:\\.|[^"\\])*)"""").find(json)?.groupValues?.get(1)
+            ?.replace("\\\"", "\"")?.replace("\\\\", "\\") ?: "தமிழ்நாடு"
+        return PattuViruppangal(
+            globalDiscountValue = discountValue,
+            globalDiscountType = discountType,
+            placeOfSupply = placeOfSupply,
+            placeOfSupplyTa = placeOfSupplyTa
+        )
+    }
+
+    private fun splitJsonObjects(jsonArray: String): List<String> {
+        val result = mutableListOf<String>()
+        var depth = 0
+        var inString = false
+        var isEscaped = false
+        val current = StringBuilder()
+
+        for (ch in jsonArray) {
+            if (isEscaped) {
+                if (depth > 0) current.append(ch)
+                isEscaped = false
+                continue
+            }
+            if (ch == '\\') {
+                if (depth > 0) current.append(ch)
+                isEscaped = true
+                continue
+            }
+            if (ch == '"') {
+                inString = !inString
+                if (depth > 0) current.append(ch)
+                continue
+            }
+            if (!inString) {
+                if (ch == '{') {
+                    if (depth > 0) current.append(ch)
+                    depth++
+                    continue
+                } else if (ch == '}') {
+                    depth--
+                    if (depth == 0) {
+                        result.add(current.toString())
+                        current.clear()
+                    } else {
+                        current.append(ch)
+                    }
+                    continue
+                }
+            }
+            if (depth > 0) {
+                current.append(ch)
+            }
+        }
+        return result
     }
 }

@@ -25,6 +25,8 @@ import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.core.platform.AppBackHandler
 import com.elvan.noolachu.data.model.PattiyalTharavuru
 import com.elvan.noolachu.data.repository.PattiyalRepository
+import com.elvan.noolachu.data.repository.PorulRepository
+import com.elvan.noolachu.data.repository.VaangunarRepository
 import com.elvan.noolachu.data.settings.NiruvanaTharavugal
 import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
 import com.elvan.noolachu.localization.K
@@ -92,6 +94,13 @@ fun PattuPattiyalThiruthiScreen(
     val ff = LocalAppFontFamily.current
     val isEditing = invoice != null && invoice.id > 0L
 
+    LaunchedEffect(Unit) {
+        NiruvanaTharavugalRepository.refreshFromDatabase()
+        PorulRepository.loadAll(AppMode.PATTU)
+        VaangunarRepository.loadAll(AppMode.PATTU)
+        PattiyalRepository.loadAll(AppMode.PATTU)
+    }
+
     val profiles: List<NiruvanaTharavugal> = NiruvanaTharavugalRepository.getAllProfiles(AppMode.PATTU)
     var selectedNiruvanamId by remember {
         mutableStateOf(
@@ -129,29 +138,50 @@ fun PattuPattiyalThiruthiScreen(
     var selectedVaangunarMunvariMap by remember { mutableStateOf(invoice?.vaangunarMunvari ?: emptyMap()) }
     var customerState by remember { mutableStateOf("") }
 
+    val initialViruppangal = remember(invoice) {
+        PattuKanakku.viruppangalFromJson(invoice?.sonthaViruppangal)
+    }
+
     // Metadata
     var pattiyalVagai by remember { mutableStateOf(invoice?.pattiyalVagai?.ifEmpty { "tax-invoice" } ?: "tax-invoice") }
     var invoiceDate by remember { mutableStateOf(invoice?.pattiyalNaal ?: System.currentTimeMillis()) }
-    var placeOfSupplyEn by remember { mutableStateOf("Tamil Nadu") }
-    var placeOfSupplyTa by remember { mutableStateOf("தமிழ்நாடு") }
+    var placeOfSupplyEn by remember {
+        mutableStateOf(
+            if (invoice != null && initialViruppangal.placeOfSupply.isNotEmpty()) initialViruppangal.placeOfSupply else "Tamil Nadu"
+        )
+    }
+    var placeOfSupplyTa by remember {
+        mutableStateOf(
+            if (invoice != null && initialViruppangal.placeOfSupplyTa.isNotEmpty()) initialViruppangal.placeOfSupplyTa else "தமிழ்நாடு"
+        )
+    }
 
     // Line items
     var items by remember {
         mutableStateOf(
-            listOf(
-                PattuUrupadi(
-                    porulPeyar = if (invoice != null && invoice.mothaThogai > 0) "பட்டு புடவை" else "",
-                    alavu = 1.0,
-                    vilai = if (invoice != null && invoice.mothaThogai > 0) invoice.mothaThogai else 0.0,
-                    variVizhukkaadu = 5.0
-                )
-            )
+            if (invoice != null) {
+                PattuKanakku.pattuListFromJson(invoice.tharavugal).ifEmpty { listOf(PattuUrupadi()) }
+            } else {
+                listOf(PattuUrupadi())
+            }
         )
     }
 
     // Global discount
-    var globalDiscountValue by remember { mutableStateOf(if (invoice != null && invoice.podhuThallupadiMathippu > 0) invoice.podhuThallupadiMathippu.toString() else "") }
-    var globalDiscountType by remember { mutableStateOf(invoice?.podhuThallupadiVagai ?: "%") }
+    var globalDiscountValue by remember {
+        mutableStateOf(
+            if (invoice != null && invoice.podhuThallupadiMathippu > 0) {
+                invoice.podhuThallupadiMathippu.toString()
+            } else if (invoice != null && initialViruppangal.globalDiscountValue > 0) {
+                initialViruppangal.globalDiscountValue.toString()
+            } else ""
+        )
+    }
+    var globalDiscountType by remember {
+        mutableStateOf(
+            invoice?.podhuThallupadiVagai?.ifEmpty { initialViruppangal.globalDiscountType } ?: initialViruppangal.globalDiscountType
+        )
+    }
 
     // Guards & states
     var hasUnsavedChanges by remember { mutableStateOf(false) }
@@ -164,9 +194,10 @@ fun PattuPattiyalThiruthiScreen(
         selectedNiruvanamId = newProfile?.id
         hasUnsavedChanges = true
         errorMessage = null
-        if (!isInvoiceNumberOverridden && !isEditing) {
+        if (!isEditing) {
             val prefix = computePrefix(newProfile)
             invoiceNumber = PattiyalRepository.getNextInvoiceNumber(newProfile?.id, prefix, AppMode.PATTU)
+            isInvoiceNumberOverridden = false
         }
     }
 
@@ -217,6 +248,19 @@ fun PattuPattiyalThiruthiScreen(
             } else {
                 isSaving = true
                 val vanakkam = PattiyalRepository.getNextVanakkam(selectedNiruvanamId, AppMode.PATTU)
+                val gVal = globalDiscountValue.toDoubleOrNull() ?: 0.0
+                val podhuDiscountThogai = if (globalDiscountType == "%") {
+                    (totals.adippadaiMothangal - (totals.thallupadiMothangal - gVal)) * (gVal / 100.0)
+                } else {
+                    gVal
+                }
+                val viruppangal = PattuKanakku.PattuViruppangal(
+                    globalDiscountValue = gVal,
+                    globalDiscountType = globalDiscountType,
+                    placeOfSupply = placeOfSupplyEn,
+                    placeOfSupplyTa = placeOfSupplyTa
+                )
+
                 val newInvoice = PattiyalTharavuru(
                     id = invoice?.id ?: 0L,
                     niruvanamId = selectedNiruvanamId,
@@ -227,11 +271,15 @@ fun PattuPattiyalThiruthiScreen(
                     vaangunarPeyar = selectedVaangunarPeyarMap,
                     vaangunarMunvari = selectedVaangunarMunvariMap,
                     pattiyalNaal = invoiceDate,
+                    tharavugal = PattuKanakku.pattuListToJson(validItems),
                     mothaThogai = totals.mothaMothangal,
                     thallupadi = totals.thallupadiMothangal,
-                    podhuThallupadiMathippu = globalDiscountValue.toDoubleOrNull() ?: 0.0,
+                    podhuThallupadiMathippu = gVal,
                     podhuThallupadiVagai = globalDiscountType,
+                    podhuThallupadiThogai = podhuDiscountThogai,
                     variThogai = totals.variMothangal,
+                    variTharavugal = PattuKanakku.variToJson(totals),
+                    sonthaViruppangal = PattuKanakku.viruppangalToJson(viruppangal),
                     updatedAt = System.currentTimeMillis()
                 )
                 PattiyalRepository.save(newInvoice, AppMode.PATTU)

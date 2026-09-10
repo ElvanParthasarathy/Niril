@@ -247,15 +247,12 @@ class AndroidSettingsDatabaseHelper : SettingsDatabaseHelper {
                 }
             }
 
-            var rowsAffected = if (profile.id != null) {
+            var rowsAffected = if (profile.id != null && profile.id!! > 0L) {
                 db.update(tableName, values, "id = ?", arrayOf(profile.id.toString()))
             } else 0
 
             if (rowsAffected == 0) {
-                rowsAffected = db.update(tableName, values, null, null)
-            }
-
-            if (rowsAffected == 0) {
+                values.put("is_deleted", 0)
                 val newId = db.insert(tableName, null, values)
                 if (newId > 0) {
                     profile.id = newId

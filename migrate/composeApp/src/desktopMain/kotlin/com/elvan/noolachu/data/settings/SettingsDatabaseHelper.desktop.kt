@@ -117,7 +117,7 @@ class DesktopSettingsDatabaseHelper : SettingsDatabaseHelper {
         try {
             getConnection(file).use { conn ->
                 val isPattu = mode == AppMode.PATTU
-                val isUpdate = profile.id != null
+                val isUpdate = profile.id != null && profile.id!! > 0L
 
                 val sql = if (isUpdate) {
                     if (isPattu) {
