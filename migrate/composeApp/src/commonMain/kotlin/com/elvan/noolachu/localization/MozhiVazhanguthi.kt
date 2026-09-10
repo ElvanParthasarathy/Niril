@@ -2,12 +2,14 @@ package com.elvan.noolachu.localization
 
 import androidx.compose.runtime.*
 import com.elvan.noolachu.core.navil.NavilMozhimaatri
+import com.elvan.noolachu.core.platform.getPreferencesHelper
+import com.elvan.noolachu.core.platform.getSystemLanguageCode
 import com.elvan.noolachu.localization.language_keys.en
 import com.elvan.noolachu.localization.language_keys.ta
 import com.elvan.noolachu.localization.language_keys.taLatn
 
 /**
- * Supported UI Language codes: Tamil and English.
+ * Supported UI Language codes: System, Tamil, English, and Tamil Latin.
  */
 enum class Language(val code: String, val displayName: String) {
     SYSTEM("system", "தானியங்கி அமைப்பு"),
@@ -27,22 +29,57 @@ enum class Language(val code: String, val displayName: String) {
 val LocalAppLanguage = compositionLocalOf { Language.TAMIL.code }
 
 /**
- * UI Language state manager.
+ * UI Language state manager with disk persistence.
  */
 object LanguageManager {
-    var currentLanguage by mutableStateOf(Language.TAMIL)
+    private const val PREF_KEY_LANGUAGE = "app_locale"
+
+    var currentLanguage by mutableStateOf(Language.SYSTEM)
         private set
+
+    /**
+     * Resolves the actual language code currently in use for UI rendering:
+     * - "ta"
+     * - "en"
+     * - "ta-Latn"
+     * When currentLanguage is SYSTEM, dynamically resolves to the device's system locale.
+     */
+    val activeLanguageCode: String
+        get() = when (currentLanguage) {
+            Language.SYSTEM -> getSystemLanguageCode()
+            Language.TAMIL -> "ta"
+            Language.ENGLISH -> "en"
+            Language.TAMIL_LATIN -> "ta-Latn"
+        }
+
+    fun init() {
+        try {
+            val saved = getPreferencesHelper().getString(PREF_KEY_LANGUAGE, null)
+            currentLanguage = if (saved.isNullOrEmpty() || saved == "system") {
+                Language.SYSTEM
+            } else {
+                Language.fromCode(saved)
+            }
+        } catch (_: Exception) {
+            currentLanguage = Language.SYSTEM
+        }
+    }
 
     fun setLanguage(language: Language) {
         currentLanguage = language
+        try {
+            val value = if (language == Language.SYSTEM) "system" else language.code
+            getPreferencesHelper().setString(PREF_KEY_LANGUAGE, value)
+        } catch (_: Exception) {}
     }
 
     fun setLanguageByCode(code: String) {
-        currentLanguage = Language.fromCode(code)
+        setLanguage(Language.fromCode(code))
     }
 
     fun toggleLanguage() {
-        currentLanguage = if (currentLanguage == Language.TAMIL) Language.ENGLISH else Language.TAMIL
+        val next = if (currentLanguage == Language.TAMIL) Language.ENGLISH else Language.TAMIL
+        setLanguage(next)
     }
 }
 
@@ -54,7 +91,8 @@ fun ProvideAppLanguage(
     language: Language = LanguageManager.currentLanguage,
     content: @Composable () -> Unit
 ) {
-    CompositionLocalProvider(LocalAppLanguage provides language.code) {
+    val activeCode = LanguageManager.activeLanguageCode
+    CompositionLocalProvider(LocalAppLanguage provides activeCode) {
         content()
     }
 }
@@ -74,10 +112,11 @@ fun String.tr(): String {
  * Translates this string key explicitly into the requested language code.
  */
 fun String.trWithLang(langCode: String): String {
-    return when (langCode) {
+    val effectiveCode = if (langCode == "system") getSystemLanguageCode() else langCode
+    return when (effectiveCode) {
         "ta" -> ta[this] ?: this
         "en" -> en[this] ?: this
         "ta-Latn" -> taLatn[this] ?: ta[this]?.let { NavilMozhimaatri.transliterate(it) } ?: NavilMozhimaatri.transliterate(this)
-        else -> ta[this] ?: en[this] ?: this
+        else -> en[this] ?: ta[this] ?: this
     }
 }

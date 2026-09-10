@@ -50,6 +50,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         com.elvan.noolachu.core.platform.AppContext.context = applicationContext
+        com.elvan.noolachu.localization.LanguageManager.init()
+        com.elvan.noolachu.theme.ThemeManager.init()
         com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository.refreshFromDatabase()
 
         if (savedInstanceState == null) {

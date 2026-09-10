@@ -5,6 +5,9 @@ import androidx.compose.ui.window.rememberWindowState
 import com.elvan.noolachu.App
 
 fun main() = application {
+    com.elvan.noolachu.localization.LanguageManager.init()
+    com.elvan.noolachu.theme.ThemeManager.init()
+
     Window(
         onCloseRequest = ::exitApplication,
         title = "Noolachu",
