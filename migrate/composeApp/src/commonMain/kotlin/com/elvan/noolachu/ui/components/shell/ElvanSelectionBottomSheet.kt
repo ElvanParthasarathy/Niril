@@ -1,9 +1,11 @@
 package com.elvan.noolachu.ui.components.shell
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,9 +13,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.elvan.noolachu.localization.tr
 import com.elvan.noolachu.theme.ShellColors
@@ -49,8 +56,7 @@ fun <T> ElvanSelectionBottomSheet(
     addNewLabel: String? = null
 ) {
     val isDark = colors.isDark
-    // Elevated sheet surface: not stark white, not pitch black, not transparent
-    val sheetBg = if (isDark) Color(0xFF1E1E1E) else Color(0xFFF6F6F8)
+    val sheetBg = if (isDark) Color(0xFF111111) else Color.White
     var searchQuery by remember { mutableStateOf("") }
 
     val filteredItems = remember(items, searchQuery) {
@@ -89,93 +95,102 @@ fun <T> ElvanSelectionBottomSheet(
                 )
             }
 
-            // 3. Items list with items matching Flutter's ElvanMaeladukkuUrupadi & Navigation Fade Masks
+            // 3. Items list with items matching Flutter's ElvanMaeladukkuUrupadi, Navigation Fade Masks & Scroller
             val listState = rememberLazyListState()
+            val isScrolling = listState.isScrollInProgress
+            val scrollbarAlpha by animateFloatAsState(
+                targetValue = if (isScrolling) 1f else 0f,
+                animationSpec = tween(durationMillis = 300),
+                label = "sheetScrollbarAlpha"
+            )
+            val scrollbarColor = if (isDark) Color.White.copy(alpha = 0.35f) else Color.Black.copy(alpha = 0.35f)
 
-            BoxWithConstraints(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                val maxListHeight = if (maxHeight > 0.dp && maxHeight != androidx.compose.ui.unit.Dp.Infinity) {
-                    (maxHeight * 0.75f).coerceIn(360.dp, 580.dp)
-                } else {
-                    520.dp
-                }
+            // Fixed stable height for scrolling lists: avoids any jumping or resizing in the middle of page
+            val hasManyItems = filteredItems.size > 5
+            val listModifier = if (hasManyItems) {
+                Modifier
+                    .fillMaxWidth()
+                    .height(460.dp)
+            } else {
+                Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 460.dp)
+            }
 
-                Box(
+            Box(modifier = listModifier) {
+                LazyColumn(
+                    state = listState,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = maxListHeight)
+                        .fillMaxSize()
+                        .drawVerticalScrollbar(
+                            listState = listState,
+                            color = scrollbarColor,
+                            alpha = scrollbarAlpha
+                        ),
+                    contentPadding = PaddingValues(top = 4.dp, bottom = 32.dp)
                 ) {
-                    LazyColumn(
-                        state = listState,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(max = maxListHeight),
-                        contentPadding = PaddingValues(top = 4.dp, bottom = 28.dp)
-                    ) {
-                        items(filteredItems) { item ->
-                            val isSelected = item == currentValue
-                            val subtitle = subtitleBuilder?.invoke(item)
+                    items(filteredItems) { item ->
+                        val isSelected = item == currentValue
+                        val subtitle = subtitleBuilder?.invoke(item)
 
-                            ElvanMaeladukkuUrupadi(
-                                title = itemLabelBuilder(item),
-                                subtitle = subtitle,
-                                isSelected = isSelected,
-                                onTap = {
-                                    onSelected(item)
-                                    onDismissRequest()
-                                },
-                                leading = leadingBuilder?.let { { it(item) } },
-                                colors = colors
-                            )
-                        }
-                    }
-
-                    // Top Fade Mask (Smooth fade into search pill / header when scrolled)
-                    val showTopFade by remember {
-                        derivedStateOf {
-                            listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0
-                        }
-                    }
-                    val topFadeAlpha by animateFloatAsState(
-                        targetValue = if (showTopFade) 1f else 0f,
-                        label = "sheetTopFadeAlpha"
-                    )
-
-                    if (topFadeAlpha > 0f) {
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.TopCenter)
-                                .fillMaxWidth()
-                                .height(24.dp)
-                                .graphicsLayer { alpha = topFadeAlpha }
-                                .background(
-                                    Brush.verticalGradient(
-                                        0.0f to sheetBg,
-                                        0.35f to sheetBg.copy(alpha = 0.55f),
-                                        0.7f to sheetBg.copy(alpha = 0.16f),
-                                        1.0f to Color.Transparent
-                                    )
-                                )
+                        ElvanMaeladukkuUrupadi(
+                            title = itemLabelBuilder(item),
+                            subtitle = subtitle,
+                            isSelected = isSelected,
+                            onTap = {
+                                onSelected(item)
+                                onDismissRequest()
+                            },
+                            leading = leadingBuilder?.let { { it(item) } },
+                            colors = colors
                         )
                     }
+                }
 
-                    // Bottom Fade Mask (Matching Navigation Home Screen)
+                // Top Fade Mask (Smooth fade into search pill / header when scrolled)
+                val showTopFade by remember {
+                    derivedStateOf {
+                        listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0
+                    }
+                }
+                val topFadeAlpha by animateFloatAsState(
+                    targetValue = if (showTopFade) 1f else 0f,
+                    label = "sheetTopFadeAlpha"
+                )
+
+                if (topFadeAlpha > 0f) {
                     Box(
                         modifier = Modifier
-                            .align(Alignment.BottomCenter)
+                            .align(Alignment.TopCenter)
                             .fillMaxWidth()
-                            .height(28.dp)
+                            .height(24.dp)
+                            .graphicsLayer { alpha = topFadeAlpha }
                             .background(
                                 Brush.verticalGradient(
-                                    0.0f to Color.Transparent,
-                                    0.3f to sheetBg.copy(alpha = 0.16f),
-                                    0.65f to sheetBg.copy(alpha = 0.55f),
-                                    1.0f to sheetBg
+                                    0.0f to sheetBg,
+                                    0.35f to sheetBg.copy(alpha = 0.55f),
+                                    0.7f to sheetBg.copy(alpha = 0.16f),
+                                    1.0f to Color.Transparent
                                 )
                             )
                     )
                 }
+
+                // Bottom Fade Mask (Matching Navigation Home Screen)
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(32.dp)
+                        .background(
+                            Brush.verticalGradient(
+                                0.0f to Color.Transparent,
+                                0.3f to sheetBg.copy(alpha = 0.16f),
+                                0.65f to sheetBg.copy(alpha = 0.55f),
+                                1.0f to sheetBg
+                            )
+                        )
+                )
             }
 
             // 4. Optional "+ Add New" button matching Flutter's ElvanMaeladukkuPudhiyaPothan
@@ -216,11 +231,46 @@ fun <T> ElvanSelectionBottomSheet(
             sheetState = sheetState,
             shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
             containerColor = sheetBg,
-            scrimColor = Color.Black.copy(alpha = 0.5f),
+            scrimColor = Color.Black.copy(alpha = 0.45f),
             dragHandle = { BottomSheetDefaults.DragHandle() },
             modifier = modifier
         ) {
             content()
+        }
+    }
+}
+
+/**
+ * Clean vertical scrollbar indicator along the right edge of LazyColumn.
+ * Smoothly fades in while actively scrolling and auto-hides when resting.
+ */
+private fun Modifier.drawVerticalScrollbar(
+    listState: LazyListState,
+    color: Color,
+    alpha: Float,
+    width: Dp = 3.dp,
+    paddingEnd: Dp = 3.dp
+): Modifier = drawWithContent {
+    drawContent()
+    val layoutInfo = listState.layoutInfo
+    val totalItemsCount = layoutInfo.totalItemsCount
+    val visibleItems = layoutInfo.visibleItemsInfo
+    if (totalItemsCount > 0 && visibleItems.isNotEmpty() && alpha > 0.02f) {
+        val firstVisible = visibleItems.first()
+        val lastVisible = visibleItems.last()
+        val visibleCount = lastVisible.index - firstVisible.index + 1
+        if (visibleCount < totalItemsCount) {
+            val viewHeight = size.height
+            val thumbHeight = ((viewHeight * visibleCount) / totalItemsCount).coerceIn(24.dp.toPx(), viewHeight * 0.75f)
+            val maxScrollIndex = (totalItemsCount - visibleCount).coerceAtLeast(1)
+            val scrollProgress = (firstVisible.index.toFloat() / maxScrollIndex).coerceIn(0f, 1f)
+            val scrollOffset = scrollProgress * (viewHeight - thumbHeight)
+            drawRoundRect(
+                color = color.copy(alpha = color.alpha * alpha),
+                topLeft = Offset(size.width - width.toPx() - paddingEnd.toPx(), scrollOffset),
+                size = Size(width.toPx(), thumbHeight),
+                cornerRadius = CornerRadius(width.toPx() / 2, width.toPx() / 2)
+            )
         }
     }
 }
