@@ -110,7 +110,8 @@ fun SettingsScreen(
                 SettingsRoute.Security -> K.paadhugaappu.tr()
                 SettingsRoute.AboutDeveloper -> K.menporulVadivaalar.tr()
                 SettingsRoute.AboutApp -> K.cheyaliPatri.tr()
-                SettingsRoute.ElvanNavil -> K.elvanNavilPatri.tr()
+                SettingsRoute.ElvanNavil -> K.navilMozhimatri.tr()
+                SettingsRoute.NavilMozhimatri -> K.navilMozhimatri.tr()
             }
 
             val leadingIcon = if (route == SettingsRoute.ManageProfiles) {
@@ -150,7 +151,8 @@ fun SettingsScreen(
                     SettingsRoute.Security -> SecuritySettingsScreen(scrollState = scrollState, colors = colors)
                     SettingsRoute.AboutDeveloper -> AboutDeveloperScreen(scrollState = scrollState, colors = colors)
                     SettingsRoute.AboutApp -> AboutAppScreen(scrollState = scrollState, colors = colors)
-                    SettingsRoute.ElvanNavil -> ElvanNavilThirai(scrollState = scrollState, colors = colors)
+                    SettingsRoute.ElvanNavil -> NavilMozhimatriScreen(scrollState = scrollState, colors = colors)
+                    SettingsRoute.NavilMozhimatri -> NavilMozhimatriScreen(scrollState = scrollState, colors = colors)
                 }
             }
         }

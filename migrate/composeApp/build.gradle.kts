@@ -38,6 +38,9 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
         }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation("org.jetbrains.skiko:skiko-awt-runtime-windows-x64:0.9.22.2")
