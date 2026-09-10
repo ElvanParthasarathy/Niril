@@ -2,6 +2,7 @@ package com.elvan.noolachu.data.business
 
 import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.data.model.PattiyalTharavuru
+import com.elvan.noolachu.data.model.PatruPattiyalInaippuTharavuru
 import com.elvan.noolachu.data.model.PatrugalTharavuru
 import com.elvan.noolachu.data.model.PorulTharavuru
 import com.elvan.noolachu.data.model.VaangunarTharavuru
@@ -56,6 +57,7 @@ class DesktopBusinessDatabaseHelper : BusinessDatabaseHelper {
         val porulTable = if (mode == AppMode.KOOLI) "kooli_porul_table" else "pattu_porul_table"
         val pattiyalTable = if (mode == AppMode.KOOLI) "kooli_pattiyal_table" else "pattu_pattiyal_table"
         val patrugalTable = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
 
         val createVaangunarSql = """
             CREATE TABLE IF NOT EXISTS "$vaangunarTable" (
@@ -153,11 +155,21 @@ class DesktopBusinessDatabaseHelper : BusinessDatabaseHelper {
             )
         """.trimIndent()
 
+        val createJunctionSql = """
+            CREATE TABLE IF NOT EXISTS "$junctionTable" (
+                "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                "patru_id" INTEGER NOT NULL,
+                "pattiyal_id" INTEGER NOT NULL,
+                "poruthiya_thogai" REAL NOT NULL DEFAULT 0.0
+            )
+        """.trimIndent()
+
         conn.createStatement().use { stmt ->
             stmt.execute(createVaangunarSql)
             stmt.execute(createPorulSql)
             stmt.execute(createPattiyalSql)
             stmt.execute(createPatrugalSql)
+            stmt.execute(createJunctionSql)
         }
     }
 
@@ -865,6 +877,260 @@ class DesktopBusinessDatabaseHelper : BusinessDatabaseHelper {
             println("Desktop error deleting receipt $id from $tableName: ${e.message}")
             return false
         }
+    }
+
+    override fun loadDeletedReceipts(mode: AppMode): List<PatrugalTharavuru> {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        val list = mutableListOf<PatrugalTharavuru>()
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val sql = "SELECT * FROM $tableName WHERE is_deleted = 1 ORDER BY deleted_at DESC, id DESC"
+                conn.createStatement().use { stmt ->
+                    stmt.executeQuery(sql).use { rs ->
+                        while (rs.next()) {
+                            list.add(rsToReceipt(rs))
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error loading deleted receipts from $tableName: ${e.message}")
+        }
+        return list
+    }
+
+    override fun restoreReceipt(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val sql = "UPDATE $tableName SET is_deleted = 0, deleted_at = NULL, updated_at = ? WHERE id = ?"
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setLong(1, System.currentTimeMillis() / 1000)
+                    stmt.setLong(2, id)
+                    return stmt.executeUpdate() > 0
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error restoring receipt $id: ${e.message}")
+            return false
+        }
+    }
+
+    override fun permanentDeleteReceipt(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                conn.autoCommit = false
+                try {
+                    conn.prepareStatement("DELETE FROM $junctionTable WHERE patru_id = ?").use { stmt ->
+                        stmt.setLong(1, id)
+                        stmt.executeUpdate()
+                    }
+                    val affected = conn.prepareStatement("DELETE FROM $tableName WHERE id = ?").use { stmt ->
+                        stmt.setLong(1, id)
+                        stmt.executeUpdate()
+                    }
+                    conn.commit()
+                    return affected > 0
+                } catch (ex: Exception) {
+                    conn.rollback()
+                    throw ex
+                } finally {
+                    conn.autoCommit = true
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error permanently deleting receipt $id: ${e.message}")
+            return false
+        }
+    }
+
+    override fun purgeExpiredReceipts(mode: AppMode, days: Int): Int {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val cutoffSec = (System.currentTimeMillis() / 1000) - (days * 86400L)
+                conn.autoCommit = false
+                try {
+                    conn.prepareStatement("DELETE FROM $junctionTable WHERE patru_id IN (SELECT id FROM $tableName WHERE is_deleted = 1 AND deleted_at < ?)").use { stmt ->
+                        stmt.setLong(1, cutoffSec)
+                        stmt.executeUpdate()
+                    }
+                    val deleted = conn.prepareStatement("DELETE FROM $tableName WHERE is_deleted = 1 AND deleted_at < ?").use { stmt ->
+                        stmt.setLong(1, cutoffSec)
+                        stmt.executeUpdate()
+                    }
+                    conn.commit()
+                    return deleted
+                } catch (ex: Exception) {
+                    conn.rollback()
+                    throw ex
+                } finally {
+                    conn.autoCommit = true
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error purging expired receipts: ${e.message}")
+            return 0
+        }
+    }
+
+    override fun getLinksForPatru(mode: AppMode, patruId: Long): List<PatruPattiyalInaippuTharavuru> {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        val list = mutableListOf<PatruPattiyalInaippuTharavuru>()
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val sql = "SELECT * FROM $junctionTable WHERE patru_id = ? ORDER BY id ASC"
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setLong(1, patruId)
+                    stmt.executeQuery().use { rs ->
+                        while (rs.next()) {
+                            list.add(
+                                PatruPattiyalInaippuTharavuru(
+                                    id = rs.getLong("id"),
+                                    patruId = rs.getLong("patru_id"),
+                                    pattiyalId = rs.getLong("pattiyal_id"),
+                                    poruthiyaThogai = rs.getDouble("poruthiya_thogai")
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error getting links for receipt $patruId: ${e.message}")
+        }
+        return list
+    }
+
+    override fun saveReceiptWithLinks(mode: AppMode, receipt: PatrugalTharavuru, links: List<PatruPattiyalInaippuTharavuru>): Long {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        val receiptId = saveReceipt(mode, receipt)
+        if (receiptId <= 0L) return -1L
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                conn.autoCommit = false
+                try {
+                    // Delete old links for this receipt
+                    conn.prepareStatement("DELETE FROM $junctionTable WHERE patru_id = ?").use { delStmt ->
+                        delStmt.setLong(1, receiptId)
+                        delStmt.executeUpdate()
+                    }
+
+                    // Insert fresh links
+                    if (links.isNotEmpty()) {
+                        val insSql = "INSERT INTO $junctionTable (patru_id, pattiyal_id, poruthiya_thogai) VALUES (?, ?, ?)"
+                        conn.prepareStatement(insSql).use { insStmt ->
+                            for (link in links) {
+                                insStmt.setLong(1, receiptId)
+                                insStmt.setLong(2, link.pattiyalId)
+                                insStmt.setDouble(3, link.poruthiyaThogai)
+                                insStmt.executeUpdate()
+                            }
+                        }
+                    }
+                    conn.commit()
+                } catch (ex: Exception) {
+                    conn.rollback()
+                    throw ex
+                } finally {
+                    conn.autoCommit = true
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error saving links for receipt $receiptId: ${e.message}")
+        }
+
+        return receiptId
+    }
+
+    override fun getPaidAmountForInvoice(mode: AppMode, invoiceId: Long): Double {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val patrugalTable = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val sql = """
+                    SELECT SUM(j.poruthiya_thogai) FROM $junctionTable j
+                    JOIN $patrugalTable p ON j.patru_id = p.id
+                    WHERE j.pattiyal_id = ? AND p.is_deleted = 0
+                """.trimIndent()
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setLong(1, invoiceId)
+                    stmt.executeQuery().use { rs ->
+                        if (rs.next()) {
+                            return rs.getDouble(1)
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error getting paid amount for invoice $invoiceId: ${e.message}")
+        }
+        return 0.0
+    }
+
+    override fun getPaidAmountsForInvoices(mode: AppMode, invoiceIds: List<Long>): Map<Long, Double> {
+        if (invoiceIds.isEmpty()) return emptyMap()
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val patrugalTable = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        val map = mutableMapOf<Long, Double>()
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val inClause = invoiceIds.joinToString(",")
+                val sql = """
+                    SELECT j.pattiyal_id, SUM(j.poruthiya_thogai) as total_paid
+                    FROM $junctionTable j
+                    JOIN $patrugalTable p ON j.patru_id = p.id
+                    WHERE j.pattiyal_id IN ($inClause) AND p.is_deleted = 0
+                    GROUP BY j.pattiyal_id
+                """.trimIndent()
+                conn.createStatement().use { stmt ->
+                    stmt.executeQuery(sql).use { rs ->
+                        while (rs.next()) {
+                            map[rs.getLong("pattiyal_id")] = rs.getDouble("total_paid")
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error getting paid amounts for invoices: ${e.message}")
+        }
+        return map
     }
 
     private fun rsToMerchant(rs: ResultSet): VaangunarTharavuru {

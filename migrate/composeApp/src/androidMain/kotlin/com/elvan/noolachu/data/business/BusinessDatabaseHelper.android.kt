@@ -8,6 +8,7 @@ import android.util.Log
 import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.core.platform.AppContext
 import com.elvan.noolachu.data.model.PattiyalTharavuru
+import com.elvan.noolachu.data.model.PatruPattiyalInaippuTharavuru
 import com.elvan.noolachu.data.model.PatrugalTharavuru
 import com.elvan.noolachu.data.model.PorulTharavuru
 import com.elvan.noolachu.data.model.VaangunarTharavuru
@@ -110,6 +111,7 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
         val porulTable = if (mode == AppMode.KOOLI) "kooli_porul_table" else "pattu_porul_table"
         val pattiyalTable = if (mode == AppMode.KOOLI) "kooli_pattiyal_table" else "pattu_pattiyal_table"
         val patrugalTable = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
 
         val createVaangunarSql = """
             CREATE TABLE IF NOT EXISTS "$vaangunarTable" (
@@ -207,10 +209,20 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
             )
         """.trimIndent()
 
+        val createJunctionSql = """
+            CREATE TABLE IF NOT EXISTS "$junctionTable" (
+                "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                "patru_id" INTEGER NOT NULL,
+                "pattiyal_id" INTEGER NOT NULL,
+                "poruthiya_thogai" REAL NOT NULL DEFAULT 0.0
+            )
+        """.trimIndent()
+
         db.execSQL(createVaangunarSql)
         db.execSQL(createPorulSql)
         db.execSQL(createPattiyalSql)
         db.execSQL(createPatrugalSql)
+        db.execSQL(createJunctionSql)
     }
 
     override fun loadAllMerchants(mode: AppMode): List<VaangunarTharavuru> {
@@ -867,6 +879,240 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
         } finally {
             db?.close()
         }
+    }
+
+    override fun loadDeletedReceipts(mode: AppMode): List<PatrugalTharavuru> {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return emptyList()
+
+        var db: SQLiteDatabase? = null
+        var cursor: Cursor? = null
+        val list = mutableListOf<PatrugalTharavuru>()
+        try {
+            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            ensureTables(db, mode)
+            cursor = db.rawQuery("SELECT * FROM $tableName WHERE is_deleted = 1 ORDER BY deleted_at DESC, id DESC", null)
+            while (cursor.moveToNext()) {
+                list.add(cursorToReceipt(cursor))
+            }
+        } catch (e: Exception) {
+            Log.e(tag, "Error loading deleted receipts from $tableName: ${e.message}", e)
+        } finally {
+            cursor?.close()
+            db?.close()
+        }
+        return list
+    }
+
+    override fun restoreReceipt(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return false
+
+        var db: SQLiteDatabase? = null
+        try {
+            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            ensureTables(db, mode)
+            val nowSec = System.currentTimeMillis() / 1000
+            val values = ContentValues().apply {
+                put("is_deleted", 0)
+                putNull("deleted_at")
+                put("updated_at", nowSec)
+            }
+            val rows = db.update(tableName, values, "id = ?", arrayOf(id.toString()))
+            return rows > 0
+        } catch (e: Exception) {
+            Log.e(tag, "Error restoring receipt $id from $tableName: ${e.message}", e)
+            return false
+        } finally {
+            db?.close()
+        }
+    }
+
+    override fun permanentDeleteReceipt(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return false
+
+        var db: SQLiteDatabase? = null
+        try {
+            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            ensureTables(db, mode)
+            db.beginTransaction()
+            try {
+                db.delete(junctionTable, "patru_id = ?", arrayOf(id.toString()))
+                val rows = db.delete(tableName, "id = ?", arrayOf(id.toString()))
+                db.setTransactionSuccessful()
+                return rows > 0
+            } finally {
+                db.endTransaction()
+            }
+        } catch (e: Exception) {
+            Log.e(tag, "Error permanently deleting receipt $id from $tableName: ${e.message}", e)
+            return false
+        } finally {
+            db?.close()
+        }
+    }
+
+    override fun purgeExpiredReceipts(mode: AppMode, days: Int): Int {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return 0
+
+        var db: SQLiteDatabase? = null
+        try {
+            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            ensureTables(db, mode)
+            val cutoffSec = (System.currentTimeMillis() / 1000) - (days * 86400L)
+            db.beginTransaction()
+            try {
+                db.execSQL("DELETE FROM $junctionTable WHERE patru_id IN (SELECT id FROM $tableName WHERE is_deleted = 1 AND deleted_at < $cutoffSec)")
+                val deleted = db.delete(tableName, "is_deleted = 1 AND deleted_at < ?", arrayOf(cutoffSec.toString()))
+                db.setTransactionSuccessful()
+                return deleted
+            } finally {
+                db.endTransaction()
+            }
+        } catch (e: Exception) {
+            Log.e(tag, "Error purging expired receipts from $tableName: ${e.message}", e)
+            return 0
+        } finally {
+            db?.close()
+        }
+    }
+
+    override fun getLinksForPatru(mode: AppMode, patruId: Long): List<PatruPattiyalInaippuTharavuru> {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return emptyList()
+
+        var db: SQLiteDatabase? = null
+        var cursor: Cursor? = null
+        val list = mutableListOf<PatruPattiyalInaippuTharavuru>()
+        try {
+            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            ensureTables(db, mode)
+            cursor = db.rawQuery("SELECT * FROM $junctionTable WHERE patru_id = ? ORDER BY id ASC", arrayOf(patruId.toString()))
+            while (cursor.moveToNext()) {
+                list.add(
+                    PatruPattiyalInaippuTharavuru(
+                        id = cursor.getLong(cursor.getColumnIndexOrThrow("id")),
+                        patruId = cursor.getLong(cursor.getColumnIndexOrThrow("patru_id")),
+                        pattiyalId = cursor.getLong(cursor.getColumnIndexOrThrow("pattiyal_id")),
+                        poruthiyaThogai = cursor.getDouble(cursor.getColumnIndexOrThrow("poruthiya_thogai"))
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            Log.e(tag, "Error loading links for receipt $patruId: ${e.message}", e)
+        } finally {
+            cursor?.close()
+            db?.close()
+        }
+        return list
+    }
+
+    override fun saveReceiptWithLinks(mode: AppMode, receipt: PatrugalTharavuru, links: List<PatruPattiyalInaippuTharavuru>): Long {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return -1L
+
+        val receiptId = saveReceipt(mode, receipt)
+        if (receiptId <= 0L) return -1L
+
+        var db: SQLiteDatabase? = null
+        try {
+            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            ensureTables(db, mode)
+            db.beginTransaction()
+            try {
+                db.delete(junctionTable, "patru_id = ?", arrayOf(receiptId.toString()))
+                for (link in links) {
+                    val values = ContentValues().apply {
+                        put("patru_id", receiptId)
+                        put("pattiyal_id", link.pattiyalId)
+                        put("poruthiya_thogai", link.poruthiyaThogai)
+                    }
+                    db.insert(junctionTable, null, values)
+                }
+                db.setTransactionSuccessful()
+            } finally {
+                db.endTransaction()
+            }
+        } catch (e: Exception) {
+            Log.e(tag, "Error saving links for receipt $receiptId: ${e.message}", e)
+        } finally {
+            db?.close()
+        }
+
+        return receiptId
+    }
+
+    override fun getPaidAmountForInvoice(mode: AppMode, invoiceId: Long): Double {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val patrugalTable = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return 0.0
+
+        var db: SQLiteDatabase? = null
+        var cursor: Cursor? = null
+        try {
+            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            ensureTables(db, mode)
+            val sql = """
+                SELECT SUM(j.poruthiya_thogai) FROM $junctionTable j
+                JOIN $patrugalTable p ON j.patru_id = p.id
+                WHERE j.pattiyal_id = ? AND p.is_deleted = 0
+            """.trimIndent()
+            cursor = db.rawQuery(sql, arrayOf(invoiceId.toString()))
+            if (cursor.moveToNext() && !cursor.isNull(0)) {
+                return cursor.getDouble(0)
+            }
+        } catch (e: Exception) {
+            Log.e(tag, "Error getting paid amount for invoice $invoiceId: ${e.message}", e)
+        } finally {
+            cursor?.close()
+            db?.close()
+        }
+        return 0.0
+    }
+
+    override fun getPaidAmountsForInvoices(mode: AppMode, invoiceIds: List<Long>): Map<Long, Double> {
+        if (invoiceIds.isEmpty()) return emptyMap()
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val patrugalTable = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return emptyMap()
+
+        val map = mutableMapOf<Long, Double>()
+        var db: SQLiteDatabase? = null
+        var cursor: Cursor? = null
+        try {
+            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            ensureTables(db, mode)
+            val inClause = invoiceIds.joinToString(",")
+            val sql = """
+                SELECT j.pattiyal_id, SUM(j.poruthiya_thogai) as total_paid
+                FROM $junctionTable j
+                JOIN $patrugalTable p ON j.patru_id = p.id
+                WHERE j.pattiyal_id IN ($inClause) AND p.is_deleted = 0
+                GROUP BY j.pattiyal_id
+            """.trimIndent()
+            cursor = db.rawQuery(sql, null)
+            while (cursor.moveToNext()) {
+                map[cursor.getLong(0)] = cursor.getDouble(1)
+            }
+        } catch (e: Exception) {
+            Log.e(tag, "Error getting paid amounts for invoices: ${e.message}", e)
+        } finally {
+            cursor?.close()
+            db?.close()
+        }
+        return map
     }
 
     private fun cursorToMerchant(cursor: Cursor): VaangunarTharavuru {

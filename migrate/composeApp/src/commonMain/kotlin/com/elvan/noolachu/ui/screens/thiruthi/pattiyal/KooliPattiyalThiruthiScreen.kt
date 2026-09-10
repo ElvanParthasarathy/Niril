@@ -23,10 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.core.platform.AppBackHandler
+import com.elvan.noolachu.core.platform.getPreferencesHelper
 import com.elvan.noolachu.data.model.PattiyalTharavuru
 import com.elvan.noolachu.data.repository.PattiyalRepository
 import com.elvan.noolachu.data.repository.PorulRepository
 import com.elvan.noolachu.data.repository.VaangunarRepository
+import com.elvan.noolachu.data.settings.MozhiJsonConverter
 import com.elvan.noolachu.data.settings.NiruvanaTharavugal
 import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
 import com.elvan.noolachu.localization.K
@@ -189,6 +191,94 @@ fun KooliPattiyalThiruthiScreen(
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isSaving by remember { mutableStateOf(false) }
 
+    // Draft persistence
+    val draftKey = "niril_draft_coolie_invoice"
+    val prefs = remember { getPreferencesHelper() }
+    var showDraftRestoreDialog by remember { mutableStateOf(false) }
+    var pendingDraftJson by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        if (!isEditing) {
+            val saved = prefs.getString(draftKey)
+            if (!saved.isNullOrBlank()) {
+                pendingDraftJson = saved
+                showDraftRestoreDialog = true
+            }
+        }
+    }
+
+    fun serializeDraft(): String {
+        val itemsJson = KooliKanakku.kooliListToJson(items)
+        val piraJson = KooliKanakku.piraVarivuListToJson(piraVarivugal)
+        val sb = StringBuilder("{")
+        sb.append("\"selectedNiruvanamId\":").append(selectedNiruvanamId ?: "null").append(",")
+        sb.append("\"selectedVaangunarId\":").append(selectedVaangunarId ?: "null").append(",")
+        sb.append("\"vaangunarPeyar\":").append(MozhiJsonConverter.stringify(selectedVaangunarPeyarMap)).append(",")
+        sb.append("\"vaangunarMunvari\":").append(MozhiJsonConverter.stringify(selectedVaangunarMunvariMap)).append(",")
+        sb.append("\"invoiceDate\":").append(invoiceDate).append(",")
+        sb.append("\"invoiceNumberOverride\":\"").append(if (isInvoiceNumberOverridden) invoiceNumber else "").append("\",")
+        sb.append("\"setharamGrams\":").append(setharamGrams).append(",")
+        sb.append("\"thabaalThogai\":").append(thabaalThogai).append(",")
+        sb.append("\"ahimsaPattuThogai\":").append(ahimsaPattuThogai).append(",")
+        sb.append("\"items\":").append(itemsJson).append(",")
+        sb.append("\"piraVarivugal\":").append(piraJson)
+        sb.append("}")
+        return sb.toString()
+    }
+
+    fun restoreDraft(json: String) {
+        try {
+            val niruvanamId = Regex(""""selectedNiruvanamId"\s*:\s*(\d+)""").find(json)?.groupValues?.get(1)?.toLongOrNull()
+            if (niruvanamId != null) selectedNiruvanamId = niruvanamId
+
+            val vaangunarId = Regex(""""selectedVaangunarId"\s*:\s*(\d+)""").find(json)?.groupValues?.get(1)?.toLongOrNull()
+            if (vaangunarId != null) selectedVaangunarId = vaangunarId
+
+            val peyarMatch = Regex(""""vaangunarPeyar"\s*:\s*(\{[^}]*\})""").find(json)?.groupValues?.get(1)
+            if (peyarMatch != null) selectedVaangunarPeyarMap = MozhiJsonConverter.parse(peyarMatch)
+
+            val munvariMatch = Regex(""""vaangunarMunvari"\s*:\s*(\{[^}]*\})""").find(json)?.groupValues?.get(1)
+            if (munvariMatch != null) selectedVaangunarMunvariMap = MozhiJsonConverter.parse(munvariMatch)
+
+            val date = Regex(""""invoiceDate"\s*:\s*(\d+)""").find(json)?.groupValues?.get(1)?.toLongOrNull()
+            if (date != null && date > 0) invoiceDate = date
+
+            val invOverride = Regex(""""invoiceNumberOverride"\s*:\s*"([^"]*)"""").find(json)?.groupValues?.get(1)
+            if (!invOverride.isNullOrEmpty()) {
+                invoiceNumber = invOverride
+                isInvoiceNumberOverridden = true
+            }
+
+            val setharam = Regex(""""setharamGrams"\s*:\s*([0-9.]+)""").find(json)?.groupValues?.get(1)?.toDoubleOrNull()
+            if (setharam != null) setharamGrams = setharam
+
+            val thabaal = Regex(""""thabaalThogai"\s*:\s*([0-9.]+)""").find(json)?.groupValues?.get(1)?.toDoubleOrNull()
+            if (thabaal != null) thabaalThogai = thabaal
+
+            val ahimsa = Regex(""""ahimsaPattuThogai"\s*:\s*([0-9.]+)""").find(json)?.groupValues?.get(1)?.toDoubleOrNull()
+            if (ahimsa != null) ahimsaPattuThogai = ahimsa
+
+            val itemsMatch = Regex(""""items"\s*:\s*(\[.*\])""").find(json)?.groupValues?.get(1)
+            val loadedItems = KooliKanakku.kooliListFromJson(itemsMatch)
+            if (loadedItems.isNotEmpty()) {
+                items = loadedItems
+            }
+
+            val piraMatch = Regex(""""piraVarivugal"\s*:\s*(\[.*\])""").find(json)?.groupValues?.get(1)
+            val loadedPira = KooliKanakku.piraVarivuListFromJson(piraMatch)
+            if (loadedPira.isNotEmpty()) {
+                piraVarivugal = loadedPira
+            }
+            hasUnsavedChanges = true
+        } catch (_: Exception) {}
+    }
+
+    LaunchedEffect(hasUnsavedChanges, selectedNiruvanamId, selectedVaangunarId, items.size, setharamGrams, thabaalThogai, ahimsaPattuThogai, piraVarivugal.size) {
+        if (hasUnsavedChanges && !isEditing) {
+            prefs.setString(draftKey, serializeDraft())
+        }
+    }
+
     val onCompanyChanged: (NiruvanaTharavugal?) -> Unit = { p ->
         selectedNiruvanamId = p?.id
         if (!isEditing) {
@@ -248,6 +338,7 @@ fun KooliPattiyalThiruthiScreen(
                     updatedAt = System.currentTimeMillis()
                 )
                 PattiyalRepository.save(newInvoice, AppMode.KOOLI)
+                prefs.setString(draftKey, null)
                 hasUnsavedChanges = false
                 isSaving = false
                 onBack()
@@ -637,6 +728,25 @@ fun KooliPattiyalThiruthiScreen(
                 onBack()
             },
             onDismissRequest = { showDeleteConfirm = false }
+        )
+    }
+
+    // ── Restore Unsaved Draft Action Sheet ──
+    if (showDraftRestoreDialog && pendingDraftJson != null) {
+        ElvanActionSheet(
+            title = K.chaemikkaadhaVaraivu.tr(),
+            cancelText = K.purakkaniPtn.tr(),
+            confirmText = K.meetkavum.tr(),
+            onDismissRequest = {
+                showDraftRestoreDialog = false
+                prefs.setString(draftKey, null)
+                pendingDraftJson = null
+            },
+            onConfirm = {
+                showDraftRestoreDialog = false
+                restoreDraft(pendingDraftJson!!)
+                pendingDraftJson = null
+            }
         )
     }
 }

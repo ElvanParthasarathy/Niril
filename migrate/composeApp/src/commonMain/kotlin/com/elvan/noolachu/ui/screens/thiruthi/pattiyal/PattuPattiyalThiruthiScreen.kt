@@ -23,10 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.core.platform.AppBackHandler
+import com.elvan.noolachu.core.platform.getPreferencesHelper
 import com.elvan.noolachu.data.model.PattiyalTharavuru
 import com.elvan.noolachu.data.repository.PattiyalRepository
 import com.elvan.noolachu.data.repository.PorulRepository
 import com.elvan.noolachu.data.repository.VaangunarRepository
+import com.elvan.noolachu.data.settings.MozhiJsonConverter
 import com.elvan.noolachu.data.settings.NiruvanaTharavugal
 import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
 import com.elvan.noolachu.localization.K
@@ -190,6 +192,94 @@ fun PattuPattiyalThiruthiScreen(
     var isCompanySheetOpen by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
+    // Draft persistence
+    val draftKey = "niril_draft_silk_invoice"
+    val prefs = remember { getPreferencesHelper() }
+    var showDraftRestoreDialog by remember { mutableStateOf(false) }
+    var pendingDraftJson by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(Unit) {
+        if (!isEditing) {
+            val saved = prefs.getString(draftKey)
+            if (!saved.isNullOrBlank()) {
+                pendingDraftJson = saved
+                showDraftRestoreDialog = true
+            }
+        }
+    }
+
+    fun serializeDraft(): String {
+        val itemsJson = PattuKanakku.pattuListToJson(items)
+        val sb = StringBuilder("{")
+        sb.append("\"selectedNiruvanamId\":").append(selectedNiruvanamId ?: "null").append(",")
+        sb.append("\"selectedVaangunarId\":").append(selectedVaangunarId ?: "null").append(",")
+        sb.append("\"vaangunarPeyar\":").append(MozhiJsonConverter.stringify(selectedVaangunarPeyarMap)).append(",")
+        sb.append("\"vaangunarMunvari\":").append(MozhiJsonConverter.stringify(selectedVaangunarMunvariMap)).append(",")
+        sb.append("\"pattiyalVagai\":\"").append(pattiyalVagai).append("\",")
+        sb.append("\"invoiceDate\":").append(invoiceDate).append(",")
+        sb.append("\"placeOfSupplyEn\":\"").append(placeOfSupplyEn).append("\",")
+        sb.append("\"placeOfSupplyTa\":\"").append(placeOfSupplyTa).append("\",")
+        sb.append("\"invoiceNumberOverride\":\"").append(if (isInvoiceNumberOverridden) invoiceNumber else "").append("\",")
+        sb.append("\"globalDiscountValue\":\"").append(globalDiscountValue).append("\",")
+        sb.append("\"globalDiscountType\":\"").append(globalDiscountType).append("\",")
+        sb.append("\"items\":").append(itemsJson)
+        sb.append("}")
+        return sb.toString()
+    }
+
+    fun restoreDraft(json: String) {
+        try {
+            val niruvanamId = Regex(""""selectedNiruvanamId"\s*:\s*(\d+)""").find(json)?.groupValues?.get(1)?.toLongOrNull()
+            if (niruvanamId != null) selectedNiruvanamId = niruvanamId
+
+            val vaangunarId = Regex(""""selectedVaangunarId"\s*:\s*(\d+)""").find(json)?.groupValues?.get(1)?.toLongOrNull()
+            if (vaangunarId != null) selectedVaangunarId = vaangunarId
+
+            val peyarMatch = Regex(""""vaangunarPeyar"\s*:\s*(\{[^}]*\})""").find(json)?.groupValues?.get(1)
+            if (peyarMatch != null) selectedVaangunarPeyarMap = MozhiJsonConverter.parse(peyarMatch)
+
+            val munvariMatch = Regex(""""vaangunarMunvari"\s*:\s*(\{[^}]*\})""").find(json)?.groupValues?.get(1)
+            if (munvariMatch != null) selectedVaangunarMunvariMap = MozhiJsonConverter.parse(munvariMatch)
+
+            val vagai = Regex(""""pattiyalVagai"\s*:\s*"([^"]*)"""").find(json)?.groupValues?.get(1)
+            if (!vagai.isNullOrEmpty()) pattiyalVagai = vagai
+
+            val date = Regex(""""invoiceDate"\s*:\s*(\d+)""").find(json)?.groupValues?.get(1)?.toLongOrNull()
+            if (date != null && date > 0) invoiceDate = date
+
+            val posEn = Regex(""""placeOfSupplyEn"\s*:\s*"([^"]*)"""").find(json)?.groupValues?.get(1)
+            if (posEn != null) placeOfSupplyEn = posEn
+
+            val posTa = Regex(""""placeOfSupplyTa"\s*:\s*"([^"]*)"""").find(json)?.groupValues?.get(1)
+            if (posTa != null) placeOfSupplyTa = posTa
+
+            val invOverride = Regex(""""invoiceNumberOverride"\s*:\s*"([^"]*)"""").find(json)?.groupValues?.get(1)
+            if (!invOverride.isNullOrEmpty()) {
+                invoiceNumber = invOverride
+                isInvoiceNumberOverridden = true
+            }
+
+            val discVal = Regex(""""globalDiscountValue"\s*:\s*"([^"]*)"""").find(json)?.groupValues?.get(1)
+            if (discVal != null) globalDiscountValue = discVal
+
+            val discType = Regex(""""globalDiscountType"\s*:\s*"([^"]*)"""").find(json)?.groupValues?.get(1)
+            if (discType != null) globalDiscountType = discType
+
+            val itemsMatch = Regex(""""items"\s*:\s*(\[.*\])""").find(json)?.groupValues?.get(1)
+            val loadedItems = PattuKanakku.pattuListFromJson(itemsMatch)
+            if (loadedItems.isNotEmpty()) {
+                items = loadedItems
+            }
+            hasUnsavedChanges = true
+        } catch (_: Exception) {}
+    }
+
+    LaunchedEffect(hasUnsavedChanges, selectedNiruvanamId, selectedVaangunarId, items.size, globalDiscountValue, placeOfSupplyEn) {
+        if (hasUnsavedChanges && !isEditing) {
+            prefs.setString(draftKey, serializeDraft())
+        }
+    }
+
     fun onCompanyChanged(newProfile: NiruvanaTharavugal?) {
         selectedNiruvanamId = newProfile?.id
         hasUnsavedChanges = true
@@ -283,6 +373,7 @@ fun PattuPattiyalThiruthiScreen(
                     updatedAt = System.currentTimeMillis()
                 )
                 PattiyalRepository.save(newInvoice, AppMode.PATTU)
+                prefs.setString(draftKey, null)
                 hasUnsavedChanges = false
                 isSaving = false
                 onBack()
@@ -671,6 +762,25 @@ fun PattuPattiyalThiruthiScreen(
             onTertiary = {
                 showUnsavedDialog = false
                 onBack()
+            }
+        )
+    }
+
+    // ── Restore Unsaved Draft Action Sheet ──
+    if (showDraftRestoreDialog && pendingDraftJson != null) {
+        ElvanActionSheet(
+            title = K.chaemikkaadhaVaraivu.tr(),
+            cancelText = K.purakkaniPtn.tr(),
+            confirmText = K.meetkavum.tr(),
+            onDismissRequest = {
+                showDraftRestoreDialog = false
+                prefs.setString(draftKey, null)
+                pendingDraftJson = null
+            },
+            onConfirm = {
+                showDraftRestoreDialog = false
+                restoreDraft(pendingDraftJson!!)
+                pendingDraftJson = null
             }
         )
     }

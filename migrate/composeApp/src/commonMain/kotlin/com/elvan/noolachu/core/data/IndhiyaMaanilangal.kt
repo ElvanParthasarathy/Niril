@@ -44,3 +44,33 @@ val indhiyaMaanilangal: List<IdangalinPeyar> = listOf(
     IdangalinPeyar(en = "West Bengal", ta = "மேற்கு வங்காளம்"),
     IdangalinPeyar(en = "Custom", ta = "தனிப்பயன்")
 )
+
+val ulagaNaadugal: List<IdangalinPeyar> = listOf(
+    IdangalinPeyar(en = "India", ta = "இந்தியா"),
+    IdangalinPeyar(en = "United States", ta = "அமெரிக்க ஒன்றிணைந்த நாடுகள்"),
+    IdangalinPeyar(en = "United Kingdom", ta = "ஒன்றிணைந்த பேரரசு"),
+    IdangalinPeyar(en = "Canada", ta = "கனடா"),
+    IdangalinPeyar(en = "Australia", ta = "ஆஸ்திரேலியா"),
+    IdangalinPeyar(en = "New Zealand", ta = "நியூசிலாந்து"),
+    IdangalinPeyar(en = "Japan", ta = "நிஹொன்"),
+    IdangalinPeyar(en = "South Korea", ta = "ஹங்குக்கு"),
+    IdangalinPeyar(en = "China", ta = "சீனா"),
+    IdangalinPeyar(en = "France", ta = "ஃபிரான்சு"),
+    IdangalinPeyar(en = "Germany", ta = "டொயிச்சுலாந்து"),
+    IdangalinPeyar(en = "Italy", ta = "இத்தாலியா"),
+    IdangalinPeyar(en = "Spain", ta = "எசுப்பானியா"),
+    IdangalinPeyar(en = "Netherlands", ta = "நெதர்லாந்து"),
+    IdangalinPeyar(en = "Singapore", ta = "சிங்கப்பூர்"),
+    IdangalinPeyar(en = "Malaysia", ta = "மலேசியா"),
+    IdangalinPeyar(en = "Indonesia", ta = "இந்தோனேசியா"),
+    IdangalinPeyar(en = "Thailand", ta = "தாய்லாந்து"),
+    IdangalinPeyar(en = "United Arab Emirates", ta = "ஒன்றிணைந்த அரபு அமீரகம்"),
+    IdangalinPeyar(en = "Saudi Arabia", ta = "சவுதி அரேபியா"),
+    IdangalinPeyar(en = "South Africa", ta = "தென் ஆப்பிரிக்கா"),
+    IdangalinPeyar(en = "Sri Lanka", ta = "இலங்கை"),
+    IdangalinPeyar(en = "Bangladesh", ta = "வங்காளதேசம்"),
+    IdangalinPeyar(en = "Nepal", ta = "நேபாளம்"),
+    IdangalinPeyar(en = "Pakistan", ta = "பாகிஸ்தான்"),
+    IdangalinPeyar(en = "Philippines", ta = "பிலிப்பினாசு"),
+    IdangalinPeyar(en = "Custom", ta = "தனிப்பயன்")
+)

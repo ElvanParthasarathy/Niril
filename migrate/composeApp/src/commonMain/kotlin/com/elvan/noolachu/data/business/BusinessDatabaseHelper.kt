@@ -2,6 +2,7 @@ package com.elvan.noolachu.data.business
 
 import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.data.model.PattiyalTharavuru
+import com.elvan.noolachu.data.model.PatruPattiyalInaippuTharavuru
 import com.elvan.noolachu.data.model.PatrugalTharavuru
 import com.elvan.noolachu.data.model.PorulTharavuru
 import com.elvan.noolachu.data.model.VaangunarTharavuru
@@ -30,6 +31,16 @@ interface BusinessDatabaseHelper {
     fun loadAllReceipts(mode: AppMode): List<PatrugalTharavuru>
     fun saveReceipt(mode: AppMode, receipt: PatrugalTharavuru): Long
     fun deleteReceipt(mode: AppMode, id: Long): Boolean
+    fun loadDeletedReceipts(mode: AppMode): List<PatrugalTharavuru>
+    fun restoreReceipt(mode: AppMode, id: Long): Boolean
+    fun permanentDeleteReceipt(mode: AppMode, id: Long): Boolean
+    fun purgeExpiredReceipts(mode: AppMode, days: Int = 30): Int
+
+    // Receipt ↔ Invoice Junction Links
+    fun getLinksForPatru(mode: AppMode, patruId: Long): List<PatruPattiyalInaippuTharavuru>
+    fun saveReceiptWithLinks(mode: AppMode, receipt: PatrugalTharavuru, links: List<PatruPattiyalInaippuTharavuru>): Long
+    fun getPaidAmountForInvoice(mode: AppMode, invoiceId: Long): Double
+    fun getPaidAmountsForInvoices(mode: AppMode, invoiceIds: List<Long>): Map<Long, Double>
 }
 
 expect fun getBusinessDatabaseHelper(): BusinessDatabaseHelper

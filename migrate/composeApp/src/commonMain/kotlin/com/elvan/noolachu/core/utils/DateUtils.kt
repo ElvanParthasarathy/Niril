@@ -4,6 +4,8 @@ object DateUtils {
     /**
      * Converts epoch milliseconds (UTC) to "DD/MM/YYYY" format.
      */
+    fun formatDate(millis: Long): String = formatEpochMillis(millis)
+
     fun formatEpochMillis(millis: Long): String {
         val days = (millis / 86400000L).toInt()
         val z = days + 719468
