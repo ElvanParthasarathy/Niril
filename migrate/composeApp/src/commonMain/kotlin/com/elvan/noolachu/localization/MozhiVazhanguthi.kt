@@ -77,7 +77,7 @@ fun String.trWithLang(langCode: String): String {
     return when (langCode) {
         "ta" -> ta[this] ?: this
         "en" -> en[this] ?: this
-        "ta-Latn" -> taLatn[this] ?: ta[this]?.let { NavilMozhimaatri.capitalizeSentences(NavilMozhimaatri.transliterate(it)) } ?: NavilMozhimaatri.capitalizeSentences(NavilMozhimaatri.transliterate(this))
+        "ta-Latn" -> taLatn[this] ?: ta[this]?.let { NavilMozhimaatri.transliterate(it) } ?: NavilMozhimaatri.transliterate(this)
         else -> ta[this] ?: en[this] ?: this
     }
 }

@@ -426,6 +426,6 @@ val ta: Map<String, String> = mapOf(
  */
 val taLatn: Map<String, String> by lazy {
     ta.mapValues { (_, tamilText) ->
-        NavilMozhimaatri.capitalizeSentences(NavilMozhimaatri.transliterate(tamilText))
+        NavilMozhimaatri.transliterate(tamilText)
     }
 }

@@ -347,8 +347,11 @@ object NavilMozhimaatri {
     /**
      * Primary transliteration function: Converts Tamil text to Latin/Romanized phonetic script
      * according to the 14 Tolkappiyam rules in Extended++ (Navil) Mode.
+     *
+     * Rule 14 (Title Case / Word Capitalization) is enabled by default for optimal readability.
+     * Pass [capitalizeWords] = false to obtain raw lowercase phonetics.
      */
-    fun transliterate(text: String): String {
+    fun transliterate(text: String, capitalizeWords: Boolean = true): String {
         if (text.isEmpty()) return ""
 
         val cleanText = sanitizeRedundantVallinaMei(text)
@@ -491,7 +494,8 @@ object NavilMozhimaatri {
             }
         }
 
-        return out.toString()
+        val rawResult = out.toString()
+        return if (capitalizeWords) capitalizeWords(rawResult) else rawResult
     }
 
     /**

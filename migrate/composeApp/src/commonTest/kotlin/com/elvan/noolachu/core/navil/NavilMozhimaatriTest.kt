@@ -146,23 +146,27 @@ class NavilMozhimaatriTest {
         )
 
         for (test in tests) {
-            val actual = NavilMozhimaatri.transliterate(test.input)
+            val actual = NavilMozhimaatri.transliterate(test.input, capitalizeWords = false)
             assertEquals(test.expected, actual, "Failed on '${test.input}' (${test.note})")
         }
     }
 
     @Test
     fun testCapitalization() {
-        // Sentence case
-        val sent = NavilMozhimaatri.capitalizeSentences(NavilMozhimaatri.transliterate("வணக்கம். எப்படி இருக்கிறீர்கள்? நன்றாக இருக்கிறேன்!"))
-        assertEquals("Vanakkam. Eppadi irukkireergal? Nandraaga irukkiraen!", sent)
-
-        // Word case (Title Case)
-        val words = NavilMozhimaatri.capitalizeWords(NavilMozhimaatri.transliterate("இன்றைய பல்கலைக்கழகத்தில் நடைபெற்ற செம்மொழித் தமிழாய்வுக் கருத்தரங்கில்"))
+        // 1. Default transliterate has Rule 14 (capitalizeWords = true) always ON
+        val words = NavilMozhimaatri.transliterate("இன்றைய பல்கலைக்கழகத்தில் நடைபெற்ற செம்மொழித் தமிழாய்வுக் கருத்தரங்கில்")
         assertEquals("Indraiya Palgalaikkazhagathil Nadaipetra Chemmozhith Thamizhaaivuk Karutharangil", words)
 
-        // Poem case
-        val poem = NavilMozhimaatri.capitalizePoem(NavilMozhimaatri.transliterate("தொன்றுதொட்டு நிலைபெற்றுள்ள\nஇருபெரும் கவிஞர்கள்\nஇயல்பும் புகழும் பெற்றார்"))
+        // 2. Can be turned OFF by passing capitalizeWords = false
+        val raw = NavilMozhimaatri.transliterate("முயற்சி", capitalizeWords = false)
+        assertEquals("muyarchi", raw)
+
+        // 3. Sentence case
+        val sent = NavilMozhimaatri.capitalizeSentences(NavilMozhimaatri.transliterate("வணக்கம். எப்படி இருக்கிறீர்கள்? நன்றாக இருக்கிறேன்!", capitalizeWords = false))
+        assertEquals("Vanakkam. Eppadi irukkireergal? Nandraaga irukkiraen!", sent)
+
+        // 4. Poem case
+        val poem = NavilMozhimaatri.capitalizePoem(NavilMozhimaatri.transliterate("தொன்றுதொட்டு நிலைபெற்றுள்ள\nஇருபெரும் கவிஞர்கள்\nஇயல்பும் புகழும் பெற்றார்", capitalizeWords = false))
         assertEquals("Thondrudhottu nilaipetrulla\nIruperum kavinyargal\nIyalbum pugazhum petraar", poem)
     }
 
