@@ -3,7 +3,7 @@ package com.elvan.noolachu.core.navil
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class NavilEngineTest {
+class NavilMozhimaatriTest {
 
     data class TestCase(val input: String, val expected: String, val note: String = "")
 
@@ -146,7 +146,7 @@ class NavilEngineTest {
         )
 
         for (test in tests) {
-            val actual = NavilEngine.transliterate(test.input)
+            val actual = NavilMozhimaatri.transliterate(test.input)
             assertEquals(test.expected, actual, "Failed on '${test.input}' (${test.note})")
         }
     }
@@ -154,22 +154,33 @@ class NavilEngineTest {
     @Test
     fun testCapitalization() {
         // Sentence case
-        val sent = NavilEngine.capitalizeSentences(NavilEngine.transliterate("வணக்கம். எப்படி இருக்கிறீர்கள்? நன்றாக இருக்கிறேன்!"))
+        val sent = NavilMozhimaatri.capitalizeSentences(NavilMozhimaatri.transliterate("வணக்கம். எப்படி இருக்கிறீர்கள்? நன்றாக இருக்கிறேன்!"))
         assertEquals("Vanakkam. Eppadi irukkireergal? Nandraaga irukkiraen!", sent)
 
         // Word case (Title Case)
-        val words = NavilEngine.capitalizeWords(NavilEngine.transliterate("இன்றைய பல்கலைக்கழகத்தில் நடைபெற்ற செம்மொழித் தமிழாய்வுக் கருத்தரங்கில்"))
+        val words = NavilMozhimaatri.capitalizeWords(NavilMozhimaatri.transliterate("இன்றைய பல்கலைக்கழகத்தில் நடைபெற்ற செம்மொழித் தமிழாய்வுக் கருத்தரங்கில்"))
         assertEquals("Indraiya Palgalaikkazhagathil Nadaipetra Chemmozhith Thamizhaaivuk Karutharangil", words)
 
         // Poem case
-        val poem = NavilEngine.capitalizePoem(NavilEngine.transliterate("தொன்றுதொட்டு நிலைபெற்றுள்ள\nஇருபெரும் கவிஞர்கள்\nஇயல்பும் புகழும் பெற்றார்"))
+        val poem = NavilMozhimaatri.capitalizePoem(NavilMozhimaatri.transliterate("தொன்றுதொட்டு நிலைபெற்றுள்ள\nஇருபெரும் கவிஞர்கள்\nஇயல்பும் புகழும் பெற்றார்"))
         assertEquals("Thondrudhottu nilaipetrulla\nIruperum kavinyargal\nIyalbum pugazhum petraar", poem)
     }
 
     @Test
     fun testSyllableSplitter() {
         val word = "முயற்சி"
-        val syllables = NavilEngine.splitSyllables(word).map { it.raw }.filter { it.isNotEmpty() }
+        val syllables = NavilMozhimaatri.splitSyllables(word).map { it.raw }.filter { it.isNotEmpty() }
         assertEquals(listOf("மு", "யற்", "சி"), syllables)
+    }
+
+    @Test
+    fun testDynamicTaLatnTransliteration() {
+        val senthamizh = com.elvan.noolachu.localization.language_keys.taLatn[com.elvan.noolachu.localization.K.senthamizh]
+        kotlin.test.assertNotNull(senthamizh)
+        assertEquals("Chendhamizh", senthamizh)
+
+        val niruvanam = com.elvan.noolachu.localization.language_keys.taLatn[com.elvan.noolachu.localization.K.niruvanam]
+        kotlin.test.assertNotNull(niruvanam)
+        assertEquals("Niruvanam", niruvanam)
     }
 }

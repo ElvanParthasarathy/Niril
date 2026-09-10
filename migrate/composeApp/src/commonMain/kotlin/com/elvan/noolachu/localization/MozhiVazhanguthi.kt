@@ -1,6 +1,7 @@
 package com.elvan.noolachu.localization
 
 import androidx.compose.runtime.*
+import com.elvan.noolachu.core.navil.NavilMozhimaatri
 import com.elvan.noolachu.localization.language_keys.en
 import com.elvan.noolachu.localization.language_keys.ta
 import com.elvan.noolachu.localization.language_keys.taLatn
@@ -76,7 +77,7 @@ fun String.trWithLang(langCode: String): String {
     return when (langCode) {
         "ta" -> ta[this] ?: this
         "en" -> en[this] ?: this
-        "ta-Latn" -> taLatn[this] ?: ta[this] ?: this
+        "ta-Latn" -> taLatn[this] ?: ta[this]?.let { NavilMozhimaatri.capitalizeSentences(NavilMozhimaatri.transliterate(it)) } ?: NavilMozhimaatri.capitalizeSentences(NavilMozhimaatri.transliterate(this))
         else -> ta[this] ?: en[this] ?: this
     }
 }

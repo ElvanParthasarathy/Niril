@@ -1,5 +1,6 @@
 package com.elvan.noolachu.localization.language_keys
 
+import com.elvan.noolachu.core.navil.NavilMozhimaatri
 import com.elvan.noolachu.localization.K
 
 /**
@@ -417,3 +418,14 @@ val ta: Map<String, String> = mapOf(
     K.ezhezhuthukkal to "எழுத்துகள்",
     K.cholEnnikkai to "சொற்கள்",
 )
+
+/**
+ * Dynamically generated Tamil Latin (Tanglish/Romanized) translations
+ * using the pure Kotlin Tolkappiyam NavilEngine.
+ * Eliminates the need for a separate static TaLatn.kt file.
+ */
+val taLatn: Map<String, String> by lazy {
+    ta.mapValues { (_, tamilText) ->
+        NavilMozhimaatri.capitalizeSentences(NavilMozhimaatri.transliterate(tamilText))
+    }
+}

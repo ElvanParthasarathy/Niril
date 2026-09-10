@@ -12,7 +12,7 @@ package com.elvan.noolachu.core.navil
  *
  * Operates in the authentic standard Extended++ (Navil) phonetic mode.
  */
-object NavilEngine {
+object NavilMozhimaatri {
 
     const val VIRAMA = "்"
 

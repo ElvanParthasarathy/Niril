@@ -280,9 +280,9 @@ fun SettingsHubScreen(
 
                     ElvanSettingsRow(
                         icon = MaterialSymbols.Rounded.AutoAwesome,
-                        title = K.navilMozhimatri.tr(),
-                        description = K.navilMozhimatriDesc.tr(),
-                        onClick = { onNavigate(SettingsRoute.NavilMozhimatri) },
+                        title = K.elvanNavil.tr(),
+                        description = K.elvanNavilDesc.tr(),
+                        onClick = { onNavigate(SettingsRoute.ElvanNavil) },
                         colors = colors
                     )
                 }
