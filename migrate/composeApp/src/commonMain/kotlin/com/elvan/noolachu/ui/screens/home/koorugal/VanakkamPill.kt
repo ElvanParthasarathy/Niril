@@ -30,6 +30,7 @@ import com.elvan.noolachu.theme.ShellColors
 import com.elvan.noolachu.theme.ShellDefaults
 import com.elvan.noolachu.theme.preventBrokenLigatures
 import com.elvan.noolachu.ui.navigation.AppSvgs
+import com.elvan.noolachu.ui.navigation.MaterialSymbols
 
 /**
  * Pixel-perfect port of Flutter's VanakkamPill.
@@ -109,10 +110,12 @@ fun VanakkamPill(
                             letterSpacing = (-0.02).sp
                         )
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = "✨",
-                        fontSize = 18.sp
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        imageVector = MaterialSymbols.Rounded.AutoAwesome,
+                        contentDescription = null,
+                        tint = colors.accent,
+                        modifier = Modifier.size(20.dp)
                     )
                 }
 
