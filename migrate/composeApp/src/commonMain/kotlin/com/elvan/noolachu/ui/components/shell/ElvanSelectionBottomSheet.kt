@@ -1,13 +1,19 @@
 package com.elvan.noolachu.ui.components.shell
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.elvan.noolachu.localization.tr
 import com.elvan.noolachu.theme.ShellColors
@@ -82,29 +88,83 @@ fun <T> ElvanSelectionBottomSheet(
                 )
             }
 
-            // 3. Items list with items matching Flutter's ElvanMaeladukkuUrupadi
-            LazyColumn(
+            // 3. Items list with items matching Flutter's ElvanMaeladukkuUrupadi & Navigation Fade Masks
+            val listState = rememberLazyListState()
+
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(max = 420.dp)
-                    .padding(bottom = 8.dp)
             ) {
-                items(filteredItems) { item ->
-                    val isSelected = item == currentValue
-                    val subtitle = subtitleBuilder?.invoke(item)
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 420.dp),
+                    contentPadding = PaddingValues(top = 4.dp, bottom = 48.dp)
+                ) {
+                    items(filteredItems) { item ->
+                        val isSelected = item == currentValue
+                        val subtitle = subtitleBuilder?.invoke(item)
 
-                    ElvanMaeladukkuUrupadi(
-                        title = itemLabelBuilder(item),
-                        subtitle = subtitle,
-                        isSelected = isSelected,
-                        onTap = {
-                            onSelected(item)
-                            onDismissRequest()
-                        },
-                        leading = leadingBuilder?.let { { it(item) } },
-                        colors = colors
+                        ElvanMaeladukkuUrupadi(
+                            title = itemLabelBuilder(item),
+                            subtitle = subtitle,
+                            isSelected = isSelected,
+                            onTap = {
+                                onSelected(item)
+                                onDismissRequest()
+                            },
+                            leading = leadingBuilder?.let { { it(item) } },
+                            colors = colors
+                        )
+                    }
+                }
+
+                // Top Fade Mask (Smooth fade into search pill / header when scrolled)
+                val showTopFade by remember {
+                    derivedStateOf {
+                        listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0
+                    }
+                }
+                val topFadeAlpha by animateFloatAsState(
+                    targetValue = if (showTopFade) 1f else 0f,
+                    label = "sheetTopFadeAlpha"
+                )
+
+                if (topFadeAlpha > 0f) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .fillMaxWidth()
+                            .height(24.dp)
+                            .graphicsLayer { alpha = topFadeAlpha }
+                            .background(
+                                Brush.verticalGradient(
+                                    0.0f to sheetBg,
+                                    0.35f to sheetBg.copy(alpha = 0.55f),
+                                    0.7f to sheetBg.copy(alpha = 0.16f),
+                                    1.0f to Color.Transparent
+                                )
+                            )
                     )
                 }
+
+                // Bottom Fade Mask (Matching Navigation Home Screen)
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .background(
+                            Brush.verticalGradient(
+                                0.0f to Color.Transparent,
+                                0.3f to sheetBg.copy(alpha = 0.16f),
+                                0.65f to sheetBg.copy(alpha = 0.55f),
+                                1.0f to sheetBg
+                            )
+                        )
+                )
             }
 
             // 4. Optional "+ Add New" button matching Flutter's ElvanMaeladukkuPudhiyaPothan
