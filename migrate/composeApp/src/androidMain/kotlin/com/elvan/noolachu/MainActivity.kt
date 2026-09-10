@@ -8,11 +8,13 @@ import android.view.View
 import android.view.Window
 import android.view.WindowInsetsController
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.DisposableEffect
 import androidx.core.view.WindowCompat
+import com.elvan.noolachu.core.mode.ModeManager
 import com.elvan.noolachu.theme.ThemeManager
 
 fun updateSystemBarsAppearance(window: Window, isDark: Boolean) {
@@ -49,6 +51,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         com.elvan.noolachu.core.platform.AppContext.context = applicationContext
         com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository.refreshFromDatabase()
+
+        if (savedInstanceState == null) {
+            ModeManager.resetStartupState()
+        }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                ModeManager.resetStartupState()
+                finish()
+            }
+        })
 
         val isSystemDark = (resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES
         val isInitialDark = when (ThemeManager.currentThemeMode) {
@@ -102,6 +115,13 @@ class MainActivity : ComponentActivity() {
                 onDispose {}
             }
             App()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (!isChangingConfigurations) {
+            ModeManager.resetStartupState()
         }
     }
 }

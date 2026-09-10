@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.zIndex
 import com.elvan.noolachu.core.mode.ModeManager
@@ -30,7 +31,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun App() {
-    var isSplashVisible by remember { mutableStateOf(true) }
+    var isSplashVisible by rememberSaveable { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         delay(600)
@@ -50,57 +51,56 @@ fun App() {
                             .fillMaxSize()
                             .background(colors.background)
                     ) {
-                        if (!ModeManager.hasSelectedModeAtStartup) {
-                            SplashBackground(isDark = ThemeManager.isDark()) {
-                                AnimatedContent(
-                                    targetState = isSplashVisible,
-                                    transitionSpec = {
-                                        fadeIn(animationSpec = tween(280)) togetherWith
-                                            fadeOut(animationSpec = tween(200))
-                                    },
-                                    label = "splash_to_mode_selector"
-                                ) { showSplash ->
-                                    if (showSplash) {
-                                        SplashContent()
-                                    } else {
-                                        ModeSelectorContent(
+                        AnimatedContent(
+                            targetState = ModeManager.hasSelectedModeAtStartup,
+                            transitionSpec = {
+                                fadeIn(animationSpec = tween(280)) togetherWith
+                                    fadeOut(animationSpec = tween(200))
+                            },
+                            label = "startup_flow"
+                        ) { hasSelectedMode ->
+                            if (!hasSelectedMode) {
+                                SplashBackground(isDark = ThemeManager.isDark()) {
+                                    AnimatedContent(
+                                        targetState = isSplashVisible,
+                                        transitionSpec = {
+                                            fadeIn(animationSpec = tween(280)) togetherWith
+                                                fadeOut(animationSpec = tween(200))
+                                        },
+                                        label = "splash_to_mode_selector"
+                                    ) { showSplash ->
+                                        if (showSplash) {
+                                            SplashContent()
+                                        } else {
+                                            ModeSelectorContent(
+                                                onModeSelected = { selectedMode ->
+                                                    ModeManager.setMode(selectedMode)
+                                                },
+                                                canDismiss = false
+                                            )
+                                        }
+                                    }
+                                }
+                            } else {
+                                Box(modifier = Modifier.fillMaxSize()) {
+                                    HomeScreen()
+
+                                    AnimatedVisibility(
+                                        visible = ModeManager.isModeSelectorOpen,
+                                        modifier = Modifier.zIndex(100f),
+                                        enter = fadeIn(animationSpec = tween(300)),
+                                        exit = fadeOut(animationSpec = tween(250))
+                                    ) {
+                                        ModeSelectorScreen(
                                             onModeSelected = { selectedMode ->
                                                 ModeManager.setMode(selectedMode)
                                             },
-                                            canDismiss = false
+                                            onDismiss = {
+                                                ModeManager.closeModeSelector()
+                                            },
+                                            canDismiss = true
                                         )
                                     }
-                                }
-                            }
-                        } else {
-                            HomeScreen()
-
-                            AnimatedVisibility(
-                                visible = ModeManager.isModeSelectorOpen,
-                                modifier = Modifier.zIndex(100f),
-                                enter = fadeIn(animationSpec = tween(300)),
-                                exit = fadeOut(animationSpec = tween(250))
-                            ) {
-                                ModeSelectorScreen(
-                                    onModeSelected = { selectedMode ->
-                                        ModeManager.setMode(selectedMode)
-                                    },
-                                    onDismiss = {
-                                        ModeManager.closeModeSelector()
-                                    },
-                                    canDismiss = true
-                                )
-                            }
-
-                            // Animated Splash Screen overlay for already-selected mode startup
-                            AnimatedVisibility(
-                                visible = isSplashVisible,
-                                modifier = Modifier.zIndex(200f),
-                                enter = fadeIn(),
-                                exit = fadeOut(animationSpec = tween(durationMillis = 280))
-                            ) {
-                                SplashBackground(isDark = ThemeManager.isDark()) {
-                                    SplashContent()
                                 }
                             }
                         }

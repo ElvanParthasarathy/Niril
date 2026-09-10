@@ -63,6 +63,15 @@ object ModeManager {
         openModeSelector()
     }
 
+    /**
+     * Resets the startup mode selection state so the next launch requires
+     * choosing mode at startup.
+     */
+    fun resetStartupState() {
+        hasSelectedModeAtStartup = false
+        isModeSelectorOpen = false
+    }
+
     /** Check if we are in Kooli mode */
     val isKooli: Boolean get() = currentMode == AppMode.KOOLI
 
