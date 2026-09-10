@@ -49,7 +49,8 @@ fun <T> ElvanSelectionBottomSheet(
     addNewLabel: String? = null
 ) {
     val isDark = colors.isDark
-    val sheetBg = if (isDark) Color(0xFF111111) else Color.White
+    // Elevated sheet surface: not stark white, not pitch black, not transparent
+    val sheetBg = if (isDark) Color(0xFF1E1E1E) else Color(0xFFF6F6F8)
     var searchQuery by remember { mutableStateOf("") }
 
     val filteredItems = remember(items, searchQuery) {
@@ -91,80 +92,90 @@ fun <T> ElvanSelectionBottomSheet(
             // 3. Items list with items matching Flutter's ElvanMaeladukkuUrupadi & Navigation Fade Masks
             val listState = rememberLazyListState()
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 420.dp)
+            BoxWithConstraints(
+                modifier = Modifier.fillMaxWidth()
             ) {
-                LazyColumn(
-                    state = listState,
+                val maxListHeight = if (maxHeight > 0.dp && maxHeight != androidx.compose.ui.unit.Dp.Infinity) {
+                    (maxHeight * 0.75f).coerceIn(360.dp, 580.dp)
+                } else {
+                    520.dp
+                }
+
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(max = 420.dp),
-                    contentPadding = PaddingValues(top = 4.dp, bottom = 48.dp)
+                        .heightIn(max = maxListHeight)
                 ) {
-                    items(filteredItems) { item ->
-                        val isSelected = item == currentValue
-                        val subtitle = subtitleBuilder?.invoke(item)
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = maxListHeight),
+                        contentPadding = PaddingValues(top = 4.dp, bottom = 28.dp)
+                    ) {
+                        items(filteredItems) { item ->
+                            val isSelected = item == currentValue
+                            val subtitle = subtitleBuilder?.invoke(item)
 
-                        ElvanMaeladukkuUrupadi(
-                            title = itemLabelBuilder(item),
-                            subtitle = subtitle,
-                            isSelected = isSelected,
-                            onTap = {
-                                onSelected(item)
-                                onDismissRequest()
-                            },
-                            leading = leadingBuilder?.let { { it(item) } },
-                            colors = colors
+                            ElvanMaeladukkuUrupadi(
+                                title = itemLabelBuilder(item),
+                                subtitle = subtitle,
+                                isSelected = isSelected,
+                                onTap = {
+                                    onSelected(item)
+                                    onDismissRequest()
+                                },
+                                leading = leadingBuilder?.let { { it(item) } },
+                                colors = colors
+                            )
+                        }
+                    }
+
+                    // Top Fade Mask (Smooth fade into search pill / header when scrolled)
+                    val showTopFade by remember {
+                        derivedStateOf {
+                            listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0
+                        }
+                    }
+                    val topFadeAlpha by animateFloatAsState(
+                        targetValue = if (showTopFade) 1f else 0f,
+                        label = "sheetTopFadeAlpha"
+                    )
+
+                    if (topFadeAlpha > 0f) {
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .fillMaxWidth()
+                                .height(24.dp)
+                                .graphicsLayer { alpha = topFadeAlpha }
+                                .background(
+                                    Brush.verticalGradient(
+                                        0.0f to sheetBg,
+                                        0.35f to sheetBg.copy(alpha = 0.55f),
+                                        0.7f to sheetBg.copy(alpha = 0.16f),
+                                        1.0f to Color.Transparent
+                                    )
+                                )
                         )
                     }
-                }
 
-                // Top Fade Mask (Smooth fade into search pill / header when scrolled)
-                val showTopFade by remember {
-                    derivedStateOf {
-                        listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0
-                    }
-                }
-                val topFadeAlpha by animateFloatAsState(
-                    targetValue = if (showTopFade) 1f else 0f,
-                    label = "sheetTopFadeAlpha"
-                )
-
-                if (topFadeAlpha > 0f) {
+                    // Bottom Fade Mask (Matching Navigation Home Screen)
                     Box(
                         modifier = Modifier
-                            .align(Alignment.TopCenter)
+                            .align(Alignment.BottomCenter)
                             .fillMaxWidth()
-                            .height(24.dp)
-                            .graphicsLayer { alpha = topFadeAlpha }
+                            .height(28.dp)
                             .background(
                                 Brush.verticalGradient(
-                                    0.0f to sheetBg,
-                                    0.35f to sheetBg.copy(alpha = 0.55f),
-                                    0.7f to sheetBg.copy(alpha = 0.16f),
-                                    1.0f to Color.Transparent
+                                    0.0f to Color.Transparent,
+                                    0.3f to sheetBg.copy(alpha = 0.16f),
+                                    0.65f to sheetBg.copy(alpha = 0.55f),
+                                    1.0f to sheetBg
                                 )
                             )
                     )
                 }
-
-                // Bottom Fade Mask (Matching Navigation Home Screen)
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
-                        .height(48.dp)
-                        .background(
-                            Brush.verticalGradient(
-                                0.0f to Color.Transparent,
-                                0.3f to sheetBg.copy(alpha = 0.16f),
-                                0.65f to sheetBg.copy(alpha = 0.55f),
-                                1.0f to sheetBg
-                            )
-                        )
-                )
             }
 
             // 4. Optional "+ Add New" button matching Flutter's ElvanMaeladukkuPudhiyaPothan
@@ -177,6 +188,8 @@ fun <T> ElvanSelectionBottomSheet(
                     label = addNewLabel ?: com.elvan.noolachu.localization.K.pudhiyaChaerkkai.tr(),
                     colors = colors
                 )
+            } else {
+                Spacer(modifier = Modifier.height(8.dp))
             }
         }
     }
@@ -196,11 +209,14 @@ fun <T> ElvanSelectionBottomSheet(
             }
         }
     } else {
+        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+
         ModalBottomSheet(
             onDismissRequest = onDismissRequest,
+            sheetState = sheetState,
             shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
             containerColor = sheetBg,
-            scrimColor = Color.Black.copy(alpha = 0.45f),
+            scrimColor = Color.Black.copy(alpha = 0.5f),
             dragHandle = { BottomSheetDefaults.DragHandle() },
             modifier = modifier
         ) {
