@@ -31,93 +31,87 @@ fun PattuMothangalKooru(
     val colors = rememberShellColors()
     val ff = LocalAppFontFamily.current
 
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .widthIn(max = 400.dp)
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        ElvanThiruthiAttai(
-            padding = PaddingValues(20.dp),
-            borderRadius = 24.dp
-        ) {
-            // Subtotal
+        // Subtotal
+        TotalsRow(
+            label = K.ulmotham.tr(),
+            amount = totals.adippadaiMothangal
+        )
+
+        // Discount (if any)
+        if (totals.thallupadiMothangal > 0) {
             TotalsRow(
-                label = K.ulmotham.tr(),
-                amount = totals.adippadaiMothangal
+                label = K.thallupadi.tr(),
+                amount = -totals.thallupadiMothangal,
+                textColor = Color(0xFFE53935)
             )
+        }
 
-            // Discount (if any)
-            if (totals.thallupadiMothangal > 0) {
-                TotalsRow(
-                    label = K.thallupadi.tr(),
-                    amount = -totals.thallupadiMothangal,
-                    textColor = Color(0xFFE53935)
-                )
-            }
-
-            // CGST
-            if (totals.cgst > 0) {
-                TotalsRow(
-                    label = "CGST",
-                    amount = totals.cgst
-                )
-            }
-
-            // SGST
-            if (totals.sgst > 0) {
-                TotalsRow(
-                    label = "SGST",
-                    amount = totals.sgst
-                )
-            }
-
-            // IGST
-            if (totals.igst > 0) {
-                TotalsRow(
-                    label = "IGST",
-                    amount = totals.igst
-                )
-            }
-
-            // Round-off
-            if (totals.suttruOff != 0.0) {
-                TotalsRow(
-                    label = K.chuttruOppu.tr(),
-                    amount = totals.suttruOff
-                )
-            }
-
-            HorizontalDivider(
-                thickness = 1.dp,
-                color = colors.textPrimary.copy(alpha = 0.08f),
-                modifier = Modifier.padding(vertical = 4.dp)
+        // CGST
+        if (totals.cgst > 0) {
+            TotalsRow(
+                label = "CGST",
+                amount = totals.cgst
             )
+        }
 
-            // Grand Total
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = K.perumMotham.tr().preventBrokenLigatures(),
-                    style = TextStyle(
-                        fontFamily = ff,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = colors.textPrimary
-                    )
+        // SGST
+        if (totals.sgst > 0) {
+            TotalsRow(
+                label = "SGST",
+                amount = totals.sgst
+            )
+        }
+
+        // IGST
+        if (totals.igst > 0) {
+            TotalsRow(
+                label = "IGST",
+                amount = totals.igst
+            )
+        }
+
+        // Round-off
+        if (totals.suttruOff != 0.0) {
+            TotalsRow(
+                label = K.chuttruOppu.tr(),
+                amount = totals.suttruOff
+            )
+        }
+
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = colors.textPrimary.copy(alpha = 0.08f),
+            modifier = Modifier.padding(vertical = 4.dp)
+        )
+
+        // Grand Total
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = K.perumMotham.tr().preventBrokenLigatures(),
+                style = TextStyle(
+                    fontFamily = ff,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colors.textPrimary
                 )
-                Text(
-                    text = CurrencyUtils.formatInr(totals.mothaMothangal),
-                    style = TextStyle(
-                        fontFamily = ff,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = colors.textPrimary
-                    )
+            )
+            Text(
+                text = CurrencyUtils.formatInr(totals.mothaMothangal),
+                style = TextStyle(
+                    fontFamily = ff,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = colors.textPrimary
                 )
-            }
+            )
         }
     }
 }

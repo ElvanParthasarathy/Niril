@@ -50,9 +50,7 @@ fun PattuPattiyalVagaiKooru(
     val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.05f)
 
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .widthIn(max = 400.dp)
+        modifier = modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             ElvanThiruthiThalaippu(label = K.pattiyalVagai.tr())

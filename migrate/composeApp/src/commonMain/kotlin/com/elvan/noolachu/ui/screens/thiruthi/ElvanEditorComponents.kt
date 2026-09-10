@@ -115,7 +115,7 @@ fun ElvanThiruthiAttai(
     val colors = rememberShellColors()
     val isDark = colors.isDark
 
-    val bg = backgroundColor ?: if (isDark) Color.White.copy(alpha = 0.03f) else Color.White
+    val bg = backgroundColor ?: if (isDark) Color.White.copy(alpha = 0.08f) else Color.White
 
     val shape = RoundedCornerShape(borderRadius)
 

@@ -103,7 +103,7 @@ fun PattuUrupadiAttai(
         // ── Item Card ──
         ElvanThiruthiAttai(
             padding = PaddingValues(16.dp),
-            borderRadius = 20.dp
+            borderRadius = 24.dp
         ) {
             // ── Product Picker Pill ──
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -233,34 +233,40 @@ fun PattuUrupadiAttai(
                             onItemUpdated(item.copy(thallupadi = disc))
                             onDirty()
                         },
-                        suffixText = "%",
                         placeholder = "0",
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        suffixIcon = {
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape)
+                                    .clickable {
+                                        val newType = if (item.thallupadiVagai == "%") "₹" else "%"
+                                        onItemUpdated(item.copy(thallupadiVagai = newType))
+                                        onDirty()
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = if (item.thallupadiVagai == "%") "%" else "₹",
+                                    style = TextStyle(
+                                        fontFamily = ff,
+                                        fontSize = 15.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = colors.textPrimary
+                                    )
+                                )
+                            }
+                        }
                     )
                 }
 
-                Column(
-                    modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.End
-                ) {
-                    Text(
-                        text = K.thogai.tr().preventBrokenLigatures(),
-                        style = TextStyle(
-                            fontFamily = ff,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = colors.textSecondary
-                        ),
-                        modifier = Modifier.padding(bottom = 6.dp)
-                    )
-                    Text(
-                        text = CurrencyUtils.formatInr(item.rowTotal),
-                        style = TextStyle(
-                            fontFamily = ff,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = colors.textPrimary
-                        )
+                Box(modifier = Modifier.weight(1f)) {
+                    ElvanThiruthiUlleedu(
+                        label = K.motham.tr(),
+                        value = CurrencyUtils.formatInr(item.rowTotal),
+                        onValueChange = {},
+                        enabled = false
                     )
                 }
             }

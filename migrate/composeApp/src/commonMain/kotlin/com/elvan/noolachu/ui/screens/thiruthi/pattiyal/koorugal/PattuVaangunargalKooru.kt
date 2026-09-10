@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -117,12 +118,18 @@ fun PattuVaangunargalKooru(
             }
         }
 
-        // ── Saved Details Card ──
+        // ── Saved Details ──
         if (selectedVaangunar != null) {
-            Spacer(modifier = Modifier.height(16.dp))
-            ElvanThiruthiAttai(
-                padding = PaddingValues(16.dp),
-                borderRadius = 20.dp
+            Spacer(modifier = Modifier.height(12.dp))
+            HorizontalDivider(
+                color = colors.textPrimary.copy(alpha = 0.08f),
+                thickness = 1.dp
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
                     text = K.chaemiththaTharavugal.tr().preventBrokenLigatures(),

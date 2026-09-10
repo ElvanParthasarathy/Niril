@@ -37,9 +37,7 @@ fun PattuThallupadiKooru(
     val ff = LocalAppFontFamily.current
 
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .widthIn(max = 400.dp)
+        modifier = modifier.fillMaxWidth()
     ) {
         ElvanThiruthiUlleedu(
             label = K.muzhuThallupadi.tr(),
