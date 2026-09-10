@@ -36,10 +36,8 @@ import com.elvan.noolachu.ui.components.shell.ElvanCheyalPothan
 import com.elvan.noolachu.ui.components.shell.ElvanSelectionBottomSheet
 import com.elvan.noolachu.ui.components.shell.ElvanSubShell
 import com.elvan.noolachu.ui.components.shell.LocalElvanTopSpacerHeight
-import com.elvan.noolachu.ui.components.shell.maeladukkugal.ElvanAzhippuUrudhiMaeladukku
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanEditorSection
-import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiAttai
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiThalaippu
 import com.elvan.noolachu.ui.screens.thiruthi.pattiyal.koorugal.*
 
@@ -108,7 +106,6 @@ fun PattuPattiyalThiruthiScreen(
     // Guards & states
     var hasUnsavedChanges by remember { mutableStateOf(false) }
     var showUnsavedDialog by remember { mutableStateOf(false) }
-    var showDeleteConfirm by remember { mutableStateOf(false) }
     var isSaving by remember { mutableStateOf(false) }
     var isCompanySheetOpen by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -237,35 +234,33 @@ fun PattuPattiyalThiruthiScreen(
                     } ?: K.niruvanaththaithThaernhedu.tr()
 
                     ElvanEditorSection(index = 0, title = K.niruvanathTharavu.tr()) {
-                        ElvanThiruthiAttai(padding = PaddingValues(16.dp), borderRadius = 24.dp) {
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                ElvanThiruthiThalaippu(label = K.niruvanam.tr())
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(45.dp)
-                                        .clip(RoundedCornerShape(999.dp))
-                                        .background(if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.05f))
-                                        .clickable { isCompanySheetOpen = true }
-                                        .padding(horizontal = 16.dp),
-                                    contentAlignment = Alignment.CenterStart
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            ElvanThiruthiThalaippu(label = K.niruvanam.tr())
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(45.dp)
+                                    .clip(RoundedCornerShape(999.dp))
+                                    .background(if (isDark) Color.White.copy(alpha = 0.08f) else Color.White)
+                                    .clickable { isCompanySheetOpen = true }
+                                    .padding(horizontal = 16.dp),
+                                contentAlignment = Alignment.CenterStart
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = companyName.preventBrokenLigatures(),
-                                            style = TextStyle(fontFamily = ff, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = colors.textPrimary)
-                                        )
-                                        Icon(
-                                            imageVector = MaterialSymbols.Rounded.KeyboardArrowDown,
-                                            contentDescription = null,
-                                            tint = colors.textSecondary,
-                                            modifier = Modifier.size(20.dp)
-                                        )
-                                    }
+                                    Text(
+                                        text = companyName.preventBrokenLigatures(),
+                                        style = TextStyle(fontFamily = ff, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = colors.textPrimary)
+                                    )
+                                    Icon(
+                                        imageVector = MaterialSymbols.Rounded.KeyboardArrowDown,
+                                        contentDescription = null,
+                                        tint = colors.textSecondary,
+                                        modifier = Modifier.size(20.dp)
+                                    )
                                 }
                             }
                         }
@@ -278,47 +273,48 @@ fun PattuPattiyalThiruthiScreen(
             // ── Section 1: ① Billed To (பெறுநர்) ──
             item(key = "customer_section") {
                 ElvanEditorSection(index = baseIndex, title = K.perunar.tr()) {
-                    ElvanThiruthiAttai(padding = PaddingValues(16.dp), borderRadius = 24.dp) {
-                        PattuVaangunargalKooru(
-                            selectedVaangunarId = selectedVaangunarId,
-                            onCustomerSelected = { customer ->
-                                selectedVaangunarId = customer.id
-                                selectedVaangunarPeyarMap = customer.peyar
-                                selectedVaangunarMunvariMap = customer.oor
-                                val sEn = customer.maanilam["en"].orEmpty()
-                                val sTa = customer.maanilam["ta"] ?: customer.maanilam.values.firstOrNull().orEmpty()
-                                customerState = sEn
-                                if (sEn.isNotEmpty()) {
-                                    placeOfSupplyEn = sEn
-                                    placeOfSupplyTa = sTa
-                                }
-                                hasUnsavedChanges = true
-                                errorMessage = null
-                            },
-                            onCustomerCleared = {
-                                selectedVaangunarId = null
-                                selectedVaangunarPeyarMap = emptyMap()
-                                selectedVaangunarMunvariMap = emptyMap()
-                                customerState = ""
-                                hasUnsavedChanges = true
-                            },
-                            onRequestAddNewCustomer = onRequestAddNewCustomer
-                        )
-                    }
+                    PattuVaangunargalKooru(
+                        selectedVaangunarId = selectedVaangunarId,
+                        onCustomerSelected = { customer ->
+                            selectedVaangunarId = customer.id
+                            selectedVaangunarPeyarMap = customer.peyar
+                            selectedVaangunarMunvariMap = customer.oor
+                            val sEn = customer.maanilam["en"].orEmpty()
+                            val sTa = customer.maanilam["ta"] ?: customer.maanilam.values.firstOrNull().orEmpty()
+                            customerState = sEn
+                            if (sEn.isNotEmpty()) {
+                                placeOfSupplyEn = sEn
+                                placeOfSupplyTa = sTa
+                            }
+                            hasUnsavedChanges = true
+                            errorMessage = null
+                        },
+                        onCustomerCleared = {
+                            selectedVaangunarId = null
+                            selectedVaangunarPeyarMap = emptyMap()
+                            selectedVaangunarMunvariMap = emptyMap()
+                            customerState = ""
+                            hasUnsavedChanges = true
+                        },
+                        onRequestAddNewCustomer = onRequestAddNewCustomer
+                    )
                 }
             }
 
             // ── Section 2: ② Invoice Details (பட்டியல் தரவுகள்) ──
             item(key = "invoice_details_section") {
                 ElvanEditorSection(index = baseIndex + 1, title = K.pattiyalTharavugal.tr()) {
-                    ElvanThiruthiAttai(padding = PaddingValues(16.dp), borderRadius = 24.dp) {
-                        // Invoice Number with pencil edit pill
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                    ) {
                         val profilePrefix = if (selectedProfile != null && selectedProfile.kurumPeyar.isNotEmpty()) {
                             "${selectedProfile.kurumPeyar}-"
                         } else {
                             "INV-"
                         }
 
+                        // Invoice Number with pencil edit pill
                         ElvanAavanaEnnKooru(
                             label = K.pattiyalEn.tr(),
                             prefix = profilePrefix,
@@ -387,6 +383,8 @@ fun PattuPattiyalThiruthiScreen(
                         }
                     }
 
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     // "+ Add New Item" stadium pill button (matching Flutter + சேர்)
                     Box(
                         modifier = Modifier.fillMaxWidth(),
@@ -428,7 +426,10 @@ fun PattuPattiyalThiruthiScreen(
             // ── Section 4: ④ Totals (மொத்தங்கள்) ──
             item(key = "totals_section") {
                 ElvanEditorSection(index = baseIndex + 3, title = K.mothangal.tr()) {
-                    ElvanThiruthiAttai(padding = PaddingValues(16.dp), borderRadius = 24.dp) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                    ) {
                         // Global Discount Row (% / ₹)
                         PattuThallupadiKooru(
                             discountValue = globalDiscountValue,
@@ -443,17 +444,7 @@ fun PattuPattiyalThiruthiScreen(
                             }
                         )
 
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        HorizontalDivider(
-                            thickness = 1.dp,
-                            color = colors.textPrimary.copy(alpha = 0.08f),
-                            modifier = Modifier.padding(vertical = 4.dp)
-                        )
-
-                        Spacer(modifier = Modifier.height(6.dp))
-
-                        // Calculated Totals Breakdown
+                        // Calculated Totals Breakdown (wrapped in ElvanThiruthiAttai inside PattuMothangalKooru)
                         PattuMothangalKooru(totals = totals)
                     }
                 }
@@ -462,49 +453,13 @@ fun PattuPattiyalThiruthiScreen(
             // ── Section 5: ⑤ Invoice Type (பட்டியல் வகை) ──
             item(key = "invoice_type_section") {
                 ElvanEditorSection(index = baseIndex + 4, title = K.pattiyalVagai.tr()) {
-                    ElvanThiruthiAttai(padding = PaddingValues(16.dp), borderRadius = 24.dp) {
-                        PattuPattiyalVagaiKooru(
-                            pattiyalVagai = pattiyalVagai,
-                            onChanged = {
-                                pattiyalVagai = it
-                                hasUnsavedChanges = true
-                            }
-                        )
-                    }
-                }
-            }
-
-            // ── Section 6: Delete Card (if editing existing invoice) ──
-            if (isEditing && invoice != null) {
-                item(key = "delete_section") {
-                    ElvanThiruthiAttai(
-                        onClick = { showDeleteConfirm = true },
-                        backgroundColor = MaterialTheme.colorScheme.error.copy(alpha = 0.08f),
-                        borderRadius = 24.dp
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = MaterialSymbols.Rounded.Delete,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = K.azhi.tr().preventBrokenLigatures(),
-                                style = TextStyle(
-                                    fontFamily = ff,
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                            )
+                    PattuPattiyalVagaiKooru(
+                        pattiyalVagai = pattiyalVagai,
+                        onChanged = {
+                            pattiyalVagai = it
+                            hasUnsavedChanges = true
                         }
-                    }
+                    )
                 }
             }
         }
@@ -545,19 +500,6 @@ fun PattuPattiyalThiruthiScreen(
                 showUnsavedDialog = false
                 onBack()
             }
-        )
-    }
-
-    // ── Delete Confirmation Modal ──
-    if (showDeleteConfirm && invoice != null) {
-        ElvanAzhippuUrudhiMaeladukku(
-            title = K.thannuruvaiMutrilumNeekkavaa.tr(),
-            onConfirm = {
-                showDeleteConfirm = false
-                PattiyalRepository.delete(invoice.id, AppMode.PATTU)
-                onBack()
-            },
-            onDismissRequest = { showDeleteConfirm = false }
         )
     }
 }

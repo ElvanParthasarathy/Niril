@@ -47,7 +47,7 @@ fun PattuPattiyalVagaiKooru(
     )
 
     val currentLabel = displayMap[pattiyalVagai] ?: K.varipPattiyal.tr()
-    val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.05f)
+    val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.White
 
     Box(
         modifier = modifier.fillMaxWidth()

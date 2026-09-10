@@ -31,10 +31,15 @@ fun PattuMothangalKooru(
     val colors = rememberShellColors()
     val ff = LocalAppFontFamily.current
 
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(6.dp)
+    ElvanThiruthiAttai(
+        padding = PaddingValues(24.dp),
+        borderRadius = 24.dp,
+        modifier = modifier
     ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
         // Subtotal
         TotalsRow(
             label = K.ulmotham.tr(),
@@ -114,6 +119,7 @@ fun PattuMothangalKooru(
             )
         }
     }
+}
 }
 
 @Composable

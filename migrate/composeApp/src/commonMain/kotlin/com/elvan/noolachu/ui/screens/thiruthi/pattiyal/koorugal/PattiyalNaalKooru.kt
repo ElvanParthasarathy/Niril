@@ -40,7 +40,7 @@ fun PattiyalNaalKooru(
     val ff = LocalAppFontFamily.current
 
     var isPickerOpen by remember { mutableStateOf(false) }
-    val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.05f)
+    val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.White
 
     Column(modifier = modifier.fillMaxWidth()) {
         if (!label.isNullOrBlank()) {

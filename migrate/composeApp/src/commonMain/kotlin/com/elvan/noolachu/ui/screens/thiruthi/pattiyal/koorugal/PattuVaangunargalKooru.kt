@@ -58,7 +58,7 @@ fun PattuVaangunargalKooru(
     Column(modifier = modifier.fillMaxWidth()) {
         ElvanThiruthiThalaippu(label = K.vaangunarPeyarThaedu.tr())
 
-        val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.05f)
+        val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.White
         val customerName = selectedVaangunar?.peyar?.get("ta")
             ?: selectedVaangunar?.peyar?.values?.firstOrNull()
             ?: ""
@@ -118,29 +118,27 @@ fun PattuVaangunargalKooru(
             }
         }
 
-        // ── Saved Details ──
+        // ── Saved Details Card (One of the few cards in the editor) ──
         if (selectedVaangunar != null) {
-            Spacer(modifier = Modifier.height(12.dp))
-            HorizontalDivider(
-                color = colors.textPrimary.copy(alpha = 0.08f),
-                thickness = 1.dp
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+            Spacer(modifier = Modifier.height(24.dp))
+            ElvanThiruthiAttai(
+                padding = PaddingValues(16.dp),
+                borderRadius = 24.dp
             ) {
-                Text(
-                    text = K.chaemiththaTharavugal.tr().preventBrokenLigatures(),
-                    style = TextStyle(
-                        fontFamily = ff,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = colors.textSecondary,
-                        letterSpacing = 0.5.sp
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = K.chaemiththaTharavugal.tr().preventBrokenLigatures(),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = colors.textSecondary,
+                            letterSpacing = 0.5.sp
+                        )
                     )
-                )
 
                 // Bilingual name
                 val enName = selectedVaangunar.peyar["en"].orEmpty()
@@ -203,6 +201,7 @@ fun PattuVaangunargalKooru(
                 }
             }
         }
+    }
     }
 
     // ── Customer Selection Bottom Sheet ──

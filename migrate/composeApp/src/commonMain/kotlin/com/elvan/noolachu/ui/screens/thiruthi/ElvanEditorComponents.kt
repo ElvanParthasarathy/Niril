@@ -200,7 +200,7 @@ fun ElvanThiruthiUlleedu(
     val isDark = colors.isDark
     val ff = LocalAppFontFamily.current
 
-    val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.05f)
+    val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.White
     val shape = if (singleLine) RoundedCornerShape(999.dp) else RoundedCornerShape(16.dp)
 
     Column(
@@ -394,7 +394,7 @@ fun ElvanThiruthiKeezhvirivu(
     val ff = LocalAppFontFamily.current
 
     var expanded by remember { mutableStateOf(false) }
-    val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.05f)
+    val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.White
 
     Column(modifier = modifier.fillMaxWidth()) {
         if (!label.isNullOrBlank()) {
