@@ -133,4 +133,27 @@ object PattiyalRepository {
             else -> invoices.size.toString()
         }
     }
+
+    fun getNextVanakkam(niruvanamId: Long?, mode: AppMode = ModeManager.currentMode): Int {
+        val matching = if (niruvanamId != null) {
+            invoices.filter { it.niruvanamId == niruvanamId }
+        } else {
+            invoices.filter { it.niruvanamId == null }
+        }
+        val maxVanakkam = matching.maxOfOrNull { it.vanakkam } ?: 0
+        val parsedMax = matching.mapNotNull { inv ->
+            inv.patrucheettuEn.substringAfterLast('-', "").toIntOrNull()
+        }.maxOfOrNull { it } ?: 0
+        return maxOf(maxVanakkam, parsedMax) + 1
+    }
+
+    fun formatPattiyalEn(prefix: String, vanakkam: Int): String {
+        val padded = if (vanakkam < 10) vanakkam.toString().padStart(2, '0') else vanakkam.toString()
+        return "$prefix-$padded"
+    }
+
+    fun getNextInvoiceNumber(niruvanamId: Long?, prefix: String, mode: AppMode = ModeManager.currentMode): String {
+        val vanakkam = getNextVanakkam(niruvanamId, mode)
+        return formatPattiyalEn(prefix, vanakkam)
+    }
 }
