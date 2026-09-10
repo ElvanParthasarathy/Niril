@@ -105,16 +105,16 @@ fun <T> ElvanSelectionBottomSheet(
             )
             val scrollbarColor = if (isDark) Color.White.copy(alpha = 0.35f) else Color.Black.copy(alpha = 0.35f)
 
-            // Fixed stable height for scrolling lists: avoids any jumping or resizing in the middle of page
-            val hasManyItems = filteredItems.size > 5
+            // Fixed short stable height matching Flutter's MediaQuery.of(context).size.height * 0.5 (~280dp list)
+            val hasManyItems = filteredItems.size > 3
             val listModifier = if (hasManyItems) {
                 Modifier
                     .fillMaxWidth()
-                    .height(460.dp)
+                    .height(280.dp)
             } else {
                 Modifier
                     .fillMaxWidth()
-                    .heightIn(max = 460.dp)
+                    .heightIn(max = 280.dp)
             }
 
             Box(modifier = listModifier) {
