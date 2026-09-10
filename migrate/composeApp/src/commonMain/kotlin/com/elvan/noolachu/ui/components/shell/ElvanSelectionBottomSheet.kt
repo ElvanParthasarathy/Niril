@@ -59,14 +59,7 @@ fun <T> ElvanSelectionBottomSheet(
         }
     }
 
-    ModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-        containerColor = sheetBg,
-        scrimColor = Color.Black.copy(alpha = 0.45f),
-        dragHandle = { BottomSheetDefaults.DragHandle() },
-        modifier = modifier
-    ) {
+    val content: @Composable () -> Unit = {
         ConfigureDialogWindow(isDark = isDark)
         Column(
             modifier = Modifier
@@ -125,6 +118,33 @@ fun <T> ElvanSelectionBottomSheet(
                     colors = colors
                 )
             }
+        }
+    }
+
+    if (com.elvan.noolachu.core.platform.currentPlatform == com.elvan.noolachu.core.platform.PlatformType.DESKTOP) {
+        androidx.compose.ui.window.Dialog(onDismissRequest = onDismissRequest) {
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = sheetBg,
+                shadowElevation = 8.dp,
+                modifier = Modifier
+                    .widthIn(max = 480.dp)
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                content()
+            }
+        }
+    } else {
+        ModalBottomSheet(
+            onDismissRequest = onDismissRequest,
+            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+            containerColor = sheetBg,
+            scrimColor = Color.Black.copy(alpha = 0.45f),
+            dragHandle = { BottomSheetDefaults.DragHandle() },
+            modifier = modifier
+        ) {
+            content()
         }
     }
 }

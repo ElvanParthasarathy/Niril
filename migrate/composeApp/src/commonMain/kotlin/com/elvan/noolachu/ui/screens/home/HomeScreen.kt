@@ -38,6 +38,7 @@ import com.elvan.noolachu.ui.screens.porul.PorulScreen
 import com.elvan.noolachu.ui.screens.settings.SettingsScreen
 import com.elvan.noolachu.ui.screens.thiruthi.patrucheettu.PatrucheettuThiruthiScreen
 import com.elvan.noolachu.ui.screens.thiruthi.pattiyal.PattiyalThiruthiScreen
+import com.elvan.noolachu.ui.screens.thiruthi.pattiyal.PattuPattiyalThiruthiScreen
 import com.elvan.noolachu.ui.screens.thiruthi.porul.PorulThiruthiScreen
 import com.elvan.noolachu.ui.screens.thiruthi.vaangunar.VaangunarThiruthiScreen
 import com.elvan.noolachu.ui.screens.uruvakku.UruvakkuScreen
@@ -182,10 +183,23 @@ fun HomeScreen() {
                     )
                 }
                 is ActiveSubpage.InvoiceEditor -> {
-                    PattiyalThiruthiScreen(
-                        invoice = subpage.invoice,
-                        onBack = { activeSubpage = null }
-                    )
+                    if (currentMode == com.elvan.noolachu.core.mode.AppMode.PATTU) {
+                        PattuPattiyalThiruthiScreen(
+                            invoice = subpage.invoice,
+                            onBack = { activeSubpage = null },
+                            onRequestAddNewCustomer = {
+                                activeSubpage = ActiveSubpage.MerchantEditor(null)
+                            },
+                            onRequestAddNewProduct = {
+                                activeSubpage = ActiveSubpage.ItemEditor(null)
+                            }
+                        )
+                    } else {
+                        PattiyalThiruthiScreen(
+                            invoice = subpage.invoice,
+                            onBack = { activeSubpage = null }
+                        )
+                    }
                 }
                 is ActiveSubpage.ReceiptEditor -> {
                     PatrucheettuThiruthiScreen(
