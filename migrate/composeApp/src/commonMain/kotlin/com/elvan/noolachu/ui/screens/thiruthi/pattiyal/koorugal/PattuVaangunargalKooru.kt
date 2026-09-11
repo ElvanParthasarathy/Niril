@@ -58,7 +58,7 @@ fun PattuVaangunargalKooru(
     Column(modifier = modifier.fillMaxWidth()) {
         ElvanThiruthiThalaippu(label = K.vaangunarPeyarThaedu.tr())
 
-        val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.White
+        val containerBg = colors.iconBg
         val customerName = selectedVaangunar?.peyar?.get("ta")
             ?: selectedVaangunar?.peyar?.values?.firstOrNull()
             ?: ""
@@ -67,11 +67,11 @@ fun PattuVaangunargalKooru(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(45.dp)
-                .clip(RoundedCornerShape(999.dp))
+                .height(48.dp)
+                .clip(RoundedCornerShape(100.dp))
                 .background(containerBg)
                 .clickable { isBottomSheetOpen = true }
-                .padding(horizontal = 16.dp),
+                .padding(start = 20.dp, end = 8.dp),
             contentAlignment = Alignment.CenterStart
         ) {
             Row(

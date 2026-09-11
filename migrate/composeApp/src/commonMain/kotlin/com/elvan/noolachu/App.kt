@@ -18,6 +18,7 @@ import com.elvan.noolachu.core.mode.ProvideModeContext
 import com.elvan.noolachu.localization.ProvideAppLanguage
 import com.elvan.noolachu.theme.NoolachuTheme
 import com.elvan.noolachu.theme.rememberShellColors
+import com.elvan.noolachu.ui.components.dev.ElvanUruvakkunarMenu
 import com.elvan.noolachu.ui.components.shell.ElvanBottomSheetController
 import com.elvan.noolachu.ui.components.shell.ElvanBottomSheetHost
 import com.elvan.noolachu.ui.components.shell.LocalElvanBottomSheetController
@@ -106,6 +107,10 @@ fun App() {
                         }
 
                         ElvanBottomSheetHost(bottomSheetController)
+
+                        Box(modifier = Modifier.fillMaxSize().zIndex(999f)) {
+                            ElvanUruvakkunarMenu()
+                        }
                     }
                 }
             }

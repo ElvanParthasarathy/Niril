@@ -110,16 +110,16 @@ fun PattuUrupadiAttai(
                 ElvanThiruthiThalaippu(label = K.porul.tr())
 
                 val displayName = item.porulPeyar.ifEmpty { item.porulPeyarEn }
-                val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.05f)
+                val containerBg = colors.iconBg
 
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(45.dp)
-                        .clip(RoundedCornerShape(999.dp))
+                        .height(48.dp)
+                        .clip(RoundedCornerShape(100.dp))
                         .background(containerBg)
                         .clickable { isPickerOpen = true }
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 20.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
                     Row(

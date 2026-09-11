@@ -352,7 +352,7 @@ fun PatrucheettuThiruthiScreen(
 
     val pageTitle = if (isEditing) K.maatriyamai.tr() else K.pudhiyaAakkam.tr()
     val scrollState = rememberLazyListState()
-    val pillBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.White
+    val pillBg = colors.iconBg
 
     ElvanSubShell(
         title = pageTitle,
@@ -394,11 +394,11 @@ fun PatrucheettuThiruthiScreen(
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(45.dp)
-                                    .clip(RoundedCornerShape(999.dp))
+                                    .height(48.dp)
+                                    .clip(RoundedCornerShape(100.dp))
                                     .background(pillBg)
                                     .clickable { isCompanySheetOpen = true }
-                                    .padding(start = 20.dp, end = 6.dp),
+                                    .padding(start = 20.dp, end = 8.dp),
                                 contentAlignment = Alignment.CenterStart
                             ) {
                                 Row(
@@ -472,12 +472,12 @@ fun PatrucheettuThiruthiScreen(
                         ) {
                             ElvanThiruthiThalaippu(label = K.pattiyal.tr())
 
-                            // Select Invoices 45dp pill button
+                            // Select Invoices 48dp pill button
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(45.dp)
-                                    .clip(RoundedCornerShape(999.dp))
+                                    .height(48.dp)
+                                    .clip(RoundedCornerShape(100.dp))
                                     .background(pillBg)
                                     .clickable { isInvoicePickerOpen = true },
                                 contentAlignment = Alignment.Center
@@ -595,8 +595,8 @@ fun PatrucheettuThiruthiScreen(
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(45.dp)
-                                        .clip(RoundedCornerShape(999.dp))
+                                        .height(48.dp)
+                                        .clip(RoundedCornerShape(100.dp))
                                         .background(pillBg)
                                         .padding(horizontal = 20.dp),
                                     contentAlignment = Alignment.CenterStart
@@ -700,11 +700,11 @@ fun PatrucheettuThiruthiScreen(
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(45.dp)
-                                        .clip(RoundedCornerShape(999.dp))
+                                        .height(48.dp)
+                                        .clip(RoundedCornerShape(100.dp))
                                         .background(pillBg)
                                         .clickable { isSeluthiVagaiSheetOpen = true }
-                                        .padding(start = 20.dp, end = 6.dp),
+                                        .padding(start = 20.dp, end = 8.dp),
                                     contentAlignment = Alignment.CenterStart
                                 ) {
                                     Row(

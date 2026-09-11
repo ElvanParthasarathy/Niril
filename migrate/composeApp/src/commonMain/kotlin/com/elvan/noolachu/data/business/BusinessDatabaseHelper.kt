@@ -45,6 +45,8 @@ interface BusinessDatabaseHelper {
     fun saveReceiptWithLinks(mode: AppMode, receipt: PatrugalTharavuru, links: List<PatruPattiyalInaippuTharavuru>): Long
     fun getPaidAmountForInvoice(mode: AppMode, invoiceId: Long): Double
     fun getPaidAmountsForInvoices(mode: AppMode, invoiceIds: List<Long>): Map<Long, Double>
+
+    fun clearAllData(mode: AppMode): Boolean
 }
 
 expect fun getBusinessDatabaseHelper(): BusinessDatabaseHelper

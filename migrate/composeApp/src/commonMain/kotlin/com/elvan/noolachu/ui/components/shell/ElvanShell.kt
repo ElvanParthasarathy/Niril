@@ -145,14 +145,14 @@ fun ElvanShell(
                     }
                 }
 
-                // 4. Navbar hide/show logic
-                if (delta > 1f && !isNavbarVisible) {
+                // 4. Navbar hide/show logic matching Flutter One UI Physics
+                val reachedPill = !isItem0 || currentScrollOffset >= (collisionOffsetPx - with(density) { 4.dp.toPx() })
+                if (delta > 2f && !isNavbarVisible) {
+                    // Scrolling UP (finger moving down) -> Show immediately!
                     isNavbarVisible = true
-                } else if (delta < -2f && isNavbarVisible && isFlinging && source == NestedScrollSource.SideEffect) {
-                    val reachedPill = !isItem0 || currentScrollOffset >= (collisionOffsetPx - with(density) { 4.dp.toPx() })
-                    if (reachedPill) {
-                        isNavbarVisible = false
-                    }
+                } else if (delta < -2f && isNavbarVisible && reachedPill) {
+                    // Scrolling DOWN past header (finger moving up) -> Hide!
+                    isNavbarVisible = false
                 }
                 return Offset.Zero
             }
@@ -199,8 +199,7 @@ fun ElvanShell(
                     return available
                 }
 
-                if (available.y < -800f) {
-                    isFlinging = true
+                if (available.y < -300f) {
                     val reachedPill = !isItem0 || currentScrollOffset >= (collisionOffsetPx - with(density) { 4.dp.toPx() })
                     if (reachedPill && isNavbarVisible) {
                         isNavbarVisible = false
@@ -221,6 +220,20 @@ fun ElvanShell(
     LaunchedEffect(isTruePill) {
         if (!isTruePill && !isNavbarVisible) {
             isNavbarVisible = true
+        }
+    }
+
+    // Restore navbar when scrolling stops (ScrollEndNotification equivalent)
+    LaunchedEffect(scrollState.isScrollInProgress) {
+        if (!scrollState.isScrollInProgress && !isNavbarVisible) {
+            isNavbarVisible = true
+        }
+    }
+
+    // Always restore navbar when at the top of the list
+    LaunchedEffect(scrollState.firstVisibleItemIndex, scrollState.firstVisibleItemScrollOffset) {
+        if (scrollState.firstVisibleItemIndex == 0 && scrollState.firstVisibleItemScrollOffset == 0) {
+            if (!isNavbarVisible) isNavbarVisible = true
         }
     }
 

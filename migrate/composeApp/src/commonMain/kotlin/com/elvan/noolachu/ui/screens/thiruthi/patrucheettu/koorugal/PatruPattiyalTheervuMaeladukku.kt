@@ -3,6 +3,8 @@ package com.elvan.noolachu.ui.screens.thiruthi.patrucheettu.koorugal
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -164,7 +166,7 @@ fun PatruPattiyalTheervuMaeladukku(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp),
+                        .padding(vertical = 36.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -177,135 +179,154 @@ fun PatruPattiyalTheervuMaeladukku(
                     )
                 }
             } else {
-                val listState = rememberLazyListState()
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 420.dp)
-                        .padding(horizontal = 16.dp)
-                ) {
-                    items(filteredInvoices, key = { it.id }) { inv ->
-                        val isSelected = selectedIds.contains(inv.id)
-                        val customer = allMerchants.firstOrNull { it.id == inv.vaangunarId }
-                        val oorText = customer?.oor?.get("ta")
-                            ?: customer?.oor?.get("en")
-                            ?: ""
+                val renderInvoiceRow: @Composable (PattiyalTharavuru) -> Unit = { inv ->
+                    val isSelected = selectedIds.contains(inv.id)
+                    val customer = allMerchants.firstOrNull { it.id == inv.vaangunarId }
+                    val oorText = customer?.oor?.get("ta")
+                        ?: customer?.oor?.get("en")
+                        ?: ""
 
-                        val dateStr = DateUtils.formatDate(inv.pattiyalNaal)
+                    val dateStr = DateUtils.formatDate(inv.pattiyalNaal)
 
-                        val customerName = inv.vaangunarPeyar["ta"]
-                            ?: inv.vaangunarPeyar["en"]
-                            ?: ""
+                    val customerName = inv.vaangunarPeyar["ta"]
+                        ?: inv.vaangunarPeyar["en"]
+                        ?: ""
 
-                        val formattedAmount = "₹ " + if (inv.mothaThogai % 1.0 == 0.0) {
-                            inv.mothaThogai.toLong().toString()
-                        } else {
-                            val rounded = (inv.mothaThogai * 100).toLong() / 100.0
-                            rounded.toString()
-                        }
+                    val formattedAmount = "₹ " + if (inv.mothaThogai % 1.0 == 0.0) {
+                        inv.mothaThogai.toLong().toString()
+                    } else {
+                        val rounded = (inv.mothaThogai * 100).toLong() / 100.0
+                        rounded.toString()
+                    }
 
-                        val itemBg = if (isSelected) {
-                            colors.accent.copy(alpha = 0.08f)
-                        } else {
-                            Color.Transparent
-                        }
+                    val itemBg = if (isSelected) {
+                        colors.accent.copy(alpha = 0.08f)
+                    } else {
+                        Color.Transparent
+                    }
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(12.dp))
-                                .background(itemBg)
-                                .clickable {
-                                    if (isSelected) {
-                                        selectedIds.remove(inv.id)
-                                    } else {
-                                        selectedIds.add(inv.id)
-                                    }
-                                }
-                                .padding(horizontal = 12.dp, vertical = 10.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            // Circular checkbox
-                            Box(
-                                modifier = Modifier
-                                    .size(22.dp)
-                                    .clip(CircleShape)
-                                    .background(
-                                        if (isSelected) colors.accent else colors.textSecondary.copy(alpha = 0.2f)
-                                    ),
-                                contentAlignment = Alignment.Center
-                            ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(itemBg)
+                            .clickable {
                                 if (isSelected) {
-                                    Icon(
-                                        imageVector = MaterialSymbols.Rounded.Check,
-                                        contentDescription = null,
-                                        tint = Color.White,
-                                        modifier = Modifier.size(16.dp)
-                                    )
+                                    selectedIds.remove(inv.id)
+                                } else {
+                                    selectedIds.add(inv.id)
                                 }
                             }
-
-                            Spacer(modifier = Modifier.width(12.dp))
-
-                            // Invoice info
-                            Column(modifier = Modifier.weight(1f)) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Text(
-                                        text = inv.patrucheettuEn,
-                                        style = TextStyle(
-                                            fontFamily = ff,
-                                            fontSize = 14.sp,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = colors.textPrimary
-                                        )
-                                    )
-                                    if (dateStr.isNotEmpty()) {
-                                        Text(
-                                            text = dateStr,
-                                            style = TextStyle(
-                                                fontFamily = ff,
-                                                fontSize = 12.sp,
-                                                color = colors.textSecondary.copy(alpha = 0.7f)
-                                            )
-                                        )
-                                    }
-                                }
-
-                                if (customerName.isNotEmpty()) {
-                                    Text(
-                                        text = customerName.preventBrokenLigatures(),
-                                        style = TextStyle(
-                                            fontFamily = ff,
-                                            fontSize = 13.sp,
-                                            color = colors.textSecondary
-                                        ),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
-
-                                val subDetail = if (oorText.isNotEmpty()) "$oorText • $formattedAmount" else formattedAmount
-                                Text(
-                                    text = subDetail.preventBrokenLigatures(),
-                                    style = TextStyle(
-                                        fontFamily = ff,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        color = colors.accent
-                                    )
+                            .padding(horizontal = 12.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Circular checkbox
+                        Box(
+                            modifier = Modifier
+                                .size(22.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (isSelected) colors.accent else colors.textSecondary.copy(alpha = 0.2f)
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (isSelected) {
+                                Icon(
+                                    imageVector = MaterialSymbols.Rounded.Check,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(16.dp)
                                 )
                             }
                         }
 
-                        HorizontalDivider(
-                            modifier = Modifier.padding(horizontal = 12.dp),
-                            thickness = 0.5.dp,
-                            color = colors.divider.copy(alpha = 0.3f)
-                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+
+                        // Invoice info
+                        Column(modifier = Modifier.weight(1f)) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Text(
+                                    text = inv.patrucheettuEn,
+                                    style = TextStyle(
+                                        fontFamily = ff,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = colors.textPrimary
+                                    )
+                                )
+                                if (dateStr.isNotEmpty()) {
+                                    Text(
+                                        text = dateStr,
+                                        style = TextStyle(
+                                            fontFamily = ff,
+                                            fontSize = 12.sp,
+                                            color = colors.textSecondary.copy(alpha = 0.7f)
+                                        )
+                                    )
+                                }
+                            }
+
+                            if (customerName.isNotEmpty()) {
+                                Text(
+                                    text = customerName.preventBrokenLigatures(),
+                                    style = TextStyle(
+                                        fontFamily = ff,
+                                        fontSize = 13.sp,
+                                        color = colors.textSecondary
+                                    ),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+
+                            val subDetail = if (oorText.isNotEmpty()) "$oorText • $formattedAmount" else formattedAmount
+                            Text(
+                                text = subDetail.preventBrokenLigatures(),
+                                style = TextStyle(
+                                    fontFamily = ff,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = colors.accent
+                                )
+                            )
+                        }
+                    }
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        thickness = 0.5.dp,
+                        color = colors.divider.copy(alpha = 0.3f)
+                    )
+                }
+
+                if (filteredInvoices.size <= 5) {
+                    val scrollState = rememberScrollState()
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 420.dp)
+                            .verticalScroll(scrollState)
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        filteredInvoices.forEach { inv ->
+                            renderInvoiceRow(inv)
+                        }
+                    }
+                } else {
+                    val listState = rememberLazyListState()
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(420.dp)
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        items(filteredInvoices, key = { it.id }) { inv ->
+                            renderInvoiceRow(inv)
+                        }
                     }
                 }
             }

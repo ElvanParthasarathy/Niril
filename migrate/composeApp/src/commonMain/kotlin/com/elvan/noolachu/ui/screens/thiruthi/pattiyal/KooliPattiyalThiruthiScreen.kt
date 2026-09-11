@@ -406,11 +406,11 @@ fun KooliPattiyalThiruthiScreen(
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(45.dp)
-                                    .clip(RoundedCornerShape(999.dp))
-                                    .background(if (isDark) Color.White.copy(alpha = 0.08f) else Color.White)
+                                    .height(48.dp)
+                                    .clip(RoundedCornerShape(100.dp))
+                                    .background(colors.iconBg)
                                     .clickable { isCompanySheetOpen = true }
-                                    .padding(start = 20.dp, end = 6.dp),
+                                    .padding(start = 20.dp, end = 8.dp),
                                 contentAlignment = Alignment.CenterStart
                             ) {
                                 Row(

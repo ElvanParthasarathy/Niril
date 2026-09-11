@@ -173,11 +173,11 @@ fun ElvanThiruthiThalaippu(
 
 /**
  * Pill-shaped input designed specifically for Elvan Editors (Thiruthi).
- * Matches Flutter's `ElvanThiruthiUlleedu`:
- * - Height: 45dp (for single-line)
- * - Corner radius: 999dp (pill) or 16dp (multiline)
- * - Clean vertical centering with no excessive Material padding
- * - Background: White (in light mode) or rgba(255,255,255,0.08) (in dark mode)
+ * Matches Flutter's `ElvanThiruthiUlleedu` and `ElvanSettingsTextField`:
+ * - Height: 48dp (for single-line, min 48dp for multiline)
+ * - Corner radius: 100dp (pill) or 16dp (multiline)
+ * - Padding: horizontal 20dp, vertical 12dp (multiline)
+ * - Background: colors.iconBg (dynamic light/dark fill)
  */
 @Composable
 fun ElvanThiruthiUlleedu(
@@ -195,14 +195,15 @@ fun ElvanThiruthiUlleedu(
     maxLines: Int = 1,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    errorMessage: String? = null
+    errorMessage: String? = null,
+    backgroundColor: Color? = null
 ) {
     val colors = rememberShellColors()
     val isDark = colors.isDark
     val ff = LocalAppFontFamily.current
 
-    val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.White
-    val shape = if (singleLine) RoundedCornerShape(999.dp) else RoundedCornerShape(16.dp)
+    val containerBg = backgroundColor ?: colors.iconBg
+    val shape = if (singleLine) RoundedCornerShape(100.dp) else RoundedCornerShape(16.dp)
 
     Column(
         modifier = modifier.fillMaxWidth()
@@ -214,10 +215,10 @@ fun ElvanThiruthiUlleedu(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .then(if (singleLine) Modifier.height(45.dp) else Modifier.heightIn(min = 45.dp, max = 120.dp))
+                .then(if (singleLine) Modifier.height(48.dp) else Modifier.heightIn(min = 48.dp, max = 120.dp))
                 .clip(shape)
                 .background(containerBg)
-                .padding(horizontal = 16.dp, vertical = if (singleLine) 0.dp else 10.dp),
+                .padding(horizontal = 20.dp, vertical = if (singleLine) 0.dp else 12.dp),
             contentAlignment = if (singleLine) Alignment.CenterStart else Alignment.TopStart
         ) {
             Row(
@@ -235,11 +236,11 @@ fun ElvanThiruthiUlleedu(
                         style = TextStyle(
                             fontFamily = ff,
                             fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = colors.textSecondary
-                        )
+                            fontWeight = FontWeight.Normal,
+                            color = colors.textPrimary.copy(alpha = 0.6f)
+                        ),
+                        modifier = Modifier.padding(end = 4.dp, top = if (singleLine) 0.dp else 2.dp)
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
                 }
 
                 Box(
@@ -252,8 +253,10 @@ fun ElvanThiruthiUlleedu(
                             style = TextStyle(
                                 fontFamily = ff,
                                 fontSize = 14.sp,
-                                color = colors.textSecondary.copy(alpha = 0.5f)
-                            )
+                                fontWeight = FontWeight.Normal,
+                                color = colors.textPrimary.copy(alpha = 0.35f)
+                            ),
+                            maxLines = if (singleLine) 1 else Int.MAX_VALUE
                         )
                     }
 
@@ -265,7 +268,7 @@ fun ElvanThiruthiUlleedu(
                         maxLines = maxLines,
                         keyboardOptions = keyboardOptions,
                         keyboardActions = keyboardActions,
-                        cursorBrush = SolidColor(if (isDark) Color.White else Color.Black),
+                        cursorBrush = SolidColor(colors.textPrimary),
                         textStyle = TextStyle(
                             fontFamily = ff,
                             fontSize = 14.sp,
@@ -283,8 +286,8 @@ fun ElvanThiruthiUlleedu(
                         style = TextStyle(
                             fontFamily = ff,
                             fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = colors.textSecondary
+                            fontWeight = FontWeight.Normal,
+                            color = colors.textPrimary.copy(alpha = 0.6f)
                         )
                     )
                 }
@@ -381,7 +384,7 @@ fun ElvanIrumozhiPulan(
 /**
  * Generic Dropdown Pill Selector for Elvan Editors.
  * Matches Flutter's `ElvanThiruthiKeezhvirivu<T>`:
- * Height: 45dp capsule pill with padding(start = 20.dp, end = 6.dp).
+ * Height: 48dp capsule pill with padding(start = 20.dp, end = 8.dp).
  * Opens `ElvanSelectionBottomSheet` on tap.
  */
 @Composable
@@ -398,14 +401,15 @@ fun <T> ElvanThiruthiKeezhvirivu(
     subtitleBuilder: ((T) -> String?)? = null,
     showSearch: Boolean = false,
     searchFilter: ((T, String) -> Boolean)? = null,
-    onRequestAddNew: (() -> Unit)? = null
+    onRequestAddNew: (() -> Unit)? = null,
+    backgroundColor: Color? = null
 ) {
     val colors = rememberShellColors()
     val isDark = colors.isDark
     val ff = LocalAppFontFamily.current
 
     var isSheetOpen by remember { mutableStateOf(false) }
-    val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.White
+    val containerBg = backgroundColor ?: colors.iconBg
     val displayText = if (value != null) itemLabelBuilder(value) else ""
 
     Column(modifier = modifier.fillMaxWidth()) {
@@ -416,11 +420,11 @@ fun <T> ElvanThiruthiKeezhvirivu(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(45.dp)
-                .clip(RoundedCornerShape(999.dp))
+                .height(48.dp)
+                .clip(RoundedCornerShape(100.dp))
                 .background(containerBg)
                 .clickable { isSheetOpen = true }
-                .padding(start = 20.dp, end = 6.dp),
+                .padding(start = 20.dp, end = 8.dp),
             contentAlignment = Alignment.CenterStart
         ) {
             Row(
@@ -438,8 +442,8 @@ fun <T> ElvanThiruthiKeezhvirivu(
                     style = TextStyle(
                         fontFamily = ff,
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = if (displayText.isNotEmpty()) colors.textPrimary else colors.textSecondary.copy(alpha = 0.5f)
+                        fontWeight = FontWeight.Normal,
+                        color = if (displayText.isNotEmpty()) colors.textPrimary else colors.textPrimary.copy(alpha = 0.35f)
                     ),
                     modifier = Modifier.weight(1f),
                     maxLines = 1,
@@ -472,7 +476,7 @@ fun <T> ElvanThiruthiKeezhvirivu(
                         Icon(
                             imageVector = MaterialSymbols.Rounded.KeyboardArrowDown,
                             contentDescription = null,
-                            tint = colors.textSecondary.copy(alpha = 0.5f),
+                            tint = colors.textPrimary.copy(alpha = 0.4f),
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -511,7 +515,8 @@ fun ElvanThiruthiKeezhvirivu(
     selectedText: String,
     items: List<Pair<String, String>>, // value to display label
     onSelected: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    backgroundColor: Color? = null
 ) {
     ElvanThiruthiKeezhvirivu(
         label = label,
@@ -519,7 +524,43 @@ fun ElvanThiruthiKeezhvirivu(
         items = items,
         onSelected = { onSelected(it.first) },
         itemLabelBuilder = { it.second },
-        modifier = modifier
+        modifier = modifier,
+        backgroundColor = backgroundColor
     )
+}
+
+/**
+ * Pill button component for Elvan Editors matching Flutter's `ElvanThiruthiPothan`.
+ * Ensures pixel-perfect consistency (48dp height, 20dp padding, 100dp pill shape).
+ */
+@Composable
+fun ElvanThiruthiPothan(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    height: Dp = 48.dp,
+    padding: PaddingValues = PaddingValues(horizontal = 20.dp),
+    backgroundColor: Color? = null,
+    content: @Composable RowScope.() -> Unit
+) {
+    val colors = rememberShellColors()
+    val containerBg = backgroundColor ?: colors.iconBg
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(height)
+            .clip(RoundedCornerShape(100.dp))
+            .background(containerBg)
+            .clickable(onClick = onClick)
+            .padding(padding),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            content = content
+        )
+    }
 }
 

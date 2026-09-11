@@ -56,6 +56,7 @@ interface SettingsDatabaseHelper {
     fun loadAllProfiles(mode: AppMode): List<NiruvanaTharavugal>
     fun saveProfile(mode: AppMode, profile: NiruvanaTharavugal): Boolean
     fun deleteProfile(mode: AppMode, profileId: Long): Boolean
+    fun clearProfiles(mode: AppMode): Boolean
 }
 
 expect fun getSettingsDatabaseHelper(): SettingsDatabaseHelper

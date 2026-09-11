@@ -236,4 +236,17 @@ object NiruvanaTharavugalRepository {
             }
         } catch (_: Exception) {}
     }
+
+    fun clearProfiles(mode: AppMode): Boolean {
+        val helper = getSettingsDatabaseHelper()
+        val success = helper.clearProfiles(mode)
+        if (success) {
+            when (mode) {
+                AppMode.KOOLI -> kooliProfilesState = emptyList()
+                AppMode.PATTU -> pattuProfilesState = emptyList()
+            }
+            refreshFromDatabase()
+        }
+        return success
+    }
 }

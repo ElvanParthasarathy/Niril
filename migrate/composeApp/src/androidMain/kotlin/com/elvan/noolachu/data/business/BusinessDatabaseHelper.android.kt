@@ -1432,6 +1432,31 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
             deletedAt = deletedAt
         )
     }
+
+    override fun clearAllData(mode: AppMode): Boolean {
+        val dbFile = resolveActiveDatabase(if (mode == AppMode.KOOLI) coolieDbName else silkDbName) ?: return false
+        val vaangunarTable = if (mode == AppMode.KOOLI) "kooli_vaangunar_table" else "pattu_vaangunar_table"
+        val porulTable = if (mode == AppMode.KOOLI) "kooli_porul_table" else "pattu_porul_table"
+        val pattiyalTable = if (mode == AppMode.KOOLI) "kooli_pattiyal_table" else "pattu_pattiyal_table"
+        val patrugalTable = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+
+        return try {
+            val db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            db.use {
+                ensureTables(it, mode)
+                it.delete(junctionTable, null, null)
+                it.delete(patrugalTable, null, null)
+                it.delete(pattiyalTable, null, null)
+                it.delete(porulTable, null, null)
+                it.delete(vaangunarTable, null, null)
+            }
+            true
+        } catch (e: Exception) {
+            Log.e(tag, "clearAllData failed for mode $mode: ${e.message}")
+            false
+        }
+    }
 }
 
 private val androidBusinessHelperInstance by lazy { AndroidBusinessDatabaseHelper() }

@@ -56,7 +56,7 @@ fun ElvanAavanaEnnKooru(
     }
     var editedNumberPart by remember(numberPart) { mutableStateOf(numberPart) }
 
-    val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.White
+    val containerBg = colors.iconBg
 
     Column(modifier = modifier.fillMaxWidth()) {
         ElvanThiruthiThalaippu(label = label)
@@ -98,14 +98,14 @@ fun ElvanAavanaEnnKooru(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(45.dp)
-                    .clip(RoundedCornerShape(999.dp))
+                    .height(48.dp)
+                    .clip(RoundedCornerShape(100.dp))
                     .background(containerBg)
                     .clickable {
                         editedNumberPart = numberPart
                         isEditing = true
                     }
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 20.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 Row(

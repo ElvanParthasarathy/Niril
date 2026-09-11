@@ -1440,6 +1440,32 @@ class DesktopBusinessDatabaseHelper : BusinessDatabaseHelper {
             deletedAt = deletedAt
         )
     }
+
+    override fun clearAllData(mode: AppMode): Boolean {
+        val dbFile = resolveActiveDatabase(if (mode == AppMode.KOOLI) coolieDbName else silkDbName)
+        val vaangunarTable = if (mode == AppMode.KOOLI) "kooli_vaangunar_table" else "pattu_vaangunar_table"
+        val porulTable = if (mode == AppMode.KOOLI) "kooli_porul_table" else "pattu_porul_table"
+        val pattiyalTable = if (mode == AppMode.KOOLI) "kooli_pattiyal_table" else "pattu_pattiyal_table"
+        val patrugalTable = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+
+        return try {
+            val conn = getConnection(dbFile)
+            conn.use { c ->
+                ensureTables(c, mode)
+                c.createStatement().use { stmt ->
+                    stmt.executeUpdate("DELETE FROM $junctionTable")
+                    stmt.executeUpdate("DELETE FROM $patrugalTable")
+                    stmt.executeUpdate("DELETE FROM $pattiyalTable")
+                    stmt.executeUpdate("DELETE FROM $porulTable")
+                    stmt.executeUpdate("DELETE FROM $vaangunarTable")
+                }
+            }
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
 }
 
 private val desktopBusinessHelperInstance by lazy { DesktopBusinessDatabaseHelper() }

@@ -243,6 +243,25 @@ class DesktopSettingsDatabaseHelper : SettingsDatabaseHelper {
         }
     }
 
+    override fun clearProfiles(mode: AppMode): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_niruvana_tharavugal_table" else "pattu_niruvana_tharavugal_table"
+        val file = resolveActiveDatabase(dbName) ?: return false
+
+        try {
+            getConnection(file).use { conn ->
+                val sql = "DELETE FROM $tableName"
+                conn.createStatement().use { stmt ->
+                    stmt.executeUpdate(sql)
+                    return true
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error clearing profiles from $tableName: ${e.message}")
+            return false
+        }
+    }
+
     private fun rsToProfile(rs: ResultSet, mode: AppMode): NiruvanaTharavugal {
         fun getString(col: String): String {
             return try { rs.getString(col) ?: "" } catch (_: Exception) { "" }

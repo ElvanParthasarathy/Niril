@@ -305,6 +305,30 @@ class AndroidSettingsDatabaseHelper : SettingsDatabaseHelper {
         }
     }
 
+    override fun clearProfiles(mode: AppMode): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_niruvana_tharavugal_table" else "pattu_niruvana_tharavugal_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return false
+
+        var db: SQLiteDatabase? = null
+        return try {
+            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            db.delete(tableName, null, null)
+            try {
+                val backupFile = File("/sdcard/$dbName")
+                if (backupFile.exists() && backupFile.canWrite()) {
+                    copyFile(dbFile, backupFile)
+                }
+            } catch (_: Exception) {}
+            true
+        } catch (e: Exception) {
+            Log.e(tag, "Error clearing profiles for $mode: ${e.message}", e)
+            false
+        } finally {
+            db?.close()
+        }
+    }
+
     private fun cursorToProfile(cursor: Cursor, mode: AppMode): NiruvanaTharavugal {
         fun getString(col: String): String {
             val idx = cursor.getColumnIndex(col)

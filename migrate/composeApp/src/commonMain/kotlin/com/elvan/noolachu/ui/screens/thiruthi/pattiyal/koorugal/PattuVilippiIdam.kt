@@ -52,7 +52,7 @@ fun PattuVilippiIdam(
         else -> ""
     }
 
-    val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.White
+    val containerBg = colors.iconBg
 
     Column(modifier = modifier.fillMaxWidth()) {
         ElvanThiruthiThalaippu(label = K.vazhangalIdam.tr())
@@ -60,11 +60,11 @@ fun PattuVilippiIdam(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(45.dp)
-                .clip(RoundedCornerShape(999.dp))
+                .height(48.dp)
+                .clip(RoundedCornerShape(100.dp))
                 .background(containerBg)
                 .clickable { isSheetOpen = true }
-                .padding(horizontal = 16.dp),
+                .padding(start = 20.dp, end = 8.dp),
             contentAlignment = Alignment.CenterStart
         ) {
             Row(
