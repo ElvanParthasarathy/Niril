@@ -43,7 +43,6 @@ kotlin {
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
-            implementation("org.jetbrains.skiko:skiko-awt-runtime-windows-x64:0.9.22.2")
             implementation("org.xerial:sqlite-jdbc:3.45.1.0")
         }
     }

@@ -1,8 +1,6 @@
 package com.elvan.noolachu.ui.screens.ulnuzhaivu.thiraigal
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,6 +12,9 @@ import com.elvan.noolachu.ui.screens.ulnuzhaivu.koorugal.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/**
+ * Login Page matching Flutter's LoginPage (ullnuzhaivu_thirai.dart) 1:1.
+ */
 @Composable
 fun UllnuzhaivuThirai(
     onBack: () -> Unit,
@@ -27,6 +28,7 @@ fun UllnuzhaivuThirai(
     val scope = rememberCoroutineScope()
 
     AuthLayout(showBranding = true) {
+        // Back Button
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.Start
@@ -34,42 +36,43 @@ fun UllnuzhaivuThirai(
             AuthBackButton(onClick = onBack)
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Header: Brand Name + Subtitle
         AuthHeader(
             title = K.niril.tr(),
             subtitle = K.cheyaliyaiAnugaUlnuzhaiyavum.tr()
         )
-        
-        Spacer(modifier = Modifier.height(48.dp))
-        
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Email Input with proper label & placeholder
         AuthInput(
             value = email,
-            onValueChange = { email = it; errorText = null },
+            onValueChange = { 
+                email = it
+                if (errorText != null) errorText = null 
+            },
             label = K.minnanjalMugavari.tr(),
-            helperText = K.minnanjalaiUllidavum.tr()
+            placeholder = K.minnanjalaiUllidavum.tr()
         )
-        
-        Spacer(modifier = Modifier.height(24.dp))
-        
+
+        // Password Input with proper label, placeholder, eye toggle, and error text
         AuthInput(
             value = password,
-            onValueChange = { password = it; errorText = null },
+            onValueChange = { 
+                password = it
+                if (errorText != null) errorText = null 
+            },
             label = K.kadavuchol.tr(),
+            placeholder = K.kadavuchollaiUllidavum.tr(),
             isPassword = true,
-            helperText = K.kadavuchollaiUllidavum.tr()
+            errorText = errorText
         )
-        
-        if (errorText != null) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = errorText!!,
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-        }
-        
-        Spacer(modifier = Modifier.height(48.dp))
-        
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Login Action Button
         AuthButton(
             text = K.ulnuzhaiga.tr(),
             loading = loading,

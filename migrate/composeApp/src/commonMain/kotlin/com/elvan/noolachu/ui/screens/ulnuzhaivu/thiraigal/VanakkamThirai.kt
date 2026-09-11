@@ -10,9 +10,16 @@ import com.elvan.noolachu.core.backup.getNirilBackupService
 import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.data.settings.NiruvanaTharavugal
 import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
+import com.elvan.noolachu.localization.K
+import com.elvan.noolachu.localization.tr
 import com.elvan.noolachu.ui.screens.ulnuzhaivu.koorugal.*
 import kotlinx.coroutines.launch
 
+/**
+ * Business Name Setup Page matching Flutter's VanakkamPage (vanakkam_thirai.dart) 1:1.
+ * Prompts for GST Business Name (if Silk profile missing) and/or
+ * Coolie Business Name (if Coolie profile missing).
+ */
 @Composable
 fun VanakkamThirai(
     billingLanguage: String = "ta",
@@ -20,27 +27,20 @@ fun VanakkamThirai(
     onBack: (() -> Unit)? = null
 ) {
     val coroutineScope = rememberCoroutineScope()
-    
-    val missingProfiles = remember { AuthManager.missingProfiles }
-    var currentIndex by remember { mutableStateOf(0) }
-    var businessName by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
 
-    if (missingProfiles.isEmpty() || currentIndex >= missingProfiles.size) {
-        LaunchedEffect(Unit) {
-            onSetupComplete()
-        }
-        return
-    }
-    
-    val currentProfile = missingProfiles[currentIndex]
-    val title = when (currentProfile.lowercase()) {
-        "kooli" -> "கூலிப் பெயர்"
-        "pattu" -> "பட்டுப் பெயர்"
-        else -> "நிறுவனப் பெயர்"
-    }
+    val missingProfiles = remember { AuthManager.missingProfiles }
+    val needsSilk = missingProfiles.any { it.equals("silk", ignoreCase = true) || it.equals("pattu", ignoreCase = true) }
+    val needsCoolie = missingProfiles.any { it.equals("coolie", ignoreCase = true) || it.equals("kooli", ignoreCase = true) }
+
+    var gstBusinessName by remember { mutableStateOf("") }
+    var coolieBusinessName by remember { mutableStateOf("") }
+    var isSaving by remember { mutableStateOf(false) }
+
+    val isButtonDisabled = (needsSilk && gstBusinessName.trim().isEmpty()) ||
+            (needsCoolie && coolieBusinessName.trim().isEmpty())
 
     AuthLayout(showBranding = true) {
+        // Back Button
         if (onBack != null) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -50,53 +50,75 @@ fun VanakkamThirai(
             }
         }
 
+        // Header: "தரவுகளை உள்ளிடுக" / "Enter Company Details"
         AuthHeader(
-            title = title,
-            subtitle = "தயவுசெய்து உங்கள் நிறுவனத்தின் பெயரை உள்ளிடவும்"
+            title = K.tharavugalaiUlliduga.tr(),
+            subtitle = ""
         )
-        
+
         Spacer(modifier = Modifier.height(32.dp))
 
-        AuthInput(
-            value = businessName,
-            onValueChange = { businessName = it },
-            label = title,
-            helperText = "பெயரை உள்ளிடவும்"
-        )
-        
-        Spacer(modifier = Modifier.height(32.dp))
+        // Silk / GST Business Name input
+        if (needsSilk) {
+            AuthInput(
+                value = gstBusinessName,
+                onValueChange = { gstBusinessName = it },
+                label = K.niruvanathinPeyar.tr().ifEmpty { "GST Business Name" },
+                placeholder = K.peyaraiUlliduga.tr(),
+                helperText = K.gstpattiyalukku.tr()
+            )
+        }
 
+        // Coolie Business Name input
+        if (needsCoolie) {
+            AuthInput(
+                value = coolieBusinessName,
+                onValueChange = { coolieBusinessName = it },
+                label = K.kooliNiruvanaPeyar.tr(),
+                placeholder = K.peyaraiUlliduga.tr(),
+                helperText = K.koolipattiyalukku.tr()
+            )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Continue Button ("தொடரவும்" / "Continue")
         AuthButton(
-            text = "சேமி",
-            loading = isLoading,
+            text = K.thodaravum.tr(),
+            loading = isSaving,
+            disabled = isButtonDisabled,
             onClick = {
-                if (businessName.isNotBlank()) {
-                    isLoading = true
-                    coroutineScope.launch {
-                        try {
-                            val mode = if (currentProfile.lowercase() == "kooli") AppMode.KOOLI else AppMode.PATTU
-                            val profile = NiruvanaTharavugal(
+                if (isButtonDisabled) return@AuthButton
+                isSaving = true
+                coroutineScope.launch {
+                    try {
+                        if (needsSilk) {
+                            val silkProfile = NiruvanaTharavugal(
                                 mudhanMozhi = billingLanguage,
-                                niruvanathinPeyar = mutableMapOf(billingLanguage to businessName),
-                                kurumPeyar = businessName
+                                niruvanathinPeyar = mutableMapOf(billingLanguage to gstBusinessName.trim()),
+                                kurumPeyar = gstBusinessName.trim()
                             )
-                            NiruvanaTharavugalRepository.createProfile(mode, profile)
-                            
-                            if (currentIndex < missingProfiles.size - 1) {
-                                currentIndex++
-                                businessName = ""
-                            } else {
-                                AuthManager.refreshProfileStatus()
-                                getNirilBackupService().createBackup()
-                                onSetupComplete()
-                            }
-                        } finally {
-                            isLoading = false
+                            NiruvanaTharavugalRepository.createProfile(AppMode.PATTU, silkProfile)
                         }
+
+                        if (needsCoolie) {
+                            val coolieProfile = NiruvanaTharavugal(
+                                mudhanMozhi = billingLanguage,
+                                niruvanathinPeyar = mutableMapOf(billingLanguage to coolieBusinessName.trim()),
+                                kurumPeyar = coolieBusinessName.trim()
+                            )
+                            NiruvanaTharavugalRepository.createProfile(AppMode.KOOLI, coolieProfile)
+                        }
+
+                        // Create backup and refresh profile status
+                        AuthManager.refreshProfileStatus()
+                        getNirilBackupService().createBackup()
+                        onSetupComplete()
+                    } finally {
+                        isSaving = false
                     }
                 }
             }
         )
     }
 }
-

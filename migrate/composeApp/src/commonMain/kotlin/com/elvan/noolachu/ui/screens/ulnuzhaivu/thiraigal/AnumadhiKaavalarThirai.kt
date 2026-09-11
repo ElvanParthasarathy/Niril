@@ -3,8 +3,6 @@ package com.elvan.noolachu.ui.screens.ulnuzhaivu.thiraigal
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -21,6 +19,7 @@ import com.elvan.noolachu.ui.screens.ulnuzhaivu.koorugal.AuthAnimatedElement
 import com.elvan.noolachu.ui.screens.ulnuzhaivu.koorugal.AuthButton
 import com.elvan.noolachu.ui.screens.ulnuzhaivu.koorugal.AuthHeader
 import com.elvan.noolachu.ui.screens.ulnuzhaivu.koorugal.AuthLayout
+import com.elvan.noolachu.ui.navigation.MaterialSymbols
 import kotlinx.coroutines.delay
 
 @Composable
@@ -44,7 +43,7 @@ fun AnumadhiKaavalarThirai(
     AuthLayout(showBranding = true) {
         AuthAnimatedElement(delayIndex = 0) {
             Icon(
-                imageVector = Icons.Default.Lock,
+                imageVector = MaterialSymbols.Rounded.Lock,
                 contentDescription = null,
                 modifier = Modifier.size(80.dp),
                 tint = MaterialTheme.colorScheme.primary
