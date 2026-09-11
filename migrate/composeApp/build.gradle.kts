@@ -79,7 +79,7 @@ android {
 compose.desktop {
     application {
         mainClass = "MainKt"
-        javaHome = "C:/Users/Elvan/.gradle/jdks/eclipse_adoptium-17-amd64-windows.2"
+        javaHome = "C:/Program Files/Android/Android Studio/jbr"
 
         nativeDistributions {
             targetFormats(TargetFormat.Msi, TargetFormat.Exe)
