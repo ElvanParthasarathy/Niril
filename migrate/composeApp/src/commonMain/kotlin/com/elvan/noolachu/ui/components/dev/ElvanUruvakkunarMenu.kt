@@ -138,8 +138,10 @@ fun ElvanUruvakkunarMenu() {
                         color = Color(0xFF673AB7),
                         isDark = isDark
                     ) {
-                        val msg = SodhanaiTharavuUruvakki.toggleExtraSilk()
-                        ElvanSnackbar.show(msg)
+                        coroutineScope.launch {
+                            val msg = SodhanaiTharavuUruvakki.toggleExtraSilk()
+                            ElvanSnackbar.show(msg)
+                        }
                     }
 
                     DevMenuDivider(isDark)
@@ -151,8 +153,10 @@ fun ElvanUruvakkunarMenu() {
                         color = Color(0xFF009688),
                         isDark = isDark
                     ) {
-                        val msg = SodhanaiTharavuUruvakki.toggleExtraCoolie()
-                        ElvanSnackbar.show(msg)
+                        coroutineScope.launch {
+                            val msg = SodhanaiTharavuUruvakki.toggleExtraCoolie()
+                            ElvanSnackbar.show(msg)
+                        }
                     }
 
                     DevMenuDivider(isDark)
@@ -177,8 +181,10 @@ fun ElvanUruvakkunarMenu() {
                         color = Color(0xFFFF9800),
                         isDark = isDark
                     ) {
-                        val msg = SodhanaiTharavuUruvakki.toggleBilingual()
-                        ElvanSnackbar.show(msg)
+                        coroutineScope.launch {
+                            val msg = SodhanaiTharavuUruvakki.toggleBilingual()
+                            ElvanSnackbar.show(msg)
+                        }
                     }
 
                     DevMenuDivider(isDark)
@@ -190,8 +196,23 @@ fun ElvanUruvakkunarMenu() {
                         color = Color(0xFFE91E63),
                         isDark = isDark
                     ) {
-                        val msg = SodhanaiTharavuUruvakki.swapDataLanguages()
-                        ElvanSnackbar.show(msg)
+                        coroutineScope.launch {
+                            val msg = SodhanaiTharavuUruvakki.swapDataLanguages()
+                            ElvanSnackbar.show(msg)
+                        }
+                    }
+
+                    DevMenuDivider(isDark)
+
+                    // 8. Color Analyzer
+                    DevMenuItem(
+                        label = "Color Analyzer",
+                        icon = MaterialSymbols.Rounded.Palette,
+                        color = Color(0xFFFFB300),
+                        isDark = isDark
+                    ) {
+                        isExpanded = false
+                        ElvanSnackbar.show("Theme: ${if (isDark) "Dark Mode (கரிய பயன்முறை)" else "Light Mode (வெளிர் பயன்முறை)"}")
                     }
                 }
             }

@@ -1,5 +1,7 @@
 package com.elvan.noolachu.data.mock
 
+import com.elvan.noolachu.core.auth.AuthManager
+import com.elvan.noolachu.core.backup.getNirilBackupService
 import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.core.mode.ModeManager
 import com.elvan.noolachu.core.utils.DateUtils
@@ -9,6 +11,10 @@ import com.elvan.noolachu.data.model.PatruPattiyalInaippuTharavuru
 import com.elvan.noolachu.data.model.PatrugalTharavuru
 import com.elvan.noolachu.data.model.PorulTharavuru
 import com.elvan.noolachu.data.model.VaangunarTharavuru
+import com.elvan.noolachu.data.repository.PatrugalRepository
+import com.elvan.noolachu.data.repository.PattiyalRepository
+import com.elvan.noolachu.data.repository.PorulRepository
+import com.elvan.noolachu.data.repository.VaangunarRepository
 import com.elvan.noolachu.data.settings.NiruvanaTharavugal
 import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
 import com.elvan.noolachu.localization.Language
@@ -108,7 +114,7 @@ object SodhanaiTharavuUruvakki {
     /**
      * Erases all business data and business profiles across both modes.
      */
-    fun eraseAllData() {
+    suspend fun eraseAllData() {
         // Clear business profiles in both DBs
         NiruvanaTharavugalRepository.clearProfiles(AppMode.KOOLI)
         NiruvanaTharavugalRepository.clearProfiles(AppMode.PATTU)
@@ -118,9 +124,20 @@ object SodhanaiTharavuUruvakki {
         helper.clearAllData(AppMode.KOOLI)
         helper.clearAllData(AppMode.PATTU)
 
-        // Refresh repository
+        // Refresh all reactive repositories to empty state
         NiruvanaTharavugalRepository.refreshFromDatabase()
+        VaangunarRepository.loadAll(AppMode.PATTU)
+        PorulRepository.loadAll(AppMode.PATTU)
+        PattiyalRepository.loadAll(AppMode.PATTU)
+        PatrugalRepository.loadAll(AppMode.PATTU)
+
+        // Log out & reset mode
+        AuthManager.logout()
         ModeManager.resetStartupState()
+
+        try {
+            getNirilBackupService().deleteBackup()
+        } catch (_: Exception) {}
     }
 
     /**
@@ -131,7 +148,7 @@ object SodhanaiTharavuUruvakki {
      * - Invoices
      * - Receipts with Invoice Links
      */
-    fun seedAllData() {
+    suspend fun seedAllData() {
         val helper = getBusinessDatabaseHelper()
 
         // ── 0. Erase all existing data across both DBs ──
@@ -148,7 +165,22 @@ object SodhanaiTharavuUruvakki {
 
         // Default to Silk mode after seeding
         ModeManager.setMode(AppMode.PATTU)
+
+        // Log in test account and refresh profile status
+        AuthManager.login("test@niril.com", "kadavuchol")
+        AuthManager.refreshProfileStatus()
+
+        // Reload all 5 reactive repositories with freshly seeded data
         NiruvanaTharavugalRepository.refreshFromDatabase()
+        VaangunarRepository.loadAll(AppMode.PATTU)
+        PorulRepository.loadAll(AppMode.PATTU)
+        PattiyalRepository.loadAll(AppMode.PATTU)
+        PatrugalRepository.loadAll(AppMode.PATTU)
+
+        // Create unified backup surviving reinstall
+        try {
+            getNirilBackupService().createBackup()
+        } catch (_: Exception) {}
     }
 
     private fun seedSilkData(helper: com.elvan.noolachu.data.business.BusinessDatabaseHelper) {
@@ -486,10 +518,10 @@ object SodhanaiTharavuUruvakki {
     /**
      * Toggles extra Silk profile (EPS) — adds if missing, deletes if exists.
      */
-    fun toggleExtraSilk(): String {
+    suspend fun toggleExtraSilk(): String {
         val profiles = NiruvanaTharavugalRepository.getAllProfiles(AppMode.PATTU)
         val existing = profiles.find { it.kurumPeyar == "EPS" }
-        return if (existing != null && existing.id != null) {
+        val msg = if (existing != null && existing.id != null) {
             NiruvanaTharavugalRepository.deleteProfile(AppMode.PATTU, existing.id!!)
             "Silk EPS Removed ✗"
         } else {
@@ -498,15 +530,20 @@ object SodhanaiTharavuUruvakki {
             }
             "Silk EPS Added ✓"
         }
+        NiruvanaTharavugalRepository.refreshFromDatabase()
+        try {
+            getNirilBackupService().createBackup()
+        } catch (_: Exception) {}
+        return msg
     }
 
     /**
      * Toggles extra Coolie profile (PVS) — adds if missing, deletes if exists.
      */
-    fun toggleExtraCoolie(): String {
+    suspend fun toggleExtraCoolie(): String {
         val profiles = NiruvanaTharavugalRepository.getAllProfiles(AppMode.KOOLI)
         val existing = profiles.find { it.kurumPeyar == "PVS" }
-        return if (existing != null && existing.id != null) {
+        val msg = if (existing != null && existing.id != null) {
             NiruvanaTharavugalRepository.deleteProfile(AppMode.KOOLI, existing.id!!)
             "Coolie PVS Removed ✗"
         } else {
@@ -515,6 +552,11 @@ object SodhanaiTharavuUruvakki {
             }
             "Coolie PVS Added ✓"
         }
+        NiruvanaTharavugalRepository.refreshFromDatabase()
+        try {
+            getNirilBackupService().createBackup()
+        } catch (_: Exception) {}
+        return msg
     }
 
     /**
@@ -533,17 +575,21 @@ object SodhanaiTharavuUruvakki {
     /**
      * Toggles bilingual mode on the currently active profile.
      */
-    fun toggleBilingual(): String {
+    suspend fun toggleBilingual(): String {
         val profile = NiruvanaTharavugalRepository.getProfile(ModeManager.currentMode)
         val updated = profile.copy(iruMozhi = !profile.iruMozhi)
         NiruvanaTharavugalRepository.updateProfile(ModeManager.currentMode, updated)
+        NiruvanaTharavugalRepository.refreshFromDatabase()
+        try {
+            getNirilBackupService().createBackup()
+        } catch (_: Exception) {}
         return if (updated.iruMozhi) "Bilingual Mode: ON ✓" else "Bilingual Mode: OFF ✗"
     }
 
     /**
      * Swaps primary and secondary data languages on the currently active profile.
      */
-    fun swapDataLanguages(): String {
+    suspend fun swapDataLanguages(): String {
         val profile = NiruvanaTharavugalRepository.getProfile(ModeManager.currentMode)
         val currentPrimary = profile.mudhanMozhi
         val currentSecondary = profile.thunaiMozhi
@@ -552,6 +598,10 @@ object SodhanaiTharavuUruvakki {
             thunaiMozhi = currentPrimary
         )
         NiruvanaTharavugalRepository.updateProfile(ModeManager.currentMode, updated)
+        NiruvanaTharavugalRepository.refreshFromDatabase()
+        try {
+            getNirilBackupService().createBackup()
+        } catch (_: Exception) {}
         return "Swapped: $currentSecondary ↔ $currentPrimary"
     }
 }

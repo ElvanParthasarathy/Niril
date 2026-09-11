@@ -1,5 +1,6 @@
 package com.elvan.noolachu.core.backup
 
+import com.elvan.noolachu.data.DesktopDbPaths
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
@@ -8,32 +9,13 @@ import java.sql.DriverManager
 
 class DesktopNirilBackupService : NirilBackupService {
 
-    private fun getBackupDir(): File {
-        val userHome = System.getProperty("user.home") ?: "."
-        val dir = File(userHome, "Documents/Elvan Niril/backup")
-        if (!dir.exists()) dir.mkdirs()
-        return dir
-    }
+    private fun getBackupDir(): File = DesktopDbPaths.getBackupDir()
 
-    private fun getBackupFile(): File = File(getBackupDir(), "elvan_niril_backup.db")
+    private fun getBackupFile(): File = DesktopDbPaths.getBackupFile()
 
-    private fun getCoolieDbPath(): String {
-        val candidates = listOf(
-            File("elvan_niril_coolie.db"),
-            File("scratch/elvan_niril_coolie.db"),
-            File("databases/elvan_niril_coolie.db")
-        )
-        return candidates.firstOrNull { it.exists() }?.absolutePath ?: "elvan_niril_coolie.db"
-    }
+    private fun getCoolieDbPath(): String = DesktopDbPaths.getDbFile("elvan_niril_coolie.db").absolutePath
 
-    private fun getSilkDbPath(): String {
-        val candidates = listOf(
-            File("elvan_niril_silk.db"),
-            File("scratch/elvan_niril_silk.db"),
-            File("databases/elvan_niril_silk.db")
-        )
-        return candidates.firstOrNull { it.exists() }?.absolutePath ?: "elvan_niril_silk.db"
-    }
+    private fun getSilkDbPath(): String = DesktopDbPaths.getDbFile("elvan_niril_silk.db").absolutePath
 
     private fun getFilesToPack(): List<String> {
         val coolie = getCoolieDbPath()

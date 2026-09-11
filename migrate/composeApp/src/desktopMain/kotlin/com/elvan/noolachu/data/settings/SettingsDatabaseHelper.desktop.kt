@@ -13,35 +13,13 @@ class DesktopSettingsDatabaseHelper : SettingsDatabaseHelper {
     private val coolieDbName = "elvan_niril_coolie.db"
     private val silkDbName = "elvan_niril_silk.db"
 
-    private fun getCandidatePaths(dbName: String): List<File> {
-        val list = mutableListOf<File>()
-        list.add(File(dbName))
-        list.add(File("scratch", dbName))
-        list.add(File("databases", dbName))
-        list.add(File("d:/Things/Padaippugal/Nadappil/Elvan Niril/scratch", dbName))
-        list.add(File("C:/Users/Elvan/.gemini/antigravity/brain/f1302e69-9da7-4bd7-8cc2-64c24935afae/scratch", dbName))
-
-        val userHome = System.getProperty("user.home")
-        if (userHome != null) {
-            list.add(File(userHome, "Documents/$dbName"))
-            list.add(File(userHome, "AppData/Roaming/Elvan Niril/$dbName"))
-            list.add(File(userHome, "AppData/Local/Elvan Niril/$dbName"))
-        }
-        return list
-    }
-
-    private fun resolveActiveDatabase(dbName: String): File? {
-        val candidates = getCandidatePaths(dbName)
-        for (candidate in candidates) {
-            if (candidate.exists() && candidate.length() > 0) {
-                return candidate
-            }
-        }
-        return null
+    private fun resolveActiveDatabase(dbName: String): File {
+        return com.elvan.noolachu.data.DesktopDbPaths.getDbFile(dbName)
     }
 
     private fun getConnection(file: File): Connection {
         Class.forName("org.sqlite.JDBC")
+        file.parentFile?.mkdirs()
         return DriverManager.getConnection("jdbc:sqlite:${file.absolutePath}")
     }
 

@@ -1,6 +1,7 @@
 package com.elvan.noolachu.data.business
 
 import com.elvan.noolachu.core.mode.AppMode
+import com.elvan.noolachu.data.DesktopDbPaths
 import com.elvan.noolachu.data.model.PattiyalTharavuru
 import com.elvan.noolachu.data.model.PatruPattiyalInaippuTharavuru
 import com.elvan.noolachu.data.model.PatrugalTharavuru
@@ -19,31 +20,8 @@ class DesktopBusinessDatabaseHelper : BusinessDatabaseHelper {
     private val coolieDbName = "elvan_niril_coolie.db"
     private val silkDbName = "elvan_niril_silk.db"
 
-    private fun getCandidatePaths(dbName: String): List<File> {
-        val list = mutableListOf<File>()
-        list.add(File(dbName))
-        list.add(File("scratch", dbName))
-        list.add(File("databases", dbName))
-        list.add(File("d:/Things/Padaippugal/Nadappil/Elvan Niril/scratch", dbName))
-        list.add(File("C:/Users/Elvan/.gemini/antigravity/brain/f1302e69-9da7-4bd7-8cc2-64c24935afae/scratch", dbName))
-
-        val userHome = System.getProperty("user.home")
-        if (userHome != null) {
-            list.add(File(userHome, "Documents/$dbName"))
-            list.add(File(userHome, "AppData/Roaming/Elvan Niril/$dbName"))
-            list.add(File(userHome, "AppData/Local/Elvan Niril/$dbName"))
-        }
-        return list
-    }
-
     private fun resolveActiveDatabase(dbName: String): File {
-        val candidates = getCandidatePaths(dbName)
-        for (candidate in candidates) {
-            if (candidate.exists() && candidate.length() > 0) {
-                return candidate
-            }
-        }
-        return File(dbName)
+        return DesktopDbPaths.getDbFile(dbName)
     }
 
     private fun getConnection(file: File): Connection {

@@ -3,7 +3,6 @@ package com.elvan.noolachu.data.business
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import android.os.Environment
 import android.util.Log
 import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.core.platform.AppContext
@@ -14,8 +13,6 @@ import com.elvan.noolachu.data.model.PorulTharavuru
 import com.elvan.noolachu.data.model.VaangunarTharavuru
 import com.elvan.noolachu.data.settings.MozhiJsonConverter
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 
 class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
 
@@ -23,87 +20,14 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
     private val coolieDbName = "elvan_niril_coolie.db"
     private val silkDbName = "elvan_niril_silk.db"
 
-    private fun getCandidatePaths(dbName: String): List<File> {
-        val list = mutableListOf<File>()
-        if (AppContext.isInitialized) {
-            val ctx = AppContext.context
-            list.add(ctx.getDatabasePath(dbName))
-            list.add(File(ctx.filesDir, dbName))
-            ctx.getExternalFilesDir(null)?.let {
-                list.add(File(it, dbName))
-            }
-        }
-        list.add(File("/sdcard/$dbName"))
-        list.add(File("/storage/emulated/0/$dbName"))
-        list.add(File(Environment.getExternalStorageDirectory(), dbName))
-        list.add(File("/sdcard/Download/$dbName"))
-        list.add(File("/sdcard/Documents/$dbName"))
-        list.add(File("/sdcard/ElvanNiril/$dbName"))
-        list.add(File("/data/user/0/com.elvan.niril/files/$dbName"))
-        list.add(File("/data/data/com.elvan.niril/files/$dbName"))
-        list.add(File("/data/user/0/com.elvan.niril/databases/$dbName"))
-        return list
-    }
-
     private fun resolveActiveDatabase(dbName: String): File? {
         if (!AppContext.isInitialized) {
             Log.w(tag, "AppContext is not initialized yet!")
             return null
         }
-        val ctx = AppContext.context
-        val localDb = ctx.getDatabasePath(dbName)
+        val localDb = AppContext.context.getDatabasePath(dbName)
         localDb.parentFile?.mkdirs()
-
-        val candidates = getCandidatePaths(dbName)
-        for (candidate in candidates) {
-            if (candidate.absolutePath == localDb.absolutePath) continue
-            try {
-                if (candidate.exists() && candidate.canRead() && candidate.length() > 0) {
-                    if (!localDb.exists() || localDb.length() == 0L || candidate.lastModified() > localDb.lastModified()) {
-                        Log.d(tag, "Syncing database from ${candidate.absolutePath} to ${localDb.absolutePath}")
-                        copyFile(candidate, localDb)
-                        break
-                    }
-                }
-            } catch (_: Exception) {}
-        }
-
-        if (localDb.exists() && localDb.length() > 0) {
-            return localDb
-        }
-
-        val filesDb = File(ctx.filesDir, dbName)
-        if (filesDb.exists() && filesDb.length() > 0) {
-            try {
-                copyFile(filesDb, localDb)
-                return localDb
-            } catch (_: Exception) {
-                return filesDb
-            }
-        }
-
-        for (candidate in candidates) {
-            try {
-                if (candidate.exists() && candidate.canRead() && candidate.length() > 0) {
-                    return candidate
-                }
-            } catch (_: Exception) {}
-        }
-
         return localDb
-    }
-
-    private fun copyFile(src: File, dst: File) {
-        try {
-            dst.parentFile?.mkdirs()
-            FileInputStream(src).use { input ->
-                FileOutputStream(dst).use { output ->
-                    input.copyTo(output)
-                }
-            }
-        } catch (e: Exception) {
-            Log.e(tag, "Failed to copy ${src.absolutePath} to ${dst.absolutePath}: ${e.message}")
-        }
     }
 
     private fun ensureTables(db: SQLiteDatabase, mode: AppMode) {
@@ -293,13 +217,6 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
                 resultId = db.insert(tableName, null, values)
             }
 
-            try {
-                val backupFile = File("/sdcard/$dbName")
-                if (backupFile.exists() && backupFile.canWrite()) {
-                    copyFile(dbFile, backupFile)
-                }
-            } catch (_: Exception) {}
-
             return resultId
         } catch (e: Exception) {
             Log.e(tag, "Error saving merchant to $tableName: ${e.message}", e)
@@ -325,13 +242,6 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
                 put("updated_at", nowSec)
             }
             val rows = db.update(tableName, values, "id = ?", arrayOf(id.toString()))
-
-            try {
-                val backupFile = File("/sdcard/$dbName")
-                if (backupFile.exists() && backupFile.canWrite()) {
-                    copyFile(dbFile, backupFile)
-                }
-            } catch (_: Exception) {}
 
             return rows > 0
         } catch (e: Exception) {
@@ -492,13 +402,6 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
                 resultId = db.insert(tableName, null, values)
             }
 
-            try {
-                val backupFile = File("/sdcard/$dbName")
-                if (backupFile.exists() && backupFile.canWrite()) {
-                    copyFile(dbFile, backupFile)
-                }
-            } catch (_: Exception) {}
-
             return resultId
         } catch (e: Exception) {
             Log.e(tag, "Error saving item to $tableName: ${e.message}", e)
@@ -524,13 +427,6 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
                 put("updated_at", nowSec)
             }
             val rows = db.update(tableName, values, "id = ?", arrayOf(id.toString()))
-
-            try {
-                val backupFile = File("/sdcard/$dbName")
-                if (backupFile.exists() && backupFile.canWrite()) {
-                    copyFile(dbFile, backupFile)
-                }
-            } catch (_: Exception) {}
 
             return rows > 0
         } catch (e: Exception) {
@@ -712,13 +608,6 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
                 resultId = db.insert(tableName, null, values)
             }
 
-            try {
-                val backupFile = File("/sdcard/$dbName")
-                if (backupFile.exists() && backupFile.canWrite()) {
-                    copyFile(dbFile, backupFile)
-                }
-            } catch (_: Exception) {}
-
             return resultId
         } catch (e: Exception) {
             Log.e(tag, "Error saving invoice to $tableName: ${e.message}", e)
@@ -744,13 +633,6 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
                 put("updated_at", nowSec)
             }
             val rows = db.update(tableName, values, "id = ?", arrayOf(id.toString()))
-
-            try {
-                val backupFile = File("/sdcard/$dbName")
-                if (backupFile.exists() && backupFile.canWrite()) {
-                    copyFile(dbFile, backupFile)
-                }
-            } catch (_: Exception) {}
 
             return rows > 0
         } catch (e: Exception) {
@@ -936,13 +818,6 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
                 resultId = db.insert(tableName, null, values)
             }
 
-            try {
-                val backupFile = File("/sdcard/$dbName")
-                if (backupFile.exists() && backupFile.canWrite()) {
-                    copyFile(dbFile, backupFile)
-                }
-            } catch (_: Exception) {}
-
             return resultId
         } catch (e: Exception) {
             Log.e(tag, "Error saving receipt to $tableName: ${e.message}", e)
@@ -968,13 +843,6 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
                 put("updated_at", nowSec)
             }
             val rows = db.update(tableName, values, "id = ?", arrayOf(id.toString()))
-
-            try {
-                val backupFile = File("/sdcard/$dbName")
-                if (backupFile.exists() && backupFile.canWrite()) {
-                    copyFile(dbFile, backupFile)
-                }
-            } catch (_: Exception) {}
 
             return rows > 0
         } catch (e: Exception) {
