@@ -761,6 +761,110 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
         }
     }
 
+    override fun loadDeletedInvoices(mode: AppMode): List<PattiyalTharavuru> {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_pattiyal_table" else "pattu_pattiyal_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return emptyList()
+
+        var db: SQLiteDatabase? = null
+        var cursor: Cursor? = null
+        val list = mutableListOf<PattiyalTharavuru>()
+        try {
+            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            ensureTables(db, mode)
+            cursor = db.rawQuery("SELECT * FROM $tableName WHERE is_deleted = 1 ORDER BY deleted_at DESC, id DESC", null)
+            while (cursor.moveToNext()) {
+                list.add(cursorToInvoice(cursor))
+            }
+        } catch (e: Exception) {
+            Log.e(tag, "Error loading deleted invoices from $tableName: ${e.message}", e)
+        } finally {
+            cursor?.close()
+            db?.close()
+        }
+        return list
+    }
+
+    override fun restoreInvoice(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_pattiyal_table" else "pattu_pattiyal_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return false
+
+        var db: SQLiteDatabase? = null
+        try {
+            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            ensureTables(db, mode)
+            val nowSec = System.currentTimeMillis() / 1000
+            val values = ContentValues().apply {
+                put("is_deleted", 0)
+                putNull("deleted_at")
+                put("updated_at", nowSec)
+            }
+            val rows = db.update(tableName, values, "id = ?", arrayOf(id.toString()))
+            return rows > 0
+        } catch (e: Exception) {
+            Log.e(tag, "Error restoring invoice $id from $tableName: ${e.message}", e)
+            return false
+        } finally {
+            db?.close()
+        }
+    }
+
+    override fun permanentDeleteInvoice(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_pattiyal_table" else "pattu_pattiyal_table"
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return false
+
+        var db: SQLiteDatabase? = null
+        try {
+            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            ensureTables(db, mode)
+            db.beginTransaction()
+            try {
+                db.delete(junctionTable, "pattiyal_id = ?", arrayOf(id.toString()))
+                val rows = db.delete(tableName, "id = ?", arrayOf(id.toString()))
+                db.setTransactionSuccessful()
+                return rows > 0
+            } finally {
+                db.endTransaction()
+            }
+        } catch (e: Exception) {
+            Log.e(tag, "Error permanently deleting invoice $id from $tableName: ${e.message}", e)
+            return false
+        } finally {
+            db?.close()
+        }
+    }
+
+    override fun purgeExpiredInvoices(mode: AppMode, days: Int): Int {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_pattiyal_table" else "pattu_pattiyal_table"
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+        val dbFile = resolveActiveDatabase(dbName) ?: return 0
+
+        var db: SQLiteDatabase? = null
+        try {
+            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            ensureTables(db, mode)
+            val cutoffSec = (System.currentTimeMillis() / 1000) - (days * 86400L)
+            db.beginTransaction()
+            try {
+                db.execSQL("DELETE FROM $junctionTable WHERE pattiyal_id IN (SELECT id FROM $tableName WHERE is_deleted = 1 AND deleted_at < $cutoffSec)")
+                val deleted = db.delete(tableName, "is_deleted = 1 AND deleted_at < ?", arrayOf(cutoffSec.toString()))
+                db.setTransactionSuccessful()
+                return deleted
+            } finally {
+                db.endTransaction()
+            }
+        } catch (e: Exception) {
+            Log.e(tag, "Error purging expired invoices from $tableName: ${e.message}", e)
+            return 0
+        } finally {
+            db?.close()
+        }
+    }
+
     override fun loadAllReceipts(mode: AppMode): List<PatrugalTharavuru> {
         val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
         val tableName = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"

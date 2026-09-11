@@ -27,6 +27,10 @@ interface BusinessDatabaseHelper {
     fun loadAllInvoices(mode: AppMode): List<PattiyalTharavuru>
     fun saveInvoice(mode: AppMode, invoice: PattiyalTharavuru): Long
     fun deleteInvoice(mode: AppMode, id: Long): Boolean
+    fun loadDeletedInvoices(mode: AppMode): List<PattiyalTharavuru>
+    fun restoreInvoice(mode: AppMode, id: Long): Boolean
+    fun permanentDeleteInvoice(mode: AppMode, id: Long): Boolean
+    fun purgeExpiredInvoices(mode: AppMode, days: Int = 30): Int
 
     fun loadAllReceipts(mode: AppMode): List<PatrugalTharavuru>
     fun saveReceipt(mode: AppMode, receipt: PatrugalTharavuru): Long

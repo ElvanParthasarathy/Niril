@@ -746,6 +746,120 @@ class DesktopBusinessDatabaseHelper : BusinessDatabaseHelper {
         }
     }
 
+    override fun loadDeletedInvoices(mode: AppMode): List<PattiyalTharavuru> {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_pattiyal_table" else "pattu_pattiyal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        val list = mutableListOf<PattiyalTharavuru>()
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val sql = "SELECT * FROM $tableName WHERE is_deleted = 1 ORDER BY deleted_at DESC, id DESC"
+                conn.createStatement().use { stmt ->
+                    stmt.executeQuery(sql).use { rs ->
+                        while (rs.next()) {
+                            list.add(rsToInvoice(rs))
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error loading deleted invoices from $tableName: ${e.message}")
+        }
+        return list
+    }
+
+    override fun restoreInvoice(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_pattiyal_table" else "pattu_pattiyal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val sql = "UPDATE $tableName SET is_deleted = 0, deleted_at = NULL, updated_at = ? WHERE id = ?"
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setLong(1, System.currentTimeMillis() / 1000)
+                    stmt.setLong(2, id)
+                    return stmt.executeUpdate() > 0
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error restoring invoice $id: ${e.message}")
+            return false
+        }
+    }
+
+    override fun permanentDeleteInvoice(mode: AppMode, id: Long): Boolean {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_pattiyal_table" else "pattu_pattiyal_table"
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                conn.autoCommit = false
+                try {
+                    conn.prepareStatement("DELETE FROM $junctionTable WHERE pattiyal_id = ?").use { stmt ->
+                        stmt.setLong(1, id)
+                        stmt.executeUpdate()
+                    }
+                    val affected = conn.prepareStatement("DELETE FROM $tableName WHERE id = ?").use { stmt ->
+                        stmt.setLong(1, id)
+                        stmt.executeUpdate()
+                    }
+                    conn.commit()
+                    return affected > 0
+                } catch (ex: Exception) {
+                    conn.rollback()
+                    throw ex
+                } finally {
+                    conn.autoCommit = true
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error permanently deleting invoice $id: ${e.message}")
+            return false
+        }
+    }
+
+    override fun purgeExpiredInvoices(mode: AppMode, days: Int): Int {
+        val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
+        val tableName = if (mode == AppMode.KOOLI) "kooli_pattiyal_table" else "pattu_pattiyal_table"
+        val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
+        val file = resolveActiveDatabase(dbName)
+
+        try {
+            getConnection(file).use { conn ->
+                ensureTables(conn, mode)
+                val cutoffSec = (System.currentTimeMillis() / 1000) - (days * 86400L)
+                conn.autoCommit = false
+                try {
+                    conn.prepareStatement("DELETE FROM $junctionTable WHERE pattiyal_id IN (SELECT id FROM $tableName WHERE is_deleted = 1 AND deleted_at < ?)").use { stmt ->
+                        stmt.setLong(1, cutoffSec)
+                        stmt.executeUpdate()
+                    }
+                    val deleted = conn.prepareStatement("DELETE FROM $tableName WHERE is_deleted = 1 AND deleted_at < ?").use { stmt ->
+                        stmt.setLong(1, cutoffSec)
+                        stmt.executeUpdate()
+                    }
+                    conn.commit()
+                    return deleted
+                } catch (ex: Exception) {
+                    conn.rollback()
+                    throw ex
+                } finally {
+                    conn.autoCommit = true
+                }
+            }
+        } catch (e: Exception) {
+            println("Desktop error purging expired invoices: ${e.message}")
+            return 0
+        }
+    }
+
     override fun loadAllReceipts(mode: AppMode): List<PatrugalTharavuru> {
         val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
         val tableName = if (mode == AppMode.KOOLI) "kooli_patrugal_table" else "pattu_patrugal_table"

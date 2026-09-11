@@ -39,7 +39,6 @@ import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.preventBrokenLigatures
 import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.components.shell.*
-import com.elvan.noolachu.ui.components.shell.maeladukkugal.ElvanAzhippuUrudhiMaeladukku
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanEditorSection
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiAttai
@@ -117,15 +116,12 @@ fun PattiyalThiruthiScreen(
     var courierCharges by remember { mutableStateOf(if (invoice != null && invoice.thabaalThogai > 0) invoice.thabaalThogai.toString() else "") }
     var ahimsaCharges by remember { mutableStateOf(if (invoice != null && invoice.ahimsaPattuThogai > 0) invoice.ahimsaPattuThogai.toString() else "") }
 
-    var showDeleteConfirm by remember { mutableStateOf(false) }
     var validationError by remember { mutableStateOf<String?>(null) }
 
     val pageTitle = if (isEditing) K.maatriyamai.tr() else K.pudhiyaPattiyalPtn.tr()
     val thogaiRequiredMsg = K.thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum.tr()
     val saveSuccessMsg = K.chaemippuvetri.tr()
     val saveFailedMsg = K.chaemikkaIyalavillai.tr()
-    val deletedMsg = K.azhippuvetri.tr()
-    val confirmDeleteTitle = K.nirandharaAzhippuUrudhi.tr()
 
     // Real-time calculated totals
     val subtotal = remember(lineItems) {
@@ -757,52 +753,6 @@ fun PattiyalThiruthiScreen(
                 }
             }
 
-            // Delete Card (if editing existing)
-            if (isEditing && invoice != null) {
-                item(key = "delete_section") {
-                    ElvanThiruthiAttai(
-                        onClick = { showDeleteConfirm = true },
-                        backgroundColor = MaterialTheme.colorScheme.error.copy(alpha = 0.08f)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = MaterialSymbols.Rounded.Delete,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = K.azhi.tr().preventBrokenLigatures(),
-                                style = TextStyle(
-                                    fontFamily = ff,
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                            )
-                        }
-                    }
-                }
-            }
         }
-    }
-
-    if (showDeleteConfirm && invoice != null) {
-        ElvanAzhippuUrudhiMaeladukku(
-            title = confirmDeleteTitle,
-            onConfirm = {
-                showDeleteConfirm = false
-                PattiyalRepository.delete(invoice.id, currentMode)
-                ElvanSnackbar.show(deletedMsg)
-                onBack()
-            },
-            onDismissRequest = { showDeleteConfirm = false },
-            colors = colors
-        )
     }
 }

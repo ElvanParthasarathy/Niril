@@ -24,6 +24,9 @@ object PattiyalRepository {
     var invoices by mutableStateOf<List<PattiyalTharavuru>>(emptyList())
         private set
 
+    var deletedInvoices by mutableStateOf<List<PattiyalTharavuru>>(emptyList())
+        private set
+
     var searchQuery by mutableStateOf("")
 
     val filteredInvoices: List<PattiyalTharavuru>
@@ -58,6 +61,15 @@ object PattiyalRepository {
         }
     }
 
+    fun loadDeleted(mode: AppMode = ModeManager.currentMode) {
+        try {
+            val helper = getBusinessDatabaseHelper()
+            deletedInvoices = helper.loadDeletedInvoices(mode)
+        } catch (_: Exception) {
+            deletedInvoices = emptyList()
+        }
+    }
+
     fun save(invoice: PattiyalTharavuru, mode: AppMode = ModeManager.currentMode): Long {
         return try {
             val helper = getBusinessDatabaseHelper()
@@ -77,10 +89,51 @@ object PattiyalRepository {
             val success = helper.deleteInvoice(mode, id)
             if (success) {
                 loadAll(mode)
+                loadDeleted(mode)
             }
             success
         } catch (_: Exception) {
             false
+        }
+    }
+
+    fun restore(id: Long, mode: AppMode = ModeManager.currentMode): Boolean {
+        return try {
+            val helper = getBusinessDatabaseHelper()
+            val success = helper.restoreInvoice(mode, id)
+            if (success) {
+                loadAll(mode)
+                loadDeleted(mode)
+            }
+            success
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    fun permanentDelete(id: Long, mode: AppMode = ModeManager.currentMode): Boolean {
+        return try {
+            val helper = getBusinessDatabaseHelper()
+            val success = helper.permanentDeleteInvoice(mode, id)
+            if (success) {
+                loadDeleted(mode)
+            }
+            success
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    fun purgeExpired(days: Int = 30, mode: AppMode = ModeManager.currentMode): Int {
+        return try {
+            val helper = getBusinessDatabaseHelper()
+            val count = helper.purgeExpiredInvoices(mode, days)
+            if (count > 0) {
+                loadDeleted(mode)
+            }
+            count
+        } catch (_: Exception) {
+            0
         }
     }
 

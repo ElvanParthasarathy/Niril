@@ -246,6 +246,8 @@ object K {
     const val viruppaMozhiThaervu = "viruppaMozhiThaervu"
     const val azhikkappattaPorulgal = "azhikkappattaPorulgal"
     const val azhikkappattaVaangunargal = "azhikkappattaVaangunargal"
+    const val azhikkappattaPattiyalgal = "azhikkappattaPattiyalgal"
+    const val azhikkappattaPatrucheettugal = "azhikkappattaPatrucheettugal"
     const val hsnSacKuriyeedu = "hsnSacKuriyeedu"
     const val kuriaindhOruPorul = "kuriaindhOruPorul"
     const val menporulVadivaalar = "menporulVadivaalar"

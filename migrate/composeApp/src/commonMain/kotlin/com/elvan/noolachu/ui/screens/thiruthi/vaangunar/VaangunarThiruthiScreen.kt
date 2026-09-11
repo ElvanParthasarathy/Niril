@@ -29,17 +29,18 @@ import com.elvan.noolachu.core.platform.AppBackHandler
 import com.elvan.noolachu.data.model.VaangunarTharavuru
 import com.elvan.noolachu.data.repository.VaangunarRepository
 import com.elvan.noolachu.localization.K
+import com.elvan.noolachu.localization.LanguageManager
 import com.elvan.noolachu.localization.tr
 import com.elvan.noolachu.theme.Dimens
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.preventBrokenLigatures
 import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.components.shell.*
-import com.elvan.noolachu.ui.components.shell.maeladukkugal.ElvanAzhippuUrudhiMaeladukku
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanEditorSection
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanIrumozhiPulan
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiAttai
+import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiKeezhvirivu
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiThalaippu
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiUlleedu
 
@@ -101,11 +102,6 @@ fun VaangunarThiruthiScreen(
     var tholaipaesi by remember { mutableStateOf(merchant?.tholaipaesi ?: "") }
     var minnanjal by remember { mutableStateOf(merchant?.minnanjal ?: "") }
 
-    var isCountryPickerOpen by remember { mutableStateOf(false) }
-    var isStatePickerOpen by remember { mutableStateOf(false) }
-    var isDistrictPickerOpen by remember { mutableStateOf(false) }
-
-    var showDeleteConfirm by remember { mutableStateOf(false) }
     var nameValidationError by remember { mutableStateOf<String?>(null) }
     var gstinValidationError by remember { mutableStateOf<String?>(null) }
 
@@ -114,8 +110,6 @@ fun VaangunarThiruthiScreen(
     val gstinErrorMsg = K.gstinTavaru.tr()
     val savedMsg = K.vaangunarChaemikkappattadhu.tr()
     val saveFailedMsg = K.chaemikkaIyalavillai.tr()
-    val deletedMsg = K.vaangunarAzhikkappattadhu.tr()
-    val confirmDeleteTitle = K.nirandharaAzhippuUrudhi.tr()
 
     // India vs Overseas address check
     val isIndia = remember(naaduMap) {
@@ -230,7 +224,7 @@ fun VaangunarThiruthiScreen(
                 end = 16.dp,
                 bottom = Dimens.SubpageContentPaddingBottom
             ),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             // Top spacer driven by One UI collapsible header
             item(key = "top_spacer") {
@@ -243,7 +237,10 @@ fun VaangunarThiruthiScreen(
                     index = 0,
                     title = K.vaangunarTharavugal.tr()
                 ) {
-                    ElvanThiruthiAttai {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
                         ElvanIrumozhiPulan(
                             label = K.vaangunarPeyar.tr(),
                             value = peyarMap,
@@ -275,115 +272,64 @@ fun VaangunarThiruthiScreen(
                     index = 1,
                     title = K.mugavari.tr()
                 ) {
-                    ElvanThiruthiAttai {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
                         if (currentMode == AppMode.PATTU) {
                             // Country Selector Pill
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                ElvanThiruthiThalaippu(label = K.naadu.tr())
-                                val countryText = naaduMap["ta"] ?: naaduMap["en"] ?: "India"
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(45.dp)
-                                        .clip(RoundedCornerShape(999.dp))
-                                        .background(pillBg)
-                                        .clickable { isCountryPickerOpen = true }
-                                        .padding(horizontal = 16.dp),
-                                    contentAlignment = Alignment.CenterStart
-                                ) {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = countryText.preventBrokenLigatures(),
-                                            style = TextStyle(fontFamily = ff, fontSize = 14.sp, color = colors.textPrimary),
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis
-                                        )
-                                        Icon(
-                                            imageVector = MaterialSymbols.Rounded.ChevronRight,
-                                            contentDescription = null,
-                                            tint = colors.textSecondary
-                                        )
-                                    }
+                            ElvanThiruthiKeezhvirivu<IdangalinPeyar>(
+                                label = K.naadu.tr(),
+                                value = ulagaNaadugal.firstOrNull { it.en.equals(naaduMap["en"], ignoreCase = true) || it.ta == naaduMap["ta"] } ?: ulagaNaadugal.first(),
+                                items = ulagaNaadugal,
+                                onSelected = { picked ->
+                                    naaduMap = mapOf("en" to picked.en, "ta" to picked.ta)
+                                },
+                                itemLabelBuilder = { if (LanguageManager.activeLanguageCode == "ta") it.ta else it.en },
+                                subtitleBuilder = { if (LanguageManager.activeLanguageCode == "ta") it.en else it.ta },
+                                showSearch = true,
+                                searchFilter = { item, query ->
+                                    item.en.contains(query, ignoreCase = true) || item.ta.contains(query, ignoreCase = true)
                                 }
-                            }
+                            )
 
                             if (isIndia) {
                                 // State Selector Pill
-                                Column(modifier = Modifier.fillMaxWidth()) {
-                                    ElvanThiruthiThalaippu(label = K.maanilam.tr())
-                                    val stateText = maanilamMap["ta"] ?: maanilamMap["en"] ?: "Tamil Nadu"
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(45.dp)
-                                            .clip(RoundedCornerShape(999.dp))
-                                            .background(pillBg)
-                                            .clickable { isStatePickerOpen = true }
-                                            .padding(horizontal = 16.dp),
-                                        contentAlignment = Alignment.CenterStart
-                                    ) {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Text(
-                                                text = stateText.preventBrokenLigatures(),
-                                                style = TextStyle(fontFamily = ff, fontSize = 14.sp, color = colors.textPrimary),
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis
-                                            )
-                                            Icon(
-                                                imageVector = MaterialSymbols.Rounded.ChevronRight,
-                                                contentDescription = null,
-                                                tint = colors.textSecondary
-                                            )
+                                ElvanThiruthiKeezhvirivu<IdangalinPeyar>(
+                                    label = K.maanilam.tr(),
+                                    value = indhiyaMaanilangal.firstOrNull { it.en.equals(maanilamMap["en"], ignoreCase = true) || it.ta == maanilamMap["ta"] },
+                                    items = indhiyaMaanilangal,
+                                    onSelected = { picked ->
+                                        maanilamMap = mapOf("en" to picked.en, "ta" to picked.ta)
+                                        if (picked.en != "Tamil Nadu" && picked.ta != "தமிழ்நாடு") {
+                                            maavattamMap = emptyMap()
                                         }
+                                    },
+                                    itemLabelBuilder = { if (LanguageManager.activeLanguageCode == "ta") it.ta else it.en },
+                                    subtitleBuilder = { if (LanguageManager.activeLanguageCode == "ta") it.en else it.ta },
+                                    showSearch = true,
+                                    searchFilter = { item, query ->
+                                        item.en.contains(query, ignoreCase = true) || item.ta.contains(query, ignoreCase = true)
                                     }
-                                }
+                                )
 
                                 // District: Autocomplete if TN, freeform otherwise
                                 if (isTamilNadu) {
-                                    Column(modifier = Modifier.fillMaxWidth()) {
-                                        ElvanThiruthiThalaippu(label = K.maavattam.tr())
-                                        val distText = maavattamMap["ta"] ?: maavattamMap["en"] ?: ""
-                                        Box(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .height(45.dp)
-                                                .clip(RoundedCornerShape(999.dp))
-                                                .background(pillBg)
-                                                .clickable { isDistrictPickerOpen = true }
-                                                .padding(horizontal = 16.dp),
-                                            contentAlignment = Alignment.CenterStart
-                                        ) {
-                                            Row(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                horizontalArrangement = Arrangement.SpaceBetween,
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                Text(
-                                                    text = (if (distText.isNotEmpty()) distText else K.maavattam.tr()).preventBrokenLigatures(),
-                                                    style = TextStyle(
-                                                        fontFamily = ff,
-                                                        fontSize = 14.sp,
-                                                        color = if (distText.isNotEmpty()) colors.textPrimary else colors.textSecondary.copy(alpha = 0.5f)
-                                                    ),
-                                                    maxLines = 1,
-                                                    overflow = TextOverflow.Ellipsis
-                                                )
-                                                Icon(
-                                                    imageVector = MaterialSymbols.Rounded.ChevronRight,
-                                                    contentDescription = null,
-                                                    tint = colors.textSecondary
-                                                )
-                                            }
+                                    ElvanThiruthiKeezhvirivu<IdangalinPeyar>(
+                                        label = K.maavattam.tr(),
+                                        value = tamizhnaattuMaavattangal.firstOrNull { it.en.equals(maavattamMap["en"], ignoreCase = true) || it.ta == maavattamMap["ta"] },
+                                        items = tamizhnaattuMaavattangal,
+                                        onSelected = { picked ->
+                                            maavattamMap = mapOf("en" to picked.en, "ta" to picked.ta)
+                                        },
+                                        onClear = { maavattamMap = emptyMap() },
+                                        itemLabelBuilder = { if (LanguageManager.activeLanguageCode == "ta") it.ta else it.en },
+                                        subtitleBuilder = { if (LanguageManager.activeLanguageCode == "ta") it.en else it.ta },
+                                        showSearch = true,
+                                        searchFilter = { item, query ->
+                                            item.en.contains(query, ignoreCase = true) || item.ta.contains(query, ignoreCase = true)
                                         }
-                                    }
+                                    )
                                 } else {
                                     ElvanIrumozhiPulan(
                                         label = K.maavattam.tr(),
@@ -460,13 +406,20 @@ fun VaangunarThiruthiScreen(
                         index = 2,
                         title = K.thodarpuVari.tr()
                     ) {
-                        ElvanThiruthiAttai {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
                             ElvanThiruthiUlleedu(
-                                label = K.tholaipaesi.tr(),
-                                value = tholaipaesi,
-                                onValueChange = { tholaipaesi = it },
-                                placeholder = "+91 98765 43210",
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+                                label = "GSTIN",
+                                value = gstin,
+                                onValueChange = {
+                                    gstin = it.uppercase()
+                                    gstinValidationError = null
+                                },
+                                placeholder = "33AAAAA0000A1Z5",
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                                errorMessage = gstinValidationError
                             )
 
                             ElvanThiruthiUlleedu(
@@ -478,123 +431,17 @@ fun VaangunarThiruthiScreen(
                             )
 
                             ElvanThiruthiUlleedu(
-                                label = K.gstin.tr(),
-                                value = gstin,
-                                onValueChange = {
-                                    gstin = it.uppercase()
-                                    gstinValidationError = null
-                                },
-                                placeholder = "33AAAAA0000A1Z5",
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                                errorMessage = gstinValidationError
+                                label = K.tholaipaesi.tr(),
+                                value = tholaipaesi,
+                                onValueChange = { tholaipaesi = it },
+                                placeholder = "+91 98765 43210",
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
                             )
                         }
                     }
                 }
             }
 
-            // Delete Card (if editing existing)
-            if (isEditing && merchant != null) {
-                item(key = "delete_section") {
-                    ElvanThiruthiAttai(
-                        onClick = { showDeleteConfirm = true },
-                        backgroundColor = MaterialTheme.colorScheme.error.copy(alpha = 0.08f)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = MaterialSymbols.Rounded.Delete,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = K.azhi.tr().preventBrokenLigatures(),
-                                style = TextStyle(
-                                    fontFamily = ff,
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                            )
-                        }
-                    }
-                }
-            }
         }
-    }
-
-    // Modal: Country Picker
-    if (isCountryPickerOpen) {
-        ElvanSelectionBottomSheet<IdangalinPeyar>(
-            title = K.naadu.tr(),
-            items = ulagaNaadugal,
-            currentValue = ulagaNaadugal.firstOrNull { it.en == naaduMap["en"] || it.ta == naaduMap["ta"] },
-            onSelected = { picked ->
-                naaduMap = mapOf("en" to picked.en, "ta" to picked.ta)
-                isCountryPickerOpen = false
-            },
-            onDismissRequest = { isCountryPickerOpen = false },
-            itemLabelBuilder = { it.ta.ifEmpty { it.en } },
-            subtitleBuilder = { it.en },
-            showSearch = true
-        )
-    }
-
-    // Modal: State Picker
-    if (isStatePickerOpen) {
-        ElvanSelectionBottomSheet<IdangalinPeyar>(
-            title = K.maanilam.tr(),
-            items = indhiyaMaanilangal,
-            currentValue = indhiyaMaanilangal.firstOrNull { it.en == maanilamMap["en"] || it.ta == maanilamMap["ta"] },
-            onSelected = { picked ->
-                maanilamMap = mapOf("en" to picked.en, "ta" to picked.ta)
-                // If not TN, clear district picker selection
-                if (picked.en != "Tamil Nadu" && picked.ta != "தமிழ்நாடு") {
-                    maavattamMap = emptyMap()
-                }
-                isStatePickerOpen = false
-            },
-            onDismissRequest = { isStatePickerOpen = false },
-            itemLabelBuilder = { it.ta.ifEmpty { it.en } },
-            subtitleBuilder = { it.en },
-            showSearch = true
-        )
-    }
-
-    // Modal: District Picker (Tamil Nadu)
-    if (isDistrictPickerOpen) {
-        ElvanSelectionBottomSheet<IdangalinPeyar>(
-            title = K.maavattam.tr(),
-            items = tamizhnaattuMaavattangal,
-            currentValue = tamizhnaattuMaavattangal.firstOrNull { it.en == maavattamMap["en"] || it.ta == maavattamMap["ta"] },
-            onSelected = { picked ->
-                maavattamMap = mapOf("en" to picked.en, "ta" to picked.ta)
-                isDistrictPickerOpen = false
-            },
-            onDismissRequest = { isDistrictPickerOpen = false },
-            itemLabelBuilder = { it.ta.ifEmpty { it.en } },
-            subtitleBuilder = { it.en },
-            showSearch = true
-        )
-    }
-
-    // Modal: Delete Confirmation
-    if (showDeleteConfirm && merchant != null) {
-        ElvanAzhippuUrudhiMaeladukku(
-            title = confirmDeleteTitle,
-            onConfirm = {
-                showDeleteConfirm = false
-                VaangunarRepository.delete(merchant.id, currentMode)
-                ElvanSnackbar.show(deletedMsg)
-                onBack()
-            },
-            onDismissRequest = { showDeleteConfirm = false },
-            colors = colors
-        )
     }
 }

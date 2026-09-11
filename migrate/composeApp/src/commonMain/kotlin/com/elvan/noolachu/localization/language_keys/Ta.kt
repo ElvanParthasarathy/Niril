@@ -247,6 +247,8 @@ val ta: Map<String, String> = mapOf(
     K.viruppaMozhiThaervu to "விருப்பமான மொழியைத் தேர்வு செய்க",
     K.azhikkappattaPorulgal to "அழிக்கப்பட்ட பொருள்கள்",
     K.azhikkappattaVaangunargal to "அழிக்கப்பட்ட வாங்குநர்கள்",
+    K.azhikkappattaPattiyalgal to "அழிக்கப்பட்ட பட்டியல்கள்",
+    K.azhikkappattaPatrucheettugal to "அழிக்கப்பட்ட பற்றுச்சீட்டுகள்",
     K.hsnSacKuriyeedu to "HSN/SAC குறியீடு",
     K.kuriaindhOruPorul to "குறைந்தது ஒரு பொருள் சேர்",
     K.menporulVadivaalar to "மென்பொருள் வடிவாளர்",

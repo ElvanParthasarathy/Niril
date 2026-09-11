@@ -48,7 +48,8 @@ fun PorulScreen(
     colors: ShellColors = rememberShellColors(),
     isSelectionMode: Boolean = false,
     selectedItemIds: Set<Long> = emptySet(),
-    onToggleSelect: ((Long) -> Unit)? = null
+    onToggleSelect: ((Long) -> Unit)? = null,
+    onItemLongClick: ((Long) -> Unit)? = null
 ) {
     val items = PorulRepository.filteredItems
     val ff = LocalAppFontFamily.current
@@ -139,11 +140,15 @@ fun PorulScreen(
                         onItemClick(item)
                     }
                 }
+                val onCardLongClick: () -> Unit = {
+                    onItemLongClick?.invoke(item.id)
+                }
                 if (mode == AppMode.KOOLI) {
                     CooliePorulCard(
                         index = index,
                         porul = item,
                         onClick = onCardClick,
+                        onLongClick = onCardLongClick,
                         colors = colors,
                         isSelectionMode = isSelectionMode,
                         isSelected = isSelected
@@ -153,6 +158,7 @@ fun PorulScreen(
                         index = index,
                         porul = item,
                         onClick = onCardClick,
+                        onLongClick = onCardLongClick,
                         colors = colors,
                         isSelectionMode = isSelectionMode,
                         isSelected = isSelected
@@ -174,7 +180,8 @@ private fun CooliePorulCard(
     onClick: () -> Unit,
     colors: ShellColors,
     isSelectionMode: Boolean = false,
-    isSelected: Boolean = false
+    isSelected: Boolean = false,
+    onLongClick: (() -> Unit)? = null
 ) {
     val ff = LocalAppFontFamily.current
     val currentLang = LocalAppLanguage.current
@@ -190,6 +197,8 @@ private fun CooliePorulCard(
 
     ElvanPothuAttai(
         onClick = onClick,
+        onLongClick = onLongClick,
+        isSelected = isSelected,
         padding = PaddingValues(16.dp),
         borderRadius = 24.dp
     ) {
@@ -279,7 +288,8 @@ private fun SilkPorulCard(
     onClick: () -> Unit,
     colors: ShellColors,
     isSelectionMode: Boolean = false,
-    isSelected: Boolean = false
+    isSelected: Boolean = false,
+    onLongClick: (() -> Unit)? = null
 ) {
     val ff = LocalAppFontFamily.current
     val currentLang = LocalAppLanguage.current
@@ -295,6 +305,8 @@ private fun SilkPorulCard(
 
     ElvanPothuAttai(
         onClick = onClick,
+        onLongClick = onLongClick,
+        isSelected = isSelected,
         padding = PaddingValues(16.dp),
         borderRadius = 24.dp
     ) {

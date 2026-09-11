@@ -30,6 +30,7 @@ import com.elvan.noolachu.localization.tr
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.preventBrokenLigatures
 import com.elvan.noolachu.theme.rememberShellColors
+import com.elvan.noolachu.ui.components.shell.ElvanSelectionBottomSheet
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
 
 /**
@@ -378,26 +379,37 @@ fun ElvanIrumozhiPulan(
 }
 
 /**
- * Dropdown Pill Selector for Elvan Editors.
- * Matches Flutter's `ElvanThiruthiKeezhvirivu`.
+ * Generic Dropdown Pill Selector for Elvan Editors.
+ * Matches Flutter's `ElvanThiruthiKeezhvirivu<T>`:
+ * Height: 45dp capsule pill with padding(start = 20.dp, end = 6.dp).
+ * Opens `ElvanSelectionBottomSheet` on tap.
  */
 @Composable
-fun ElvanThiruthiKeezhvirivu(
+fun <T> ElvanThiruthiKeezhvirivu(
     label: String? = null,
-    selectedText: String,
-    items: List<Pair<String, String>>, // value to display label
-    onSelected: (String) -> Unit,
-    modifier: Modifier = Modifier
+    hideLabel: Boolean = false,
+    value: T?,
+    items: List<T>,
+    onSelected: (T) -> Unit,
+    itemLabelBuilder: (T) -> String,
+    modifier: Modifier = Modifier,
+    onClear: (() -> Unit)? = null,
+    leadingBuilder: (@Composable (T) -> Unit)? = null,
+    subtitleBuilder: ((T) -> String?)? = null,
+    showSearch: Boolean = false,
+    searchFilter: ((T, String) -> Boolean)? = null,
+    onRequestAddNew: (() -> Unit)? = null
 ) {
     val colors = rememberShellColors()
     val isDark = colors.isDark
     val ff = LocalAppFontFamily.current
 
-    var expanded by remember { mutableStateOf(false) }
+    var isSheetOpen by remember { mutableStateOf(false) }
     val containerBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.White
+    val displayText = if (value != null) itemLabelBuilder(value) else ""
 
     Column(modifier = modifier.fillMaxWidth()) {
-        if (!label.isNullOrBlank()) {
+        if (!label.isNullOrBlank() && !hideLabel) {
             ElvanThiruthiThalaippu(label = label)
         }
 
@@ -407,8 +419,8 @@ fun ElvanThiruthiKeezhvirivu(
                 .height(45.dp)
                 .clip(RoundedCornerShape(999.dp))
                 .background(containerBg)
-                .clickable { expanded = true }
-                .padding(horizontal = 16.dp),
+                .clickable { isSheetOpen = true }
+                .padding(start = 20.dp, end = 6.dp),
             contentAlignment = Alignment.CenterStart
         ) {
             Row(
@@ -416,50 +428,98 @@ fun ElvanThiruthiKeezhvirivu(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                if (value != null && leadingBuilder != null) {
+                    leadingBuilder(value)
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+
                 Text(
-                    text = selectedText.preventBrokenLigatures(),
+                    text = displayText.preventBrokenLigatures(),
                     style = TextStyle(
                         fontFamily = ff,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
-                        color = colors.textPrimary
+                        color = if (displayText.isNotEmpty()) colors.textPrimary else colors.textSecondary.copy(alpha = 0.5f)
                     ),
+                    modifier = Modifier.weight(1f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
 
-                Icon(
-                    imageVector = MaterialSymbols.Rounded.KeyboardArrowDown,
-                    contentDescription = null,
-                    tint = colors.textSecondary,
-                    modifier = Modifier.size(22.dp)
-                )
-            }
-
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier.background(colors.floatingBg)
-            ) {
-                items.forEach { (valKey, displayLabel) ->
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = displayLabel.preventBrokenLigatures(),
-                                style = TextStyle(
-                                    fontFamily = ff,
-                                    fontSize = 14.sp,
-                                    color = colors.textPrimary
-                                )
-                            )
-                        },
-                        onClick = {
-                            expanded = false
-                            onSelected(valKey)
-                        }
-                    )
+                if (value != null && onClear != null) {
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clip(CircleShape)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = ripple(bounded = true, radius = 16.dp)
+                            ) { onClear() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = MaterialSymbols.Rounded.Close,
+                            contentDescription = "Clear",
+                            tint = colors.textSecondary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier.size(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = MaterialSymbols.Rounded.KeyboardArrowDown,
+                            contentDescription = null,
+                            tint = colors.textSecondary.copy(alpha = 0.5f),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
                 }
             }
         }
     }
+
+    if (isSheetOpen) {
+        ElvanSelectionBottomSheet(
+            title = label ?: "",
+            items = items,
+            currentValue = value,
+            onSelected = {
+                onSelected(it)
+                isSheetOpen = false
+            },
+            onDismissRequest = { isSheetOpen = false },
+            itemLabelBuilder = itemLabelBuilder,
+            subtitleBuilder = subtitleBuilder,
+            leadingBuilder = leadingBuilder,
+            showSearch = showSearch,
+            searchFilter = searchFilter,
+            onRequestAddNew = onRequestAddNew
+        )
+    }
 }
+
+/**
+ * Dropdown Pill Selector for Elvan Editors (Pair variant for simple string lists).
+ * Matches Flutter's `ElvanThiruthiKeezhvirivu` and opens `ElvanSelectionBottomSheet`.
+ */
+@Composable
+fun ElvanThiruthiKeezhvirivu(
+    label: String? = null,
+    selectedText: String,
+    items: List<Pair<String, String>>, // value to display label
+    onSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    ElvanThiruthiKeezhvirivu(
+        label = label,
+        value = items.firstOrNull { it.first == selectedText || it.second == selectedText },
+        items = items,
+        onSelected = { onSelected(it.first) },
+        itemLabelBuilder = { it.second },
+        modifier = modifier
+    )
+}
+

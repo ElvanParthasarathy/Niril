@@ -1,5 +1,6 @@
 package com.elvan.noolachu.ui.screens.thiruthi.porul
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,17 +24,17 @@ import com.elvan.noolachu.core.platform.AppBackHandler
 import com.elvan.noolachu.data.model.PorulTharavuru
 import com.elvan.noolachu.data.repository.PorulRepository
 import com.elvan.noolachu.localization.K
+import com.elvan.noolachu.localization.LanguageManager
 import com.elvan.noolachu.localization.tr
+import com.elvan.noolachu.localization.trWithLang
 import com.elvan.noolachu.theme.Dimens
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.preventBrokenLigatures
 import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.components.shell.*
-import com.elvan.noolachu.ui.components.shell.maeladukkugal.ElvanAzhippuUrudhiMaeladukku
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanEditorSection
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanIrumozhiPulan
-import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiAttai
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiKeezhvirivu
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiUlleedu
 
@@ -71,15 +72,12 @@ fun PorulThiruthiScreen(
     }
     var alavuVagai by remember { mutableStateOf(item?.alavuVagai?.ifEmpty { "quantity" } ?: "quantity") }
 
-    var showDeleteConfirm by remember { mutableStateOf(false) }
     var validationError by remember { mutableStateOf<String?>(null) }
 
     val pageTitle = if (isEditing) K.maatriyamai.tr() else K.pudhiyaAakkam.tr()
     val nameRequiredMsg = K.porulPeyarThaevai.tr()
     val savedMsg = K.porulChaemikkappattadhu.tr()
     val saveFailedMsg = K.chaemikkaIyalavillai.tr()
-    val deletedMsg = K.porulAzhikkappattadhu.tr()
-    val confirmDeleteTitle = K.nirandharaAzhippuUrudhi.tr()
 
     fun handleSave() {
         if (porulPeyarMap.values.none { it.isNotBlank() }) {
@@ -137,7 +135,7 @@ fun PorulThiruthiScreen(
                 end = 16.dp,
                 bottom = Dimens.SubpageContentPaddingBottom
             ),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             // Top spacer driven by One UI collapsible header
             item(key = "top_spacer") {
@@ -150,7 +148,10 @@ fun PorulThiruthiScreen(
                     index = 0,
                     title = K.porulTharavugal.tr()
                 ) {
-                    ElvanThiruthiAttai {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
                         ElvanIrumozhiPulan(
                             label = K.porul.tr(),
                             value = porulPeyarMap,
@@ -175,14 +176,17 @@ fun PorulThiruthiScreen(
 
                         // In Silk mode: Measurement method selector
                         if (currentMode == AppMode.PATTU) {
-                            ElvanThiruthiKeezhvirivu(
+                            ElvanThiruthiKeezhvirivu<String>(
                                 label = K.alaveeduMurai.tr(),
-                                selectedText = if (alavuVagai == "weight") "${K.edai.tr()} (kg)" else "${K.alavu.tr()} (Nos)",
-                                items = listOf(
-                                    "quantity" to "${K.alavu.tr()} (Nos)",
-                                    "weight" to "${K.edai.tr()} (kg)"
-                                ),
-                                onSelected = { alavuVagai = it }
+                                value = if (alavuVagai == "weight") K.edai else K.alavu,
+                                items = listOf(K.alavu, K.edai),
+                                onSelected = { key ->
+                                    alavuVagai = if (key == K.edai) "weight" else "quantity"
+                                },
+                                itemLabelBuilder = { key ->
+                                    val lang = LanguageManager.activeLanguageCode
+                                    if (key == K.edai) "${K.edai.trWithLang(lang)} (kg)" else "${K.alavu.trWithLang(lang)} (Nos)"
+                                }
                             )
                         }
                     }
@@ -196,7 +200,10 @@ fun PorulThiruthiScreen(
                         index = 1,
                         title = K.vilaiMatrumVari.tr()
                     ) {
-                        ElvanThiruthiAttai {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
                             // HSN Code
                             ElvanThiruthiUlleedu(
                                 label = K.hsnSacKuriyeedu.tr(),
@@ -262,52 +269,6 @@ fun PorulThiruthiScreen(
                 }
             }
 
-            // Delete Card (if editing existing)
-            if (isEditing && item != null) {
-                item(key = "delete_section") {
-                    ElvanThiruthiAttai(
-                        onClick = { showDeleteConfirm = true },
-                        backgroundColor = MaterialTheme.colorScheme.error.copy(alpha = 0.08f)
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                imageVector = MaterialSymbols.Rounded.Delete,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(20.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = K.azhi.tr().preventBrokenLigatures(),
-                                style = TextStyle(
-                                    fontFamily = ff,
-                                    fontSize = 15.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                            )
-                        }
-                    }
-                }
-            }
         }
-    }
-
-    if (showDeleteConfirm && item != null) {
-        ElvanAzhippuUrudhiMaeladukku(
-            title = confirmDeleteTitle,
-            onConfirm = {
-                showDeleteConfirm = false
-                PorulRepository.delete(item.id, currentMode)
-                ElvanSnackbar.show(deletedMsg)
-                onBack()
-            },
-            onDismissRequest = { showDeleteConfirm = false },
-            colors = colors
-        )
     }
 }

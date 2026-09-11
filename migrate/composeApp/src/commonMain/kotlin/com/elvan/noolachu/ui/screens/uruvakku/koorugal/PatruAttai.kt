@@ -33,7 +33,10 @@ fun PatruAttai(
     receipt: PatrugalTharavuru,
     colors: ShellColors,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    isSelectionMode: Boolean = false,
+    isSelected: Boolean = false,
+    onClick: () -> Unit = {},
+    onLongClick: (() -> Unit)? = null
 ) {
     val ff = LocalAppFontFamily.current
     val isDark = colors.isDark
@@ -59,18 +62,34 @@ fun PatruAttai(
 
     ElvanPothuAttai(
         onClick = onClick,
+        onLongClick = onLongClick,
+        isSelected = isSelected,
         modifier = modifier,
         padding = PaddingValues(16.dp),
         borderRadius = 20.dp
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth()
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Row 1: Customer Name + Date
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+            if (isSelectionMode) {
+                Icon(
+                    imageVector = if (isSelected) MaterialSymbols.Rounded.CheckCircleFill else MaterialSymbols.Rounded.RadioButtonUnchecked,
+                    contentDescription = null,
+                    modifier = Modifier.size(22.dp),
+                    tint = if (isSelected) (if (isDark) Color.White else Color.Black)
+                    else (if (isDark) Color.White.copy(alpha = 0.30f) else Color.Black.copy(alpha = 0.26f))
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+            }
+            Column(
+                modifier = Modifier.weight(1f)
             ) {
+                // Row 1: Customer Name + Date
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                 Text(
                     text = name.preventBrokenLigatures(),
                     style = TextStyle(
@@ -155,4 +174,5 @@ fun PatruAttai(
             }
         }
     }
+}
 }

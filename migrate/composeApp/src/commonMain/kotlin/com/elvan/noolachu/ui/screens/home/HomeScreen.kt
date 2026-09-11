@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.elvan.noolachu.core.mode.LocalAppMode
 import com.elvan.noolachu.core.platform.AppBackHandler
@@ -75,6 +76,17 @@ fun HomeScreen() {
     var menuExpanded by remember { mutableStateOf(false) }
     var isSelectionMode by remember { mutableStateOf(false) }
     var selectedItemIds by remember { mutableStateOf<Set<Long>>(emptySet()) }
+    var showBulkDeleteConfirm by remember { mutableStateOf(false) }
+
+    val onToggleItem: (Long) -> Unit = { id ->
+        val newSet = if (selectedItemIds.contains(id)) selectedItemIds - id else selectedItemIds + id
+        selectedItemIds = newSet
+        if (newSet.isEmpty()) isSelectionMode = false
+    }
+    val onStartSelection: (Long) -> Unit = { id ->
+        isSelectionMode = true
+        selectedItemIds = setOf(id)
+    }
 
     val scope = rememberCoroutineScope()
     val colors = rememberShellColors()
@@ -86,8 +98,10 @@ fun HomeScreen() {
     val azhikkiradhuLabel = K.azhikkiradhu.tr()
 
     // Intercept hardware/system back when a subpage is open, selection mode is active, or search is active
-    AppBackHandler(enabled = activeSubpage != null || isSelectionMode || isSearchActive) {
-        if (activeSubpage != null) {
+    AppBackHandler(enabled = activeSubpage != null || isSelectionMode || isSearchActive || showBulkDeleteConfirm) {
+        if (showBulkDeleteConfirm) {
+            showBulkDeleteConfirm = false
+        } else if (activeSubpage != null) {
             activeSubpage = null
         } else if (isSelectionMode) {
             isSelectionMode = false
@@ -357,28 +371,9 @@ fun HomeScreen() {
                                             selectedItemIds = if (selectedItemIds.size == allIds.size) emptySet() else allIds
                                         },
                                         onDelete = {
-                                            when (selectedTab) {
-                                                NavTab.Products -> {
-                                                    selectedItemIds.forEach { PorulRepository.delete(it, currentMode) }
-                                                    ElvanSnackbar.show(porulDeletedMsg)
-                                                }
-                                                NavTab.Customers -> {
-                                                    selectedItemIds.forEach { VaangunarRepository.delete(it, currentMode) }
-                                                    ElvanSnackbar.show(vaangunarDeletedMsg)
-                                                }
-                                                NavTab.Create -> {
-                                                    if (uruvakkuSegment == 0) {
-                                                        selectedItemIds.forEach { PattiyalRepository.delete(it, currentMode) }
-                                                        ElvanSnackbar.show("${selectedItemIds.size} $pattiyalgalLabel $azhikkiradhuLabel")
-                                                    } else {
-                                                        selectedItemIds.forEach { PatrugalRepository.delete(it, currentMode) }
-                                                        ElvanSnackbar.show("${selectedItemIds.size} $patrucheettugalLabel $azhikkiradhuLabel")
-                                                    }
-                                                }
-                                                else -> {}
+                                            if (selectedItemIds.isNotEmpty()) {
+                                                showBulkDeleteConfirm = true
                                             }
-                                            isSelectionMode = false
-                                            selectedItemIds = emptySet()
                                         },
                                         onCancel = {
                                             isSelectionMode = false
@@ -486,9 +481,15 @@ fun HomeScreen() {
                                         onSegmentSelected = { newSegment ->
                                             uruvakkuSegment = newSegment
                                             isSearchActive = false
+                                            isSelectionMode = false
+                                            selectedItemIds = emptySet()
                                             PattiyalRepository.searchQuery = ""
                                             PatrugalRepository.searchQuery = ""
                                         },
+                                        isSelectionMode = isSelectionMode,
+                                        selectedItemIds = selectedItemIds,
+                                        onToggleSelect = onToggleItem,
+                                        onItemLongClick = onStartSelection,
                                         onInvoiceClick = { invoice ->
                                             activeSubpage = ActiveSubpage.InvoiceEditor(invoice)
                                         },
@@ -517,9 +518,8 @@ fun HomeScreen() {
                                         onItemClick = { activeSubpage = ActiveSubpage.ItemEditor(it) },
                                         isSelectionMode = isSelectionMode,
                                         selectedItemIds = selectedItemIds,
-                                        onToggleSelect = { id ->
-                                            selectedItemIds = if (selectedItemIds.contains(id)) selectedItemIds - id else selectedItemIds + id
-                                        }
+                                        onToggleSelect = onToggleItem,
+                                        onItemLongClick = onStartSelection
                                     )
                                 }
                             }
@@ -542,9 +542,8 @@ fun HomeScreen() {
                                         onMerchantClick = { activeSubpage = ActiveSubpage.MerchantEditor(it) },
                                         isSelectionMode = isSelectionMode,
                                         selectedItemIds = selectedItemIds,
-                                        onToggleSelect = { id ->
-                                            selectedItemIds = if (selectedItemIds.contains(id)) selectedItemIds - id else selectedItemIds + id
-                                        }
+                                        onToggleSelect = onToggleItem,
+                                        onItemLongClick = onStartSelection
                                     )
                                 }
                             }
@@ -552,6 +551,56 @@ fun HomeScreen() {
                     }
                 }
             }
+        }
+
+        if (showBulkDeleteConfirm && selectedItemIds.isNotEmpty()) {
+            val deleteSheetTitle = when (selectedTab) {
+                NavTab.Products -> "${selectedItemIds.size} ${K.porulAzhikkappattadhu.tr()}"
+                NavTab.Customers -> "${selectedItemIds.size} ${K.vaangunarAzhikkappattadhu.tr()}"
+                NavTab.Create -> {
+                    if (uruvakkuSegment == 0) {
+                        "${selectedItemIds.size} ${K.pattiyalgal.tr()}"
+                    } else {
+                        "${selectedItemIds.size} ${K.patrucheettugal.tr()}"
+                    }
+                }
+                else -> ""
+            }
+            ElvanActionSheet(
+                title = deleteSheetTitle,
+                cancelText = K.kaividuPtn.tr(),
+                confirmText = K.neekkuPtn.tr(),
+                confirmColor = Color(0xFFBA1A1A),
+                onConfirm = {
+                    when (selectedTab) {
+                        NavTab.Products -> {
+                            selectedItemIds.forEach { PorulRepository.delete(it, currentMode) }
+                            ElvanSnackbar.show(porulDeletedMsg)
+                        }
+                        NavTab.Customers -> {
+                            selectedItemIds.forEach { VaangunarRepository.delete(it, currentMode) }
+                            ElvanSnackbar.show(vaangunarDeletedMsg)
+                        }
+                        NavTab.Create -> {
+                            if (uruvakkuSegment == 0) {
+                                selectedItemIds.forEach { PattiyalRepository.delete(it, currentMode) }
+                                ElvanSnackbar.show("${selectedItemIds.size} $pattiyalgalLabel $azhikkiradhuLabel")
+                            } else {
+                                selectedItemIds.forEach { PatrugalRepository.delete(it, currentMode) }
+                                ElvanSnackbar.show("${selectedItemIds.size} $patrucheettugalLabel $azhikkiradhuLabel")
+                            }
+                        }
+                        else -> {}
+                    }
+                    isSelectionMode = false
+                    selectedItemIds = emptySet()
+                    showBulkDeleteConfirm = false
+                },
+                onDismissRequest = {
+                    showBulkDeleteConfirm = false
+                },
+                colors = colors
+            )
         }
     }
 }

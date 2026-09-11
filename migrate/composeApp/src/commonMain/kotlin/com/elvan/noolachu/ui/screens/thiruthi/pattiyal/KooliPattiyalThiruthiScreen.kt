@@ -42,7 +42,6 @@ import com.elvan.noolachu.ui.components.shell.ElvanCheyalPothan
 import com.elvan.noolachu.ui.components.shell.ElvanSelectionBottomSheet
 import com.elvan.noolachu.ui.components.shell.ElvanSubShell
 import com.elvan.noolachu.ui.components.shell.LocalElvanTopSpacerHeight
-import com.elvan.noolachu.ui.components.shell.maeladukkugal.ElvanAzhippuUrudhiMaeladukku
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanEditorSection
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiThalaippu
@@ -186,7 +185,6 @@ fun KooliPattiyalThiruthiScreen(
     // UI state
     var hasUnsavedChanges by remember { mutableStateOf(false) }
     var showUnsavedDialog by remember { mutableStateOf(false) }
-    var showDeleteConfirm by remember { mutableStateOf(false) }
     var isCompanySheetOpen by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isSaving by remember { mutableStateOf(false) }
@@ -633,45 +631,7 @@ fun KooliPattiyalThiruthiScreen(
                 }
             }
 
-            // ── Delete Button (if editing existing invoice) ──
-            if (isEditing) {
-                item(key = "delete_button") {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp, bottom = 8.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Surface(
-                            shape = RoundedCornerShape(999.dp),
-                            color = MaterialTheme.colorScheme.error.copy(alpha = 0.12f),
-                            modifier = Modifier.clickable { showDeleteConfirm = true }
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 24.dp, vertical = 12.dp),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = MaterialSymbols.Rounded.Delete,
-                                    contentDescription = K.azhi.tr(),
-                                    tint = MaterialTheme.colorScheme.error,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Text(
-                                    text = K.azhi.tr().preventBrokenLigatures(),
-                                    style = TextStyle(
-                                        fontFamily = ff,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = MaterialTheme.colorScheme.error
-                                    )
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+
         }
     }
 
@@ -718,18 +678,6 @@ fun KooliPattiyalThiruthiScreen(
         )
     }
 
-    // ── Delete Confirmation Dialog ──
-    if (showDeleteConfirm && invoice != null) {
-        ElvanAzhippuUrudhiMaeladukku(
-            title = K.nirandharaAzhippuUrudhi.tr(),
-            onConfirm = {
-                PattiyalRepository.delete(invoice.id, AppMode.KOOLI)
-                showDeleteConfirm = false
-                onBack()
-            },
-            onDismissRequest = { showDeleteConfirm = false }
-        )
-    }
 
     // ── Restore Unsaved Draft Action Sheet ──
     if (showDraftRestoreDialog && pendingDraftJson != null) {

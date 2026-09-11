@@ -246,6 +246,8 @@ val en: Map<String, String> = mapOf(
     K.viruppaMozhiThaervu to "Choose your preferred language",
     K.azhikkappattaPorulgal to "Deleted Products",
     K.azhikkappattaVaangunargal to "Deleted Customers",
+    K.azhikkappattaPattiyalgal to "Deleted Invoices",
+    K.azhikkappattaPatrucheettugal to "Deleted Receipts",
     K.hsnSacKuriyeedu to "HSN/SAC Code",
     K.kuriaindhOruPorul to "Add at least one product",
     K.menporulVadivaalar to "Software Designer",

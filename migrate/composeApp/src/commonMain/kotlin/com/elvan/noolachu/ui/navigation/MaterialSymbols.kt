@@ -88,6 +88,15 @@ object MaterialSymbols {
         }
         val LocationOn: ImageVector get() = LibSymbols.RoundedFilled.Location_on
         val CreditCard: ImageVector get() = LibSymbols.RoundedFilled.Credit_card
+        val Payments: ImageVector by lazy {
+            symbol("Payments", "M200-280q-33 0-56.5-23.5T120-360v-400q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v400q0 33-23.5 56.5T760-280H200Zm0-80h560v-400H200v400Zm-80 160q-33 0-56.5-23.5T40-280v-440h80v440h600v80H120Zm360-200q33 0 56.5-23.5T560-480q0-33-23.5-56.5T480-560q-33 0-56.5 23.5T400-480q0 33 23.5 56.5T480-400Z")
+        }
+        val QrCode: ImageVector by lazy {
+            symbol("QrCode", "M480-80q-17 0-28.5-11.5T440-120v-80h-80q-17 0-28.5-11.5T320-240v-480q0-17 11.5-28.5T360-760h240q17 0 28.5 11.5T640-720v480q0 17-11.5 28.5T600-200h-80v80q0 17-11.5 28.5T480-80Zm-80-200h160v-400H400v400Z")
+        }
+        val AccountBalance: ImageVector by lazy {
+            symbol("AccountBalance", "M200-200v-80h560v80H200Zm0-160v-240h80v240h-80Zm160 0v-240h80v240h-80Zm160 0v-240h80v240h-80Zm160 0v-240h80v240h-80ZM120-680v-80l360-180 360 180v80H120Z")
+        }
         val Person: ImageVector get() = LibSymbols.RoundedFilled.Person
         val LightMode: ImageVector get() = LibSymbols.RoundedFilled.Light_mode
         val DarkMode: ImageVector get() = LibSymbols.RoundedFilled.Dark_mode

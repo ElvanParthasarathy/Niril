@@ -2,8 +2,12 @@ package com.elvan.noolachu.data.model
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.elvan.noolachu.localization.K
+import com.elvan.noolachu.localization.LanguageManager
 import com.elvan.noolachu.localization.tr
+import com.elvan.noolachu.localization.trWithLang
+import com.elvan.noolachu.ui.navigation.MaterialSymbols
 
 /**
  * Type-safe payment mode enum with localized display names.
@@ -19,16 +23,27 @@ enum class SeluthiVagai(
     KAASOALAI("cheque", true),           // Cheque — காசோலை
     ATTAI("card", true);                 // Card — அட்டை
 
-    @Composable
-    fun label(): String {
+    val icon: ImageVector
+        get() = when (this) {
+            PANAM -> MaterialSymbols.Rounded.Payments
+            UPI -> MaterialSymbols.Rounded.QrCode
+            VANGI_MAATRAM -> MaterialSymbols.Rounded.AccountBalance
+            KAASOALAI -> MaterialSymbols.Rounded.ReceiptLong
+            ATTAI -> MaterialSymbols.Rounded.CreditCard
+        }
+
+    fun labelString(langCode: String = LanguageManager.activeLanguageCode): String {
         return when (this) {
-            PANAM -> K.kaasu.tr()
+            PANAM -> K.kaasu.trWithLang(langCode)
             UPI -> "UPI"
-            VANGI_MAATRAM -> K.vangiParimaatram.tr()
-            KAASOALAI -> K.kaasoalai.tr()
-            ATTAI -> K.attai.tr()
+            VANGI_MAATRAM -> K.vangiParimaatram.trWithLang(langCode)
+            KAASOALAI -> K.kaasoalai.trWithLang(langCode)
+            ATTAI -> K.attai.trWithLang(langCode)
         }
     }
+
+    @Composable
+    fun label(): String = labelString()
 
     fun badgeColor(isDark: Boolean): Color {
         return when (this) {
@@ -53,13 +68,12 @@ enum class SeluthiVagai(
             }
         }
 
-        @Composable
-        fun allOptions(): List<Pair<String, String>> = listOf(
-            PANAM.name to PANAM.label(),
-            UPI.name to UPI.label(),
-            VANGI_MAATRAM.name to VANGI_MAATRAM.label(),
-            KAASOALAI.name to KAASOALAI.label(),
-            ATTAI.name to ATTAI.label()
+        fun allOptions(langCode: String = LanguageManager.activeLanguageCode): List<Pair<String, String>> = listOf(
+            PANAM.name to PANAM.labelString(langCode),
+            UPI.name to UPI.labelString(langCode),
+            VANGI_MAATRAM.name to VANGI_MAATRAM.labelString(langCode),
+            KAASOALAI.name to KAASOALAI.labelString(langCode),
+            ATTAI.name to ATTAI.labelString(langCode)
         )
     }
 }

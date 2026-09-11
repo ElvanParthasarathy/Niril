@@ -43,6 +43,10 @@ fun UruvakkuScreen(
     selectedSegment: Int,
     onSegmentSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    isSelectionMode: Boolean = false,
+    selectedItemIds: Set<Long> = emptySet(),
+    onToggleSelect: ((Long) -> Unit)? = null,
+    onItemLongClick: ((Long) -> Unit)? = null,
     onInvoiceClick: (PattiyalTharavuru) -> Unit = {},
     onReceiptClick: (PatrugalTharavuru) -> Unit = {}
 ) {
@@ -164,19 +168,37 @@ fun UruvakkuScreen(
                             )
                         }
 
+                        val isSelected = selectedItemIds.contains(invoice.id)
+                        val onCardClick: () -> Unit = {
+                            if (isSelectionMode) {
+                                onToggleSelect?.invoke(invoice.id)
+                            } else {
+                                onInvoiceClick(invoice)
+                            }
+                        }
+                        val onCardLongClick: () -> Unit = {
+                            onItemLongClick?.invoke(invoice.id)
+                        }
+
                         if (mode == AppMode.KOOLI) {
                             KooliPattiyalAttai(
                                 index = index,
                                 pattiyal = invoice,
                                 colors = colors,
-                                onClick = { onInvoiceClick(invoice) }
+                                isSelectionMode = isSelectionMode,
+                                isSelected = isSelected,
+                                onClick = onCardClick,
+                                onLongClick = onCardLongClick
                             )
                         } else {
                             PattuPattiyalAttai(
                                 index = index,
                                 pattiyal = invoice,
                                 colors = colors,
-                                onClick = { onInvoiceClick(invoice) }
+                                isSelectionMode = isSelectionMode,
+                                isSelected = isSelected,
+                                onClick = onCardClick,
+                                onLongClick = onCardLongClick
                             )
                         }
                     }
@@ -242,10 +264,25 @@ fun UruvakkuScreen(
                             )
                         }
 
+                        val isSelected = selectedItemIds.contains(receipt.id)
+                        val onCardClick: () -> Unit = {
+                            if (isSelectionMode) {
+                                onToggleSelect?.invoke(receipt.id)
+                            } else {
+                                onReceiptClick(receipt)
+                            }
+                        }
+                        val onCardLongClick: () -> Unit = {
+                            onItemLongClick?.invoke(receipt.id)
+                        }
+
                         PatruAttai(
                             receipt = receipt,
                             colors = colors,
-                            onClick = { onReceiptClick(receipt) }
+                            isSelectionMode = isSelectionMode,
+                            isSelected = isSelected,
+                            onClick = onCardClick,
+                            onLongClick = onCardLongClick
                         )
                     }
                 }

@@ -48,7 +48,8 @@ fun VaangunarScreen(
     colors: ShellColors = rememberShellColors(),
     isSelectionMode: Boolean = false,
     selectedItemIds: Set<Long> = emptySet(),
-    onToggleSelect: ((Long) -> Unit)? = null
+    onToggleSelect: ((Long) -> Unit)? = null,
+    onItemLongClick: ((Long) -> Unit)? = null
 ) {
     val merchants = VaangunarRepository.filteredMerchants
     val ff = LocalAppFontFamily.current
@@ -139,11 +140,15 @@ fun VaangunarScreen(
                         onMerchantClick(merchant)
                     }
                 }
+                val onCardLongClick: () -> Unit = {
+                    onItemLongClick?.invoke(merchant.id)
+                }
                 if (mode == AppMode.KOOLI) {
                     CoolieVaangunarCard(
                         index = index,
                         merchant = merchant,
                         onClick = onCardClick,
+                        onLongClick = onCardLongClick,
                         colors = colors,
                         isSelectionMode = isSelectionMode,
                         isSelected = isSelected
@@ -153,6 +158,7 @@ fun VaangunarScreen(
                         index = index,
                         merchant = merchant,
                         onClick = onCardClick,
+                        onLongClick = onCardLongClick,
                         colors = colors,
                         isSelectionMode = isSelectionMode,
                         isSelected = isSelected
@@ -174,7 +180,8 @@ private fun CoolieVaangunarCard(
     onClick: () -> Unit,
     colors: ShellColors,
     isSelectionMode: Boolean = false,
-    isSelected: Boolean = false
+    isSelected: Boolean = false,
+    onLongClick: (() -> Unit)? = null
 ) {
     val ff = LocalAppFontFamily.current
     val currentLang = LocalAppLanguage.current
@@ -198,6 +205,8 @@ private fun CoolieVaangunarCard(
 
     ElvanPothuAttai(
         onClick = onClick,
+        onLongClick = onLongClick,
+        isSelected = isSelected,
         padding = PaddingValues(16.dp),
         borderRadius = 24.dp
     ) {
@@ -315,7 +324,8 @@ private fun SilkVaangunarCard(
     onClick: () -> Unit,
     colors: ShellColors,
     isSelectionMode: Boolean = false,
-    isSelected: Boolean = false
+    isSelected: Boolean = false,
+    onLongClick: (() -> Unit)? = null
 ) {
     val ff = LocalAppFontFamily.current
     val currentLang = LocalAppLanguage.current
@@ -342,6 +352,8 @@ private fun SilkVaangunarCard(
 
     ElvanPothuAttai(
         onClick = onClick,
+        onLongClick = onLongClick,
+        isSelected = isSelected,
         padding = PaddingValues(16.dp),
         borderRadius = 24.dp
     ) {

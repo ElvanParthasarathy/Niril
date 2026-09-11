@@ -10,10 +10,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,8 +27,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.elvan.noolachu.core.mode.LocalAppMode
 import com.elvan.noolachu.core.platform.AppBackHandler
+import com.elvan.noolachu.core.utils.CurrencyUtils
+import com.elvan.noolachu.core.utils.DateUtils
+import com.elvan.noolachu.data.model.PattiyalTharavuru
+import com.elvan.noolachu.data.model.PatrugalTharavuru
 import com.elvan.noolachu.data.model.PorulTharavuru
 import com.elvan.noolachu.data.model.VaangunarTharavuru
+import com.elvan.noolachu.data.repository.PattiyalRepository
+import com.elvan.noolachu.data.repository.PatrugalRepository
 import com.elvan.noolachu.data.repository.PorulRepository
 import com.elvan.noolachu.data.repository.VaangunarRepository
 import com.elvan.noolachu.localization.K
@@ -42,6 +46,7 @@ import com.elvan.noolachu.theme.ShellColors
 import com.elvan.noolachu.theme.preventBrokenLigatures
 import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.components.ElvanPothuAttai
+import com.elvan.noolachu.ui.components.shell.ElvanActionSheet
 import com.elvan.noolachu.ui.components.shell.ElvanSnackbar
 import com.elvan.noolachu.ui.components.shell.ElvanSubShell
 import com.elvan.noolachu.ui.components.shell.LocalElvanTopSpacerHeight
@@ -66,15 +71,24 @@ fun MeetpagamScreen(
     LaunchedEffect(mode) {
         PorulRepository.purgeExpired(days = 30, mode = mode)
         VaangunarRepository.purgeExpired(days = 30, mode = mode)
+        PattiyalRepository.purgeExpired(days = 30, mode = mode)
+        PatrugalRepository.purgeExpired(days = 30, mode = mode)
+
         PorulRepository.loadDeleted(mode)
         VaangunarRepository.loadDeleted(mode)
+        PattiyalRepository.loadDeleted(mode)
+        PatrugalRepository.loadDeleted(mode)
     }
 
     val deletedPorulgal = PorulRepository.deletedItems
     val deletedVaangunargal = VaangunarRepository.deletedMerchants
+    val deletedInvoices = PattiyalRepository.deletedInvoices
+    val deletedReceipts = PatrugalRepository.deletedReceipts
 
     var itemToDeletePermanently by remember { mutableStateOf<PorulTharavuru?>(null) }
     var merchantToDeletePermanently by remember { mutableStateOf<VaangunarTharavuru?>(null) }
+    var invoiceToDeletePermanently by remember { mutableStateOf<PattiyalTharavuru?>(null) }
+    var receiptToDeletePermanently by remember { mutableStateOf<PatrugalTharavuru?>(null) }
 
     AppBackHandler(enabled = true) {
         onBack()
@@ -102,7 +116,7 @@ fun MeetpagamScreen(
                 Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
             }
 
-            if (deletedPorulgal.isEmpty() && deletedVaangunargal.isEmpty()) {
+            if (deletedPorulgal.isEmpty() && deletedVaangunargal.isEmpty() && deletedInvoices.isEmpty() && deletedReceipts.isEmpty()) {
                 item(key = "empty_state") {
                     Column(
                         modifier = Modifier
@@ -143,6 +157,86 @@ fun MeetpagamScreen(
                 // 30-Day Auto-Purge Notice Banner
                 item(key = "auto_delete_banner") {
                     MeetpagamAutoPurgeBanner(isDark = isDark)
+                }
+
+                // Section: Deleted Invoices
+                if (deletedInvoices.isNotEmpty()) {
+                    item(key = "header_invoices") {
+                        MeetpagamSectionHeader(
+                            title = K.azhikkappattaPattiyalgal.tr(),
+                            count = deletedInvoices.size,
+                            colors = colors
+                        )
+                    }
+
+                    items(deletedInvoices, key = { "invoice_${it.id}" }) { invoice ->
+                        val currentLang = LocalAppLanguage.current
+                        val customerName = invoice.vaangunarPeyar[currentLang]
+                            ?: invoice.vaangunarPeyar["ta"]
+                            ?: invoice.vaangunarPeyar["en"]
+                            ?: invoice.vaangunarPeyar.values.firstOrNull()
+                            ?: ""
+                        val primaryText = invoice.patrucheettuEn + if (customerName.isNotBlank()) " • $customerName" else ""
+                        val dateStr = DateUtils.formatEpochMillis(invoice.pattiyalNaal)
+                        val amountStr = CurrencyUtils.formatInr(invoice.mothaThogai)
+                        val secondaryText = "$dateStr • $amountStr"
+
+                        MeetpagamCard(
+                            primaryText = primaryText,
+                            secondaryText = secondaryText,
+                            icon = MaterialSymbols.Rounded.Description,
+                            colors = colors,
+                            onRestore = {
+                                val success = PattiyalRepository.restore(invoice.id, mode)
+                                if (success) {
+                                    ElvanSnackbar.show(restoreSuccessMsg)
+                                }
+                            },
+                            onPermanentDelete = {
+                                invoiceToDeletePermanently = invoice
+                            }
+                        )
+                    }
+                }
+
+                // Section: Deleted Receipts
+                if (deletedReceipts.isNotEmpty()) {
+                    item(key = "header_receipts") {
+                        MeetpagamSectionHeader(
+                            title = K.azhikkappattaPatrucheettugal.tr(),
+                            count = deletedReceipts.size,
+                            colors = colors
+                        )
+                    }
+
+                    items(deletedReceipts, key = { "receipt_${it.id}" }) { receipt ->
+                        val currentLang = LocalAppLanguage.current
+                        val customerName = receipt.vaangunarPeyar[currentLang]
+                            ?: receipt.vaangunarPeyar["ta"]
+                            ?: receipt.vaangunarPeyar["en"]
+                            ?: receipt.vaangunarPeyar.values.firstOrNull()
+                            ?: ""
+                        val primaryText = receipt.patruEn + if (customerName.isNotBlank()) " • $customerName" else ""
+                        val dateStr = DateUtils.formatEpochMillis(receipt.patruNaal)
+                        val amountStr = CurrencyUtils.formatInr(receipt.thogai)
+                        val secondaryText = "$dateStr • $amountStr"
+
+                        MeetpagamCard(
+                            primaryText = primaryText,
+                            secondaryText = secondaryText,
+                            icon = MaterialSymbols.Rounded.ReceiptLong,
+                            colors = colors,
+                            onRestore = {
+                                val success = PatrugalRepository.restore(receipt.id, mode)
+                                if (success) {
+                                    ElvanSnackbar.show(restoreSuccessMsg)
+                                }
+                            },
+                            onPermanentDelete = {
+                                receiptToDeletePermanently = receipt
+                            }
+                        )
+                    }
                 }
 
                 // Section: Deleted Products
@@ -222,67 +316,64 @@ fun MeetpagamScreen(
         }
     }
 
-    // Confirmation dialog for permanent delete (Product)
-    itemToDeletePermanently?.let { item ->
-        AlertDialog(
-            onDismissRequest = { itemToDeletePermanently = null },
-            title = {
-                Text(
-                    text = K.nirandharaAzhippuUrudhi.tr().preventBrokenLigatures(),
-                    style = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                )
+    // Confirmation action sheets for permanent deletion
+    invoiceToDeletePermanently?.let { invoice ->
+        ElvanActionSheet(
+            title = K.nirandharaAzhippuUrudhi.tr(),
+            cancelText = K.kaividuPtn.tr(),
+            confirmText = K.neekkuPtn.tr(),
+            confirmColor = Color(0xFFBA1A1A),
+            onConfirm = {
+                PattiyalRepository.permanentDelete(invoice.id, mode)
+                invoiceToDeletePermanently = null
             },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        PorulRepository.permanentDelete(item.id, mode)
-                        itemToDeletePermanently = null
-                    }
-                ) {
-                    Text(
-                        text = K.neekkuPtn.tr(),
-                        color = Color(0xFFBA1A1A),
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { itemToDeletePermanently = null }) {
-                    Text(text = K.kaividuPtn.tr())
-                }
-            }
+            onDismissRequest = { invoiceToDeletePermanently = null },
+            colors = colors
         )
     }
 
-    // Confirmation dialog for permanent delete (Merchant)
+    receiptToDeletePermanently?.let { receipt ->
+        ElvanActionSheet(
+            title = K.nirandharaAzhippuUrudhi.tr(),
+            cancelText = K.kaividuPtn.tr(),
+            confirmText = K.neekkuPtn.tr(),
+            confirmColor = Color(0xFFBA1A1A),
+            onConfirm = {
+                PatrugalRepository.permanentDelete(receipt.id, mode)
+                receiptToDeletePermanently = null
+            },
+            onDismissRequest = { receiptToDeletePermanently = null },
+            colors = colors
+        )
+    }
+
+    itemToDeletePermanently?.let { item ->
+        ElvanActionSheet(
+            title = K.nirandharaAzhippuUrudhi.tr(),
+            cancelText = K.kaividuPtn.tr(),
+            confirmText = K.neekkuPtn.tr(),
+            confirmColor = Color(0xFFBA1A1A),
+            onConfirm = {
+                PorulRepository.permanentDelete(item.id, mode)
+                itemToDeletePermanently = null
+            },
+            onDismissRequest = { itemToDeletePermanently = null },
+            colors = colors
+        )
+    }
+
     merchantToDeletePermanently?.let { merchant ->
-        AlertDialog(
+        ElvanActionSheet(
+            title = K.nirandharaAzhippuUrudhi.tr(),
+            cancelText = K.kaividuPtn.tr(),
+            confirmText = K.neekkuPtn.tr(),
+            confirmColor = Color(0xFFBA1A1A),
+            onConfirm = {
+                VaangunarRepository.permanentDelete(merchant.id, mode)
+                merchantToDeletePermanently = null
+            },
             onDismissRequest = { merchantToDeletePermanently = null },
-            title = {
-                Text(
-                    text = K.nirandharaAzhippuUrudhi.tr().preventBrokenLigatures(),
-                    style = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        VaangunarRepository.permanentDelete(merchant.id, mode)
-                        merchantToDeletePermanently = null
-                    }
-                ) {
-                    Text(
-                        text = K.neekkuPtn.tr(),
-                        color = Color(0xFFBA1A1A),
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { merchantToDeletePermanently = null }) {
-                    Text(text = K.kaividuPtn.tr())
-                }
-            }
+            colors = colors
         )
     }
 }

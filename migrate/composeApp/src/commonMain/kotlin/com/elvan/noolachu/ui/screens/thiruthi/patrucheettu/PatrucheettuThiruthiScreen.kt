@@ -37,10 +37,8 @@ import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.preventBrokenLigatures
 import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.components.shell.*
-import com.elvan.noolachu.ui.components.shell.maeladukkugal.ElvanAzhippuUrudhiMaeladukku
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanEditorSection
-import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiAttai
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiKeezhvirivu
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiThalaippu
 import com.elvan.noolachu.ui.screens.thiruthi.ElvanThiruthiUlleedu
@@ -49,19 +47,51 @@ import com.elvan.noolachu.ui.screens.thiruthi.pattiyal.koorugal.ElvanAavanaEnnKo
 import com.elvan.noolachu.ui.screens.thiruthi.pattiyal.koorugal.PattiyalNaalKooru
 import com.elvan.noolachu.core.utils.DateUtils
 import com.elvan.noolachu.ui.components.shell.LocalElvanTopSpacerHeight
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.ui.graphics.graphicsLayer
+
+/**
+ * Form Lock container matching Flutter's `Opacity(0.4) + IgnorePointer`.
+ * Dims and locks downstream form sections until a business profile is selected.
+ */
+@Composable
+private fun FormLockWrapper(
+    isLocked: Boolean,
+    content: @Composable () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .graphicsLayer { alpha = if (isLocked) 0.4f else 1f }
+    ) {
+        content()
+        if (isLocked) {
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                        onClick = {}
+                    )
+            )
+        }
+    }
+}
 
 /**
  * Receipt Editor Screen (பற்றுச்சீட்டு திருத்தி)
  * Complete 1:1 port of Flutter's `PatruThiruthi` (patru_thiruthi.dart).
  *
  * Architecture:
- * - Section 0: Business profile selector ribbon (locked if unselected)
- * - Section 1: Linked invoice picker (with multi-select bottom sheet & FIFO distribution)
- * - Section 2: Receipt data (date picker, locked customer card, auto-sequenced receipt number)
- * - Section 3: Payment details (amount with auto-calc, SeluthiVagai 5 modes, dynamic reference number, internal notes)
- * - Bottom Delete action (when editing) with ElvanAzhippuUrudhiMaeladukku
+ * - Section 0: Business profile selector (45dp capsule pill with clear X, bottom sheet picker, locked if multiple)
+ * - Section 1: Linked invoice picker (45dp capsule button, multi-select bottom sheet, stadium chip list)
+ * - Section 3: Payment details (amount with auto-calc, SeluthiVagai bottom sheet picker, dynamic reference, internal notes)
+ * - Indian Rupee formatting
  * - Unsaved changes guard with 3-action sheet
+ * - Continuous form layout matching Flutter (no card container wrappers)
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun PatrucheettuThiruthiScreen(
     receipt: PatrugalTharavuru? = null,
@@ -69,6 +99,7 @@ fun PatrucheettuThiruthiScreen(
 ) {
     val currentMode = LocalAppMode.current
     val colors = rememberShellColors()
+    val isDark = colors.isDark
     val ff = LocalAppFontFamily.current
     val isEditing = receipt != null && receipt.id > 0L
 
@@ -79,6 +110,15 @@ fun PatrucheettuThiruthiScreen(
     val selectedProfile = remember(selectedNiruvanamId, profiles) {
         profiles.firstOrNull { it.id == selectedNiruvanamId }
     }
+
+    // Auto-select if only 1 profile exists
+    LaunchedEffect(profiles) {
+        if (profiles.size == 1 && selectedNiruvanamId == null) {
+            selectedNiruvanamId = profiles.first().id
+        }
+    }
+
+    val isFormLocked = profiles.size > 1 && selectedNiruvanamId == null
 
     // Refresh dependencies on launch
     LaunchedEffect(Unit) {
@@ -135,8 +175,9 @@ fun PatrucheettuThiruthiScreen(
 
     var hasUnsavedChanges by remember { mutableStateOf(false) }
     var showUnsavedDialog by remember { mutableStateOf(false) }
-    var showDeleteConfirm by remember { mutableStateOf(false) }
     var isSaving by remember { mutableStateOf(false) }
+    var isCompanySheetOpen by remember { mutableStateOf(false) }
+    var isSeluthiVagaiSheetOpen by remember { mutableStateOf(false) }
 
     val amaippugalStr = K.amaippugal.tr()
     val pattiyalaiThaernheduMsg = K.pattiyalaiThaernhedu.tr()
@@ -145,25 +186,31 @@ fun PatrucheettuThiruthiScreen(
     val duplicateMsg = K.patrucheettuEnYaerkanavaeUlladhu.tr()
     val savedMsg = K.patrucheettuChaemikkappattadhu.tr()
     val saveFailedMsg = K.chaemikkaIyalavillai.tr()
-    val deletedSuccessMsg = K.azhippuvetri.tr()
-    val confirmDeleteTitle = K.nirandharaAzhippuUrudhi.tr()
 
     // Helper: auto-calculate receipt number
-    fun generatePatruEn() {
+    fun generatePatruEn(profile: NiruvanaTharavugal?) {
         if (isEditing) return
-        val bizShort = selectedProfile?.kurumPeyar?.trim()?.ifEmpty { null }
-            ?: selectedProfile?.niruvanathinPeyar?.get("en")?.split(" ")?.mapNotNull { it.firstOrNull()?.uppercaseChar() }?.joinToString("")?.take(4)?.ifEmpty { null }
+        val bizShort = profile?.kurumPeyar?.trim()?.ifEmpty { null }
+            ?: profile?.niruvanathinPeyar?.get("en")?.split(" ")?.mapNotNull { it.firstOrNull()?.uppercaseChar() }?.joinToString("")?.take(4)?.ifEmpty { null }
             ?: "BIZ"
 
-        val nextSeq = PatrugalRepository.getNextVanakkam(selectedNiruvanamId, currentMode)
+        val nextSeq = PatrugalRepository.getNextVanakkam(profile?.id, currentMode)
         vanakkam = nextSeq
         patruEn = PatrugalRepository.formatPatruEn(bizShort, nextSeq)
+    }
+
+    fun onCompanyChanged(newProfile: NiruvanaTharavugal?) {
+        selectedNiruvanamId = newProfile?.id
+        hasUnsavedChanges = true
+        if (!isEditing) {
+            generatePatruEn(newProfile)
+        }
     }
 
     // Auto-generate receipt number on profile selection if new
     LaunchedEffect(selectedNiruvanamId) {
         if (!isEditing && patruEn.isEmpty() && selectedNiruvanamId != null) {
-            generatePatruEn()
+            generatePatruEn(selectedProfile)
         }
     }
 
@@ -303,8 +350,9 @@ fun PatrucheettuThiruthiScreen(
         handleBackAttempt()
     }
 
-    val pageTitle = if (isEditing) K.maatriyamai.tr() else K.pudhiyaPatrucheettuPtn.tr()
+    val pageTitle = if (isEditing) K.maatriyamai.tr() else K.pudhiyaAakkam.tr()
     val scrollState = rememberLazyListState()
+    val pillBg = if (isDark) Color.White.copy(alpha = 0.08f) else Color.White
 
     ElvanSubShell(
         title = pageTitle,
@@ -315,174 +363,93 @@ fun PatrucheettuThiruthiScreen(
             ElvanCheyalPothan(
                 label = K.chaemiPtn.tr(),
                 onClick = { handleSave() },
-                enabled = !isSaving
+                enabled = !isSaving && !isFormLocked
             )
         }
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(
-                state = scrollState,
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 16.dp,
-                    bottom = 120.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                item(key = "top_spacer") {
-                    Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
-                }
+        LazyColumn(
+            state = scrollState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
+                start = 16.dp,
+                end = 16.dp,
+                bottom = Dimens.SubpageContentPaddingBottom
+            ),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            item(key = "top_spacer") {
+                Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
+            }
 
-                // Section 0: Business Profile Selector (when multiple profiles exist)
-                val baseIndex = if (profiles.size > 1) {
-                    item {
-                        ElvanEditorSection(index = 1, title = K.niruvanam.tr()) {
-                            ElvanThiruthiAttai {
-                                ElvanThiruthiKeezhvirivu(
-                                    label = K.niruvanaththaithThaernhedu.tr(),
-                                    selectedText = selectedProfile?.kurumPeyar ?: K.niruvanamThaerodhu.tr(),
-                                    items = profiles.map { it.kurumPeyar to it.kurumPeyar },
-                                    onSelected = { pickedName ->
-                                        val picked = profiles.firstOrNull { it.kurumPeyar == pickedName }
-                                        selectedNiruvanamId = picked?.id
-                                        generatePatruEn()
-                                        hasUnsavedChanges = true
-                                    }
-                                )
-                            }
-                        }
+            // ── Section 0: Business Profile Selector (if multiple profiles exist) ──
+            if (profiles.size > 1) {
+                item(key = "profile_section") {
+                    val companyName = selectedProfile?.kurumPeyar?.ifEmpty {
+                        selectedProfile.niruvanathinPeyar.values.firstOrNull().orEmpty()
                     }
-                    2
-                } else {
-                    1
-                }
 
-                // Section 1: Linked Invoice Picker (Required)
-                item {
-                    ElvanEditorSection(index = baseIndex, title = K.endhapPattiyalukku.tr()) {
-                        ElvanThiruthiAttai {
-                            Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
-                                if (selectedInvoices.isEmpty()) {
-                                    // Empty state: Tappable button to open modal
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(48.dp)
-                                            .clip(RoundedCornerShape(999.dp))
-                                            .background(if (colors.isDark) Color.White.copy(alpha = 0.08f) else Color(0xFFF1F3F4))
-                                            .clickable { isInvoicePickerOpen = true }
-                                            .padding(horizontal = 16.dp),
-                                        contentAlignment = Alignment.CenterStart
-                                    ) {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                                Icon(
-                                                    imageVector = MaterialSymbols.Rounded.Description,
-                                                    contentDescription = null,
-                                                    tint = colors.accent,
-                                                    modifier = Modifier.size(18.dp)
-                                                )
-                                                Spacer(modifier = Modifier.width(8.dp))
-                                                Text(
-                                                    text = K.pattiyalgalaiThaernhedu.tr().preventBrokenLigatures(),
-                                                    style = TextStyle(
-                                                        fontFamily = ff,
-                                                        fontSize = 14.sp,
-                                                        color = colors.textPrimary
-                                                    )
-                                                )
-                                            }
-                                            Icon(
-                                                imageVector = MaterialSymbols.Rounded.ChevronRight,
-                                                contentDescription = null,
-                                                tint = colors.textSecondary
-                                            )
-                                        }
-                                    }
-                                } else {
-                                    // List of selected invoices with remove button
-                                    Column(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                                    ) {
-                                        selectedInvoices.forEach { inv ->
-                                            val formattedAmount = "₹ " + if (inv.mothaThogai % 1.0 == 0.0) {
-                                                inv.mothaThogai.toLong().toString()
-                                            } else {
-                                                ((inv.mothaThogai * 100).toLong() / 100.0).toString()
-                                            }
+                    ElvanEditorSection(index = 0, title = K.niruvanathTharavu.tr()) {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            ElvanThiruthiThalaippu(label = K.niruvanam.tr())
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(45.dp)
+                                    .clip(RoundedCornerShape(999.dp))
+                                    .background(pillBg)
+                                    .clickable { isCompanySheetOpen = true }
+                                    .padding(start = 20.dp, end = 6.dp),
+                                contentAlignment = Alignment.CenterStart
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = (companyName ?: K.niruvanaththaithThaernhedu.tr()).preventBrokenLigatures(),
+                                        style = TextStyle(
+                                            fontFamily = ff,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            color = if (companyName != null) colors.textPrimary else colors.textSecondary
+                                        ),
+                                        modifier = Modifier.weight(1f),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
 
-                                            Row(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .clip(RoundedCornerShape(12.dp))
-                                                    .background(colors.accent.copy(alpha = 0.08f))
-                                                    .padding(horizontal = 14.dp, vertical = 10.dp),
-                                                horizontalArrangement = Arrangement.SpaceBetween,
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                Column(modifier = Modifier.weight(1f)) {
-                                                    Text(
-                                                        text = inv.patrucheettuEn,
-                                                        style = TextStyle(
-                                                            fontFamily = ff,
-                                                            fontSize = 14.sp,
-                                                            fontWeight = FontWeight.SemiBold,
-                                                            color = colors.textPrimary
-                                                        )
-                                                    )
-                                                    Text(
-                                                        text = formattedAmount,
-                                                        style = TextStyle(
-                                                            fontFamily = ff,
-                                                            fontSize = 12.sp,
-                                                            fontWeight = FontWeight.Medium,
-                                                            color = colors.accent
-                                                        )
-                                                    )
-                                                }
-
-                                                IconButton(
-                                                    onClick = {
-                                                        val updated = selectedInvoices.filter { it.id != inv.id }
-                                                        onInvoicesUpdated(updated)
-                                                    },
-                                                    modifier = Modifier.size(28.dp)
+                                    if (selectedNiruvanamId != null) {
+                                        // Clear button (X)
+                                        Box(
+                                            modifier = Modifier
+                                                .size(32.dp)
+                                                .clip(CircleShape)
+                                                .clickable(
+                                                    interactionSource = remember { MutableInteractionSource() },
+                                                    indication = ripple(bounded = true, radius = 16.dp)
                                                 ) {
-                                                    Icon(
-                                                        imageVector = MaterialSymbols.Rounded.Close,
-                                                        contentDescription = "Remove",
-                                                        tint = colors.textSecondary,
-                                                        modifier = Modifier.size(18.dp)
-                                                    )
-                                                }
-                                            }
-                                        }
-
-                                        // Button to add more / re-open picker
-                                        OutlinedButton(
-                                            onClick = { isInvoicePickerOpen = true },
-                                            modifier = Modifier.fillMaxWidth().height(42.dp),
-                                            shape = RoundedCornerShape(999.dp),
-                                            colors = ButtonDefaults.outlinedButtonColors(
-                                                contentColor = colors.accent
-                                            )
+                                                    onCompanyChanged(null)
+                                                },
+                                            contentAlignment = Alignment.Center
                                         ) {
                                             Icon(
-                                                imageVector = MaterialSymbols.Rounded.Add,
-                                                contentDescription = null,
+                                                imageVector = MaterialSymbols.Rounded.Close,
+                                                contentDescription = "Clear",
+                                                tint = colors.textSecondary,
                                                 modifier = Modifier.size(16.dp)
                                             )
-                                            Spacer(modifier = Modifier.width(6.dp))
-                                            Text(
-                                                text = K.pattiyalgalaiThaernhedu.tr().preventBrokenLigatures(),
-                                                style = TextStyle(fontFamily = ff, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                                        }
+                                    } else {
+                                        Box(
+                                            modifier = Modifier.size(32.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = MaterialSymbols.Rounded.KeyboardArrowDown,
+                                                contentDescription = null,
+                                                tint = colors.textSecondary,
+                                                modifier = Modifier.size(20.dp)
                                             )
                                         }
                                     }
@@ -491,227 +458,350 @@ fun PatrucheettuThiruthiScreen(
                         }
                     }
                 }
+            }
 
-                // Section 2: Receipt Data
-                item {
-                    ElvanEditorSection(index = baseIndex + 1, title = K.patrucheettuTharavugal.tr()) {
-                        ElvanThiruthiAttai {
-                            Column(
-                                modifier = Modifier.fillMaxWidth().padding(12.dp),
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
+            val baseIndex = if (profiles.size > 1) 1 else 0
+
+            // ── Section 1: Linked Invoice (Required) ──
+            item(key = "invoice_picker_section") {
+                FormLockWrapper(isLocked = isFormLocked) {
+                    ElvanEditorSection(index = baseIndex, title = K.endhapPattiyalukku.tr()) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            ElvanThiruthiThalaippu(label = K.pattiyal.tr())
+
+                            // Select Invoices 45dp pill button
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(45.dp)
+                                    .clip(RoundedCornerShape(999.dp))
+                                    .background(pillBg)
+                                    .clickable { isInvoicePickerOpen = true },
+                                contentAlignment = Alignment.Center
                             ) {
-                                // 1. Receipt Date
+                                Row(
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = MaterialSymbols.Rounded.Description,
+                                        contentDescription = null,
+                                        tint = colors.textPrimary,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = if (selectedInvoices.isEmpty()) {
+                                            K.pattiyalgalaiThaernhedu.tr().preventBrokenLigatures()
+                                        } else {
+                                            "${selectedInvoices.size} ${K.pattiyalgal.tr().preventBrokenLigatures()}"
+                                        },
+                                        style = TextStyle(
+                                            fontFamily = ff,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            color = colors.textPrimary
+                                        )
+                                    )
+                                }
+                            }
+
+                            // Selected Invoices Stadium Chips
+                            if (selectedInvoices.isNotEmpty()) {
+                                FlowRow(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    selectedInvoices.forEach { inv ->
+                                        Box(
+                                            modifier = Modifier
+                                                .clip(RoundedCornerShape(999.dp))
+                                                .background(if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.06f))
+                                                .padding(start = 12.dp, end = 6.dp, top = 6.dp, bottom = 6.dp)
+                                        ) {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                            ) {
+                                                Text(
+                                                    text = inv.patrucheettuEn,
+                                                    style = TextStyle(
+                                                        fontFamily = ff,
+                                                        fontSize = 13.sp,
+                                                        fontWeight = FontWeight.SemiBold,
+                                                        color = colors.textPrimary
+                                                    )
+                                                )
+                                                Box(
+                                                    modifier = Modifier
+                                                        .size(20.dp)
+                                                        .clip(CircleShape)
+                                                        .clickable(
+                                                            interactionSource = remember { MutableInteractionSource() },
+                                                            indication = ripple(bounded = true, radius = 10.dp)
+                                                        ) {
+                                                            val updated = selectedInvoices.filter { it.id != inv.id }
+                                                            onInvoicesUpdated(updated)
+                                                        },
+                                                    contentAlignment = Alignment.Center
+                                                ) {
+                                                    Icon(
+                                                        imageVector = MaterialSymbols.Rounded.Cancel,
+                                                        contentDescription = "Remove",
+                                                        tint = colors.textSecondary,
+                                                        modifier = Modifier.size(16.dp)
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ── Section 2: Receipt Data ──
+            item(key = "receipt_data_section") {
+                FormLockWrapper(isLocked = isFormLocked) {
+                    ElvanEditorSection(index = baseIndex + 1, title = K.patrucheettuTharavugal.tr()) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(24.dp)
+                        ) {
+                            // 1. Receipt Date
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                ElvanThiruthiThalaippu(label = K.patrucheettuNaal.tr())
                                 PattiyalNaalKooru(
                                     selectedDate = patruNaal,
                                     onDateChanged = {
                                         patruNaal = it
                                         hasUnsavedChanges = true
-                                    },
-                                    label = K.patrucheettuNaal.tr()
+                                    }
                                 )
+                            }
 
-                                // 2. Customer Info (Locked from invoice)
-                                Column(modifier = Modifier.fillMaxWidth()) {
-                                    ElvanThiruthiThalaippu(label = K.vaangunar.tr())
-                                    val customerName = selectedVaangunarPeyarMap["ta"]
-                                        ?: selectedVaangunarPeyarMap.values.firstOrNull()
-                                        ?: ""
+                            // 2. Customer Pill (Locked with lock icon when loaded from invoice)
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                ElvanThiruthiThalaippu(label = K.vaangunar.tr())
+                                val customerName = selectedVaangunarPeyarMap["ta"]
+                                    ?: selectedVaangunarPeyarMap.values.firstOrNull().orEmpty()
 
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(45.dp)
-                                            .clip(RoundedCornerShape(999.dp))
-                                            .background(if (colors.isDark) Color.White.copy(alpha = 0.08f) else Color.White)
-                                            .padding(horizontal = 16.dp),
-                                        contentAlignment = Alignment.CenterStart
-                                    ) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(45.dp)
+                                        .clip(RoundedCornerShape(999.dp))
+                                        .background(pillBg)
+                                        .padding(horizontal = 20.dp),
+                                    contentAlignment = Alignment.CenterStart
+                                ) {
+                                    if (customerName.isNotEmpty()) {
                                         Row(
                                             modifier = Modifier.fillMaxWidth(),
                                             horizontalArrangement = Arrangement.SpaceBetween,
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
-                                            if (customerName.isNotEmpty()) {
-                                                Text(
-                                                    text = customerName.preventBrokenLigatures(),
-                                                    style = TextStyle(
-                                                        fontFamily = ff,
-                                                        fontSize = 14.sp,
-                                                        fontWeight = FontWeight.Medium,
-                                                        color = colors.textPrimary
-                                                    ),
-                                                    maxLines = 1,
-                                                    overflow = TextOverflow.Ellipsis,
-                                                    modifier = Modifier.weight(1f)
-                                                )
-                                                Icon(
-                                                    imageVector = MaterialSymbols.Rounded.Lock,
-                                                    contentDescription = "Locked",
-                                                    tint = colors.textSecondary.copy(alpha = 0.4f),
-                                                    modifier = Modifier.size(16.dp)
-                                                )
-                                            } else {
-                                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                                    Icon(
-                                                        imageVector = MaterialSymbols.Rounded.Info,
-                                                        contentDescription = null,
-                                                        tint = colors.textSecondary.copy(alpha = 0.5f),
-                                                        modifier = Modifier.size(16.dp)
-                                                    )
-                                                    Spacer(modifier = Modifier.width(8.dp))
-                                                    Text(
-                                                        text = K.pattiyalThaervukkuPinVaangunarTharavugalNirappappadum.tr().preventBrokenLigatures(),
-                                                        style = TextStyle(
-                                                            fontFamily = ff,
-                                                            fontSize = 12.sp,
-                                                            color = colors.textSecondary.copy(alpha = 0.6f)
-                                                        ),
-                                                        maxLines = 1,
-                                                        overflow = TextOverflow.Ellipsis
-                                                    )
-                                                }
-                                            }
+                                            Text(
+                                                text = customerName.preventBrokenLigatures(),
+                                                style = TextStyle(
+                                                    fontFamily = ff,
+                                                    fontSize = 14.sp,
+                                                    fontWeight = FontWeight.Medium,
+                                                    color = colors.textPrimary
+                                                ),
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                            Icon(
+                                                imageVector = MaterialSymbols.Rounded.Lock,
+                                                contentDescription = "Locked",
+                                                tint = colors.textSecondary.copy(alpha = 0.4f),
+                                                modifier = Modifier.size(16.dp)
+                                            )
+                                        }
+                                    } else {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                imageVector = MaterialSymbols.Rounded.Info,
+                                                contentDescription = null,
+                                                tint = colors.textSecondary.copy(alpha = 0.5f),
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Text(
+                                                text = K.pattiyalThaervukkuPinVaangunarTharavugalNirappappadum.tr().preventBrokenLigatures(),
+                                                style = TextStyle(
+                                                    fontFamily = ff,
+                                                    fontSize = 14.sp,
+                                                    color = colors.textSecondary.copy(alpha = 0.7f)
+                                                ),
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
+                                            )
                                         }
                                     }
                                 }
-
-                                // 3. Receipt Number (Editable capsule with pencil toggle)
-                                val bizPrefix = selectedProfile?.kurumPeyar?.let { "RCP/$it/" } ?: "RCP/BIZ/"
-                                ElvanAavanaEnnKooru(
-                                    label = K.patrucheettuEn.tr(),
-                                    prefix = bizPrefix,
-                                    initialFullNumber = patruEn,
-                                    onFullNumberChanged = {
-                                        patruEn = it
-                                        hasUnsavedChanges = true
-                                    },
-                                    onDirty = { hasUnsavedChanges = true }
-                                )
                             }
-                        }
-                    }
-                }
 
-                // Section 3: Payment Details
-                item {
-                    ElvanEditorSection(index = baseIndex + 2, title = K.cheluthiyaTharavu.tr()) {
-                        ElvanThiruthiAttai {
-                            Column(
-                                modifier = Modifier.fillMaxWidth().padding(12.dp),
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
-                            ) {
-                                // Amount field
-                                ElvanThiruthiUlleedu(
-                                    value = thogai,
-                                    onValueChange = {
-                                        thogai = it
-                                        hasUnsavedChanges = true
-                                    },
-                                    label = K.thogaiVinmeen.tr(),
-                                    prefixText = "₹ ",
-                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
-                                )
-
-                                // Payment Mode Dropdown
-                                ElvanThiruthiKeezhvirivu(
-                                    label = K.cheluthumMuraiVinmeen.tr(),
-                                    selectedText = seluthiVagai.label(),
-                                    items = SeluthiVagai.allOptions(),
-                                    onSelected = { pickedName ->
-                                        val picked = SeluthiVagai.entries.firstOrNull { it.name == pickedName }
-                                        if (picked != null) {
-                                            seluthiVagai = picked
-                                            hasUnsavedChanges = true
-                                        }
-                                    }
-                                )
-
-                                // Reference Number (only visible when required)
-                                if (seluthiVagai.needsReference) {
-                                    ElvanThiruthiUlleedu(
-                                        value = suttruEn,
-                                        onValueChange = {
-                                            suttruEn = it
-                                            hasUnsavedChanges = true
-                                        },
-                                        label = K.kurippuEnParimaatraEn.tr()
-                                    )
-                                }
-
-                                // Internal Notes
-                                ElvanThiruthiUlleedu(
-                                    value = ullkurippu,
-                                    onValueChange = {
-                                        ullkurippu = it
-                                        hasUnsavedChanges = true
-                                    },
-                                    label = K.kurippu.tr(),
-                                    maxLines = 3,
-                                    singleLine = false
-                                )
+                            // 3. Receipt Number (with pencil edit toggle)
+                            val bizPrefix = if (selectedProfile != null && selectedProfile.kurumPeyar.isNotEmpty()) {
+                                "RCP/${selectedProfile.kurumPeyar}/"
+                            } else {
+                                "RCP/BIZ/"
                             }
-                        }
-                    }
-                }
-
-                // Delete Section (visible only when editing)
-                if (isEditing) {
-                    item {
-                        ElvanThiruthiAttai(backgroundColor = MaterialTheme.colorScheme.error.copy(alpha = 0.08f)) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { showDeleteConfirm = true }
-                                    .padding(12.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = K.azhikka.tr().preventBrokenLigatures(),
-                                    style = TextStyle(
-                                        fontFamily = ff,
-                                        fontSize = 15.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = MaterialTheme.colorScheme.error
-                                    )
-                                )
-                            }
+                            ElvanAavanaEnnKooru(
+                                label = K.patrucheettuEn.tr(),
+                                prefix = bizPrefix,
+                                initialFullNumber = patruEn,
+                                onFullNumberChanged = {
+                                    patruEn = it
+                                    hasUnsavedChanges = true
+                                },
+                                onDirty = { hasUnsavedChanges = true }
+                            )
                         }
                     }
                 }
             }
 
-            // Bottom Floating Save Bar
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .background(colors.background.copy(alpha = 0.95f))
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-            ) {
-                Button(
-                    onClick = { handleSave() },
-                    modifier = Modifier.fillMaxWidth().height(50.dp),
-                    shape = RoundedCornerShape(999.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colors.accent,
-                        contentColor = Color.White
-                    ),
-                    enabled = !isSaving
-                ) {
-                    Text(
-                        text = K.chaemiPtn.tr().preventBrokenLigatures(),
-                        style = TextStyle(
-                            fontFamily = ff,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    )
+            // ── Section 3: Payment Details ──
+            item(key = "payment_section") {
+                FormLockWrapper(isLocked = isFormLocked) {
+                    ElvanEditorSection(index = baseIndex + 2, title = K.cheluthiyaTharavu.tr()) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(24.dp)
+                        ) {
+                            // 1. Amount
+                            ElvanThiruthiUlleedu(
+                                value = thogai,
+                                onValueChange = {
+                                    thogai = it
+                                    hasUnsavedChanges = true
+                                },
+                                label = K.thogaiVinmeen.tr(),
+                                prefixText = "₹ ",
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+                            )
+
+                            // 2. Payment Mode Selector Pill
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                ElvanThiruthiThalaippu(label = K.cheluthumMuraiVinmeen.tr())
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(45.dp)
+                                        .clip(RoundedCornerShape(999.dp))
+                                        .background(pillBg)
+                                        .clickable { isSeluthiVagaiSheetOpen = true }
+                                        .padding(start = 20.dp, end = 6.dp),
+                                    contentAlignment = Alignment.CenterStart
+                                ) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.weight(1f),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Icon(
+                                                imageVector = seluthiVagai.icon,
+                                                contentDescription = null,
+                                                tint = colors.textPrimary.copy(alpha = 0.7f),
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(8.dp))
+                                            Text(
+                                                text = seluthiVagai.label().preventBrokenLigatures(),
+                                                style = TextStyle(
+                                                    fontFamily = ff,
+                                                    fontSize = 14.sp,
+                                                    fontWeight = FontWeight.Medium,
+                                                    color = colors.textPrimary
+                                                ),
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
+                                            )
+                                        }
+
+                                        Box(
+                                            modifier = Modifier.size(32.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Icon(
+                                                imageVector = MaterialSymbols.Rounded.KeyboardArrowDown,
+                                                contentDescription = null,
+                                                tint = colors.textSecondary,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
+                            // 3. Reference Number (shown when payment mode requires it)
+                            if (seluthiVagai.needsReference) {
+                                ElvanThiruthiUlleedu(
+                                    value = suttruEn,
+                                    onValueChange = {
+                                        suttruEn = it
+                                        hasUnsavedChanges = true
+                                    },
+                                    label = K.kurippuEnParimaatraEn.tr()
+                                )
+                            }
+
+                            // 4. Internal Notes
+                            ElvanThiruthiUlleedu(
+                                value = ullkurippu,
+                                onValueChange = {
+                                    ullkurippu = it
+                                    hasUnsavedChanges = true
+                                },
+                                label = K.kurippu.tr(),
+                                maxLines = 3,
+                                singleLine = false
+                            )
+                        }
+                    }
                 }
             }
         }
     }
 
-    // Modal 1: Invoice Picker Bottom Sheet
+    // Modal: Business Profile Bottom Sheet
+    if (isCompanySheetOpen) {
+        ElvanSelectionBottomSheet<NiruvanaTharavugal>(
+            title = K.niruvanam.tr(),
+            items = profiles,
+            currentValue = selectedProfile,
+            onSelected = { profile ->
+                onCompanyChanged(profile)
+                isCompanySheetOpen = false
+            },
+            onDismissRequest = { isCompanySheetOpen = false },
+            itemLabelBuilder = {
+                it.kurumPeyar.ifEmpty { it.niruvanathinPeyar.values.firstOrNull().orEmpty() }
+            },
+            subtitleBuilder = {
+                it.niruvanathinPeyar["ta"] ?: it.niruvanathinPeyar["en"]
+            }
+        )
+    }
+
+    // Modal: Invoice Picker Bottom Sheet (Multi-select)
     if (isInvoicePickerOpen) {
         val selectableInvoices = if (selectedNiruvanamId != null) {
             allInvoices.filter { it.niruvanamId == selectedNiruvanamId }
@@ -724,30 +814,40 @@ fun PatrucheettuThiruthiScreen(
             initialSelectedIds = selectedInvoices.map { it.id }.toSet(),
             onConfirmed = { pickedList ->
                 onInvoicesUpdated(pickedList)
+                isInvoicePickerOpen = false
             },
             onDismissRequest = { isInvoicePickerOpen = false }
         )
     }
 
-    // Modal 2: Delete Confirmation Modal
-    if (showDeleteConfirm && receipt != null) {
-        ElvanAzhippuUrudhiMaeladukku(
-            title = "${receipt.patruEn} — $confirmDeleteTitle",
-            onConfirm = {
-                showDeleteConfirm = false
-                val success = PatrugalRepository.delete(receipt.id, currentMode)
-                if (success) {
-                    ElvanSnackbar.show(deletedSuccessMsg)
-                    onBack()
-                } else {
-                    ElvanSnackbar.show(saveFailedMsg)
+    // Modal: Payment Mode Bottom Sheet
+    if (isSeluthiVagaiSheetOpen) {
+        ElvanSelectionBottomSheet<SeluthiVagai>(
+            title = K.cheluthumMuraiThaernhedu.tr(),
+            items = SeluthiVagai.entries,
+            currentValue = seluthiVagai,
+            onSelected = { mode ->
+                seluthiVagai = mode
+                if (mode == SeluthiVagai.PANAM) {
+                    suttruEn = ""
                 }
+                hasUnsavedChanges = true
+                isSeluthiVagaiSheetOpen = false
             },
-            onDismissRequest = { showDeleteConfirm = false }
+            onDismissRequest = { isSeluthiVagaiSheetOpen = false },
+            itemLabelBuilder = { it.labelString() },
+            leadingBuilder = { mode ->
+                Icon(
+                    imageVector = mode.icon,
+                    contentDescription = null,
+                    tint = colors.textPrimary.copy(alpha = 0.8f),
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         )
     }
 
-    // Modal 3: Unsaved Changes Action Sheet
+    // Modal: Unsaved Changes Action Sheet
     if (showUnsavedDialog) {
         ElvanActionSheet(
             title = K.chaemippuNiluvai.tr(),

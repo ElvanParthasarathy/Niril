@@ -34,7 +34,10 @@ fun KooliPattiyalAttai(
     pattiyal: PattiyalTharavuru,
     colors: ShellColors,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {}
+    isSelectionMode: Boolean = false,
+    isSelected: Boolean = false,
+    onClick: () -> Unit = {},
+    onLongClick: (() -> Unit)? = null
 ) {
     val ff = LocalAppFontFamily.current
     val isDark = colors.isDark
@@ -64,6 +67,8 @@ fun KooliPattiyalAttai(
 
     ElvanPothuAttai(
         onClick = onClick,
+        onLongClick = onLongClick,
+        isSelected = isSelected,
         modifier = modifier,
         padding = PaddingValues(16.dp),
         borderRadius = 24.dp
@@ -72,28 +77,38 @@ fun KooliPattiyalAttai(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top
         ) {
-            // Index circle (28x28)
+            // Index circle / Selection checkbox (28x28)
             Box(
                 modifier = Modifier
                     .padding(top = 1.dp)
                     .size(28.dp)
                     .clip(CircleShape)
                     .background(
-                        if (isDark) Color.White.copy(alpha = 0.12f)
+                        if (isSelectionMode && isSelected) (if (isDark) Color.White else Color.Black)
+                        else if (isDark) Color.White.copy(alpha = 0.12f)
                         else Color.Black.copy(alpha = 0.08f)
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = (index + 1).toString().padStart(2, '0'),
-                    style = TextStyle(
-                        fontFamily = ff,
-                        fontSize = 11.2.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = if (isDark) Color.White else Color.Black,
-                        lineHeight = 11.2.sp
+                if (isSelectionMode && isSelected) {
+                    Icon(
+                        imageVector = MaterialSymbols.Rounded.Check,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = if (isDark) Color.Black else Color.White
                     )
-                )
+                } else {
+                    Text(
+                        text = (index + 1).toString().padStart(2, '0'),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 11.2.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = if (isDark) Color.White else Color.Black,
+                            lineHeight = 11.2.sp
+                        )
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(12.dp))
