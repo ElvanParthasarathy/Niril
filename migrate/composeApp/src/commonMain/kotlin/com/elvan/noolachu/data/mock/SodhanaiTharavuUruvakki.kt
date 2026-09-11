@@ -125,11 +125,12 @@ object SodhanaiTharavuUruvakki {
         helper.clearAllData(AppMode.PATTU)
 
         // Refresh all reactive repositories to empty state
+        val mode = ModeManager.currentMode
         NiruvanaTharavugalRepository.refreshFromDatabase()
-        VaangunarRepository.loadAll(AppMode.PATTU)
-        PorulRepository.loadAll(AppMode.PATTU)
-        PattiyalRepository.loadAll(AppMode.PATTU)
-        PatrugalRepository.loadAll(AppMode.PATTU)
+        VaangunarRepository.loadAll(mode)
+        PorulRepository.loadAll(mode)
+        PattiyalRepository.loadAll(mode)
+        PatrugalRepository.loadAll(mode)
 
         // Log out & reset mode
         AuthManager.logout()
@@ -163,8 +164,8 @@ object SodhanaiTharavuUruvakki {
         // ── 2. Seed Coolie Mode ──
         seedCoolieData(helper)
 
-        // Default to Silk mode after seeding
-        ModeManager.setMode(AppMode.PATTU)
+        // Preserve active mode
+        val activeMode = ModeManager.currentMode
 
         // Log in test account and refresh profile status
         AuthManager.login("test@niril.com", "kadavuchol")
@@ -172,10 +173,10 @@ object SodhanaiTharavuUruvakki {
 
         // Reload all 5 reactive repositories with freshly seeded data
         NiruvanaTharavugalRepository.refreshFromDatabase()
-        VaangunarRepository.loadAll(AppMode.PATTU)
-        PorulRepository.loadAll(AppMode.PATTU)
-        PattiyalRepository.loadAll(AppMode.PATTU)
-        PatrugalRepository.loadAll(AppMode.PATTU)
+        VaangunarRepository.loadAll(activeMode)
+        PorulRepository.loadAll(activeMode)
+        PattiyalRepository.loadAll(activeMode)
+        PatrugalRepository.loadAll(activeMode)
 
         // Create unified backup surviving reinstall
         try {
@@ -455,31 +456,28 @@ object SodhanaiTharavuUruvakki {
     }
 
     private fun parseSilkItems(rawJson: String, items: List<PorulTharavuru>): List<PattuUrupadi> {
-        val result = mutableListOf<PattuUrupadi>()
-        val blocks = KooliKanakku.kooliListFromJson(rawJson) // Extract individual rows
-        for (b in blocks) {
-            val peyar = b.porulPeyar
-            val matched = items.find { it.porulPeyar["ta"] == peyar }
-            val id = matched?.id?.toString()
-            val hsn = matched?.hsnCode ?: ""
-            val vilai = if (b.vilai > 0.0) b.vilai else (matched?.vilai ?: 0.0)
-            val alavu = if (b.edai > 0.0) b.edai else 1.0
-            val mozhiMap = matched?.porulPeyar ?: mapOf("ta" to peyar)
-
-            result.add(
-                PattuUrupadi(
-                    porulId = id,
-                    porulPeyar = peyar,
-                    porulPeyarEn = mozhiMap["en"] ?: "",
-                    hsnKuriyeedu = hsn,
-                    alavu = alavu,
-                    vilai = vilai,
-                    variVizhukkaadu = matched?.variVeetham ?: 5.0,
-                    mozhiMap = mozhiMap
-                )
+        val parsed = PattuKanakku.pattuListFromJson(rawJson)
+        return parsed.map { item ->
+            val matched = items.find {
+                it.porulPeyar["ta"] == item.porulPeyar ||
+                    (item.porulPeyarEn.isNotEmpty() && it.porulPeyar["en"] == item.porulPeyarEn)
+            }
+            val id = matched?.id?.toString() ?: item.porulId
+            val hsn = if (item.hsnKuriyeedu.isNotEmpty()) item.hsnKuriyeedu else (matched?.hsnCode ?: "")
+            val vilai = if (item.vilai > 0.0) item.vilai else (matched?.vilai ?: 0.0)
+            val vari = if (item.variVizhukkaadu > 0.0) item.variVizhukkaadu else (matched?.variVeetham ?: 0.0)
+            val alagu = if (item.alagu.isNotEmpty()) item.alagu else (matched?.alagu ?: "Nos")
+            val mozhiMap = if (item.mozhiMap.isNotEmpty()) item.mozhiMap else (matched?.porulPeyar ?: mapOf("ta" to item.porulPeyar, "en" to item.porulPeyarEn))
+            item.copy(
+                porulId = id,
+                porulPeyarEn = mozhiMap["en"] ?: item.porulPeyarEn,
+                hsnKuriyeedu = hsn,
+                alagu = alagu,
+                vilai = vilai,
+                variVizhukkaadu = vari,
+                mozhiMap = mozhiMap
             )
         }
-        return result
     }
 
     private fun parseCoolieItems(rawJson: String, items: List<PorulTharavuru>): List<KooliUrupadi> {

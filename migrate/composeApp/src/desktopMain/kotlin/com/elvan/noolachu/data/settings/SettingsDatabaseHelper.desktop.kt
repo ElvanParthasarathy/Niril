@@ -35,6 +35,86 @@ class DesktopSettingsDatabaseHelper : SettingsDatabaseHelper {
         )
     }
 
+    private fun ensureTables(conn: Connection, mode: AppMode) {
+        val tableName = if (mode == AppMode.KOOLI) "kooli_niruvana_tharavugal_table" else "pattu_niruvana_tharavugal_table"
+        val sql = if (mode == AppMode.KOOLI) {
+            """
+            CREATE TABLE IF NOT EXISTS "$tableName" (
+                "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                "niruvanathin_peyar" TEXT NOT NULL DEFAULT '{}',
+                "kurum_peyar" TEXT NOT NULL DEFAULT '',
+                "tholaipaesi1" TEXT NOT NULL DEFAULT '',
+                "tholaipaesi2" TEXT NOT NULL DEFAULT '',
+                "minnanjal" TEXT NOT NULL DEFAULT '',
+                "gstin" TEXT NOT NULL DEFAULT '',
+                "mugavari" TEXT NOT NULL DEFAULT '{}',
+                "oor" TEXT NOT NULL DEFAULT '{}',
+                "maavattam" TEXT NOT NULL DEFAULT '{}',
+                "maanilam" TEXT NOT NULL DEFAULT '{}',
+                "naadu" TEXT NOT NULL DEFAULT '{"en": "India", "ta": "இந்தியா"}',
+                "anjal_kuriyeedu" TEXT NOT NULL DEFAULT '',
+                "vangi_peyar" TEXT NOT NULL DEFAULT '{}',
+                "kilai" TEXT NOT NULL DEFAULT '{}',
+                "vangi_kanakku" TEXT NOT NULL DEFAULT '',
+                "ifsc" TEXT NOT NULL DEFAULT '',
+                "oavuru" TEXT NOT NULL DEFAULT '',
+                "agala_oavuru" TEXT NOT NULL DEFAULT '',
+                "thalaippu_vadivu" TEXT NOT NULL DEFAULT 'small',
+                "kaiyoppam" TEXT NOT NULL DEFAULT '',
+                "oppam_peyar" TEXT NOT NULL DEFAULT '',
+                "adaimozhi" TEXT NOT NULL DEFAULT '{}',
+                "upi_id" TEXT NOT NULL DEFAULT '',
+                "thoatra_niram" TEXT NOT NULL DEFAULT '',
+                "created_at" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "updated_at" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "is_deleted" INTEGER NOT NULL DEFAULT 0 CHECK ("is_deleted" IN (0, 1)),
+                "deleted_at" INTEGER NULL
+            )
+            """.trimIndent()
+        } else {
+            """
+            CREATE TABLE IF NOT EXISTS "$tableName" (
+                "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                "mudhan_mozhi" TEXT NOT NULL DEFAULT 'ta',
+                "thunai_mozhi" TEXT NOT NULL DEFAULT 'en',
+                "iru_mozhi" INTEGER NOT NULL DEFAULT 0 CHECK ("iru_mozhi" IN (0, 1)),
+                "gst_pirippugal" INTEGER NOT NULL DEFAULT 0 CHECK ("gst_pirippugal" IN (0, 1)),
+                "niruvanathin_peyar" TEXT NOT NULL DEFAULT '{}',
+                "kurum_peyar" TEXT NOT NULL DEFAULT '',
+                "tholaipaesi1" TEXT NOT NULL DEFAULT '',
+                "tholaipaesi2" TEXT NOT NULL DEFAULT '',
+                "minnanjal" TEXT NOT NULL DEFAULT '',
+                "gstin" TEXT NOT NULL DEFAULT '',
+                "mugavari" TEXT NOT NULL DEFAULT '{}',
+                "oor" TEXT NOT NULL DEFAULT '{}',
+                "maavattam" TEXT NOT NULL DEFAULT '{}',
+                "maanilam" TEXT NOT NULL DEFAULT '{}',
+                "naadu" TEXT NOT NULL DEFAULT '{"en": "India", "ta": "இந்தியா"}',
+                "anjal_kuriyeedu" TEXT NOT NULL DEFAULT '',
+                "vangi_peyar" TEXT NOT NULL DEFAULT '{}',
+                "kilai" TEXT NOT NULL DEFAULT '{}',
+                "vangi_kanakku" TEXT NOT NULL DEFAULT '',
+                "ifsc" TEXT NOT NULL DEFAULT '',
+                "oavuru" TEXT NOT NULL DEFAULT '',
+                "agala_oavuru" TEXT NOT NULL DEFAULT '',
+                "thalaippu_vadivu" TEXT NOT NULL DEFAULT 'small',
+                "kaiyoppam" TEXT NOT NULL DEFAULT '',
+                "oppam_peyar" TEXT NOT NULL DEFAULT '',
+                "adaimozhi" TEXT NOT NULL DEFAULT '{}',
+                "upi_id" TEXT NOT NULL DEFAULT '',
+                "thoatra_niram" TEXT NOT NULL DEFAULT '',
+                "created_at" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "updated_at" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "is_deleted" INTEGER NOT NULL DEFAULT 0 CHECK ("is_deleted" IN (0, 1)),
+                "deleted_at" INTEGER NULL
+            )
+            """.trimIndent()
+        }
+        conn.createStatement().use { stmt ->
+            stmt.execute(sql)
+        }
+    }
+
     override fun loadProfile(mode: AppMode, profileId: Long?): NiruvanaTharavugal? {
         val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
         val tableName = if (mode == AppMode.KOOLI) "kooli_niruvana_tharavugal_table" else "pattu_niruvana_tharavugal_table"
@@ -42,6 +122,7 @@ class DesktopSettingsDatabaseHelper : SettingsDatabaseHelper {
 
         try {
             getConnection(file).use { conn ->
+                ensureTables(conn, mode)
                 val sql = if (profileId != null) {
                     "SELECT * FROM $tableName WHERE id = ? AND is_deleted = 0 LIMIT 1"
                 } else {
@@ -72,6 +153,7 @@ class DesktopSettingsDatabaseHelper : SettingsDatabaseHelper {
         val list = mutableListOf<NiruvanaTharavugal>()
         try {
             getConnection(file).use { conn ->
+                ensureTables(conn, mode)
                 val sql = "SELECT * FROM $tableName WHERE is_deleted = 0 ORDER BY id ASC"
                 conn.createStatement().use { stmt ->
                     stmt.executeQuery(sql).use { rs ->
@@ -94,65 +176,39 @@ class DesktopSettingsDatabaseHelper : SettingsDatabaseHelper {
 
         try {
             getConnection(file).use { conn ->
-                val isPattu = mode == AppMode.PATTU
+                ensureTables(conn, mode)
                 val isUpdate = profile.id != null && profile.id!! > 0L
 
                 val sql = if (isUpdate) {
-                    if (isPattu) {
-                        """
-                        UPDATE $tableName SET
-                            mudhan_mozhi = ?, thunai_mozhi = ?, iru_mozhi = ?, gst_pirippugal = ?,
-                            niruvanathin_peyar = ?, kurum_peyar = ?, tholaipaesi1 = ?, tholaipaesi2 = ?,
-                            minnanjal = ?, gstin = ?, mugavari = ?, oor = ?, maavattam = ?, maanilam = ?,
-                            naadu = ?, anjal_kuriyeedu = ?, vangi_peyar = ?, kilai = ?, vangi_kanakku = ?,
-                            ifsc = ?, oavuru = ?, agala_oavuru = ?, thalaippu_vadivu = ?, kaiyoppam = ?,
-                            oppam_peyar = ?, adaimozhi = ?, upi_id = ?, thoatra_niram = ?, updated_at = ?
-                        WHERE id = ?
-                        """.trimIndent()
-                    } else {
-                        """
-                        UPDATE $tableName SET
-                            niruvanathin_peyar = ?, kurum_peyar = ?, tholaipaesi1 = ?, tholaipaesi2 = ?,
-                            minnanjal = ?, gstin = ?, mugavari = ?, oor = ?, maavattam = ?, maanilam = ?,
-                            naadu = ?, anjal_kuriyeedu = ?, vangi_peyar = ?, kilai = ?, vangi_kanakku = ?,
-                            ifsc = ?, oavuru = ?, agala_oavuru = ?, thalaippu_vadivu = ?, kaiyoppam = ?,
-                            oppam_peyar = ?, adaimozhi = ?, upi_id = ?, thoatra_niram = ?, updated_at = ?
-                        WHERE id = ?
-                        """.trimIndent()
-                    }
+                    """
+                    UPDATE $tableName SET
+                        mudhan_mozhi = ?, thunai_mozhi = ?, iru_mozhi = ?, gst_pirippugal = ?,
+                        niruvanathin_peyar = ?, kurum_peyar = ?, tholaipaesi1 = ?, tholaipaesi2 = ?,
+                        minnanjal = ?, gstin = ?, mugavari = ?, oor = ?, maavattam = ?, maanilam = ?,
+                        naadu = ?, anjal_kuriyeedu = ?, vangi_peyar = ?, kilai = ?, vangi_kanakku = ?,
+                        ifsc = ?, oavuru = ?, agala_oavuru = ?, thalaippu_vadivu = ?, kaiyoppam = ?,
+                        oppam_peyar = ?, adaimozhi = ?, upi_id = ?, thoatra_niram = ?, updated_at = ?
+                    WHERE id = ?
+                    """.trimIndent()
                 } else {
-                    if (isPattu) {
-                        """
-                        INSERT INTO $tableName (
-                            mudhan_mozhi, thunai_mozhi, iru_mozhi, gst_pirippugal,
-                            niruvanathin_peyar, kurum_peyar, tholaipaesi1, tholaipaesi2,
-                            minnanjal, gstin, mugavari, oor, maavattam, maanilam,
-                            naadu, anjal_kuriyeedu, vangi_peyar, kilai, vangi_kanakku,
-                            ifsc, oavuru, agala_oavuru, thalaippu_vadivu, kaiyoppam,
-                            oppam_peyar, adaimozhi, upi_id, thoatra_niram, updated_at
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        """.trimIndent()
-                    } else {
-                        """
-                        INSERT INTO $tableName (
-                            niruvanathin_peyar, kurum_peyar, tholaipaesi1, tholaipaesi2,
-                            minnanjal, gstin, mugavari, oor, maavattam, maanilam,
-                            naadu, anjal_kuriyeedu, vangi_peyar, kilai, vangi_kanakku,
-                            ifsc, oavuru, agala_oavuru, thalaippu_vadivu, kaiyoppam,
-                            oppam_peyar, adaimozhi, upi_id, thoatra_niram, updated_at
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        """.trimIndent()
-                    }
+                    """
+                    INSERT INTO $tableName (
+                        mudhan_mozhi, thunai_mozhi, iru_mozhi, gst_pirippugal,
+                        niruvanathin_peyar, kurum_peyar, tholaipaesi1, tholaipaesi2,
+                        minnanjal, gstin, mugavari, oor, maavattam, maanilam,
+                        naadu, anjal_kuriyeedu, vangi_peyar, kilai, vangi_kanakku,
+                        ifsc, oavuru, agala_oavuru, thalaippu_vadivu, kaiyoppam,
+                        oppam_peyar, adaimozhi, upi_id, thoatra_niram, updated_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """.trimIndent()
                 }
 
                 conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS).use { stmt ->
                     var idx = 1
-                    if (isPattu) {
-                        stmt.setString(idx++, profile.mudhanMozhi)
-                        stmt.setString(idx++, profile.thunaiMozhi)
-                        stmt.setInt(idx++, if (profile.iruMozhi) 1 else 0)
-                        stmt.setInt(idx++, if (profile.gstPirippugal) 1 else 0)
-                    }
+                    stmt.setString(idx++, profile.mudhanMozhi.ifEmpty { "ta" })
+                    stmt.setString(idx++, profile.thunaiMozhi.ifEmpty { "en" })
+                    stmt.setInt(idx++, if (profile.iruMozhi) 1 else 0)
+                    stmt.setInt(idx++, if (profile.gstPirippugal) 1 else 0)
                     stmt.setString(idx++, MozhiJsonConverter.stringify(profile.niruvanathinPeyar))
                     stmt.setString(idx++, profile.kurumPeyar)
                     stmt.setString(idx++, profile.tholaipaesi1)
@@ -207,7 +263,8 @@ class DesktopSettingsDatabaseHelper : SettingsDatabaseHelper {
 
         try {
             getConnection(file).use { conn ->
-                val sql = "UPDATE $tableName SET is_deleted = 1, updated_at = ? WHERE id = ?"
+                ensureTables(conn, mode)
+                val sql = "UPDATE $tableName SET is_deleted = 1, updated_at = ?" + " WHERE id = ?"
                 conn.prepareStatement(sql).use { stmt ->
                     stmt.setLong(1, System.currentTimeMillis() / 1000)
                     stmt.setLong(2, profileId)
@@ -228,6 +285,7 @@ class DesktopSettingsDatabaseHelper : SettingsDatabaseHelper {
 
         try {
             getConnection(file).use { conn ->
+                ensureTables(conn, mode)
                 val sql = "DELETE FROM $tableName"
                 conn.createStatement().use { stmt ->
                     stmt.executeUpdate(sql)
@@ -251,11 +309,10 @@ class DesktopSettingsDatabaseHelper : SettingsDatabaseHelper {
             return try { val v = rs.getInt(col); if (rs.wasNull()) defaultVal else v } catch (_: Exception) { defaultVal }
         }
 
-        val isPattu = mode == AppMode.PATTU
-        val mudhan = if (isPattu) getString("mudhan_mozhi").ifEmpty { "ta" } else "ta"
-        val thunai = if (isPattu) getString("thunai_mozhi").ifEmpty { "en" } else "en"
-        val iru = if (isPattu) getInt("iru_mozhi", 1) == 1 else true
-        val gstPirippugal = if (isPattu) getInt("gst_pirippugal", 0) == 1 else false
+        val mudhan = getString("mudhan_mozhi").ifEmpty { "ta" }
+        val thunai = getString("thunai_mozhi").ifEmpty { "en" }
+        val iru = getInt("iru_mozhi", 1) == 1
+        val gstPirippugal = getInt("gst_pirippugal", 0) == 1
 
         return NiruvanaTharavugal(
             id = getLong("id"),
@@ -286,7 +343,7 @@ class DesktopSettingsDatabaseHelper : SettingsDatabaseHelper {
             oppamPeyar = getString("oppam_peyar"),
             adaimozhi = MozhiJsonConverter.parse(getString("adaimozhi")),
             upiId = getString("upi_id"),
-            thoatraNiram = getString("thoatra_niram").ifEmpty { if (isPattu) "#6a1b9a" else "#388e3c" }
+            thoatraNiram = getString("thoatra_niram").ifEmpty { if (mode == AppMode.PATTU) "#6a1b9a" else "#388e3c" }
         )
     }
 }

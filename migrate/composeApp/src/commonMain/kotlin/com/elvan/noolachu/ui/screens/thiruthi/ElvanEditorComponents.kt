@@ -1,5 +1,6 @@
 package com.elvan.noolachu.ui.screens.thiruthi
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -23,6 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.core.mode.LocalAppMode
 import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
 import com.elvan.noolachu.localization.K
@@ -333,7 +335,7 @@ fun ElvanIrumozhiPulan(
     val currentMode = LocalAppMode.current
     val profile = NiruvanaTharavugalRepository.getProfile(currentMode)
 
-    val isBilingual = profile.iruMozhi
+    val isBilingual = if (currentMode == AppMode.KOOLI) true else profile.iruMozhi
     val primaryLang = profile.mudhanMozhi.ifEmpty { "ta" }
     val secondaryLang = profile.thunaiMozhi.ifEmpty { "en" }
 
@@ -348,35 +350,43 @@ fun ElvanIrumozhiPulan(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         // Primary Field
-        ElvanThiruthiUlleedu(
-            value = primaryValue,
-            onValueChange = { newText ->
-                val updated = value.toMutableMap()
-                updated[primaryLang] = newText
-                onChanged(updated)
-            },
-            label = "$label ($primaryLangLabel)",
-            placeholder = placeholder,
-            enabled = enabled,
-            singleLine = maxLines == 1,
-            maxLines = maxLines
-        )
-
-        // Secondary Field (shown only when bilingual mode is enabled in Settings)
-        if (isBilingual) {
+        key(primaryLang) {
             ElvanThiruthiUlleedu(
-                value = secondaryValue,
+                value = primaryValue,
                 onValueChange = { newText ->
                     val updated = value.toMutableMap()
-                    updated[secondaryLang] = newText
+                    updated[primaryLang] = newText
                     onChanged(updated)
                 },
-                label = "$label ($secondaryLangLabel)",
+                label = "$label ($primaryLangLabel)",
                 placeholder = placeholder,
                 enabled = enabled,
                 singleLine = maxLines == 1,
                 maxLines = maxLines
             )
+        }
+
+        // Secondary Field (shown only when bilingual mode is enabled in Settings)
+        AnimatedVisibility(
+            visible = isBilingual,
+            enter = expandVertically() + fadeIn(),
+            exit = shrinkVertically() + fadeOut()
+        ) {
+            key(secondaryLang) {
+                ElvanThiruthiUlleedu(
+                    value = secondaryValue,
+                    onValueChange = { newText ->
+                        val updated = value.toMutableMap()
+                        updated[secondaryLang] = newText
+                        onChanged(updated)
+                    },
+                    label = "$label ($secondaryLangLabel)",
+                    placeholder = placeholder,
+                    enabled = enabled,
+                    singleLine = maxLines == 1,
+                    maxLines = maxLines
+                )
+            }
         }
     }
 }

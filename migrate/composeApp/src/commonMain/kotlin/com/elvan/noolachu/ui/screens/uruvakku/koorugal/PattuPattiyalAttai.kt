@@ -16,10 +16,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.core.utils.CurrencyUtils
 import com.elvan.noolachu.core.utils.DateUtils
 import com.elvan.noolachu.data.model.PattiyalTharavuru
-import com.elvan.noolachu.localization.LocalAppLanguage
+import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.ShellColors
 import com.elvan.noolachu.theme.preventBrokenLigatures
@@ -42,11 +43,13 @@ fun PattuPattiyalAttai(
 ) {
     val ff = LocalAppFontFamily.current
     val isDark = colors.isDark
-    val currentLang = LocalAppLanguage.current
 
-    val name = pattiyal.vaangunarPeyar[currentLang]
-        ?: pattiyal.vaangunarPeyar["ta"]
-        ?: pattiyal.vaangunarPeyar["en"]
+    val profile = NiruvanaTharavugalRepository.getProfile(AppMode.PATTU)
+    val primaryLang = profile.mudhanMozhi.ifEmpty { "ta" }
+    val secondaryLang = profile.thunaiMozhi.ifEmpty { "en" }
+
+    val name = pattiyal.vaangunarPeyar[primaryLang]
+        ?: pattiyal.vaangunarPeyar[secondaryLang]
         ?: pattiyal.vaangunarPeyar.values.firstOrNull()
         ?: "-"
 

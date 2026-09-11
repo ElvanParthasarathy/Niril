@@ -27,6 +27,7 @@ import com.elvan.noolachu.data.repository.PatrugalRepository
 import com.elvan.noolachu.data.repository.PorulRepository
 import com.elvan.noolachu.data.repository.VaangunarRepository
 import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
+import com.elvan.noolachu.data.mock.SodhanaiTharavuUruvakki
 import com.elvan.noolachu.localization.K
 import com.elvan.noolachu.localization.tr
 import com.elvan.noolachu.theme.LocalAppFontFamily
@@ -133,6 +134,10 @@ fun HomeScreen() {
         PorulRepository.loadAll(currentMode)
         VaangunarRepository.loadAll(currentMode)
         NiruvanaTharavugalRepository.refreshFromDatabase()
+
+        if (PattiyalRepository.invoices.isEmpty() && VaangunarRepository.merchants.isEmpty()) {
+            SodhanaiTharavuUruvakki.seedAllData()
+        }
     }
 
     // Reset search and selection state on tab switch

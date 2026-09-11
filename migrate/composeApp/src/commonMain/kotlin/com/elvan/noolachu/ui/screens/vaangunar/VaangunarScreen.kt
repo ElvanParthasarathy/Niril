@@ -23,6 +23,7 @@ import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.core.mode.LocalAppMode
 import com.elvan.noolachu.data.model.VaangunarTharavuru
 import com.elvan.noolachu.data.repository.VaangunarRepository
+import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
 import com.elvan.noolachu.localization.K
 import com.elvan.noolachu.localization.LocalAppLanguage
 import com.elvan.noolachu.localization.tr
@@ -184,24 +185,28 @@ private fun CoolieVaangunarCard(
     onLongClick: (() -> Unit)? = null
 ) {
     val ff = LocalAppFontFamily.current
-    val currentLang = LocalAppLanguage.current
     val isDark = colors.isDark
 
-    val primaryName = merchant.peyar[currentLang]
+    val profile = NiruvanaTharavugalRepository.getProfile(AppMode.KOOLI)
+    val isBilingual = profile.iruMozhi
+    val primaryLang = profile.mudhanMozhi.ifEmpty { "ta" }
+    val secondaryLang = profile.thunaiMozhi.ifEmpty { "en" }
+
+    val primaryName = merchant.peyar[primaryLang]
         ?: merchant.peyar["ta"]
         ?: merchant.peyar["en"]
         ?: merchant.peyar.values.firstOrNull()
         ?: ""
 
-    val secondaryName = if (currentLang == "ta") merchant.peyar["en"] ?: "" else merchant.peyar["ta"] ?: ""
+    val secondaryName = if (isBilingual) (merchant.peyar[secondaryLang] ?: "") else ""
 
-    val primaryCity = merchant.oor[currentLang]
+    val primaryCity = merchant.oor[primaryLang]
         ?: merchant.oor["ta"]
         ?: merchant.oor["en"]
         ?: merchant.oor.values.firstOrNull()
         ?: ""
 
-    val secondaryCity = if (currentLang == "ta") merchant.oor["en"] ?: "" else merchant.oor["ta"] ?: ""
+    val secondaryCity = if (isBilingual) (merchant.oor[secondaryLang] ?: "") else ""
 
     ElvanPothuAttai(
         onClick = onClick,
@@ -266,7 +271,7 @@ private fun CoolieVaangunarCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                if (secondaryName.isNotBlank() && secondaryName != primaryName) {
+                if (isBilingual && secondaryName.isNotBlank() && secondaryName != primaryName) {
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = secondaryName.preventBrokenLigatures(),
@@ -295,7 +300,7 @@ private fun CoolieVaangunarCard(
                     )
                 }
 
-                if (secondaryCity.isNotBlank() && secondaryCity != primaryCity) {
+                if (isBilingual && secondaryCity.isNotBlank() && secondaryCity != primaryCity) {
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = secondaryCity.preventBrokenLigatures(),
@@ -328,24 +333,28 @@ private fun SilkVaangunarCard(
     onLongClick: (() -> Unit)? = null
 ) {
     val ff = LocalAppFontFamily.current
-    val currentLang = LocalAppLanguage.current
     val isDark = colors.isDark
 
-    val primaryName = merchant.peyar[currentLang]
+    val profile = NiruvanaTharavugalRepository.getProfile(AppMode.PATTU)
+    val isBilingual = profile.iruMozhi
+    val primaryLang = profile.mudhanMozhi.ifEmpty { "ta" }
+    val secondaryLang = profile.thunaiMozhi.ifEmpty { "en" }
+
+    val primaryName = merchant.peyar[primaryLang]
         ?: merchant.peyar["ta"]
         ?: merchant.peyar["en"]
         ?: merchant.peyar.values.firstOrNull()
         ?: ""
 
-    val secondaryName = if (currentLang == "ta") merchant.peyar["en"] ?: "" else merchant.peyar["ta"] ?: ""
+    val secondaryName = if (isBilingual) (merchant.peyar[secondaryLang] ?: "") else ""
 
-    val primaryCity = merchant.oor[currentLang]
+    val primaryCity = merchant.oor[primaryLang]
         ?: merchant.oor["ta"]
         ?: merchant.oor["en"]
         ?: merchant.oor.values.firstOrNull()
         ?: ""
 
-    val secondaryCity = if (currentLang == "ta") merchant.oor["en"] ?: "" else merchant.oor["ta"] ?: ""
+    val secondaryCity = if (isBilingual) (merchant.oor[secondaryLang] ?: "") else ""
 
     val gstin = merchant.gstin.trim()
     val phone = merchant.tholaipaesi.trim()
@@ -413,7 +422,7 @@ private fun SilkVaangunarCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                if (secondaryName.isNotBlank() && secondaryName != primaryName) {
+                if (isBilingual && secondaryName.isNotBlank() && secondaryName != primaryName) {
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = secondaryName.preventBrokenLigatures(),
@@ -442,7 +451,7 @@ private fun SilkVaangunarCard(
                     )
                 }
 
-                if (secondaryCity.isNotBlank() && secondaryCity != primaryCity) {
+                if (isBilingual && secondaryCity.isNotBlank() && secondaryCity != primaryCity) {
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = secondaryCity.preventBrokenLigatures(),

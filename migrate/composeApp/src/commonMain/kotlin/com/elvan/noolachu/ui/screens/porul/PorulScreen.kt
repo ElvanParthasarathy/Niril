@@ -23,6 +23,7 @@ import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.core.mode.LocalAppMode
 import com.elvan.noolachu.data.model.PorulTharavuru
 import com.elvan.noolachu.data.repository.PorulRepository
+import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
 import com.elvan.noolachu.localization.K
 import com.elvan.noolachu.localization.LocalAppLanguage
 import com.elvan.noolachu.localization.tr
@@ -184,16 +185,20 @@ private fun CooliePorulCard(
     onLongClick: (() -> Unit)? = null
 ) {
     val ff = LocalAppFontFamily.current
-    val currentLang = LocalAppLanguage.current
     val isDark = colors.isDark
 
-    val primary = porul.porulPeyar[currentLang]
+    val profile = NiruvanaTharavugalRepository.getProfile(AppMode.KOOLI)
+    val isBilingual = profile.iruMozhi
+    val primaryLang = profile.mudhanMozhi.ifEmpty { "ta" }
+    val secondaryLang = profile.thunaiMozhi.ifEmpty { "en" }
+
+    val primary = porul.porulPeyar[primaryLang]
         ?: porul.porulPeyar["ta"]
         ?: porul.porulPeyar["en"]
         ?: porul.porulPeyar.values.firstOrNull()
         ?: ""
 
-    val secondary = if (currentLang == "ta") porul.porulPeyar["en"] ?: "" else porul.porulPeyar["ta"] ?: ""
+    val secondary = if (isBilingual) (porul.porulPeyar[secondaryLang] ?: "") else ""
 
     ElvanPothuAttai(
         onClick = onClick,
@@ -258,7 +263,7 @@ private fun CooliePorulCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                if (secondary.isNotBlank() && secondary != primary) {
+                if (isBilingual && secondary.isNotBlank() && secondary != primary) {
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = secondary.preventBrokenLigatures(),
@@ -292,16 +297,20 @@ private fun SilkPorulCard(
     onLongClick: (() -> Unit)? = null
 ) {
     val ff = LocalAppFontFamily.current
-    val currentLang = LocalAppLanguage.current
     val isDark = colors.isDark
 
-    val primary = porul.porulPeyar[currentLang]
+    val profile = NiruvanaTharavugalRepository.getProfile(AppMode.PATTU)
+    val isBilingual = profile.iruMozhi
+    val primaryLang = profile.mudhanMozhi.ifEmpty { "ta" }
+    val secondaryLang = profile.thunaiMozhi.ifEmpty { "en" }
+
+    val primary = porul.porulPeyar[primaryLang]
         ?: porul.porulPeyar["ta"]
         ?: porul.porulPeyar["en"]
         ?: porul.porulPeyar.values.firstOrNull()
         ?: ""
 
-    val secondary = if (currentLang == "ta") porul.porulPeyar["en"] ?: "" else porul.porulPeyar["ta"] ?: ""
+    val secondary = if (isBilingual) (porul.porulPeyar[secondaryLang] ?: "") else ""
 
     ElvanPothuAttai(
         onClick = onClick,
@@ -366,7 +375,7 @@ private fun SilkPorulCard(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                if (secondary.isNotBlank() && secondary != primary) {
+                if (isBilingual && secondary.isNotBlank() && secondary != primary) {
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = secondary.preventBrokenLigatures(),

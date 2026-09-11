@@ -15,10 +15,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.core.utils.CurrencyUtils
 import com.elvan.noolachu.core.utils.DateUtils
 import com.elvan.noolachu.data.model.PattiyalTharavuru
-import com.elvan.noolachu.localization.LocalAppLanguage
+import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.ShellColors
 import com.elvan.noolachu.theme.preventBrokenLigatures
@@ -38,22 +39,22 @@ fun KooliMugappuAttai(
 ) {
     val ff = LocalAppFontFamily.current
     val isDark = colors.isDark
-    val currentLang = LocalAppLanguage.current
 
-    val primary = pattiyal.vaangunarPeyar[currentLang]
+    val profile = NiruvanaTharavugalRepository.getProfile(AppMode.KOOLI)
+    val isBilingual = profile.iruMozhi
+    val primaryLang = profile.mudhanMozhi.ifEmpty { "ta" }
+    val secondaryLang = profile.thunaiMozhi.ifEmpty { "en" }
+
+    val primary = pattiyal.vaangunarPeyar[primaryLang]
         ?: pattiyal.vaangunarPeyar["ta"]
         ?: pattiyal.vaangunarPeyar["en"]
         ?: pattiyal.vaangunarPeyar.values.firstOrNull()
         ?: "-"
 
-    val secondary = if (currentLang == "ta") {
-        pattiyal.vaangunarPeyar["en"].orEmpty()
-    } else {
-        pattiyal.vaangunarPeyar["ta"].orEmpty()
-    }
-    val showSecondary = secondary.isNotBlank() && secondary != primary
+    val secondary = if (isBilingual) pattiyal.vaangunarPeyar[secondaryLang].orEmpty() else ""
+    val showSecondary = isBilingual && secondary.isNotBlank() && secondary != primary
 
-    val primaryOor = pattiyal.vaangunarMunvari[currentLang]
+    val primaryOor = pattiyal.vaangunarMunvari[primaryLang]
         ?: pattiyal.vaangunarMunvari["ta"]
         ?: pattiyal.vaangunarMunvari["en"]
         ?: pattiyal.vaangunarMunvari.values.firstOrNull()

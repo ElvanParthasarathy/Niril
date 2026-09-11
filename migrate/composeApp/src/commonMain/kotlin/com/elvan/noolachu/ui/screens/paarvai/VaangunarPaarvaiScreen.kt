@@ -19,6 +19,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.core.mode.LocalAppMode
 import com.elvan.noolachu.core.platform.AppBackHandler
 import com.elvan.noolachu.data.model.VaangunarTharavuru
@@ -48,16 +49,17 @@ fun VaangunarPaarvaiScreen(
     val ff = LocalAppFontFamily.current
 
     val billingConfig = AchuMozhiManager.getConfig(currentMode)
+    val isBilingual = if (currentMode == AppMode.KOOLI) true else billingConfig.isBilingual
     val primaryLang = billingConfig.primaryLanguage.code
-    val secondaryLang = if (primaryLang == "ta") "en" else "ta"
+    val secondaryLang = billingConfig.secondaryLanguage.code
 
     val p1 = merchant.peyar[primaryLang] ?: merchant.peyar["ta"] ?: ""
     val p2 = merchant.peyar[secondaryLang] ?: merchant.peyar["en"] ?: ""
     val primaryName = p1.ifEmpty { p2.ifEmpty { "-" } }
-    val secondaryName = if (p1.isNotEmpty() && p2.isNotEmpty() && p1 != p2) p2 else ""
+    val secondaryName = if (isBilingual && p1.isNotEmpty() && p2.isNotEmpty() && p1 != p2) p2 else ""
 
-    val oorVal = merchant.oor[primaryLang] ?: merchant.oor["ta"] ?: merchant.oor.values.firstOrNull().orEmpty()
-    val mugavariVal = merchant.mugavari[primaryLang] ?: merchant.mugavari["ta"] ?: merchant.mugavari.values.firstOrNull().orEmpty()
+    val oorVal = merchant.oor[primaryLang] ?: merchant.oor[secondaryLang] ?: merchant.oor.values.firstOrNull().orEmpty()
+    val mugavariVal = merchant.mugavari[primaryLang] ?: merchant.mugavari[secondaryLang] ?: merchant.mugavari.values.firstOrNull().orEmpty()
 
     AppBackHandler(enabled = true) {
         onBack()

@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.elvan.noolachu.core.mode.AppMode
+import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
 
 /**
  * ══════════════════════════════════════════════════════════════════════
@@ -42,64 +43,44 @@ data class BillingLanguageConfig(
 
 object AchuMozhiManager {
 
-    // ── KOOLI (Coolie) Billing Language State ──
-    var kooliBillingConfig by mutableStateOf(
-        BillingLanguageConfig(
-            primaryLanguage = BillingLanguage.TAMIL,
-            isBilingual = false
-        )
-    )
-        private set
-
-    // ── PATTU (Silk) Billing Language State ──
-    var pattuBillingConfig by mutableStateOf(
-        BillingLanguageConfig(
-            primaryLanguage = BillingLanguage.TAMIL,
-            secondaryLanguage = BillingLanguage.ENGLISH,
-            isBilingual = false
-        )
-    )
-        private set
-
     /**
      * Returns the active billing language config for the specified mode.
+     * Reactively reads from NiruvanaTharavugalRepository.
      */
     fun getConfig(mode: AppMode): BillingLanguageConfig {
-        return when (mode) {
-            AppMode.KOOLI -> kooliBillingConfig
-            AppMode.PATTU -> pattuBillingConfig
-        }
+        val profile = NiruvanaTharavugalRepository.getProfile(mode)
+        val isBilingual = profile.iruMozhi
+        val primary = BillingLanguage.fromCode(profile.mudhanMozhi.ifEmpty { "ta" })
+        val secondary = BillingLanguage.fromCode(profile.thunaiMozhi.ifEmpty { "en" })
+        return BillingLanguageConfig(
+            primaryLanguage = primary,
+            secondaryLanguage = secondary,
+            isBilingual = isBilingual
+        )
     }
 
     /**
-     * Updates the primary billing language for a mode.
-     * Note: This has ZERO effect on the UI screen language!
+     * Updates the primary billing language for a mode on its active profile.
      */
     fun setPrimaryLanguage(mode: AppMode, language: BillingLanguage) {
-        when (mode) {
-            AppMode.KOOLI -> kooliBillingConfig = kooliBillingConfig.copy(primaryLanguage = language)
-            AppMode.PATTU -> pattuBillingConfig = pattuBillingConfig.copy(primaryLanguage = language)
-        }
+        val profile = NiruvanaTharavugalRepository.getProfile(mode)
+        NiruvanaTharavugalRepository.updateProfile(mode, profile.copy(mudhanMozhi = language.code))
     }
 
     /**
      * Updates the secondary billing language (used for bilingual bills).
      */
     fun setSecondaryLanguage(mode: AppMode, language: BillingLanguage) {
-        when (mode) {
-            AppMode.KOOLI -> kooliBillingConfig = kooliBillingConfig.copy(secondaryLanguage = language)
-            AppMode.PATTU -> pattuBillingConfig = pattuBillingConfig.copy(secondaryLanguage = language)
-        }
+        val profile = NiruvanaTharavugalRepository.getProfile(mode)
+        NiruvanaTharavugalRepository.updateProfile(mode, profile.copy(thunaiMozhi = language.code))
     }
 
     /**
      * Toggles bilingual billing mode (e.g. Tamil heading + English subheading on bills).
      */
     fun setBilingual(mode: AppMode, enabled: Boolean) {
-        when (mode) {
-            AppMode.KOOLI -> kooliBillingConfig = kooliBillingConfig.copy(isBilingual = enabled)
-            AppMode.PATTU -> pattuBillingConfig = pattuBillingConfig.copy(isBilingual = enabled)
-        }
+        val profile = NiruvanaTharavugalRepository.getProfile(mode)
+        NiruvanaTharavugalRepository.updateProfile(mode, profile.copy(iruMozhi = enabled))
     }
 
     /**

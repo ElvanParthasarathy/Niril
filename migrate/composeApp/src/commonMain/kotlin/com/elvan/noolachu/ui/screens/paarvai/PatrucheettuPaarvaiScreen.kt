@@ -16,6 +16,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.elvan.noolachu.core.mode.AppMode
 import com.elvan.noolachu.core.mode.LocalAppMode
 import com.elvan.noolachu.core.platform.AppBackHandler
 import com.elvan.noolachu.core.utils.CurrencyUtils
@@ -29,9 +30,10 @@ import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.preventBrokenLigatures
 import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.components.shell.LocalElvanTopSpacerHeight
+import com.elvan.noolachu.ui.navigation.MaterialSymbols
 
 /**
- * Payment Receipt View Screen (பற்றுச்சீட்டு பார்வை)
+ * Receipt View Screen (பற்றுச்சீட்டு பார்வை)
  * Ported 1:1 from Flutter's patrucheettu_paarvai.dart.
  */
 @Composable
@@ -47,11 +49,15 @@ fun PatrucheettuPaarvaiScreen(
     val ff = LocalAppFontFamily.current
 
     val billingConfig = AchuMozhiManager.getConfig(currentMode)
+    val isBilingual = if (currentMode == AppMode.KOOLI) true else billingConfig.isBilingual
     val primaryLang = billingConfig.primaryLanguage.code
+    val secondaryLang = billingConfig.secondaryLanguage.code
 
     val customerName = receipt.vaangunarPeyar[primaryLang]
-        ?: receipt.vaangunarPeyar["ta"]
+        ?: receipt.vaangunarPeyar[secondaryLang]
         ?: receipt.vaangunarPeyar.values.firstOrNull().orEmpty().ifEmpty { "-" }
+
+    val secondaryCustomerName = if (isBilingual) (receipt.vaangunarPeyar[secondaryLang] ?: "") else ""
 
     AppBackHandler(enabled = true) {
         onBack()
@@ -111,6 +117,18 @@ fun PatrucheettuPaarvaiScreen(
                                     letterSpacing = (-0.2).sp
                                 )
                             )
+                            if (isBilingual && secondaryCustomerName.isNotBlank() && secondaryCustomerName != customerName) {
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = secondaryCustomerName.preventBrokenLigatures(),
+                                    style = TextStyle(
+                                        fontFamily = ff,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        color = if (isDark) Color.White.copy(alpha = 0.54f) else Color.Black.copy(alpha = 0.54f)
+                                    )
+                                )
+                            }
                         }
 
                         Spacer(modifier = Modifier.width(16.dp))

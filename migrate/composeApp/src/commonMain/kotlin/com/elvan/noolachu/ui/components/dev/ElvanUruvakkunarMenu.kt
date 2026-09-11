@@ -27,7 +27,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.elvan.noolachu.core.mode.ModeManager
 import com.elvan.noolachu.data.mock.SodhanaiTharavuUruvakki
+import com.elvan.noolachu.data.repository.PatrugalRepository
+import com.elvan.noolachu.data.repository.PattiyalRepository
+import com.elvan.noolachu.data.repository.PorulRepository
+import com.elvan.noolachu.data.repository.VaangunarRepository
+import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
 import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.components.shell.ElvanSnackbar
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
@@ -108,6 +114,12 @@ fun ElvanUruvakkunarMenu() {
                     ) {
                         coroutineScope.launch {
                             SodhanaiTharavuUruvakki.seedAllData()
+                            val mode = ModeManager.currentMode
+                            NiruvanaTharavugalRepository.refreshFromDatabase()
+                            VaangunarRepository.loadAll(mode)
+                            PorulRepository.loadAll(mode)
+                            PattiyalRepository.loadAll(mode)
+                            PatrugalRepository.loadAll(mode)
                             ElvanSnackbar.show("All Data Seeded Successfully ✓")
                             isExpanded = false
                         }
@@ -124,6 +136,12 @@ fun ElvanUruvakkunarMenu() {
                     ) {
                         coroutineScope.launch {
                             SodhanaiTharavuUruvakki.eraseAllData()
+                            val mode = ModeManager.currentMode
+                            NiruvanaTharavugalRepository.refreshFromDatabase()
+                            VaangunarRepository.loadAll(mode)
+                            PorulRepository.loadAll(mode)
+                            PattiyalRepository.loadAll(mode)
+                            PatrugalRepository.loadAll(mode)
                             ElvanSnackbar.show("All Data Erased ✗")
                             isExpanded = false
                         }
@@ -140,6 +158,7 @@ fun ElvanUruvakkunarMenu() {
                     ) {
                         coroutineScope.launch {
                             val msg = SodhanaiTharavuUruvakki.toggleExtraSilk()
+                            NiruvanaTharavugalRepository.refreshFromDatabase()
                             ElvanSnackbar.show(msg)
                         }
                     }
@@ -155,6 +174,7 @@ fun ElvanUruvakkunarMenu() {
                     ) {
                         coroutineScope.launch {
                             val msg = SodhanaiTharavuUruvakki.toggleExtraCoolie()
+                            NiruvanaTharavugalRepository.refreshFromDatabase()
                             ElvanSnackbar.show(msg)
                         }
                     }

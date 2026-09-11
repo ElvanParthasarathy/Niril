@@ -15,10 +15,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.elvan.noolachu.core.mode.LocalAppMode
 import com.elvan.noolachu.core.utils.CurrencyUtils
 import com.elvan.noolachu.core.utils.DateUtils
 import com.elvan.noolachu.data.model.PatrugalTharavuru
-import com.elvan.noolachu.localization.LocalAppLanguage
+import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.ShellColors
 import com.elvan.noolachu.theme.preventBrokenLigatures
@@ -40,11 +41,14 @@ fun PatruAttai(
 ) {
     val ff = LocalAppFontFamily.current
     val isDark = colors.isDark
-    val currentLang = LocalAppLanguage.current
 
-    val name = receipt.vaangunarPeyar[currentLang]
-        ?: receipt.vaangunarPeyar["ta"]
-        ?: receipt.vaangunarPeyar["en"]
+    val currentMode = LocalAppMode.current
+    val profile = NiruvanaTharavugalRepository.getProfile(currentMode)
+    val primaryLang = profile.mudhanMozhi.ifEmpty { "ta" }
+    val secondaryLang = profile.thunaiMozhi.ifEmpty { "en" }
+
+    val name = receipt.vaangunarPeyar[primaryLang]
+        ?: receipt.vaangunarPeyar[secondaryLang]
         ?: receipt.vaangunarPeyar.values.firstOrNull()
         ?: receipt.patruEn
 

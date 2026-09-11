@@ -74,7 +74,8 @@ class DesktopBusinessDatabaseHelper : BusinessDatabaseHelper {
             )
         """.trimIndent()
 
-        val createPattiyalSql = """
+        val createPattiyalSql = if (mode == AppMode.KOOLI) {
+            """
             CREATE TABLE IF NOT EXISTS "$pattiyalTable" (
                 "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                 "niruvanam_id" INTEGER NULL,
@@ -108,7 +109,38 @@ class DesktopBusinessDatabaseHelper : BusinessDatabaseHelper {
                 "is_deleted" INTEGER NOT NULL DEFAULT 0 CHECK ("is_deleted" IN (0, 1)),
                 "deleted_at" INTEGER NULL
             )
-        """.trimIndent()
+            """.trimIndent()
+        } else {
+            """
+            CREATE TABLE IF NOT EXISTS "$pattiyalTable" (
+                "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                "niruvanam_id" INTEGER NULL,
+                "patrucheettu_en" TEXT NOT NULL,
+                "fin_year" INTEGER NOT NULL,
+                "vanakkam" INTEGER NOT NULL DEFAULT 1,
+                "pattiyal_vagai" TEXT NOT NULL DEFAULT 'tax-invoice',
+                "vaangunar_id" INTEGER NULL,
+                "vaangunar_peyar" TEXT NOT NULL DEFAULT '{}',
+                "vaangunar_munvari" TEXT NOT NULL DEFAULT '{}',
+                "pattiyal_naal" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "tharavugal" TEXT NOT NULL DEFAULT '[]',
+                "motha_thogai" REAL NOT NULL DEFAULT 0.0,
+                "thallupadi" REAL NOT NULL DEFAULT 0.0,
+                "podhu_thallupadi_mathippu" REAL NOT NULL DEFAULT 0.0,
+                "podhu_thallupadi_vagai" TEXT NOT NULL DEFAULT '%',
+                "podhu_thallupadi_thogai" REAL NOT NULL DEFAULT 0.0,
+                "vari_thogai" REAL NOT NULL DEFAULT 0.0,
+                "vari_tharavugal" TEXT NOT NULL DEFAULT '{}',
+                "sontha_viruppangal" TEXT NOT NULL DEFAULT '{}',
+                "nibandhanaigal" TEXT NOT NULL DEFAULT '',
+                "ullkurippu" TEXT NOT NULL DEFAULT '',
+                "created_at" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "updated_at" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "is_deleted" INTEGER NOT NULL DEFAULT 0 CHECK ("is_deleted" IN (0, 1)),
+                "deleted_at" INTEGER NULL
+            )
+            """.trimIndent()
+        }
 
         val createPatrugalSql = """
             CREATE TABLE IF NOT EXISTS "$patrugalTable" (
@@ -608,30 +640,56 @@ class DesktopBusinessDatabaseHelper : BusinessDatabaseHelper {
                 val naalSec = if (invoice.pattiyalNaal > 10000000000L) invoice.pattiyalNaal / 1000 else invoice.pattiyalNaal
                 val isUpdate = invoice.id > 0L
 
-                val sql = if (isUpdate) {
-                    """
-                    UPDATE $tableName SET
-                        niruvanam_id = ?, patrucheettu_en = ?, fin_year = ?, vanakkam = ?, pattiyal_vagai = ?,
-                        vaangunar_id = ?, vaangunar_peyar = ?, vaangunar_munvari = ?, pattiyal_naal = ?,
-                        tharavugal = ?, motha_thogai = ?, thallupadi = ?, podhu_thallupadi_mathippu = ?,
-                        podhu_thallupadi_vagai = ?, podhu_thallupadi_thogai = ?, vari_thogai = ?, vari_tharavugal = ?,
-                        motha_edai = ?, setharam_grams = ?, thabaal_thogai = ?, ahimsa_pattu_thogai = ?,
-                        piravari_vugal = ?, sontha_viruppangal = ?, nibandhanaigal = ?, ullkurippu = ?,
-                        vangi_tharavugal = ?, updated_at = ?, is_deleted = ?, deleted_at = ?
-                    WHERE id = ?
-                    """.trimIndent()
+                val sql = if (mode == AppMode.KOOLI) {
+                    if (isUpdate) {
+                        """
+                        UPDATE $tableName SET
+                            niruvanam_id = ?, patrucheettu_en = ?, fin_year = ?, vanakkam = ?, pattiyal_vagai = ?,
+                            vaangunar_id = ?, vaangunar_peyar = ?, vaangunar_munvari = ?, pattiyal_naal = ?,
+                            tharavugal = ?, motha_thogai = ?, thallupadi = ?, podhu_thallupadi_mathippu = ?,
+                            podhu_thallupadi_vagai = ?, podhu_thallupadi_thogai = ?, vari_thogai = ?, vari_tharavugal = ?,
+                            motha_edai = ?, setharam_grams = ?, thabaal_thogai = ?, ahimsa_pattu_thogai = ?,
+                            piravari_vugal = ?, sontha_viruppangal = ?, nibandhanaigal = ?, ullkurippu = ?,
+                            vangi_tharavugal = ?, updated_at = ?, is_deleted = ?, deleted_at = ?
+                        WHERE id = ?
+                        """.trimIndent()
+                    } else {
+                        """
+                        INSERT INTO $tableName (
+                            niruvanam_id, patrucheettu_en, fin_year, vanakkam, pattiyal_vagai,
+                            vaangunar_id, vaangunar_peyar, vaangunar_munvari, pattiyal_naal,
+                            tharavugal, motha_thogai, thallupadi, podhu_thallupadi_mathippu,
+                            podhu_thallupadi_vagai, podhu_thallupadi_thogai, vari_thogai, vari_tharavugal,
+                            motha_edai, setharam_grams, thabaal_thogai, ahimsa_pattu_thogai,
+                            piravari_vugal, sontha_viruppangal, nibandhanaigal, ullkurippu,
+                            vangi_tharavugal, created_at, updated_at, is_deleted, deleted_at
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """.trimIndent()
+                    }
                 } else {
-                    """
-                    INSERT INTO $tableName (
-                        niruvanam_id, patrucheettu_en, fin_year, vanakkam, pattiyal_vagai,
-                        vaangunar_id, vaangunar_peyar, vaangunar_munvari, pattiyal_naal,
-                        tharavugal, motha_thogai, thallupadi, podhu_thallupadi_mathippu,
-                        podhu_thallupadi_vagai, podhu_thallupadi_thogai, vari_thogai, vari_tharavugal,
-                        motha_edai, setharam_grams, thabaal_thogai, ahimsa_pattu_thogai,
-                        piravari_vugal, sontha_viruppangal, nibandhanaigal, ullkurippu,
-                        vangi_tharavugal, created_at, updated_at, is_deleted, deleted_at
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """.trimIndent()
+                    if (isUpdate) {
+                        """
+                        UPDATE $tableName SET
+                            niruvanam_id = ?, patrucheettu_en = ?, fin_year = ?, vanakkam = ?, pattiyal_vagai = ?,
+                            vaangunar_id = ?, vaangunar_peyar = ?, vaangunar_munvari = ?, pattiyal_naal = ?,
+                            tharavugal = ?, motha_thogai = ?, thallupadi = ?, podhu_thallupadi_mathippu = ?,
+                            podhu_thallupadi_vagai = ?, podhu_thallupadi_thogai = ?, vari_thogai = ?, vari_tharavugal = ?,
+                            sontha_viruppangal = ?, nibandhanaigal = ?, ullkurippu = ?,
+                            updated_at = ?, is_deleted = ?, deleted_at = ?
+                        WHERE id = ?
+                        """.trimIndent()
+                    } else {
+                        """
+                        INSERT INTO $tableName (
+                            niruvanam_id, patrucheettu_en, fin_year, vanakkam, pattiyal_vagai,
+                            vaangunar_id, vaangunar_peyar, vaangunar_munvari, pattiyal_naal,
+                            tharavugal, motha_thogai, thallupadi, podhu_thallupadi_mathippu,
+                            podhu_thallupadi_vagai, podhu_thallupadi_thogai, vari_thogai, vari_tharavugal,
+                            sontha_viruppangal, nibandhanaigal, ullkurippu,
+                            created_at, updated_at, is_deleted, deleted_at
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """.trimIndent()
+                    }
                 }
 
                 conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS).use { stmt ->
@@ -653,15 +711,19 @@ class DesktopBusinessDatabaseHelper : BusinessDatabaseHelper {
                     stmt.setDouble(idx++, invoice.podhuThallupadiThogai)
                     stmt.setDouble(idx++, invoice.variThogai)
                     stmt.setString(idx++, invoice.variTharavugal)
-                    stmt.setDouble(idx++, invoice.mothaEdai)
-                    stmt.setDouble(idx++, invoice.setharamGrams)
-                    stmt.setDouble(idx++, invoice.thabaalThogai)
-                    stmt.setDouble(idx++, invoice.ahimsaPattuThogai)
-                    stmt.setString(idx++, invoice.piravariVugal)
+                    if (mode == AppMode.KOOLI) {
+                        stmt.setDouble(idx++, invoice.mothaEdai)
+                        stmt.setDouble(idx++, invoice.setharamGrams)
+                        stmt.setDouble(idx++, invoice.thabaalThogai)
+                        stmt.setDouble(idx++, invoice.ahimsaPattuThogai)
+                        stmt.setString(idx++, invoice.piravariVugal)
+                    }
                     stmt.setString(idx++, invoice.sonthaViruppangal)
                     stmt.setString(idx++, invoice.nibandhanaigal)
                     stmt.setString(idx++, invoice.ullkurippu)
-                    stmt.setString(idx++, invoice.vangiTharavugal)
+                    if (mode == AppMode.KOOLI) {
+                        stmt.setString(idx++, invoice.vangiTharavugal)
+                    }
 
                     if (!isUpdate) {
                         val createdSec = if (invoice.createdAt > 10000000000L) invoice.createdAt / 1000 else if (invoice.createdAt > 0L) invoice.createdAt else nowSec

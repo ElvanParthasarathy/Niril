@@ -39,6 +39,85 @@ class AndroidSettingsDatabaseHelper : SettingsDatabaseHelper {
         return report
     }
 
+    private fun ensureTables(db: SQLiteDatabase, mode: AppMode) {
+        val tableName = if (mode == AppMode.KOOLI) "kooli_niruvana_tharavugal_table" else "pattu_niruvana_tharavugal_table"
+        val sql = if (mode == AppMode.KOOLI) {
+            """
+            CREATE TABLE IF NOT EXISTS "$tableName" (
+                "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                "niruvanathin_peyar" TEXT NOT NULL DEFAULT '{}',
+                "kurum_peyar" TEXT NOT NULL DEFAULT '',
+                "tholaipaesi1" TEXT NOT NULL DEFAULT '',
+                "tholaipaesi2" TEXT NOT NULL DEFAULT '',
+                "minnanjal" TEXT NOT NULL DEFAULT '',
+                "gstin" TEXT NOT NULL DEFAULT '',
+                "mugavari" TEXT NOT NULL DEFAULT '{}',
+                "oor" TEXT NOT NULL DEFAULT '{}',
+                "maavattam" TEXT NOT NULL DEFAULT '{}',
+                "maanilam" TEXT NOT NULL DEFAULT '{}',
+                "naadu" TEXT NOT NULL DEFAULT '{"en": "India", "ta": "இந்தியா"}',
+                "anjal_kuriyeedu" TEXT NOT NULL DEFAULT '',
+                "vangi_peyar" TEXT NOT NULL DEFAULT '{}',
+                "kilai" TEXT NOT NULL DEFAULT '{}',
+                "vangi_kanakku" TEXT NOT NULL DEFAULT '',
+                "ifsc" TEXT NOT NULL DEFAULT '',
+                "oavuru" TEXT NOT NULL DEFAULT '',
+                "agala_oavuru" TEXT NOT NULL DEFAULT '',
+                "thalaippu_vadivu" TEXT NOT NULL DEFAULT 'small',
+                "kaiyoppam" TEXT NOT NULL DEFAULT '',
+                "oppam_peyar" TEXT NOT NULL DEFAULT '',
+                "adaimozhi" TEXT NOT NULL DEFAULT '{}',
+                "upi_id" TEXT NOT NULL DEFAULT '',
+                "thoatra_niram" TEXT NOT NULL DEFAULT '',
+                "created_at" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "updated_at" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "is_deleted" INTEGER NOT NULL DEFAULT 0 CHECK ("is_deleted" IN (0, 1)),
+                "deleted_at" INTEGER NULL
+            )
+            """.trimIndent()
+        } else {
+            """
+            CREATE TABLE IF NOT EXISTS "$tableName" (
+                "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                "mudhan_mozhi" TEXT NOT NULL DEFAULT 'ta',
+                "thunai_mozhi" TEXT NOT NULL DEFAULT 'en',
+                "iru_mozhi" INTEGER NOT NULL DEFAULT 0 CHECK ("iru_mozhi" IN (0, 1)),
+                "gst_pirippugal" INTEGER NOT NULL DEFAULT 0 CHECK ("gst_pirippugal" IN (0, 1)),
+                "niruvanathin_peyar" TEXT NOT NULL DEFAULT '{}',
+                "kurum_peyar" TEXT NOT NULL DEFAULT '',
+                "tholaipaesi1" TEXT NOT NULL DEFAULT '',
+                "tholaipaesi2" TEXT NOT NULL DEFAULT '',
+                "minnanjal" TEXT NOT NULL DEFAULT '',
+                "gstin" TEXT NOT NULL DEFAULT '',
+                "mugavari" TEXT NOT NULL DEFAULT '{}',
+                "oor" TEXT NOT NULL DEFAULT '{}',
+                "maavattam" TEXT NOT NULL DEFAULT '{}',
+                "maanilam" TEXT NOT NULL DEFAULT '{}',
+                "naadu" TEXT NOT NULL DEFAULT '{"en": "India", "ta": "இந்தியா"}',
+                "anjal_kuriyeedu" TEXT NOT NULL DEFAULT '',
+                "vangi_peyar" TEXT NOT NULL DEFAULT '{}',
+                "kilai" TEXT NOT NULL DEFAULT '{}',
+                "vangi_kanakku" TEXT NOT NULL DEFAULT '',
+                "ifsc" TEXT NOT NULL DEFAULT '',
+                "oavuru" TEXT NOT NULL DEFAULT '',
+                "agala_oavuru" TEXT NOT NULL DEFAULT '',
+                "thalaippu_vadivu" TEXT NOT NULL DEFAULT 'small',
+                "kaiyoppam" TEXT NOT NULL DEFAULT '',
+                "oppam_peyar" TEXT NOT NULL DEFAULT '',
+                "adaimozhi" TEXT NOT NULL DEFAULT '{}',
+                "upi_id" TEXT NOT NULL DEFAULT '',
+                "thoatra_niram" TEXT NOT NULL DEFAULT '',
+                "created_at" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "updated_at" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "is_deleted" INTEGER NOT NULL DEFAULT 0 CHECK ("is_deleted" IN (0, 1)),
+                "deleted_at" INTEGER NULL
+            )
+            """.trimIndent()
+        }
+        db.execSQL(sql)
+        ensureColumns(db, tableName)
+    }
+
     override fun loadProfile(mode: AppMode, profileId: Long?): NiruvanaTharavugal? {
         val dbName = if (mode == AppMode.KOOLI) coolieDbName else silkDbName
         val tableName = if (mode == AppMode.KOOLI) "kooli_niruvana_tharavugal_table" else "pattu_niruvana_tharavugal_table"
@@ -47,7 +126,8 @@ class AndroidSettingsDatabaseHelper : SettingsDatabaseHelper {
         var db: SQLiteDatabase? = null
         var cursor: Cursor? = null
         try {
-            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
+            ensureTables(db, mode)
             val sql = if (profileId != null) {
                 "SELECT * FROM $tableName WHERE id = ? AND is_deleted = 0 LIMIT 1"
             } else {
@@ -76,7 +156,8 @@ class AndroidSettingsDatabaseHelper : SettingsDatabaseHelper {
         var db: SQLiteDatabase? = null
         var cursor: Cursor? = null
         try {
-            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
+            ensureTables(db, mode)
             cursor = db.rawQuery("SELECT * FROM $tableName WHERE is_deleted = 0 ORDER BY id ASC", null)
             while (cursor.moveToNext()) {
                 list.add(cursorToProfile(cursor, mode))
@@ -126,8 +207,8 @@ class AndroidSettingsDatabaseHelper : SettingsDatabaseHelper {
 
         var db: SQLiteDatabase? = null
         try {
-            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
-            ensureColumns(db, tableName)
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
+            ensureTables(db, mode)
 
             val values = ContentValues().apply {
                 put("niruvanathin_peyar", MozhiJsonConverter.stringify(profile.niruvanathinPeyar))
@@ -156,12 +237,10 @@ class AndroidSettingsDatabaseHelper : SettingsDatabaseHelper {
                 put("thoatra_niram", profile.thoatraNiram)
                 put("updated_at", System.currentTimeMillis() / 1000)
 
-                if (mode == AppMode.PATTU) {
-                    put("mudhan_mozhi", profile.mudhanMozhi)
-                    put("thunai_mozhi", profile.thunaiMozhi)
-                    put("iru_mozhi", if (profile.iruMozhi) 1 else 0)
-                    put("gst_pirippugal", if (profile.gstPirippugal) 1 else 0)
-                }
+                put("mudhan_mozhi", profile.mudhanMozhi.ifEmpty { "ta" })
+                put("thunai_mozhi", profile.thunaiMozhi.ifEmpty { "en" })
+                put("iru_mozhi", if (profile.iruMozhi) 1 else 0)
+                put("gst_pirippugal", if (profile.gstPirippugal) 1 else 0)
             }
 
             var rowsAffected = if (profile.id != null && profile.id!! > 0L) {
@@ -193,7 +272,8 @@ class AndroidSettingsDatabaseHelper : SettingsDatabaseHelper {
 
         var db: SQLiteDatabase? = null
         try {
-            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
+            ensureTables(db, mode)
             val values = ContentValues().apply {
                 put("is_deleted", 1)
                 put("updated_at", System.currentTimeMillis() / 1000)
@@ -215,7 +295,8 @@ class AndroidSettingsDatabaseHelper : SettingsDatabaseHelper {
 
         var db: SQLiteDatabase? = null
         return try {
-            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
+            ensureTables(db, mode)
             db.delete(tableName, null, null)
             true
         } catch (e: Exception) {
@@ -240,11 +321,10 @@ class AndroidSettingsDatabaseHelper : SettingsDatabaseHelper {
             return if (idx >= 0 && !cursor.isNull(idx)) cursor.getInt(idx) else defaultVal
         }
 
-        val isPattu = mode == AppMode.PATTU
-        val mudhan = if (isPattu) getString("mudhan_mozhi").ifEmpty { "ta" } else "ta"
-        val thunai = if (isPattu) getString("thunai_mozhi").ifEmpty { "en" } else "en"
-        val iru = if (isPattu) getInt("iru_mozhi", 1) == 1 else true
-        val gstPirippugal = if (isPattu) getInt("gst_pirippugal", 0) == 1 else false
+        val mudhan = getString("mudhan_mozhi").ifEmpty { "ta" }
+        val thunai = getString("thunai_mozhi").ifEmpty { "en" }
+        val iru = getInt("iru_mozhi", 1) == 1
+        val gstPirippugal = getInt("gst_pirippugal", 0) == 1
 
         return NiruvanaTharavugal(
             id = getLong("id"),
@@ -275,7 +355,7 @@ class AndroidSettingsDatabaseHelper : SettingsDatabaseHelper {
             oppamPeyar = getString("oppam_peyar"),
             adaimozhi = MozhiJsonConverter.parse(getString("adaimozhi")),
             upiId = getString("upi_id"),
-            thoatraNiram = getString("thoatra_niram").ifEmpty { if (isPattu) "#6a1b9a" else "#388e3c" }
+            thoatraNiram = getString("thoatra_niram").ifEmpty { if (mode == AppMode.PATTU) "#6a1b9a" else "#388e3c" }
         )
     }
 }

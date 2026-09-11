@@ -48,14 +48,18 @@ fun PattiyalPaarvaiScreen(
     val ff = LocalAppFontFamily.current
 
     val billingConfig = AchuMozhiManager.getConfig(currentMode)
+    val isBilingual = if (currentMode == AppMode.KOOLI) true else billingConfig.isBilingual
     val primaryLang = billingConfig.primaryLanguage.code
+    val secondaryLang = billingConfig.secondaryLanguage.code
 
     val customerName = invoice.vaangunarPeyar[primaryLang]
-        ?: invoice.vaangunarPeyar["ta"]
+        ?: invoice.vaangunarPeyar[secondaryLang]
         ?: invoice.vaangunarPeyar.values.firstOrNull().orEmpty().ifEmpty { "-" }
 
+    val secondaryCustomerName = if (isBilingual) (invoice.vaangunarPeyar[secondaryLang] ?: "") else ""
+
     val customerTown = invoice.vaangunarMunvari[primaryLang]
-        ?: invoice.vaangunarMunvari["ta"]
+        ?: invoice.vaangunarMunvari[secondaryLang]
         ?: invoice.vaangunarMunvari.values.firstOrNull().orEmpty()
 
     AppBackHandler(enabled = true) {
@@ -116,6 +120,18 @@ fun PattiyalPaarvaiScreen(
                                     letterSpacing = (-0.2).sp
                                 )
                             )
+                            if (isBilingual && secondaryCustomerName.isNotBlank() && secondaryCustomerName != customerName) {
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = secondaryCustomerName.preventBrokenLigatures(),
+                                    style = TextStyle(
+                                        fontFamily = ff,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Medium,
+                                        color = if (isDark) Color.White.copy(alpha = 0.54f) else Color.Black.copy(alpha = 0.54f)
+                                    )
+                                )
+                            }
                             if (customerTown.isNotBlank()) {
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(

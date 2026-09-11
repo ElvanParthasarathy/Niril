@@ -74,7 +74,8 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
             )
         """.trimIndent()
 
-        val createPattiyalSql = """
+        val createPattiyalSql = if (mode == AppMode.KOOLI) {
+            """
             CREATE TABLE IF NOT EXISTS "$pattiyalTable" (
                 "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                 "niruvanam_id" INTEGER NULL,
@@ -108,7 +109,38 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
                 "is_deleted" INTEGER NOT NULL DEFAULT 0 CHECK ("is_deleted" IN (0, 1)),
                 "deleted_at" INTEGER NULL
             )
-        """.trimIndent()
+            """.trimIndent()
+        } else {
+            """
+            CREATE TABLE IF NOT EXISTS "$pattiyalTable" (
+                "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                "niruvanam_id" INTEGER NULL,
+                "patrucheettu_en" TEXT NOT NULL,
+                "fin_year" INTEGER NOT NULL,
+                "vanakkam" INTEGER NOT NULL DEFAULT 1,
+                "pattiyal_vagai" TEXT NOT NULL DEFAULT 'tax-invoice',
+                "vaangunar_id" INTEGER NULL,
+                "vaangunar_peyar" TEXT NOT NULL DEFAULT '{}',
+                "vaangunar_munvari" TEXT NOT NULL DEFAULT '{}',
+                "pattiyal_naal" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "tharavugal" TEXT NOT NULL DEFAULT '[]',
+                "motha_thogai" REAL NOT NULL DEFAULT 0.0,
+                "thallupadi" REAL NOT NULL DEFAULT 0.0,
+                "podhu_thallupadi_mathippu" REAL NOT NULL DEFAULT 0.0,
+                "podhu_thallupadi_vagai" TEXT NOT NULL DEFAULT '%',
+                "podhu_thallupadi_thogai" REAL NOT NULL DEFAULT 0.0,
+                "vari_thogai" REAL NOT NULL DEFAULT 0.0,
+                "vari_tharavugal" TEXT NOT NULL DEFAULT '{}',
+                "sontha_viruppangal" TEXT NOT NULL DEFAULT '{}',
+                "nibandhanaigal" TEXT NOT NULL DEFAULT '',
+                "ullkurippu" TEXT NOT NULL DEFAULT '',
+                "created_at" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "updated_at" INTEGER NOT NULL DEFAULT (CAST(strftime('%s', CURRENT_TIMESTAMP) AS INTEGER)),
+                "is_deleted" INTEGER NOT NULL DEFAULT 0 CHECK ("is_deleted" IN (0, 1)),
+                "deleted_at" INTEGER NULL
+            )
+            """.trimIndent()
+        }
 
         val createPatrugalSql = """
             CREATE TABLE IF NOT EXISTS "$patrugalTable" (
@@ -579,15 +611,17 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
                 put("podhu_thallupadi_thogai", invoice.podhuThallupadiThogai)
                 put("vari_thogai", invoice.variThogai)
                 put("vari_tharavugal", invoice.variTharavugal)
-                put("motha_edai", invoice.mothaEdai)
-                put("setharam_grams", invoice.setharamGrams)
-                put("thabaal_thogai", invoice.thabaalThogai)
-                put("ahimsa_pattu_thogai", invoice.ahimsaPattuThogai)
-                put("piravari_vugal", invoice.piravariVugal)
+                if (mode == AppMode.KOOLI) {
+                    put("motha_edai", invoice.mothaEdai)
+                    put("setharam_grams", invoice.setharamGrams)
+                    put("thabaal_thogai", invoice.thabaalThogai)
+                    put("ahimsa_pattu_thogai", invoice.ahimsaPattuThogai)
+                    put("piravari_vugal", invoice.piravariVugal)
+                    put("vangi_tharavugal", invoice.vangiTharavugal)
+                }
                 put("sontha_viruppangal", invoice.sonthaViruppangal)
                 put("nibandhanaigal", invoice.nibandhanaigal)
                 put("ullkurippu", invoice.ullkurippu)
-                put("vangi_tharavugal", invoice.vangiTharavugal)
                 put("updated_at", nowSec)
                 put("is_deleted", if (invoice.isDeleted) 1 else 0)
                 if (invoice.deletedAt != null) {
@@ -862,7 +896,7 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
         var cursor: Cursor? = null
         val list = mutableListOf<PatrugalTharavuru>()
         try {
-            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
             ensureTables(db, mode)
             cursor = db.rawQuery("SELECT * FROM $tableName WHERE is_deleted = 1 ORDER BY deleted_at DESC, id DESC", null)
             while (cursor.moveToNext()) {
@@ -884,7 +918,7 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
 
         var db: SQLiteDatabase? = null
         try {
-            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
             ensureTables(db, mode)
             val nowSec = System.currentTimeMillis() / 1000
             val values = ContentValues().apply {
@@ -910,7 +944,7 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
 
         var db: SQLiteDatabase? = null
         try {
-            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
             ensureTables(db, mode)
             db.beginTransaction()
             try {
@@ -937,7 +971,7 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
 
         var db: SQLiteDatabase? = null
         try {
-            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
             ensureTables(db, mode)
             val cutoffSec = (System.currentTimeMillis() / 1000) - (days * 86400L)
             db.beginTransaction()
@@ -966,7 +1000,7 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
         var cursor: Cursor? = null
         val list = mutableListOf<PatruPattiyalInaippuTharavuru>()
         try {
-            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
             ensureTables(db, mode)
             cursor = db.rawQuery("SELECT * FROM $junctionTable WHERE patru_id = ? ORDER BY id ASC", arrayOf(patruId.toString()))
             while (cursor.moveToNext()) {
@@ -998,7 +1032,7 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
 
         var db: SQLiteDatabase? = null
         try {
-            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
             ensureTables(db, mode)
             db.beginTransaction()
             try {
@@ -1033,7 +1067,7 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
         var db: SQLiteDatabase? = null
         var cursor: Cursor? = null
         try {
-            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
             ensureTables(db, mode)
             val sql = """
                 SELECT SUM(j.poruthiya_thogai) FROM $junctionTable j
@@ -1064,7 +1098,7 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
         var db: SQLiteDatabase? = null
         var cursor: Cursor? = null
         try {
-            db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
             ensureTables(db, mode)
             val inClause = invoiceIds.joinToString(",")
             val sql = """
@@ -1310,7 +1344,7 @@ class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
         val junctionTable = if (mode == AppMode.KOOLI) "kooli_patru_pattiyal_table" else "pattu_patru_pattiyal_table"
 
         return try {
-            val db = SQLiteDatabase.openDatabase(dbFile.absolutePath, null, SQLiteDatabase.OPEN_READWRITE)
+            val db = SQLiteDatabase.openOrCreateDatabase(dbFile, null)
             db.use {
                 ensureTables(it, mode)
                 it.delete(junctionTable, null, null)

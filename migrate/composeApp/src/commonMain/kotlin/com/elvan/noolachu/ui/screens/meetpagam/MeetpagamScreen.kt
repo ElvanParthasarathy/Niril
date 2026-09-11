@@ -37,6 +37,7 @@ import com.elvan.noolachu.data.repository.PattiyalRepository
 import com.elvan.noolachu.data.repository.PatrugalRepository
 import com.elvan.noolachu.data.repository.PorulRepository
 import com.elvan.noolachu.data.repository.VaangunarRepository
+import com.elvan.noolachu.data.settings.NiruvanaTharavugalRepository
 import com.elvan.noolachu.localization.K
 import com.elvan.noolachu.localization.LocalAppLanguage
 import com.elvan.noolachu.localization.tr
@@ -154,6 +155,11 @@ fun MeetpagamScreen(
                     }
                 }
             } else {
+                val profile = NiruvanaTharavugalRepository.getProfile(mode)
+                val isBilingual = profile.iruMozhi
+                val primaryLang = profile.mudhanMozhi.ifEmpty { "ta" }
+                val secondaryLang = profile.thunaiMozhi.ifEmpty { "en" }
+
                 // 30-Day Auto-Purge Notice Banner
                 item(key = "auto_delete_banner") {
                     MeetpagamAutoPurgeBanner(isDark = isDark)
@@ -170,10 +176,8 @@ fun MeetpagamScreen(
                     }
 
                     items(deletedInvoices, key = { "invoice_${it.id}" }) { invoice ->
-                        val currentLang = LocalAppLanguage.current
-                        val customerName = invoice.vaangunarPeyar[currentLang]
-                            ?: invoice.vaangunarPeyar["ta"]
-                            ?: invoice.vaangunarPeyar["en"]
+                        val customerName = invoice.vaangunarPeyar[primaryLang]
+                            ?: invoice.vaangunarPeyar[secondaryLang]
                             ?: invoice.vaangunarPeyar.values.firstOrNull()
                             ?: ""
                         val primaryText = invoice.patrucheettuEn + if (customerName.isNotBlank()) " • $customerName" else ""
@@ -210,10 +214,8 @@ fun MeetpagamScreen(
                     }
 
                     items(deletedReceipts, key = { "receipt_${it.id}" }) { receipt ->
-                        val currentLang = LocalAppLanguage.current
-                        val customerName = receipt.vaangunarPeyar[currentLang]
-                            ?: receipt.vaangunarPeyar["ta"]
-                            ?: receipt.vaangunarPeyar["en"]
+                        val customerName = receipt.vaangunarPeyar[primaryLang]
+                            ?: receipt.vaangunarPeyar[secondaryLang]
                             ?: receipt.vaangunarPeyar.values.firstOrNull()
                             ?: ""
                         val primaryText = receipt.patruEn + if (customerName.isNotBlank()) " • $customerName" else ""
@@ -250,13 +252,12 @@ fun MeetpagamScreen(
                     }
 
                     items(deletedPorulgal, key = { "porul_${it.id}" }) { porul ->
-                        val currentLang = LocalAppLanguage.current
-                        val primaryText = porul.porulPeyar[currentLang]
+                        val primaryText = porul.porulPeyar[primaryLang]
                             ?: porul.porulPeyar["ta"]
                             ?: porul.porulPeyar["en"]
                             ?: porul.porulPeyar.values.firstOrNull()
                             ?: ""
-                        val secondaryText = if (currentLang == "ta") porul.porulPeyar["en"] else porul.porulPeyar["ta"]
+                        val secondaryText = if (isBilingual) porul.porulPeyar[secondaryLang] else null
 
                         MeetpagamCard(
                             primaryText = primaryText,
@@ -287,13 +288,12 @@ fun MeetpagamScreen(
                     }
 
                     items(deletedVaangunargal, key = { "merchant_${it.id}" }) { merchant ->
-                        val currentLang = LocalAppLanguage.current
-                        val primaryText = merchant.peyar[currentLang]
+                        val primaryText = merchant.peyar[primaryLang]
                             ?: merchant.peyar["ta"]
                             ?: merchant.peyar["en"]
                             ?: merchant.peyar.values.firstOrNull()
                             ?: ""
-                        val city = merchant.oor[currentLang] ?: merchant.oor.values.firstOrNull()
+                        val city = merchant.oor[primaryLang] ?: merchant.oor[secondaryLang] ?: merchant.oor.values.firstOrNull()
 
                         MeetpagamCard(
                             primaryText = primaryText,
