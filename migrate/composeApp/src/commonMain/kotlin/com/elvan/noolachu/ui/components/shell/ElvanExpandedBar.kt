@@ -37,7 +37,7 @@ fun ElvanExpandedBar(
             .fillMaxWidth()
             .height(expandedHeight)
     ) {
-        val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+        val statusBarHeight = com.elvan.noolachu.core.platform.getStatusBarTopPadding()
         val density = LocalDensity.current
         val screenWidth = maxWidth
         val ff = LocalAppFontFamily.current

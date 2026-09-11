@@ -66,8 +66,8 @@ fun ElvanThaedalPattai(
         }
     }
 
-    val imeBottom = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
-    val navBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val imeBottom = com.elvan.noolachu.core.platform.getImeBottomPadding()
+    val navBottom = com.elvan.noolachu.core.platform.getNavBarBottomPadding()
     val isImeOpen = imeBottom > 0.dp
     val effectiveBottomPadding = if (isImeOpen) maxOf(navBottom + 16.dp, imeBottom + 20.dp) else navBottom + 16.dp
 

@@ -1,12 +1,10 @@
 package com.elvan.noolachu.theme
 
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.elvan.noolachu.core.platform.getImeBottomPadding
+import com.elvan.noolachu.core.platform.getNavBarBottomPadding
 
 object Dimens {
     val ContentPadding = 12.dp
@@ -15,16 +13,16 @@ object Dimens {
     val ContentPaddingBottom: Dp
         @Composable
         get() {
-            val navBarsPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-            val imePadding = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
+            val navBarsPadding = getNavBarBottomPadding()
+            val imePadding = getImeBottomPadding()
             return if (imePadding > 0.dp) imePadding + 90.dp else 110.dp + navBarsPadding
         }
 
     val SubpageContentPaddingBottom: Dp
         @Composable
         get() {
-            val navBarsPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-            val imePadding = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
+            val navBarsPadding = getNavBarBottomPadding()
+            val imePadding = getImeBottomPadding()
             return if (imePadding > 0.dp) 40.dp else 32.dp + navBarsPadding
         }
 

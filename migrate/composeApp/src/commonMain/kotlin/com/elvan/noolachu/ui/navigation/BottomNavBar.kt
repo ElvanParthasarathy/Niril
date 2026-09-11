@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.elvan.noolachu.core.platform.navigationBarsPaddingIfMobile
 import com.elvan.noolachu.core.extensions.cssShadow
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.ShellColors
@@ -137,7 +138,7 @@ fun BottomNavBar(
     if (navBarAlpha > 0f) {
         Box(
             modifier = modifier
-                .windowInsetsPadding(WindowInsets.navigationBars)
+                .navigationBarsPaddingIfMobile()
                 .padding(bottom = 16.dp)
                 .graphicsLayer {
                     scaleX = containerScale

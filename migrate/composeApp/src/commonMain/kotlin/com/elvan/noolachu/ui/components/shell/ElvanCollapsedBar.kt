@@ -67,7 +67,7 @@ fun ElvanCollapsedBar(
     hasActions: Boolean = false,
     actions: @Composable RowScope.() -> Unit = {}
 ) {
-    val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    val statusBarHeight = com.elvan.noolachu.core.platform.getStatusBarTopPadding()
     val ceiling = statusBarHeight + 20.dp
     val density = LocalDensity.current
     val ceilingPx = with(density) { ceiling.toPx() }

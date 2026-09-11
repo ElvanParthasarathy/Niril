@@ -64,7 +64,7 @@ fun ElvanSnackbarHost(
         }
     }
 
-    val navBarsPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val navBarsPadding = com.elvan.noolachu.core.platform.getNavBarBottomPadding()
     // When the system 3-button navigation bar is present (>= 36.dp, typically 48.dp),
     // elevate the snackbar cleanly above the navbar with comfortable breathing room.
     // For others (gesture navigation, desktop, etc.), maintain the normal 32.dp offset.

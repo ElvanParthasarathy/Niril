@@ -59,7 +59,7 @@ fun ElvanShell(
     val isDesktop = com.elvan.noolachu.core.platform.currentPlatform == com.elvan.noolachu.core.platform.PlatformType.DESKTOP
     val expandedHeight = if (isDesktop) 130.dp else 280.dp
     val pillHeight = 50.dp
-    val statusBarHeight = if (isDesktop) 0.dp else WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    val statusBarHeight = com.elvan.noolachu.core.platform.getStatusBarTopPadding()
     val ceiling = if (isDesktop) 16.dp else statusBarHeight + 20.dp
     val density = LocalDensity.current
 
@@ -385,7 +385,7 @@ fun ElvanShell(
             }
 
             // Layer 4: Bottom Fade Mask and Navbar
-            val navBarsPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+            val navBarsPadding = com.elvan.noolachu.core.platform.getNavBarBottomPadding()
 
             if (showNavbar) {
                 // Fade mask is ALWAYS present when showNavbar is true
