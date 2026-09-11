@@ -36,6 +36,10 @@ import com.elvan.noolachu.ui.navigation.MaterialSymbols
 import com.elvan.noolachu.ui.navigation.NavTab
 import com.elvan.noolachu.ui.screens.meetpagam.MeetpagamScreen
 import com.elvan.noolachu.ui.screens.porul.PorulScreen
+import com.elvan.noolachu.ui.screens.paarvai.PatrucheettuPaarvaiScreen
+import com.elvan.noolachu.ui.screens.paarvai.PattiyalPaarvaiScreen
+import com.elvan.noolachu.ui.screens.paarvai.PorulPaarvaiScreen
+import com.elvan.noolachu.ui.screens.paarvai.VaangunarPaarvaiScreen
 import com.elvan.noolachu.ui.screens.settings.SettingsScreen
 import com.elvan.noolachu.ui.screens.thiruthi.patrucheettu.PatrucheettuThiruthiScreen
 import com.elvan.noolachu.ui.screens.thiruthi.pattiyal.KooliPattiyalThiruthiScreen
@@ -55,6 +59,10 @@ sealed class ActiveSubpage {
     data class MerchantEditor(val merchant: VaangunarTharavuru? = null) : ActiveSubpage()
     data class InvoiceEditor(val invoice: PattiyalTharavuru? = null) : ActiveSubpage()
     data class ReceiptEditor(val receipt: PatrugalTharavuru? = null) : ActiveSubpage()
+    data class CustomerView(val customer: VaangunarTharavuru) : ActiveSubpage()
+    data class ProductView(val product: PorulTharavuru) : ActiveSubpage()
+    data class InvoiceView(val invoice: PattiyalTharavuru) : ActiveSubpage()
+    data class ReceiptView(val receipt: PatrugalTharavuru) : ActiveSubpage()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -226,6 +234,42 @@ fun HomeScreen() {
                     PatrucheettuThiruthiScreen(
                         receipt = subpage.receipt,
                         onBack = { activeSubpage = null }
+                    )
+                }
+                is ActiveSubpage.CustomerView -> {
+                    VaangunarPaarvaiScreen(
+                        merchant = subpage.customer,
+                        onBack = { activeSubpage = null },
+                        onEdit = {
+                            activeSubpage = ActiveSubpage.MerchantEditor(subpage.customer)
+                        }
+                    )
+                }
+                is ActiveSubpage.ProductView -> {
+                    PorulPaarvaiScreen(
+                        item = subpage.product,
+                        onBack = { activeSubpage = null },
+                        onEdit = {
+                            activeSubpage = ActiveSubpage.ItemEditor(subpage.product)
+                        }
+                    )
+                }
+                is ActiveSubpage.InvoiceView -> {
+                    PattiyalPaarvaiScreen(
+                        invoice = subpage.invoice,
+                        onBack = { activeSubpage = null },
+                        onEdit = {
+                            activeSubpage = ActiveSubpage.InvoiceEditor(subpage.invoice)
+                        }
+                    )
+                }
+                is ActiveSubpage.ReceiptView -> {
+                    PatrucheettuPaarvaiScreen(
+                        receipt = subpage.receipt,
+                        onBack = { activeSubpage = null },
+                        onEdit = {
+                            activeSubpage = ActiveSubpage.ReceiptEditor(subpage.receipt)
+                        }
                     )
                 }
                 null -> {
@@ -455,7 +499,7 @@ fun HomeScreen() {
                                             uruvakkuSegment = 0
                                         },
                                         onInvoiceClick = { invoice ->
-                                            activeSubpage = ActiveSubpage.InvoiceEditor(invoice)
+                                            activeSubpage = ActiveSubpage.InvoiceView(invoice)
                                         }
                                     )
                                 }
@@ -491,10 +535,10 @@ fun HomeScreen() {
                                         onToggleSelect = onToggleItem,
                                         onItemLongClick = onStartSelection,
                                         onInvoiceClick = { invoice ->
-                                            activeSubpage = ActiveSubpage.InvoiceEditor(invoice)
+                                            activeSubpage = ActiveSubpage.InvoiceView(invoice)
                                         },
                                         onReceiptClick = { receipt ->
-                                            activeSubpage = ActiveSubpage.ReceiptEditor(receipt)
+                                            activeSubpage = ActiveSubpage.ReceiptView(receipt)
                                         }
                                     )
                                 }
@@ -515,7 +559,7 @@ fun HomeScreen() {
                                 ) {
                                     PorulScreen(
                                         scrollState = productsScrollState,
-                                        onItemClick = { activeSubpage = ActiveSubpage.ItemEditor(it) },
+                                        onItemClick = { activeSubpage = ActiveSubpage.ProductView(it) },
                                         isSelectionMode = isSelectionMode,
                                         selectedItemIds = selectedItemIds,
                                         onToggleSelect = onToggleItem,
@@ -539,7 +583,7 @@ fun HomeScreen() {
                                 ) {
                                     VaangunarScreen(
                                         scrollState = customersScrollState,
-                                        onMerchantClick = { activeSubpage = ActiveSubpage.MerchantEditor(it) },
+                                        onMerchantClick = { activeSubpage = ActiveSubpage.CustomerView(it) },
                                         isSelectionMode = isSelectionMode,
                                         selectedItemIds = selectedItemIds,
                                         onToggleSelect = onToggleItem,

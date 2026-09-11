@@ -121,6 +121,18 @@ object MaterialSymbols {
         val BrokenImage: ImageVector get() = LibSymbols.Rounded.Broken_image
         val PhotoLibrary: ImageVector get() = LibSymbols.Rounded.Photo_library
         val FolderOpen: ImageVector get() = LibSymbols.Rounded.Folder_open
+        val Call: ImageVector by lazy {
+            symbol("Call", "M798-120q-125 0-247-54.5T329-329Q229-429 174.5-551T120-798q0-18 12-30t30-12h162q14 0 25 9.5t13 22.5l26 140q2 16-1 27t-11 19l-97 98q20 37 47 71.5t57 62.5q31 31 64.5 57.5T490-298l96-98q10-10 23-14.5t27-1.5l138 28q14 4 23.5 14.5T808-346v184q0 18-12 30t-30 12Z")
+        }
+        val Percent: ImageVector by lazy {
+            symbol("Percent", "M280-560q-33 0-56.5-23.5T200-640q0-33 23.5-56.5T280-760q33 0 56.5 23.5T360-640q0 33-23.5 56.5T280-560Zm400 360q-33 0-56.5-23.5T600-280q0-33 23.5-56.5T680-400q33 0 56.5 23.5T760-320q0 33-23.5 56.5T680-200ZM274-200l-54-54 506-506 54 54-506 506Z")
+        }
+        val Straighten: ImageVector by lazy {
+            symbol("Straighten", "M120-240v-480h720v480H120Zm80-80h80v-160h80v160h80v-240h80v240h80v-160h80v160h80v-320H200v320Z")
+        }
+        val LocalShipping: ImageVector by lazy {
+            symbol("LocalShipping", "M240-200q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Zm480 0q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35ZM120-440h80v-80H80q-17 0-28.5-11.5T40-560v-200q0-17 11.5-28.5T80-800h560q17 0 28.5 11.5T680-760v80h120l120 160v240h-80q0-83-58.5-141.5T720-480q-83 0-141.5 58.5T520-280H440q0-83-58.5-141.5T240-480q-83 0-141.5 58.5T40-280H0v-160h120Zm480-80v-200H120v200h480Zm80 0h140l-75-100h-65v100Z")
+        }
     }
 
     /**

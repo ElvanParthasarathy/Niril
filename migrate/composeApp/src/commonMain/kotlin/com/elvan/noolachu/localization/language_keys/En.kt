@@ -418,4 +418,5 @@ val en: Map<String, String> = mapOf(
     K.tholkaappiyaNerigal to "Tolkappiyam Phonetic Rules",
     K.ezhezhuthukkal to "Characters",
     K.cholEnnikkai to "Words",
+    K.achadiPtn to "Print",
 )

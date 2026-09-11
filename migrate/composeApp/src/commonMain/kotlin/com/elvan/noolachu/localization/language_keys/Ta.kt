@@ -325,7 +325,7 @@ val ta: Map<String, String> = mapOf(
     K.patrucheettuEnYaerkanavaeUlladhu to "பற்றுச்சீட்டு எண் ஏற்கனவே உள்ளது!",
     K.patrucheettuEnnikai to "பற்றுச்சீட்டு எண்ணிக்கை",
     K.patrucheettuNaal to "பற்றுச்சீட்டு நாள்",
-    K.patrucheettuTharavugal to "பற்றுச்சீட்டு தரவுகள்",
+    K.patrucheettuTharavugal to "பற்றுச்சீட்டுத் தரவுகள்",
     K.patrucheettuVagai to "பற்றுச்சீட்டு வகை",
     K.patrucheettugal to "பற்றுச்சீட்டுகள்",
     K.pattiyalPatrucheettuMozhi to "பட்டியல் & பற்றுச்சீட்டு மொழி",
@@ -419,6 +419,7 @@ val ta: Map<String, String> = mapOf(
     K.tholkaappiyaNerigal to "தொல்காப்பிய நெறிகள்",
     K.ezhezhuthukkal to "எழுத்துகள்",
     K.cholEnnikkai to "சொற்கள்",
+    K.achadiPtn to "அச்சிடு",
 )
 
 /**

@@ -418,4 +418,5 @@ object K {
     const val tholkaappiyaNerigal = "tholkaappiyaNerigal"
     const val ezhezhuthukkal = "ezhezhuthukkal"
     const val cholEnnikkai = "cholEnnikkai"
+    const val achadiPtn = "achadiPtn"
 }
