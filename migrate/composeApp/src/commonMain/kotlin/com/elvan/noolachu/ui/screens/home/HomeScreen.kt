@@ -15,6 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.elvan.noolachu.core.mode.LocalAppMode
 import com.elvan.noolachu.core.platform.AppBackHandler
+import com.elvan.noolachu.core.platform.PlatformType
+import com.elvan.noolachu.core.platform.currentPlatform
+import com.elvan.noolachu.ui.screens.home.kanini.ElvanKaniniPakkapattai
 import com.elvan.noolachu.data.model.PatrugalTharavuru
 import com.elvan.noolachu.data.model.PattiyalTharavuru
 import com.elvan.noolachu.data.model.PorulTharavuru
@@ -157,16 +160,40 @@ fun HomeScreen() {
         NavTab.Customers -> VaangunarRepository.searchQuery
     }
 
-    Box(
+    val isDesktop = currentPlatform == PlatformType.DESKTOP
+
+    BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .background(colors.background)
     ) {
-        AnimatedContent(
-            targetState = activeSubpage,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(colors.background),
+        val isWideScreen = isDesktop && maxWidth >= 768.dp
+
+        Row(modifier = Modifier.fillMaxSize()) {
+            if (isWideScreen) {
+                ElvanKaniniPakkapattai(
+                    selectedTab = selectedTab,
+                    onTabSelected = { tab ->
+                        selectedTab = tab
+                        activeSubpage = null
+                    },
+                    onSettingsClick = {
+                        activeSubpage = ActiveSubpage.Settings
+                    },
+                    colors = colors
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+            ) {
+                AnimatedContent(
+                    targetState = activeSubpage,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(colors.background),
             transitionSpec = {
                 if (targetState != null) {
                     slideIntoContainer(
@@ -276,6 +303,7 @@ fun HomeScreen() {
                     ElvanShell(
                         scrollState = currentScrollState,
                         title = selectedTab.getLocalizedHeader(),
+                        showNavbar = !isWideScreen,
                         hasActions = !isSearchActive,
                         actions = {
                             if (selectedTab != NavTab.Home) {
@@ -645,6 +673,8 @@ fun HomeScreen() {
                 },
                 colors = colors
             )
+        }
+            }
         }
     }
 }

@@ -419,4 +419,9 @@ val en: Map<String, String> = mapOf(
     K.ezhezhuthukkal to "Characters",
     K.cholEnnikkai to "Words",
     K.achadiPtn to "Print",
+
+    // Permission Guard
+    K.chaemippagaAnumadhiThaevai to "Storage Permission Required",
+    K.chaemippagaAnumadhiVilakkam to "This permission is needed to save backups and invoices.",
+    K.anumadhiVazhanguPtn to "Grant Permission",
 )

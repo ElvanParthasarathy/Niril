@@ -56,16 +56,17 @@ fun ElvanShell(
     var isNavbarVisible by remember { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()
 
-    val expandedHeight = 280.dp
+    val isDesktop = com.elvan.noolachu.core.platform.currentPlatform == com.elvan.noolachu.core.platform.PlatformType.DESKTOP
+    val expandedHeight = if (isDesktop) 130.dp else 280.dp
     val pillHeight = 50.dp
-    val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    val ceiling = statusBarHeight + 20.dp
+    val statusBarHeight = if (isDesktop) 0.dp else WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    val ceiling = if (isDesktop) 16.dp else statusBarHeight + 20.dp
     val density = LocalDensity.current
 
     val collisionOffsetDp = expandedHeight - (ceiling + pillHeight)
     val collisionOffsetPx = with(density) { collisionOffsetDp.toPx() }
 
-    val handoffShrinkOffsetDp = 196.dp - statusBarHeight
+    val handoffShrinkOffsetDp = if (isDesktop) 50.dp else (196.dp - statusBarHeight)
     val handoffShrinkOffsetPx = with(density) { handoffShrinkOffsetDp.toPx() }
 
     val globalHeaderExpanded = LocalGlobalHeaderExpanded.current

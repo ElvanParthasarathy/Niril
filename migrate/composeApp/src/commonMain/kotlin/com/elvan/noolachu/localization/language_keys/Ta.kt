@@ -420,6 +420,11 @@ val ta: Map<String, String> = mapOf(
     K.ezhezhuthukkal to "எழுத்துகள்",
     K.cholEnnikkai to "சொற்கள்",
     K.achadiPtn to "அச்சிடு",
+
+    // Permission Guard
+    K.chaemippagaAnumadhiThaevai to "சேமிப்பக அனுமதி தேவை",
+    K.chaemippagaAnumadhiVilakkam to "காப்புப்பிரதி மற்றும் பட்டியல்களைச் சேமிக்க இந்த அனுமதி தேவை.",
+    K.anumadhiVazhanguPtn to "அனுமதி வழங்கு",
 )
 
 /**

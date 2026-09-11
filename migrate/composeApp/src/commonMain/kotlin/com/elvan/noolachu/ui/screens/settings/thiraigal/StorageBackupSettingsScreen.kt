@@ -31,6 +31,7 @@ import com.elvan.noolachu.theme.rememberShellColors
 import com.elvan.noolachu.ui.components.shell.*
 import com.elvan.noolachu.ui.navigation.AppSvgs
 import com.elvan.noolachu.ui.navigation.MaterialSymbols
+import com.elvan.noolachu.core.backup.getNirilBackupService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -46,15 +47,19 @@ fun StorageBackupSettingsScreen(
 ) {
     val ff = LocalAppFontFamily.current
     val scope = rememberCoroutineScope()
+    val backupService = remember { getNirilBackupService() }
 
     var showBackupConfirm by remember { mutableStateOf(false) }
     var isBackingUp by remember { mutableStateOf(false) }
-    var lastBackupTime by remember { mutableStateOf<String?>(null) }
+    var backupStats by remember { mutableStateOf(backupService.getBackupStats()) }
+    var totalDbSize by remember { mutableStateOf(backupService.getTotalDatabaseSize().coerceAtLeast(128 * 1024L)) }
+    var lastBackupTime by remember { 
+        mutableStateOf(
+            if (backupStats != null) "உள்ளது" else null
+        ) 
+    }
     val backupSuccessMsg = K.tharavuchaemippuvetri.tr()
-
-    // Mock live database sizes & counts matching Flutter
-    val totalDbSize = 512 * 1024L // 512 KB
-    val backupSize = 256 * 1024L // 256 KB
+    val backupSize = backupStats?.sizeBytes ?: 0L
 
     fun formatBytes(bytes: Long): String {
         if (bytes <= 0) return "0 B"
@@ -69,6 +74,7 @@ fun StorageBackupSettingsScreen(
 
     val maxSpace = 1024.0 * 1024.0 * 1024.0 // 1 GB
     val progress = (totalDbSize / maxSpace).toFloat().coerceIn(0.02f, 1f)
+
 
     LazyColumn(
         state = scrollState,
@@ -302,10 +308,17 @@ fun StorageBackupSettingsScreen(
                 showBackupConfirm = false
                 isBackingUp = true
                 scope.launch {
-                    delay(800)
+                    delay(300)
+                    val success = backupService.createBackup()
                     isBackingUp = false
-                    lastBackupTime = "இன்று"
-                    ElvanSnackbar.show(backupSuccessMsg)
+                    if (success) {
+                        backupStats = backupService.getBackupStats()
+                        totalDbSize = backupService.getTotalDatabaseSize().coerceAtLeast(128 * 1024L)
+                        lastBackupTime = "இன்று"
+                        ElvanSnackbar.show(backupSuccessMsg)
+                    } else {
+                        ElvanSnackbar.show("காப்புப்பிரதி தோல்வியடைந்தது")
+                    }
                 }
             },
             colors = colors

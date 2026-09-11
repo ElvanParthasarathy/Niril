@@ -419,4 +419,9 @@ object K {
     const val ezhezhuthukkal = "ezhezhuthukkal"
     const val cholEnnikkai = "cholEnnikkai"
     const val achadiPtn = "achadiPtn"
+
+    // Permission Guard
+    const val chaemippagaAnumadhiThaevai = "chaemippagaAnumadhiThaevai"
+    const val chaemippagaAnumadhiVilakkam = "chaemippagaAnumadhiVilakkam"
+    const val anumadhiVazhanguPtn = "anumadhiVazhanguPtn"
 }
