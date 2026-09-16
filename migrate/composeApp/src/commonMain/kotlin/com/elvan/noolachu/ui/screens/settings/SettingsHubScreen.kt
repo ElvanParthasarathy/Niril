@@ -27,6 +27,7 @@ import com.elvan.noolachu.core.mode.ModeManager
 import com.elvan.noolachu.localization.K
 import com.elvan.noolachu.localization.tr
 import com.elvan.noolachu.theme.Dimens
+import com.elvan.noolachu.theme.FontManager
 import com.elvan.noolachu.theme.LocalAppFontFamily
 import com.elvan.noolachu.theme.ShellColors
 import com.elvan.noolachu.theme.ShellDefaults
@@ -201,7 +202,7 @@ fun SettingsHubScreen(
                     ElvanSettingsRow(
                         icon = MaterialSymbols.Rounded.LightMode,
                         title = K.thirai.tr(),
-                        description = K.olirIrulThaaniyangu.tr(),
+                        description = "${K.olirIrulThaaniyangu.tr()} • ${FontManager.currentFont.displayName}",
                         onClick = { onNavigate(SettingsRoute.Display) },
                         colors = colors
                     )

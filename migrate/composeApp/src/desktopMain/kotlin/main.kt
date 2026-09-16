@@ -17,6 +17,7 @@ fun main() {
     application {
         com.elvan.noolachu.localization.LanguageManager.init()
         com.elvan.noolachu.theme.ThemeManager.init()
+        com.elvan.noolachu.theme.FontManager.init()
 
         Window(
             onCloseRequest = ::exitApplication,

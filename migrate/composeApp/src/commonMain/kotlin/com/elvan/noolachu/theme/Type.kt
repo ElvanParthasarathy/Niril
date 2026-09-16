@@ -7,9 +7,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 /**
- * Creates full Material3 Typography using Elvan Sans typeface.
+ * Creates full Material3 Typography using specified typeface.
  */
-private fun createTypography(fontFamily: FontFamily) = Typography(
+fun createTypography(fontFamily: FontFamily) = Typography(
     // Display
     displayLarge = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Normal, fontSize = 57.sp, lineHeight = 64.sp, letterSpacing = (-0.25).sp),
     displayMedium = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Normal, fontSize = 45.sp, lineHeight = 52.sp, letterSpacing = 0.sp),
@@ -32,4 +32,4 @@ private fun createTypography(fontFamily: FontFamily) = Typography(
     labelSmall = TextStyle(fontFamily = fontFamily, fontWeight = FontWeight.Medium, fontSize = 11.sp, lineHeight = 16.sp, letterSpacing = 0.5.sp)
 )
 
-val NoolachuTypography = createTypography(ElvanSansFontFamily)
+val NoolachuTypography = createTypography(NavilSansFontFamily)

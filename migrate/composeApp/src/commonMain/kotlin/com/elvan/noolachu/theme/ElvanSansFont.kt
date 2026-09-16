@@ -4,11 +4,12 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.text.font.FontFamily
 
 /**
- * Multiplatform expect declaration for Elvan Sans Font Family.
+ * Multiplatform expect declarations for application font families.
  */
 expect val ElvanSansFontFamily: FontFamily
+expect val NavilSansFontFamily: FontFamily
 
-val LocalAppFontFamily = compositionLocalOf { ElvanSansFontFamily }
+val LocalAppFontFamily = compositionLocalOf { NavilSansFontFamily }
 
 /**
  * Prevents broken/stylized composite ligatures (such as 'fi', 'fl', 'ff')

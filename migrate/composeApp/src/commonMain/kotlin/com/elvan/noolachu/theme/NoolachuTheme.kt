@@ -9,6 +9,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
@@ -49,10 +50,19 @@ private val DarkColorScheme = darkColorScheme(
 @Composable
 fun NoolachuTheme(
     darkTheme: Boolean = ThemeManager.isDark(),
+    font: AppFont = FontManager.currentFont,
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val rippleColor = if (darkTheme) Color.White else Color.Black
+
+    val currentFontFamily = when (font) {
+        AppFont.NAVIL_SANS -> NavilSansFontFamily
+        AppFont.ELVAN_SANS -> ElvanSansFontFamily
+    }
+    val typography = remember(currentFontFamily) {
+        createTypography(currentFontFamily)
+    }
 
     // Fix for devices with large default font/display scaling
     // We force the font scale to be at most 1.0f to maintain the intended design
@@ -64,11 +74,12 @@ fun NoolachuTheme(
     }
 
     CompositionLocalProvider(
-        LocalDensity provides density
+        LocalDensity provides density,
+        LocalAppFontFamily provides currentFontFamily
     ) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = NoolachuTypography,
+            typography = typography,
             shapes = NoolachuShapes
         ) {
             @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)

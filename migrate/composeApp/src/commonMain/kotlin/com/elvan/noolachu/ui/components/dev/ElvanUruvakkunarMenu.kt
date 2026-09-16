@@ -234,6 +234,20 @@ fun ElvanUruvakkunarMenu() {
                         isExpanded = false
                         ElvanSnackbar.show("Theme: ${if (isDark) "Dark Mode (கரிய பயன்முறை)" else "Light Mode (வெளிர் பயன்முறை)"}")
                     }
+
+                    DevMenuDivider(isDark)
+
+                    // 9. Font Switcher
+                    val currentAppFont = com.elvan.noolachu.theme.FontManager.currentFont
+                    DevMenuItem(
+                        label = "Font: ${currentAppFont.displayName}",
+                        icon = MaterialSymbols.Rounded.Translate,
+                        color = Color(0xFF00BCD4),
+                        isDark = isDark
+                    ) {
+                        val nextFont = com.elvan.noolachu.theme.FontManager.toggleFont()
+                        ElvanSnackbar.show("Font: ${nextFont.displayName}")
+                    }
                 }
             }
         }
