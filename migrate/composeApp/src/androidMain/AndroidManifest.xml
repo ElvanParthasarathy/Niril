@@ -11,7 +11,7 @@
         android:icon="@android:drawable/sym_def_app_icon"
         android:label="Udukkai"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Noolachu">
+        android:theme="@style/Theme.Udukkai">
         <activity
             android:name=".MainActivity"
             android:exported="true"

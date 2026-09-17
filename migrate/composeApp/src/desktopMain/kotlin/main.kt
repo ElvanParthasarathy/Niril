@@ -4,7 +4,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
-import com.elvan.noolachu.App
+import com.elvan.udukkai.App
 
 fun main() {
     Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
@@ -15,9 +15,9 @@ fun main() {
     println(">>> Starting Udukkai Desktop App...")
 
     application {
-        com.elvan.noolachu.localization.LanguageManager.init()
-        com.elvan.noolachu.theme.ThemeManager.init()
-        com.elvan.noolachu.theme.FontManager.init()
+        com.elvan.udukkai.localization.LanguageManager.init()
+        com.elvan.udukkai.theme.ThemeManager.init()
+        com.elvan.udukkai.theme.FontManager.init()
 
         Window(
             onCloseRequest = ::exitApplication,

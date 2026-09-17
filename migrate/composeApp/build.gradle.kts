@@ -49,7 +49,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.elvan.noolachu"
+    namespace = "com.elvan.udukkai"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
