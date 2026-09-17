@@ -71,9 +71,9 @@ fun UruvakkuScreen(
         if (profiles.isEmpty()) {
             emptyList()
         } else {
-            val list = mutableListOf<VanigaPillItem>()
+            val list = mutableListOf<VanigaChipItem>()
             list.add(
-                VanigaPillItem(
+                VanigaChipItem(
                     label = allLabel,
                     icon = MaterialSymbols.Rounded.Apartment
                 )
@@ -83,7 +83,7 @@ fun UruvakkuScreen(
                     p.niruvanathinPeyar.values.firstOrNull().orEmpty()
                 }.uppercase()
                 list.add(
-                    VanigaPillItem(
+                    VanigaChipItem(
                         label = shortName,
                         icon = MaterialSymbols.Rounded.Apartment
                     )
@@ -172,10 +172,10 @@ fun UruvakkuScreen(
             }
         }
 
-        // Business Profile Filter Pill Shifter (below Invoices vs Receipts pill)
+        // Business Profile Filter Chips (below Invoices vs Receipts pill)
         if (selectedSegment == 0 && businessFilterItems.size > 1) {
-            item(key = "business_pill_shifter") {
-                ElvanVanigaPillShifter(
+            item(key = "business_chips") {
+                ElvanVanigaChips(
                     items = businessFilterItems,
                     selectedIndex = safeProfileIndex,
                     onIndexSelected = { selectedProfileFilterIndex = it },
