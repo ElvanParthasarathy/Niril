@@ -38,6 +38,39 @@ import com.elvan.udukkai.ui.navigation.MaterialSymbols
 import com.elvan.udukkai.theme.LocalShellColors
 
 /**
+ * Resolves a field dynamically based on bilingual settings, matching React's `getDynamicField` 1:1.
+ */
+private fun getDynamicField(
+    map: Map<String, String>,
+    isPrimary: Boolean,
+    isBilingual: Boolean,
+    primaryLang: String,
+    secondaryLang: String
+): String {
+    if (!isBilingual && !isPrimary) {
+        return ""
+    }
+    val targetLang = if (isPrimary) primaryLang else secondaryLang
+    val exactVal = map[targetLang]?.trim()
+    if (!exactVal.isNullOrEmpty()) {
+        return exactVal
+    }
+
+    // Safety fallback for single-language mode:
+    if (!isBilingual && isPrimary) {
+        val fallbackVal = map[secondaryLang]?.trim()
+        if (!fallbackVal.isNullOrEmpty()) {
+            return fallbackVal
+        }
+    }
+
+    if (isPrimary) {
+        return map.values.firstOrNull { it.isNotBlank() } ?: ""
+    }
+    return ""
+}
+
+/**
  * PorulScreen — Displays list of items using PorulRepository.filteredItems.
  * Supports mode-aware item cards: Coolie and Silk matching Flutter 1:1.
  */
@@ -61,8 +94,8 @@ fun PorulScreen(
             state = scrollState,
             modifier = modifier.fillMaxSize(),
             contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
+                start = Dimens.ContentPadding,
+                end = Dimens.ContentPadding,
                 bottom = Dimens.ContentPaddingBottom
             )
         ) {
@@ -123,11 +156,11 @@ fun PorulScreen(
             state = scrollState,
             modifier = modifier.fillMaxSize(),
             contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
+                start = Dimens.ContentPadding,
+                end = Dimens.ContentPadding,
                 bottom = Dimens.ContentPaddingBottom
             ),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(Dimens.ItemSpacing)
         ) {
             item(key = "top_spacer") {
                 Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
@@ -173,7 +206,7 @@ fun PorulScreen(
 
 /**
  * Coolie product card: 28dp index badge, product name (15.2sp bold), secondary name (13sp medium).
- * Exact 1:1 port of Flutter's _CooliePorulCard.
+ * Exact 1:1 port of Flutter's _CooliePorulCard with unified Pattiyalgal selection badge.
  */
 @Composable
 private fun CooliePorulCard(
@@ -193,43 +226,43 @@ private fun CooliePorulCard(
     val primaryLang = profile.mudhanMozhi.ifEmpty { "ta" }
     val secondaryLang = profile.thunaiMozhi.ifEmpty { "en" }
 
-    val primary = porul.porulPeyar[primaryLang]
-        ?: porul.porulPeyar["ta"]
-        ?: porul.porulPeyar["en"]
-        ?: porul.porulPeyar.values.firstOrNull()
-        ?: ""
-
-    val secondary = if (isBilingual) (porul.porulPeyar[secondaryLang] ?: "") else ""
+    val primary = getDynamicField(porul.porulPeyar, isPrimary = true, isBilingual = isBilingual, primaryLang, secondaryLang)
+        .ifEmpty { porul.porulPeyar.values.firstOrNull() ?: "-" }
+    val secondary = getDynamicField(porul.porulPeyar, isPrimary = false, isBilingual = isBilingual, primaryLang, secondaryLang)
 
     ElvanPothuAttai(
         onClick = onClick,
         onLongClick = onLongClick,
-        isSelected = isSelected,
-        padding = PaddingValues(16.dp),
-        borderRadius = 24.dp
+        isSelected = isSelectionMode && isSelected,
+        padding = PaddingValues(
+            horizontal = Dimens.CardPaddingHorizontal,
+            vertical = Dimens.CardPaddingVertical
+        ),
+        borderRadius = Dimens.CardRadius
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top
         ) {
-            // Index circle or Selection Checkbox (28x28)
+            // Index circle / Selection Checkbox (28x28) matching Pattiyalgal exactly
             Box(
                 modifier = Modifier
+                    .padding(top = 1.dp)
                     .size(28.dp)
                     .clip(CircleShape)
                     .background(
-                        if (isSelectionMode && isSelected) colors.accent
+                        if (isSelectionMode && isSelected) LocalShellColors.current.textPrimary
                         else if (isDark) Color.White.copy(alpha = 0.12f)
                         else Color.Black.copy(alpha = 0.08f)
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                if (isSelectionMode) {
+                if (isSelectionMode && isSelected) {
                     Icon(
-                        imageVector = if (isSelected) MaterialSymbols.Rounded.Check else MaterialSymbols.Rounded.CheckBoxOutlineBlank,
+                        imageVector = MaterialSymbols.Rounded.Check,
                         contentDescription = null,
-                        tint = if (isSelected) Color.White else colors.textSecondary,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(16.dp),
+                        tint = LocalShellColors.current.surface
                     )
                 } else {
                     Text(
@@ -284,8 +317,9 @@ private fun CooliePorulCard(
 }
 
 /**
- * Silk product card: 28dp index badge, product name, secondary name, Row 2 (HSN + GST % + Rate).
- * Exact 1:1 port of Flutter's _PattuPorulCard.
+ * Silk product card: 28dp index badge, product name, secondary name,
+ * HSN/Tax row, measure type label ("அளவு • Quantity" / "எடை • Weight"), and price.
+ * Matches React 1:1 with unified Pattiyalgal circular selection graphics.
  */
 @Composable
 private fun SilkPorulCard(
@@ -305,43 +339,43 @@ private fun SilkPorulCard(
     val primaryLang = profile.mudhanMozhi.ifEmpty { "ta" }
     val secondaryLang = profile.thunaiMozhi.ifEmpty { "en" }
 
-    val primary = porul.porulPeyar[primaryLang]
-        ?: porul.porulPeyar["ta"]
-        ?: porul.porulPeyar["en"]
-        ?: porul.porulPeyar.values.firstOrNull()
-        ?: ""
-
-    val secondary = if (isBilingual) (porul.porulPeyar[secondaryLang] ?: "") else ""
+    val primary = getDynamicField(porul.porulPeyar, isPrimary = true, isBilingual = isBilingual, primaryLang, secondaryLang)
+        .ifEmpty { porul.porulPeyar.values.firstOrNull() ?: "-" }
+    val secondary = getDynamicField(porul.porulPeyar, isPrimary = false, isBilingual = isBilingual, primaryLang, secondaryLang)
 
     ElvanPothuAttai(
         onClick = onClick,
         onLongClick = onLongClick,
-        isSelected = isSelected,
-        padding = PaddingValues(16.dp),
-        borderRadius = 24.dp
+        isSelected = isSelectionMode && isSelected,
+        padding = PaddingValues(
+            horizontal = Dimens.CardPaddingHorizontal,
+            vertical = Dimens.CardPaddingVertical
+        ),
+        borderRadius = Dimens.CardRadius
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top
         ) {
-            // Index circle or Selection Checkbox (28x28)
+            // Index circle / Selection Checkbox (28x28) matching Pattiyalgal exactly
             Box(
                 modifier = Modifier
+                    .padding(top = 1.dp)
                     .size(28.dp)
                     .clip(CircleShape)
                     .background(
-                        if (isSelectionMode && isSelected) colors.accent
+                        if (isSelectionMode && isSelected) LocalShellColors.current.textPrimary
                         else if (isDark) Color.White.copy(alpha = 0.12f)
                         else Color.Black.copy(alpha = 0.08f)
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                if (isSelectionMode) {
+                if (isSelectionMode && isSelected) {
                     Icon(
-                        imageVector = if (isSelected) MaterialSymbols.Rounded.Check else MaterialSymbols.Rounded.CheckBoxOutlineBlank,
+                        imageVector = MaterialSymbols.Rounded.Check,
                         contentDescription = null,
-                        tint = if (isSelected) Color.White else colors.textSecondary,
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(16.dp),
+                        tint = LocalShellColors.current.surface
                     )
                 } else {
                     Text(
@@ -391,49 +425,69 @@ private fun SilkPorulCard(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
-                // Row 2: HSN + Tax % + Rate
+                // Bottom Row: HSN/Tax + Measure Type (left) and Rate (right), matching React
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom
                 ) {
-                    if (porul.hsnCode.isNotBlank()) {
+                    Column(
+                        modifier = Modifier.weight(1f, fill = false)
+                    ) {
+                        val hsnText = if (porul.hsnCode.isNotBlank()) "HSN: ${porul.hsnCode}" else ""
+                        val gstRate = if (porul.variVeetham % 1.0 == 0.0) porul.variVeetham.toLong().toString() else porul.variVeetham.toString()
+                        val taxText = if (porul.variVeetham > 0.0) "Tax: $gstRate%" else ""
+                        val hsnTaxLine = if (hsnText.isNotBlank() && taxText.isNotBlank()) "$hsnText • $taxText" else "$hsnText$taxText"
+
+                        if (hsnTaxLine.isNotBlank()) {
+                            Text(
+                                text = hsnTaxLine,
+                                style = TextStyle(
+                                    fontFamily = ff,
+                                    fontSize = 13.6.sp,
+                                    color = colors.textSecondary
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+
+                        // Measure Type: "எடை • Weight" or "அளவு • Quantity" in accent color matching React
+                        val measureLabel = if (porul.alavuVagai == "weight") "எடை • Weight" else "அளவு • Quantity"
                         Text(
-                            text = "HSN: ${porul.hsnCode}",
+                            text = measureLabel,
                             style = TextStyle(
                                 fontFamily = ff,
-                                fontSize = 13.6.sp,
-                                color = LocalShellColors.current.textTertiary
-                            )
+                                fontSize = 12.8.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = colors.accent
+                            ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.padding(top = 2.dp)
                         )
-                        Spacer(modifier = Modifier.width(12.dp))
                     }
 
-                    val gstRate = if (porul.variVeetham % 1.0 == 0.0) porul.variVeetham.toLong().toString() else porul.variVeetham.toString()
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    val priceText = if (porul.vilai > 0.0) {
+                        val formatted = if (porul.vilai % 1.0 == 0.0) porul.vilai.toLong().toString() else porul.vilai.toString()
+                        "₹$formatted"
+                    } else {
+                        "-"
+                    }
                     Text(
-                        text = "GST: $gstRate%",
+                        text = priceText,
                         style = TextStyle(
                             fontFamily = ff,
-                            fontSize = 13.6.sp,
-                            color = LocalShellColors.current.textTertiary
-                        )
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = if (priceText.length > 11) 12.8.sp else 15.2.sp,
+                            color = colors.accent
+                        ),
+                        maxLines = 1
                     )
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    if (porul.vilai > 0.0) {
-                        val formatted = if (porul.vilai % 1.0 == 0.0) porul.vilai.toLong().toString() else porul.vilai.toString()
-                        Text(
-                            text = "₹$formatted",
-                            style = TextStyle(
-                                fontFamily = ff,
-                                fontWeight = FontWeight.ExtraBold,
-                                fontSize = 15.sp,
-                                color = colors.accent
-                            )
-                        )
-                    }
                 }
             }
         }

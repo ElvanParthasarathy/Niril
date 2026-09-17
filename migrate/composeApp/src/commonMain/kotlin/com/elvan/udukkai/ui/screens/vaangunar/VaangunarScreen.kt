@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,11 +28,11 @@ import com.elvan.udukkai.localization.K
 import com.elvan.udukkai.localization.tr
 import com.elvan.udukkai.theme.Dimens
 import com.elvan.udukkai.theme.LocalAppFontFamily
+import com.elvan.udukkai.theme.LocalShellColors
 import com.elvan.udukkai.theme.ShellColors
 import com.elvan.udukkai.theme.preventBrokenLigatures
 import com.elvan.udukkai.theme.rememberShellColors
 import com.elvan.udukkai.ui.components.ElvanPothuAttai
-import com.elvan.udukkai.ui.components.shell.ElvanActionSheet
 import com.elvan.udukkai.ui.components.shell.LocalElvanTopSpacerHeight
 import com.elvan.udukkai.ui.navigation.MaterialSymbols
 
@@ -92,7 +91,6 @@ fun VaangunarScreen(
 ) {
     val merchants = VaangunarRepository.filteredMerchants
     val ff = LocalAppFontFamily.current
-    var merchantToDelete by remember { mutableStateOf<VaangunarTharavuru?>(null) }
 
     if (merchants.isEmpty()) {
         LazyColumn(
@@ -192,8 +190,7 @@ fun VaangunarScreen(
                         onLongClick = onCardLongClick,
                         colors = colors,
                         isSelectionMode = isSelectionMode,
-                        isSelected = isSelected,
-                        onDeleteSingle = { merchantToDelete = merchant }
+                        isSelected = isSelected
                     )
                 } else {
                     SilkVaangunarCard(
@@ -203,38 +200,18 @@ fun VaangunarScreen(
                         onLongClick = onCardLongClick,
                         colors = colors,
                         isSelectionMode = isSelectionMode,
-                        isSelected = isSelected,
-                        onDeleteSingle = { merchantToDelete = merchant }
+                        isSelected = isSelected
                     )
                 }
             }
         }
-    }
-
-    if (merchantToDelete != null) {
-        ElvanActionSheet(
-            title = K.delete.tr(),
-            cancelText = K.cancelBtn.tr(),
-            confirmText = K.deleteBtn.tr(),
-            confirmColor = Color(0xFFBA1A1A),
-            onConfirm = {
-                merchantToDelete?.let {
-                    VaangunarRepository.delete(it.id, mode)
-                }
-                merchantToDelete = null
-            },
-            onDismissRequest = {
-                merchantToDelete = null
-            },
-            colors = colors
-        )
     }
 }
 
 
 /**
  * Coolie customer card: 28dp index badge, name, secondary name, town/city.
- * Exact 1:1 port of React's CoolieMerchants.tsx renderCard.
+ * Exact 1:1 port of React's CoolieMerchants.tsx with unified Pattiyalgal selection badge.
  */
 @Composable
 private fun CoolieVaangunarCard(
@@ -244,8 +221,7 @@ private fun CoolieVaangunarCard(
     colors: ShellColors,
     isSelectionMode: Boolean = false,
     isSelected: Boolean = false,
-    onLongClick: (() -> Unit)? = null,
-    onDeleteSingle: (() -> Unit)? = null
+    onLongClick: (() -> Unit)? = null
 ) {
     val ff = LocalAppFontFamily.current
     val isDark = colors.isDark
@@ -262,152 +238,116 @@ private fun CoolieVaangunarCard(
     val primaryCity = getDynamicField(merchant.oor, isPrimary = true, isBilingual = isBilingual, primaryLang, secondaryLang)
     val secondaryCity = getDynamicField(merchant.oor, isPrimary = false, isBilingual = isBilingual, primaryLang, secondaryLang)
 
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.CenterStart
+    ElvanPothuAttai(
+        onClick = onClick,
+        onLongClick = onLongClick,
+        isSelected = isSelectionMode && isSelected,
+        padding = PaddingValues(
+            horizontal = Dimens.CardPaddingHorizontal,
+            vertical = Dimens.CardPaddingVertical
+        ),
+        borderRadius = Dimens.CardRadius
     ) {
-        ElvanPothuAttai(
-            onClick = onClick,
-            onLongClick = onLongClick,
-            isSelected = isSelectionMode && isSelected,
-            padding = PaddingValues(
-                horizontal = Dimens.CardPaddingHorizontal,
-                vertical = Dimens.CardPaddingVertical
-            ),
-            borderRadius = Dimens.CardRadius
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Top
+            // Index circle / Selection Checkbox (28x28) matching Pattiyalgal exactly
+            Box(
+                modifier = Modifier
+                    .padding(top = 1.dp)
+                    .size(28.dp)
+                    .clip(CircleShape)
+                    .background(
+                        if (isSelectionMode && isSelected) LocalShellColors.current.textPrimary
+                        else if (isDark) Color.White.copy(alpha = 0.12f)
+                        else Color.Black.copy(alpha = 0.08f)
+                    ),
+                contentAlignment = Alignment.Center
             ) {
-                // Index circle badge or Checkbox (28x28) matching React
-                if (!isSelectionMode) {
-                    Box(
-                        modifier = Modifier
-                            .size(28.dp)
-                            .clip(CircleShape)
-                            .background(
-                                if (isDark) Color.White.copy(alpha = 0.12f)
-                                else Color.Black.copy(alpha = 0.08f)
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = (index + 1).toString().padStart(2, '0'),
-                            style = TextStyle(
-                                fontFamily = ff,
-                                fontWeight = FontWeight.ExtraBold,
-                                fontSize = 11.2.sp,
-                                color = if (isDark) Color.White else Color.Black,
-                                lineHeight = 11.2.sp
-                            )
-                        )
-                    }
+                if (isSelectionMode && isSelected) {
+                    Icon(
+                        imageVector = MaterialSymbols.Rounded.Check,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = LocalShellColors.current.surface
+                    )
                 } else {
-                    Box(
-                        modifier = Modifier.size(28.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = if (isSelected) MaterialSymbols.Rounded.CheckBox else MaterialSymbols.Rounded.CheckBoxOutlineBlank,
-                            contentDescription = null,
-                            tint = if (isSelected) colors.accent else colors.textSecondary,
-                            modifier = Modifier.size(24.dp)
+                    Text(
+                        text = (index + 1).toString().padStart(2, '0'),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 11.2.sp,
+                            color = LocalShellColors.current.textPrimary,
+                            lineHeight = 11.2.sp
                         )
-                    }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // Content Column
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = primaryName.preventBrokenLigatures(),
+                    style = TextStyle(
+                        fontFamily = ff,
+                        fontSize = 15.2.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.textPrimary
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                if (secondaryName.isNotBlank() && secondaryName != primaryName) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = secondaryName.preventBrokenLigatures(),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = colors.textSecondary
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
 
-                Spacer(modifier = Modifier.width(12.dp))
-
-                // Content Column
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.Top
-                    ) {
+                if (primaryCity.isNotBlank() || secondaryCity.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    if (primaryCity.isNotBlank()) {
                         Text(
-                            text = primaryName.preventBrokenLigatures(),
+                            text = primaryCity.preventBrokenLigatures(),
                             style = TextStyle(
                                 fontFamily = ff,
-                                fontSize = 15.2.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = colors.textPrimary
-                            ),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f, fill = false)
-                        )
-                        if (isSelectionMode) {
-                            Spacer(modifier = Modifier.width(36.dp))
-                        }
-                    }
-
-                    if (secondaryName.isNotBlank() && secondaryName != primaryName) {
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = secondaryName.preventBrokenLigatures(),
-                            style = TextStyle(
-                                fontFamily = ff,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Medium,
+                                fontSize = 13.6.sp,
                                 color = colors.textSecondary
                             ),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     }
-
-                    if (primaryCity.isNotBlank() || secondaryCity.isNotBlank()) {
-                        Spacer(modifier = Modifier.height(4.dp))
-                        if (primaryCity.isNotBlank()) {
-                            Text(
-                                text = primaryCity.preventBrokenLigatures(),
-                                style = TextStyle(
-                                    fontFamily = ff,
-                                    fontSize = 13.6.sp,
-                                    color = colors.textSecondary
-                                ),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-                        if (secondaryCity.isNotBlank() && secondaryCity != primaryCity) {
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = secondaryCity.preventBrokenLigatures(),
-                                style = TextStyle(
-                                    fontFamily = ff,
-                                    fontSize = 12.8.sp,
-                                    color = colors.textSecondary.copy(alpha = 0.8f)
-                                ),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
+                    if (secondaryCity.isNotBlank() && secondaryCity != primaryCity) {
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = secondaryCity.preventBrokenLigatures(),
+                            style = TextStyle(
+                                fontFamily = ff,
+                                fontSize = 12.8.sp,
+                                color = colors.textSecondary.copy(alpha = 0.8f)
+                            ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 }
-            }
-        }
-
-        // Single delete Trash icon on right in selection mode, matching React
-        if (isSelectionMode && onDeleteSingle != null) {
-            IconButton(
-                onClick = onDeleteSingle,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(end = 12.dp)
-                    .size(36.dp)
-            ) {
-                Icon(
-                    imageVector = MaterialSymbols.Rounded.Delete,
-                    contentDescription = K.delete.tr(),
-                    tint = Color(0xFFEF4444),
-                    modifier = Modifier.size(20.dp)
-                )
             }
         }
     }
@@ -416,7 +356,7 @@ private fun CoolieVaangunarCard(
 /**
  * Silk customer card: 28dp index badge, name, secondary name (if bilingual),
  * inline town/city with bullet separator (`Primary • Secondary`), and GSTIN.
- * Exact 1:1 port of React's Vanigargal.tsx renderCard.
+ * Exact 1:1 port of React's Vanigargal.tsx with unified Pattiyalgal selection badge.
  */
 @Composable
 private fun SilkVaangunarCard(
@@ -426,8 +366,7 @@ private fun SilkVaangunarCard(
     colors: ShellColors,
     isSelectionMode: Boolean = false,
     isSelected: Boolean = false,
-    onLongClick: (() -> Unit)? = null,
-    onDeleteSingle: (() -> Unit)? = null
+    onLongClick: (() -> Unit)? = null
 ) {
     val ff = LocalAppFontFamily.current
     val isDark = colors.isDark
@@ -446,99 +385,104 @@ private fun SilkVaangunarCard(
 
     val gstin = merchant.gstin.trim()
 
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.CenterStart
+    ElvanPothuAttai(
+        onClick = onClick,
+        onLongClick = onLongClick,
+        isSelected = isSelectionMode && isSelected,
+        padding = PaddingValues(
+            horizontal = Dimens.CardPaddingHorizontal,
+            vertical = Dimens.CardPaddingVertical
+        ),
+        borderRadius = Dimens.CardRadius
     ) {
-        ElvanPothuAttai(
-            onClick = onClick,
-            onLongClick = onLongClick,
-            isSelected = isSelectionMode && isSelected,
-            padding = PaddingValues(
-                horizontal = Dimens.CardPaddingHorizontal,
-                vertical = Dimens.CardPaddingVertical
-            ),
-            borderRadius = Dimens.CardRadius
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Top
+            // Index circle / Selection Checkbox (28x28) matching Pattiyalgal exactly
+            Box(
+                modifier = Modifier
+                    .padding(top = 1.dp)
+                    .size(28.dp)
+                    .clip(CircleShape)
+                    .background(
+                        if (isSelectionMode && isSelected) LocalShellColors.current.textPrimary
+                        else if (isDark) Color.White.copy(alpha = 0.12f)
+                        else Color.Black.copy(alpha = 0.08f)
+                    ),
+                contentAlignment = Alignment.Center
             ) {
-                // Index circle badge or Checkbox (28x28) matching React
-                if (!isSelectionMode) {
-                    Box(
-                        modifier = Modifier
-                            .size(28.dp)
-                            .clip(CircleShape)
-                            .background(
-                                if (isDark) Color.White.copy(alpha = 0.12f)
-                                else Color.Black.copy(alpha = 0.08f)
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = (index + 1).toString().padStart(2, '0'),
-                            style = TextStyle(
-                                fontFamily = ff,
-                                fontWeight = FontWeight.ExtraBold,
-                                fontSize = 11.2.sp,
-                                color = if (isDark) Color.White else Color.Black,
-                                lineHeight = 11.2.sp
-                            )
-                        )
-                    }
+                if (isSelectionMode && isSelected) {
+                    Icon(
+                        imageVector = MaterialSymbols.Rounded.Check,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = LocalShellColors.current.surface
+                    )
                 } else {
-                    Box(
-                        modifier = Modifier.size(28.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = if (isSelected) MaterialSymbols.Rounded.CheckBox else MaterialSymbols.Rounded.CheckBoxOutlineBlank,
-                            contentDescription = null,
-                            tint = if (isSelected) colors.accent else colors.textSecondary,
-                            modifier = Modifier.size(24.dp)
+                    Text(
+                        text = (index + 1).toString().padStart(2, '0'),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 11.2.sp,
+                            color = LocalShellColors.current.textPrimary,
+                            lineHeight = 11.2.sp
                         )
-                    }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // Content Column
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = primaryName.preventBrokenLigatures(),
+                    style = TextStyle(
+                        fontFamily = ff,
+                        fontSize = 15.2.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.textPrimary
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                // Secondary Name - ONLY when bilingual mode is enabled in Silk profile
+                if (isBilingual && secondaryName.isNotBlank() && secondaryName != primaryName) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = secondaryName.preventBrokenLigatures(),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = colors.textSecondary
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
 
-                Spacer(modifier = Modifier.width(12.dp))
+                // City / Oor - Inline bullet format matching React: `Primary • Secondary`
+                val cityText = if (isBilingual && secondaryCity.isNotBlank() && secondaryCity != primaryCity) {
+                    if (primaryCity.isNotBlank()) "$primaryCity • $secondaryCity" else secondaryCity
+                } else {
+                    primaryCity
+                }
 
-                // Content Column
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.Top
-                    ) {
+                if (cityText.isNotBlank() || gstin.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    if (cityText.isNotBlank()) {
                         Text(
-                            text = primaryName.preventBrokenLigatures(),
+                            text = cityText.preventBrokenLigatures(),
                             style = TextStyle(
                                 fontFamily = ff,
-                                fontSize = 15.2.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = colors.textPrimary
-                            ),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f, fill = false)
-                        )
-                        if (isSelectionMode) {
-                            Spacer(modifier = Modifier.width(36.dp))
-                        }
-                    }
-
-                    // Secondary Name - ONLY when bilingual mode is enabled in Silk profile
-                    if (isBilingual && secondaryName.isNotBlank() && secondaryName != primaryName) {
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = secondaryName.preventBrokenLigatures(),
-                            style = TextStyle(
-                                fontFamily = ff,
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.Medium,
+                                fontSize = 13.6.sp,
                                 color = colors.textSecondary
                             ),
                             maxLines = 1,
@@ -546,63 +490,22 @@ private fun SilkVaangunarCard(
                         )
                     }
 
-                    // City / Oor - Inline bullet format matching React: `Primary • Secondary`
-                    val cityText = if (isBilingual && secondaryCity.isNotBlank() && secondaryCity != primaryCity) {
-                        if (primaryCity.isNotBlank()) "$primaryCity • $secondaryCity" else secondaryCity
-                    } else {
-                        primaryCity
-                    }
-
-                    if (cityText.isNotBlank() || gstin.isNotBlank()) {
-                        Spacer(modifier = Modifier.height(4.dp))
-                        if (cityText.isNotBlank()) {
-                            Text(
-                                text = cityText.preventBrokenLigatures(),
-                                style = TextStyle(
-                                    fontFamily = ff,
-                                    fontSize = 13.6.sp,
-                                    color = colors.textSecondary
-                                ),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
-
-                        // GSTIN label with explicit `GSTIN: ` prefix matching React
-                        if (gstin.isNotBlank()) {
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = "GSTIN: $gstin",
-                                style = TextStyle(
-                                    fontFamily = ff,
-                                    fontSize = 12.8.sp,
-                                    fontWeight = FontWeight.Medium,
-                                    color = colors.textSecondary
-                                ),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
+                    // GSTIN label with explicit `GSTIN: ` prefix matching React
+                    if (gstin.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = "GSTIN: $gstin",
+                            style = TextStyle(
+                                fontFamily = ff,
+                                fontSize = 12.8.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = colors.textSecondary
+                            ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 }
-            }
-        }
-
-        // Single delete Trash icon on right in selection mode, matching React
-        if (isSelectionMode && onDeleteSingle != null) {
-            IconButton(
-                onClick = onDeleteSingle,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(end = 12.dp)
-                    .size(36.dp)
-            ) {
-                Icon(
-                    imageVector = MaterialSymbols.Rounded.Delete,
-                    contentDescription = K.delete.tr(),
-                    tint = Color(0xFFEF4444),
-                    modifier = Modifier.size(20.dp)
-                )
             }
         }
     }
