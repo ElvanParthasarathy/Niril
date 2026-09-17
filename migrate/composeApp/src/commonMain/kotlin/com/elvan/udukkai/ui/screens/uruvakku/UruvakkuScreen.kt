@@ -73,8 +73,7 @@ fun UruvakkuScreen(
             val list = mutableListOf<PillShifterItem>()
             list.add(
                 PillShifterItem(
-                    label = allLabel,
-                    icon = MaterialSymbols.Rounded.Apartment
+                    label = allLabel
                 )
             )
             profiles.forEach { p ->
@@ -83,8 +82,7 @@ fun UruvakkuScreen(
                 }.uppercase()
                 list.add(
                     PillShifterItem(
-                        label = shortName,
-                        icon = MaterialSymbols.Rounded.Apartment
+                        label = shortName
                     )
                 )
             }
