@@ -1,4 +1,4 @@
-package com.elvan.niril.lite;
+package com.elvan.udukkai.lite;
 
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;

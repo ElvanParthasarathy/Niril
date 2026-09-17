@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.elvan.niril.lite',
-  appName: 'Elvan Niril',
+  appId: 'com.elvan.udukkai.lite',
+  appName: 'Udukkai',
   webDir: 'dist',
   plugins: {
     SplashScreen: {

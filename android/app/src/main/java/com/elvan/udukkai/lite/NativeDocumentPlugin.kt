@@ -1,4 +1,4 @@
-package com.elvan.niril.lite
+package com.elvan.udukkai.lite
 
 import android.content.ContentValues
 import android.content.Context
@@ -72,7 +72,7 @@ class NativeDocumentPlugin : Plugin() {
     fun downloadPdf(call: PluginCall) {
         val base64Data = call.getString("base64Data")
         val filename = call.getString("filename", "document.pdf")
-        val appMode = call.getString("appMode", "Niril Silk")
+        val appMode = call.getString("appMode", "Udukkai Silk")
         val category = call.getString("category", "Invoice")
 
         if (base64Data == null || filename == null) {
@@ -82,7 +82,7 @@ class NativeDocumentPlugin : Plugin() {
 
         try {
             val pdfBytes = Base64.decode(base64Data, Base64.DEFAULT)
-            val relativePath = Environment.DIRECTORY_DOCUMENTS + "/Niril/" + appMode + "/" + category
+            val relativePath = Environment.DIRECTORY_DOCUMENTS + "/Udukkai/" + appMode + "/" + category
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val resolver = context.contentResolver
@@ -101,7 +101,7 @@ class NativeDocumentPlugin : Plugin() {
                 }
             } else {
                 val docsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
-                val targetDir = File(docsDir, "Niril/$appMode/$category")
+                val targetDir = File(docsDir, "Udukkai/$appMode/$category")
                 if (!targetDir.exists()) {
                     targetDir.mkdirs()
                 }

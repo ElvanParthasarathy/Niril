@@ -67,7 +67,7 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                             margin: 0,
                             letterSpacing: '-0.5px'
                         }}>
-                            Welcome to Niril
+                            Welcome to Udukkai
                         </h1>
                         <p style={{
                             fontSize: '18px',
@@ -94,7 +94,7 @@ export default function Welcome({ onContinue }: { onContinue: () => void }) {
                             maxWidth: '280px',
                             lineHeight: '1.5'
                         }}>
-                            Tap "Get Started" to continue with Niril.
+                            Tap "Get Started" to continue with Udukkai.
                         </p>
 
                         <div style={{ width: '100%', maxWidth: '360px' }}>

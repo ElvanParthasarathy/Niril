@@ -239,10 +239,10 @@ export default function CoolieInvoiceView({ bill, onClose, onEdit }) {
           await NativeDocument.downloadPdf({
             base64Data: pdfBase64,
             filename: fileName,
-            appMode: 'Niril Coolie',
+            appMode: 'Udukkai Coolie',
             category: 'Invoice'
           });
-          thagaval('Invoice downloaded to Niril Coolie/Invoice/', 'success');
+          thagaval('Invoice downloaded to Udukkai Coolie/Invoice/', 'success');
         } else {
           pdf.save(fileName);
           const pdfBlob = pdf.output('blob');

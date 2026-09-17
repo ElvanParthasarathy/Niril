@@ -3,8 +3,8 @@ import { TranslationKey } from './ta';
 
 export const en: Record<TranslationKey, string> = {
   // App General
-  appName: 'Niril',
-  appNameFull: 'Elvan Niril',
+  appName: 'Udukkai',
+  appNameFull: 'Udukkai',
   welcomeBack: 'Welcome back!',
   loading: 'Loading...',
   error: 'Error',
@@ -271,8 +271,8 @@ export const en: Record<TranslationKey, string> = {
   branding: 'Branding',
   invoiceSettings: 'Invoice Settings',
   languageSettings: 'Language Settings',
-  nirilCoolie: 'Niril Coolie',
-  nirilSilk: 'Niril Silk',
+  nirilCoolie: 'Udukkai Coolie',
+  nirilSilk: 'Udukkai Silk',
   companyAddressDetails: 'Company address details',
   logoSignatures: 'Logo & Signatures',
   accountNumberIfsc: 'Account number, IFSC',
@@ -563,7 +563,7 @@ export const en: Record<TranslationKey, string> = {
   hc_downloadBackup: "Download Backup",
   hc_restoreFromBackup: "Restore from Backup",
   hc_overwriteMatchingRecordsById: "overwrite matching records by ID",
-  hc_welcomeToElvanNiril: "Welcome to Elvan Niril",
+  hc_welcomeToElvanNiril: "Welcome to Udukkai",
   hc_businessDetails: "Business Details",
   hc_businessName: "Business Name",
   hc_egSharmaConsultantsPvtLtd: "e.g. Sharma Consultants Pvt. Ltd.",
@@ -1132,9 +1132,9 @@ export const en: Record<TranslationKey, string> = {
   tooManyRequests: 'Too many attempts. Try later.',
   errorOccurred: 'Failed to erase data.',
 
-  welcomeTitle: 'Welcome to Niril',
+  welcomeTitle: 'Welcome to Udukkai',
   welcomeSubtitle: 'Your Billing & GST, Sorted.',
-  welcomeAgreeText: 'Tap "Get Started" to continue with Niril.',
+  welcomeAgreeText: 'Tap "Get Started" to continue with Udukkai.',
   agreeAndContinueBtn: 'Get Started',
   selectLanguageTitle: 'Select Language',
   selectLanguageSubtitle: 'Choose your preferred language',

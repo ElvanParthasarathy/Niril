@@ -1,8 +1,8 @@
-package com.elvan.niril.lite
+package com.elvan.udukkai.lite
 
 import android.content.Context
 import androidx.compose.ui.platform.ComposeView
-import com.elvan.niril.lite.ui.SplashScreen
+import com.elvan.udukkai.lite.ui.SplashScreen
 
 object ComposeOverlay {
     fun create(context: Context, isDarkTheme: Boolean): ComposeView {

@@ -232,10 +232,10 @@ export default function CoolieReceiptView({ receipt: receiptProp, onBack, onEdit
         await NativeDocument.downloadPdf({
           base64Data: pdfBase64,
           filename: fileName,
-          appMode: 'Niril Coolie',
+          appMode: 'Udukkai Coolie',
           category: 'Receipt'
         });
-        thagaval(`Receipt downloaded to Niril Coolie/Receipt/`, 'success');
+        thagaval(`Receipt downloaded to Udukkai Coolie/Receipt/`, 'success');
       } else {
         pdf.save(fileName);
         const pdfBlob = pdf.output('blob');

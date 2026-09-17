@@ -3,10 +3,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 
 android {
-    namespace = "com.elvan.niril"
+    namespace = "com.elvan.udukkai.lite"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.elvan.niril.lite"
+        applicationId "com.elvan.udukkai.lite"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

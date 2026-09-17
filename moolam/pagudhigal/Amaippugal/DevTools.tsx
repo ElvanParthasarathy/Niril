@@ -68,7 +68,7 @@ export default function DevTools({ profile, driveConnected, setDriveConnected, c
     try {
       const text = await file.text();
       const inspection = inspectBackup(text);
-      if (!inspection.valid) { thagaval("This file doesn't look like a Elvan Niril backup.", 'error'); return; }
+      if (!inspection.valid) { thagaval("This file doesn't look like an Udukkai backup.", 'error'); return; }
       setImportInspection(inspection);
       setImportJsonText(text);
       const auto: any = {};

@@ -1,4 +1,4 @@
-package com.elvan.niril.lite.ui
+package com.elvan.udukkai.lite.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,7 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.elvan.niril.R
+import com.elvan.udukkai.lite.R
 
 @Composable
 fun SplashScreen(isDarkTheme: Boolean = false) {

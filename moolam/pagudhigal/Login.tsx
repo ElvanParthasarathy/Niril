@@ -36,7 +36,7 @@ export default function Login() {
     <AuthLayout>
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <AuthHeader
-          title="Elvan Niril"
+          title="Udukkai"
           subtitle="Sign in to your secure database"
         />
 

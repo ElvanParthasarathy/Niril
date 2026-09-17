@@ -33,9 +33,9 @@ export default defineConfig(({ command }) => ({
       registerType: 'autoUpdate',
       includeAssets: ['og-preview.png'],
       manifest: {
-        name: 'Elvan Niril',
-        short_name: 'Niril',
-        description: 'Elvan Niril App',
+        name: 'Udukkai',
+        short_name: 'Udukkai',
+        description: 'Udukkai App',
         theme_color: '#1e40af',
         background_color: '#f8fafc',
         display: 'standalone',

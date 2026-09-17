@@ -1,4 +1,4 @@
-package com.elvan.niril.lite;
+package com.elvan.udukkai.lite;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

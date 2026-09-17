@@ -266,10 +266,10 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
         await NativeDocument.downloadPdf({
           base64Data: pdfBase64,
           filename: fileName,
-          appMode: 'Niril Silk',
+          appMode: 'Udukkai Silk',
           category: 'Receipt'
         });
-        thagaval(`Receipt downloaded to Niril Silk/Receipt/`, 'success');
+        thagaval(`Receipt downloaded to Udukkai Silk/Receipt/`, 'success');
       } else {
         pdf.save(fileName);
         const pdfBlob = pdf.output('blob');

@@ -126,10 +126,10 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
         await NativeDocument.downloadPdf({
           base64Data: pdfBase64,
           filename: fileName,
-          appMode: 'Niril Silk',
+          appMode: 'Udukkai Silk',
           category: 'Invoice'
         });
-        thagaval(`Invoice downloaded to Niril Silk/Invoice/`, 'success');
+        thagaval(`Invoice downloaded to Udukkai Silk/Invoice/`, 'success');
       } else {
         pdf.save(fileName);
         const pdfBlob = pdf.output('blob');
