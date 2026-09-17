@@ -71,9 +71,9 @@ fun UruvakkuScreen(
         if (profiles.isEmpty()) {
             emptyList()
         } else {
-            val list = mutableListOf<PillShifterItem>()
+            val list = mutableListOf<VanigaPillItem>()
             list.add(
-                PillShifterItem(
+                VanigaPillItem(
                     label = allLabel,
                     icon = MaterialSymbols.Rounded.Apartment
                 )
@@ -83,7 +83,7 @@ fun UruvakkuScreen(
                     p.niruvanathinPeyar.values.firstOrNull().orEmpty()
                 }.uppercase()
                 list.add(
-                    PillShifterItem(
+                    VanigaPillItem(
                         label = shortName,
                         icon = MaterialSymbols.Rounded.Apartment
                     )
@@ -157,23 +157,25 @@ fun UruvakkuScreen(
             Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
         }
 
-        // Segmented Pill Shifter (Invoices vs Receipts)
+        // Segmented Pill Shifter (Invoices vs Receipts - Original Centered Style)
         item(key = "pill_shifter") {
-            ElvanPillShifter(
-                items = shifterItems,
-                selectedIndex = selectedSegment,
-                onIndexSelected = onSegmentSelected,
-                colors = colors,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            )
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                ElvanPillShifter(
+                    items = shifterItems,
+                    selectedIndex = selectedSegment,
+                    onIndexSelected = onSegmentSelected,
+                    colors = colors
+                )
+            }
         }
 
         // Business Profile Filter Pill Shifter (below Invoices vs Receipts pill)
         if (selectedSegment == 0 && businessFilterItems.size > 1) {
             item(key = "business_pill_shifter") {
-                ElvanPillShifter(
+                ElvanVanigaPillShifter(
                     items = businessFilterItems,
                     selectedIndex = safeProfileIndex,
                     onIndexSelected = { selectedProfileFilterIndex = it },
