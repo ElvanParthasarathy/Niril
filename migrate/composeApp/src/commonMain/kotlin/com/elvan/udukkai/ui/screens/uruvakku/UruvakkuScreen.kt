@@ -73,8 +73,7 @@ fun UruvakkuScreen(
             val list = mutableListOf<VanigaChipItem>()
             list.add(
                 VanigaChipItem(
-                    label = allLabel,
-                    icon = MaterialSymbols.Rounded.Apartment
+                    label = allLabel
                 )
             )
             profiles.forEach { p ->
@@ -83,8 +82,7 @@ fun UruvakkuScreen(
                 }.uppercase()
                 list.add(
                     VanigaChipItem(
-                        label = shortName,
-                        icon = MaterialSymbols.Rounded.Apartment
+                        label = shortName
                     )
                 )
             }
@@ -171,9 +169,7 @@ fun UruvakkuScreen(
                     selectedIndex = safeProfileIndex,
                     onIndexSelected = { selectedProfileFilterIndex = it },
                     colors = colors,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
         }
