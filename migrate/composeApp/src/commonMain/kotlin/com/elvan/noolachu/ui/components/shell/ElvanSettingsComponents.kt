@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -363,10 +364,11 @@ fun <T> ElvanRadioSettingsRow(
     onSelected: (T) -> Unit,
     modifier: Modifier = Modifier,
     description: String? = null,
+    fontFamily: FontFamily? = null,
     colors: ShellColors = rememberShellColors()
 ) {
     val isSelected = value == groupValue
-    val ff = LocalAppFontFamily.current
+    val ff = fontFamily ?: LocalAppFontFamily.current
 
     Surface(
         modifier = modifier

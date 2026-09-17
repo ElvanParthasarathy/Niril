@@ -155,98 +155,24 @@ fun DisplaySettingsScreen(
                     val fontChangedMsg = K.ezhuthuruMaatram.tr()
 
                     AppFont.entries.forEachIndexed { index, fontOption ->
-                        val isSelected = currentFont == fontOption
                         val fontOptionFamily = when (fontOption) {
                             AppFont.NAVIL_SANS -> NavilSansFontFamily
                             AppFont.ELVAN_SANS -> ElvanSansFontFamily
                         }
 
-                        Surface(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable(
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    indication = ShellDefaults.ripple(colors, bounded = true)
-                                ) {
-                                    if (currentFont != fontOption) {
-                                        FontManager.setFont(fontOption)
-                                        ElvanSnackbar.show("$fontChangedMsg: ${fontOption.displayName}")
-                                    }
-                                },
-                            color = Color.Transparent
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 20.dp, vertical = 14.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Column(
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = fontOption.displayName,
-                                            style = TextStyle(
-                                                fontFamily = fontOptionFamily,
-                                                fontSize = 16.sp,
-                                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
-                                            ),
-                                            color = colors.textPrimary
-                                        )
-                                        if (fontOption == AppFont.DEFAULT) {
-                                            Spacer(modifier = Modifier.width(8.dp))
-                                            Surface(
-                                                shape = RoundedCornerShape(100),
-                                                color = colors.accent.copy(alpha = 0.12f)
-                                            ) {
-                                                Text(
-                                                    text = "Default",
-                                                    style = TextStyle(
-                                                        fontFamily = fontOptionFamily,
-                                                        fontSize = 11.sp,
-                                                        fontWeight = FontWeight.SemiBold
-                                                    ),
-                                                    color = colors.accent,
-                                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
-                                                )
-                                            }
-                                        }
-                                    }
-                                    Spacer(modifier = Modifier.height(2.dp))
-                                    Text(
-                                        text = fontOption.descKey.tr(),
-                                        style = TextStyle(
-                                            fontFamily = fontOptionFamily,
-                                            fontSize = 13.sp,
-                                            fontWeight = FontWeight.Normal
-                                        ),
-                                        color = colors.textPrimary.copy(alpha = 0.5f)
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(
-                                        text = "அஆஇஈஉஊ • Aa Bb Cc 123",
-                                        style = TextStyle(
-                                            fontFamily = fontOptionFamily,
-                                            fontSize = 13.sp,
-                                            fontWeight = FontWeight.Medium
-                                        ),
-                                        color = colors.textPrimary.copy(alpha = 0.75f)
-                                    )
+                        ElvanRadioSettingsRow(
+                            title = fontOption.displayName,
+                            value = fontOption,
+                            groupValue = currentFont,
+                            fontFamily = fontOptionFamily,
+                            onSelected = { selectedFont ->
+                                if (currentFont != selectedFont) {
+                                    FontManager.setFont(selectedFont)
+                                    ElvanSnackbar.show("$fontChangedMsg: ${selectedFont.displayName}")
                                 }
-
-                                Spacer(modifier = Modifier.width(12.dp))
-
-                                Icon(
-                                    imageVector = if (isSelected) MaterialSymbols.Rounded.CheckCircleFill else MaterialSymbols.Rounded.RadioButtonUnchecked,
-                                    contentDescription = null,
-                                    tint = if (isSelected) colors.textPrimary else colors.textPrimary.copy(alpha = 0.35f),
-                                    modifier = Modifier.size(22.dp)
-                                )
-                            }
-                        }
+                            },
+                            colors = colors
+                        )
 
                         if (index < AppFont.entries.size - 1) {
                             ElvanSettingsDivider(colors = colors)
