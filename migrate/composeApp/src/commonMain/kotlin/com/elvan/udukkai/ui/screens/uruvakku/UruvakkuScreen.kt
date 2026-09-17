@@ -66,14 +66,15 @@ fun UruvakkuScreen(
     }
 
     val allLabel = K.all.tr().uppercase()
-    val businessFilterItems = remember(profiles, allLabel) {
+    val businessShifterItems = remember(profiles, allLabel) {
         if (profiles.isEmpty()) {
             emptyList()
         } else {
-            val list = mutableListOf<VanigaChipItem>()
+            val list = mutableListOf<PillShifterItem>()
             list.add(
-                VanigaChipItem(
-                    label = allLabel
+                PillShifterItem(
+                    label = allLabel,
+                    icon = MaterialSymbols.Rounded.Apartment
                 )
             )
             profiles.forEach { p ->
@@ -81,8 +82,9 @@ fun UruvakkuScreen(
                     p.niruvanathinPeyar.values.firstOrNull().orEmpty()
                 }.uppercase()
                 list.add(
-                    VanigaChipItem(
-                        label = shortName
+                    PillShifterItem(
+                        label = shortName,
+                        icon = MaterialSymbols.Rounded.Apartment
                     )
                 )
             }
@@ -90,7 +92,7 @@ fun UruvakkuScreen(
         }
     }
 
-    val safeProfileIndex = selectedProfileFilterIndex.coerceIn(0, (businessFilterItems.size - 1).coerceAtLeast(0))
+    val safeProfileIndex = selectedProfileFilterIndex.coerceIn(0, (businessShifterItems.size - 1).coerceAtLeast(0))
 
     val allInvoices = PattiyalRepository.filteredInvoices
     val invoices = remember(allInvoices, safeProfileIndex, profiles) {
@@ -156,20 +158,24 @@ fun UruvakkuScreen(
                     items = shifterItems,
                     selectedIndex = selectedSegment,
                     onIndexSelected = onSegmentSelected,
-                    colors = colors
+                    colors = colors,
+                    isFullWidth = false
                 )
             }
         }
 
-        // Business Profile Filter Chips (below Invoices vs Receipts pill)
-        if (businessFilterItems.size > 1) {
-            item(key = "business_chips") {
-                ElvanVanigaChips(
-                    items = businessFilterItems,
+        // Business Profile Filter Shifter (below Invoices vs Receipts pill - End to End)
+        if (businessShifterItems.size > 1) {
+            item(key = "business_shifter") {
+                ElvanPillShifter(
+                    items = businessShifterItems,
                     selectedIndex = safeProfileIndex,
                     onIndexSelected = { selectedProfileFilterIndex = it },
                     colors = colors,
-                    modifier = Modifier.fillMaxWidth()
+                    isFullWidth = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
                 )
             }
         }
