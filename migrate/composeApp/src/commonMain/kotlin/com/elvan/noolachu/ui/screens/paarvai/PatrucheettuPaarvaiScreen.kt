@@ -66,7 +66,7 @@ fun PatrucheettuPaarvaiScreen(
     val scrollState = rememberLazyListState()
 
     ElvanPaarvaiOadu(
-        title = "${K.patrucheettu.tr()} #${receipt.patruEn}",
+        title = "${K.receipt.tr()} #${receipt.patruEn}",
         onBack = onBack,
         scrollState = scrollState,
         onEdit = onEdit,
@@ -184,7 +184,7 @@ fun PatrucheettuPaarvaiScreen(
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = K.perumMotham.tr().preventBrokenLigatures(),
+                            text = K.grandTotal.tr().preventBrokenLigatures(),
                             style = TextStyle(
                                 fontFamily = ff,
                                 fontSize = 15.sp,
@@ -246,7 +246,7 @@ fun PatrucheettuPaarvaiScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     Text(
-                                        text = K.vangi.tr(),
+                                        text = K.bank.tr(),
                                         style = TextStyle(fontFamily = ff, fontSize = 14.sp, color = colors.textSecondary)
                                     )
                                     Text(
@@ -265,7 +265,7 @@ fun PatrucheettuPaarvaiScreen(
                 item(key = "notes_card") {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            text = K.kurippu.tr().preventBrokenLigatures(),
+                            text = K.remarks.tr().preventBrokenLigatures(),
                             style = TextStyle(
                                 fontFamily = ff,
                                 fontSize = 16.sp,

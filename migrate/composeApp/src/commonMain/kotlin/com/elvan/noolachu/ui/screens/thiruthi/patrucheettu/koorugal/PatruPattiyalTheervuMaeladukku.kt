@@ -114,7 +114,7 @@ fun PatruPattiyalTheervuMaeladukku(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = K.endhapPattiyalukku.tr().preventBrokenLigatures(),
+                    text = K.forWhichInvoice.tr().preventBrokenLigatures(),
                     style = TextStyle(
                         fontFamily = ff,
                         fontSize = 18.sp,
@@ -132,7 +132,7 @@ fun PatruPattiyalTheervuMaeladukku(
                         }
                     ) {
                         Text(
-                            text = K.chariPtn.tr().preventBrokenLigatures(),
+                            text = K.okBtn.tr().preventBrokenLigatures(),
                             style = TextStyle(
                                 fontFamily = ff,
                                 fontSize = 15.sp,
@@ -170,7 +170,7 @@ fun PatruPattiyalTheervuMaeladukku(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = K.pattiyalgalIllai.tr().preventBrokenLigatures(),
+                        text = K.noInvoicesYet.tr().preventBrokenLigatures(),
                         style = TextStyle(
                             fontFamily = ff,
                             fontSize = 14.sp,

@@ -39,11 +39,11 @@ fun NewProfileBottomSheet(
 
     val fieldBg = if (colors.isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.06f)
 
-    val maxProfilesMsg = K.perumalavu5thannuru.tr()
-    val saveSuccessMsg = K.thannuruChaemikkappattadhu.tr()
-    val createTitle = K.pudhiyaThannuruvaiUruvaakku.tr()
-    val cancelLabel = K.kaividu.tr()
-    val createLabel = K.aakku.tr()
+    val maxProfilesMsg = K.maxFiveProfiles.tr()
+    val saveSuccessMsg = K.profileSaved.tr()
+    val createTitle = K.createNewProfile.tr()
+    val cancelLabel = K.cancel.tr()
+    val createLabel = K.make.tr()
 
     ElvanActionSheet(
         title = createTitle,
@@ -95,7 +95,7 @@ fun NewProfileBottomSheet(
                 ) {
                     if (newNamePrimary.isEmpty()) {
                         Text(
-                            text = "${K.niruvanathinPeyar.tr()} (${K.thamizh.tr()})",
+                            text = "${K.companyName.tr()} (${K.taCode.tr()})",
                             style = TextStyle(
                                 fontFamily = ff,
                                 fontSize = 13.sp,
@@ -131,7 +131,7 @@ fun NewProfileBottomSheet(
                 ) {
                     if (newNameSecondary.isEmpty()) {
                         Text(
-                            text = "${K.niruvanathinPeyar.tr()} (${K.aangilam.tr()})",
+                            text = "${K.companyName.tr()} (${K.enCode.tr()})",
                             style = TextStyle(
                                 fontFamily = ff,
                                 fontSize = 13.sp,

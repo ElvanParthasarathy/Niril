@@ -138,7 +138,7 @@ fun ElvanThaedalPattai(
                     ) {
                         if (query.isEmpty()) {
                             Text(
-                                text = K.thaeduga.tr(),
+                                text = K.search.tr(),
                                 style = TextStyle(
                                     fontFamily = ff,
                                     fontSize = 17.sp,
@@ -176,7 +176,7 @@ fun ElvanThaedalPattai(
                     ) {
                         Icon(
                             imageVector = MaterialSymbols.Rounded.Cancel,
-                            contentDescription = K.kaividu.tr(),
+                            contentDescription = K.cancel.tr(),
                             tint = colors.textSecondary,
                             modifier = Modifier.size(22.dp)
                         )

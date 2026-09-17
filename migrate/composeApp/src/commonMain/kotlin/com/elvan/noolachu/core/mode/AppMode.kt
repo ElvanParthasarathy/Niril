@@ -24,12 +24,12 @@ enum class AppMode(
 ) {
     KOOLI(
         key = "kooli",
-        titleKey = K.nirilKooli,
+        titleKey = K.udukkaiCoolie,
         databaseName = "udukkai_kooli.db"
     ),
     PATTU(
         key = "pattu",
-        titleKey = K.nirilPattu,
+        titleKey = K.udukkaiSilk,
         databaseName = "udukkai_pattu.db"
     );
 

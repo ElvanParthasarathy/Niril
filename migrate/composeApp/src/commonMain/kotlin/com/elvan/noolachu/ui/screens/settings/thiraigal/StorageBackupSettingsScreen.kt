@@ -58,7 +58,7 @@ fun StorageBackupSettingsScreen(
             if (backupStats != null) "உள்ளது" else null
         ) 
     }
-    val backupSuccessMsg = K.tharavuchaemippuvetri.tr()
+    val backupSuccessMsg = K.backupSavedToDocuments.tr()
     val backupSize = backupStats?.sizeBytes ?: 0L
 
     fun formatBytes(bytes: Long): String {
@@ -114,7 +114,7 @@ fun StorageBackupSettingsScreen(
                         verticalAlignment = Alignment.Bottom
                     ) {
                         Text(
-                            text = K.tharavuthalam.tr(),
+                            text = K.databaseStore.tr(),
                             style = TextStyle(
                                 fontFamily = ff,
                                 fontSize = 14.sp,
@@ -165,8 +165,8 @@ fun StorageBackupSettingsScreen(
                 // Used Storage
                 ElvanSettingsRow(
                     icon = MaterialSymbols.Rounded.Folder,
-                    title = K.payanpaduthiyaChaemippu.tr(),
-                    description = "${formatBytes(totalDbSize)} ${K.tharavuthalam.tr()}\n${formatBytes(backupSize)} ${K.kaappu.tr()}",
+                    title = K.storageUsed.tr(),
+                    description = "${formatBytes(totalDbSize)} ${K.databaseStore.tr()}\n${formatBytes(backupSize)} ${K.backup.tr()}",
                     onClick = {},
                     colors = colors
                 )
@@ -175,8 +175,8 @@ fun StorageBackupSettingsScreen(
                 // Last Auto Backup
                 ElvanSettingsRow(
                     icon = MaterialSymbols.Rounded.Schedule,
-                    title = K.kadaisiThaaniyakkaKaappu.tr(),
-                    description = lastBackupTime ?: K.idhuvuraiKaappuIllai.tr(),
+                    title = K.lastAutoBackup.tr(),
+                    description = lastBackupTime ?: K.noBackupYet.tr(),
                     onClick = {},
                     colors = colors
                 )
@@ -185,8 +185,8 @@ fun StorageBackupSettingsScreen(
                 // Backup Data Button
                 ElvanSettingsRow(
                     icon = MaterialSymbols.Rounded.CloudUpload,
-                    title = K.tharavuKaappuChei.tr(),
-                    description = K.ungalTharavaiChaemikkavum.tr(),
+                    title = K.backupData.tr(),
+                    description = K.manuallyUpdateBackup.tr(),
                     onClick = { showBackupConfirm = true },
                     colors = colors
                 )
@@ -219,7 +219,7 @@ fun StorageBackupSettingsScreen(
                         }
                         Spacer(modifier = Modifier.width(14.dp))
                         Text(
-                            text = K.kooliTharavugal.tr(),
+                            text = K.coolieData.tr(),
                             style = TextStyle(
                                 fontFamily = ff,
                                 fontSize = 15.sp,
@@ -234,13 +234,13 @@ fun StorageBackupSettingsScreen(
                     // 2x2 Data Grid
                     val gridStyle = TextStyle(fontFamily = ff, fontSize = 12.sp, color = colors.textPrimary.copy(alpha = 0.5f))
                     Row(modifier = Modifier.fillMaxWidth().padding(start = 50.dp)) {
-                        Text("0 ${K.pattiyalgal.tr()}", style = gridStyle, modifier = Modifier.weight(1f))
-                        Text("0 ${K.patrucheettugal.tr()}", style = gridStyle, modifier = Modifier.weight(1f))
+                        Text("0 ${K.invoices.tr()}", style = gridStyle, modifier = Modifier.weight(1f))
+                        Text("0 ${K.receipts.tr()}", style = gridStyle, modifier = Modifier.weight(1f))
                     }
                     Spacer(modifier = Modifier.height(6.dp))
                     Row(modifier = Modifier.fillMaxWidth().padding(start = 50.dp)) {
-                        Text("0 ${K.vaangunargal.tr()}", style = gridStyle, modifier = Modifier.weight(1f))
-                        Text("0 ${K.porutkal.tr()}", style = gridStyle, modifier = Modifier.weight(1f))
+                        Text("0 ${K.customers.tr()}", style = gridStyle, modifier = Modifier.weight(1f))
+                        Text("0 ${K.products.tr()}", style = gridStyle, modifier = Modifier.weight(1f))
                     }
                 }
 
@@ -269,7 +269,7 @@ fun StorageBackupSettingsScreen(
                         }
                         Spacer(modifier = Modifier.width(14.dp))
                         Text(
-                            text = K.pattuTharavugal.tr(),
+                            text = K.silkData.tr(),
                             style = TextStyle(
                                 fontFamily = ff,
                                 fontSize = 15.sp,
@@ -284,13 +284,13 @@ fun StorageBackupSettingsScreen(
                     // 2x2 Data Grid
                     val gridStyle = TextStyle(fontFamily = ff, fontSize = 12.sp, color = colors.textPrimary.copy(alpha = 0.5f))
                     Row(modifier = Modifier.fillMaxWidth().padding(start = 50.dp)) {
-                        Text("0 ${K.pattiyalgal.tr()}", style = gridStyle, modifier = Modifier.weight(1f))
-                        Text("0 ${K.patrucheettugal.tr()}", style = gridStyle, modifier = Modifier.weight(1f))
+                        Text("0 ${K.invoices.tr()}", style = gridStyle, modifier = Modifier.weight(1f))
+                        Text("0 ${K.receipts.tr()}", style = gridStyle, modifier = Modifier.weight(1f))
                     }
                     Spacer(modifier = Modifier.height(6.dp))
                     Row(modifier = Modifier.fillMaxWidth().padding(start = 50.dp)) {
-                        Text("0 ${K.vaangunargal.tr()}", style = gridStyle, modifier = Modifier.weight(1f))
-                        Text("0 ${K.porutkal.tr()}", style = gridStyle, modifier = Modifier.weight(1f))
+                        Text("0 ${K.customers.tr()}", style = gridStyle, modifier = Modifier.weight(1f))
+                        Text("0 ${K.products.tr()}", style = gridStyle, modifier = Modifier.weight(1f))
                     }
                 }
             }
@@ -300,9 +300,9 @@ fun StorageBackupSettingsScreen(
     // Confirmation & Loading Sheets
     if (showBackupConfirm) {
         ElvanActionSheet(
-            title = K.tharavuKaappu.tr(),
-            cancelText = K.kaividuPtn.tr(),
-            confirmText = K.kaappuCheiPtn.tr(),
+            title = K.backupDatabase.tr(),
+            cancelText = K.cancelBtn.tr(),
+            confirmText = K.backupNowBtn.tr(),
             onDismissRequest = { showBackupConfirm = false },
             onConfirm = {
                 showBackupConfirm = false
@@ -327,7 +327,7 @@ fun StorageBackupSettingsScreen(
 
     if (isBackingUp) {
         ElvanLoadingOverlay(
-            text = K.chaemikkappadugiradhu.tr(),
+            text = K.backingUp.tr(),
             colors = colors
         )
     }

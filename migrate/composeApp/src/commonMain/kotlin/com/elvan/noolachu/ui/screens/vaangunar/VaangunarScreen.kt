@@ -95,7 +95,7 @@ fun VaangunarScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = K.vaangunargalIllai.tr().preventBrokenLigatures(),
+                        text = K.noCustomersYet.tr().preventBrokenLigatures(),
                         style = TextStyle(
                             fontFamily = ff,
                             fontSize = 18.sp,
@@ -107,7 +107,7 @@ fun VaangunarScreen(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
-                        text = K.vaangunaraiChaerkkavum.tr().preventBrokenLigatures(),
+                        text = K.addFirstCustomer.tr().preventBrokenLigatures(),
                         style = TextStyle(
                             fontFamily = ff,
                             fontSize = 14.sp,

@@ -52,7 +52,7 @@ fun VanakkamThirai(
 
         // Header: "தரவுகளை உள்ளிடுக" / "Enter Company Details"
         AuthHeader(
-            title = K.tharavugalaiUlliduga.tr(),
+            title = K.enterCompanyDetails.tr(),
             subtitle = ""
         )
 
@@ -63,9 +63,9 @@ fun VanakkamThirai(
             AuthInput(
                 value = gstBusinessName,
                 onValueChange = { gstBusinessName = it },
-                label = K.niruvanathinPeyar.tr().ifEmpty { "GST Business Name" },
-                placeholder = K.peyaraiUlliduga.tr(),
-                helperText = K.gstpattiyalukku.tr()
+                label = K.companyName.tr().ifEmpty { "GST Business Name" },
+                placeholder = K.enterName.tr(),
+                helperText = K.forGstInvoice.tr()
             )
         }
 
@@ -74,9 +74,9 @@ fun VanakkamThirai(
             AuthInput(
                 value = coolieBusinessName,
                 onValueChange = { coolieBusinessName = it },
-                label = K.kooliNiruvanaPeyar.tr(),
-                placeholder = K.peyaraiUlliduga.tr(),
-                helperText = K.koolipattiyalukku.tr()
+                label = K.coolieCompanyName.tr(),
+                placeholder = K.enterName.tr(),
+                helperText = K.usedForCoolieBillsReceipts.tr()
             )
         }
 
@@ -84,7 +84,7 @@ fun VanakkamThirai(
 
         // Continue Button ("தொடரவும்" / "Continue")
         AuthButton(
-            text = K.thodaravum.tr(),
+            text = K.continueText.tr(),
             loading = isSaving,
             disabled = isButtonDisabled,
             onClick = {

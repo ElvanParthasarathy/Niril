@@ -17,13 +17,13 @@ enum class AppFont(
         id = "navil_sans",
         displayName = "Navil Sans",
         titleKey = K.navilSans,
-        descKey = K.navilSansVilakkam
+        descKey = K.navilSansDesc
     ),
     ELVAN_SANS(
         id = "elvan_sans",
         displayName = "Elvan Sans",
         titleKey = K.elvanSans,
-        descKey = K.elvanSansVilakkam
+        descKey = K.elvanSansDesc
     );
 
     companion object {

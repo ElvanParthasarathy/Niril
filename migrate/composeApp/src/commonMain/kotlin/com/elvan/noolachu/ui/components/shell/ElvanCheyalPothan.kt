@@ -17,7 +17,7 @@ import com.elvan.noolachu.theme.rememberShellColors
 
 @Composable
 fun ElvanCheyalPothan(
-    label: String = K.chaemiPtn.tr(),
+    label: String = K.saveBtn.tr(),
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true

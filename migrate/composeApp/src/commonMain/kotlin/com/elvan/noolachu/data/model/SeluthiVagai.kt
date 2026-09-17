@@ -34,11 +34,11 @@ enum class SeluthiVagai(
 
     fun labelString(langCode: String = LanguageManager.activeLanguageCode): String {
         return when (this) {
-            PANAM -> K.kaasu.trWithLang(langCode)
+            PANAM -> K.cash.trWithLang(langCode)
             UPI -> "UPI"
-            VANGI_MAATRAM -> K.vangiParimaatram.trWithLang(langCode)
-            KAASOALAI -> K.kaasoalai.trWithLang(langCode)
-            ATTAI -> K.attai.trWithLang(langCode)
+            VANGI_MAATRAM -> K.bankTransfer.trWithLang(langCode)
+            KAASOALAI -> K.cheque.trWithLang(langCode)
+            ATTAI -> K.card.trWithLang(langCode)
         }
     }
 

@@ -96,7 +96,7 @@ fun PattiyalNaalKooru(
                     }
                 ) {
                     Text(
-                        text = K.urudhi.tr(),
+                        text = K.confirm.tr(),
                         style = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, color = colors.accent)
                     )
                 }
@@ -104,7 +104,7 @@ fun PattiyalNaalKooru(
             dismissButton = {
                 TextButton(onClick = { isPickerOpen = false }) {
                     Text(
-                        text = K.kaividu.tr(),
+                        text = K.cancel.tr(),
                         style = TextStyle(fontFamily = ff, color = colors.textSecondary)
                     )
                 }

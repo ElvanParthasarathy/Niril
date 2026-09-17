@@ -55,8 +55,8 @@ fun BillingLanguageStep(
 
         // Header: "பட்டியல் முதன்மை மொழி" / "Invoice Language"
         AuthHeader(
-            title = K.pattiyalMudhanmozhi.tr(),
-            subtitle = K.pattiyalmozhi.tr()
+            title = K.selectPrimaryBillingLanguage.tr(),
+            subtitle = K.whichBillingLanguagePrompt.tr()
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -92,7 +92,7 @@ fun BillingLanguageStep(
 
         // Continue Button: "தொடரவும்" / "Continue"
         AuthButton(
-            text = K.thodaravum.tr(),
+            text = K.continueText.tr(),
             onClick = onContinue
         )
     }

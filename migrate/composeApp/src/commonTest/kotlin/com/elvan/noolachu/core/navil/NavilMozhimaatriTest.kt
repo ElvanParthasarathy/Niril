@@ -179,11 +179,11 @@ class NavilMozhimaatriTest {
 
     @Test
     fun testDynamicTaLatnTransliteration() {
-        val senthamizh = com.elvan.noolachu.localization.language_keys.taLatn[com.elvan.noolachu.localization.K.senthamizh]
+        val senthamizh = com.elvan.noolachu.localization.language_keys.taLatn[com.elvan.noolachu.localization.K.pureTamil]
         kotlin.test.assertNotNull(senthamizh)
         assertEquals("Chendhamizh", senthamizh)
 
-        val niruvanam = com.elvan.noolachu.localization.language_keys.taLatn[com.elvan.noolachu.localization.K.niruvanam]
+        val niruvanam = com.elvan.noolachu.localization.language_keys.taLatn[com.elvan.noolachu.localization.K.company]
         kotlin.test.assertNotNull(niruvanam)
         assertEquals("Niruvanam", niruvanam)
     }

@@ -69,7 +69,7 @@ fun PattiyalPaarvaiScreen(
     val scrollState = rememberLazyListState()
 
     ElvanPaarvaiOadu(
-        title = "${K.pattiyal.tr()} #${invoice.patrucheettuEn}",
+        title = "${K.invoice.tr()} #${invoice.patrucheettuEn}",
         onBack = onBack,
         scrollState = scrollState,
         onEdit = onEdit,
@@ -171,7 +171,7 @@ fun PattiyalPaarvaiScreen(
                                     .padding(horizontal = 8.dp, vertical = 4.dp)
                             ) {
                                 Text(
-                                    text = if (currentMode == AppMode.PATTU) K.nirilPattu.tr() else K.nirilKooli.tr(),
+                                    text = if (currentMode == AppMode.PATTU) K.udukkaiSilk.tr() else K.udukkaiCoolie.tr(),
                                     style = TextStyle(
                                         fontFamily = ff,
                                         fontSize = 12.sp,
@@ -214,7 +214,7 @@ fun PattiyalPaarvaiScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     Text(
-                                        text = "${K.chaedhaaram.tr()} (Grams)",
+                                        text = "${K.setharam.tr()} (Grams)",
                                         style = TextStyle(fontFamily = ff, fontSize = 14.sp, color = colors.textSecondary)
                                     )
                                     Text(
@@ -229,7 +229,7 @@ fun PattiyalPaarvaiScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     Text(
-                                        text = K.koriyarKattanam.tr(),
+                                        text = K.courierCharge.tr(),
                                         style = TextStyle(fontFamily = ff, fontSize = 14.sp, color = colors.textSecondary)
                                     )
                                     Text(
@@ -275,7 +275,7 @@ fun PattiyalPaarvaiScreen(
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
-                            text = K.perumMotham.tr().preventBrokenLigatures(),
+                            text = K.grandTotal.tr().preventBrokenLigatures(),
                             style = TextStyle(
                                 fontFamily = ff,
                                 fontSize = 15.sp,
@@ -302,7 +302,7 @@ fun PattiyalPaarvaiScreen(
                 item(key = "notes_card") {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            text = K.kurippu.tr().preventBrokenLigatures(),
+                            text = K.remarks.tr().preventBrokenLigatures(),
                             style = TextStyle(
                                 fontFamily = ff,
                                 fontSize = 16.sp,

@@ -32,8 +32,8 @@ fun NoolachuDialog(
 ) {
     ElvanActionSheet(
         title = title,
-        cancelText = dismissText ?: K.kaividu.tr(),
-        confirmText = confirmText ?: K.urudhi.tr(),
+        cancelText = dismissText ?: K.cancel.tr(),
+        confirmText = confirmText ?: K.confirm.tr(),
         onDismissRequest = onDismiss,
         onConfirm = onConfirm,
         confirmColor = confirmColor,

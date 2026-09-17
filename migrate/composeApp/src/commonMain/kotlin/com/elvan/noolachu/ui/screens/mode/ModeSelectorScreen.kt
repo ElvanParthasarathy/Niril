@@ -96,7 +96,7 @@ fun ModeSelectorContent(
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = MaterialSymbols.Rounded.Close,
-                        contentDescription = K.kaividu.tr(),
+                        contentDescription = K.cancel.tr(),
                         tint = colors.textPrimary,
                         modifier = Modifier.size(22.dp)
                     )
@@ -117,7 +117,7 @@ fun ModeSelectorContent(
             AuthAnimatedElement(delayMillis = 100) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = K.endhachCheyalmurai.tr(),
+                        text = K.whichWorkspace.tr(),
                         style = TextStyle(
                             fontFamily = ff,
                             fontSize = 28.sp,
@@ -131,7 +131,7 @@ fun ModeSelectorContent(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = K.ungalCheyalmuraiyaithThaerndhedukkavum.tr(),
+                        text = K.selectYourWorkspace.tr(),
                         style = TextStyle(
                             fontFamily = ff,
                             fontSize = 14.sp,
@@ -153,7 +153,7 @@ fun ModeSelectorContent(
                 ) {
                     // Kooli Profile Card ("Udukkai Coolie" / "உடுக்கைக் கூலி")
                     NetflixProfileCard(
-                        title = K.nirilKooli.tr(),
+                        title = K.udukkaiCoolie.tr(),
                         icon = AppSvgs.coolieMode,
                         isDark = isDark,
                         onClick = { onModeSelected(AppMode.KOOLI) }
@@ -161,7 +161,7 @@ fun ModeSelectorContent(
 
                     // Pattu Profile Card ("Udukkai Silk" / "உடுக்கைப் பட்டு")
                     NetflixProfileCard(
-                        title = K.nirilPattu.tr(),
+                        title = K.udukkaiSilk.tr(),
                         icon = AppSvgs.silkMode,
                         isDark = isDark,
                         onClick = { onModeSelected(AppMode.PATTU) }

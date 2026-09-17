@@ -44,7 +44,7 @@ fun UserProfileSettingsScreen(
 
     var editingSection by remember { mutableStateOf<String?>(null) }
     var tempVal by remember { mutableStateOf("") }
-    val saveSuccessMsg = K.thannuruChaemikkappattadhu.tr()
+    val saveSuccessMsg = K.profileSaved.tr()
 
     fun beginEdit(section: String, initial: String) {
         editingSection = section
@@ -72,7 +72,7 @@ fun UserProfileSettingsScreen(
                     isEditing = editingSection == "mudhalPeyar",
                     displayContent = {
                         ElvanSettingsDisplayRow(
-                            title = K.mudhalPeyar.tr(),
+                            title = K.firstName.tr(),
                             primaryValue = mudhalPeyar,
                             onEdit = { beginEdit("mudhalPeyar", mudhalPeyar) },
                             colors = colors
@@ -80,7 +80,7 @@ fun UserProfileSettingsScreen(
                     },
                     editContent = {
                         ElvanSettingsEditContainer(
-                            title = K.mudhalPeyar.tr(),
+                            title = K.firstName.tr(),
                             onCancel = { editingSection = null },
                             onSave = {
                                 mudhalPeyar = tempVal
@@ -90,7 +90,7 @@ fun UserProfileSettingsScreen(
                             colors = colors
                         ) {
                             ElvanSettingsTextField(
-                                label = K.mudhalPeyar.tr(),
+                                label = K.firstName.tr(),
                                 value = tempVal,
                                 onValueChange = { tempVal = it },
                                 colors = colors
@@ -105,7 +105,7 @@ fun UserProfileSettingsScreen(
                     isEditing = editingSection == "irudhiPeyar",
                     displayContent = {
                         ElvanSettingsDisplayRow(
-                            title = K.irudhiPeyar.tr(),
+                            title = K.lastName.tr(),
                             primaryValue = irudhiPeyar,
                             onEdit = { beginEdit("irudhiPeyar", irudhiPeyar) },
                             colors = colors
@@ -113,7 +113,7 @@ fun UserProfileSettingsScreen(
                     },
                     editContent = {
                         ElvanSettingsEditContainer(
-                            title = K.irudhiPeyar.tr(),
+                            title = K.lastName.tr(),
                             onCancel = { editingSection = null },
                             onSave = {
                                 irudhiPeyar = tempVal
@@ -123,7 +123,7 @@ fun UserProfileSettingsScreen(
                             colors = colors
                         ) {
                             ElvanSettingsTextField(
-                                label = K.irudhiPeyar.tr(),
+                                label = K.lastName.tr(),
                                 value = tempVal,
                                 onValueChange = { tempVal = it },
                                 colors = colors
@@ -146,7 +146,7 @@ fun UserProfileSettingsScreen(
                     isEditing = editingSection == "pirandhaThaedhi",
                     displayContent = {
                         ElvanSettingsDisplayRow(
-                            title = K.pirandhaThaedhi.tr(),
+                            title = K.dateOfBirth.tr(),
                             primaryValue = pirandhaThaedhi,
                             onEdit = { beginEdit("pirandhaThaedhi", pirandhaThaedhi) },
                             colors = colors
@@ -154,7 +154,7 @@ fun UserProfileSettingsScreen(
                     },
                     editContent = {
                         ElvanSettingsEditContainer(
-                            title = K.pirandhaThaedhi.tr(),
+                            title = K.dateOfBirth.tr(),
                             onCancel = { editingSection = null },
                             onSave = {
                                 pirandhaThaedhi = tempVal
@@ -168,7 +168,7 @@ fun UserProfileSettingsScreen(
                                 horizontalAlignment = Alignment.Start
                             ) {
                                 Text(
-                                    text = K.pirandhaThaedhi.tr(),
+                                    text = K.dateOfBirth.tr(),
                                     style = TextStyle(
                                         fontFamily = ff,
                                         fontSize = 12.sp,
@@ -231,12 +231,12 @@ fun UserProfileSettingsScreen(
                                                 showDatePicker = false
                                             }
                                         ) {
-                                            Text(K.urudhi.tr(), color = colors.accent)
+                                            Text(K.confirm.tr(), color = colors.accent)
                                         }
                                     },
                                     dismissButton = {
                                         TextButton(onClick = { showDatePicker = false }) {
-                                            Text(K.kaividu.tr(), color = colors.textPrimary.copy(alpha = 0.7f))
+                                            Text(K.cancel.tr(), color = colors.textPrimary.copy(alpha = 0.7f))
                                         }
                                     },
                                     colors = DatePickerDefaults.colors(

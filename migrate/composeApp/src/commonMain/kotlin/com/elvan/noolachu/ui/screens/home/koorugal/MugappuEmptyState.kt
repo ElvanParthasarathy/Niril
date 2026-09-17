@@ -46,7 +46,7 @@ fun MugappuEmptyState(
             )
             Spacer(modifier = Modifier.height(14.dp))
             Text(
-                text = K.pattiyalgalIllai.tr().preventBrokenLigatures(),
+                text = K.noInvoicesYet.tr().preventBrokenLigatures(),
                 style = TextStyle(
                     fontFamily = ff,
                     fontSize = 15.sp,

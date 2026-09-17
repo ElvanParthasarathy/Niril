@@ -70,7 +70,7 @@ fun PattuUrupadiAttai(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "${K.porul.tr()} #${index + 1}".preventBrokenLigatures(),
+                text = "${K.product.tr()} #${index + 1}".preventBrokenLigatures(),
                 style = TextStyle(
                     fontFamily = ff,
                     fontSize = 13.sp,
@@ -92,7 +92,7 @@ fun PattuUrupadiAttai(
                 ) {
                     Icon(
                         imageVector = MaterialSymbols.Rounded.Delete,
-                        contentDescription = K.azhi.tr(),
+                        contentDescription = K.delete.tr(),
                         tint = colors.textSecondary,
                         modifier = Modifier.size(18.dp)
                     )
@@ -107,7 +107,7 @@ fun PattuUrupadiAttai(
         ) {
             // ── Product Picker Pill ──
             Column(modifier = Modifier.fillMaxWidth()) {
-                ElvanThiruthiThalaippu(label = K.porul.tr())
+                ElvanThiruthiThalaippu(label = K.product.tr())
 
                 val displayName = item.porulPeyar.ifEmpty { item.porulPeyarEn }
                 val containerBg = colors.iconBg
@@ -128,7 +128,7 @@ fun PattuUrupadiAttai(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = (if (displayName.isNotEmpty()) displayName else K.porutkal.tr()).preventBrokenLigatures(),
+                            text = (if (displayName.isNotEmpty()) displayName else K.products.tr()).preventBrokenLigatures(),
                             style = TextStyle(
                                 fontFamily = ff,
                                 fontSize = 14.sp,
@@ -153,7 +153,7 @@ fun PattuUrupadiAttai(
                             ) {
                                 Icon(
                                     imageVector = MaterialSymbols.Rounded.Close,
-                                    contentDescription = K.kaividu.tr(),
+                                    contentDescription = K.cancel.tr(),
                                     tint = colors.textSecondary,
                                     modifier = Modifier.size(16.dp)
                                 )
@@ -190,7 +190,7 @@ fun PattuUrupadiAttai(
             ) {
                 Box(modifier = Modifier.weight(1f)) {
                     ElvanThiruthiUlleedu(
-                        label = K.alavu.tr(),
+                        label = K.quantity.tr(),
                         value = if (item.alavu == 0.0) "" else if (item.alavu % 1.0 == 0.0) item.alavu.toInt().toString() else item.alavu.toString(),
                         onValueChange = { str ->
                             val qty = str.toDoubleOrNull() ?: 0.0
@@ -204,7 +204,7 @@ fun PattuUrupadiAttai(
 
                 Box(modifier = Modifier.weight(1f)) {
                     ElvanThiruthiUlleedu(
-                        label = K.vilai.tr(),
+                        label = K.sellingRate.tr(),
                         value = if (item.vilai == 0.0) "" else if (item.vilai % 1.0 == 0.0) item.vilai.toInt().toString() else item.vilai.toString(),
                         onValueChange = { str ->
                             val rate = str.toDoubleOrNull() ?: 0.0
@@ -226,7 +226,7 @@ fun PattuUrupadiAttai(
             ) {
                 Box(modifier = Modifier.weight(1f)) {
                     ElvanThiruthiUlleedu(
-                        label = K.thallupadi.tr(),
+                        label = K.discount.tr(),
                         value = if (item.thallupadi == 0.0) "" else if (item.thallupadi % 1.0 == 0.0) item.thallupadi.toInt().toString() else item.thallupadi.toString(),
                         onValueChange = { str ->
                             val disc = str.toDoubleOrNull() ?: 0.0
@@ -263,7 +263,7 @@ fun PattuUrupadiAttai(
 
                 Box(modifier = Modifier.weight(1f)) {
                     ElvanThiruthiUlleedu(
-                        label = K.motham.tr(),
+                        label = K.total.tr(),
                         value = CurrencyUtils.formatInr(item.rowTotal),
                         onValueChange = {},
                         enabled = false
@@ -276,7 +276,7 @@ fun PattuUrupadiAttai(
     // ── Product Selection Bottom Sheet ──
     if (isPickerOpen) {
         ElvanSelectionBottomSheet(
-            title = K.porutkal.tr(),
+            title = K.products.tr(),
             items = allProducts,
             currentValue = allProducts.firstOrNull { it.id.toString() == item.porulId },
             showSearch = true,
@@ -314,7 +314,7 @@ fun PattuUrupadiAttai(
                 isPickerOpen = false
                 onRequestAddNewProduct()
             },
-            addNewLabel = K.pudhiyaChaerkkai.tr()
+            addNewLabel = K.addNew.tr()
         )
     }
 }

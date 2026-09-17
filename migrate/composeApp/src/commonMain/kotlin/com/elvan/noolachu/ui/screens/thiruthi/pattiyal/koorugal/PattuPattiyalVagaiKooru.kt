@@ -42,18 +42,18 @@ fun PattuPattiyalVagaiKooru(
     val types = listOf("tax-invoice", "proforma")
 
     val displayMap = mapOf(
-        "tax-invoice" to K.varipPattiyal.tr(),
-        "proforma" to K.munvaraivu.tr()
+        "tax-invoice" to K.taxInvoice.tr(),
+        "proforma" to K.proforma.tr()
     )
 
-    val currentLabel = displayMap[pattiyalVagai] ?: K.varipPattiyal.tr()
+    val currentLabel = displayMap[pattiyalVagai] ?: K.taxInvoice.tr()
     val containerBg = colors.iconBg
 
     Box(
         modifier = modifier.fillMaxWidth()
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            ElvanThiruthiThalaippu(label = K.pattiyalVagai.tr())
+            ElvanThiruthiThalaippu(label = K.invoiceType.tr())
 
             Box(
                 modifier = Modifier
@@ -93,7 +93,7 @@ fun PattuPattiyalVagaiKooru(
 
     if (isSheetOpen) {
         ElvanSelectionBottomSheet(
-            title = K.pattiyalVagai.tr(),
+            title = K.invoiceType.tr(),
             items = types,
             currentValue = pattiyalVagai,
             showSearch = false,

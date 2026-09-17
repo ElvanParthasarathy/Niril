@@ -81,7 +81,7 @@ fun MugappuScreen(
                 ) {
                     ElvanStatsCard(
                         icon = MaterialSymbols.Rounded.CurrencyRupee,
-                        label = K.mothaKanakku.tr(),
+                        label = K.totalInvoiced.tr(),
                         value = CurrencyUtils.formatInr(overallTotal),
                         colors = colors,
                         modifier = Modifier.weight(1f),
@@ -90,7 +90,7 @@ fun MugappuScreen(
 
                     ElvanStatsCard(
                         icon = MaterialSymbols.Rounded.Apartment,
-                        label = K.niruvanangal.tr(),
+                        label = K.companies.tr(),
                         value = companiesSummary,
                         colors = colors,
                         modifier = Modifier.weight(1f),
@@ -101,7 +101,7 @@ fun MugappuScreen(
                 // Full-width 3rd card: Invoice count with company breakdown
                 ElvanStatsCard(
                     icon = MaterialSymbols.Rounded.Description,
-                    label = K.mothaPattiyalgal.tr(),
+                    label = K.totalInvoices.tr(),
                     value = invoiceCountSummary,
                     colors = colors,
                     modifier = Modifier.fillMaxWidth(),

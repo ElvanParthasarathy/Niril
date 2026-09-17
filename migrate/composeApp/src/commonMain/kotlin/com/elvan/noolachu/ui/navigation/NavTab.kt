@@ -14,26 +14,26 @@ enum class NavTab(
     Home(
         icon = MaterialSymbols.CustomNav.Home,
         activeIcon = MaterialSymbols.CustomNav.HomeFill,
-        titleKey = K.mugappu,
-        headerTitleKey = K.niril
+        titleKey = K.home,
+        headerTitleKey = K.udukkai
     ),
     Create(
         icon = MaterialSymbols.CustomNav.Create,
         activeIcon = MaterialSymbols.CustomNav.CreateFill,
-        titleKey = K.aakku,
-        headerTitleKey = K.uruvaakkuPtn
+        titleKey = K.make,
+        headerTitleKey = K.createBtn
     ),
     Products(
         icon = MaterialSymbols.CustomNav.Products,
         activeIcon = MaterialSymbols.CustomNav.ProductsFill,
-        titleKey = K.porul,
-        headerTitleKey = K.porutkal
+        titleKey = K.product,
+        headerTitleKey = K.products
     ),
     Customers(
         icon = MaterialSymbols.CustomNav.Customers,
         activeIcon = MaterialSymbols.CustomNav.CustomersFill,
-        titleKey = K.vaangunar,
-        headerTitleKey = K.vaangunargal
+        titleKey = K.customer,
+        headerTitleKey = K.customers
     );
 
     @Composable

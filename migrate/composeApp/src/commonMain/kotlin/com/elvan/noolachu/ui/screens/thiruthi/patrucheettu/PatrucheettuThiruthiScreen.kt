@@ -179,13 +179,13 @@ fun PatrucheettuThiruthiScreen(
     var isCompanySheetOpen by remember { mutableStateOf(false) }
     var isSeluthiVagaiSheetOpen by remember { mutableStateOf(false) }
 
-    val amaippugalStr = K.amaippugal.tr()
-    val pattiyalaiThaernheduMsg = K.pattiyalaiThaernhedu.tr()
-    val vaangunarPeyarThaevaiMsg = K.vaangunarPeyarThaevai.tr()
-    val thogaiInvalidMsg = K.thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum.tr()
-    val duplicateMsg = K.patrucheettuEnYaerkanavaeUlladhu.tr()
-    val savedMsg = K.patrucheettuChaemikkappattadhu.tr()
-    val saveFailedMsg = K.chaemikkaIyalavillai.tr()
+    val amaippugalStr = K.settings.tr()
+    val pattiyalaiThaernheduMsg = K.selectInvoice.tr()
+    val vaangunarPeyarThaevaiMsg = K.customerNameRequired.tr()
+    val thogaiInvalidMsg = K.amountMustBeGreaterThanZero.tr()
+    val duplicateMsg = K.receiptNumberAlreadyExists.tr()
+    val savedMsg = K.receiptSaved.tr()
+    val saveFailedMsg = K.couldNotSavePrefix.tr()
 
     // Helper: auto-calculate receipt number
     fun generatePatruEn(profile: NiruvanaTharavugal?) {
@@ -350,7 +350,7 @@ fun PatrucheettuThiruthiScreen(
         handleBackAttempt()
     }
 
-    val pageTitle = if (isEditing) K.maatriyamai.tr() else K.pudhiyaAakkam.tr()
+    val pageTitle = if (isEditing) K.editRecord.tr() else K.createRecord.tr()
     val scrollState = rememberLazyListState()
     val pillBg = colors.iconBg
 
@@ -361,7 +361,7 @@ fun PatrucheettuThiruthiScreen(
         hasActions = true,
         actions = {
             ElvanCheyalPothan(
-                label = K.chaemiPtn.tr(),
+                label = K.saveBtn.tr(),
                 onClick = { handleSave() },
                 enabled = !isSaving && !isFormLocked
             )
@@ -388,9 +388,9 @@ fun PatrucheettuThiruthiScreen(
                         selectedProfile.niruvanathinPeyar.values.firstOrNull().orEmpty()
                     }
 
-                    ElvanEditorSection(index = 0, title = K.niruvanathTharavu.tr()) {
+                    ElvanEditorSection(index = 0, title = K.companyDetail.tr()) {
                         Column(modifier = Modifier.fillMaxWidth()) {
-                            ElvanThiruthiThalaippu(label = K.niruvanam.tr())
+                            ElvanThiruthiThalaippu(label = K.company.tr())
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -407,7 +407,7 @@ fun PatrucheettuThiruthiScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = (companyName ?: K.niruvanaththaithThaernhedu.tr()).preventBrokenLigatures(),
+                                        text = (companyName ?: K.selectCompany.tr()).preventBrokenLigatures(),
                                         style = TextStyle(
                                             fontFamily = ff,
                                             fontSize = 14.sp,
@@ -465,12 +465,12 @@ fun PatrucheettuThiruthiScreen(
             // ── Section 1: Linked Invoice (Required) ──
             item(key = "invoice_picker_section") {
                 FormLockWrapper(isLocked = isFormLocked) {
-                    ElvanEditorSection(index = baseIndex, title = K.endhapPattiyalukku.tr()) {
+                    ElvanEditorSection(index = baseIndex, title = K.forWhichInvoice.tr()) {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            ElvanThiruthiThalaippu(label = K.pattiyal.tr())
+                            ElvanThiruthiThalaippu(label = K.invoice.tr())
 
                             // Select Invoices 48dp pill button
                             Box(
@@ -495,9 +495,9 @@ fun PatrucheettuThiruthiScreen(
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
                                         text = if (selectedInvoices.isEmpty()) {
-                                            K.pattiyalgalaiThaernhedu.tr().preventBrokenLigatures()
+                                            K.selectInvoices.tr().preventBrokenLigatures()
                                         } else {
-                                            "${selectedInvoices.size} ${K.pattiyalgal.tr().preventBrokenLigatures()}"
+                                            "${selectedInvoices.size} ${K.invoices.tr().preventBrokenLigatures()}"
                                         },
                                         style = TextStyle(
                                             fontFamily = ff,
@@ -569,14 +569,14 @@ fun PatrucheettuThiruthiScreen(
             // ── Section 2: Receipt Data ──
             item(key = "receipt_data_section") {
                 FormLockWrapper(isLocked = isFormLocked) {
-                    ElvanEditorSection(index = baseIndex + 1, title = K.patrucheettuTharavugal.tr()) {
+                    ElvanEditorSection(index = baseIndex + 1, title = K.receiptDetails.tr()) {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(24.dp)
                         ) {
                             // 1. Receipt Date
                             Column(modifier = Modifier.fillMaxWidth()) {
-                                ElvanThiruthiThalaippu(label = K.patrucheettuNaal.tr())
+                                ElvanThiruthiThalaippu(label = K.receiptDate.tr())
                                 PattiyalNaalKooru(
                                     selectedDate = patruNaal,
                                     onDateChanged = {
@@ -588,7 +588,7 @@ fun PatrucheettuThiruthiScreen(
 
                             // 2. Customer Pill (Locked with lock icon when loaded from invoice)
                             Column(modifier = Modifier.fillMaxWidth()) {
-                                ElvanThiruthiThalaippu(label = K.vaangunar.tr())
+                                ElvanThiruthiThalaippu(label = K.customer.tr())
                                 val customerName = selectedVaangunarPeyarMap["ta"]
                                     ?: selectedVaangunarPeyarMap.values.firstOrNull().orEmpty()
 
@@ -639,7 +639,7 @@ fun PatrucheettuThiruthiScreen(
                                             )
                                             Spacer(modifier = Modifier.width(8.dp))
                                             Text(
-                                                text = K.pattiyalThaervukkuPinVaangunarTharavugalNirappappadum.tr().preventBrokenLigatures(),
+                                                text = K.customerDetailsAutoFilledAfterInvoice.tr().preventBrokenLigatures(),
                                                 style = TextStyle(
                                                     fontFamily = ff,
                                                     fontSize = 14.sp,
@@ -660,7 +660,7 @@ fun PatrucheettuThiruthiScreen(
                                 "RCP/BIZ/"
                             }
                             ElvanAavanaEnnKooru(
-                                label = K.patrucheettuEn.tr(),
+                                label = K.receiptNumber.tr(),
                                 prefix = bizPrefix,
                                 initialFullNumber = patruEn,
                                 onFullNumberChanged = {
@@ -677,7 +677,7 @@ fun PatrucheettuThiruthiScreen(
             // ── Section 3: Payment Details ──
             item(key = "payment_section") {
                 FormLockWrapper(isLocked = isFormLocked) {
-                    ElvanEditorSection(index = baseIndex + 2, title = K.cheluthiyaTharavu.tr()) {
+                    ElvanEditorSection(index = baseIndex + 2, title = K.paymentDetails.tr()) {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(24.dp)
@@ -689,14 +689,14 @@ fun PatrucheettuThiruthiScreen(
                                     thogai = it
                                     hasUnsavedChanges = true
                                 },
-                                label = K.thogaiVinmeen.tr(),
+                                label = K.amountRequired.tr(),
                                 prefixText = "₹ ",
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
                             )
 
                             // 2. Payment Mode Selector Pill
                             Column(modifier = Modifier.fillMaxWidth()) {
-                                ElvanThiruthiThalaippu(label = K.cheluthumMuraiVinmeen.tr())
+                                ElvanThiruthiThalaippu(label = K.paymentModeRequired.tr())
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -759,7 +759,7 @@ fun PatrucheettuThiruthiScreen(
                                         suttruEn = it
                                         hasUnsavedChanges = true
                                     },
-                                    label = K.kurippuEnParimaatraEn.tr()
+                                    label = K.referenceOrTxnNo.tr()
                                 )
                             }
 
@@ -770,7 +770,7 @@ fun PatrucheettuThiruthiScreen(
                                     ullkurippu = it
                                     hasUnsavedChanges = true
                                 },
-                                label = K.kurippu.tr(),
+                                label = K.remarks.tr(),
                                 maxLines = 3,
                                 singleLine = false
                             )
@@ -784,7 +784,7 @@ fun PatrucheettuThiruthiScreen(
     // Modal: Business Profile Bottom Sheet
     if (isCompanySheetOpen) {
         ElvanSelectionBottomSheet<NiruvanaTharavugal>(
-            title = K.niruvanam.tr(),
+            title = K.company.tr(),
             items = profiles,
             currentValue = selectedProfile,
             onSelected = { profile ->
@@ -823,7 +823,7 @@ fun PatrucheettuThiruthiScreen(
     // Modal: Payment Mode Bottom Sheet
     if (isSeluthiVagaiSheetOpen) {
         ElvanSelectionBottomSheet<SeluthiVagai>(
-            title = K.cheluthumMuraiThaernhedu.tr(),
+            title = K.selectPaymentMode.tr(),
             items = SeluthiVagai.entries,
             currentValue = seluthiVagai,
             onSelected = { mode ->
@@ -850,10 +850,10 @@ fun PatrucheettuThiruthiScreen(
     // Modal: Unsaved Changes Action Sheet
     if (showUnsavedDialog) {
         ElvanActionSheet(
-            title = K.chaemippuNiluvai.tr(),
-            cancelText = K.thodarPtn.tr(),
-            confirmText = K.chaemiPtn.tr(),
-            tertiaryText = K.purakkaniPtn.tr(),
+            title = K.pendingSave.tr(),
+            cancelText = K.continueBtn.tr(),
+            confirmText = K.saveBtn.tr(),
+            tertiaryText = K.discardBtn.tr(),
             onDismissRequest = { showUnsavedDialog = false },
             onConfirm = {
                 showUnsavedDialog = false

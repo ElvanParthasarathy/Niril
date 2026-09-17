@@ -118,10 +118,10 @@ fun PattiyalThiruthiScreen(
 
     var validationError by remember { mutableStateOf<String?>(null) }
 
-    val pageTitle = if (isEditing) K.maatriyamai.tr() else K.pudhiyaPattiyalPtn.tr()
-    val thogaiRequiredMsg = K.thogaiChuzhiyaththaiVidaMigudhiyaagaIrukkaVaendum.tr()
-    val saveSuccessMsg = K.chaemippuvetri.tr()
-    val saveFailedMsg = K.chaemikkaIyalavillai.tr()
+    val pageTitle = if (isEditing) K.editRecord.tr() else K.newInvoiceBtn.tr()
+    val thogaiRequiredMsg = K.amountMustBeGreaterThanZero.tr()
+    val saveSuccessMsg = K.savedSuccessfully.tr()
+    val saveFailedMsg = K.couldNotSavePrefix.tr()
 
     // Real-time calculated totals
     val subtotal = remember(lineItems) {
@@ -209,7 +209,7 @@ fun PattiyalThiruthiScreen(
         hasActions = true,
         actions = {
             ElvanCheyalPothan(
-                label = K.chaemiPtn.tr(),
+                label = K.saveBtn.tr(),
                 onClick = { handleSave() }
             )
         }
@@ -233,14 +233,14 @@ fun PattiyalThiruthiScreen(
             item(key = "customer_section") {
                 ElvanEditorSection(
                     index = 0,
-                    title = K.vaangunar.tr()
+                    title = K.customer.tr()
                 ) {
                     val hasCustomer = selectedVaangunarId != null || selectedVaangunarPeyarMap.isNotEmpty()
 
                     if (hasCustomer) {
                         // Selected Customer Card with Clear button
                         val customerName = selectedVaangunarPeyarMap.values.firstOrNull()?.ifEmpty { null }
-                            ?: K.vaangunar.tr()
+                            ?: K.customer.tr()
                         val customerAddress = selectedVaangunarMunvariMap.values.firstOrNull()?.ifEmpty { null }
 
                         ElvanThiruthiAttai {
@@ -251,7 +251,7 @@ fun PattiyalThiruthiScreen(
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = K.chaemiththaTharavugal.tr().preventBrokenLigatures(),
+                                        text = K.savedDetails.tr().preventBrokenLigatures(),
                                         style = TextStyle(
                                             fontFamily = ff,
                                             fontSize = 11.sp,
@@ -297,7 +297,7 @@ fun PattiyalThiruthiScreen(
                                 ) {
                                     Icon(
                                         imageVector = MaterialSymbols.Rounded.Close,
-                                        contentDescription = K.kaividuPtn.tr(),
+                                        contentDescription = K.cancelBtn.tr(),
                                         tint = colors.textSecondary,
                                         modifier = Modifier.size(18.dp)
                                     )
@@ -308,13 +308,13 @@ fun PattiyalThiruthiScreen(
                         // Inline Customer Search & Picker
                         ElvanThiruthiAttai {
                             ElvanThiruthiUlleedu(
-                                label = K.vaangunarPeyarThaedu.tr(),
+                                label = K.clientNameSearch.tr(),
                                 value = customerSearchQuery,
                                 onValueChange = {
                                     customerSearchQuery = it
                                     isCustomerDropdownOpen = it.isNotBlank()
                                 },
-                                placeholder = K.vaangunarPeyarThaedu.tr(),
+                                placeholder = K.clientNameSearch.tr(),
                                 prefixIcon = {
                                     Icon(
                                         imageVector = MaterialSymbols.Rounded.Search,
@@ -400,7 +400,7 @@ fun PattiyalThiruthiScreen(
             item(key = "metadata_section") {
                 ElvanEditorSection(
                     index = 1,
-                    title = K.pattiyalTharavugal.tr()
+                    title = K.invoiceDetails.tr()
                 ) {
                     ElvanThiruthiAttai {
                         // Profile Selector (if multiple profiles exist)
@@ -408,10 +408,10 @@ fun PattiyalThiruthiScreen(
                             val activeProfile = profiles.find { it.id == selectedNiruvanamId }
                             val profileDisplayName = activeProfile?.kurumPeyar?.ifEmpty {
                                 activeProfile.niruvanathinPeyar.values.firstOrNull().orEmpty()
-                            } ?: K.niruvanaththaithThaernhedu.tr()
+                            } ?: K.selectCompany.tr()
 
                             ElvanThiruthiKeezhvirivu(
-                                label = K.niruvanam.tr(),
+                                label = K.company.tr(),
                                 selectedText = profileDisplayName,
                                 items = profiles.map { p ->
                                     val name = p.kurumPeyar.ifEmpty { p.niruvanathinPeyar.values.firstOrNull().orEmpty() }
@@ -423,7 +423,7 @@ fun PattiyalThiruthiScreen(
 
                         // Invoice Number
                         ElvanThiruthiUlleedu(
-                            label = K.en.tr(),
+                            label = K.english.tr(),
                             value = invoiceNumber,
                             onValueChange = { invoiceNumber = it },
                             placeholder = "INV-001"
@@ -431,7 +431,7 @@ fun PattiyalThiruthiScreen(
 
                         // Invoice Date
                         ElvanThiruthiUlleedu(
-                            label = K.pirandhaThaedhi.tr(),
+                            label = K.dateOfBirth.tr(),
                             value = DateUtils.formatEpochMillis(invoiceDate),
                             onValueChange = {},
                             enabled = false,
@@ -462,7 +462,7 @@ fun PattiyalThiruthiScreen(
             item(key = "line_items_section") {
                 ElvanEditorSection(
                     index = 2,
-                    title = K.porutkal.tr()
+                    title = K.products.tr()
                 ) {
                     lineItems.forEachIndexed { itemIndex, lineItem ->
                         ElvanThiruthiAttai(
@@ -475,7 +475,7 @@ fun PattiyalThiruthiScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "${K.porul.tr()} #${itemIndex + 1}",
+                                    text = "${K.product.tr()} #${itemIndex + 1}",
                                     style = TextStyle(
                                         fontFamily = ff,
                                         fontWeight = FontWeight.Bold,
@@ -497,7 +497,7 @@ fun PattiyalThiruthiScreen(
                                     ) {
                                         Icon(
                                             imageVector = MaterialSymbols.Rounded.Delete,
-                                            contentDescription = K.neekkuPtn.tr(),
+                                            contentDescription = K.deleteBtn.tr(),
                                             tint = MaterialTheme.colorScheme.error,
                                             modifier = Modifier.size(16.dp)
                                         )
@@ -507,14 +507,14 @@ fun PattiyalThiruthiScreen(
 
                             // Item Name Input
                             ElvanThiruthiUlleedu(
-                                label = K.porul.tr(),
+                                label = K.product.tr(),
                                 value = lineItem.name,
                                 onValueChange = { newName ->
                                     lineItems = lineItems.toMutableList().also {
                                         it[itemIndex] = it[itemIndex].copy(name = newName)
                                     }
                                 },
-                                placeholder = K.porul.tr()
+                                placeholder = K.product.tr()
                             )
 
                             // Row: Quantity/Weight + Rate
@@ -524,7 +524,7 @@ fun PattiyalThiruthiScreen(
                             ) {
                                 Box(modifier = Modifier.weight(1f)) {
                                     ElvanThiruthiUlleedu(
-                                        label = if (currentMode == AppMode.KOOLI) "${K.edai.tr()} (kg)" else K.alavu.tr(),
+                                        label = if (currentMode == AppMode.KOOLI) "${K.weight.tr()} (kg)" else K.quantity.tr(),
                                         value = lineItem.quantityOrWeight,
                                         onValueChange = { newQty ->
                                             lineItems = lineItems.toMutableList().also {
@@ -537,7 +537,7 @@ fun PattiyalThiruthiScreen(
 
                                 Box(modifier = Modifier.weight(1f)) {
                                     ElvanThiruthiUlleedu(
-                                        label = K.vilai.tr(),
+                                        label = K.sellingRate.tr(),
                                         value = lineItem.rate,
                                         onValueChange = { newRate ->
                                             lineItems = lineItems.toMutableList().also {
@@ -558,7 +558,7 @@ fun PattiyalThiruthiScreen(
                                 ) {
                                     Box(modifier = Modifier.weight(1f)) {
                                         ElvanThiruthiUlleedu(
-                                            label = K.hsnSacKuriyeedu.tr(),
+                                            label = K.hsnSacCode.tr(),
                                             value = lineItem.hsn,
                                             onValueChange = { newHsn ->
                                                 lineItems = lineItems.toMutableList().also {
@@ -572,7 +572,7 @@ fun PattiyalThiruthiScreen(
 
                                     Box(modifier = Modifier.weight(1f)) {
                                         ElvanThiruthiUlleedu(
-                                            label = K.gstVeedham.tr(),
+                                            label = K.gstRate.tr(),
                                             value = lineItem.gstRate,
                                             onValueChange = { newGst ->
                                                 lineItems = lineItems.toMutableList().also {
@@ -617,7 +617,7 @@ fun PattiyalThiruthiScreen(
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
-                                text = "${K.porul.tr()} ${K.chaer.tr()}".preventBrokenLigatures(),
+                                text = "${K.product.tr()} ${K.add.tr()}".preventBrokenLigatures(),
                                 style = TextStyle(
                                     fontFamily = ff,
                                     fontSize = 14.sp,
@@ -634,12 +634,12 @@ fun PattiyalThiruthiScreen(
             item(key = "totals_section") {
                 ElvanEditorSection(
                     index = 3,
-                    title = if (currentMode == AppMode.KOOLI) "கூடுதல் கட்டணங்கள் மற்றும் மொத்தம்" else K.mothangal.tr()
+                    title = if (currentMode == AppMode.KOOLI) "கூடுதல் கட்டணங்கள் மற்றும் மொத்தம்" else K.totals.tr()
                 ) {
                     ElvanThiruthiAttai {
                         if (currentMode == AppMode.KOOLI) {
                             ElvanThiruthiUlleedu(
-                                label = "${K.chaedhaaram.tr()} (Grams)",
+                                label = "${K.setharam.tr()} (Grams)",
                                 value = setharamGrams,
                                 onValueChange = { setharamGrams = it },
                                 placeholder = "0",
@@ -647,7 +647,7 @@ fun PattiyalThiruthiScreen(
                             )
 
                             ElvanThiruthiUlleedu(
-                                label = K.koriyarKattanam.tr(),
+                                label = K.courierCharge.tr(),
                                 value = courierCharges,
                                 onValueChange = { courierCharges = it },
                                 placeholder = "0.00",
@@ -731,7 +731,7 @@ fun PattiyalThiruthiScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = K.motham.tr(),
+                                text = K.total.tr(),
                                 style = TextStyle(
                                     fontFamily = ff,
                                     fontSize = 17.sp,

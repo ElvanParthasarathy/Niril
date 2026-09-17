@@ -40,7 +40,7 @@ fun PattuThallupadiKooru(
         modifier = modifier.fillMaxWidth()
     ) {
         ElvanThiruthiUlleedu(
-            label = K.muzhuThallupadi.tr(),
+            label = K.globalDiscount.tr(),
             value = discountValue,
             onValueChange = onValueChanged,
             placeholder = "0",

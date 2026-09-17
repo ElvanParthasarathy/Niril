@@ -112,7 +112,7 @@ fun ElvanCollapsedBar(
                         ) {
                             Icon(
                                 imageVector = leadingIcon ?: MaterialSymbols.Rounded.ArrowBack,
-                                contentDescription = if (leadingIcon != null) K.kaividu.tr() else K.pinchel.tr(),
+                                contentDescription = if (leadingIcon != null) K.cancel.tr() else K.back.tr(),
                                 tint = colors.textPrimary,
                                 modifier = Modifier.size(22.dp)
                             )

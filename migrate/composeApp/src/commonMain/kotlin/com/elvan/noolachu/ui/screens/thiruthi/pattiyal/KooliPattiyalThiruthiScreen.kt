@@ -299,10 +299,10 @@ fun KooliPattiyalThiruthiScreen(
         handleBack()
     }
 
-    val niruvanamRequiredMsg = K.niruvanamThaerodhu.tr()
-    val vaangunarRequiredMsg = K.vaangunaraiThaerodhu.tr()
-    val porulRequiredMsg = K.kuriaindhOruPorul.tr()
-    val saveBtnLabel = K.chaemiPtn.tr()
+    val niruvanamRequiredMsg = K.selectCompanyProfile.tr()
+    val vaangunarRequiredMsg = K.selectCustomer.tr()
+    val porulRequiredMsg = K.addAtLeastOneProduct.tr()
+    val saveBtnLabel = K.saveBtn.tr()
 
     val handleSave: () -> Unit = {
         if (profiles.size > 1 && selectedNiruvanamId == null) {
@@ -344,7 +344,7 @@ fun KooliPattiyalThiruthiScreen(
         }
     }
 
-    val pageTitle = if (isEditing) K.maatriyamai.tr() else K.pudhiyaAakkam.tr()
+    val pageTitle = if (isEditing) K.editRecord.tr() else K.createRecord.tr()
     val scrollState = rememberLazyListState()
 
     ElvanSubShell(
@@ -400,9 +400,9 @@ fun KooliPattiyalThiruthiScreen(
                         selectedProfile.niruvanathinPeyar.values.firstOrNull().orEmpty()
                     }
 
-                    ElvanEditorSection(index = 0, title = K.niruvanathTharavu.tr()) {
+                    ElvanEditorSection(index = 0, title = K.companyDetail.tr()) {
                         Column(modifier = Modifier.fillMaxWidth()) {
-                            ElvanThiruthiThalaippu(label = K.niruvanam.tr())
+                            ElvanThiruthiThalaippu(label = K.company.tr())
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -419,7 +419,7 @@ fun KooliPattiyalThiruthiScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = (companyName ?: K.niruvanaththaithThaernhedu.tr()).preventBrokenLigatures(),
+                                        text = (companyName ?: K.selectCompany.tr()).preventBrokenLigatures(),
                                         style = TextStyle(
                                             fontFamily = ff,
                                             fontSize = 14.sp,
@@ -476,7 +476,7 @@ fun KooliPattiyalThiruthiScreen(
             // ── Section 1: Customer (பெறுநர்) ──
             item(key = "customer_section") {
                 FormLockWrapper(isLocked = isFormLocked) {
-                    ElvanEditorSection(index = baseIndex, title = K.perunar.tr()) {
+                    ElvanEditorSection(index = baseIndex, title = K.billedTo.tr()) {
                         PattuVaangunargalKooru(
                             selectedVaangunarId = selectedVaangunarId,
                             onCustomerSelected = { customer ->
@@ -500,14 +500,14 @@ fun KooliPattiyalThiruthiScreen(
             // ── Section 2: Invoice Details (பட்டியல் தரவுகள்) ──
             item(key = "invoice_details_section") {
                 FormLockWrapper(isLocked = isFormLocked) {
-                    ElvanEditorSection(index = baseIndex + 1, title = K.pattiyalTharavugal.tr()) {
+                    ElvanEditorSection(index = baseIndex + 1, title = K.invoiceDetails.tr()) {
                         val currentPrefix = computePrefix(selectedProfile)
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             ElvanAavanaEnnKooru(
-                                label = K.patrucheettuEn.tr(),
+                                label = K.receiptNumber.tr(),
                                 prefix = "$currentPrefix-",
                                 initialFullNumber = invoiceNumber,
                                 onFullNumberChanged = { newNum ->
@@ -519,7 +519,7 @@ fun KooliPattiyalThiruthiScreen(
                             )
 
                             PattiyalNaalKooru(
-                                label = K.naal.tr(),
+                                label = K.date.tr(),
                                 selectedDate = invoiceDate,
                                 onDateChanged = { newDate ->
                                     invoiceDate = newDate
@@ -534,7 +534,7 @@ fun KooliPattiyalThiruthiScreen(
             // ── Section 3: Items (பொருட்கள்) ──
             item(key = "items_section") {
                 FormLockWrapper(isLocked = isFormLocked) {
-                    ElvanEditorSection(index = baseIndex + 2, title = K.porutkal.tr()) {
+                    ElvanEditorSection(index = baseIndex + 2, title = K.products.tr()) {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -595,7 +595,7 @@ fun KooliPattiyalThiruthiScreen(
             // ── Section 4: Totals & Extra Charges (மொத்தங்கள்) ──
             item(key = "totals_section") {
                 FormLockWrapper(isLocked = isFormLocked) {
-                    ElvanEditorSection(index = baseIndex + 3, title = K.mothangal.tr()) {
+                    ElvanEditorSection(index = baseIndex + 3, title = K.totals.tr()) {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -638,7 +638,7 @@ fun KooliPattiyalThiruthiScreen(
     // ── Company Selection Bottom Sheet ──
     if (isCompanySheetOpen) {
         ElvanSelectionBottomSheet(
-            title = K.niruvanaththaithThaernhedu.tr(),
+            title = K.selectCompany.tr(),
             items = profiles,
             currentValue = selectedProfile,
             onDismissRequest = { isCompanySheetOpen = false },
@@ -662,10 +662,10 @@ fun KooliPattiyalThiruthiScreen(
     // ── Unsaved Changes Guard Action Sheet ──
     if (showUnsavedDialog) {
         ElvanActionSheet(
-            title = K.chaemippuNiluvai.tr(),
-            cancelText = K.thodarPtn.tr(),
-            confirmText = K.chaemiPtn.tr(),
-            tertiaryText = K.purakkaniPtn.tr(),
+            title = K.pendingSave.tr(),
+            cancelText = K.continueBtn.tr(),
+            confirmText = K.saveBtn.tr(),
+            tertiaryText = K.discardBtn.tr(),
             onDismissRequest = { showUnsavedDialog = false },
             onConfirm = {
                 showUnsavedDialog = false
@@ -682,9 +682,9 @@ fun KooliPattiyalThiruthiScreen(
     // ── Restore Unsaved Draft Action Sheet ──
     if (showDraftRestoreDialog && pendingDraftJson != null) {
         ElvanActionSheet(
-            title = K.chaemikkaadhaVaraivu.tr(),
-            cancelText = K.purakkaniPtn.tr(),
-            confirmText = K.meetkavum.tr(),
+            title = K.unsavedDraftRestore.tr(),
+            cancelText = K.discardBtn.tr(),
+            confirmText = K.recover.tr(),
             onDismissRequest = {
                 showDraftRestoreDialog = false
                 prefs.setString(draftKey, null)

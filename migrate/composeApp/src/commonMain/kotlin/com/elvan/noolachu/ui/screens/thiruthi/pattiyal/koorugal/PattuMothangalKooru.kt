@@ -42,14 +42,14 @@ fun PattuMothangalKooru(
         ) {
         // Subtotal
         TotalsRow(
-            label = K.ulmotham.tr(),
+            label = K.subtotal.tr(),
             amount = totals.adippadaiMothangal
         )
 
         // Discount (if any)
         if (totals.thallupadiMothangal > 0) {
             TotalsRow(
-                label = K.thallupadi.tr(),
+                label = K.discount.tr(),
                 amount = -totals.thallupadiMothangal,
                 textColor = Color(0xFFE53935)
             )
@@ -82,7 +82,7 @@ fun PattuMothangalKooru(
         // Round-off
         if (totals.suttruOff != 0.0) {
             TotalsRow(
-                label = K.chuttruOppu.tr(),
+                label = K.roundOff.tr(),
                 amount = totals.suttruOff
             )
         }
@@ -100,7 +100,7 @@ fun PattuMothangalKooru(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = K.perumMotham.tr().preventBrokenLigatures(),
+                text = K.grandTotal.tr().preventBrokenLigatures(),
                 style = TextStyle(
                     fontFamily = ff,
                     fontSize = 16.sp,

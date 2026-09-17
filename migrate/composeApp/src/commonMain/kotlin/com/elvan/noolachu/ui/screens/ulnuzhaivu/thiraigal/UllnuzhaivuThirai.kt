@@ -24,7 +24,7 @@ fun UllnuzhaivuThirai(
     var password by remember { mutableStateOf("") }
     var errorText by remember { mutableStateOf<String?>(null) }
     var loading by remember { mutableStateOf(false) }
-    val emptyFieldsError = K.vidupattaPulangalaiNirappavum.tr()
+    val emptyFieldsError = K.fillAllFields.tr()
     val scope = rememberCoroutineScope()
 
     AuthLayout(showBranding = true) {
@@ -40,8 +40,8 @@ fun UllnuzhaivuThirai(
 
         // Header: Brand Name + Subtitle
         AuthHeader(
-            title = K.niril.tr(),
-            subtitle = K.cheyaliyaiAnugaUlnuzhaiyavum.tr()
+            title = K.udukkai.tr(),
+            subtitle = K.loginToAccessApp.tr()
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -53,8 +53,8 @@ fun UllnuzhaivuThirai(
                 email = it
                 if (errorText != null) errorText = null 
             },
-            label = K.minnanjalMugavari.tr(),
-            placeholder = K.minnanjalaiUllidavum.tr()
+            label = K.emailAddress.tr(),
+            placeholder = K.enterEmail.tr()
         )
 
         // Password Input with proper label, placeholder, eye toggle, and error text
@@ -64,8 +64,8 @@ fun UllnuzhaivuThirai(
                 password = it
                 if (errorText != null) errorText = null 
             },
-            label = K.kadavuchol.tr(),
-            placeholder = K.kadavuchollaiUllidavum.tr(),
+            label = K.password.tr(),
+            placeholder = K.enterPassword.tr(),
             isPassword = true,
             errorText = errorText
         )
@@ -74,7 +74,7 @@ fun UllnuzhaivuThirai(
 
         // Login Action Button
         AuthButton(
-            text = K.ulnuzhaiga.tr(),
+            text = K.signIn.tr(),
             loading = loading,
             onClick = {
                 if (email.isBlank() || password.isBlank()) {

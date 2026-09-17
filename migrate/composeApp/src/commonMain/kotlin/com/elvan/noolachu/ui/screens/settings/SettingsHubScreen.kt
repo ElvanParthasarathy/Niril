@@ -101,7 +101,7 @@ fun SettingsHubScreen(
                         ) {
                             Icon(
                                 imageVector = if (currentMode == AppMode.KOOLI) AppSvgs.coolieMode else AppSvgs.silkMode,
-                                contentDescription = if (currentMode == AppMode.KOOLI) K.nirilKooli.tr() else K.nirilPattu.tr(),
+                                contentDescription = if (currentMode == AppMode.KOOLI) K.udukkaiCoolie.tr() else K.udukkaiSilk.tr(),
                                 tint = colors.textPrimary,
                                 modifier = Modifier.size(30.dp)
                             )
@@ -114,7 +114,7 @@ fun SettingsHubScreen(
                             horizontalAlignment = Alignment.Start
                         ) {
                             Text(
-                                text = K.niruvanaAmaippugal.tr(),
+                                text = K.companySettings.tr(),
                                 style = TextStyle(
                                     fontFamily = ff,
                                     fontSize = 18.sp,
@@ -125,7 +125,7 @@ fun SettingsHubScreen(
                             )
                             Spacer(modifier = Modifier.height(3.dp))
                             Text(
-                                text = if (currentMode == AppMode.KOOLI) K.nirilKooli.tr() else K.nirilPattu.tr(),
+                                text = if (currentMode == AppMode.KOOLI) K.udukkaiCoolie.tr() else K.udukkaiSilk.tr(),
                                 style = TextStyle(
                                     fontFamily = ff,
                                     fontSize = 14.sp,
@@ -147,16 +147,16 @@ fun SettingsHubScreen(
                     if (currentMode == AppMode.KOOLI) {
                         ElvanSettingsRow(
                             icon = MaterialSymbols.Rounded.BusinessCenter,
-                            title = K.adaiyaalam.tr(),
-                            description = K.kooliNiruvanaAdaiyaalangal.tr(),
+                            title = K.identifier.tr(),
+                            description = K.coolieCompanyBranding.tr(),
                             onClick = { onNavigate(SettingsRoute.KooliIdentity) },
                             colors = colors
                         )
                     } else {
                         ElvanSettingsRow(
                             icon = MaterialSymbols.Rounded.BusinessCenter,
-                            title = K.adaiyaalam.tr(),
-                            description = K.pattuNiruvanaAdaiyaalangal.tr(),
+                            title = K.identifier.tr(),
+                            description = K.silkCompanyBranding.tr(),
                             onClick = { onNavigate(SettingsRoute.PattuIdentity) },
                             colors = colors
                         )
@@ -166,8 +166,8 @@ fun SettingsHubScreen(
 
                     ElvanSettingsRow(
                         icon = MaterialSymbols.Rounded.LocationOn,
-                        title = K.mugavari.tr(),
-                        description = K.mugavaritharavugal.tr(),
+                        title = K.address.tr(),
+                        description = K.companyAddressDetails.tr(),
                         onClick = { onNavigate(SettingsRoute.Address) },
                         colors = colors
                     )
@@ -176,8 +176,8 @@ fun SettingsHubScreen(
 
                     ElvanSettingsRow(
                         icon = MaterialSymbols.Rounded.CreditCard,
-                        title = K.vangi.tr(),
-                        description = K.kanakkuEnIfsc.tr(),
+                        title = K.bank.tr(),
+                        description = K.bankDetails.tr(),
                         onClick = { onNavigate(SettingsRoute.Bank) },
                         colors = colors
                     )
@@ -191,8 +191,8 @@ fun SettingsHubScreen(
                 ElvanSettingsSection(colors = colors) {
                     ElvanSettingsRow(
                         icon = MaterialSymbols.Rounded.Description,
-                        title = K.uruvaakkuPtn.tr(),
-                        description = K.pilVadivamaippuViruppangal.tr(),
+                        title = K.createBtn.tr(),
+                        description = K.pdfStylingOptions.tr(),
                         onClick = { onNavigate(SettingsRoute.InvoiceCreation) },
                         colors = colors
                     )
@@ -201,8 +201,8 @@ fun SettingsHubScreen(
 
                     ElvanSettingsRow(
                         icon = MaterialSymbols.Rounded.LightMode,
-                        title = K.thirai.tr(),
-                        description = "${K.olirIrulThaaniyangu.tr()} • ${FontManager.currentFont.displayName}",
+                        title = K.display.tr(),
+                        description = "${K.themeLightDarkAuto.tr()} • ${FontManager.currentFont.displayName}",
                         onClick = { onNavigate(SettingsRoute.Display) },
                         colors = colors
                     )
@@ -211,8 +211,8 @@ fun SettingsHubScreen(
 
                     ElvanSettingsRow(
                         icon = MaterialSymbols.Rounded.Translate,
-                        title = K.cheyaliMozhi.tr(),
-                        description = K.thamizhAangilamThaaniyangu.tr(),
+                        title = K.appLanguage.tr(),
+                        description = K.tamilEnglishAuto.tr(),
                         onClick = { onNavigate(SettingsRoute.Language) },
                         colors = colors
                     )
@@ -226,8 +226,8 @@ fun SettingsHubScreen(
                 ElvanSettingsSection(colors = colors) {
                     ElvanSettingsRow(
                         icon = MaterialSymbols.Rounded.Person,
-                        title = K.payanar.tr(),
-                        description = K.payanarAmaippugal.tr(),
+                        title = K.user.tr(),
+                        description = K.userSettings.tr(),
                         onClick = { onNavigate(SettingsRoute.UserProfile) },
                         colors = colors
                     )
@@ -236,8 +236,8 @@ fun SettingsHubScreen(
 
                     ElvanSettingsRow(
                         icon = MaterialSymbols.Rounded.Folder,
-                        title = K.chaemippuMatrumKaappu.tr(),
-                        description = K.tharavuthalangalKaappaikKaiyaalu.tr(),
+                        title = K.storageAndBackup.tr(),
+                        description = K.manageDatabasesBackups.tr(),
                         onClick = { onNavigate(SettingsRoute.StorageBackup) },
                         colors = colors
                     )
@@ -246,8 +246,8 @@ fun SettingsHubScreen(
 
                     ElvanSettingsRow(
                         icon = MaterialSymbols.Rounded.Lock,
-                        title = K.paadhugaappu.tr(),
-                        description = K.thaekkagathaiazhi.tr(),
+                        title = K.security.tr(),
+                        description = K.syncLogoutClearData.tr(),
                         onClick = { onNavigate(SettingsRoute.Security) },
                         colors = colors
                     )
@@ -261,8 +261,8 @@ fun SettingsHubScreen(
                 ElvanSettingsSection(colors = colors) {
                     ElvanSettingsRow(
                         icon = MaterialSymbols.Rounded.Code,
-                        title = K.menporulVadivaalar.tr(),
-                        description = K.elvanPatriMaelumAriga.tr(),
+                        title = K.softwareDesigner.tr(),
+                        description = K.learnMoreAboutElvan.tr(),
                         onClick = { onNavigate(SettingsRoute.AboutDeveloper) },
                         colors = colors
                     )
@@ -271,8 +271,8 @@ fun SettingsHubScreen(
 
                     ElvanSettingsRow(
                         icon = MaterialSymbols.Rounded.Info,
-                        title = K.cheyaliPatri.tr(),
-                        description = K.cheyalipadhippu.tr(),
+                        title = K.aboutApp.tr(),
+                        description = K.appVersionAndData.tr(),
                         onClick = { onNavigate(SettingsRoute.AboutApp) },
                         colors = colors
                     )
@@ -282,7 +282,7 @@ fun SettingsHubScreen(
                     ElvanSettingsRow(
                         icon = MaterialSymbols.Rounded.AutoAwesome,
                         title = K.elvanNavil.tr(),
-                        description = K.elvanNavilDesc.tr(),
+                        description = K.elvanNavilStudioDesc.tr(),
                         onClick = { onNavigate(SettingsRoute.ElvanNavil) },
                         colors = colors
                     )

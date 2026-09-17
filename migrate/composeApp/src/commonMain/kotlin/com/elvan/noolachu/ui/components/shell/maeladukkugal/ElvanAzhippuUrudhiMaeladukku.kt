@@ -15,9 +15,9 @@ import com.elvan.noolachu.ui.components.shell.ElvanActionSheet
 fun ElvanAzhippuUrudhiMaeladukku(
     onConfirm: () -> Unit,
     onDismissRequest: () -> Unit,
-    title: String = K.thannuruvaiMutrilumNeekkavaa.tr(),
-    cancelText: String = K.kaividu.tr(),
-    confirmText: String = K.azhi.tr(),
+    title: String = K.deleteCompanyProfilePrompt.tr(),
+    cancelText: String = K.cancel.tr(),
+    confirmText: String = K.delete.tr(),
     colors: ShellColors = rememberShellColors()
 ) {
     ElvanActionSheet(

@@ -53,14 +53,14 @@ fun AnumadhiKaavalarThirai(
         Spacer(modifier = Modifier.height(24.dp))
 
         AuthHeader(
-            title = K.chaemippagaAnumadhiThaevai.tr(),
-            subtitle = K.chaemippagaAnumadhiVilakkam.tr()
+            title = K.storagePermissionRequired.tr(),
+            subtitle = K.storagePermissionDesc.tr()
         )
 
         Spacer(modifier = Modifier.height(48.dp))
 
         AuthButton(
-            text = K.anumadhiVazhanguPtn.tr(),
+            text = K.grantPermissionBtn.tr(),
             onClick = {
                 requestStoragePermission()
             }

@@ -260,14 +260,14 @@ fun ElvanKaniniPakkapattai(
                 ) {
                     Icon(
                         imageVector = MaterialSymbols.Rounded.Settings,
-                        contentDescription = K.amaippugal.tr(),
+                        contentDescription = K.settings.tr(),
                         tint = colors.textPrimary.copy(alpha = 0.7f),
                         modifier = Modifier.size(22.dp)
                     )
                     if (!isCollapsed) {
                         Spacer(modifier = Modifier.width(14.dp))
                         Text(
-                            text = K.amaippugal.tr(),
+                            text = K.settings.tr(),
                             fontFamily = ff,
                             fontWeight = FontWeight.Medium,
                             fontSize = 14.sp,

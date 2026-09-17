@@ -74,7 +74,7 @@ fun DisplaySettingsScreen(
                     ) {
                         // Light Mode Option
                         ThemeOptionBox(
-                            title = K.oliNilai.tr(),
+                            title = K.lightMode.tr(),
                             isSelected = currentMode == ThemeMode.LIGHT,
                             isDarkModeDesign = false,
                             onClick = { ThemeManager.setThemeMode(ThemeMode.LIGHT) },
@@ -83,7 +83,7 @@ fun DisplaySettingsScreen(
 
                         // Dark Mode Option
                         ThemeOptionBox(
-                            title = K.irulNilai.tr(),
+                            title = K.darkMode.tr(),
                             isSelected = currentMode == ThemeMode.DARK,
                             isDarkModeDesign = true,
                             onClick = { ThemeManager.setThemeMode(ThemeMode.DARK) },
@@ -119,7 +119,7 @@ fun DisplaySettingsScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
-                                text = K.thaaniyangiAmaippu.tr(),
+                                text = K.systemAuto.tr(),
                                 style = TextStyle(
                                     fontFamily = ff,
                                     fontSize = 15.sp,
@@ -148,11 +148,11 @@ fun DisplaySettingsScreen(
         item(key = "font_section") {
             ElvanSectionContainer {
                 ElvanSettingsSection(
-                    title = K.ezhuthuru.tr(),
+                    title = K.fontFamily.tr(),
                     colors = colors
                 ) {
                     val currentFont = FontManager.currentFont
-                    val fontChangedMsg = K.ezhuthuruMaatram.tr()
+                    val fontChangedMsg = K.fontUpdatedSuccessfully.tr()
 
                     AppFont.entries.forEachIndexed { index, fontOption ->
                         val fontOptionFamily = when (fontOption) {

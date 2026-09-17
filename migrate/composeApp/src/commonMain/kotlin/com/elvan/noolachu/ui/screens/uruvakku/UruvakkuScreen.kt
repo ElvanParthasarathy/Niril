@@ -68,12 +68,12 @@ fun UruvakkuScreen(
 
     val shifterItems = listOf(
         PillShifterItem(
-            label = K.pattiyalgal.tr(),
+            label = K.invoices.tr(),
             icon = MaterialSymbols.Rounded.Description,
             activeIcon = MaterialSymbols.Rounded.DescriptionFill
         ),
         PillShifterItem(
-            label = K.patrucheettugal.tr(),
+            label = K.receipts.tr(),
             icon = MaterialSymbols.Rounded.ReceiptLong,
             activeIcon = MaterialSymbols.Rounded.ReceiptLongFill
         )
@@ -131,7 +131,7 @@ fun UruvakkuScreen(
                             )
                             Spacer(modifier = Modifier.height(14.dp))
                             Text(
-                                text = K.pattiyalgalIllai.tr().preventBrokenLigatures(),
+                                text = K.noInvoicesYet.tr().preventBrokenLigatures(),
                                 style = TextStyle(
                                     fontFamily = ff,
                                     fontSize = 15.sp,
@@ -228,7 +228,7 @@ fun UruvakkuScreen(
                             )
                             Spacer(modifier = Modifier.height(14.dp))
                             Text(
-                                text = K.patrucheettugalIllai.tr().preventBrokenLigatures(),
+                                text = K.noReceiptsYet.tr().preventBrokenLigatures(),
                                 style = TextStyle(
                                     fontFamily = ff,
                                     fontSize = 15.sp,

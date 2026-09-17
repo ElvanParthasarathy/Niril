@@ -95,22 +95,22 @@ fun SettingsScreen(
         ) { route ->
             val scrollState = if (route == SettingsRoute.Hub) hubScrollState else subpageScrollStates.getOrPut(route) { LazyListState() }
             val pageTitle = when (route) {
-                SettingsRoute.Hub -> K.amaippugal.tr()
-                SettingsRoute.Display -> K.thoatram.tr()
-                SettingsRoute.Language -> K.cheyaliMozhi.tr()
-                SettingsRoute.Merchant -> K.niruvanam.tr()
-                SettingsRoute.ManageProfiles -> K.kaiyaalu.tr()
-                SettingsRoute.KooliIdentity -> K.kooliNiruvanaAdaiyaalangal.tr()
-                SettingsRoute.PattuIdentity -> K.pattuNiruvanaAdaiyaalangal.tr()
-                SettingsRoute.Address -> K.mugavari.tr()
-                SettingsRoute.Bank -> K.vangi.tr()
-                SettingsRoute.InvoiceCreation -> K.uruvaakkuPtn.tr()
-                SettingsRoute.UserProfile -> K.payanar.tr()
-                SettingsRoute.StorageBackup -> K.chaemippuMatrumKaappu.tr()
-                SettingsRoute.Security -> K.paadhugaappu.tr()
-                SettingsRoute.AboutDeveloper -> K.menporulVadivaalar.tr()
-                SettingsRoute.AboutApp -> K.cheyaliPatri.tr()
-                SettingsRoute.ElvanNavil -> K.elvanNavilPatri.tr()
+                SettingsRoute.Hub -> K.settings.tr()
+                SettingsRoute.Display -> K.appearance.tr()
+                SettingsRoute.Language -> K.appLanguage.tr()
+                SettingsRoute.Merchant -> K.company.tr()
+                SettingsRoute.ManageProfiles -> K.manage.tr()
+                SettingsRoute.KooliIdentity -> K.coolieCompanyBranding.tr()
+                SettingsRoute.PattuIdentity -> K.silkCompanyBranding.tr()
+                SettingsRoute.Address -> K.address.tr()
+                SettingsRoute.Bank -> K.bank.tr()
+                SettingsRoute.InvoiceCreation -> K.createBtn.tr()
+                SettingsRoute.UserProfile -> K.user.tr()
+                SettingsRoute.StorageBackup -> K.storageAndBackup.tr()
+                SettingsRoute.Security -> K.security.tr()
+                SettingsRoute.AboutDeveloper -> K.softwareDesigner.tr()
+                SettingsRoute.AboutApp -> K.aboutApp.tr()
+                SettingsRoute.ElvanNavil -> K.aboutElvanNavil.tr()
             }
 
             val leadingIcon = if (route == SettingsRoute.ManageProfiles) {
@@ -157,9 +157,9 @@ fun SettingsScreen(
 
     if (showSignOutDialog) {
         ElvanActionSheet(
-            title = K.veliyaeruUrudhi.tr(),
-            cancelText = K.kaividu.tr(),
-            confirmText = K.veliyaeru.tr(),
+            title = K.signOutConfirmPrompt.tr(),
+            cancelText = K.cancel.tr(),
+            confirmText = K.logout.tr(),
             onDismissRequest = { showSignOutDialog = false },
             onConfirm = {
                 showSignOutDialog = false

@@ -78,7 +78,7 @@ fun KooliUrupadiAttai(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "${K.porul.tr()} #${index + 1}".preventBrokenLigatures(),
+                text = "${K.product.tr()} #${index + 1}".preventBrokenLigatures(),
                 style = TextStyle(
                     fontFamily = ff,
                     fontSize = 13.sp,
@@ -100,7 +100,7 @@ fun KooliUrupadiAttai(
                 ) {
                     Icon(
                         imageVector = MaterialSymbols.Rounded.Delete,
-                        contentDescription = K.azhi.tr(),
+                        contentDescription = K.delete.tr(),
                         tint = colors.textSecondary,
                         modifier = Modifier.size(18.dp)
                     )
@@ -120,7 +120,7 @@ fun KooliUrupadiAttai(
 
                 val productSearchPill = @Composable {
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        ElvanThiruthiThalaippu(label = K.porul.tr())
+                        ElvanThiruthiThalaippu(label = K.product.tr())
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -137,7 +137,7 @@ fun KooliUrupadiAttai(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = (if (displayName.isNotEmpty()) displayName else K.porutkal.tr()).preventBrokenLigatures(),
+                                    text = (if (displayName.isNotEmpty()) displayName else K.products.tr()).preventBrokenLigatures(),
                                     style = TextStyle(
                                         fontFamily = ff,
                                         fontSize = 14.sp,
@@ -162,7 +162,7 @@ fun KooliUrupadiAttai(
                                     ) {
                                         Icon(
                                             imageVector = MaterialSymbols.Rounded.Close,
-                                            contentDescription = K.kaividu.tr(),
+                                            contentDescription = K.cancel.tr(),
                                             tint = colors.textSecondary,
                                             modifier = Modifier.size(16.dp)
                                         )
@@ -194,7 +194,7 @@ fun KooliUrupadiAttai(
 
                 val weightInput = @Composable {
                     ElvanThiruthiUlleedu(
-                        label = K.edai.tr(),
+                        label = K.weight.tr(),
                         value = if (item.edai == 0.0) "" else cleanNum(item.edai),
                         onValueChange = { str ->
                             val parsed = str.toDoubleOrNull() ?: 0.0
@@ -208,7 +208,7 @@ fun KooliUrupadiAttai(
 
                 val rateInput = @Composable {
                     ElvanThiruthiUlleedu(
-                        label = K.vilai.tr(),
+                        label = K.sellingRate.tr(),
                         value = if (item.vilai == 0.0) "" else cleanNum(item.vilai),
                         onValueChange = { str ->
                             val parsed = str.toDoubleOrNull() ?: 0.0
@@ -223,7 +223,7 @@ fun KooliUrupadiAttai(
 
                 val totalOutput = @Composable {
                     ElvanThiruthiUlleedu(
-                        label = K.motham.tr(),
+                        label = K.total.tr(),
                         value = CurrencyUtils.formatInr(item.varisaiThogai.toDouble()),
                         onValueChange = {},
                         enabled = false
@@ -290,7 +290,7 @@ fun KooliUrupadiAttai(
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
-                                text = K.chaerPtn.tr().preventBrokenLigatures(),
+                                text = K.addBtn.tr().preventBrokenLigatures(),
                                 style = TextStyle(
                                     fontFamily = ff,
                                     fontSize = 14.sp,
@@ -324,7 +324,7 @@ fun KooliUrupadiAttai(
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
-                                text = K.piraVarivuChaer.tr().preventBrokenLigatures(),
+                                text = K.addOtherCharges.tr().preventBrokenLigatures(),
                                 style = TextStyle(
                                     fontFamily = ff,
                                     fontSize = 14.sp,
@@ -342,7 +342,7 @@ fun KooliUrupadiAttai(
     // ── Product Selection Bottom Sheet ──
     if (isPickerOpen) {
         ElvanSelectionBottomSheet(
-            title = K.porutkal.tr(),
+            title = K.products.tr(),
             items = allProducts,
             currentValue = allProducts.firstOrNull { it.id.toString() == item.porulId },
             showSearch = true,
@@ -378,7 +378,7 @@ fun KooliUrupadiAttai(
                 isPickerOpen = false
                 onRequestAddNewProduct()
             },
-            addNewLabel = K.pudhiyaChaerkkai.tr()
+            addNewLabel = K.addNew.tr()
         )
     }
 }
@@ -411,7 +411,7 @@ fun KooliPiraVarivuAttai(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "${K.pira.tr()} #${index + 1}".preventBrokenLigatures(),
+                text = "${K.other.tr()} #${index + 1}".preventBrokenLigatures(),
                 style = TextStyle(
                     fontFamily = ff,
                     fontSize = 13.sp,
@@ -432,7 +432,7 @@ fun KooliPiraVarivuAttai(
             ) {
                 Icon(
                     imageVector = MaterialSymbols.Rounded.Delete,
-                    contentDescription = K.azhi.tr(),
+                    contentDescription = K.delete.tr(),
                     tint = colors.textSecondary,
                     modifier = Modifier.size(18.dp)
                 )
@@ -450,19 +450,19 @@ fun KooliPiraVarivuAttai(
             ) {
                 Box(modifier = Modifier.weight(2f)) {
                     ElvanThiruthiUlleedu(
-                        label = K.kattanaPeyar.tr(),
+                        label = K.chargeName.tr(),
                         value = charge.peyar,
                         onValueChange = {
                             onUpdated(charge.copy(peyar = it))
                             onDirty()
                         },
-                        placeholder = K.kattanaPeyar.tr()
+                        placeholder = K.chargeName.tr()
                     )
                 }
 
                 Box(modifier = Modifier.weight(1f)) {
                     ElvanThiruthiUlleedu(
-                        label = "${K.motham.tr()} (₹)",
+                        label = "${K.total.tr()} (₹)",
                         value = if (charge.thogai == 0.0) "" else cleanNum(charge.thogai),
                         onValueChange = {
                             val parsed = it.toDoubleOrNull() ?: 0.0
@@ -499,7 +499,7 @@ fun KooliMelthogaiKooru(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         ElvanThiruthiUlleedu(
-            label = K.chaedhaaramGiraam.tr(),
+            label = K.wastage.tr(),
             value = if (setharamGrams == 0.0) "" else cleanNum(setharamGrams),
             onValueChange = {
                 val parsed = it.toDoubleOrNull() ?: 0.0
@@ -516,7 +516,7 @@ fun KooliMelthogaiKooru(
         ) {
             Box(modifier = Modifier.weight(1f)) {
                 ElvanThiruthiUlleedu(
-                    label = K.ahimsaiPattuThogai.tr(),
+                    label = K.ahimsaSilkAmount.tr(),
                     value = if (ahimsaPattuThogai == 0.0) "" else cleanNum(ahimsaPattuThogai),
                     onValueChange = {
                         val parsed = it.toDoubleOrNull() ?: 0.0
@@ -531,7 +531,7 @@ fun KooliMelthogaiKooru(
 
             Box(modifier = Modifier.weight(1f)) {
                 ElvanThiruthiUlleedu(
-                    label = K.koriyarKattanam.tr(),
+                    label = K.courierCharge.tr(),
                     value = if (thabaalThogai == 0.0) "" else cleanNum(thabaalThogai),
                     onValueChange = {
                         val parsed = it.toDoubleOrNull() ?: 0.0
@@ -574,7 +574,7 @@ fun KooliMothangalKooru(
         ) {
             // Subtotal
             KooliTotalsRow(
-                label = K.ulmotham.tr(),
+                label = K.subtotal.tr(),
                 value = "₹ ${CurrencyUtils.formatInr(totals.adippadaiMothangal)}",
                 labelWeight = FontWeight.SemiBold,
                 valueWeight = FontWeight.Bold
@@ -583,7 +583,7 @@ fun KooliMothangalKooru(
             // Ahimsa
             if (ahimsaPattuThogai > 0) {
                 KooliTotalsRow(
-                    label = K.ahimsaiPattu.tr(),
+                    label = K.ahimsaSilk.tr(),
                     value = "₹ ${CurrencyUtils.formatInr(ahimsaPattuThogai)}"
                 )
             }
@@ -591,7 +591,7 @@ fun KooliMothangalKooru(
             // Courier
             if (thabaalThogai > 0) {
                 KooliTotalsRow(
-                    label = K.koriyar.tr(),
+                    label = K.courier.tr(),
                     value = "₹ ${CurrencyUtils.formatInr(thabaalThogai)}"
                 )
             }
@@ -600,7 +600,7 @@ fun KooliMothangalKooru(
             for (charge in piraVarivugal) {
                 if (charge.thogai > 0) {
                     KooliTotalsRow(
-                        label = charge.peyar.ifEmpty { K.pira.tr() },
+                        label = charge.peyar.ifEmpty { K.other.tr() },
                         value = "₹ ${CurrencyUtils.formatInr(charge.thogai)}"
                     )
                 }
@@ -608,7 +608,7 @@ fun KooliMothangalKooru(
 
             // Total Weight
             KooliTotalsRow(
-                label = K.mothaEdai.tr(),
+                label = K.totalWeight.tr(),
                 value = "${totals.mothaEdai} Kg",
                 labelWeight = FontWeight.SemiBold,
                 valueWeight = FontWeight.Bold
@@ -617,7 +617,7 @@ fun KooliMothangalKooru(
             // Setharam grams
             if (setharamGrams > 0) {
                 KooliTotalsRow(
-                    label = "+ ${K.chaedhaaram.tr()}",
+                    label = "+ ${K.setharam.tr()}",
                     value = "${cleanNum(setharamGrams)} g"
                 )
             }
@@ -634,7 +634,7 @@ fun KooliMothangalKooru(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = K.motham.tr().preventBrokenLigatures(),
+                    text = K.total.tr().preventBrokenLigatures(),
                     style = TextStyle(
                         fontFamily = ff,
                         fontSize = 18.sp,

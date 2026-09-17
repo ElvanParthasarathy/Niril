@@ -48,10 +48,10 @@ fun ManageProfilesModal(
     var showNewProfileSheet by remember { mutableStateOf(false) }
     var profileToDelete by remember { mutableStateOf<NiruvanaTharavugal?>(null) }
 
-    val deleteSuccessMsg = K.thannuruNeekkappattadhu.tr()
-    val deletePrompt = K.thannuruvaiMutrilumNeekkavaa.tr()
-    val cancelLabel = K.kaividu.tr()
-    val deleteLabel = K.azhi.tr()
+    val deleteSuccessMsg = K.profileDeleted.tr()
+    val deletePrompt = K.deleteCompanyProfilePrompt.tr()
+    val cancelLabel = K.cancel.tr()
+    val deleteLabel = K.delete.tr()
 
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -101,7 +101,7 @@ fun ManageProfilesModal(
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = K.kaiyaalu.tr(),
+                        text = K.manage.tr(),
                         style = TextStyle(
                             fontFamily = ff,
                             fontSize = 20.sp,
@@ -119,7 +119,7 @@ fun ManageProfilesModal(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = K.thannurukkalIllai.tr(),
+                            text = K.noSavedProfiles.tr(),
                             style = TextStyle(
                                 fontFamily = ff,
                                 fontSize = 16.sp,
@@ -139,13 +139,13 @@ fun ManageProfilesModal(
                                 profiles.forEachIndexed { index, profileItem ->
                                     val isActive = profileItem.id == activeProfile.id
                                     val primaryName = profileItem.getPrimary("niruvanathinPeyar")
-                                        .ifEmpty { K.tharpoadhaiyaNiruvanam.tr() }
+                                        .ifEmpty { K.activeCompany.tr() }
                                     val secondaryName = if (profileItem.iruMozhi) {
                                         profileItem.getSecondary("niruvanathinPeyar")
                                     } else null
 
                                     ElvanSettingsDisplayRow(
-                                        title = if (isActive) K.tharpoadhaiyaNiruvanam.tr() else "",
+                                        title = if (isActive) K.activeCompany.tr() else "",
                                         primaryValue = primaryName,
                                         secondaryValue = secondaryName,
                                         icon = MaterialSymbols.Rounded.DeleteForever,

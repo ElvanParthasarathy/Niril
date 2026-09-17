@@ -43,7 +43,7 @@ fun RecentActivityHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = K.arugilSeyalgal.tr().preventBrokenLigatures(),
+            text = K.recentActivity.tr().preventBrokenLigatures(),
             style = TextStyle(
                 fontFamily = ff,
                 fontSize = 16.sp,
@@ -63,7 +63,7 @@ fun RecentActivityHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = K.anaiththaiyumPaarPtn.tr().preventBrokenLigatures(),
+                text = K.seeAllBtn.tr().preventBrokenLigatures(),
                 style = TextStyle(
                     fontFamily = ff,
                     fontSize = 14.sp,

@@ -32,7 +32,7 @@ import com.elvan.noolachu.ui.navigation.MaterialSymbols
 fun ElvanMaeladukkuPudhiyaPothan(
     onTap: () -> Unit,
     modifier: Modifier = Modifier,
-    label: String = K.pudhiyaChaerkkai.tr(),
+    label: String = K.addNew.tr(),
     colors: ShellColors = rememberShellColors()
 ) {
     val ff = LocalAppFontFamily.current

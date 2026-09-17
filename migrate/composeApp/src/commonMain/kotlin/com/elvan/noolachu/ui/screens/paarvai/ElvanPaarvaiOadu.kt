@@ -32,13 +32,13 @@ fun ElvanPaarvaiOadu(
         actions = {
             if (onPrint != null) {
                 ElvanCheyalPothan(
-                    label = K.achadiPtn.tr(),
+                    label = K.printBtn.tr(),
                     onClick = onPrint
                 )
             }
             if (onEdit != null) {
                 ElvanCheyalPothan(
-                    label = K.maatriyamai.tr(),
+                    label = K.editRecord.tr(),
                     onClick = onEdit
                 )
             }

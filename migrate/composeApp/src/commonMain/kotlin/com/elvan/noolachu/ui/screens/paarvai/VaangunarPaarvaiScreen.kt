@@ -68,7 +68,7 @@ fun VaangunarPaarvaiScreen(
     val scrollState = rememberLazyListState()
 
     ElvanPaarvaiOadu(
-        title = K.vaangunarTharavugal.tr(),
+        title = K.businessDetails.tr(),
         onBack = onBack,
         scrollState = scrollState,
         onEdit = onEdit
@@ -181,7 +181,7 @@ fun VaangunarPaarvaiScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     DetailCard(
-                        title = K.oor.tr(),
+                        title = K.city.tr(),
                         value = oorVal.ifEmpty { "-" },
                         icon = MaterialSymbols.Rounded.LocationOn,
                         colors = colors,
@@ -189,7 +189,7 @@ fun VaangunarPaarvaiScreen(
                     )
 
                     DetailCard(
-                        title = K.mugavari.tr(),
+                        title = K.address.tr(),
                         value = mugavariVal.ifEmpty { "-" },
                         icon = MaterialSymbols.Rounded.Apartment,
                         colors = colors,
@@ -198,7 +198,7 @@ fun VaangunarPaarvaiScreen(
 
                     if (merchant.tholaipaesi.isNotBlank()) {
                         DetailCard(
-                            title = K.tholaipaesi.tr(),
+                            title = K.telephone.tr(),
                             value = merchant.tholaipaesi,
                             icon = MaterialSymbols.Rounded.Call,
                             colors = colors,
@@ -218,7 +218,7 @@ fun VaangunarPaarvaiScreen(
 
                     if (!merchant.minnanjal.isNullOrBlank()) {
                         DetailCard(
-                            title = K.minnanjal.tr(),
+                            title = K.email.tr(),
                             value = merchant.minnanjal,
                             icon = MaterialSymbols.Rounded.Email,
                             colors = colors,

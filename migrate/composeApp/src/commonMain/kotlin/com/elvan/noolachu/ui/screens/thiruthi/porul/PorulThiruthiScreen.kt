@@ -74,10 +74,10 @@ fun PorulThiruthiScreen(
 
     var validationError by remember { mutableStateOf<String?>(null) }
 
-    val pageTitle = if (isEditing) K.maatriyamai.tr() else K.pudhiyaAakkam.tr()
-    val nameRequiredMsg = K.porulPeyarThaevai.tr()
-    val savedMsg = K.porulChaemikkappattadhu.tr()
-    val saveFailedMsg = K.chaemikkaIyalavillai.tr()
+    val pageTitle = if (isEditing) K.editRecord.tr() else K.createRecord.tr()
+    val nameRequiredMsg = K.productNameRequired.tr()
+    val savedMsg = K.productSavedSuccessfully.tr()
+    val saveFailedMsg = K.couldNotSavePrefix.tr()
 
     fun handleSave() {
         if (porulPeyarMap.values.none { it.isNotBlank() }) {
@@ -122,7 +122,7 @@ fun PorulThiruthiScreen(
         hasActions = true,
         actions = {
             ElvanCheyalPothan(
-                label = K.chaemiPtn.tr(),
+                label = K.saveBtn.tr(),
                 onClick = { handleSave() }
             )
         }
@@ -146,20 +146,20 @@ fun PorulThiruthiScreen(
             item(key = "product_name_section") {
                 ElvanEditorSection(
                     index = 0,
-                    title = K.porulTharavugal.tr()
+                    title = K.productDetails.tr()
                 ) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         ElvanIrumozhiPulan(
-                            label = K.porul.tr(),
+                            label = K.product.tr(),
                             value = porulPeyarMap,
                             onChanged = {
                                 porulPeyarMap = it
                                 validationError = null
                             },
-                            placeholder = K.porul.tr()
+                            placeholder = K.product.tr()
                         )
 
                         if (validationError != null) {
@@ -177,15 +177,15 @@ fun PorulThiruthiScreen(
                         // In Silk mode: Measurement method selector
                         if (currentMode == AppMode.PATTU) {
                             ElvanThiruthiKeezhvirivu<String>(
-                                label = K.alaveeduMurai.tr(),
-                                value = if (alavuVagai == "weight") K.edai else K.alavu,
-                                items = listOf(K.alavu, K.edai),
+                                label = K.measurementMethod.tr(),
+                                value = if (alavuVagai == "weight") K.weight else K.quantity,
+                                items = listOf(K.quantity, K.weight),
                                 onSelected = { key ->
-                                    alavuVagai = if (key == K.edai) "weight" else "quantity"
+                                    alavuVagai = if (key == K.weight) "weight" else "quantity"
                                 },
                                 itemLabelBuilder = { key ->
                                     val lang = LanguageManager.activeLanguageCode
-                                    if (key == K.edai) "${K.edai.trWithLang(lang)} (kg)" else "${K.alavu.trWithLang(lang)} (Nos)"
+                                    if (key == K.weight) "${K.weight.trWithLang(lang)} (kg)" else "${K.quantity.trWithLang(lang)} (Nos)"
                                 }
                             )
                         }
@@ -198,7 +198,7 @@ fun PorulThiruthiScreen(
                 item(key = "price_tax_section") {
                     ElvanEditorSection(
                         index = 1,
-                        title = K.vilaiMatrumVari.tr()
+                        title = K.pricingAndTax.tr()
                     ) {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
@@ -206,7 +206,7 @@ fun PorulThiruthiScreen(
                         ) {
                             // HSN Code
                             ElvanThiruthiUlleedu(
-                                label = K.hsnSacKuriyeedu.tr(),
+                                label = K.hsnSacCode.tr(),
                                 value = hsnCode,
                                 onValueChange = { hsnCode = it },
                                 placeholder = "50020010",
@@ -231,7 +231,7 @@ fun PorulThiruthiScreen(
 
                             // Price
                             ElvanThiruthiUlleedu(
-                                label = K.vilai.tr(),
+                                label = K.sellingRate.tr(),
                                 value = vilai,
                                 onValueChange = { vilai = it },
                                 placeholder = "0.00",
@@ -241,7 +241,7 @@ fun PorulThiruthiScreen(
 
                             // GST %
                             ElvanThiruthiUlleedu(
-                                label = K.gstVeedham.tr(),
+                                label = K.gstRate.tr(),
                                 value = variVeetham,
                                 onValueChange = { variVeetham = it },
                                 placeholder = "5",

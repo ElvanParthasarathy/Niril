@@ -97,7 +97,7 @@ fun PattuSilkProductCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "${K.edai.tr()}: $weightGrams g",
+                    text = "${K.weight.tr()}: $weightGrams g",
                     style = TextStyle(
                         fontFamily = ff,
                         fontSize = 13.sp
@@ -105,7 +105,7 @@ fun PattuSilkProductCard(
                     color = colors.textSecondary
                 )
                 Text(
-                    text = "${K.gstVeedham.tr()}: $gstRate%",
+                    text = "${K.gstRate.tr()}: $gstRate%",
                     style = TextStyle(
                         fontFamily = ff,
                         fontSize = 13.sp

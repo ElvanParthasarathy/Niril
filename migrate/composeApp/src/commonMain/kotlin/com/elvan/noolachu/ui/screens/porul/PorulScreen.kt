@@ -95,7 +95,7 @@ fun PorulScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = K.porulgalIllai.tr().preventBrokenLigatures(),
+                        text = K.noProductsYet.tr().preventBrokenLigatures(),
                         style = TextStyle(
                             fontFamily = ff,
                             fontSize = 18.sp,
@@ -107,7 +107,7 @@ fun PorulScreen(
                     Spacer(modifier = Modifier.height(6.dp))
 
                     Text(
-                        text = K.porulaiChaerkkavum.tr().preventBrokenLigatures(),
+                        text = K.addFirstProduct.tr().preventBrokenLigatures(),
                         style = TextStyle(
                             fontFamily = ff,
                             fontSize = 14.sp,

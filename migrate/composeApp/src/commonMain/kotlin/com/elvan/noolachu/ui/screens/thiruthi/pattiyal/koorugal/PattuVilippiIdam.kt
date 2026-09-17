@@ -55,7 +55,7 @@ fun PattuVilippiIdam(
     val containerBg = colors.iconBg
 
     Column(modifier = modifier.fillMaxWidth()) {
-        ElvanThiruthiThalaippu(label = K.vazhangalIdam.tr())
+        ElvanThiruthiThalaippu(label = K.placeOfSupply.tr())
 
         Box(
             modifier = Modifier
@@ -73,7 +73,7 @@ fun PattuVilippiIdam(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = (if (displayText.isNotEmpty()) displayText else K.vazhangalIdam.tr()).preventBrokenLigatures(),
+                    text = (if (displayText.isNotEmpty()) displayText else K.placeOfSupply.tr()).preventBrokenLigatures(),
                     style = TextStyle(
                         fontFamily = ff,
                         fontSize = 14.sp,
@@ -95,7 +95,7 @@ fun PattuVilippiIdam(
                     ) {
                         Icon(
                             imageVector = MaterialSymbols.Rounded.Close,
-                            contentDescription = K.kaividu.tr(),
+                            contentDescription = K.cancel.tr(),
                             tint = colors.textSecondary,
                             modifier = Modifier.size(16.dp)
                         )
@@ -114,7 +114,7 @@ fun PattuVilippiIdam(
 
     if (isSheetOpen) {
         ElvanSelectionBottomSheet(
-            title = K.vazhangalIdam.tr(),
+            title = K.placeOfSupply.tr(),
             items = indhiyaMaanilangal,
             currentValue = indhiyaMaanilangal.firstOrNull { it.en.equals(placeOfSupplyEn, ignoreCase = true) },
             showSearch = true,

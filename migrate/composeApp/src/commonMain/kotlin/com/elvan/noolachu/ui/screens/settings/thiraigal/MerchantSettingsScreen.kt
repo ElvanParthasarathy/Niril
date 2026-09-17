@@ -58,9 +58,9 @@ fun MerchantSettingsScreen(
 
     val isBilingual = profile.iruMozhi
     val isPattu = currentMode == AppMode.PATTU
-    val saveSuccessMsg = K.thannuruChaemikkappattadhu.tr()
-    val defaultProfileName = K.tharpoadhaiyaNiruvanam.tr()
-    val selectCompanyTitle = K.niruvanaththaithThaernhedu.tr()
+    val saveSuccessMsg = K.profileSaved.tr()
+    val defaultProfileName = K.activeCompany.tr()
+    val selectCompanyTitle = K.selectCompany.tr()
     val bottomSheet = LocalElvanBottomSheetController.current
 
     fun saveField(action: () -> Unit) {
@@ -156,7 +156,7 @@ fun MerchantSettingsScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = profile.getPrimary("niruvanathinPeyar").ifEmpty { K.tharpoadhaiyaNiruvanam.tr() },
+                                text = profile.getPrimary("niruvanathinPeyar").ifEmpty { K.activeCompany.tr() },
                                 style = TextStyle(
                                     fontFamily = ff,
                                     fontSize = 14.sp,
@@ -186,7 +186,7 @@ fun MerchantSettingsScreen(
                     isEditing = editingSection == "niruvanathinPeyar",
                     displayContent = {
                         ElvanSettingsDisplayRow(
-                            title = K.niruvanathinPeyar.tr(),
+                            title = K.companyName.tr(),
                             primaryValue = profile.getPrimary("niruvanathinPeyar"),
                             secondaryValue = if (isBilingual) profile.getSecondary("niruvanathinPeyar") else null,
                             onEdit = {
@@ -199,7 +199,7 @@ fun MerchantSettingsScreen(
                     },
                     editContent = {
                         ElvanSettingsEditContainer(
-                            title = K.niruvanathinPeyar.tr(),
+                            title = K.companyName.tr(),
                             onCancel = { editingSection = null },
                             onSave = {
                                 saveField {
@@ -210,7 +210,7 @@ fun MerchantSettingsScreen(
                             colors = colors
                         ) {
                             ElvanSettingsTextField(
-                                label = "${K.niruvanathinPeyar.tr()} (${K.thamizh.tr()})",
+                                label = "${K.companyName.tr()} (${K.taCode.tr()})",
                                 value = tempPrimary,
                                 onValueChange = { tempPrimary = it },
                                 colors = colors
@@ -218,7 +218,7 @@ fun MerchantSettingsScreen(
                             if (isBilingual) {
                                 Spacer(modifier = Modifier.height(16.dp))
                                 ElvanSettingsTextField(
-                                    label = "${K.niruvanathinPeyar.tr()} (${K.aangilam.tr()})",
+                                    label = "${K.companyName.tr()} (${K.enCode.tr()})",
                                     value = tempSecondary,
                                     onValueChange = { tempSecondary = it },
                                     colors = colors
@@ -235,7 +235,7 @@ fun MerchantSettingsScreen(
                     isEditing = editingSection == "kurumPeyar",
                     displayContent = {
                         ElvanSettingsDisplayRow(
-                            title = K.kurugiyaNiruvanaPeyar.tr(),
+                            title = K.shortCompanyName.tr(),
                             primaryValue = profile.kurumPeyar,
                             onEdit = {
                                 tempPrimary = profile.kurumPeyar
@@ -246,7 +246,7 @@ fun MerchantSettingsScreen(
                     },
                     editContent = {
                         ElvanSettingsEditContainer(
-                            title = K.kurugiyaNiruvanaPeyar.tr(),
+                            title = K.shortCompanyName.tr(),
                             onCancel = { editingSection = null },
                             onSave = {
                                 saveField {
@@ -256,7 +256,7 @@ fun MerchantSettingsScreen(
                             colors = colors
                         ) {
                             ElvanSettingsTextField(
-                                label = K.kurugiyaNiruvanaPeyar.tr(),
+                                label = K.shortCompanyName.tr(),
                                 value = tempPrimary,
                                 onValueChange = { tempPrimary = it },
                                 colors = colors
@@ -272,7 +272,7 @@ fun MerchantSettingsScreen(
                     isEditing = editingSection == "adaimozhi",
                     displayContent = {
                         ElvanSettingsDisplayRow(
-                            title = K.adaimozhi.tr(),
+                            title = K.tagline.tr(),
                             primaryValue = profile.getPrimary("adaimozhi"),
                             secondaryValue = if (isBilingual) profile.getSecondary("adaimozhi") else null,
                             onEdit = {
@@ -285,7 +285,7 @@ fun MerchantSettingsScreen(
                     },
                     editContent = {
                         ElvanSettingsEditContainer(
-                            title = K.adaimozhi.tr(),
+                            title = K.tagline.tr(),
                             onCancel = { editingSection = null },
                             onSave = {
                                 saveField {
@@ -296,7 +296,7 @@ fun MerchantSettingsScreen(
                             colors = colors
                         ) {
                             ElvanSettingsTextField(
-                                label = if (isBilingual) "${K.adaimozhi.tr()} (${K.thamizh.tr()})" else K.adaimozhi.tr(),
+                                label = if (isBilingual) "${K.tagline.tr()} (${K.taCode.tr()})" else K.tagline.tr(),
                                 value = tempPrimary,
                                 onValueChange = { tempPrimary = it },
                                 colors = colors
@@ -304,7 +304,7 @@ fun MerchantSettingsScreen(
                             if (isBilingual) {
                                 Spacer(modifier = Modifier.height(16.dp))
                                 ElvanSettingsTextField(
-                                    label = "${K.adaimozhi.tr()} (${K.aangilam.tr()})",
+                                    label = "${K.tagline.tr()} (${K.enCode.tr()})",
                                     value = tempSecondary,
                                     onValueChange = { tempSecondary = it },
                                     colors = colors
@@ -321,7 +321,7 @@ fun MerchantSettingsScreen(
                     isEditing = editingSection == "tholaipesigal",
                     displayContent = {
                         ElvanSettingsDisplayRow(
-                            title = K.paesiEnkal.tr(),
+                            title = K.phoneNumbers.tr(),
                             primaryValue = profile.tholaipaesi1,
                             secondaryValue = profile.tholaipaesi2.ifEmpty { null },
                             onEdit = {
@@ -335,7 +335,7 @@ fun MerchantSettingsScreen(
                     },
                     editContent = {
                         ElvanSettingsEditContainer(
-                            title = K.paesiEnkal.tr(),
+                            title = K.phoneNumbers.tr(),
                             extraAction = if (!showExtraPhone) {
                                 {
                                     TextButton(
@@ -343,7 +343,7 @@ fun MerchantSettingsScreen(
                                         shape = RoundedCornerShape(50)
                                     ) {
                                         Text(
-                                            text = "+ ${K.chaer.tr()}",
+                                            text = "+ ${K.add.tr()}",
                                             style = TextStyle(
                                                 fontFamily = ff,
                                                 fontSize = 13.sp,
@@ -367,7 +367,7 @@ fun MerchantSettingsScreen(
                             colors = colors
                         ) {
                             ElvanSettingsTextField(
-                                label = K.paesiEn.tr(),
+                                label = K.phone.tr(),
                                 value = tempPrimary,
                                 onValueChange = { tempPrimary = it },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
@@ -377,7 +377,7 @@ fun MerchantSettingsScreen(
                             if (showExtraPhone) {
                                 Spacer(modifier = Modifier.height(16.dp))
                                 ElvanSettingsTextField(
-                                    label = K.maatruPaesiEn.tr(),
+                                    label = K.mobile.tr(),
                                     value = tempSecondary,
                                     onValueChange = { tempSecondary = it },
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
@@ -412,7 +412,7 @@ fun MerchantSettingsScreen(
                     isEditing = editingSection == "minnanjal",
                     displayContent = {
                         ElvanSettingsDisplayRow(
-                            title = K.minnanjal.tr(),
+                            title = K.email.tr(),
                             primaryValue = profile.minnanjal,
                             onEdit = {
                                 tempPrimary = profile.minnanjal
@@ -423,7 +423,7 @@ fun MerchantSettingsScreen(
                     },
                     editContent = {
                         ElvanSettingsEditContainer(
-                            title = K.minnanjal.tr(),
+                            title = K.email.tr(),
                             onCancel = { editingSection = null },
                             onSave = {
                                 saveField {
@@ -433,7 +433,7 @@ fun MerchantSettingsScreen(
                             colors = colors
                         ) {
                             ElvanSettingsTextField(
-                                label = K.minnanjal.tr(),
+                                label = K.email.tr(),
                                 value = tempPrimary,
                                 onValueChange = { tempPrimary = it },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -451,7 +451,7 @@ fun MerchantSettingsScreen(
                         isEditing = editingSection == "gstin",
                         displayContent = {
                             ElvanSettingsDisplayRow(
-                                title = K.gstinVariAdaiyaalaEn.tr(),
+                                title = K.gstinTaxId.tr(),
                                 primaryValue = profile.gstin,
                                 onEdit = {
                                     tempPrimary = profile.gstin
@@ -462,7 +462,7 @@ fun MerchantSettingsScreen(
                         },
                         editContent = {
                             ElvanSettingsEditContainer(
-                                title = K.gstinVariAdaiyaalaEn.tr(),
+                                title = K.gstinTaxId.tr(),
                                 onCancel = { editingSection = null },
                                 onSave = {
                                     saveField {
@@ -472,7 +472,7 @@ fun MerchantSettingsScreen(
                                 colors = colors
                             ) {
                                 ElvanSettingsTextField(
-                                    label = K.gstinVariAdaiyaalaEn.tr(),
+                                    label = K.gstinTaxId.tr(),
                                     value = tempPrimary,
                                     onValueChange = { tempPrimary = it.uppercase() },
                                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters),

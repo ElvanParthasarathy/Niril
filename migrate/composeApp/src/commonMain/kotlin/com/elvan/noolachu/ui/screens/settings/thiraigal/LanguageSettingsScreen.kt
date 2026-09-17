@@ -26,8 +26,8 @@ private data class LanguageSettingItem(
 private val languageSettingsOptions = listOf(
     LanguageSettingItem(Language.SYSTEM, "", null),
     LanguageSettingItem(Language.TAMIL, "தமிழ்", K.tamil),
-    LanguageSettingItem(Language.TAMIL_LATIN, "Thamizh", K.tamilLatin),
-    LanguageSettingItem(Language.ENGLISH, "English", K.english),
+    LanguageSettingItem(Language.TAMIL_LATIN, "Thamizh", K.thamizhLatin),
+    LanguageSettingItem(Language.ENGLISH, "English", K.englishLanguage),
 )
 
 /**
@@ -59,7 +59,7 @@ fun LanguageSettingsScreen(
             ElvanSectionContainer {
                 ElvanSettingsSection(colors = colors) {
                     languageSettingsOptions.forEachIndexed { index, option ->
-                        val title = if (option.language == Language.SYSTEM) K.thaaniyangiAmaippu.tr() else option.title
+                        val title = if (option.language == Language.SYSTEM) K.systemAuto.tr() else option.title
                         val description = option.descriptionKey?.let { it.tr() }
 
                         ElvanRadioSettingsRow(

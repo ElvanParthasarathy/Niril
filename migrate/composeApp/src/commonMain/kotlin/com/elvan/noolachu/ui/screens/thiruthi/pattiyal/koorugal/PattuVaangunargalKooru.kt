@@ -56,7 +56,7 @@ fun PattuVaangunargalKooru(
     }
 
     Column(modifier = modifier.fillMaxWidth()) {
-        ElvanThiruthiThalaippu(label = K.vaangunarPeyarThaedu.tr())
+        ElvanThiruthiThalaippu(label = K.clientNameSearch.tr())
 
         val containerBg = colors.iconBg
         val customerName = selectedVaangunar?.peyar?.get("ta")
@@ -80,7 +80,7 @@ fun PattuVaangunargalKooru(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = (if (customerName.isNotEmpty()) customerName else K.vaangunaraiThaerodhu.tr()).preventBrokenLigatures(),
+                    text = (if (customerName.isNotEmpty()) customerName else K.selectCustomer.tr()).preventBrokenLigatures(),
                     style = TextStyle(
                         fontFamily = ff,
                         fontSize = 14.sp,
@@ -102,7 +102,7 @@ fun PattuVaangunargalKooru(
                     ) {
                         Icon(
                             imageVector = MaterialSymbols.Rounded.Close,
-                            contentDescription = K.kaividu.tr(),
+                            contentDescription = K.cancel.tr(),
                             tint = colors.textSecondary,
                             modifier = Modifier.size(16.dp)
                         )
@@ -130,7 +130,7 @@ fun PattuVaangunargalKooru(
                     verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     Text(
-                        text = K.chaemiththaTharavugal.tr().preventBrokenLigatures(),
+                        text = K.savedDetails.tr().preventBrokenLigatures(),
                         style = TextStyle(
                             fontFamily = ff,
                             fontSize = 11.sp,
@@ -207,7 +207,7 @@ fun PattuVaangunargalKooru(
     // ── Customer Selection Bottom Sheet ──
     if (isBottomSheetOpen) {
         ElvanSelectionBottomSheet(
-            title = K.vaangunaraiThaerodhu.tr(),
+            title = K.selectCustomer.tr(),
             items = allMerchants,
             currentValue = selectedVaangunar,
             showSearch = true,
@@ -232,7 +232,7 @@ fun PattuVaangunargalKooru(
                 isBottomSheetOpen = false
                 onRequestAddNewCustomer()
             },
-            addNewLabel = K.pudhiyaChaerkkai.tr()
+            addNewLabel = K.addNew.tr()
         )
     }
 }

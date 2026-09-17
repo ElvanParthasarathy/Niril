@@ -41,11 +41,11 @@ fun AddressSettingsScreen(
     var tempPrimary by remember { mutableStateOf("") }
     var tempSecondary by remember { mutableStateOf("") }
 
-    val stateTitle = K.maanilam.tr()
-    val districtTitle = K.maavattam.tr()
-    val primaryLangLabel = if (profile.mudhanMozhi.lowercase().startsWith("ta")) K.thamizh.tr() else K.aangilam.tr()
-    val secondaryLangLabel = if (profile.thunaiMozhi.lowercase().startsWith("ta")) K.thamizh.tr() else K.aangilam.tr()
-    val saveSuccessMsg = K.thannuruChaemikkappattadhu.tr()
+    val stateTitle = K.state.tr()
+    val districtTitle = K.district.tr()
+    val primaryLangLabel = if (profile.mudhanMozhi.lowercase().startsWith("ta")) K.taCode.tr() else K.enCode.tr()
+    val secondaryLangLabel = if (profile.thunaiMozhi.lowercase().startsWith("ta")) K.taCode.tr() else K.enCode.tr()
+    val saveSuccessMsg = K.profileSaved.tr()
 
     val bottomSheet = LocalElvanBottomSheetController.current
 
@@ -166,7 +166,7 @@ fun AddressSettingsScreen(
                     val naaduPrimary = profile.getPrimary("naadu")
                     val naaduSecondary = profile.getSecondary("naadu")
                     ElvanSettingsDisplayRow(
-                        title = K.naadu.tr(),
+                        title = K.country.tr(),
                         primaryValue = naaduPrimary,
                         secondaryValue = if (isBilingual) naaduSecondary else null,
                         onEdit = null,
@@ -181,7 +181,7 @@ fun AddressSettingsScreen(
                         isEditing = editingSection == "maanilam",
                         displayContent = {
                             ElvanSettingsDisplayRow(
-                                title = K.maanilam.tr(),
+                                title = K.state.tr(),
                                 primaryValue = maanilamPrimary,
                                 secondaryValue = if (isBilingual) maanilamSecondary else null,
                                 onEdit = openStateSelection,
@@ -190,13 +190,13 @@ fun AddressSettingsScreen(
                         },
                         editContent = {
                             ElvanSettingsEditContainer(
-                                title = K.maanilam.tr(),
+                                title = K.state.tr(),
                                 onCancel = { editingSection = null },
                                 onSave = { saveBilingual("maanilam") },
                                 colors = colors
                             ) {
                                 ElvanSettingsTextField(
-                                    label = "${K.maanilam.tr()} ($primaryLangLabel)",
+                                    label = "${K.state.tr()} ($primaryLangLabel)",
                                     value = tempPrimary,
                                     onValueChange = { tempPrimary = it },
                                     colors = colors
@@ -204,7 +204,7 @@ fun AddressSettingsScreen(
                                 if (isBilingual) {
                                     Spacer(modifier = Modifier.height(12.dp))
                                     ElvanSettingsTextField(
-                                        label = "${K.maanilam.tr()} ($secondaryLangLabel)",
+                                        label = "${K.state.tr()} ($secondaryLangLabel)",
                                         value = tempSecondary,
                                         onValueChange = { tempSecondary = it },
                                         colors = colors
@@ -224,7 +224,7 @@ fun AddressSettingsScreen(
                         isEditing = editingSection == "maavattam",
                         displayContent = {
                             ElvanSettingsDisplayRow(
-                                title = K.maavattam.tr(),
+                                title = K.district.tr(),
                                 primaryValue = maavattamPrimary,
                                 secondaryValue = if (isBilingual) maavattamSecondary else null,
                                 onEdit = if (isTamilNadu) openDistrictSelection else { { beginEdit("maavattam", maavattamPrimary, maavattamSecondary) } },
@@ -233,13 +233,13 @@ fun AddressSettingsScreen(
                         },
                         editContent = {
                             ElvanSettingsEditContainer(
-                                title = K.maavattam.tr(),
+                                title = K.district.tr(),
                                 onCancel = { editingSection = null },
                                 onSave = { saveBilingual("maavattam") },
                                 colors = colors
                             ) {
                                 ElvanSettingsTextField(
-                                    label = "${K.maavattam.tr()} ($primaryLangLabel)",
+                                    label = "${K.district.tr()} ($primaryLangLabel)",
                                     value = tempPrimary,
                                     onValueChange = { tempPrimary = it },
                                     colors = colors
@@ -247,7 +247,7 @@ fun AddressSettingsScreen(
                                 if (isBilingual) {
                                     Spacer(modifier = Modifier.height(12.dp))
                                     ElvanSettingsTextField(
-                                        label = "${K.maavattam.tr()} ($secondaryLangLabel)",
+                                        label = "${K.district.tr()} ($secondaryLangLabel)",
                                         value = tempSecondary,
                                         onValueChange = { tempSecondary = it },
                                         colors = colors
@@ -265,7 +265,7 @@ fun AddressSettingsScreen(
                         isEditing = editingSection == "oor",
                         displayContent = {
                             ElvanSettingsDisplayRow(
-                                title = K.oor.tr(),
+                                title = K.city.tr(),
                                 primaryValue = oorPrimary,
                                 secondaryValue = if (isBilingual) oorSecondary else null,
                                 onEdit = { beginEdit("oor", oorPrimary, oorSecondary) },
@@ -274,13 +274,13 @@ fun AddressSettingsScreen(
                         },
                         editContent = {
                             ElvanSettingsEditContainer(
-                                title = K.oor.tr(),
+                                title = K.city.tr(),
                                 onCancel = { editingSection = null },
                                 onSave = { saveBilingual("oor") },
                                 colors = colors
                             ) {
                                 ElvanSettingsTextField(
-                                    label = "${K.oor.tr()} ($primaryLangLabel)",
+                                    label = "${K.city.tr()} ($primaryLangLabel)",
                                     value = tempPrimary,
                                     onValueChange = { tempPrimary = it },
                                     colors = colors
@@ -288,7 +288,7 @@ fun AddressSettingsScreen(
                                 if (isBilingual) {
                                     Spacer(modifier = Modifier.height(12.dp))
                                     ElvanSettingsTextField(
-                                        label = "${K.oor.tr()} ($secondaryLangLabel)",
+                                        label = "${K.city.tr()} ($secondaryLangLabel)",
                                         value = tempSecondary,
                                         onValueChange = { tempSecondary = it },
                                         colors = colors
@@ -306,7 +306,7 @@ fun AddressSettingsScreen(
                         isEditing = editingSection == "mugavari",
                         displayContent = {
                             ElvanSettingsDisplayRow(
-                                title = K.mugavari.tr(),
+                                title = K.address.tr(),
                                 primaryValue = mugavariPrimary,
                                 secondaryValue = if (isBilingual) mugavariSecondary else null,
                                 onEdit = { beginEdit("mugavari", mugavariPrimary, mugavariSecondary) },
@@ -315,13 +315,13 @@ fun AddressSettingsScreen(
                         },
                         editContent = {
                             ElvanSettingsEditContainer(
-                                title = K.mugavari.tr(),
+                                title = K.address.tr(),
                                 onCancel = { editingSection = null },
                                 onSave = { saveBilingual("mugavari") },
                                 colors = colors
                             ) {
                                 ElvanSettingsTextField(
-                                    label = "${K.mugavari.tr()} ($primaryLangLabel)",
+                                    label = "${K.address.tr()} ($primaryLangLabel)",
                                     value = tempPrimary,
                                     onValueChange = { tempPrimary = it },
                                     singleLine = false,
@@ -330,7 +330,7 @@ fun AddressSettingsScreen(
                                 if (isBilingual) {
                                     Spacer(modifier = Modifier.height(12.dp))
                                     ElvanSettingsTextField(
-                                        label = "${K.mugavari.tr()} ($secondaryLangLabel)",
+                                        label = "${K.address.tr()} ($secondaryLangLabel)",
                                         value = tempSecondary,
                                         onValueChange = { tempSecondary = it },
                                         singleLine = false,
@@ -348,7 +348,7 @@ fun AddressSettingsScreen(
                         isEditing = editingSection == "anjalKuriyeedu",
                         displayContent = {
                             ElvanSettingsDisplayRow(
-                                title = K.anjalKuriyeedu.tr(),
+                                title = K.pincode.tr(),
                                 primaryValue = pin,
                                 onEdit = { beginEdit("anjalKuriyeedu", pin) },
                                 colors = colors
@@ -356,13 +356,13 @@ fun AddressSettingsScreen(
                         },
                         editContent = {
                             ElvanSettingsEditContainer(
-                                title = K.anjalKuriyeedu.tr(),
+                                title = K.pincode.tr(),
                                 onCancel = { editingSection = null },
                                 onSave = { saveSingle { profile.anjalKuriyeedu = it } },
                                 colors = colors
                             ) {
                                 ElvanSettingsTextField(
-                                    label = K.anjalKuriyeedu.tr(),
+                                    label = K.pincode.tr(),
                                     value = tempPrimary,
                                     onValueChange = { if (it.length <= 6 && it.all { c -> c.isDigit() }) tempPrimary = it },
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -381,7 +381,7 @@ fun AddressSettingsScreen(
                         isEditing = editingSection == "mugavari",
                         displayContent = {
                             ElvanSettingsDisplayRow(
-                                title = K.mugavari.tr(),
+                                title = K.address.tr(),
                                 primaryValue = mugavariPrimary,
                                 secondaryValue = mugavariSecondary,
                                 onEdit = { beginEdit("mugavari", mugavariPrimary, mugavariSecondary) },
@@ -390,13 +390,13 @@ fun AddressSettingsScreen(
                         },
                         editContent = {
                             ElvanSettingsEditContainer(
-                                title = K.mugavari.tr(),
+                                title = K.address.tr(),
                                 onCancel = { editingSection = null },
                                 onSave = { saveBilingual("mugavari") },
                                 colors = colors
                             ) {
                                 ElvanSettingsTextField(
-                                    label = "${K.mugavari.tr()} ($primaryLangLabel)",
+                                    label = "${K.address.tr()} ($primaryLangLabel)",
                                     value = tempPrimary,
                                     onValueChange = { tempPrimary = it },
                                     singleLine = false,
@@ -404,7 +404,7 @@ fun AddressSettingsScreen(
                                 )
                                 Spacer(modifier = Modifier.height(12.dp))
                                 ElvanSettingsTextField(
-                                    label = "${K.mugavari.tr()} ($secondaryLangLabel)",
+                                    label = "${K.address.tr()} ($secondaryLangLabel)",
                                     value = tempSecondary,
                                     onValueChange = { tempSecondary = it },
                                     singleLine = false,
@@ -422,7 +422,7 @@ fun AddressSettingsScreen(
                         isEditing = editingSection == "oor",
                         displayContent = {
                             ElvanSettingsDisplayRow(
-                                title = K.oor.tr(),
+                                title = K.city.tr(),
                                 primaryValue = oorPrimary,
                                 secondaryValue = oorSecondary,
                                 onEdit = { beginEdit("oor", oorPrimary, oorSecondary) },
@@ -431,20 +431,20 @@ fun AddressSettingsScreen(
                         },
                         editContent = {
                             ElvanSettingsEditContainer(
-                                title = K.oor.tr(),
+                                title = K.city.tr(),
                                 onCancel = { editingSection = null },
                                 onSave = { saveBilingual("oor") },
                                 colors = colors
                             ) {
                                 ElvanSettingsTextField(
-                                    label = "${K.oor.tr()} ($primaryLangLabel)",
+                                    label = "${K.city.tr()} ($primaryLangLabel)",
                                     value = tempPrimary,
                                     onValueChange = { tempPrimary = it },
                                     colors = colors
                                 )
                                 Spacer(modifier = Modifier.height(12.dp))
                                 ElvanSettingsTextField(
-                                    label = "${K.oor.tr()} ($secondaryLangLabel)",
+                                    label = "${K.city.tr()} ($secondaryLangLabel)",
                                     value = tempSecondary,
                                     onValueChange = { tempSecondary = it },
                                     colors = colors
@@ -461,7 +461,7 @@ fun AddressSettingsScreen(
                         isEditing = editingSection == "maavattam",
                         displayContent = {
                             ElvanSettingsDisplayRow(
-                                title = K.maavattam.tr(),
+                                title = K.district.tr(),
                                 primaryValue = maavattamPrimary,
                                 secondaryValue = maavattamSecondary,
                                 onEdit = openDistrictSelection,
@@ -470,20 +470,20 @@ fun AddressSettingsScreen(
                         },
                         editContent = {
                             ElvanSettingsEditContainer(
-                                title = K.maavattam.tr(),
+                                title = K.district.tr(),
                                 onCancel = { editingSection = null },
                                 onSave = { saveBilingual("maavattam") },
                                 colors = colors
                             ) {
                                 ElvanSettingsTextField(
-                                    label = "${K.maavattam.tr()} ($primaryLangLabel)",
+                                    label = "${K.district.tr()} ($primaryLangLabel)",
                                     value = tempPrimary,
                                     onValueChange = { tempPrimary = it },
                                     colors = colors
                                 )
                                 Spacer(modifier = Modifier.height(12.dp))
                                 ElvanSettingsTextField(
-                                    label = "${K.maavattam.tr()} ($secondaryLangLabel)",
+                                    label = "${K.district.tr()} ($secondaryLangLabel)",
                                     value = tempSecondary,
                                     onValueChange = { tempSecondary = it },
                                     colors = colors
@@ -499,7 +499,7 @@ fun AddressSettingsScreen(
                         isEditing = editingSection == "anjalKuriyeedu",
                         displayContent = {
                             ElvanSettingsDisplayRow(
-                                title = K.anjalKuriyeedu.tr(),
+                                title = K.pincode.tr(),
                                 primaryValue = pin,
                                 onEdit = { beginEdit("anjalKuriyeedu", pin) },
                                 colors = colors
@@ -507,13 +507,13 @@ fun AddressSettingsScreen(
                         },
                         editContent = {
                             ElvanSettingsEditContainer(
-                                title = K.anjalKuriyeedu.tr(),
+                                title = K.pincode.tr(),
                                 onCancel = { editingSection = null },
                                 onSave = { saveSingle { profile.anjalKuriyeedu = it } },
                                 colors = colors
                             ) {
                                 ElvanSettingsTextField(
-                                    label = K.anjalKuriyeedu.tr(),
+                                    label = K.pincode.tr(),
                                     value = tempPrimary,
                                     onValueChange = { if (it.length <= 6 && it.all { c -> c.isDigit() }) tempPrimary = it },
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

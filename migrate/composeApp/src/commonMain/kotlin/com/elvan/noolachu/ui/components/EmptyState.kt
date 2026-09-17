@@ -26,7 +26,7 @@ fun EmptyState(
         icon?.invoke()
         if (icon != null) Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = message ?: K.tharavuIllai.tr(),
+            text = message ?: K.noData.tr(),
             fontSize = 16.sp,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant

@@ -39,9 +39,9 @@ fun BankSettingsScreen(
     var tempPrimary by remember { mutableStateOf("") }
     var tempSecondary by remember { mutableStateOf("") }
 
-    val primaryLangLabel = if (profile.mudhanMozhi.lowercase().startsWith("ta")) K.thamizh.tr() else K.aangilam.tr()
-    val secondaryLangLabel = if (profile.thunaiMozhi.lowercase().startsWith("ta")) K.thamizh.tr() else K.aangilam.tr()
-    val saveSuccessMsg = K.thannuruChaemikkappattadhu.tr()
+    val primaryLangLabel = if (profile.mudhanMozhi.lowercase().startsWith("ta")) K.taCode.tr() else K.enCode.tr()
+    val secondaryLangLabel = if (profile.thunaiMozhi.lowercase().startsWith("ta")) K.taCode.tr() else K.enCode.tr()
+    val saveSuccessMsg = K.profileSaved.tr()
 
     fun beginEdit(section: String, primary: String, secondary: String = "") {
         editingSection = section
@@ -93,7 +93,7 @@ fun BankSettingsScreen(
                     isEditing = editingSection == "vangiPeyar",
                     displayContent = {
                         ElvanSettingsDisplayRow(
-                            title = K.vangiyinPeyar.tr(),
+                            title = K.bankName.tr(),
                             primaryValue = vangiPeyarPrimary,
                             secondaryValue = if (isBilingual) vangiPeyarSecondary else null,
                             onEdit = { beginEdit("vangiPeyar", vangiPeyarPrimary, vangiPeyarSecondary) },
@@ -102,13 +102,13 @@ fun BankSettingsScreen(
                     },
                     editContent = {
                         ElvanSettingsEditContainer(
-                            title = K.vangiyinPeyar.tr(),
+                            title = K.bankName.tr(),
                             onCancel = { editingSection = null },
                             onSave = { saveBilingual("vangiPeyar") },
                             colors = colors
                         ) {
                             ElvanSettingsTextField(
-                                label = "${K.vangiyinPeyar.tr()} ($primaryLangLabel)",
+                                label = "${K.bankName.tr()} ($primaryLangLabel)",
                                 value = tempPrimary,
                                 onValueChange = { tempPrimary = it },
                                 colors = colors
@@ -116,7 +116,7 @@ fun BankSettingsScreen(
                             if (isBilingual) {
                                 Spacer(modifier = Modifier.height(12.dp))
                                 ElvanSettingsTextField(
-                                    label = "${K.vangiyinPeyar.tr()} ($secondaryLangLabel)",
+                                    label = "${K.bankName.tr()} ($secondaryLangLabel)",
                                     value = tempSecondary,
                                     onValueChange = { tempSecondary = it },
                                     colors = colors
@@ -132,7 +132,7 @@ fun BankSettingsScreen(
                     isEditing = editingSection == "vangiKilai",
                     displayContent = {
                         ElvanSettingsDisplayRow(
-                            title = K.kilaipPeyar.tr(),
+                            title = K.branchName.tr(),
                             primaryValue = kilaiPrimary,
                             secondaryValue = if (isBilingual) kilaiSecondary else null,
                             onEdit = { beginEdit("vangiKilai", kilaiPrimary, kilaiSecondary) },
@@ -141,13 +141,13 @@ fun BankSettingsScreen(
                     },
                     editContent = {
                         ElvanSettingsEditContainer(
-                            title = K.kilaipPeyar.tr(),
+                            title = K.branchName.tr(),
                             onCancel = { editingSection = null },
                             onSave = { saveBilingual("kilai") },
                             colors = colors
                         ) {
                             ElvanSettingsTextField(
-                                label = "${K.kilaipPeyar.tr()} ($primaryLangLabel)",
+                                label = "${K.branchName.tr()} ($primaryLangLabel)",
                                 value = tempPrimary,
                                 onValueChange = { tempPrimary = it },
                                 colors = colors
@@ -155,7 +155,7 @@ fun BankSettingsScreen(
                             if (isBilingual) {
                                 Spacer(modifier = Modifier.height(12.dp))
                                 ElvanSettingsTextField(
-                                    label = "${K.kilaipPeyar.tr()} ($secondaryLangLabel)",
+                                    label = "${K.branchName.tr()} ($secondaryLangLabel)",
                                     value = tempSecondary,
                                     onValueChange = { tempSecondary = it },
                                     colors = colors
@@ -172,7 +172,7 @@ fun BankSettingsScreen(
                     isEditing = editingSection == "vangiKanakku",
                     displayContent = {
                         ElvanSettingsDisplayRow(
-                            title = K.kanakkuEn.tr(),
+                            title = K.accountNumber.tr(),
                             primaryValue = accountNo,
                             onEdit = { beginEdit("vangiKanakku", accountNo) },
                             colors = colors
@@ -180,13 +180,13 @@ fun BankSettingsScreen(
                     },
                     editContent = {
                         ElvanSettingsEditContainer(
-                            title = K.kanakkuEn.tr(),
+                            title = K.accountNumber.tr(),
                             onCancel = { editingSection = null },
                             onSave = { saveSingle { profile.vangiKanakku = it } },
                             colors = colors
                         ) {
                             ElvanSettingsTextField(
-                                label = K.kanakkuEn.tr(),
+                                label = K.accountNumber.tr(),
                                 value = tempPrimary,
                                 onValueChange = { if (it.length <= 18 && it.all { c -> c.isDigit() }) tempPrimary = it },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -204,7 +204,7 @@ fun BankSettingsScreen(
                     isEditing = editingSection == "ifsc",
                     displayContent = {
                         ElvanSettingsDisplayRow(
-                            title = K.ifscKuriyeedu.tr(),
+                            title = K.ifscCode.tr(),
                             primaryValue = ifsc,
                             onEdit = { beginEdit("ifsc", ifsc) },
                             colors = colors
@@ -212,13 +212,13 @@ fun BankSettingsScreen(
                     },
                     editContent = {
                         ElvanSettingsEditContainer(
-                            title = K.ifscKuriyeedu.tr(),
+                            title = K.ifscCode.tr(),
                             onCancel = { editingSection = null },
                             onSave = { saveSingle { profile.ifsc = it } },
                             colors = colors
                         ) {
                             ElvanSettingsTextField(
-                                label = K.ifscKuriyeedu.tr(),
+                                label = K.ifscCode.tr(),
                                 value = tempPrimary,
                                 onValueChange = { if (it.length <= 11) tempPrimary = it.uppercase() },
                                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters),

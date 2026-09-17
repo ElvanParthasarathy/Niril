@@ -24,7 +24,7 @@ fun LoadingIndicator(
         CircularProgressIndicator()
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = message ?: K.aetrugiradhu.tr(),
+            text = message ?: K.loading.tr(),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

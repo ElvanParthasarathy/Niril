@@ -66,7 +66,7 @@ fun MeetpagamScreen(
     val colors = rememberShellColors()
     val isDark = colors.isDark
     val ff = LocalAppFontFamily.current
-    val restoreSuccessMsg = K.meeteduppuVetri.tr()
+    val restoreSuccessMsg = K.restoredSuccessfully.tr()
 
     // Auto-purge items older than 30 days on launch
     LaunchedEffect(mode) {
@@ -98,7 +98,7 @@ fun MeetpagamScreen(
     val scrollState = rememberLazyListState()
 
     ElvanSubShell(
-        title = K.meetpagam.tr(),
+        title = K.recycleBin.tr(),
         onBack = onBack,
         scrollState = scrollState,
         hasActions = false
@@ -144,7 +144,7 @@ fun MeetpagamScreen(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
-                            text = K.meetpagamKaaliyanadhu.tr().preventBrokenLigatures(),
+                            text = K.recycleBinIsEmpty.tr().preventBrokenLigatures(),
                             style = TextStyle(
                                 fontFamily = ff,
                                 fontSize = 16.sp,
@@ -169,7 +169,7 @@ fun MeetpagamScreen(
                 if (deletedInvoices.isNotEmpty()) {
                     item(key = "header_invoices") {
                         MeetpagamSectionHeader(
-                            title = K.azhikkappattaPattiyalgal.tr(),
+                            title = K.deletedInvoices.tr(),
                             count = deletedInvoices.size,
                             colors = colors
                         )
@@ -207,7 +207,7 @@ fun MeetpagamScreen(
                 if (deletedReceipts.isNotEmpty()) {
                     item(key = "header_receipts") {
                         MeetpagamSectionHeader(
-                            title = K.azhikkappattaPatrucheettugal.tr(),
+                            title = K.deletedReceipts.tr(),
                             count = deletedReceipts.size,
                             colors = colors
                         )
@@ -245,7 +245,7 @@ fun MeetpagamScreen(
                 if (deletedPorulgal.isNotEmpty()) {
                     item(key = "header_products") {
                         MeetpagamSectionHeader(
-                            title = K.azhikkappattaPorulgal.tr(),
+                            title = K.deletedProducts.tr(),
                             count = deletedPorulgal.size,
                             colors = colors
                         )
@@ -281,7 +281,7 @@ fun MeetpagamScreen(
                 if (deletedVaangunargal.isNotEmpty()) {
                     item(key = "header_merchants") {
                         MeetpagamSectionHeader(
-                            title = K.azhikkappattaVaangunargal.tr(),
+                            title = K.deletedCustomers.tr(),
                             count = deletedVaangunargal.size,
                             colors = colors
                         )
@@ -319,9 +319,9 @@ fun MeetpagamScreen(
     // Confirmation action sheets for permanent deletion
     invoiceToDeletePermanently?.let { invoice ->
         ElvanActionSheet(
-            title = K.nirandharaAzhippuUrudhi.tr(),
-            cancelText = K.kaividuPtn.tr(),
-            confirmText = K.neekkuPtn.tr(),
+            title = K.deletePermanentlyConfirm.tr(),
+            cancelText = K.cancelBtn.tr(),
+            confirmText = K.deleteBtn.tr(),
             confirmColor = Color(0xFFBA1A1A),
             onConfirm = {
                 PattiyalRepository.permanentDelete(invoice.id, mode)
@@ -334,9 +334,9 @@ fun MeetpagamScreen(
 
     receiptToDeletePermanently?.let { receipt ->
         ElvanActionSheet(
-            title = K.nirandharaAzhippuUrudhi.tr(),
-            cancelText = K.kaividuPtn.tr(),
-            confirmText = K.neekkuPtn.tr(),
+            title = K.deletePermanentlyConfirm.tr(),
+            cancelText = K.cancelBtn.tr(),
+            confirmText = K.deleteBtn.tr(),
             confirmColor = Color(0xFFBA1A1A),
             onConfirm = {
                 PatrugalRepository.permanentDelete(receipt.id, mode)
@@ -349,9 +349,9 @@ fun MeetpagamScreen(
 
     itemToDeletePermanently?.let { item ->
         ElvanActionSheet(
-            title = K.nirandharaAzhippuUrudhi.tr(),
-            cancelText = K.kaividuPtn.tr(),
-            confirmText = K.neekkuPtn.tr(),
+            title = K.deletePermanentlyConfirm.tr(),
+            cancelText = K.cancelBtn.tr(),
+            confirmText = K.deleteBtn.tr(),
             confirmColor = Color(0xFFBA1A1A),
             onConfirm = {
                 PorulRepository.permanentDelete(item.id, mode)
@@ -364,9 +364,9 @@ fun MeetpagamScreen(
 
     merchantToDeletePermanently?.let { merchant ->
         ElvanActionSheet(
-            title = K.nirandharaAzhippuUrudhi.tr(),
-            cancelText = K.kaividuPtn.tr(),
-            confirmText = K.neekkuPtn.tr(),
+            title = K.deletePermanentlyConfirm.tr(),
+            cancelText = K.cancelBtn.tr(),
+            confirmText = K.deleteBtn.tr(),
             confirmColor = Color(0xFFBA1A1A),
             onConfirm = {
                 VaangunarRepository.permanentDelete(merchant.id, mode)
@@ -401,7 +401,7 @@ private fun MeetpagamAutoPurgeBanner(isDark: Boolean) {
         )
         Spacer(modifier = Modifier.width(10.dp))
         Text(
-            text = K.meetpagam30Naal.tr().preventBrokenLigatures(),
+            text = K.recycleBin30Days.tr().preventBrokenLigatures(),
             style = TextStyle(
                 fontFamily = ff,
                 fontSize = 12.sp,
@@ -534,7 +534,7 @@ private fun MeetpagamCard(
             ) {
                 Icon(
                     imageVector = MaterialSymbols.Rounded.Restore,
-                    contentDescription = K.meeteduppuVetri.tr(),
+                    contentDescription = K.restoredSuccessfully.tr(),
                     tint = Color(0xFF1B6B4F),
                     modifier = Modifier.size(20.dp)
                 )
@@ -556,7 +556,7 @@ private fun MeetpagamCard(
             ) {
                 Icon(
                     imageVector = MaterialSymbols.Rounded.DeleteForever,
-                    contentDescription = K.nirandharaAzhippu.tr(),
+                    contentDescription = K.deletePermanently.tr(),
                     tint = Color(0xFFBA1A1A).copy(alpha = 0.7f),
                     modifier = Modifier.size(20.dp)
                 )

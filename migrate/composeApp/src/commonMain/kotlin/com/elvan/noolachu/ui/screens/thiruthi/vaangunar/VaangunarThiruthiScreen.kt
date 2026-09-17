@@ -105,11 +105,11 @@ fun VaangunarThiruthiScreen(
     var nameValidationError by remember { mutableStateOf<String?>(null) }
     var gstinValidationError by remember { mutableStateOf<String?>(null) }
 
-    val pageTitle = if (isEditing) K.maatriyamai.tr() else K.pudhiyaAakkam.tr()
-    val nameRequiredMsg = K.vaangunarPeyarThaevai.tr()
-    val gstinErrorMsg = K.gstinTavaru.tr()
-    val savedMsg = K.vaangunarChaemikkappattadhu.tr()
-    val saveFailedMsg = K.chaemikkaIyalavillai.tr()
+    val pageTitle = if (isEditing) K.editRecord.tr() else K.createRecord.tr()
+    val nameRequiredMsg = K.customerNameRequired.tr()
+    val gstinErrorMsg = K.invalidGstinFormat.tr()
+    val savedMsg = K.customerSavedSuccessfully.tr()
+    val saveFailedMsg = K.couldNotSavePrefix.tr()
 
     // India vs Overseas address check
     val isIndia = remember(naaduMap) {
@@ -211,7 +211,7 @@ fun VaangunarThiruthiScreen(
         hasActions = true,
         actions = {
             ElvanCheyalPothan(
-                label = K.chaemiPtn.tr(),
+                label = K.saveBtn.tr(),
                 onClick = { handleSave() }
             )
         }
@@ -235,20 +235,20 @@ fun VaangunarThiruthiScreen(
             item(key = "merchant_details_section") {
                 ElvanEditorSection(
                     index = 0,
-                    title = K.vaangunarTharavugal.tr()
+                    title = K.businessDetails.tr()
                 ) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         ElvanIrumozhiPulan(
-                            label = K.vaangunarPeyar.tr(),
+                            label = K.customerName.tr(),
                             value = peyarMap,
                             onChanged = {
                                 peyarMap = it
                                 nameValidationError = null
                             },
-                            placeholder = K.vaangunarPeyar.tr()
+                            placeholder = K.customerName.tr()
                         )
 
                         if (nameValidationError != null) {
@@ -270,7 +270,7 @@ fun VaangunarThiruthiScreen(
             item(key = "address_section") {
                 ElvanEditorSection(
                     index = 1,
-                    title = K.mugavari.tr()
+                    title = K.address.tr()
                 ) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
@@ -279,7 +279,7 @@ fun VaangunarThiruthiScreen(
                         if (currentMode == AppMode.PATTU) {
                             // Country Selector Pill
                             ElvanThiruthiKeezhvirivu<IdangalinPeyar>(
-                                label = K.naadu.tr(),
+                                label = K.country.tr(),
                                 value = ulagaNaadugal.firstOrNull { it.en.equals(naaduMap["en"], ignoreCase = true) || it.ta == naaduMap["ta"] } ?: ulagaNaadugal.first(),
                                 items = ulagaNaadugal,
                                 onSelected = { picked ->
@@ -296,7 +296,7 @@ fun VaangunarThiruthiScreen(
                             if (isIndia) {
                                 // State Selector Pill
                                 ElvanThiruthiKeezhvirivu<IdangalinPeyar>(
-                                    label = K.maanilam.tr(),
+                                    label = K.state.tr(),
                                     value = indhiyaMaanilangal.firstOrNull { it.en.equals(maanilamMap["en"], ignoreCase = true) || it.ta == maanilamMap["ta"] },
                                     items = indhiyaMaanilangal,
                                     onSelected = { picked ->
@@ -316,7 +316,7 @@ fun VaangunarThiruthiScreen(
                                 // District: Autocomplete if TN, freeform otherwise
                                 if (isTamilNadu) {
                                     ElvanThiruthiKeezhvirivu<IdangalinPeyar>(
-                                        label = K.maavattam.tr(),
+                                        label = K.district.tr(),
                                         value = tamizhnaattuMaavattangal.firstOrNull { it.en.equals(maavattamMap["en"], ignoreCase = true) || it.ta == maavattamMap["ta"] },
                                         items = tamizhnaattuMaavattangal,
                                         onSelected = { picked ->
@@ -332,33 +332,33 @@ fun VaangunarThiruthiScreen(
                                     )
                                 } else {
                                     ElvanIrumozhiPulan(
-                                        label = K.maavattam.tr(),
+                                        label = K.district.tr(),
                                         value = maavattamMap,
                                         onChanged = { maavattamMap = it },
-                                        placeholder = K.maavattam.tr()
+                                        placeholder = K.district.tr()
                                     )
                                 }
 
                                 // Town / City
                                 ElvanIrumozhiPulan(
-                                    label = K.oor.tr(),
+                                    label = K.city.tr(),
                                     value = oorMap,
                                     onChanged = { oorMap = it },
-                                    placeholder = K.oor.tr()
+                                    placeholder = K.city.tr()
                                 )
 
                                 // Street Address
                                 ElvanIrumozhiPulan(
-                                    label = K.mugavari.tr(),
+                                    label = K.address.tr(),
                                     value = mugavariMap,
                                     onChanged = { mugavariMap = it },
-                                    placeholder = K.mugavari.tr(),
+                                    placeholder = K.address.tr(),
                                     maxLines = 2
                                 )
 
                                 // PIN Code
                                 ElvanThiruthiUlleedu(
-                                    label = K.anjalKuriyeedu.tr(),
+                                    label = K.pincode.tr(),
                                     value = anjalKuriyeedu,
                                     onValueChange = {
                                         if (it.length <= 6 && it.all { ch -> ch.isDigit() }) {
@@ -371,27 +371,27 @@ fun VaangunarThiruthiScreen(
                             } else {
                                 // Overseas Address: Single multiline bilingual text field
                                 ElvanIrumozhiPulan(
-                                    label = K.velinaadMugavari.tr(),
+                                    label = K.fullAddress.tr(),
                                     value = velinaadMugavariMap,
                                     onChanged = { velinaadMugavariMap = it },
-                                    placeholder = K.velinaadMugavari.tr(),
+                                    placeholder = K.fullAddress.tr(),
                                     maxLines = 4
                                 )
                             }
                         } else {
                             // Coolie Mode: only Town and Street Address
                             ElvanIrumozhiPulan(
-                                label = K.oor.tr(),
+                                label = K.city.tr(),
                                 value = oorMap,
                                 onChanged = { oorMap = it },
-                                placeholder = K.oor.tr()
+                                placeholder = K.city.tr()
                             )
 
                             ElvanIrumozhiPulan(
-                                label = K.mugavari.tr(),
+                                label = K.address.tr(),
                                 value = mugavariMap,
                                 onChanged = { mugavariMap = it },
-                                placeholder = K.mugavari.tr(),
+                                placeholder = K.address.tr(),
                                 maxLines = 4
                             )
                         }
@@ -404,7 +404,7 @@ fun VaangunarThiruthiScreen(
                 item(key = "contact_tax_section") {
                     ElvanEditorSection(
                         index = 2,
-                        title = K.thodarpuVari.tr()
+                        title = K.contactAndTax.tr()
                     ) {
                         Column(
                             modifier = Modifier.fillMaxWidth(),
@@ -423,7 +423,7 @@ fun VaangunarThiruthiScreen(
                             )
 
                             ElvanThiruthiUlleedu(
-                                label = K.minnanjal.tr(),
+                                label = K.email.tr(),
                                 value = minnanjal,
                                 onValueChange = { minnanjal = it },
                                 placeholder = "merchant@example.com",
@@ -431,7 +431,7 @@ fun VaangunarThiruthiScreen(
                             )
 
                             ElvanThiruthiUlleedu(
-                                label = K.tholaipaesi.tr(),
+                                label = K.telephone.tr(),
                                 value = tholaipaesi,
                                 onValueChange = { tholaipaesi = it },
                                 placeholder = "+91 98765 43210",

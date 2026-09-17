@@ -43,7 +43,7 @@ fun ManageProfilesScreen(
     var showNewProfileSheet by remember { mutableStateOf(false) }
     var profileToDelete by remember { mutableStateOf<NiruvanaTharavugal?>(null) }
 
-    val deleteSuccessMsg = K.thannuruNeekkappattadhu.tr()
+    val deleteSuccessMsg = K.profileDeleted.tr()
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -67,7 +67,7 @@ fun ManageProfilesScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = K.thannurukkalIllai.tr(),
+                            text = K.noSavedProfiles.tr(),
                             style = TextStyle(
                                 fontFamily = ff,
                                 fontSize = 16.sp,
@@ -83,10 +83,10 @@ fun ManageProfilesScreen(
                             profiles.forEachIndexed { index, profileItem ->
                                 val isActive = profileItem.id == activeProfile.id
                                 val primaryName = profileItem.getPrimary("niruvanathinPeyar")
-                                    .ifEmpty { K.tharpoadhaiyaNiruvanam.tr() }
+                                    .ifEmpty { K.activeCompany.tr() }
 
                                 ElvanSettingsDisplayRow(
-                                    title = if (isActive) K.tharpoadhaiyaNiruvanam.tr() else "",
+                                    title = if (isActive) K.activeCompany.tr() else "",
                                     primaryValue = primaryName,
                                     secondaryValue = null,
                                     icon = MaterialSymbols.Rounded.Delete,

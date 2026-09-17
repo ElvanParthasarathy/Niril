@@ -339,8 +339,8 @@ fun ElvanIrumozhiPulan(
     val primaryLang = profile.mudhanMozhi.ifEmpty { "ta" }
     val secondaryLang = profile.thunaiMozhi.ifEmpty { "en" }
 
-    val primaryLangLabel = if (primaryLang == "ta") K.thamizh.tr() else K.aangilam.tr()
-    val secondaryLangLabel = if (secondaryLang == "en") K.aangilam.tr() else K.thamizh.tr()
+    val primaryLangLabel = if (primaryLang == "ta") K.taCode.tr() else K.enCode.tr()
+    val secondaryLangLabel = if (secondaryLang == "en") K.enCode.tr() else K.taCode.tr()
 
     val primaryValue = value[primaryLang] ?: ""
     val secondaryValue = value[secondaryLang] ?: ""

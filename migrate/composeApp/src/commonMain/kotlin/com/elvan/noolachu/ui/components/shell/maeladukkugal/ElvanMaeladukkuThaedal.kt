@@ -33,7 +33,7 @@ fun ElvanMaeladukkuThaedal(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    placeholder: String = K.thaeduga.tr(),
+    placeholder: String = K.search.tr(),
     colors: ShellColors = rememberShellColors()
 ) {
     val ff = LocalAppFontFamily.current

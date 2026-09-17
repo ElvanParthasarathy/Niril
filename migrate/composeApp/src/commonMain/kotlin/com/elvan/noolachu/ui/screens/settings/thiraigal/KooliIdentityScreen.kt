@@ -59,7 +59,7 @@ fun KooliIdentityScreen(
     val logoPath = profile.oavuru.ifEmpty { null }
     val signaturePath = profile.kaiyoppam.ifEmpty { null }
     val signatoryName = profile.oppamPeyar
-    val saveSuccessMsg = K.thannuruChaemikkappattadhu.tr()
+    val saveSuccessMsg = K.profileSaved.tr()
 
     LazyColumn(
         state = scrollState,
@@ -82,8 +82,8 @@ fun KooliIdentityScreen(
                     isEditing = editingSection == "logo",
                     displayContent = {
                         ElvanSettingsDisplayRow(
-                            title = K.niruvanathinOavuru.tr(),
-                            primaryValue = if (logoPath != null) "" else K.oavuruIllai.tr(),
+                            title = K.companyLogo.tr(),
+                            primaryValue = if (logoPath != null) "" else K.noLogo.tr(),
                             primaryWidget = if (logoPath != null) {
                                 {
                                     ElvanOavuruKaatchi(
@@ -102,7 +102,7 @@ fun KooliIdentityScreen(
                     },
                     editContent = {
                         ElvanSettingsEditContainer(
-                            title = K.niruvanathinOavuru.tr(),
+                            title = K.companyLogo.tr(),
                             onCancel = { editingSection = null },
                             onSave = {
                                 val updated = profile.copy()
@@ -132,8 +132,8 @@ fun KooliIdentityScreen(
                     isEditing = editingSection == "kaiyoppam",
                     displayContent = {
                         ElvanSettingsDisplayRow(
-                            title = K.kaiyoppam.tr(),
-                            primaryValue = if (signaturePath != null) signatoryName else K.kaiyoppamIllai.tr(),
+                            title = K.signatureStamp.tr(),
+                            primaryValue = if (signaturePath != null) signatoryName else K.noSignature.tr(),
                             primaryWidget = if (signaturePath != null) {
                                 {
                                     ElvanOavuruKaatchi(
@@ -153,7 +153,7 @@ fun KooliIdentityScreen(
                     },
                     editContent = {
                         ElvanSettingsEditContainer(
-                            title = K.kaiyoppam.tr(),
+                            title = K.signatureStamp.tr(),
                             onCancel = { editingSection = null },
                             onSave = {
                                 val updated = profile.copy()
@@ -176,10 +176,10 @@ fun KooliIdentityScreen(
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                             ElvanSettingsTextField(
-                                label = K.aluvalkaiyoppam.tr(),
+                                label = K.authorizedSignatoryName.tr(),
                                 value = tempSignatoryName,
                                 onValueChange = { tempSignatoryName = it },
-                                placeholder = K.aluvalkaiyoppam.tr(),
+                                placeholder = K.authorizedSignatoryName.tr(),
                                 colors = colors
                             )
                         }
@@ -234,7 +234,7 @@ private fun ImageUploadBox(
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = MaterialSymbols.Rounded.DeleteForever,
-                        contentDescription = K.azhi.tr(),
+                        contentDescription = K.delete.tr(),
                         tint = Color(0xFFBA1A1A),
                         modifier = Modifier.size(18.dp)
                     )
@@ -253,7 +253,7 @@ private fun ImageUploadBox(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = K.padhivaetru.tr(),
+                    text = K.upload.tr(),
                     style = TextStyle(
                         fontFamily = ff,
                         fontSize = 12.sp,

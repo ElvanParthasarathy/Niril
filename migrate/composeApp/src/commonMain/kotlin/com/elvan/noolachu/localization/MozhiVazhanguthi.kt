@@ -100,7 +100,7 @@ fun ProvideAppLanguage(
 /**
  * Extension on String for reactive translations in Compose UI.
  * Usage:
- *   Text(K.pattiyal.tr())
+ *   Text(K.invoice.tr())
  */
 @Composable
 fun String.tr(): String {

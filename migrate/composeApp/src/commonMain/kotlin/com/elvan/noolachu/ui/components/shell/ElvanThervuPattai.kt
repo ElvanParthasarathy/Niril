@@ -76,7 +76,7 @@ fun ElvanThervuPattai(
             // Action 1: Select All / Count
             ThervuPattaiAction(
                 icon = if (selectedCount > 0) MaterialSymbols.Rounded.CheckBox else MaterialSymbols.Rounded.CheckBoxOutlineBlank,
-                label = if (selectedCount > 0) "$selectedCount ${K.thaerndhedu.tr()}" else K.anaithaiyumTheriPtn.tr(),
+                label = if (selectedCount > 0) "$selectedCount ${K.select.tr()}" else K.selectAllBtn.tr(),
                 isActive = selectedCount > 0,
                 isDisabled = false,
                 isDark = isDark,
@@ -86,7 +86,7 @@ fun ElvanThervuPattai(
             // Action 2: Delete
             ThervuPattaiAction(
                 icon = MaterialSymbols.Rounded.Delete,
-                label = K.neekkuPtn.tr(),
+                label = K.deleteBtn.tr(),
                 isActive = false,
                 isDisabled = selectedCount == 0,
                 isDark = isDark,
@@ -96,7 +96,7 @@ fun ElvanThervuPattai(
             // Action 3: Cancel
             ThervuPattaiAction(
                 icon = MaterialSymbols.Rounded.Close,
-                label = K.kaividuPtn.tr(),
+                label = K.cancelBtn.tr(),
                 isActive = false,
                 isDisabled = false,
                 isDark = isDark,

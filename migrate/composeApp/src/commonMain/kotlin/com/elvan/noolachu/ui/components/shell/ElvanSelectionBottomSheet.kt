@@ -310,7 +310,7 @@ fun <T> ElvanSelectionBottomSheet(
                             onDismissRequest()
                             onRequestAddNew()
                         },
-                        label = addNewLabel ?: com.elvan.noolachu.localization.K.pudhiyaChaerkkai.tr(),
+                        label = addNewLabel ?: com.elvan.noolachu.localization.K.addNew.tr(),
                         colors = colors
                     )
                 } else {

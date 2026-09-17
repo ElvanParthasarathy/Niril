@@ -37,8 +37,8 @@ fun ElvanImagePickerSheet(
     val ff = LocalAppFontFamily.current
 
     ElvanActionSheet(
-        title = K.padammoolam.tr(),
-        cancelText = K.kaividuPtn.tr(),
+        title = K.selectImageSource.tr(),
+        cancelText = K.cancelBtn.tr(),
         confirmText = "",
         onDismissRequest = onDismissRequest,
         onConfirm = {},
@@ -50,7 +50,7 @@ fun ElvanImagePickerSheet(
             ) {
                 ActionOption(
                     icon = MaterialSymbols.Rounded.PhotoLibrary,
-                    label = K.pugaippadathThoguppu.tr(),
+                    label = K.gallery.tr(),
                     onClick = {
                         onDismissRequest()
                         onPickGallery()
@@ -60,7 +60,7 @@ fun ElvanImagePickerSheet(
                 )
                 ActionOption(
                     icon = MaterialSymbols.Rounded.FolderOpen,
-                    label = K.koappugal.tr(),
+                    label = K.files.tr(),
                     onClick = {
                         onDismissRequest()
                         onPickFiles()

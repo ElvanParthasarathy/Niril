@@ -75,7 +75,7 @@ fun AboutAppScreen(
                 ) {
                     Icon(
                         imageVector = MaterialSymbols.Rounded.Notes,
-                        contentDescription = K.cheyaliPatri.tr(),
+                        contentDescription = K.aboutApp.tr(),
                         tint = colors.textPrimary,
                         modifier = Modifier.size(50.dp)
                     )
@@ -96,7 +96,7 @@ fun AboutAppScreen(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    text = K.elvanNavilDesc.tr(),
+                    text = K.elvanNavilStudioDesc.tr(),
                     style = TextStyle(
                         fontFamily = ff,
                         fontSize = 13.5.sp,

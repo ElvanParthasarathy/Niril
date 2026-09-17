@@ -568,7 +568,7 @@ fun ElvanSettingsDisplayRow(
                     ) {
                         Icon(
                             imageVector = icon,
-                            contentDescription = K.thiruthu.tr(),
+                            contentDescription = K.edit.tr(),
                             tint = iconColor ?: colors.textPrimary.copy(alpha = 0.6f),
                             modifier = Modifier.size(20.dp)
                         )
@@ -596,8 +596,8 @@ fun ElvanSettingsEditContainer(
     content: @Composable ColumnScope.() -> Unit
 ) {
     val ff = LocalAppFontFamily.current
-    val effectiveCancel = cancelText ?: K.kaividu.tr()
-    val effectiveSave = saveText ?: K.chaemi.tr()
+    val effectiveCancel = cancelText ?: K.cancel.tr()
+    val effectiveSave = saveText ?: K.save.tr()
 
     Column(
         modifier = modifier

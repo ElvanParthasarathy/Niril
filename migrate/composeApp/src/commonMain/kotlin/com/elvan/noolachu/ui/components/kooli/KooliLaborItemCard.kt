@@ -86,7 +86,7 @@ fun KooliLaborItemCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "${K.vilai.tr()}: ₹$wageRate / ${K.alagu.tr()}",
+                    text = "${K.sellingRate.tr()}: ₹$wageRate / ${K.unit.tr()}",
                     style = TextStyle(
                         fontFamily = ff,
                         fontSize = 13.sp
@@ -94,7 +94,7 @@ fun KooliLaborItemCard(
                     color = colors.textSecondary
                 )
                 Text(
-                    text = "${K.alavu.tr()}: $units",
+                    text = "${K.quantity.tr()}: $units",
                     style = TextStyle(
                         fontFamily = ff,
                         fontSize = 13.sp

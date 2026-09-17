@@ -61,8 +61,8 @@ fun NalvaravuThirai(
 
         // 2. TEXT SECTION (Title: "நிறிளிற்கு நல்வரவு", Subtitle: "உங்கள் பட்டியல்கள் & GST, எளிதாக்கப்பட்டது.")
         AuthHeader(
-            title = K.nirilirkuNalvaravu.tr(),
-            subtitle = K.pattiyalgstelidhu.tr()
+            title = K.welcomeToUdukkai.tr(),
+            subtitle = K.billingGstSorted.tr()
         )
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -70,7 +70,7 @@ fun NalvaravuThirai(
         // 3. INTRO SUBTEXT matching Flutter
         AuthAnimatedElement(delayIndex = 2) {
             Text(
-                text = K.nirilthodanga.tr(),
+                text = K.tapGetStarted.tr(),
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp,
                 lineHeight = 18.sp,
@@ -80,9 +80,9 @@ fun NalvaravuThirai(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 4. ACTION BUTTON matching Flutter (K.thodangugaPtn -> "தொடங்குக" / "Get Started")
+        // 4. ACTION BUTTON matching Flutter (K.getStartedBtn -> "தொடங்குக" / "Get Started")
         AuthButton(
-            text = K.thodangugaPtn.tr(),
+            text = K.getStartedBtn.tr(),
             onClick = onNavigateToLogin
         )
     }

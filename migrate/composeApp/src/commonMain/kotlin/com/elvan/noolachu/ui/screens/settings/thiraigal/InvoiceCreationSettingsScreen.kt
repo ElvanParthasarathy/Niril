@@ -54,13 +54,13 @@ fun InvoiceCreationSettingsScreen(
     var dummyGstSplit by remember { mutableStateOf(false) }
 
     val bottomSheet = LocalElvanBottomSheetController.current
-    val pdfThemeTitle = K.pdfThoatram.tr()
-    val saveSuccessMsg = K.thannuruChaemikkappattadhu.tr()
+    val pdfThemeTitle = K.pdfTheme.tr()
+    val saveSuccessMsg = K.profileSaved.tr()
 
-    val greenLabel = K.pachai.tr()
-    val purpleLabel = K.oodhaa.tr()
-    val tamilLabel = K.thamizh.tr()
-    val englishLabel = K.aangilam.tr()
+    val greenLabel = K.green.tr()
+    val purpleLabel = K.violet.tr()
+    val tamilLabel = K.taCode.tr()
+    val englishLabel = K.enCode.tr()
 
     fun getLanguageName(code: String): String {
         return if (code.lowercase().startsWith("ta")) tamilLabel else englishLabel
@@ -107,7 +107,7 @@ fun InvoiceCreationSettingsScreen(
                         displayContent = {
                             Column {
                                 ElvanSimpleSettingsRow(
-                                    title = K.mudhanmaiMozhi.tr(),
+                                    title = K.primaryLanguage.tr(),
                                     description = getLanguageName(profile.mudhanMozhi),
                                     trailing = {
                                         Surface(
@@ -129,7 +129,7 @@ fun InvoiceCreationSettingsScreen(
                                             Box(contentAlignment = Alignment.Center) {
                                                 Icon(
                                                     imageVector = MaterialSymbols.Rounded.Edit,
-                                                    contentDescription = K.thiruthu.tr(),
+                                                    contentDescription = K.edit.tr(),
                                                     tint = colors.textPrimary.copy(alpha = 0.6f),
                                                     modifier = Modifier.size(20.dp)
                                                 )
@@ -142,7 +142,7 @@ fun InvoiceCreationSettingsScreen(
                                 if (profile.iruMozhi) {
                                     ElvanSettingsDivider(colors = colors)
                                     ElvanSimpleSettingsRow(
-                                        title = K.irandaamMozhi.tr(),
+                                        title = K.secondaryLanguage.tr(),
                                         description = getLanguageName(profile.thunaiMozhi),
                                         colors = colors
                                     )
@@ -164,7 +164,7 @@ fun InvoiceCreationSettingsScreen(
                             ) {
                                 // Primary Language Dropdown (Pill triggering bottom sheet)
                                 ElvanSettingsDropdown(
-                                    label = K.mudhanmaiMozhi.tr(),
+                                    label = K.primaryLanguage.tr(),
                                     value = tempPrimaryLang,
                                     items = listOf("ta", "en"),
                                     itemLabelBuilder = { getLanguageName(it) },
@@ -181,7 +181,7 @@ fun InvoiceCreationSettingsScreen(
                                     Spacer(modifier = Modifier.height(16.dp))
                                     // Secondary Language Dropdown (Pill triggering bottom sheet)
                                     ElvanSettingsDropdown(
-                                        label = K.irandaamMozhi.tr(),
+                                        label = K.secondaryLanguage.tr(),
                                         value = tempSecondaryLang,
                                         items = listOf("ta", "en"),
                                         itemLabelBuilder = { getLanguageName(it) },
@@ -205,7 +205,7 @@ fun InvoiceCreationSettingsScreen(
                 ElvanSettingsSection(colors = colors) {
                     // Bilingual Mode Toggle
                     ElvanSimpleSettingsRow(
-                        title = K.irumozhiMurai.tr(),
+                        title = K.bilingualMode.tr(),
                         trailing = {
                             ElvanSettingsSwitch(
                                 checked = profile.iruMozhi,
@@ -223,7 +223,7 @@ fun InvoiceCreationSettingsScreen(
 
                     // GST Split Toggle (Dummy)
                     ElvanSimpleSettingsRow(
-                        title = K.gstpirippugal.tr(),
+                        title = K.showGstSplitsInTable.tr(),
                         trailing = {
                             ElvanSettingsSwitch(
                                 checked = dummyGstSplit,
@@ -246,7 +246,7 @@ fun InvoiceCreationSettingsScreen(
                         isEditing = isEditingLanguages,
                         displayContent = {
                             ElvanSimpleSettingsRow(
-                                title = K.pattiyalPatrucheettuMozhi.tr(),
+                                title = K.invoiceReceiptLanguage.tr(),
                                 description = getLanguageName(profile.mudhanMozhi),
                                 trailing = {
                                     Surface(
@@ -267,7 +267,7 @@ fun InvoiceCreationSettingsScreen(
                                         Box(contentAlignment = Alignment.Center) {
                                             Icon(
                                                 imageVector = MaterialSymbols.Rounded.Edit,
-                                                contentDescription = K.thiruthu.tr(),
+                                                contentDescription = K.edit.tr(),
                                                 tint = colors.textPrimary.copy(alpha = 0.6f),
                                                 modifier = Modifier.size(20.dp)
                                             )
@@ -290,7 +290,7 @@ fun InvoiceCreationSettingsScreen(
                                 colors = colors
                             ) {
                                 ElvanSettingsDropdown(
-                                    label = K.pattiyalPatrucheettuMozhi.tr(),
+                                    label = K.invoiceReceiptLanguage.tr(),
                                     value = tempPrimaryLang,
                                     items = listOf("ta", "en"),
                                     itemLabelBuilder = { getLanguageName(it) },
@@ -307,7 +307,7 @@ fun InvoiceCreationSettingsScreen(
                     val currentColor = parseColor(currentThemeColorHex)
 
                     ElvanSettingsDisplayRow(
-                        title = K.pdfThoatram.tr(),
+                        title = K.pdfTheme.tr(),
                         primaryValue = "",
                         primaryWidget = {
                             Row(verticalAlignment = Alignment.CenterVertically) {

@@ -103,11 +103,11 @@ fun HomeScreen() {
     val scope = rememberCoroutineScope()
     val colors = rememberShellColors()
 
-    val porulDeletedMsg = K.porulAzhikkappattadhu.tr()
-    val vaangunarDeletedMsg = K.vaangunarAzhikkappattadhu.tr()
-    val pattiyalgalLabel = K.pattiyalgal.tr()
-    val patrucheettugalLabel = K.patrucheettugal.tr()
-    val azhikkiradhuLabel = K.azhikkiradhu.tr()
+    val porulDeletedMsg = K.productDeleted.tr()
+    val vaangunarDeletedMsg = K.customerDeleted.tr()
+    val pattiyalgalLabel = K.invoices.tr()
+    val patrucheettugalLabel = K.receipts.tr()
+    val azhikkiradhuLabel = K.erasing.tr()
 
     // Intercept hardware/system back when a subpage is open, selection mode is active, or search is active
     AppBackHandler(enabled = activeSubpage != null || isSelectionMode || isSearchActive || showBulkDeleteConfirm) {
@@ -318,7 +318,7 @@ fun HomeScreen() {
                                 ) {
                                     Icon(
                                         imageVector = MaterialSymbols.Rounded.Search,
-                                        contentDescription = K.thaeduga.tr(),
+                                        contentDescription = K.search.tr(),
                                         tint = colors.textPrimary,
                                         modifier = Modifier.size(22.dp)
                                     )
@@ -350,7 +350,7 @@ fun HomeScreen() {
                             ) {
                                 Icon(
                                     imageVector = MaterialSymbols.Rounded.Add,
-                                    contentDescription = K.chaer.tr(),
+                                    contentDescription = K.add.tr(),
                                     tint = colors.textPrimary,
                                     modifier = Modifier.size(24.dp)
                                 )
@@ -366,14 +366,14 @@ fun HomeScreen() {
                                 ) {
                                     Icon(
                                         imageVector = MaterialSymbols.Rounded.MoreVert,
-                                        contentDescription = K.melum.tr(),
+                                        contentDescription = K.more.tr(),
                                         tint = colors.textPrimary,
                                         modifier = Modifier.size(22.dp)
                                     )
                                 }
-                                val settingsLabel = K.amaippugal.tr()
-                                val meetpagamLabel = K.meetpagam.tr()
-                                val thaerndheduLabel = K.thaerndhedu.tr()
+                                val settingsLabel = K.settings.tr()
+                                val meetpagamLabel = K.recycleBin.tr()
+                                val thaerndheduLabel = K.select.tr()
                                 val menuItems = buildList {
                                     add(
                                         ElvanPopupMenuItem(
@@ -632,21 +632,21 @@ fun HomeScreen() {
 
         if (showBulkDeleteConfirm && selectedItemIds.isNotEmpty()) {
             val deleteSheetTitle = when (selectedTab) {
-                NavTab.Products -> "${selectedItemIds.size} ${K.porulAzhikkappattadhu.tr()}"
-                NavTab.Customers -> "${selectedItemIds.size} ${K.vaangunarAzhikkappattadhu.tr()}"
+                NavTab.Products -> "${selectedItemIds.size} ${K.productDeleted.tr()}"
+                NavTab.Customers -> "${selectedItemIds.size} ${K.customerDeleted.tr()}"
                 NavTab.Create -> {
                     if (uruvakkuSegment == 0) {
-                        "${selectedItemIds.size} ${K.pattiyalgal.tr()}"
+                        "${selectedItemIds.size} ${K.invoices.tr()}"
                     } else {
-                        "${selectedItemIds.size} ${K.patrucheettugal.tr()}"
+                        "${selectedItemIds.size} ${K.receipts.tr()}"
                     }
                 }
                 else -> ""
             }
             ElvanActionSheet(
                 title = deleteSheetTitle,
-                cancelText = K.kaividuPtn.tr(),
-                confirmText = K.neekkuPtn.tr(),
+                cancelText = K.cancelBtn.tr(),
+                confirmText = K.deleteBtn.tr(),
                 confirmColor = Color(0xFFBA1A1A),
                 onConfirm = {
                     when (selectedTab) {

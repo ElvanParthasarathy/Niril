@@ -56,8 +56,8 @@ fun AppLanguageStep(
 
         // Header: "மொழித் தேர்வு" / "Select Language"
         AuthHeader(
-            title = K.mozhiThaervu.tr(),
-            subtitle = K.viruppaMozhiThaervu.tr()
+            title = K.selectLanguage.tr(),
+            subtitle = K.choosePreferredLanguage.tr()
         )
 
         Spacer(modifier = Modifier.height(32.dp))

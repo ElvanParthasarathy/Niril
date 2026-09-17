@@ -66,7 +66,7 @@ fun PorulPaarvaiScreen(
     val scrollState = rememberLazyListState()
 
     ElvanPaarvaiOadu(
-        title = K.porulTharavugal.tr(),
+        title = K.productDetails.tr(),
         onBack = onBack,
         scrollState = scrollState,
         onEdit = onEdit
@@ -176,7 +176,7 @@ fun PorulPaarvaiScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     DetailCard(
-                        title = K.vilai.tr(),
+                        title = K.sellingRate.tr(),
                         value = CurrencyUtils.formatInr(item.vilai),
                         icon = MaterialSymbols.Rounded.CurrencyRupee,
                         colors = colors,
@@ -184,7 +184,7 @@ fun PorulPaarvaiScreen(
                     )
 
                     DetailCard(
-                        title = K.gstVeedham.tr(),
+                        title = K.gstRate.tr(),
                         value = "${item.variVeetham}%",
                         icon = MaterialSymbols.Rounded.Percent,
                         colors = colors,
@@ -193,7 +193,7 @@ fun PorulPaarvaiScreen(
 
                     if (item.alavuVagai.isNotBlank()) {
                         DetailCard(
-                            title = K.alavuVagai.tr(),
+                            title = K.measureType.tr(),
                             value = item.alavuVagai,
                             icon = MaterialSymbols.Rounded.Straighten,
                             colors = colors,
@@ -203,7 +203,7 @@ fun PorulPaarvaiScreen(
 
                     if (item.alagu.isNotBlank()) {
                         DetailCard(
-                            title = K.alagu.tr(),
+                            title = K.unit.tr(),
                             value = item.alagu,
                             icon = MaterialSymbols.Rounded.Inventory2,
                             colors = colors,

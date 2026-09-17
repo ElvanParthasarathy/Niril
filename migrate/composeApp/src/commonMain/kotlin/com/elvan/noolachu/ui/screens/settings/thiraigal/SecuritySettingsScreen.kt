@@ -42,9 +42,9 @@ fun SecuritySettingsScreen(
     var emailInput by remember { mutableStateOf("") }
     var passwordInput by remember { mutableStateOf("") }
 
-    val syncSuccessMsg = K.orunginaikkappattadhu.tr()
-    val signOutSuccessMsg = K.veliyaetramvetri.tr()
-    val eraseSuccessMsg = K.azhippuvetri.tr()
+    val syncSuccessMsg = K.synced.tr()
+    val signOutSuccessMsg = K.signedOutSuccessfully.tr()
+    val eraseSuccessMsg = K.appDataErased.tr()
 
     LazyColumn(
         state = scrollState,
@@ -66,8 +66,8 @@ fun SecuritySettingsScreen(
                 // 1. Sync App (Orunginai Cheyali)
                 ElvanSettingsRow(
                     icon = MaterialSymbols.Rounded.Sync,
-                    title = K.orunginaiCheyaliPtn.tr(),
-                    description = K.orunginaiCheyaliVilakkam.tr(),
+                    title = K.syncAppBtn.tr(),
+                    description = K.syncRecentChanges.tr(),
                     onClick = {
                         showSyncLoading = true
                         scope.launch {
@@ -86,8 +86,8 @@ fun SecuritySettingsScreen(
                 // 2. Sign Out (Veliyaeru)
                 ElvanSettingsRow(
                     icon = MaterialSymbols.Rounded.Logout,
-                    title = K.veliyaeru.tr(),
-                    description = K.cheyaliyilirundhuVeliyaeravum.tr(),
+                    title = K.logout.tr(),
+                    description = K.logoutApplication.tr(),
                     onClick = { showSignOutConfirm = true },
                     colors = colors
                 )
@@ -96,8 +96,8 @@ fun SecuritySettingsScreen(
                 // 3. Erase App Data (Cheyalith Tharavai Azhi)
                 ElvanSettingsRow(
                     icon = MaterialSymbols.Rounded.DeleteForever,
-                    title = K.cheyalithTharavaiAzhi.tr(),
-                    description = K.tharavaiazhi.tr(),
+                    title = K.eraseAppData.tr(),
+                    description = K.permanentlyEraseData.tr(),
                     onClick = {
                         emailInput = ""
                         passwordInput = ""
@@ -114,7 +114,7 @@ fun SecuritySettingsScreen(
     // ── Sync Loading Modal ──
     if (showSyncLoading) {
         ElvanLoadingOverlay(
-            text = K.orunginaikkiRadhu.tr(),
+            text = K.syncing.tr(),
             colors = colors
         )
     }
@@ -122,9 +122,9 @@ fun SecuritySettingsScreen(
     // ── Sign Out Confirmation Modal ──
     if (showSignOutConfirm) {
         ElvanActionSheet(
-            title = K.veliyaeraVaendumaa.tr(),
-            cancelText = K.kaividuPtn.tr(),
-            confirmText = K.veliyaeruPtn.tr(),
+            title = K.signOutPrompt.tr(),
+            cancelText = K.cancelBtn.tr(),
+            confirmText = K.signOutBtn.tr(),
             confirmColor = Color(0xFFBA1A1A),
             onDismissRequest = { showSignOutConfirm = false },
             onConfirm = {
@@ -142,7 +142,7 @@ fun SecuritySettingsScreen(
 
     if (showSignOutLoading) {
         ElvanLoadingOverlay(
-            text = K.veliyaerugiradhu.tr(),
+            text = K.signingOut.tr(),
             colors = colors
         )
     }
@@ -150,15 +150,15 @@ fun SecuritySettingsScreen(
     // ── Erase Step 1: Email Confirmation ──
     if (showEraseStep1) {
         ElvanActionSheet(
-            title = K.cheyalithTharavaiAzhi.tr(),
-            cancelText = K.kaividuPtn.tr(),
-            confirmText = K.thodaravum.tr(),
+            title = K.eraseAppData.tr(),
+            cancelText = K.cancelBtn.tr(),
+            confirmText = K.continueText.tr(),
             customContent = {
                 ElvanSettingsTextField(
-                    label = K.minnanjal.tr(),
+                    label = K.email.tr(),
                     value = emailInput,
                     onValueChange = { emailInput = it },
-                    placeholder = K.minnanjalaiUrudhiseiga.tr(),
+                    placeholder = K.confirmEmail.tr(),
                     colors = colors
                 )
             },
@@ -174,16 +174,16 @@ fun SecuritySettingsScreen(
     // ── Erase Step 2: Password Confirmation ──
     if (showEraseStep2) {
         ElvanActionSheet(
-            title = K.kadavuchollaiUllidavum.tr(),
-            cancelText = K.kaividuPtn.tr(),
-            confirmText = K.tharavaiAzhiPtn.tr(),
+            title = K.enterPassword.tr(),
+            cancelText = K.cancelBtn.tr(),
+            confirmText = K.eraseDataBtn.tr(),
             confirmColor = Color(0xFFBA1A1A),
             customContent = {
                 ElvanSettingsTextField(
-                    label = K.kadavuchol.tr(),
+                    label = K.password.tr(),
                     value = passwordInput,
                     onValueChange = { passwordInput = it },
-                    placeholder = K.kadavuchol.tr(),
+                    placeholder = K.password.tr(),
                     colors = colors
                 )
             },
@@ -203,7 +203,7 @@ fun SecuritySettingsScreen(
 
     if (showEraseLoading) {
         ElvanLoadingOverlay(
-            text = K.azhikkiradhu.tr(),
+            text = K.erasing.tr(),
             colors = colors
         )
     }
