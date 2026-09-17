@@ -39,8 +39,7 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
   const [saving, setSaving] = useState(false);
 
   const theme = useTheme();
-  const isNative = typeof window !== 'undefined' && (window as any).FlutterBridge && (window as any).FlutterBridge.isNativeApp && (window as any).FlutterBridge.isNativeApp();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')) && !isNative;
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const initialScale = typeof window !== 'undefined' ? Math.min((window.innerWidth - 32) / 793.7, 1) : 0.43;
   const mbPercent = (1 - initialScale) * 141;
 
@@ -165,13 +164,6 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
         </body>
       </html>
     `;
-
-    // @ts-ignore
-    if (window.FlutterBridge) {
-      // @ts-ignore
-      window.FlutterBridge.printReceipt();
-      return;
-    }
 
     if (Capacitor.isNativePlatform()) {
       try {
@@ -360,9 +352,9 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
 
 
 
-      <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4, width: '100%', pt: isNative ? 0 : undefined }}>
-        <div ref={isMobile ? wrapperRef : null} style={isNative ? { width: "100%", display: "flex", justifyContent: "center" } : isMobile ? { width: "100%", overflow: "hidden", touchAction: "none", display: "flex", justifyContent: "center", padding: "0 16px", boxSizing: "border-box" } : { width: '100%', display: 'flex', justifyContent: 'center' }}>
-          <div ref={isMobile ? contentRef : null} style={isNative ? { transformOrigin: "top left", width: "100%" } : isMobile ? { transformOrigin: "top center", width: "100%" } : {}}>
+      <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4, width: '100%' }}>
+        <div ref={isMobile ? wrapperRef : null} style={isMobile ? { width: "100%", overflow: "hidden", touchAction: "none", display: "flex", justifyContent: "center", padding: "0 16px", boxSizing: "border-box" } : { width: '100%', display: 'flex', justifyContent: 'center' }}>
+          <div ref={isMobile ? contentRef : null} style={isMobile ? { transformOrigin: "top center", width: "100%" } : {}}>
             <Paper elevation={isMobile ? 8 : 3} className="invoice-paper print-wrapper" sx={{ 
               p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto', bgcolor: 'white', color: 'black',
               ...(isMobile ? {
@@ -550,11 +542,7 @@ export default function ReceiptView({ receipt: receiptProp, profile: profileProp
                 
                 const email = profile?.email || profile?.minnanjal || '';
                 const phoneArr = [];
-                // Dart profile model uses tholaipaesi1 and tholaipaesi2
-                if (profile?.tholaipaesi1) phoneArr.push(String(profile.tholaipaesi1).trim());
-                if (profile?.tholaipaesi2) phoneArr.push(String(profile.tholaipaesi2).trim());
-                // Fallbacks for other possible field names
-                if (!phoneArr.length && profile?.tholaippaesi) phoneArr.push(...(Array.isArray(profile.tholaippaesi) ? profile.tholaippaesi : String(profile.tholaippaesi).split(',')));
+                if (profile?.tholaipesi) phoneArr.push(...(Array.isArray(profile.tholaipesi) ? profile.tholaipesi : String(profile.tholaipesi).split(',')));
                 if (profile?.mobileNumber) phoneArr.push(...(Array.isArray(profile.mobileNumber) ? profile.mobileNumber : String(profile.mobileNumber).split(',')));
                 const phone = phoneArr.map(p => p.trim()).filter(Boolean);
 

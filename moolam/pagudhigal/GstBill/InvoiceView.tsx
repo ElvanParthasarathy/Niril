@@ -24,10 +24,9 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
   const [displayOptions, setDisplayOptions] = useState<any>({});
   
   const theme = useTheme();
-  const isNative = typeof window !== 'undefined' && (window as any).FlutterBridge && (window as any).FlutterBridge.isNativeApp && (window as any).FlutterBridge.isNativeApp();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')) || isNative;
-  const initialScale = typeof window !== 'undefined' ? Math.min((window.innerWidth - 32) / 793.7, 1) : 0.43;
-  const mbPercent = (1 - initialScale) * 141;
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const initialScale = typeof window !== 'undefined' ? Math.min((window.innerWidth - 32) / 793.7, 1) : 0.43;
+    const mbPercent = (1 - initialScale) * 141;
 
   const { wrapperRef, contentRef, scale } = usePinchZoom({ minScale: 1, maxScale: 4 });
 
@@ -35,12 +34,10 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
     const savedLocal = localStorage.getItem('elvanniril_invoiceOptions');
     const local = savedLocal ? JSON.parse(savedLocal) : {};
     setDisplayOptions(local);
-    if (!isNative) {
-      getInvoiceDisplayOptions().then(serverOpts => {
-        if (serverOpts) setDisplayOptions(prev => ({ ...prev, ...serverOpts }));
-      });
-    }
-  }, [isNative]);
+    getInvoiceDisplayOptions().then(serverOpts => {
+      if (serverOpts) setDisplayOptions(prev => ({ ...prev, ...serverOpts }));
+    });
+  }, []);
 
   if (!bill) return null;
 
@@ -253,16 +250,6 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
       return;
     }
 
-    // @ts-ignore
-    if (typeof window !== 'undefined' && window.FlutterBridge) {
-        // @ts-ignore
-        if (window.FlutterBridge.printInvoice) {
-            // @ts-ignore
-            window.FlutterBridge.printInvoice();
-        }
-        return;
-    }
-
     const iframe = document.createElement('iframe');
     iframe.style.position = 'fixed';
     iframe.style.right = '0';
@@ -286,40 +273,29 @@ export default function InvoiceView({ bill, profile, onBack, onEdit, onDuplicate
 
   return (
     <Box className="print-wrapper" sx={{ py: { xs: 1.5, md: 4 }, px: { xs: 0, md: 4 }, maxWidth: 1200, mx: 'auto', width: '100%', position: 'relative', bgcolor: 'background.default', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {!isNative && (
-        <ViewHeader 
-          className="no-print"
-          onEdit={() => onEdit(bill)}
-          onPrint={handlePrint}
-          onPDF={generatePDF}
-          onShare={handleNativeShare}
-          saving={saving}
-          title={details?.invoiceNumber}
-          onBack={onBack}
-        />
-      )}
+      <ViewHeader 
+        className="no-print"
+        onEdit={() => onEdit(bill)}
+        onPrint={handlePrint}
+        onPDF={generatePDF}
+        onShare={handleNativeShare}
+        saving={saving}
+        title={details?.invoiceNumber}
+        onBack={onBack}
+      />
 
       {/* Centered Preview Container */}
       <Box className="print-wrapper" sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', alignItems: 'flex-start', overflowX: 'hidden', pb: 4, width: '100%' }}>
         {isMobile ? (
           <div ref={wrapperRef} style={{ width: "100%", overflow: "hidden", touchAction: "none", display: "flex", justifyContent: "center", padding: "0 16px", boxSizing: "border-box" }}>
             <div ref={contentRef} style={{ transformOrigin: "top center", width: "100%" }}>
-              <Paper elevation={isNative ? 3 : 8} className="invoice-paper print-wrapper" sx={{ 
-                                p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto', bgcolor: 'white', color: 'black',
+              <Paper elevation={8} className="invoice-paper print-wrapper" sx={{ 
+                                p: 0, overflow: 'hidden', minWidth: '210mm', width: '210mm', m: '0 auto',
                                 zoom: 'none',
                                   transformOrigin: 'top left',
                                   transform: `scale(${initialScale})`,
                                   mb: `-${mbPercent}%`,
-                                  borderRadius: isNative ? '0' : '12px',
-                                  '@media print': { 
-                                    zoom: '1 !important', 
-                                    transform: 'none !important',
-                                    mb: '0 !important',
-                                    boxShadow: 'none !important',
-                                    bgcolor: 'white !important',
-                                    color: 'black !important',
-                                    borderRadius: '0 !important'
-                                  }
+                                  borderRadius: '12px',
                             }}>
                 {(() => {
                   const mergedOptions = { ...displayOptions, ...invoiceOptions };

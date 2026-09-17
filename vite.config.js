@@ -112,15 +112,9 @@ export default defineConfig(({ command }) => ({
       }
     }),
   ],
-  base: './',
   publicDir: 'podhu',
   build: {
     rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, 'index.html'),
-        patrucheettu: path.resolve(__dirname, 'moolam/patrucheettu.html'),
-        pattiyal: path.resolve(__dirname, 'moolam/pattiyal.html')
-      },
       output: {
         manualChunks: {
           'pdf': ['jspdf', 'html2canvas'],
