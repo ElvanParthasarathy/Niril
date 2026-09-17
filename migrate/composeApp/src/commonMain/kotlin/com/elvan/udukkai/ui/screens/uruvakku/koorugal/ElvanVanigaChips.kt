@@ -3,7 +3,6 @@ package com.elvan.udukkai.ui.screens.uruvakku.koorugal
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -26,10 +25,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.elvan.udukkai.core.extensions.cssShadow
 import com.elvan.udukkai.theme.LocalAppFontFamily
-import com.elvan.udukkai.theme.LocalShellColors
 import com.elvan.udukkai.theme.ShellColors
 import com.elvan.udukkai.theme.preventBrokenLigatures
 import com.elvan.udukkai.theme.rememberShellColors
+import com.elvan.udukkai.ui.navigation.MaterialSymbols
 
 data class VanigaChipItem(
     val label: String,
@@ -37,10 +36,13 @@ data class VanigaChipItem(
 )
 
 /**
- * Filter Chips for business profiles (ALL, VRM, PVS, etc.) matching React's CSS styles:
- * - Each chip auto-adapts to screen width with equal weight and spacing.
- * - Active chip: elevated surface with 0 2px 8px shadow and semi-bold text.
- * - Inactive chip: translucent React bgcolor rgba(255,255,255,0.05) / rgba(0,0,0,0.04) with thin border.
+ * Material 3 Filter Chips for business profiles (ALL, VRM, PVS, etc.):
+ * - Pill-shaped (CircleShape).
+ * - No outline/border (border = null).
+ * - M3 Elevated/Filled style:
+ *   - Selected: elevated surface with soft drop shadow, bold textPrimary, and M3 checkmark icon.
+ *   - Unselected: subtle tonal filled surface (0.06f white in dark / 0.05f black in light), textSecondary, leading icon.
+ * - Responsive: equal weight across available width extending cleanly to screen edges.
  */
 @Composable
 fun ElvanVanigaChips(
@@ -63,29 +65,19 @@ fun ElvanVanigaChips(
 
             val animBgColor by animateColorAsState(
                 targetValue = if (isSelected) {
-                    if (isDark) colors.surface else Color.White
+                    if (isDark) Color(0xFF222222) else Color.White
                 } else {
-                    if (isDark) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.04f)
+                    if (isDark) Color.White.copy(alpha = 0.06f) else Color.Black.copy(alpha = 0.05f)
                 },
                 animationSpec = tween(durationMillis = 200),
                 label = "chipBgColor"
             )
 
-            val animBorderColor by animateColorAsState(
-                targetValue = if (isSelected) {
-                    if (isDark) Color.White.copy(alpha = 0.20f) else Color.Black.copy(alpha = 0.12f)
-                } else {
-                    if (isDark) Color.White.copy(alpha = 0.06f) else Color.Black.copy(alpha = 0.06f)
-                },
-                animationSpec = tween(durationMillis = 200),
-                label = "chipBorderColor"
-            )
-
             val contentColor by animateColorAsState(
                 targetValue = if (isSelected) {
-                    LocalShellColors.current.textPrimary
+                    colors.textPrimary
                 } else {
-                    LocalShellColors.current.textSecondary
+                    colors.textSecondary
                 },
                 animationSpec = tween(durationMillis = 200),
                 label = "chipContentColor"
@@ -94,7 +86,7 @@ fun ElvanVanigaChips(
             val shadowModifier = if (isSelected) {
                 Modifier.cssShadow(
                     color = Color.Black,
-                    alpha = if (isDark) 0.35f else 0.15f,
+                    alpha = if (isDark) 0.35f else 0.12f,
                     borderRadius = 50.dp,
                     blurRadius = 8.dp,
                     offsetY = 2.dp
@@ -106,15 +98,10 @@ fun ElvanVanigaChips(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .height(42.dp)
+                    .height(38.dp)
                     .then(shadowModifier)
                     .clip(CircleShape)
                     .background(animBgColor, CircleShape)
-                    .border(
-                        width = if (isSelected) 1.dp else 0.5.dp,
-                        color = animBorderColor,
-                        shape = CircleShape
-                    )
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = ripple(color = colors.ripple, bounded = true),
@@ -123,25 +110,31 @@ fun ElvanVanigaChips(
                 contentAlignment = Alignment.Center
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 10.dp),
+                    modifier = Modifier.padding(horizontal = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    if (item.icon != null) {
+                    val leadingIcon = if (isSelected) {
+                        MaterialSymbols.Rounded.Check
+                    } else {
+                        item.icon
+                    }
+
+                    if (leadingIcon != null) {
                         Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.label,
+                            imageVector = leadingIcon,
+                            contentDescription = null,
                             tint = contentColor,
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(15.dp)
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Spacer(modifier = Modifier.width(5.dp))
                     }
                     Text(
                         text = item.label.preventBrokenLigatures(),
                         style = TextStyle(
                             fontFamily = ff,
-                            fontSize = if (items.size > 3) 12.sp else 13.5.sp,
-                            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium
+                            fontSize = if (items.size > 3) 11.5.sp else 13.sp,
+                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
                         ),
                         color = contentColor,
                         maxLines = 1,

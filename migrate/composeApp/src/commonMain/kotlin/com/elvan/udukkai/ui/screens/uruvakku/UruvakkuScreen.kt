@@ -58,7 +58,6 @@ fun UruvakkuScreen(
     val ff = LocalAppFontFamily.current
 
     val profiles = NiruvanaTharavugalRepository.getAllProfiles(mode)
-    val hasMultipleProfiles = profiles.size > 1
 
     var selectedProfileFilterIndex by remember { mutableIntStateOf(0) }
 
@@ -123,14 +122,6 @@ fun UruvakkuScreen(
         }
     }
 
-    fun getProfileName(profileId: Long?): String {
-        if (profileId == null) return "பொது"
-        val prof = profiles.find { it.id == profileId }
-        return prof?.kurumPeyar?.ifEmpty {
-            prof.niruvanathinPeyar.values.firstOrNull().orEmpty()
-        } ?: "பொது"
-    }
-
     val shifterItems = listOf(
         PillShifterItem(
             label = K.invoices.tr(),
@@ -173,7 +164,7 @@ fun UruvakkuScreen(
         }
 
         // Business Profile Filter Chips (below Invoices vs Receipts pill)
-        if (selectedSegment == 0 && businessFilterItems.size > 1) {
+        if (businessFilterItems.size > 1) {
             item(key = "business_chips") {
                 ElvanVanigaChips(
                     items = businessFilterItems,
@@ -223,40 +214,23 @@ fun UruvakkuScreen(
                     items = invoices,
                     key = { _, item -> "inv_${item.id}" }
                 ) { index, invoice ->
-                    // Profile section header if previous invoice was from a different profile
-                    val showProfileHeader = hasMultipleProfiles && safeProfileIndex == 0 && (index == 0 || invoices[index - 1].niruvanamId != invoice.niruvanamId)
+                    val isSelected = selectedItemIds.contains(invoice.id)
+                    val onCardClick: () -> Unit = {
+                        if (isSelectionMode) {
+                            onToggleSelect?.invoke(invoice.id)
+                        } else {
+                            onInvoiceClick(invoice)
+                        }
+                    }
+                    val onCardLongClick: () -> Unit = {
+                        onItemLongClick?.invoke(invoice.id)
+                    }
 
-                    Column(
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
                     ) {
-                        if (showProfileHeader) {
-                            Text(
-                                text = getProfileName(invoice.niruvanamId).uppercase().preventBrokenLigatures(),
-                                style = TextStyle(
-                                    fontFamily = ff,
-                                    fontSize = 12.5.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    letterSpacing = 0.5.sp,
-                                    color = LocalShellColors.current.iconInactive
-                                ),
-                                modifier = Modifier.padding(start = 4.dp, top = 8.dp, bottom = 6.dp)
-                            )
-                        }
-
-                        val isSelected = selectedItemIds.contains(invoice.id)
-                        val onCardClick: () -> Unit = {
-                            if (isSelectionMode) {
-                                onToggleSelect?.invoke(invoice.id)
-                            } else {
-                                onInvoiceClick(invoice)
-                            }
-                        }
-                        val onCardLongClick: () -> Unit = {
-                            onItemLongClick?.invoke(invoice.id)
-                        }
-
                         if (mode == AppMode.KOOLI) {
                             KooliPattiyalAttai(
                                 index = index,
@@ -317,39 +291,23 @@ fun UruvakkuScreen(
                     items = receipts,
                     key = { _, item -> "receipt_${item.id}" }
                 ) { index, receipt ->
-                    val showProfileHeader = hasMultipleProfiles && safeProfileIndex == 0 && (index == 0 || receipts[index - 1].niruvanamId != receipt.niruvanamId)
+                    val isSelected = selectedItemIds.contains(receipt.id)
+                    val onCardClick: () -> Unit = {
+                        if (isSelectionMode) {
+                            onToggleSelect?.invoke(receipt.id)
+                        } else {
+                            onReceiptClick(receipt)
+                        }
+                    }
+                    val onCardLongClick: () -> Unit = {
+                        onItemLongClick?.invoke(receipt.id)
+                    }
 
-                    Column(
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
                     ) {
-                        if (showProfileHeader) {
-                            Text(
-                                text = getProfileName(receipt.niruvanamId).uppercase().preventBrokenLigatures(),
-                                style = TextStyle(
-                                    fontFamily = ff,
-                                    fontSize = 12.5.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    letterSpacing = 0.5.sp,
-                                    color = LocalShellColors.current.iconInactive
-                                ),
-                                modifier = Modifier.padding(start = 4.dp, top = 8.dp, bottom = 6.dp)
-                            )
-                        }
-
-                        val isSelected = selectedItemIds.contains(receipt.id)
-                        val onCardClick: () -> Unit = {
-                            if (isSelectionMode) {
-                                onToggleSelect?.invoke(receipt.id)
-                            } else {
-                                onReceiptClick(receipt)
-                            }
-                        }
-                        val onCardLongClick: () -> Unit = {
-                            onItemLongClick?.invoke(receipt.id)
-                        }
-
                         PatruAttai(
                             receipt = receipt,
                             colors = colors,
