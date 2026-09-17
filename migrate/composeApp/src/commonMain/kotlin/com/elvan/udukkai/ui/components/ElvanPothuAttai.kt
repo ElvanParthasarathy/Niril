@@ -43,7 +43,7 @@ fun ElvanPothuAttai(
     val isDark = colors.isDark
 
     val defaultBg = LocalShellColors.current.surface
-    val selectedBg = if (isDark) Color(0xFF1A1A1A) else Color.Black.copy(alpha = 0.04f)
+    val selectedBg = if (isDark) Color.White.copy(alpha = 0.06f) else Color.Black.copy(alpha = 0.04f)
     val bgColor = if (isSelected) selectedBg else defaultBg
 
     val interactionSource = remember { MutableInteractionSource() }

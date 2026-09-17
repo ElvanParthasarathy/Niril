@@ -30,14 +30,18 @@ object VaangunarRepository {
             return merchants.filter { m ->
                 val nameMatches = m.peyar.values.any { it.lowercase().contains(q) }
                 val cityMatches = m.oor.values.any { it.lowercase().contains(q) }
+                val addressMatches = m.mugavari.values.any { it.lowercase().contains(q) }
 
                 if (mode == AppMode.KOOLI) {
-                    nameMatches || cityMatches
+                    nameMatches || cityMatches || addressMatches
                 } else {
                     val gstinMatches = m.gstin.lowercase().contains(q)
                     val phoneMatches = m.tholaipaesi.lowercase().contains(q)
                     val emailMatches = m.minnanjal.lowercase().contains(q)
-                    nameMatches || cityMatches || gstinMatches || phoneMatches || emailMatches
+                    val pinMatches = m.anjalKuriyeedu.lowercase().contains(q)
+                    val stateMatches = m.maanilam.values.any { it.lowercase().contains(q) }
+                    val districtMatches = m.maavattam.values.any { it.lowercase().contains(q) }
+                    nameMatches || cityMatches || addressMatches || gstinMatches || phoneMatches || emailMatches || pinMatches || stateMatches || districtMatches
                 }
             }
         }
