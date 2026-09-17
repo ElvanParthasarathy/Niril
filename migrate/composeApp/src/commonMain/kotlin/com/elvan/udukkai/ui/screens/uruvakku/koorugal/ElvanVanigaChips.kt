@@ -1,6 +1,7 @@
 package com.elvan.udukkai.ui.screens.uruvakku.koorugal
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -36,13 +38,12 @@ data class VanigaChipItem(
 )
 
 /**
- * Material 3 Pill-shaped Filter Chips for business profiles (ALL, VRM, PVS, etc.):
- * - Compact sleek pill look (height = 32.dp, CircleShape).
- * - No symbols or tick marks (pure text only).
- * - No outline/border (border = null).
- * - Adaptive layout:
- *   - <= 3 businesses: Auto-adapts with equal weight filling the row to screen edges.
- *   - > 3 businesses: Horizontally swipeable (LazyRow) extending all the way to the end.
+ * Compact Borderless Monogram Avatars (iOS Contacts / WhatsApp Style):
+ * - Small circular avatar discs (size = 36.dp, CircleShape).
+ * - Borderless with zero outline.
+ * - Active: Solid high-contrast fill (White in dark / Black in light) with drop shadow and bold monogram.
+ * - Inactive: Subtle translucent disc with dimmed monogram.
+ * - Adaptive layout: Centered when few items, horizontally swipeable with LazyRow when many items.
  */
 @Composable
 fun ElvanVanigaChips(
@@ -66,13 +67,16 @@ fun ElvanVanigaChips(
         state = lazyListState,
         modifier = modifier.fillMaxWidth(),
         contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically
     ) {
         itemsIndexed(items) { index, item ->
-            VanigaChip(
-                item = item,
-                isSelected = index == selectedIndex,
+            val isSelected = index == selectedIndex
+            val monogram = remember(item.label) { formatMonogram(item.label) }
+
+            VanigaMonogramAvatar(
+                monogram = monogram,
+                isSelected = isSelected,
                 isDark = isDark,
                 colors = colors,
                 ff = ff,
@@ -82,9 +86,19 @@ fun ElvanVanigaChips(
     }
 }
 
+private fun formatMonogram(label: String): String {
+    val trimmed = label.trim()
+    return when {
+        trimmed.equals("யாவும்", ignoreCase = true) -> "யா"
+        trimmed.equals("ALL", ignoreCase = true) -> "ALL"
+        trimmed.length <= 3 -> trimmed
+        else -> trimmed.take(2)
+    }
+}
+
 @Composable
-private fun VanigaChip(
-    item: VanigaChipItem,
+private fun VanigaMonogramAvatar(
+    monogram: String,
     isSelected: Boolean,
     isDark: Boolean,
     colors: ShellColors,
@@ -94,30 +108,36 @@ private fun VanigaChip(
 ) {
     val animBgColor by animateColorAsState(
         targetValue = if (isSelected) {
-            if (isDark) Color(0xFF222222) else Color.White
+            if (isDark) Color.White else Color(0xFF1D1D1F)
         } else {
-            if (isDark) Color.White.copy(alpha = 0.06f) else Color.Black.copy(alpha = 0.05f)
+            if (isDark) Color.White.copy(alpha = 0.08f) else Color.Black.copy(alpha = 0.06f)
         },
         animationSpec = tween(durationMillis = 200),
-        label = "chipBgColor"
+        label = "avatarBgColor"
     )
 
     val contentColor by animateColorAsState(
         targetValue = if (isSelected) {
-            colors.textPrimary
+            if (isDark) Color.Black else Color.White
         } else {
-            colors.textSecondary
+            if (isDark) Color.White.copy(alpha = 0.65f) else Color.Black.copy(alpha = 0.65f)
         },
         animationSpec = tween(durationMillis = 200),
-        label = "chipContentColor"
+        label = "avatarContentColor"
+    )
+
+    val scale by animateFloatAsState(
+        targetValue = if (isSelected) 1.06f else 1.0f,
+        animationSpec = tween(durationMillis = 200),
+        label = "avatarScale"
     )
 
     val shadowModifier = if (isSelected) {
         Modifier.cssShadow(
             color = Color.Black,
-            alpha = if (isDark) 0.35f else 0.12f,
+            alpha = if (isDark) 0.35f else 0.20f,
             borderRadius = 50.dp,
-            blurRadius = 6.dp,
+            blurRadius = 8.dp,
             offsetY = 2.dp
         )
     } else {
@@ -126,7 +146,11 @@ private fun VanigaChip(
 
     Box(
         modifier = modifier
-            .height(32.dp)
+            .size(36.dp)
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
             .then(shadowModifier)
             .clip(CircleShape)
             .background(animBgColor, CircleShape)
@@ -134,16 +158,16 @@ private fun VanigaChip(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = ripple(color = colors.ripple, bounded = true),
                 onClick = onClick
-            )
-            .padding(horizontal = 14.dp),
+            ),
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = item.label.preventBrokenLigatures(),
+            text = monogram.preventBrokenLigatures(),
             style = TextStyle(
                 fontFamily = ff,
-                fontSize = 12.sp,
-                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium
+                fontSize = if (monogram.length >= 3) 11.sp else 12.5.sp,
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
+                letterSpacing = if (monogram.length >= 3) (-0.2).sp else 0.sp
             ),
             color = contentColor,
             maxLines = 1
