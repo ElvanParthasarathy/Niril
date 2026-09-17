@@ -1,4 +1,4 @@
-﻿package com.elvan.noolachu.data
+package com.elvan.noolachu.data
 
 import java.io.File
 
@@ -10,7 +10,7 @@ object DesktopDbPaths {
         } else {
             File(System.getProperty("user.home") ?: ".", "AppData/Roaming")
         }
-        val dir = File(base, "Elvan Niril")
+        val dir = File(base, "Udukkai")
         if (!dir.exists()) dir.mkdirs()
         dir
     }
@@ -22,10 +22,10 @@ object DesktopDbPaths {
 
     fun getBackupDir(): File {
         val userHome = System.getProperty("user.home") ?: "."
-        val dir = File(userHome, "Documents/Elvan Niril/backup")
+        val dir = File(userHome, "Documents/Udukkai/backup")
         if (!dir.exists()) dir.mkdirs()
         return dir
     }
 
-    fun getBackupFile(): File = File(getBackupDir(), "elvan_niril_backup.db")
+    fun getBackupFile(): File = File(getBackupDir(), "udukkai_backup.db")
 }

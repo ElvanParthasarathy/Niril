@@ -193,7 +193,7 @@ fun PattuPattiyalThiruthiScreen(
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
     // Draft persistence
-    val draftKey = "niril_draft_silk_invoice"
+    val draftKey = "udukkai_draft_silk_invoice"
     val prefs = remember { getPreferencesHelper() }
     var showDraftRestoreDialog by remember { mutableStateOf(false) }
     var pendingDraftJson by remember { mutableStateOf<String?>(null) }

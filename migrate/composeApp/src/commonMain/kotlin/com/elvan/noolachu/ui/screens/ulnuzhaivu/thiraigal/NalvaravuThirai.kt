@@ -50,7 +50,7 @@ fun NalvaravuThirai(
             ) {
                 Icon(
                     imageVector = MaterialSymbols.Rounded.Storage,
-                    contentDescription = "Niril Database",
+                    contentDescription = "Udukkai Database",
                     tint = logoTint,
                     modifier = Modifier.size(48.dp)
                 )

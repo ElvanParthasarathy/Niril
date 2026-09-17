@@ -17,8 +17,8 @@ import java.io.File
 class AndroidBusinessDatabaseHelper : BusinessDatabaseHelper {
 
     private val tag = "BusinessDbHelper"
-    private val coolieDbName = "elvan_niril_coolie.db"
-    private val silkDbName = "elvan_niril_silk.db"
+    private val coolieDbName = "udukkai_kooli.db"
+    private val silkDbName = "udukkai_pattu.db"
 
     private fun resolveActiveDatabase(dbName: String): File? {
         if (!AppContext.isInitialized) {

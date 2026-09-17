@@ -13,21 +13,21 @@ class AndroidNirilBackupService : NirilBackupService {
     private val tag = "NirilBackup"
 
     private fun getBackupDir(): File {
-        val dir = File("/storage/emulated/0/Documents/Elvan Niril/backup")
+        val dir = File("/storage/emulated/0/Documents/Udukkai/backup")
         if (!dir.exists()) dir.mkdirs()
         return dir
     }
 
-    private fun getBackupFile(): File = File(getBackupDir(), "elvan_niril_backup.db")
+    private fun getBackupFile(): File = File(getBackupDir(), "udukkai_backup.db")
 
     private fun getCoolieDbPath(): String {
         if (!AppContext.isInitialized) return ""
-        return AppContext.context.getDatabasePath("elvan_niril_coolie.db").absolutePath
+        return AppContext.context.getDatabasePath("udukkai_kooli.db").absolutePath
     }
 
     private fun getSilkDbPath(): String {
         if (!AppContext.isInitialized) return ""
-        return AppContext.context.getDatabasePath("elvan_niril_silk.db").absolutePath
+        return AppContext.context.getDatabasePath("udukkai_pattu.db").absolutePath
     }
 
     private fun getFilesToPack(): List<String> {

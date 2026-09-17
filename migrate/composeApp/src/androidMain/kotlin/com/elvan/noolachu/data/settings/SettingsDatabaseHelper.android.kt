@@ -11,8 +11,8 @@ import java.io.File
 class AndroidSettingsDatabaseHelper : SettingsDatabaseHelper {
 
     private val tag = "SettingsDatabaseHelper"
-    private val coolieDbName = "elvan_niril_coolie.db"
-    private val silkDbName = "elvan_niril_silk.db"
+    private val coolieDbName = "udukkai_kooli.db"
+    private val silkDbName = "udukkai_pattu.db"
 
     private fun resolveActiveDatabase(dbName: String): File? {
         if (!AppContext.isInitialized) {

@@ -168,7 +168,7 @@ object SodhanaiTharavuUruvakki {
         val activeMode = ModeManager.currentMode
 
         // Log in test account and refresh profile status
-        AuthManager.login("test@niril.com", "kadavuchol")
+        AuthManager.login("test@udukkai.com", "kadavuchol")
         AuthManager.refreshProfileStatus()
 
         // Reload all 5 reactive repositories with freshly seeded data

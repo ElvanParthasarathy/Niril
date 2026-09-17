@@ -151,17 +151,17 @@ fun ModeSelectorContent(
                     horizontalArrangement = Arrangement.spacedBy(28.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Kooli Profile Card (Pure "கூலி" label)
+                    // Kooli Profile Card ("Udukkai Coolie" / "உடுக்கைக் கூலி")
                     NetflixProfileCard(
-                        title = K.kooli.tr(),
+                        title = K.nirilKooli.tr(),
                         icon = AppSvgs.coolieMode,
                         isDark = isDark,
                         onClick = { onModeSelected(AppMode.KOOLI) }
                     )
 
-                    // Pattu Profile Card (Pure "பட்டு" label)
+                    // Pattu Profile Card ("Udukkai Silk" / "உடுக்கைப் பட்டு")
                     NetflixProfileCard(
-                        title = K.pattu.tr(),
+                        title = K.nirilPattu.tr(),
                         icon = AppSvgs.silkMode,
                         isDark = isDark,
                         onClick = { onModeSelected(AppMode.PATTU) }

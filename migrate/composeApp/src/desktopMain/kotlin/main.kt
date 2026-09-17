@@ -12,7 +12,7 @@ fun main() {
         throwable.printStackTrace()
     }
 
-    println(">>> Starting Elvan Niril Desktop App...")
+    println(">>> Starting Udukkai Desktop App...")
 
     application {
         com.elvan.noolachu.localization.LanguageManager.init()
@@ -21,7 +21,7 @@ fun main() {
 
         Window(
             onCloseRequest = ::exitApplication,
-            title = "Elvan Niril",
+            title = "Udukkai",
             state = rememberWindowState(
                 width = 1180.dp,
                 height = 800.dp,

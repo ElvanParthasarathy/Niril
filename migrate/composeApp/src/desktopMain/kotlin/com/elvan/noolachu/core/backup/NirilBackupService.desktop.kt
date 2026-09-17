@@ -13,9 +13,9 @@ class DesktopNirilBackupService : NirilBackupService {
 
     private fun getBackupFile(): File = DesktopDbPaths.getBackupFile()
 
-    private fun getCoolieDbPath(): String = DesktopDbPaths.getDbFile("elvan_niril_coolie.db").absolutePath
+    private fun getCoolieDbPath(): String = DesktopDbPaths.getDbFile("udukkai_kooli.db").absolutePath
 
-    private fun getSilkDbPath(): String = DesktopDbPaths.getDbFile("elvan_niril_silk.db").absolutePath
+    private fun getSilkDbPath(): String = DesktopDbPaths.getDbFile("udukkai_pattu.db").absolutePath
 
     private fun getFilesToPack(): List<String> {
         val coolie = getCoolieDbPath()

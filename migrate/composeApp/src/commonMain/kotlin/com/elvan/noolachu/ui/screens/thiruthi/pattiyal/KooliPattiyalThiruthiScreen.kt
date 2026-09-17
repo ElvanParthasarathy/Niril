@@ -190,7 +190,7 @@ fun KooliPattiyalThiruthiScreen(
     var isSaving by remember { mutableStateOf(false) }
 
     // Draft persistence
-    val draftKey = "niril_draft_coolie_invoice"
+    val draftKey = "udukkai_draft_coolie_invoice"
     val prefs = remember { getPreferencesHelper() }
     var showDraftRestoreDialog by remember { mutableStateOf(false) }
     var pendingDraftJson by remember { mutableStateOf<String?>(null) }

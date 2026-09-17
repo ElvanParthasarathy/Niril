@@ -50,7 +50,7 @@ fun ElvanKaniniPakkapattai(
     val currentMode = LocalAppMode.current
     val activeProfile = NiruvanaTharavugalRepository.getProfile(currentMode)
     val businessName = activeProfile.niruvanathinPeyar[activeProfile.mudhanMozhi]
-        ?: activeProfile.kurumPeyar.ifEmpty { "Noolachu" }
+        ?: activeProfile.kurumPeyar.ifEmpty { "Udukkai" }
 
     val sidebarWidth by animateDpAsState(
         targetValue = if (isCollapsed) 80.dp else 260.dp,
@@ -90,7 +90,7 @@ fun ElvanKaniniPakkapattai(
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Text(
-                                    text = "N",
+                                    text = "U",
                                     fontFamily = ff,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 18.sp,
@@ -100,7 +100,7 @@ fun ElvanKaniniPakkapattai(
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = "Elvan Niril",
+                            text = "Udukkai",
                             fontFamily = ff,
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp,

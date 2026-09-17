@@ -24,13 +24,13 @@ enum class AppMode(
 ) {
     KOOLI(
         key = "kooli",
-        titleKey = K.noolachuKooli,
-        databaseName = "noolachu_kooli.db"
+        titleKey = K.nirilKooli,
+        databaseName = "udukkai_kooli.db"
     ),
     PATTU(
         key = "pattu",
-        titleKey = K.noolachuPattu,
-        databaseName = "noolachu_pattu.db"
+        titleKey = K.nirilPattu,
+        databaseName = "udukkai_pattu.db"
     );
 
     /**
