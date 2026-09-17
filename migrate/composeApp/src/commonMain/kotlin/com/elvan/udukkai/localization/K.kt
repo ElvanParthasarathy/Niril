@@ -428,4 +428,5 @@ object K {
     const val storagePermissionRequired = "storagePermissionRequired"
     const val storagePermissionDesc = "storagePermissionDesc"
     const val grantPermissionBtn = "grantPermissionBtn"
+    const val all = "all"
 }

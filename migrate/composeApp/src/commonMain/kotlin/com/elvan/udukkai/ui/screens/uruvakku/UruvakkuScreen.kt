@@ -6,7 +6,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +22,7 @@ import com.elvan.udukkai.data.repository.PattiyalRepository
 import com.elvan.udukkai.data.repository.PatrugalRepository
 import com.elvan.udukkai.data.settings.NiruvanaTharavugalRepository
 import com.elvan.udukkai.localization.K
+import com.elvan.udukkai.localization.LocalAppLanguage
 import com.elvan.udukkai.localization.tr
 import com.elvan.udukkai.theme.Dimens
 import com.elvan.udukkai.theme.LocalAppFontFamily
@@ -59,6 +60,69 @@ fun UruvakkuScreen(
     val profiles = NiruvanaTharavugalRepository.getAllProfiles(mode)
     val hasMultipleProfiles = profiles.size > 1
 
+    var selectedProfileFilterIndex by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(mode) {
+        selectedProfileFilterIndex = 0
+    }
+
+    val allLabel = K.all.tr().uppercase()
+    val businessFilterItems = remember(profiles, allLabel) {
+        if (profiles.isEmpty()) {
+            emptyList()
+        } else {
+            val list = mutableListOf<PillShifterItem>()
+            list.add(
+                PillShifterItem(
+                    label = allLabel,
+                    icon = MaterialSymbols.Rounded.Apartment
+                )
+            )
+            profiles.forEach { p ->
+                val shortName = p.kurumPeyar.ifEmpty {
+                    p.niruvanathinPeyar.values.firstOrNull().orEmpty()
+                }.uppercase()
+                list.add(
+                    PillShifterItem(
+                        label = shortName,
+                        icon = MaterialSymbols.Rounded.Apartment
+                    )
+                )
+            }
+            list
+        }
+    }
+
+    val safeProfileIndex = selectedProfileFilterIndex.coerceIn(0, (businessFilterItems.size - 1).coerceAtLeast(0))
+
+    val allInvoices = PattiyalRepository.filteredInvoices
+    val invoices = remember(allInvoices, safeProfileIndex, profiles) {
+        if (safeProfileIndex == 0 || profiles.isEmpty()) {
+            allInvoices
+        } else {
+            val targetProfile = profiles.getOrNull(safeProfileIndex - 1)
+            if (targetProfile != null) {
+                allInvoices.filter { it.niruvanamId == targetProfile.id }
+            } else {
+                allInvoices
+            }
+        }
+    }
+
+    val allReceipts = PatrugalRepository.filteredReceipts
+    val receipts = remember(allReceipts, safeProfileIndex, profiles) {
+        if (safeProfileIndex == 0 || profiles.isEmpty()) {
+            allReceipts
+        } else {
+            val targetProfile = profiles.getOrNull(safeProfileIndex - 1)
+            if (targetProfile != null) {
+                allReceipts.filter { it.niruvanamId == targetProfile.id }
+            } else {
+                allReceipts
+            }
+        }
+    }
+
     fun getProfileName(profileId: Long?): String {
         if (profileId == null) return "பொது"
         val prof = profiles.find { it.id == profileId }
@@ -93,25 +157,35 @@ fun UruvakkuScreen(
             Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
         }
 
-        // Segmented Pill Shifter
+        // Segmented Pill Shifter (Invoices vs Receipts)
         item(key = "pill_shifter") {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
+            ElvanPillShifter(
+                items = shifterItems,
+                selectedIndex = selectedSegment,
+                onIndexSelected = onSegmentSelected,
+                colors = colors,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            )
+        }
+
+        // Business Profile Filter Pill Shifter (below Invoices vs Receipts pill)
+        if (selectedSegment == 0 && businessFilterItems.size > 1) {
+            item(key = "business_pill_shifter") {
                 ElvanPillShifter(
-                    items = shifterItems,
-                    selectedIndex = selectedSegment,
-                    onIndexSelected = onSegmentSelected,
-                    colors = colors
+                    items = businessFilterItems,
+                    selectedIndex = safeProfileIndex,
+                    onIndexSelected = { selectedProfileFilterIndex = it },
+                    colors = colors,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
                 )
             }
         }
 
         if (selectedSegment == 0) {
-            // Invoices Segment
-            val invoices = PattiyalRepository.filteredInvoices
-
             if (invoices.isEmpty()) {
                 item(key = "empty_invoices") {
                     Box(
@@ -148,7 +222,7 @@ fun UruvakkuScreen(
                     key = { _, item -> "inv_${item.id}" }
                 ) { index, invoice ->
                     // Profile section header if previous invoice was from a different profile
-                    val showProfileHeader = hasMultipleProfiles && (index == 0 || invoices[index - 1].niruvanamId != invoice.niruvanamId)
+                    val showProfileHeader = hasMultipleProfiles && safeProfileIndex == 0 && (index == 0 || invoices[index - 1].niruvanamId != invoice.niruvanamId)
 
                     Column(
                         modifier = Modifier
@@ -206,9 +280,6 @@ fun UruvakkuScreen(
                 }
             }
         } else {
-            // Payment Receipts Segment
-            val receipts = PatrugalRepository.filteredReceipts
-
             if (receipts.isEmpty()) {
                 item(key = "empty_receipts") {
                     Box(
@@ -244,7 +315,7 @@ fun UruvakkuScreen(
                     items = receipts,
                     key = { _, item -> "receipt_${item.id}" }
                 ) { index, receipt ->
-                    val showProfileHeader = hasMultipleProfiles && (index == 0 || receipts[index - 1].niruvanamId != receipt.niruvanamId)
+                    val showProfileHeader = hasMultipleProfiles && safeProfileIndex == 0 && (index == 0 || receipts[index - 1].niruvanamId != receipt.niruvanamId)
 
                     Column(
                         modifier = Modifier

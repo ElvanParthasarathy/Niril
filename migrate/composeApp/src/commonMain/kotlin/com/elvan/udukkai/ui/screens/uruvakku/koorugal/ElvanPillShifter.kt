@@ -26,30 +26,30 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.elvan.udukkai.core.extensions.cssShadow
 import com.elvan.udukkai.theme.LocalAppFontFamily
+import com.elvan.udukkai.theme.LocalShellColors
 import com.elvan.udukkai.theme.ShellColors
 import com.elvan.udukkai.theme.preventBrokenLigatures
 import com.elvan.udukkai.theme.rememberShellColors
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlin.math.floor
 import kotlin.math.roundToInt
-import com.elvan.udukkai.theme.LocalShellColors
 
 data class PillShifterItem(
     val label: String,
-    val icon: ImageVector,
-    val activeIcon: ImageVector = icon
+    val icon: ImageVector? = null,
+    val activeIcon: ImageVector? = icon
 )
 
 /**
- * Pixel-perfect port of Neram's Schedule ViewTypeTabsRow Pill Shifter.
+ * Pixel-perfect responsive Pill Shifter matching React's CSS & Neram's interactive thumb tracking.
  *
  * Features:
  * - Fluid pointer dragging and real-time thumb tracking.
- * - Symmetrical 4dp expansion in all directions when pressed/dragged (pillScaleX=1.055, pillScaleY=1.20).
- * - 1.02x outer container interactive zoom on touch.
- * - Snap-to-slot animation with smooth easing curve.
+ * - Auto-adapting dynamic slot width with edge-to-edge support via BoxWithConstraints.
+ * - React MUI ToggleButtonGroup parity:
+ *     - Outer container: `rgba(255,255,255,0.05)` dark / `rgba(0,0,0,0.04)` light
+ *     - Sliding thumb: `surface` / `paper` with `0 2px 8px rgba(0,0,0,0.2)` shadow
  * - Distinct active & inactive colors and icon variants.
  */
 @Composable
@@ -67,15 +67,7 @@ fun ElvanPillShifter(
     val itemCount = items.size.coerceAtLeast(1)
     val actualIndex = selectedIndex.coerceIn(0, itemCount - 1)
 
-    val coroutineScope = rememberCoroutineScope()
     val density = LocalDensity.current
-
-    // Exact Schedule ViewTypeTabsRow matching layout dimensions
-    val layoutWidth = 136.dp
-    val bgWidth = 144.dp
-    val horizontalPadding = 8.dp
-    val verticalPadding = 4.dp
-    val totalWidth = (layoutWidth * itemCount) + (horizontalPadding * 2)
 
     var isInteracting by remember { mutableStateOf(false) }
     var dragOffsetPx by remember { mutableStateOf<Float?>(null) }
@@ -83,9 +75,6 @@ fun ElvanPillShifter(
     var hoverIndex by remember { mutableStateOf<Int?>(null) }
     var localLockedIndex by remember { mutableStateOf<Int?>(null) }
     var snapNextFrame by remember { mutableStateOf(false) }
-
-    val layoutWidthPx = with(density) { layoutWidth.toPx() }
-    val bgWidthPx = with(density) { bgWidth.toPx() }
 
     LaunchedEffect(actualIndex) {
         localLockedIndex = null
@@ -104,63 +93,71 @@ fun ElvanPillShifter(
         localLockedIndex ?: actualIndex
     }
 
-    // Outer AnimatedScale: 1.02x on interaction (BottomNavBar / Schedule match)
+    // Outer AnimatedScale: 1.02x on interaction
     val containerScale by animateFloatAsState(
         targetValue = if (isInteracting) 1.02f else 1.0f,
         animationSpec = tween(150, easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f)),
         label = "containerScale"
     )
 
-    // Pill scale on interaction: Symmetrical expansion in all directions
+    // Pill scale on interaction: subtle expansion
     val pillScaleX by animateFloatAsState(
-        targetValue = if (isInteracting) 1.055f else 1.0f,
+        targetValue = if (isInteracting) 1.04f else 1.0f,
         animationSpec = tween(150, easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f)),
         label = "pillScaleX"
     )
     val pillScaleY by animateFloatAsState(
-        targetValue = if (isInteracting) 1.20f else 1.0f,
+        targetValue = if (isInteracting) 1.08f else 1.0f,
         animationSpec = tween(150, easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f)),
         label = "pillScaleY"
     )
 
-    // Exact pixel offset clamping
-    val overlapPx = (bgWidthPx - layoutWidthPx) / 2f
-    val maxLeftPx = ((itemCount - 1) * layoutWidthPx) - overlapPx
-    val minLeftPx = -overlapPx
-
-    val targetLeftPx = if (isInteracting && dragOffsetPx != null) {
-        (dragOffsetPx!! - (bgWidthPx / 2f)).coerceIn(minLeftPx, maxLeftPx)
-    } else {
-        ((activeVisualIndex * layoutWidthPx) - overlapPx).coerceIn(minLeftPx, maxLeftPx)
-    }
-
-    val animatedLeftPx by animateFloatAsState(
-        targetValue = targetLeftPx,
-        animationSpec = if (snapNextFrame || (isInteracting && dragOffsetPx != null)) {
-            snap()
-        } else {
-            tween(150, easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f))
-        },
-        label = "pillX"
-    )
-
-    Box(
+    BoxWithConstraints(
         modifier = modifier
             .graphicsLayer {
                 scaleX = containerScale
                 scaleY = containerScale
                 clip = false
             }
-            .height(48.dp)
-            .width(totalWidth),
+            .height(46.dp),
         contentAlignment = Alignment.Center
     ) {
-        // Layer 1: Outer Container (Matches card/surface background, no outline, no shadow)
+        val totalAvailableWidth = maxWidth
+        val horizontalPadding = 4.dp
+        val verticalPadding = 4.dp
+        val availableWidth = (totalAvailableWidth - (horizontalPadding * 2)).coerceAtLeast(0.dp)
+        val layoutWidth = availableWidth / itemCount
+        val bgWidth = layoutWidth
+
+        val layoutWidthPx = with(density) { layoutWidth.toPx() }
+        val bgWidthPx = layoutWidthPx
+
+        val maxLeftPx = (itemCount - 1) * layoutWidthPx
+        val minLeftPx = 0f
+
+        val targetLeftPx = if (isInteracting && dragOffsetPx != null) {
+            (dragOffsetPx!! - (bgWidthPx / 2f)).coerceIn(minLeftPx, maxLeftPx)
+        } else {
+            (activeVisualIndex * layoutWidthPx).coerceIn(minLeftPx, maxLeftPx)
+        }
+
+        val animatedLeftPx by animateFloatAsState(
+            targetValue = targetLeftPx,
+            animationSpec = if (snapNextFrame || (isInteracting && dragOffsetPx != null)) {
+                snap()
+            } else {
+                tween(150, easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f))
+            },
+            label = "pillX"
+        )
+
+        // Layer 1: Outer Container matching React CSS:
+        // bgcolor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.04)'
         Box(
             modifier = Modifier
                 .matchParentSize()
                 .background(
-                    color = colors.surface,
+                    color = if (isDark) Color.White.copy(alpha = 0.05f) else Color.Black.copy(alpha = 0.04f),
                     shape = CircleShape
                 )
         )
@@ -170,7 +167,8 @@ fun ElvanPillShifter(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = horizontalPadding, vertical = verticalPadding)
-                .pointerInput(Unit) {
+                .pointerInput(itemCount, layoutWidthPx) {
+                    if (layoutWidthPx <= 0f) return@pointerInput
                     awaitEachGesture {
                         val down = awaitFirstDown(requireUnconsumed = false)
                         isInteracting = true
@@ -205,28 +203,23 @@ fun ElvanPillShifter(
                         val finalIndex = hoverIndex
                         if (finalIndex != null) {
                             localLockedIndex = finalIndex
+                            onIndexSelected(finalIndex)
                         }
                         isInteracting = false
                         onInteraction(false)
                         dragOffsetPx = null
                         hoverIndex = null
-
-                        if (finalIndex != null) {
-                            coroutineScope.launch {
-                                delay(150)
-                                onIndexSelected(finalIndex)
-                            }
-                        }
                     }
                 },
             contentAlignment = Alignment.CenterStart
         ) {
             Box(
                 modifier = Modifier
-                    .width(layoutWidth * itemCount)
+                    .width(availableWidth)
                     .fillMaxHeight()
             ) {
                 // Master Background Pill (Detached & Draggable)
+                // bgcolor: 'background.paper', boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
                 Box(
                     modifier = Modifier
                         .offset { IntOffset(animatedLeftPx.roundToInt(), 0) }
@@ -238,9 +231,15 @@ fun ElvanPillShifter(
                             transformOrigin = TransformOrigin.Center
                             clip = false
                         }
+                        .cssShadow(
+                            color = Color.Black,
+                            alpha = if (isDark) 0.35f else 0.15f,
+                            borderRadius = 50.dp,
+                            blurRadius = 8.dp,
+                            offsetY = 2.dp
+                        )
                         .background(
-                            color = if (isDark) Color(0xFF333333)
-                            else Color(0xFFE5E5E5),
+                            color = if (isDark) colors.surface else Color.White,
                             shape = CircleShape
                         )
                 )
@@ -255,7 +254,7 @@ fun ElvanPillShifter(
                         val itemColor = if (isActive) {
                             LocalShellColors.current.textPrimary
                         } else {
-                            if (isDark) Color(0xFF9E9E9E) else Color(0xFF7C7C80)
+                            LocalShellColors.current.textSecondary
                         }
 
                         Box(
@@ -268,18 +267,20 @@ fun ElvanPillShifter(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Center
                             ) {
-                                Icon(
-                                    imageVector = if (isActive) item.activeIcon else item.icon,
-                                    contentDescription = item.label,
-                                    tint = itemColor,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
+                                if (item.icon != null) {
+                                    Icon(
+                                        imageVector = if (isActive) (item.activeIcon ?: item.icon) else item.icon,
+                                        contentDescription = item.label,
+                                        tint = itemColor,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                }
                                 Text(
                                     text = item.label.preventBrokenLigatures(),
                                     style = TextStyle(
                                         fontFamily = ff,
-                                        fontSize = 14.sp,
+                                        fontSize = if (itemCount > 2) 13.sp else 14.sp,
                                         fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Medium
                                     ),
                                     color = itemColor,

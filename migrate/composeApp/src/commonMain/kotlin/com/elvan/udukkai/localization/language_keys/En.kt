@@ -428,4 +428,5 @@ val en: Map<String, String> = mapOf(
     K.storagePermissionRequired to "Storage Permission Required",
     K.storagePermissionDesc to "This permission is needed to save backups and invoices.",
     K.grantPermissionBtn to "Grant Permission",
+    K.all to "All",
 )

@@ -429,6 +429,7 @@ val ta: Map<String, String> = mapOf(
     K.storagePermissionRequired to "சேமிப்பக அனுமதி தேவை",
     K.storagePermissionDesc to "காப்புப்பிரதி மற்றும் பட்டியல்களைச் சேமிக்க இந்த அனுமதி தேவை.",
     K.grantPermissionBtn to "அனுமதி வழங்கு",
+    K.all to "யாவும்",
 )
 
 /**
