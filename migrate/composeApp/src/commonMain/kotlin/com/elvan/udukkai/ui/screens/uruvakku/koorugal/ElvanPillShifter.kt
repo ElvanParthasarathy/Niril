@@ -62,7 +62,7 @@ fun ElvanPillShifter(
     colors: ShellColors = rememberShellColors(),
     modifier: Modifier = Modifier,
     isFullWidth: Boolean = false,
-    height: Dp = if (isFullWidth) 36.dp else 48.dp,
+    height: Dp = if (isFullWidth) 40.dp else 48.dp,
     onInteraction: (Boolean) -> Unit = {},
     onDragProgress: (Float) -> Unit = {}
 ) {
@@ -107,12 +107,12 @@ fun ElvanPillShifter(
 
     // Pill scale on interaction: Symmetrical expansion in all directions
     val pillScaleX by animateFloatAsState(
-        targetValue = if (isInteracting) (if (isFullWidth) 1.02f else 1.055f) else 1.0f,
+        targetValue = if (isInteracting) 1.055f else 1.0f,
         animationSpec = tween(150, easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f)),
         label = "pillScaleX"
     )
     val pillScaleY by animateFloatAsState(
-        targetValue = if (isInteracting) (if (isFullWidth) 1.04f else 1.20f) else 1.0f,
+        targetValue = if (isInteracting) 1.20f else 1.0f,
         animationSpec = tween(150, easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f)),
         label = "pillScaleY"
     )

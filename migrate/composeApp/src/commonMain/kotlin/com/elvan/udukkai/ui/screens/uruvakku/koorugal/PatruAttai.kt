@@ -1,4 +1,4 @@
-﻿package com.elvan.udukkai.ui.screens.uruvakku.koorugal
+package com.elvan.udukkai.ui.screens.uruvakku.koorugal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.elvan.udukkai.core.mode.AppMode
 import com.elvan.udukkai.core.mode.LocalAppMode
 import com.elvan.udukkai.core.utils.CurrencyUtils
 import com.elvan.udukkai.core.utils.DateUtils
@@ -46,6 +47,7 @@ fun PatruAttai(
 
     val currentMode = LocalAppMode.current
     val profile = NiruvanaTharavugalRepository.getProfile(currentMode)
+    val isBilingual = currentMode == AppMode.KOOLI || profile.iruMozhi
     val primaryLang = profile.mudhanMozhi.ifEmpty { "ta" }
     val secondaryLang = profile.thunaiMozhi.ifEmpty { "en" }
 
@@ -55,8 +57,8 @@ fun PatruAttai(
         ?: receipt.vaangunarPeyar.values.firstOrNull()
         ?: receipt.patruEn
 
-    val secondary = receipt.vaangunarPeyar[secondaryLang].orEmpty()
-    val showSecondary = secondary.isNotBlank() && secondary != primary
+    val secondary = if (isBilingual) receipt.vaangunarPeyar[secondaryLang].orEmpty() else ""
+    val showSecondary = isBilingual && secondary.isNotBlank() && secondary != primary
 
     val dateStr = DateUtils.formatEpochMillis(receipt.patruNaal)
     val amountStr = CurrencyUtils.formatInr(receipt.thogai)
@@ -70,12 +72,12 @@ fun PatruAttai(
         else -> receipt.seluthumMurai to ""
     }
 
-    val paymentModeText = if (enLabel.isEmpty() || taLabel.equals(enLabel, ignoreCase = true)) {
-        taLabel
+    val paymentModeText = if (!isBilingual || enLabel.isEmpty() || taLabel.equals(enLabel, ignoreCase = true)) {
+        if (primaryLang.lowercase().startsWith("en") && enLabel.isNotEmpty()) enLabel else taLabel
     } else if (primaryLang.lowercase().startsWith("en")) {
-        "$enLabel $taLabel"
+        "$enLabel  •  $taLabel"
     } else {
-        "$taLabel $enLabel"
+        "$taLabel  •  $enLabel"
     }
 
     ElvanPothuAttai(
