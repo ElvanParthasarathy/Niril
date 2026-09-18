@@ -325,37 +325,6 @@ fun HomeScreen() {
                                 }
                             }
 
-                            // Add (+) Button — Available across all tabs including Home
-                            ElvanTopBarIconButton(
-                                onClick = {
-                                    when (selectedTab) {
-                                        NavTab.Home -> {
-                                            activeSubpage = ActiveSubpage.InvoiceEditor(null)
-                                        }
-                                        NavTab.Products -> {
-                                            activeSubpage = ActiveSubpage.ItemEditor(null)
-                                        }
-                                        NavTab.Customers -> {
-                                            activeSubpage = ActiveSubpage.MerchantEditor(null)
-                                        }
-                                        NavTab.Create -> {
-                                            if (uruvakkuSegment == 0) {
-                                                activeSubpage = ActiveSubpage.InvoiceEditor(null)
-                                            } else {
-                                                activeSubpage = ActiveSubpage.ReceiptEditor(null)
-                                            }
-                                        }
-                                    }
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = MaterialSymbols.Rounded.Add,
-                                    contentDescription = K.add.tr(),
-                                    tint = colors.textPrimary,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                            }
-
                             // 3-Dot More Menu (மேலும்)
                             Box {
                                 ElvanTopBarIconButton(
@@ -466,6 +435,26 @@ fun HomeScreen() {
                                     BottomNavBar(
                                         selectedTab = selectedTab,
                                         hideContent = isSearchActive,
+                                        onAddClick = {
+                                            when (selectedTab) {
+                                                NavTab.Home -> {
+                                                    activeSubpage = ActiveSubpage.InvoiceEditor(null)
+                                                }
+                                                NavTab.Products -> {
+                                                    activeSubpage = ActiveSubpage.ItemEditor(null)
+                                                }
+                                                NavTab.Customers -> {
+                                                    activeSubpage = ActiveSubpage.MerchantEditor(null)
+                                                }
+                                                NavTab.Create -> {
+                                                    if (uruvakkuSegment == 0) {
+                                                        activeSubpage = ActiveSubpage.InvoiceEditor(null)
+                                                    } else {
+                                                        activeSubpage = ActiveSubpage.ReceiptEditor(null)
+                                                    }
+                                                }
+                                            }
+                                        },
                                         onTabSelected = { tab, _ ->
                                             if (selectedTab == tab) {
                                                 shellController.toggleHeader()

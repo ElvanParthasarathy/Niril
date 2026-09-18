@@ -6,6 +6,9 @@ import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.*
@@ -14,6 +17,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import com.elvan.udukkai.localization.K
+import com.elvan.udukkai.localization.tr
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
@@ -44,6 +50,7 @@ fun BottomNavBar(
     onInteraction: (Boolean) -> Unit = {},
     onDragProgress: (Float) -> Unit = {},
     hideContent: Boolean = false,
+    onAddClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val tabs = NavTab.entries
@@ -52,9 +59,9 @@ fun BottomNavBar(
     val isDark = colors.isDark
 
     val itemCount = tabs.size
-    val layoutWidth = if (itemCount <= 4) 67.dp else 61.dp
-    val bgWidth = if (itemCount <= 4) 75.dp else 69.dp
-    val horizontalPadding = 8.dp
+    val layoutWidth = if (onAddClick != null) 60.dp else (if (itemCount <= 4) 67.dp else 61.dp)
+    val bgWidth = if (onAddClick != null) 68.dp else (if (itemCount <= 4) 75.dp else 69.dp)
+    val horizontalPadding = if (onAddClick != null) 6.dp else 8.dp
     val verticalPadding = 4.dp
     val totalWidth = (layoutWidth * itemCount) + (horizontalPadding * 2)
 
@@ -136,20 +143,28 @@ fun BottomNavBar(
     )
 
     if (navBarAlpha > 0f) {
-        Box(
+        Row(
             modifier = modifier
+                .fillMaxWidth()
                 .navigationBarsPaddingIfMobile()
                 .padding(bottom = 16.dp)
                 .graphicsLayer {
-                    scaleX = containerScale
-                    scaleY = containerScale
                     alpha = navBarAlpha
-                    clip = false
-                }
-                .height(60.dp)
-                .width(totalWidth),
-            contentAlignment = Alignment.Center
+                },
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            Box(
+                modifier = Modifier
+                    .graphicsLayer {
+                        scaleX = containerScale
+                        scaleY = containerScale
+                        clip = false
+                    }
+                    .height(60.dp)
+                    .width(totalWidth),
+                contentAlignment = Alignment.Center
+            ) {
         // Layer 1: Background Capsule & Border
         Box(
             modifier = Modifier
@@ -295,6 +310,53 @@ fun BottomNavBar(
                         }
                     }
                 }
+            }
+            }
+        }
+
+        if (onAddClick != null) {
+            Spacer(modifier = Modifier.width(10.dp))
+
+            val addInteractionSource = remember { MutableInteractionSource() }
+            val isAddPressed by addInteractionSource.collectIsPressedAsState()
+            val addScale by animateFloatAsState(
+                targetValue = if (isAddPressed) 0.92f else 1.0f,
+                animationSpec = tween(120, easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f)),
+                label = "addScale"
+            )
+
+            Box(
+                modifier = Modifier
+                    .size(60.dp)
+                    .graphicsLayer {
+                        scaleX = addScale
+                        scaleY = addScale
+                        clip = false
+                    }
+                    .cssShadow(color = Color.Black, alpha = 0.05f, blurRadius = 16.dp, offsetY = 4.dp)
+                    .background(
+                        color = colors.floatingBg.copy(alpha = 0.88f),
+                        shape = CircleShape
+                    )
+                    .border(
+                        width = 0.5.dp,
+                        color = colors.floatingBorder.copy(alpha = if (isDark) 0.15f else 0.6f),
+                        shape = CircleShape
+                    )
+                    .clip(CircleShape)
+                    .clickable(
+                        interactionSource = addInteractionSource,
+                        indication = null,
+                        onClick = onAddClick
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = MaterialSymbols.Rounded.Add,
+                    contentDescription = K.add.tr(),
+                    tint = colors.textPrimary,
+                    modifier = Modifier.size(26.dp)
+                )
             }
         }
     }

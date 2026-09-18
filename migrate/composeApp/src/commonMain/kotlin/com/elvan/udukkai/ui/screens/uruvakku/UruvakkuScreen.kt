@@ -3,7 +3,9 @@ package com.elvan.udukkai.ui.screens.uruvakku
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import com.elvan.udukkai.core.utils.DateGroupUtils
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -120,6 +122,64 @@ fun UruvakkuScreen(
         }
     }
 
+    val activeProfile = NiruvanaTharavugalRepository.getProfile(mode)
+    val isBilingual = mode == AppMode.KOOLI || activeProfile.iruMozhi
+    val primaryLang = activeProfile.mudhanMozhi.ifEmpty { "ta" }
+
+    val invoiceGroups = remember(invoices) {
+        DateGroupUtils.groupItemsByDate(invoices) { it.pattiyalNaal }
+    }
+
+    val receiptGroups = remember(receipts) {
+        DateGroupUtils.groupItemsByDate(receipts) { it.patruNaal }
+    }
+
+    val dateIndexMap = remember(selectedSegment, invoiceGroups, receiptGroups, businessShifterItems.size) {
+        val map = mutableListOf<Long>()
+        val headerCount = if (businessShifterItems.size > 1) 3 else 2
+        val activeGroups = if (selectedSegment == 0) invoiceGroups else receiptGroups
+        val firstDate = activeGroups.firstOrNull()?.dateMillis ?: System.currentTimeMillis()
+
+        repeat(headerCount) {
+            map.add(firstDate)
+        }
+
+        activeGroups.forEach { group ->
+            // Date section header item
+            map.add(group.dateMillis)
+            // Cards in this group
+            repeat(group.items.size) {
+                map.add(group.dateMillis)
+            }
+        }
+        map
+    }
+
+    val uiLang = LocalAppLanguage.current
+    val dateProvider: (Int) -> String = remember(dateIndexMap, uiLang) {
+        { idx ->
+            val dateMillis = dateIndexMap.getOrNull(idx) ?: dateIndexMap.firstOrNull() ?: 0L
+            if (dateMillis > 0L) {
+                DateGroupUtils.formatPillDate(dateMillis, isBilingual = false, primaryLang = uiLang)
+            } else {
+                ""
+            }
+        }
+    }
+
+    val topSpacer = LocalElvanTopSpacerHeight.current
+    val hasBusinessShifter = businessShifterItems.size > 1
+    val minTopPadding = 120.dp
+    val scrollerTopPadding = remember(topSpacer, hasBusinessShifter, scrollState.firstVisibleItemIndex) {
+        if (scrollState.firstVisibleItemIndex == 0) {
+            maxOf(minTopPadding, topSpacer + 48.dp + 14.dp + (if (hasBusinessShifter) 54.dp else 0.dp) + 24.dp)
+        } else if (scrollState.firstVisibleItemIndex == 1) {
+            maxOf(minTopPadding, 48.dp + 14.dp + (if (hasBusinessShifter) 54.dp else 0.dp) + 24.dp)
+        } else {
+            minTopPadding
+        }
+    }
+
     val shifterItems = listOf(
         PillShifterItem(
             label = K.invoices.tr(),
@@ -133,193 +193,230 @@ fun UruvakkuScreen(
         )
     )
 
-    LazyColumn(
-        state = scrollState,
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(
-            bottom = Dimens.ContentPaddingBottom
-        ),
-        verticalArrangement = Arrangement.spacedBy(14.dp)
-    ) {
-        // Collapsible Top Header spacer
-        item(key = "uruvakku_top_spacer") {
-            Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
-        }
-
-        // Segmented Pill Shifter (Invoices vs Receipts - Original Centered Style)
-        item(key = "pill_shifter") {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                ElvanPillShifter(
-                    items = shifterItems,
-                    selectedIndex = selectedSegment,
-                    onIndexSelected = onSegmentSelected,
-                    colors = colors,
-                    isFullWidth = false
-                )
+    Box(modifier = modifier.fillMaxSize()) {
+        LazyColumn(
+            state = scrollState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
+                bottom = Dimens.ContentPaddingBottom
+            ),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            // Collapsible Top Header spacer
+            item(key = "uruvakku_top_spacer") {
+                Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
             }
-        }
 
-        // Business Profile Filter Shifter (below Invoices vs Receipts pill - End to End)
-        if (businessShifterItems.size > 1) {
-            item(key = "business_shifter") {
-                ElvanPillShifter(
-                    items = businessShifterItems,
-                    selectedIndex = safeProfileIndex,
-                    onIndexSelected = { selectedProfileFilterIndex = it },
-                    colors = colors,
-                    isFullWidth = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                )
+            // Segmented Pill Shifter (Invoices vs Receipts - Original Centered Style)
+            item(key = "pill_shifter") {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    ElvanPillShifter(
+                        items = shifterItems,
+                        selectedIndex = selectedSegment,
+                        onIndexSelected = onSegmentSelected,
+                        colors = colors,
+                        isFullWidth = false
+                    )
+                }
             }
-        }
 
-        if (selectedSegment == 0) {
-            if (invoices.isEmpty()) {
-                item(key = "empty_invoices") {
-                    Box(
+            // Business Profile Filter Shifter (below Invoices vs Receipts pill - End to End)
+            if (businessShifterItems.size > 1) {
+                item(key = "business_shifter") {
+                    ElvanPillShifter(
+                        items = businessShifterItems,
+                        selectedIndex = safeProfileIndex,
+                        onIndexSelected = { selectedProfileFilterIndex = it },
+                        colors = colors,
+                        isFullWidth = true,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 56.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                            .padding(horizontal = 16.dp)
+                    )
+                }
+            }
+
+            if (selectedSegment == 0) {
+                if (invoices.isEmpty()) {
+                    item(key = "empty_invoices") {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 56.dp),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Icon(
-                                imageVector = MaterialSymbols.Rounded.Description,
-                                contentDescription = null,
-                                tint = LocalShellColors.current.textQuaternary,
-                                modifier = Modifier.size(48.dp)
-                            )
-                            Spacer(modifier = Modifier.height(14.dp))
-                            Text(
-                                text = K.noInvoicesYet.tr().preventBrokenLigatures(),
-                                style = TextStyle(
-                                    fontFamily = ff,
-                                    fontSize = 15.sp,
-                                    color = LocalShellColors.current.textTertiary
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    imageVector = MaterialSymbols.Rounded.Description,
+                                    contentDescription = null,
+                                    tint = LocalShellColors.current.textQuaternary,
+                                    modifier = Modifier.size(48.dp)
                                 )
+                                Spacer(modifier = Modifier.height(14.dp))
+                                Text(
+                                    text = K.noInvoicesYet.tr().preventBrokenLigatures(),
+                                    style = TextStyle(
+                                        fontFamily = ff,
+                                        fontSize = 15.sp,
+                                        color = LocalShellColors.current.textTertiary
+                                    )
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    invoiceGroups.forEach { group ->
+                        item(key = "date_hdr_inv_${group.dayKey}") {
+                            DateSectionHeader(
+                                dateMillis = group.dateMillis,
+                                isBilingual = isBilingual,
+                                primaryLang = primaryLang,
+                                colors = colors
                             )
+                        }
+
+                        items(
+                            items = group.items,
+                            key = { "inv_${it.data.id}" }
+                        ) { indexedInvoice ->
+                            val index = indexedInvoice.globalIndex
+                            val invoice = indexedInvoice.data
+                            val isSelected = selectedItemIds.contains(invoice.id)
+                            val onCardClick: () -> Unit = {
+                                if (isSelectionMode) {
+                                    onToggleSelect?.invoke(invoice.id)
+                                } else {
+                                    onInvoiceClick(invoice)
+                                }
+                            }
+                            val onCardLongClick: () -> Unit = {
+                                onItemLongClick?.invoke(invoice.id)
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
+                            ) {
+                                if (mode == AppMode.KOOLI) {
+                                    KooliPattiyalAttai(
+                                        index = index,
+                                        pattiyal = invoice,
+                                        colors = colors,
+                                        isSelectionMode = isSelectionMode,
+                                        isSelected = isSelected,
+                                        onClick = onCardClick,
+                                        onLongClick = onCardLongClick
+                                    )
+                                } else {
+                                    PattuPattiyalAttai(
+                                        index = index,
+                                        pattiyal = invoice,
+                                        colors = colors,
+                                        isSelectionMode = isSelectionMode,
+                                        isSelected = isSelected,
+                                        onClick = onCardClick,
+                                        onLongClick = onCardLongClick
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             } else {
-                itemsIndexed(
-                    items = invoices,
-                    key = { _, item -> "inv_${item.id}" }
-                ) { index, invoice ->
-                    val isSelected = selectedItemIds.contains(invoice.id)
-                    val onCardClick: () -> Unit = {
-                        if (isSelectionMode) {
-                            onToggleSelect?.invoke(invoice.id)
-                        } else {
-                            onInvoiceClick(invoice)
-                        }
-                    }
-                    val onCardLongClick: () -> Unit = {
-                        onItemLongClick?.invoke(invoice.id)
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        if (mode == AppMode.KOOLI) {
-                            KooliPattiyalAttai(
-                                index = index,
-                                pattiyal = invoice,
-                                colors = colors,
-                                isSelectionMode = isSelectionMode,
-                                isSelected = isSelected,
-                                onClick = onCardClick,
-                                onLongClick = onCardLongClick
-                            )
-                        } else {
-                            PattuPattiyalAttai(
-                                index = index,
-                                pattiyal = invoice,
-                                colors = colors,
-                                isSelectionMode = isSelectionMode,
-                                isSelected = isSelected,
-                                onClick = onCardClick,
-                                onLongClick = onCardLongClick
-                            )
-                        }
-                    }
-                }
-            }
-        } else {
-            if (receipts.isEmpty()) {
-                item(key = "empty_receipts") {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 56.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                if (receipts.isEmpty()) {
+                    item(key = "empty_receipts") {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 56.dp),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Icon(
-                                imageVector = MaterialSymbols.Rounded.ReceiptLong,
-                                contentDescription = null,
-                                tint = LocalShellColors.current.textQuaternary,
-                                modifier = Modifier.size(48.dp)
-                            )
-                            Spacer(modifier = Modifier.height(14.dp))
-                            Text(
-                                text = K.noReceiptsYet.tr().preventBrokenLigatures(),
-                                style = TextStyle(
-                                    fontFamily = ff,
-                                    fontSize = 15.sp,
-                                    color = LocalShellColors.current.textTertiary
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Icon(
+                                    imageVector = MaterialSymbols.Rounded.ReceiptLong,
+                                    contentDescription = null,
+                                    tint = LocalShellColors.current.textQuaternary,
+                                    modifier = Modifier.size(48.dp)
                                 )
+                                Spacer(modifier = Modifier.height(14.dp))
+                                Text(
+                                    text = K.noReceiptsYet.tr().preventBrokenLigatures(),
+                                    style = TextStyle(
+                                        fontFamily = ff,
+                                        fontSize = 15.sp,
+                                        color = LocalShellColors.current.textTertiary
+                                    )
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    receiptGroups.forEach { group ->
+                        item(key = "date_hdr_rec_${group.dayKey}") {
+                            DateSectionHeader(
+                                dateMillis = group.dateMillis,
+                                isBilingual = isBilingual,
+                                primaryLang = primaryLang,
+                                colors = colors
                             )
                         }
-                    }
-                }
-            } else {
-                itemsIndexed(
-                    items = receipts,
-                    key = { _, item -> "receipt_${item.id}" }
-                ) { index, receipt ->
-                    val isSelected = selectedItemIds.contains(receipt.id)
-                    val onCardClick: () -> Unit = {
-                        if (isSelectionMode) {
-                            onToggleSelect?.invoke(receipt.id)
-                        } else {
-                            onReceiptClick(receipt)
-                        }
-                    }
-                    val onCardLongClick: () -> Unit = {
-                        onItemLongClick?.invoke(receipt.id)
-                    }
 
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                    ) {
-                        PatruAttai(
-                            index = index,
-                            receipt = receipt,
-                            colors = colors,
-                            isSelectionMode = isSelectionMode,
-                            isSelected = isSelected,
-                            onClick = onCardClick,
-                            onLongClick = onCardLongClick
-                        )
+                        items(
+                            items = group.items,
+                            key = { "receipt_${it.data.id}" }
+                        ) { indexedReceipt ->
+                            val index = indexedReceipt.globalIndex
+                            val receipt = indexedReceipt.data
+                            val isSelected = selectedItemIds.contains(receipt.id)
+                            val onCardClick: () -> Unit = {
+                                if (isSelectionMode) {
+                                    onToggleSelect?.invoke(receipt.id)
+                                } else {
+                                    onReceiptClick(receipt)
+                                }
+                            }
+                            val onCardLongClick: () -> Unit = {
+                                onItemLongClick?.invoke(receipt.id)
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp)
+                            ) {
+                                PatruAttai(
+                                    index = index,
+                                    receipt = receipt,
+                                    colors = colors,
+                                    isSelectionMode = isSelectionMode,
+                                    isSelected = isSelected,
+                                    onClick = onCardClick,
+                                    onLongClick = onCardLongClick
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
+
+        // Google Photos style Side Fast Scroller with floating date pill
+        ElvanDateFastScroller(
+            scrollState = scrollState,
+            dateProvider = dateProvider,
+            colors = colors,
+            topPadding = scrollerTopPadding,
+            bottomPadding = 120.dp
+        )
     }
 }
