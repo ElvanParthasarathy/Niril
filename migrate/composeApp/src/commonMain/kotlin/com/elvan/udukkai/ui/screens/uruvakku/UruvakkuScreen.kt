@@ -309,6 +309,7 @@ fun UruvakkuScreen(
                             .padding(horizontal = 16.dp)
                     ) {
                         PatruAttai(
+                            index = index,
                             receipt = receipt,
                             colors = colors,
                             isSelectionMode = isSelectionMode,

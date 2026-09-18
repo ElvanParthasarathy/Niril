@@ -2,6 +2,7 @@ package com.elvan.udukkai.ui.screens.uruvakku.koorugal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -28,10 +29,11 @@ import com.elvan.udukkai.ui.navigation.MaterialSymbols
 import com.elvan.udukkai.theme.LocalShellColors
 
 /**
- * Pixel-perfect port of Flutter's _PatruCard for the Payment Receipts list.
+ * Pixel-perfect port of Receipt Card matching the exact card design of Invoices.
  */
 @Composable
 fun PatruAttai(
+    index: Int,
     receipt: PatrugalTharavuru,
     colors: ShellColors,
     modifier: Modifier = Modifier,
@@ -48,10 +50,14 @@ fun PatruAttai(
     val primaryLang = profile.mudhanMozhi.ifEmpty { "ta" }
     val secondaryLang = profile.thunaiMozhi.ifEmpty { "en" }
 
-    val name = receipt.vaangunarPeyar[primaryLang]
-        ?: receipt.vaangunarPeyar[secondaryLang]
+    val primary = receipt.vaangunarPeyar[primaryLang]
+        ?: receipt.vaangunarPeyar["ta"]
+        ?: receipt.vaangunarPeyar["en"]
         ?: receipt.vaangunarPeyar.values.firstOrNull()
         ?: receipt.patruEn
+
+    val secondary = receipt.vaangunarPeyar[secondaryLang].orEmpty()
+    val showSecondary = secondary.isNotBlank() && secondary != primary
 
     val dateStr = DateUtils.formatEpochMillis(receipt.patruNaal)
     val amountStr = CurrencyUtils.formatInr(receipt.thogai)
@@ -71,113 +77,147 @@ fun PatruAttai(
         isSelected = isSelected,
         modifier = modifier,
         padding = PaddingValues(16.dp),
-        borderRadius = 20.dp
+        borderRadius = 24.dp
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Top
         ) {
-            if (isSelectionMode) {
-                Icon(
-                    imageVector = if (isSelected) MaterialSymbols.Rounded.CheckCircleFill else MaterialSymbols.Rounded.RadioButtonUnchecked,
-                    contentDescription = null,
-                    modifier = Modifier.size(22.dp),
-                    tint = if (isSelected) (LocalShellColors.current.textPrimary)
-                    else (LocalShellColors.current.textQuaternary)
-                )
-                Spacer(modifier = Modifier.width(12.dp))
+            // Index circle / Selection checkbox (28x28)
+            Box(
+                modifier = Modifier
+                    .padding(top = 1.dp)
+                    .size(28.dp)
+                    .clip(CircleShape)
+                    .background(
+                        if (isSelectionMode && isSelected) (LocalShellColors.current.textPrimary)
+                        else if (isDark) Color.White.copy(alpha = 0.12f)
+                        else Color.Black.copy(alpha = 0.08f)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                if (isSelectionMode && isSelected) {
+                    Icon(
+                        imageVector = MaterialSymbols.Rounded.Check,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = LocalShellColors.current.surface
+                    )
+                } else {
+                    Text(
+                        text = (index + 1).toString().padStart(2, '0'),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 11.2.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = LocalShellColors.current.textPrimary,
+                            lineHeight = 11.2.sp
+                        )
+                    )
+                }
             }
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // Content
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                // Row 1: Customer Name + Date
+                // Row 1: Name + Chevron
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Top
                 ) {
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = primary.preventBrokenLigatures(),
+                            style = TextStyle(
+                                fontFamily = ff,
+                                fontSize = 16.5.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = colors.textPrimary
+                            ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        if (showSecondary) {
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = secondary.preventBrokenLigatures(),
+                                style = TextStyle(
+                                    fontFamily = ff,
+                                    fontSize = 13.5.sp,
+                                    color = LocalShellColors.current.textSecondary
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+
+                    Icon(
+                        imageVector = MaterialSymbols.Rounded.ChevronRight,
+                        contentDescription = null,
+                        tint = LocalShellColors.current.border,
+                        modifier = Modifier.size(18.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Row 2: Receipt #  •  Date
                 Text(
-                    text = name.preventBrokenLigatures(),
+                    text = "${receipt.patruEn}  •  $dateStr",
                     style = TextStyle(
                         fontFamily = ff,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = colors.textPrimary
+                        fontSize = 13.5.sp,
+                        color = LocalShellColors.current.textSecondary
                     ),
-                    modifier = Modifier.weight(1f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
 
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
-                Text(
-                    text = dateStr,
-                    style = TextStyle(
-                        fontFamily = ff,
-                        fontSize = 12.sp,
-                        color = LocalShellColors.current.iconInactive
-                    )
-                )
-            }
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            // Row 2: Receipt # + Payment Method Badge + Amount + Chevron
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = receipt.patruEn,
-                    style = TextStyle(
-                        fontFamily = ff,
-                        fontSize = 12.5.sp,
-                        color = LocalShellColors.current.iconInactive
-                    )
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(badgeColor.copy(alpha = 0.15f))
-                        .padding(horizontal = 8.dp, vertical = 2.dp),
-                    contentAlignment = Alignment.Center
+                // Row 3: Payment mode badge on left + Amount on right
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom
                 ) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(badgeColor.copy(alpha = 0.15f))
+                            .padding(horizontal = 8.dp, vertical = 2.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = badgeText.preventBrokenLigatures(),
+                            style = TextStyle(
+                                fontFamily = ff,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = badgeColor
+                            )
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
                     Text(
-                        text = badgeText.preventBrokenLigatures(),
+                        text = amountStr,
                         style = TextStyle(
                             fontFamily = ff,
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = badgeColor
+                            fontSize = if (amountStr.length > 11) 12.5.sp else 14.5.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = colors.textPrimary
                         )
                     )
                 }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Text(
-                    text = amountStr,
-                    style = TextStyle(
-                        fontFamily = ff,
-                        fontSize = 14.5.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = if (isDark) Color(0xFF81C784) else Color(0xFF2E7D32)
-                    )
-                )
-
-                Spacer(modifier = Modifier.width(6.dp))
-
-                Icon(
-                    imageVector = MaterialSymbols.Rounded.ChevronRight,
-                    contentDescription = null,
-                    tint = LocalShellColors.current.textQuaternary,
-                    modifier = Modifier.size(16.dp)
-                )
             }
         }
     }
-}
 }
