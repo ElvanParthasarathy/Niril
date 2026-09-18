@@ -59,10 +59,11 @@ fun BottomNavBar(
     val isDark = colors.isDark
 
     val itemCount = tabs.size
-    val layoutWidth = if (onAddClick != null) 60.dp else (if (itemCount <= 4) 67.dp else 61.dp)
-    val bgWidth = if (onAddClick != null) 68.dp else (if (itemCount <= 4) 75.dp else 69.dp)
-    val horizontalPadding = if (onAddClick != null) 6.dp else 8.dp
+    val layoutWidth = if (onAddClick != null) 58.dp else (if (itemCount <= 4) 65.dp else 59.dp)
+    val bgWidth = if (onAddClick != null) 66.dp else (if (itemCount <= 4) 73.dp else 67.dp)
     val verticalPadding = 4.dp
+    val overlap = (bgWidth - layoutWidth) / 2
+    val horizontalPadding = verticalPadding + overlap
     val totalWidth = (layoutWidth * itemCount) + (horizontalPadding * 2)
 
     var isInteracting by remember { mutableStateOf(false) }
@@ -161,7 +162,7 @@ fun BottomNavBar(
                         scaleY = containerScale
                         clip = false
                     }
-                    .height(60.dp)
+                    .height(56.dp)
                     .width(totalWidth),
                 contentAlignment = Alignment.Center
             ) {
@@ -282,7 +283,7 @@ fun BottomNavBar(
                         val color = if (isActive) colors.textPrimary else colors.textSecondary
 
                         // Uniform Apple pattern matching Flutter 1:1: large icons, small labels
-                        val iconSize = 23.dp
+                        val iconSize = 22.dp
 
                         Column(
                             modifier = Modifier
@@ -297,7 +298,7 @@ fun BottomNavBar(
                                 tint = color,
                                 modifier = Modifier.size(iconSize)
                             )
-                            Spacer(modifier = Modifier.height(2.dp))
+                            Spacer(modifier = Modifier.height(1.5.dp))
                             Text(
                                 text = tab.getLocalizedLabel(),
                                 color = color,
@@ -327,7 +328,7 @@ fun BottomNavBar(
 
             Box(
                 modifier = Modifier
-                    .size(60.dp)
+                    .size(56.dp)
                     .graphicsLayer {
                         scaleX = addScale
                         scaleY = addScale
@@ -355,7 +356,7 @@ fun BottomNavBar(
                     imageVector = MaterialSymbols.Rounded.Add,
                     contentDescription = K.add.tr(),
                     tint = colors.textPrimary,
-                    modifier = Modifier.size(26.dp)
+                    modifier = Modifier.size(24.dp)
                 )
             }
         }
