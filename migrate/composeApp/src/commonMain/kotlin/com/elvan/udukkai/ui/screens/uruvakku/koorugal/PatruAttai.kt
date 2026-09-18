@@ -1,9 +1,8 @@
-package com.elvan.udukkai.ui.screens.uruvakku.koorugal
+﻿package com.elvan.udukkai.ui.screens.uruvakku.koorugal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -62,13 +61,21 @@ fun PatruAttai(
     val dateStr = DateUtils.formatEpochMillis(receipt.patruNaal)
     val amountStr = CurrencyUtils.formatInr(receipt.thogai)
 
-    val (badgeText, badgeColor) = when (receipt.seluthumMurai.lowercase()) {
-        "cash" -> "ரொக்கம்" to if (isDark) Color(0xFF81C784) else Color(0xFF2E7D32)
-        "upi" -> "UPI" to if (isDark) Color(0xFFBA68C8) else Color(0xFF7B1FA2)
-        "bank_transfer" -> "வங்கி" to if (isDark) Color(0xFF64B5F6) else Color(0xFF1565C0)
-        "cheque" -> "காசோலை" to if (isDark) Color(0xFFFFB74D) else Color(0xFFEF6C00)
-        "card" -> "அட்டை" to if (isDark) Color(0xFF4DB6AC) else Color(0xFF00796B)
-        else -> receipt.seluthumMurai to if (isDark) Color.White.copy(0.7f) else Color.Black.copy(0.7f)
+    val (taLabel, enLabel) = when (receipt.seluthumMurai.lowercase()) {
+        "cash" -> "ரொக்கம்" to "Cash"
+        "upi" -> "UPI" to "UPI"
+        "bank_transfer" -> "வங்கி" to "Bank"
+        "cheque" -> "காசோலை" to "Cheque"
+        "card" -> "அட்டை" to "Card"
+        else -> receipt.seluthumMurai to ""
+    }
+
+    val paymentModeText = if (enLabel.isEmpty() || taLabel.equals(enLabel, ignoreCase = true)) {
+        taLabel
+    } else if (primaryLang.lowercase().startsWith("en")) {
+        "$enLabel $taLabel"
+    } else {
+        "$taLabel $enLabel"
     }
 
     ElvanPothuAttai(
@@ -181,29 +188,23 @@ fun PatruAttai(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Row 3: Payment mode badge on left + Amount on right
+                // Row 3: Payment mode text on left + Amount on right
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Bottom
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
-                            .background(badgeColor.copy(alpha = 0.15f))
-                            .padding(horizontal = 8.dp, vertical = 2.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = badgeText.preventBrokenLigatures(),
-                            style = TextStyle(
-                                fontFamily = ff,
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = badgeColor
-                            )
-                        )
-                    }
+                    Text(
+                        text = paymentModeText.preventBrokenLigatures(),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 13.5.sp,
+                            color = LocalShellColors.current.textSecondary
+                        ),
+                        modifier = Modifier.weight(1f, fill = false),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
 
                     Spacer(modifier = Modifier.width(8.dp))
 

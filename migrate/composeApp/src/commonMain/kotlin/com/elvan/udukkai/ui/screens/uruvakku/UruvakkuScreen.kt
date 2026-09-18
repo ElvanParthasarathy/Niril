@@ -65,7 +65,7 @@ fun UruvakkuScreen(
         selectedProfileFilterIndex = 0
     }
 
-    val allLabel = K.all.tr().uppercase()
+    val allLabel = K.all.tr()
     val businessShifterItems = remember(profiles, allLabel) {
         if (profiles.isEmpty()) {
             emptyList()
@@ -79,7 +79,7 @@ fun UruvakkuScreen(
             profiles.forEach { p ->
                 val shortName = p.kurumPeyar.ifEmpty {
                     p.niruvanathinPeyar.values.firstOrNull().orEmpty()
-                }.uppercase()
+                }
                 list.add(
                     PillShifterItem(
                         label = shortName

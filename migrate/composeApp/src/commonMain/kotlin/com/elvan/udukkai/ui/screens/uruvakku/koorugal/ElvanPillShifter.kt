@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,6 +62,7 @@ fun ElvanPillShifter(
     colors: ShellColors = rememberShellColors(),
     modifier: Modifier = Modifier,
     isFullWidth: Boolean = false,
+    height: Dp = if (isFullWidth) 36.dp else 48.dp,
     onInteraction: (Boolean) -> Unit = {},
     onDragProgress: (Float) -> Unit = {}
 ) {
@@ -110,7 +112,7 @@ fun ElvanPillShifter(
         label = "pillScaleX"
     )
     val pillScaleY by animateFloatAsState(
-        targetValue = if (isInteracting) (if (isFullWidth) 1.08f else 1.20f) else 1.0f,
+        targetValue = if (isInteracting) (if (isFullWidth) 1.04f else 1.20f) else 1.0f,
         animationSpec = tween(150, easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f)),
         label = "pillScaleY"
     )
@@ -126,12 +128,12 @@ fun ElvanPillShifter(
                 scaleY = containerScale
                 clip = false
             }
-            .height(48.dp)
+            .height(height)
             .then(if (isFullWidth) Modifier.fillMaxWidth() else Modifier.width(fixedTotalWidth)),
         contentAlignment = Alignment.Center
     ) {
         val horizontalPadding = if (isFullWidth) 4.dp else 8.dp
-        val verticalPadding = 4.dp
+        val verticalPadding = if (isFullWidth) 3.dp else 4.dp
 
         val (layoutWidth, bgWidth, contentWidth) = if (isFullWidth) {
             val available = (maxWidth - (horizontalPadding * 2)).coerceAtLeast(0.dp)
@@ -295,7 +297,7 @@ fun ElvanPillShifter(
                                     text = item.label.preventBrokenLigatures(),
                                     style = TextStyle(
                                         fontFamily = ff,
-                                        fontSize = if (itemCount > 2) 13.sp else 14.sp,
+                                        fontSize = if (isFullWidth) 13.sp else (if (itemCount > 2) 13.sp else 14.sp),
                                         fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Medium
                                     ),
                                     color = itemColor,

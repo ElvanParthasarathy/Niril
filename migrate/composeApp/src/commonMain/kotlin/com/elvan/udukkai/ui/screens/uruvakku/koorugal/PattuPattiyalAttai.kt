@@ -45,14 +45,27 @@ fun PattuPattiyalAttai(
     val ff = LocalAppFontFamily.current
     val isDark = colors.isDark
 
-    val profile = NiruvanaTharavugalRepository.getProfile(AppMode.PATTU)
+    val profiles = NiruvanaTharavugalRepository.getAllProfiles(AppMode.PATTU)
+    val profile = (if (pattiyal.niruvanamId != null) profiles.find { it.id == pattiyal.niruvanamId } else null)
+        ?: NiruvanaTharavugalRepository.getProfile(AppMode.PATTU)
+    val isBilingual = profile.iruMozhi
     val primaryLang = profile.mudhanMozhi.ifEmpty { "ta" }
     val secondaryLang = profile.thunaiMozhi.ifEmpty { "en" }
 
-    val name = pattiyal.vaangunarPeyar[primaryLang]
-        ?: pattiyal.vaangunarPeyar[secondaryLang]
+    val primary = pattiyal.vaangunarPeyar[primaryLang]
+        ?: pattiyal.vaangunarPeyar["ta"]
+        ?: pattiyal.vaangunarPeyar["en"]
         ?: pattiyal.vaangunarPeyar.values.firstOrNull()
         ?: "-"
+
+    val secondary = if (isBilingual) pattiyal.vaangunarPeyar[secondaryLang].orEmpty() else ""
+    val showSecondary = isBilingual && secondary.isNotBlank() && secondary != primary
+
+    val primaryOor = pattiyal.vaangunarMunvari[primaryLang]
+        ?: pattiyal.vaangunarMunvari["ta"]
+        ?: pattiyal.vaangunarMunvari["en"]
+        ?: pattiyal.vaangunarMunvari.values.firstOrNull()
+        ?: ""
 
     val amountStr = CurrencyUtils.formatInr(pattiyal.mothaThogai)
     val dateStr = DateUtils.formatEpochMillis(pattiyal.pattiyalNaal)
@@ -112,20 +125,36 @@ fun PattuPattiyalAttai(
                 // Row 1: Customer Name + Chevron
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Top
                 ) {
-                    Text(
-                        text = name.preventBrokenLigatures(),
-                        style = TextStyle(
-                            fontFamily = ff,
-                            fontSize = 15.5.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = colors.textPrimary
-                        ),
-                        modifier = Modifier.weight(1f),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = primary.preventBrokenLigatures(),
+                            style = TextStyle(
+                                fontFamily = ff,
+                                fontSize = 15.5.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.textPrimary
+                            ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        if (showSecondary) {
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = secondary.preventBrokenLigatures(),
+                                style = TextStyle(
+                                    fontFamily = ff,
+                                    fontSize = 13.5.sp,
+                                    color = LocalShellColors.current.textSecondary
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
 
                     Icon(
                         imageVector = MaterialSymbols.Rounded.ChevronRight,
@@ -151,18 +180,36 @@ fun PattuPattiyalAttai(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Row 3: Right-aligned Amount
-                Text(
-                    text = amountStr,
-                    style = TextStyle(
-                        fontFamily = ff,
-                        fontSize = if (amountStr.length > 11) 13.sp else 15.5.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = colors.accent
-                    ),
+                // Row 3: City on left + Amount on right
+                Row(
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.End
-                )
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Text(
+                        text = primaryOor.preventBrokenLigatures(),
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = 13.5.sp,
+                            color = LocalShellColors.current.textSecondary
+                        ),
+                        modifier = Modifier.weight(1f, fill = false),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(
+                        text = amountStr,
+                        style = TextStyle(
+                            fontFamily = ff,
+                            fontSize = if (amountStr.length > 11) 12.5.sp else 14.5.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = colors.textPrimary
+                        )
+                    )
+                }
             }
         }
     }
