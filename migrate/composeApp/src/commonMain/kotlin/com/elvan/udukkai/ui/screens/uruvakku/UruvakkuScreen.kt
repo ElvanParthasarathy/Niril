@@ -167,19 +167,6 @@ fun UruvakkuScreen(
         }
     }
 
-    val topSpacer = LocalElvanTopSpacerHeight.current
-    val hasBusinessShifter = businessShifterItems.size > 1
-    val minTopPadding = 120.dp
-    val scrollerTopPadding = remember(topSpacer, hasBusinessShifter, scrollState.firstVisibleItemIndex) {
-        if (scrollState.firstVisibleItemIndex == 0) {
-            maxOf(minTopPadding, topSpacer + 48.dp + 14.dp + (if (hasBusinessShifter) 54.dp else 0.dp) + 24.dp)
-        } else if (scrollState.firstVisibleItemIndex == 1) {
-            maxOf(minTopPadding, 48.dp + 14.dp + (if (hasBusinessShifter) 54.dp else 0.dp) + 24.dp)
-        } else {
-            minTopPadding
-        }
-    }
-
     val shifterItems = listOf(
         PillShifterItem(
             label = K.invoices.tr(),
@@ -275,8 +262,6 @@ fun UruvakkuScreen(
                         item(key = "date_hdr_inv_${group.dayKey}") {
                             DateSectionHeader(
                                 dateMillis = group.dateMillis,
-                                isBilingual = isBilingual,
-                                primaryLang = primaryLang,
                                 colors = colors
                             )
                         }
@@ -365,8 +350,6 @@ fun UruvakkuScreen(
                         item(key = "date_hdr_rec_${group.dayKey}") {
                             DateSectionHeader(
                                 dateMillis = group.dateMillis,
-                                isBilingual = isBilingual,
-                                primaryLang = primaryLang,
                                 colors = colors
                             )
                         }
@@ -415,8 +398,8 @@ fun UruvakkuScreen(
             scrollState = scrollState,
             dateProvider = dateProvider,
             colors = colors,
-            topPadding = scrollerTopPadding,
-            bottomPadding = 120.dp
+            topPadding = 104.dp,
+            bottomPadding = 104.dp
         )
     }
 }

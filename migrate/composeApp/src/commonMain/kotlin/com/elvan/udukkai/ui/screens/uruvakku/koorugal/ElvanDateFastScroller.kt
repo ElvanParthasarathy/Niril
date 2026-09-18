@@ -33,6 +33,7 @@ import com.elvan.udukkai.theme.LocalShellColors
 import com.elvan.udukkai.theme.ShellColors
 import com.elvan.udukkai.theme.preventBrokenLigatures
 import com.elvan.udukkai.theme.rememberShellColors
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -42,9 +43,10 @@ import kotlin.math.roundToInt
  *
  * Features:
  * - Slender, elegant edge track & thumb matching Elvan design language.
- * - Interactive direct dragging and tap-to-scrub through LazyListState.
+ * - Interactive direct dragging and tap-to-scrub through LazyListState with zero frame drops.
  * - Floating Date Pill that pops out beside the thumb with smooth capsule clipping and scale animation.
  * - Date pill is ONLY visible while actively dragging the scroller thumb.
+ * - Locked bounds: Top and bottom track bounds stay rock-solid in place matching the card viewport.
  * - Auto-fades thumb after 1200ms when scrolling halts.
  */
 @Composable
@@ -53,8 +55,8 @@ fun ElvanDateFastScroller(
     dateProvider: (Int) -> String,
     modifier: Modifier = Modifier,
     colors: ShellColors = rememberShellColors(),
-    topPadding: Dp = 180.dp,
-    bottomPadding: Dp = 120.dp
+    topPadding: Dp = 104.dp,
+    bottomPadding: Dp = 104.dp
 ) {
     val ff = LocalAppFontFamily.current
     val isDark = colors.isDark
@@ -63,6 +65,8 @@ fun ElvanDateFastScroller(
 
     var isDragging by remember { mutableStateOf(false) }
     var dragProgress by remember { mutableStateOf<Float?>(null) }
+    var lastScrolledIndex by remember { mutableIntStateOf(-1) }
+    var scrollJob by remember { mutableStateOf<Job?>(null) }
     var lastActiveTime by remember { mutableLongStateOf(0L) }
 
     val isScrollInProgress = scrollState.isScrollInProgress
@@ -91,7 +95,13 @@ fun ElvanDateFastScroller(
 
     val naturalFraction = remember(firstVisible, firstOffset, totalItems) {
         if (totalItems > 1) {
-            (firstVisible.toFloat() / (totalItems - 1).toFloat()).coerceIn(0f, 1f)
+            val visibleItems = scrollState.layoutInfo.visibleItemsInfo
+            val firstItem = visibleItems.firstOrNull()
+            val itemSize = firstItem?.size ?: 0
+            val subItemOffset = if (itemSize > 0) {
+                (firstOffset.toFloat() / itemSize.toFloat()).coerceIn(0f, 1f)
+            } else 0f
+            ((firstVisible.toFloat() + subItemOffset) / (totalItems - 1).toFloat()).coerceIn(0f, 1f)
         } else 0f
     }
 
@@ -139,12 +149,12 @@ fun ElvanDateFastScroller(
 
         val thumbYPx = (topPaddingPx + (activeFraction * maxTravelPx)).coerceIn(topPaddingPx, topPaddingPx + maxTravelPx)
 
-        // Gesture detector on the right 36.dp edge
+        // Gesture detector on the right 40.dp edge
         Box(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .fillMaxHeight()
-                .width(36.dp)
+                .width(40.dp)
                 .pointerInput(totalItems, availableTrackHeight, maxTravelPx, topPaddingPx) {
                     awaitEachGesture {
                         val down = awaitFirstDown(requireUnconsumed = false)
@@ -156,14 +166,19 @@ fun ElvanDateFastScroller(
                             dragProgress = fraction
 
                             val targetIndex = (fraction * (totalItems - 1)).roundToInt().coerceIn(0, totalItems - 1)
-                            coroutineScope.launch {
-                                scrollState.scrollToItem(targetIndex)
+                            if (targetIndex != lastScrolledIndex) {
+                                lastScrolledIndex = targetIndex
+                                scrollJob?.cancel()
+                                scrollJob = coroutineScope.launch {
+                                    scrollState.scrollToItem(targetIndex, 0)
+                                }
                             }
                         }
 
+                        val pointerId = down.id
                         do {
                             val event = awaitPointerEvent()
-                            val change = event.changes.firstOrNull() ?: break
+                            val change = event.changes.firstOrNull { it.id == pointerId } ?: break
                             if (change.pressed && isDragging) {
                                 val currentY = change.position.y
                                 val relY = (currentY - topPaddingPx - (thumbHeightPx / 2f)).coerceIn(0f, maxTravelPx)
@@ -171,15 +186,26 @@ fun ElvanDateFastScroller(
                                 dragProgress = fraction
 
                                 val targetIndex = (fraction * (totalItems - 1)).roundToInt().coerceIn(0, totalItems - 1)
-                                coroutineScope.launch {
-                                    scrollState.scrollToItem(targetIndex)
+                                if (targetIndex != lastScrolledIndex) {
+                                    lastScrolledIndex = targetIndex
+                                    scrollJob?.cancel()
+                                    scrollJob = coroutineScope.launch {
+                                        scrollState.scrollToItem(targetIndex, 0)
+                                    }
                                 }
                                 change.consume()
                             }
                         } while (event.changes.any { it.pressed })
 
                         isDragging = false
+                        if (lastScrolledIndex >= 0) {
+                            scrollJob?.cancel()
+                            scrollJob = coroutineScope.launch {
+                                scrollState.scrollToItem(lastScrolledIndex, 0)
+                            }
+                        }
                         dragProgress = null
+                        lastScrolledIndex = -1
                     }
                 }
         ) {

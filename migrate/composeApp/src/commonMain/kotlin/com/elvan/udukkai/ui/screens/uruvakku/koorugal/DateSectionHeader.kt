@@ -11,6 +11,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.elvan.udukkai.core.utils.DateGroupUtils
+import com.elvan.udukkai.localization.LocalAppLanguage
 import com.elvan.udukkai.theme.LocalAppFontFamily
 import com.elvan.udukkai.theme.LocalShellColors
 import com.elvan.udukkai.theme.ShellColors
@@ -18,19 +19,19 @@ import com.elvan.udukkai.theme.preventBrokenLigatures
 import com.elvan.udukkai.theme.rememberShellColors
 
 /**
- * Google Photos-style clean date section header for Invoices and Receipts lists.
+ * Google Photos-style clean monolingual date section header for Invoices and Receipts lists.
+ * Bound directly to the application's UI language.
  */
 @Composable
 fun DateSectionHeader(
     dateMillis: Long,
-    isBilingual: Boolean,
-    primaryLang: String,
     colors: ShellColors = rememberShellColors(),
+    language: String = LocalAppLanguage.current,
     modifier: Modifier = Modifier
 ) {
     val ff = LocalAppFontFamily.current
-    val (primaryDate, secondaryDate) = DateGroupUtils.formatDateHeader(dateMillis, isBilingual, primaryLang)
-    val weekdaySubtitle = DateGroupUtils.getWeekdaySubtitle(dateMillis, isBilingual, primaryLang)
+    val (primaryDate, _) = DateGroupUtils.formatDateHeader(dateMillis, isBilingual = false, primaryLang = language)
+    val weekdaySubtitle = DateGroupUtils.getWeekdaySubtitle(dateMillis, isBilingual = false, primaryLang = language)
 
     Row(
         modifier = modifier
@@ -39,36 +40,18 @@ fun DateSectionHeader(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(
+        Text(
+            text = primaryDate.preventBrokenLigatures(),
+            style = TextStyle(
+                fontFamily = ff,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+                color = colors.textPrimary
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f, fill = false)
-        ) {
-            Text(
-                text = primaryDate.preventBrokenLigatures(),
-                style = TextStyle(
-                    fontFamily = ff,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.textPrimary
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-
-            if (isBilingual && secondaryDate.isNotBlank() && secondaryDate != primaryDate) {
-                Spacer(modifier = Modifier.height(1.5.dp))
-                Text(
-                    text = secondaryDate.preventBrokenLigatures(),
-                    style = TextStyle(
-                        fontFamily = ff,
-                        fontSize = 12.5.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = LocalShellColors.current.textSecondary
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
+        )
 
         Spacer(modifier = Modifier.width(12.dp))
 
