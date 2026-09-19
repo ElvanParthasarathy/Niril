@@ -61,9 +61,9 @@ fun App() {
         isSplashVisible = false
     }
 
-    UdukkaiTheme {
-        ProvideAppLanguage {
-            ProvideModeContext {
+    ProvideAppLanguage {
+        ProvideModeContext {
+            UdukkaiTheme {
                 val bottomSheetController = remember { ElvanBottomSheetController() }
                 val colors = rememberShellColors()
 

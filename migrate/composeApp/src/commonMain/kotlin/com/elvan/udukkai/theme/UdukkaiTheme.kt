@@ -53,7 +53,6 @@ fun UdukkaiTheme(
     font: AppFont = FontManager.currentFont,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
     val rippleColor = if (darkTheme) Color.White else Color.Black
 
     val currentFontFamily = when (font) {
@@ -74,6 +73,20 @@ fun UdukkaiTheme(
     }
 
     val shellColors = rememberShellColors()
+
+    val colorScheme = remember(darkTheme, shellColors) {
+        if (darkTheme) {
+            DarkColorScheme.copy(
+                primary = shellColors.accent,
+                primaryContainer = shellColors.accentContainer
+            )
+        } else {
+            LightColorScheme.copy(
+                primary = shellColors.accent,
+                primaryContainer = shellColors.accentContainer
+            )
+        }
+    }
 
     CompositionLocalProvider(
         LocalDensity provides density,
