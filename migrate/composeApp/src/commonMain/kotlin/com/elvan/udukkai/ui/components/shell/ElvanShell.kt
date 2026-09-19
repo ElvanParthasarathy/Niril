@@ -418,7 +418,7 @@ fun ElvanShell(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(56.dp + 60.dp + 20.dp)
+                                .height(56.dp + 56.dp + 20.dp)
                                 .background(
                                     Brush.verticalGradient(
                                         0.0f to Color.Transparent,
@@ -442,7 +442,7 @@ fun ElvanShell(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth()
-                            .height(72.dp + 60.dp + 16.dp + navBarsPadding)
+                            .height(72.dp + 56.dp + 16.dp + navBarsPadding)
                             .background(
                                 Brush.verticalGradient(
                                     0.0f to Color.Transparent,

@@ -28,6 +28,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.elvan.udukkai.core.extensions.cssShadow
+import com.elvan.udukkai.core.platform.navigationBarsPaddingIfMobile
 import com.elvan.udukkai.localization.K
 import com.elvan.udukkai.localization.tr
 import com.elvan.udukkai.theme.LocalAppFontFamily
@@ -37,9 +38,7 @@ import kotlinx.coroutines.delay
 /**
  * ElvanThaedalPattai — Floating bottom search pill.
  * Exact 1:1 Kotlin Compose port of Flutter's ElvanSearchBar (elvan_thaedal_pattai.dart).
- *
- * Sits directly on top of the bottom navbar position and expands across the bottom
- * when activated, providing search input, live filtering, and quick dismiss.
+ * Height and bottom alignment match BottomNavBar (56.dp) 1:1.
  */
 @Composable
 fun ElvanThaedalPattai(
@@ -67,13 +66,18 @@ fun ElvanThaedalPattai(
     }
 
     val imeBottom = com.elvan.udukkai.core.platform.getImeBottomPadding()
-    val navBottom = com.elvan.udukkai.core.platform.getNavBarBottomPadding()
     val isImeOpen = imeBottom > 0.dp
-    val effectiveBottomPadding = if (isImeOpen) maxOf(navBottom + 16.dp, imeBottom + 20.dp) else navBottom + 16.dp
 
     BoxWithConstraints(
         modifier = modifier
-            .padding(bottom = effectiveBottomPadding),
+            .fillMaxWidth()
+            .then(
+                if (isImeOpen) {
+                    Modifier.padding(bottom = imeBottom + 16.dp)
+                } else {
+                    Modifier.navigationBarsPaddingIfMobile().padding(bottom = 16.dp)
+                }
+            ),
         contentAlignment = Alignment.Center
     ) {
         val screenWidth = maxWidth
@@ -99,7 +103,7 @@ fun ElvanThaedalPattai(
             Box(
                 modifier = Modifier
                     .width(animatedWidth)
-                    .height(60.dp)
+                    .height(56.dp)
                     .graphicsLayer { this.alpha = alpha }
                     .cssShadow(
                         color = Color.Black,

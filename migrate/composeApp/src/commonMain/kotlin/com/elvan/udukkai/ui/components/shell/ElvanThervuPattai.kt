@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.elvan.udukkai.core.extensions.cssShadow
+import com.elvan.udukkai.core.platform.navigationBarsPaddingIfMobile
 import com.elvan.udukkai.localization.K
 import com.elvan.udukkai.localization.tr
 import com.elvan.udukkai.theme.LocalAppFontFamily
@@ -38,8 +39,8 @@ import com.elvan.udukkai.ui.navigation.MaterialSymbols
 
 /**
  * ElvanThervuPattai — Floating multi-selection action bar.
- * Exact 1:1 Kotlin Compose port matching Flutter's choreographed overlay container transform.
- * Expands across the bottom navbar with the exact same animation, size, and position as ElvanThaedalPattai.
+ * Matches BottomNavBar position and 56.dp height exactly.
+ * Compact width sized strictly to its 3 elements with inset pill-shaped ripples.
  */
 @Composable
 fun ElvanThervuPattai(
@@ -52,39 +53,36 @@ fun ElvanThervuPattai(
     modifier: Modifier = Modifier
 ) {
     val isDark = colors.isDark
-    val navBottom = com.elvan.udukkai.core.platform.getNavBarBottomPadding()
-    val effectiveBottomPadding = navBottom + 16.dp
 
-    BoxWithConstraints(
-        modifier = modifier
-            .padding(bottom = effectiveBottomPadding),
-        contentAlignment = Alignment.Center
-    ) {
-        val screenWidth = maxWidth
-        val minWidth = 284.dp
-        val maxWidthTarget = (screenWidth - 32.dp).coerceAtLeast(minWidth)
+    val alpha by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(durationMillis = 200, easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f)),
+        label = "thervuPattaiAlpha"
+    )
 
-        val animatedWidth by animateDpAsState(
-            targetValue = if (visible) maxWidthTarget else minWidth,
-            animationSpec = tween(
-                durationMillis = 300,
-                easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f)
-            ),
-            label = "thervuPattaiWidth"
-        )
+    val scale by animateFloatAsState(
+        targetValue = if (visible) 1.0f else 0.92f,
+        animationSpec = tween(durationMillis = 200, easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f)),
+        label = "thervuPattaiScale"
+    )
 
-        val alpha by animateFloatAsState(
-            targetValue = if (visible) 1f else 0f,
-            animationSpec = tween(durationMillis = 200),
-            label = "thervuPattaiAlpha"
-        )
-
-        if (visible || alpha > 0f) {
+    if (visible || alpha > 0f) {
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .navigationBarsPaddingIfMobile()
+                .padding(bottom = 16.dp)
+                .graphicsLayer {
+                    this.alpha = alpha
+                    this.scaleX = scale
+                    this.scaleY = scale
+                },
+            contentAlignment = Alignment.Center
+        ) {
             Box(
                 modifier = Modifier
-                    .width(animatedWidth)
-                    .height(60.dp)
-                    .graphicsLayer { this.alpha = alpha }
+                    .width(244.dp)
+                    .height(56.dp)
                     .cssShadow(
                         color = Color.Black,
                         alpha = 0.05f,
@@ -100,13 +98,11 @@ fun ElvanThervuPattai(
                         color = colors.floatingBorder.copy(alpha = if (isDark) 0.15f else 0.6f),
                         shape = CircleShape
                     )
-                    .padding(horizontal = 8.dp),
+                    .padding(horizontal = 6.dp, vertical = 4.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 4.dp),
+                    modifier = Modifier.fillMaxSize(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -156,44 +152,58 @@ private fun ThervuPattaiAction(
     modifier: Modifier = Modifier
 ) {
     val ff = LocalAppFontFamily.current
+    val isDark = colors.isDark
     val contentColor = when {
         isDisabled -> colors.textSecondary.copy(alpha = 0.35f)
         isActive -> colors.accent
         else -> colors.textPrimary
     }
 
-    Column(
+    Box(
         modifier = modifier
-            .widthIn(min = 68.dp, max = 96.dp)
+            .width(74.dp)
             .fillMaxHeight()
+            .padding(horizontal = 2.dp, vertical = 2.dp)
             .clip(CircleShape)
+            .then(
+                if (isActive) {
+                    Modifier.background(
+                        color = colors.accent.copy(alpha = if (isDark) 0.18f else 0.12f),
+                        shape = CircleShape
+                    )
+                } else Modifier
+            )
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = ripple(bounded = true),
+                indication = ripple(bounded = true, radius = 24.dp),
                 enabled = !isDisabled,
                 onClick = onClick
             ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        contentAlignment = Alignment.Center
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = label,
-            tint = contentColor,
-            modifier = Modifier.size(22.dp)
-        )
-        Spacer(modifier = Modifier.height(2.dp))
-        Text(
-            text = label,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center,
-            style = TextStyle(
-                fontFamily = ff,
-                fontSize = 11.sp,
-                fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Normal,
-                color = contentColor
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = contentColor,
+                modifier = Modifier.size(20.dp)
             )
-        )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = label,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
+                style = TextStyle(
+                    fontFamily = ff,
+                    fontSize = 10.sp,
+                    fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Medium,
+                    color = contentColor
+                )
+            )
+        }
     }
 }

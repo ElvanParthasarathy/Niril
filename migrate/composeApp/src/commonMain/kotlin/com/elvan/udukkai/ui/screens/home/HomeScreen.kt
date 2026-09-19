@@ -320,7 +320,7 @@ fun HomeScreen() {
                         scrollState = currentScrollState,
                         title = selectedTab.getLocalizedHeader(),
                         showNavbar = !isWideScreen,
-                        hasActions = !isSearchActive && !isSelectionMode,
+                        hasActions = !isSearchActive,
                         isSearchActive = isSearchActive,
                         actions = {
                             if (selectedTab != NavTab.Home) {
