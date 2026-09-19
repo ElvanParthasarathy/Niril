@@ -406,23 +406,43 @@ fun ElvanShell(
             val imeBottom = com.elvan.udukkai.core.platform.getImeBottomPadding()
             val navBarsPadding = com.elvan.udukkai.core.platform.getNavBarBottomPadding()
             val isImeOpen = imeBottom > 0.dp
-            val effectiveBottomPadding = if (isImeOpen) {
-                maxOf(navBarsPadding + 16.dp, imeBottom + 20.dp)
-            } else {
-                navBarsPadding + 16.dp
-            }
 
             if (showNavbar) {
-                // Bottom Fade Mask: 96.dp gradient above the pill, plus solid background below it
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .fillMaxWidth()
-                ) {
+                if (isSearchActive && isImeOpen) {
+                    // Search active with keyboard: gentle gradient above keyboard, solid only behind keyboard
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth()
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp + 60.dp + 20.dp)
+                                .background(
+                                    Brush.verticalGradient(
+                                        0.0f to Color.Transparent,
+                                        0.3f to colors.background.copy(alpha = 0.16f),
+                                        0.65f to colors.background.copy(alpha = 0.55f),
+                                        1.0f to colors.background
+                                    )
+                                )
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(imeBottom)
+                                .background(colors.background)
+                        )
+                    }
+                } else {
+                    // Standard floating navbar / bottom search pill: Smooth subtle gradient, zero solid box.
+                    // Content flows freely beneath the navbar.
                     Box(
                         modifier = Modifier
+                            .align(Alignment.BottomCenter)
                             .fillMaxWidth()
-                            .height(96.dp)
+                            .height(72.dp + 60.dp + 16.dp + navBarsPadding)
                             .background(
                                 Brush.verticalGradient(
                                     0.0f to Color.Transparent,
@@ -431,12 +451,6 @@ fun ElvanShell(
                                     1.0f to colors.background
                                 )
                             )
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(60.dp + effectiveBottomPadding)
-                            .background(colors.background)
                     )
                 }
 
