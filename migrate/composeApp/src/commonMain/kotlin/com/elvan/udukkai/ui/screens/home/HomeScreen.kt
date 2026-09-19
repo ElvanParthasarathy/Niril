@@ -321,6 +321,7 @@ fun HomeScreen() {
                         title = selectedTab.getLocalizedHeader(),
                         showNavbar = !isWideScreen,
                         hasActions = !isSearchActive,
+                        isSearchActive = isSearchActive,
                         actions = {
                             if (selectedTab != NavTab.Home) {
                                 // Search Icon Button

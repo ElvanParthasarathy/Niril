@@ -50,6 +50,7 @@ fun ElvanShell(
     hasActions: Boolean = false,
     actions: @Composable RowScope.() -> Unit = {},
     navbar: @Composable () -> Unit = {},
+    isSearchActive: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colors = rememberShellColors()
@@ -80,6 +81,25 @@ fun ElvanShell(
             globalHeaderExpanded.value = false
         } else if (headerCollapsePx == 0f && !globalHeaderExpanded.value) {
             globalHeaderExpanded.value = true
+        }
+    }
+
+    LaunchedEffect(isSearchActive) {
+        if (isSearchActive) {
+            if (scrollState.firstVisibleItemIndex > 0 || scrollState.firstVisibleItemScrollOffset > 0) {
+                scrollState.scrollToItem(0, 0)
+            }
+            if (headerCollapsePx < handoffShrinkOffsetPx) {
+                androidx.compose.animation.core.animate(
+                    initialValue = headerCollapsePx,
+                    targetValue = handoffShrinkOffsetPx,
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f)
+                    )
+                ) { value, _ -> headerCollapsePx = value }
+                globalHeaderExpanded.value = false
+            }
         }
     }
 
@@ -250,7 +270,7 @@ fun ElvanShell(
         label = "navOpacity"
     )
 
-    val effectiveNavOpacity = if (isTruePill) navOpacity else 1.0f
+    val effectiveNavOpacity = if (isSearchActive) 1.0f else (if (isTruePill) navOpacity else 1.0f)
 
     val shellController = remember(scrollState, handoffShrinkOffsetPx, globalHeaderExpanded) {
         ElvanShellController(
@@ -383,24 +403,42 @@ fun ElvanShell(
             }
 
             // Layer 4: Bottom Fade Mask and Navbar
+            val imeBottom = com.elvan.udukkai.core.platform.getImeBottomPadding()
             val navBarsPadding = com.elvan.udukkai.core.platform.getNavBarBottomPadding()
+            val isImeOpen = imeBottom > 0.dp
+            val effectiveBottomPadding = if (isImeOpen) {
+                maxOf(navBarsPadding + 16.dp, imeBottom + 20.dp)
+            } else {
+                navBarsPadding + 16.dp
+            }
 
             if (showNavbar) {
-                // Fade mask is ALWAYS present when showNavbar is true
-                Box(
+                // Bottom Fade Mask: 96.dp gradient above the pill, plus solid background below it
+                Column(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
-                        .height(96.dp + 60.dp + 16.dp + navBarsPadding)
-                        .background(
-                            Brush.verticalGradient(
-                                0.0f to Color.Transparent,
-                                0.3f to colors.background.copy(alpha = 0.16f),
-                                0.65f to colors.background.copy(alpha = 0.55f),
-                                1.0f to colors.background
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(96.dp)
+                            .background(
+                                Brush.verticalGradient(
+                                    0.0f to Color.Transparent,
+                                    0.3f to colors.background.copy(alpha = 0.16f),
+                                    0.65f to colors.background.copy(alpha = 0.55f),
+                                    1.0f to colors.background
+                                )
                             )
-                        )
-                )
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp + effectiveBottomPadding)
+                            .background(colors.background)
+                    )
+                }
 
                 Box(
                     modifier = Modifier
