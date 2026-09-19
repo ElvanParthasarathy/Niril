@@ -278,7 +278,7 @@ fun <T> ElvanSelectionBottomSheet(
             dismissOnClickOutside = true
         )
     ) {
-        ConfigureDialogWindow(isDark = isDark, clearDim = true, navBarColor = sheetBg)
+        ConfigureDialogWindow(isDark = isDark, clearDim = true)
 
         // Scrim background with smooth fade
         val scrimAlpha by animateFloatAsState(
