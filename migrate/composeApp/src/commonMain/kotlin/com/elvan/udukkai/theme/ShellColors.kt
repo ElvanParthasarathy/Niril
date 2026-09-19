@@ -47,21 +47,12 @@ val LocalShellColors = staticCompositionLocalOf<ShellColors> {
 fun rememberShellColors(mode: AppMode = LocalAppMode.current): ShellColors {
     val isDark = ThemeManager.isDark()
     return remember(isDark, mode) {
-        val isCoolie = mode == AppMode.KOOLI
-
         if (isDark) {
-            val accent = if (isCoolie) Color(0xFF087F8C) else Color(0xFF6B3F68)
-            val accentBright = if (isCoolie) Color(0xFF4DD0DC) else Color(0xFFCE85CA)
-            val accentDark = if (isCoolie) Color(0xFF066A75) else Color(0xFF522B4F)
-            val accentContainer = if (isCoolie) Color(0xFF123C40) else Color(0xFF3D1B3B)
-            val secondaryAccent = if (isCoolie) Color(0xFF6B3F68) else Color(0xFF087F8C)
-            val iconAccent = accentBright
-
             ShellColors(
                 isDark = true,
                 background = Color.Black,
                 surface = Color(0xFF111111),
-                accent = accent,
+                accent = Color.White,
                 textPrimary = Color.White,
                 textSecondary = Color.White.copy(alpha = 0.54f),
                 textTertiary = Color.White.copy(alpha = 0.38f),
@@ -77,26 +68,19 @@ fun rememberShellColors(mode: AppMode = LocalAppMode.current): ShellColors {
                 divider = Color.White.copy(alpha = 0.04f),
                 icon = Color.White,
                 iconInactive = Color.White.copy(alpha = 0.45f),
-                accentBright = accentBright,
-                accentDark = accentDark,
-                accentContainer = accentContainer,
-                secondaryAccent = secondaryAccent,
-                iconAccent = iconAccent,
+                accentBright = Color.White,
+                accentDark = Color(0xFFE5E5EA),
+                accentContainer = Color.White.copy(alpha = 0.12f),
+                secondaryAccent = Color.White,
+                iconAccent = Color.White,
                 error = Color(0xFFFFB4AB)
             )
         } else {
-            val accent = if (isCoolie) Color(0xFF087F8C) else Color(0xFF6B3F68)
-            val accentBright = if (isCoolie) Color(0xFF4DD0DC) else Color(0xFFCE85CA)
-            val accentDark = if (isCoolie) Color(0xFF066A75) else Color(0xFF522B4F)
-            val accentContainer = if (isCoolie) Color(0xFFD5F3F5) else Color(0xFFF5E8F4)
-            val secondaryAccent = if (isCoolie) Color(0xFF6B3F68) else Color(0xFF087F8C)
-            val iconAccent = accent
-
             ShellColors(
                 isDark = false,
                 background = Color(0xFFF5F5F7),
                 surface = Color.White,
-                accent = accent,
+                accent = Color(0xFF1D1D1F),
                 textPrimary = Color.Black,
                 textSecondary = Color.Black.copy(alpha = 0.54f),
                 textTertiary = Color.Black.copy(alpha = 0.38f),
@@ -112,11 +96,11 @@ fun rememberShellColors(mode: AppMode = LocalAppMode.current): ShellColors {
                 divider = Color.Black.copy(alpha = 0.04f),
                 icon = Color.Black,
                 iconInactive = Color.Black.copy(alpha = 0.45f),
-                accentBright = accentBright,
-                accentDark = accentDark,
-                accentContainer = accentContainer,
-                secondaryAccent = secondaryAccent,
-                iconAccent = iconAccent,
+                accentBright = Color(0xFF1D1D1F),
+                accentDark = Color.Black,
+                accentContainer = Color.Black.copy(alpha = 0.08f),
+                secondaryAccent = Color(0xFF1D1D1F),
+                iconAccent = Color(0xFF1D1D1F),
                 error = Color(0xFFBA1A1A)
             )
         }
