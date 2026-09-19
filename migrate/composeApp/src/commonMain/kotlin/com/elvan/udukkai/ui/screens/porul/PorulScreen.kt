@@ -7,9 +7,12 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import com.elvan.udukkai.ui.components.shell.PorulCardSkeleton
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -89,119 +92,156 @@ fun PorulScreen(
     val items = PorulRepository.filteredItems
     val ff = LocalAppFontFamily.current
 
-    if (items.isEmpty()) {
+    val pageSize = 10
+    var visibleItemCount by remember { mutableIntStateOf(pageSize) }
+
+    LaunchedEffect(mode) {
+        visibleItemCount = pageSize
+    }
+
+    val currentSearchQuery = PorulRepository.searchQuery
+    var isSearchLoading by remember { mutableStateOf(false) }
+
+    LaunchedEffect(currentSearchQuery) {
+        visibleItemCount = pageSize
+        if (currentSearchQuery.isNotBlank()) {
+            isSearchLoading = true
+            delay(300)
+            isSearchLoading = false
+        } else {
+            isSearchLoading = false
+        }
+    }
+
+    val displayedItems = remember(items, visibleItemCount) {
+        items.take(visibleItemCount)
+    }
+    val hasMoreItems = items.size > visibleItemCount
+
+    Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
             state = scrollState,
-            modifier = modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
                 start = Dimens.ContentPadding,
                 end = Dimens.ContentPadding,
                 bottom = Dimens.ContentPaddingBottom
-            )
+            ),
+            verticalArrangement = Arrangement.spacedBy(Dimens.ItemSpacing)
         ) {
             item(key = "top_spacer") {
                 Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
             }
 
-            item(key = "empty_state") {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 56.dp, bottom = 32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Box(
+            if (isSearchLoading) {
+                items(3) {
+                    PorulCardSkeleton()
+                }
+            } else if (items.isEmpty()) {
+                item(key = "empty_state") {
+                    Column(
                         modifier = Modifier
-                            .size(76.dp)
-                            .clip(CircleShape)
-                            .background(colors.iconBg),
-                        contentAlignment = Alignment.Center
+                            .fillMaxWidth()
+                            .padding(top = 56.dp, bottom = 32.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        Icon(
-                            imageVector = MaterialSymbols.Rounded.Inventory2,
-                            contentDescription = null,
-                            modifier = Modifier.size(36.dp),
-                            tint = colors.textSecondary.copy(alpha = 0.6f)
+                        Box(
+                            modifier = Modifier
+                                .size(76.dp)
+                                .clip(CircleShape)
+                                .background(colors.iconBg),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = MaterialSymbols.Rounded.Inventory2,
+                                contentDescription = null,
+                                modifier = Modifier.size(36.dp),
+                                tint = colors.textSecondary.copy(alpha = 0.6f)
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Text(
+                            text = K.noProductsYet.tr().preventBrokenLigatures(),
+                            style = TextStyle(
+                                fontFamily = ff,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.textPrimary
+                            )
+                        )
+
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        Text(
+                            text = K.addFirstProduct.tr().preventBrokenLigatures(),
+                            style = TextStyle(
+                                fontFamily = ff,
+                                fontSize = 14.sp,
+                                color = colors.textSecondary
+                            )
                         )
                     }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = K.noProductsYet.tr().preventBrokenLigatures(),
-                        style = TextStyle(
-                            fontFamily = ff,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = colors.textPrimary
-                        )
-                    )
-
-                    Spacer(modifier = Modifier.height(6.dp))
-
-                    Text(
-                        text = K.addFirstProduct.tr().preventBrokenLigatures(),
-                        style = TextStyle(
-                            fontFamily = ff,
-                            fontSize = 14.sp,
-                            color = colors.textSecondary
-                        )
-                    )
                 }
-            }
-        }
-    } else {
-        Box(modifier = modifier.fillMaxSize()) {
-            LazyColumn(
-                state = scrollState,
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(
-                    start = Dimens.ContentPadding,
-                    end = Dimens.ContentPadding,
-                    bottom = Dimens.ContentPaddingBottom
-                ),
-                verticalArrangement = Arrangement.spacedBy(Dimens.ItemSpacing)
-            ) {
-            item(key = "top_spacer") {
-                Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
-            }
-
-            itemsIndexed(items, key = { _, item -> item.id }) { index, item ->
-                val isSelected = selectedItemIds.contains(item.id)
-                val onCardClick: () -> Unit = {
-                    if (isSelectionMode) {
-                        onToggleSelect?.invoke(item.id)
+            } else {
+                itemsIndexed(displayedItems, key = { _, item -> item.id }) { index, item ->
+                    val isSelected = selectedItemIds.contains(item.id)
+                    val onCardClick: () -> Unit = {
+                        if (isSelectionMode) {
+                            onToggleSelect?.invoke(item.id)
+                        } else {
+                            onItemClick(item)
+                        }
+                    }
+                    val onCardLongClick: () -> Unit = {
+                        onItemLongClick?.invoke(item.id)
+                    }
+                    if (mode == AppMode.KOOLI) {
+                        CooliePorulCard(
+                            index = index,
+                            porul = item,
+                            onClick = onCardClick,
+                            onLongClick = onCardLongClick,
+                            colors = colors,
+                            isSelectionMode = isSelectionMode,
+                            isSelected = isSelected
+                        )
                     } else {
-                        onItemClick(item)
+                        SilkPorulCard(
+                            index = index,
+                            porul = item,
+                            onClick = onCardClick,
+                            onLongClick = onCardLongClick,
+                            colors = colors,
+                            isSelectionMode = isSelectionMode,
+                            isSelected = isSelected
+                        )
                     }
                 }
-                val onCardLongClick: () -> Unit = {
-                    onItemLongClick?.invoke(item.id)
-                }
-                if (mode == AppMode.KOOLI) {
-                    CooliePorulCard(
-                        index = index,
-                        porul = item,
-                        onClick = onCardClick,
-                        onLongClick = onCardLongClick,
-                        colors = colors,
-                        isSelectionMode = isSelectionMode,
-                        isSelected = isSelected
-                    )
-                } else {
-                    SilkPorulCard(
-                        index = index,
-                        porul = item,
-                        onClick = onCardClick,
-                        onLongClick = onCardLongClick,
-                        colors = colors,
-                        isSelectionMode = isSelectionMode,
-                        isSelected = isSelected
-                    )
+
+                if (hasMoreItems) {
+                    item(key = "porul_bottom_loader") {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 20.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(26.dp),
+                                strokeWidth = 2.5.dp,
+                                color = colors.accent
+                            )
+                        }
+                        LaunchedEffect(Unit) {
+                            delay(350)
+                            visibleItemCount += pageSize
+                        }
+                    }
                 }
             }
-        }
         }
     }
 }

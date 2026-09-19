@@ -12,8 +12,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import com.elvan.udukkai.core.utils.DateUtils
+import com.elvan.udukkai.ui.components.shell.UruvakkuCardSkeleton
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -130,12 +133,49 @@ fun UruvakkuScreen(
     val isBilingual = mode == AppMode.KOOLI || activeProfile.iruMozhi
     val primaryLang = activeProfile.mudhanMozhi.ifEmpty { "ta" }
 
-    val invoiceGroups = remember(invoices) {
-        DateGroupUtils.groupItemsByDate(invoices) { it.pattiyalNaal }
+    val pageSize = 10
+    var visibleInvoiceCount by remember { mutableIntStateOf(pageSize) }
+    var visibleReceiptCount by remember { mutableIntStateOf(pageSize) }
+
+    // Reset pagination when mode, company profile filter, or date filter changes
+    LaunchedEffect(mode, safeProfileIndex, PattiyalRepository.startDateFilter, PattiyalRepository.endDateFilter) {
+        visibleInvoiceCount = pageSize
+    }
+    LaunchedEffect(mode, safeProfileIndex, PatrugalRepository.startDateFilter, PatrugalRepository.endDateFilter) {
+        visibleReceiptCount = pageSize
     }
 
-    val receiptGroups = remember(receipts) {
-        DateGroupUtils.groupItemsByDate(receipts) { it.patruNaal }
+    val currentSearchQuery = if (selectedSegment == 0) PattiyalRepository.searchQuery else PatrugalRepository.searchQuery
+    var isSearchLoading by remember { mutableStateOf(false) }
+
+    LaunchedEffect(currentSearchQuery) {
+        visibleInvoiceCount = pageSize
+        visibleReceiptCount = pageSize
+        if (currentSearchQuery.isNotBlank()) {
+            isSearchLoading = true
+            delay(300)
+            isSearchLoading = false
+        } else {
+            isSearchLoading = false
+        }
+    }
+
+    val displayedInvoices = remember(invoices, visibleInvoiceCount) {
+        invoices.take(visibleInvoiceCount)
+    }
+    val hasMoreInvoices = invoices.size > visibleInvoiceCount
+
+    val displayedReceipts = remember(receipts, visibleReceiptCount) {
+        receipts.take(visibleReceiptCount)
+    }
+    val hasMoreReceipts = receipts.size > visibleReceiptCount
+
+    val invoiceGroups = remember(displayedInvoices) {
+        DateGroupUtils.groupItemsByDate(displayedInvoices) { it.pattiyalNaal }
+    }
+
+    val receiptGroups = remember(displayedReceipts) {
+        DateGroupUtils.groupItemsByDate(displayedReceipts) { it.patruNaal }
     }
 
 
@@ -256,7 +296,17 @@ fun UruvakkuScreen(
                 }
             }
 
-            if (selectedSegment == 0) {
+            if (isSearchLoading) {
+                items(3) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        UruvakkuCardSkeleton()
+                    }
+                }
+            } else if (selectedSegment == 0) {
                 if (invoices.isEmpty()) {
                     item(key = "empty_invoices") {
                         Box(
@@ -343,6 +393,27 @@ fun UruvakkuScreen(
                             }
                         }
                     }
+
+                    if (hasMoreInvoices) {
+                        item(key = "inv_bottom_loader") {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 20.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(26.dp),
+                                    strokeWidth = 2.5.dp,
+                                    color = colors.accent
+                                )
+                            }
+                            LaunchedEffect(Unit) {
+                                delay(350)
+                                visibleInvoiceCount += pageSize
+                            }
+                        }
+                    }
                 }
             } else {
                 if (receipts.isEmpty()) {
@@ -416,6 +487,27 @@ fun UruvakkuScreen(
                                     onClick = onCardClick,
                                     onLongClick = onCardLongClick
                                 )
+                            }
+                        }
+                    }
+
+                    if (hasMoreReceipts) {
+                        item(key = "rec_bottom_loader") {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 20.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(26.dp),
+                                    strokeWidth = 2.5.dp,
+                                    color = colors.accent
+                                )
+                            }
+                            LaunchedEffect(Unit) {
+                                delay(350)
+                                visibleReceiptCount += pageSize
                             }
                         }
                     }

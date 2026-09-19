@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.sp
 import com.elvan.udukkai.core.mode.AppMode
 import com.elvan.udukkai.core.mode.LocalAppMode
 import com.elvan.udukkai.core.mode.ModeManager
-import com.elvan.udukkai.data.settings.NiruvanaTharavugalRepository
 import com.elvan.udukkai.localization.K
 import com.elvan.udukkai.localization.tr
 import com.elvan.udukkai.theme.Dimens
@@ -48,12 +47,7 @@ fun VanakkamPill(
     val ff = LocalAppFontFamily.current
     val isDark = colors.isDark
 
-    val profile = NiruvanaTharavugalRepository.getProfile(mode)
-    val subtitleText = profile.kurumPeyar.ifEmpty {
-        profile.niruvanathinPeyar.values.firstOrNull().orEmpty()
-    }.ifEmpty {
-        if (mode == AppMode.KOOLI) K.udukkaiCoolie.tr() else K.udukkaiSilk.tr()
-    }
+    val subtitleText = mode.displayName()
 
     val pillShape = RoundedCornerShape(999.dp)
 
