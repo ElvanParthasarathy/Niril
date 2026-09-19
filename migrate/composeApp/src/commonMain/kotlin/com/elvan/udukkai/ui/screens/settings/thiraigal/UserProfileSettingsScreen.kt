@@ -139,7 +139,9 @@ fun UserProfileSettingsScreen(
                     DateUtils.parseToEpochMillis(tempVal) ?: DateUtils.parseToEpochMillis("15/08/1990")
                 }
                 val datePickerState = rememberDatePickerState(
-                    initialSelectedDateMillis = initialMillis
+                    initialSelectedDateMillis = initialMillis,
+                    yearRange = DatePickerDefaults.YearRange,
+                    selectableDates = DatePickerDefaults.AllDates
                 )
 
                 ElvanSettingsAnimatedExpand(
@@ -243,25 +245,91 @@ fun UserProfileSettingsScreen(
                                         containerColor = colors.surface
                                     )
                                 ) {
-                                    DatePicker(
-                                        state = datePickerState,
-                                        colors = DatePickerDefaults.colors(
-                                            containerColor = colors.surface,
-                                            titleContentColor = colors.textPrimary,
-                                            headlineContentColor = colors.textPrimary,
-                                            weekdayContentColor = colors.textPrimary.copy(alpha = 0.6f),
-                                            subheadContentColor = colors.textPrimary.copy(alpha = 0.8f),
-                                            yearContentColor = colors.textPrimary,
-                                            currentYearContentColor = colors.accent,
-                                            selectedYearContentColor = colors.background,
-                                            selectedYearContainerColor = colors.accent,
-                                            dayContentColor = colors.textPrimary,
-                                            selectedDayContentColor = colors.background,
-                                            selectedDayContainerColor = colors.accent,
-                                            todayContentColor = colors.accent,
-                                            todayDateBorderColor = colors.accent
+                                    MaterialTheme(
+                                        typography = MaterialTheme.typography.copy(
+                                            headlineLarge = TextStyle(
+                                                fontFamily = ff,
+                                                fontSize = 18.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                lineHeight = 24.sp
+                                            ),
+                                            headlineMedium = TextStyle(
+                                                fontFamily = ff,
+                                                fontSize = 18.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                lineHeight = 24.sp
+                                            ),
+                                            headlineSmall = TextStyle(
+                                                fontFamily = ff,
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                lineHeight = 22.sp
+                                            ),
+                                            titleLarge = TextStyle(
+                                                fontFamily = ff,
+                                                fontSize = 15.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                lineHeight = 20.sp
+                                            ),
+                                            titleMedium = TextStyle(
+                                                fontFamily = ff,
+                                                fontSize = 14.sp,
+                                                fontWeight = FontWeight.SemiBold,
+                                                lineHeight = 20.sp
+                                            ),
+                                            titleSmall = TextStyle(
+                                                fontFamily = ff,
+                                                fontSize = 13.sp,
+                                                fontWeight = FontWeight.Medium,
+                                                lineHeight = 18.sp
+                                            ),
+                                            bodyLarge = TextStyle(
+                                                fontFamily = ff,
+                                                fontSize = 14.sp,
+                                                lineHeight = 20.sp
+                                            ),
+                                            bodyMedium = TextStyle(
+                                                fontFamily = ff,
+                                                fontSize = 13.sp,
+                                                lineHeight = 18.sp
+                                            ),
+                                            labelLarge = TextStyle(
+                                                fontFamily = ff,
+                                                fontSize = 13.sp,
+                                                fontWeight = FontWeight.Medium,
+                                                lineHeight = 18.sp
+                                            )
                                         )
-                                    )
+                                    ) {
+                                        DatePicker(
+                                            state = datePickerState,
+                                            title = null,
+                                            headline = {
+                                                DatePickerDefaults.DatePickerHeadline(
+                                                    selectedDateMillis = datePickerState.selectedDateMillis,
+                                                    displayMode = datePickerState.displayMode,
+                                                    dateFormatter = remember { DatePickerDefaults.dateFormatter() },
+                                                    modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp, bottom = 8.dp)
+                                                )
+                                            },
+                                            colors = DatePickerDefaults.colors(
+                                                containerColor = colors.surface,
+                                                titleContentColor = colors.textPrimary,
+                                                headlineContentColor = colors.textPrimary,
+                                                weekdayContentColor = colors.textPrimary.copy(alpha = 0.6f),
+                                                subheadContentColor = colors.textPrimary.copy(alpha = 0.8f),
+                                                yearContentColor = colors.textPrimary,
+                                                currentYearContentColor = colors.accent,
+                                                selectedYearContentColor = colors.background,
+                                                selectedYearContainerColor = colors.accent,
+                                                dayContentColor = colors.textPrimary,
+                                                selectedDayContentColor = colors.background,
+                                                selectedDayContainerColor = colors.accent,
+                                                todayContentColor = colors.accent,
+                                                todayDateBorderColor = colors.accent
+                                            )
+                                        )
+                                    }
                                 }
                             }
                         }

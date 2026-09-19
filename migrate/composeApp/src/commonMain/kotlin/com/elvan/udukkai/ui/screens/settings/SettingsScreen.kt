@@ -22,7 +22,6 @@ import com.elvan.udukkai.localization.tr
 import com.elvan.udukkai.theme.Transitions
 import com.elvan.udukkai.theme.rememberShellColors
 import com.elvan.udukkai.ui.components.shell.ElvanActionSheet
-import com.elvan.udukkai.ui.components.shell.ElvanSnackbarHost
 import com.elvan.udukkai.ui.components.shell.ElvanSubShell
 import com.elvan.udukkai.ui.navigation.MaterialSymbols
 import com.elvan.udukkai.ui.screens.settings.thiraigal.*
@@ -169,7 +168,5 @@ fun SettingsScreen(
             colors = colors
         )
     }
-
-    ElvanSnackbarHost(colors = colors)
     }
 }

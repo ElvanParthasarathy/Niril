@@ -178,6 +178,13 @@ fun HomeScreen() {
     ) {
         val isWideScreen = isDesktop && maxWidth >= 768.dp
 
+        LaunchedEffect(activeSubpage, isWideScreen) {
+            ElvanSnackbar.isBottomBarVisible = (activeSubpage == null && !isWideScreen)
+        }
+        DisposableEffect(Unit) {
+            onDispose { ElvanSnackbar.isBottomBarVisible = false }
+        }
+
         Row(modifier = Modifier.fillMaxSize()) {
             if (isWideScreen) {
                 ElvanKaniniPakkapattai(

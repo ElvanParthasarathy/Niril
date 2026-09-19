@@ -26,6 +26,7 @@ import com.elvan.udukkai.theme.rememberShellColors
 import com.elvan.udukkai.ui.components.dev.ElvanUruvakkunarMenu
 import com.elvan.udukkai.ui.components.shell.ElvanBottomSheetController
 import com.elvan.udukkai.ui.components.shell.ElvanBottomSheetHost
+import com.elvan.udukkai.ui.components.shell.ElvanSnackbarHost
 import com.elvan.udukkai.ui.components.shell.LocalElvanBottomSheetController
 import com.elvan.udukkai.ui.screens.home.HomeScreen
 import com.elvan.udukkai.ui.screens.mode.ModeSelectorContent
@@ -179,6 +180,8 @@ fun App() {
                         }
 
                         ElvanBottomSheetHost(bottomSheetController)
+
+                        ElvanSnackbarHost(colors = colors)
 
                         Box(modifier = Modifier.fillMaxSize().zIndex(999f)) {
                             ElvanUruvakkunarMenu()

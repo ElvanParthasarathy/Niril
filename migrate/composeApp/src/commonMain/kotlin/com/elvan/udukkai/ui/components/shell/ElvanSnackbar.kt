@@ -28,6 +28,8 @@ object ElvanSnackbar {
 
     private var messageId by mutableStateOf(0L)
 
+    var isBottomBarVisible by mutableStateOf(false)
+
     fun show(message: String) {
         currentMessage = message
         messageId++
@@ -65,14 +67,19 @@ fun ElvanSnackbarHost(
     }
 
     val navBarsPadding = com.elvan.udukkai.core.platform.getNavBarBottomPadding()
-    // When the system 3-button navigation bar is present (>= 36.dp, typically 48.dp),
-    // elevate the snackbar cleanly above the navbar with comfortable breathing room.
-    // For others (gesture navigation, desktop, etc.), maintain the normal 32.dp offset.
-    val isThreeButtonNav = navBarsPadding >= 36.dp
-    val effectiveBottomPadding = if (isThreeButtonNav) {
-        maxOf(bottomPadding.dp, navBarsPadding + 20.dp)
+    // When the floating app BottomNavBar is present (HomeScreen):
+    // BottomNavBar height (56.dp) + bottom margin (16.dp) + breathing room (16.dp) = 88.dp above system nav bar.
+    // When BottomNavBar is not present (subpages, settings, editors):
+    // Position cleanly above system navigation bar with standard breathing room.
+    val effectiveBottomPadding = if (ElvanSnackbar.isBottomBarVisible) {
+        navBarsPadding + 88.dp
     } else {
-        bottomPadding.dp
+        val isThreeButtonNav = navBarsPadding >= 36.dp
+        if (isThreeButtonNav) {
+            maxOf(bottomPadding.dp, navBarsPadding + 20.dp)
+        } else {
+            bottomPadding.dp
+        }
     }
 
     Box(

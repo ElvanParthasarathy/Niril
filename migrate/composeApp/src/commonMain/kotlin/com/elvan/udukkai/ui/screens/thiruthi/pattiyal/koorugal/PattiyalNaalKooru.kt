@@ -83,7 +83,11 @@ fun PattiyalNaalKooru(
     }
 
     if (isPickerOpen) {
-        val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedDate)
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = selectedDate,
+            yearRange = DatePickerDefaults.YearRange,
+            selectableDates = DatePickerDefaults.AllDates
+        )
         val dialogBg = if (isDark) Color(0xFF1E1E1E) else Color.White
 
         DatePickerDialog(
@@ -113,14 +117,80 @@ fun PattiyalNaalKooru(
                 containerColor = dialogBg
             )
         ) {
-            DatePicker(
-                state = datePickerState,
-                colors = DatePickerDefaults.colors(
-                    containerColor = dialogBg,
-                    selectedDayContainerColor = colors.accent,
-                    todayDateBorderColor = colors.accent
+            MaterialTheme(
+                typography = MaterialTheme.typography.copy(
+                    headlineLarge = TextStyle(
+                        fontFamily = ff,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        lineHeight = 24.sp
+                    ),
+                    headlineMedium = TextStyle(
+                        fontFamily = ff,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        lineHeight = 24.sp
+                    ),
+                    headlineSmall = TextStyle(
+                        fontFamily = ff,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        lineHeight = 22.sp
+                    ),
+                    titleLarge = TextStyle(
+                        fontFamily = ff,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        lineHeight = 20.sp
+                    ),
+                    titleMedium = TextStyle(
+                        fontFamily = ff,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        lineHeight = 20.sp
+                    ),
+                    titleSmall = TextStyle(
+                        fontFamily = ff,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        lineHeight = 18.sp
+                    ),
+                    bodyLarge = TextStyle(
+                        fontFamily = ff,
+                        fontSize = 14.sp,
+                        lineHeight = 20.sp
+                    ),
+                    bodyMedium = TextStyle(
+                        fontFamily = ff,
+                        fontSize = 13.sp,
+                        lineHeight = 18.sp
+                    ),
+                    labelLarge = TextStyle(
+                        fontFamily = ff,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        lineHeight = 18.sp
+                    )
                 )
-            )
+            ) {
+                DatePicker(
+                    state = datePickerState,
+                    title = null,
+                    headline = {
+                        DatePickerDefaults.DatePickerHeadline(
+                            selectedDateMillis = datePickerState.selectedDateMillis,
+                            displayMode = datePickerState.displayMode,
+                            dateFormatter = remember { DatePickerDefaults.dateFormatter() },
+                            modifier = Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp, bottom = 8.dp)
+                        )
+                    },
+                    colors = DatePickerDefaults.colors(
+                        containerColor = dialogBg,
+                        selectedDayContainerColor = colors.accent,
+                        todayDateBorderColor = colors.accent
+                    )
+                )
+            }
         }
     }
 }

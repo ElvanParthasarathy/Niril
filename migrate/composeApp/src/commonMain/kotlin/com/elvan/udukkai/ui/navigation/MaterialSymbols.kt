@@ -65,12 +65,8 @@ object MaterialSymbols {
             symbol("ArrowBack", "M390.13,480L680.3,770.17Q696.74,786.61 696.36,809Q695.98,831.39 679.3,848.07Q662.87,864.5 640.48,864.5Q618.09,864.5 601.65,848.07L297.24,544.65Q283.57,530.98 276.85,514.07Q270.13,497.15 270.13,480Q270.13,462.85 276.85,445.93Q283.57,429.02 297.24,415.35L601.65,111.17Q618.09,94.74 640.86,95Q663.63,95.26 680.3,111.93Q696.74,128.37 696.74,150.88Q696.74,173.39 680.3,189.83L390.13,480Z")
         }
         val ArrowForward: ImageVector get() = LibSymbols.Rounded.Arrow_forward
-        val Visibility: ImageVector by lazy {
-            symbol("Visibility", "M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-45 0-76.5-31.5T372-500q0-45 31.5-76.5T480-608q45 0 76.5 31.5T588-500q0 45-31.5 76.5T480-392Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Z")
-        }
-        val VisibilityOff: ImageVector by lazy {
-            symbol("VisibilityOff", "m644-428-58-58q9-47-27-88t-87-32l-58-58q17-5 35-7.5t35-2.5q75 0 127.5 52.5T672-500q0 17-2.5 35t-7.5 35Zm128 126-58-56q38-29 67.5-63.5T832-500q-50-101-143.5-160.5T480-720q-29 0-57 4t-55 12l-62-62q41-17 84-25.5t88-8.5q146 0 266 81.5T920-500q-24 59-62.5 110.5T772-302Zm20 382L636-76l-46-46q-26 12-53.5 17t-56.5 5q-146 0-266-81.5T40-500q33-76 86-138t120-102l-98-98 56-56 648 648-54 54Z")
-        }
+        val Visibility: ImageVector get() = LibSymbols.Rounded.Visibility
+        val VisibilityOff: ImageVector get() = LibSymbols.Rounded.Visibility_off
         val Close: ImageVector get() = LibSymbols.Rounded.Close
         val Cancel: ImageVector get() = LibSymbols.RoundedFilled.Cancel
         val Check: ImageVector get() = LibSymbols.Rounded.Check
@@ -93,35 +89,21 @@ object MaterialSymbols {
         val AddCircle: ImageVector get() = LibSymbols.Rounded.Add_circle
         val CheckCircleFill: ImageVector get() = LibSymbols.RoundedFilled.Check_circle
         val RadioButtonUnchecked: ImageVector get() = LibSymbols.Rounded.Radio_button_unchecked
-        val CheckBox: ImageVector by lazy {
-            symbol("CheckBox", "M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm214-142 284-284-56-56-228 228-114-114-56 56 170 170Z")
-        }
-        val CheckBoxOutlineBlank: ImageVector by lazy {
-            symbol("CheckBoxOutlineBlank", "M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Z")
-        }
-        val Restore: ImageVector by lazy {
-            symbol("Restore", "M480-80q-75 0-140.5-28.5t-114-77.5q-48.5-49-77-114.5T120-440h80q0 117 81.5 198.5T480-160q117 0 198.5-81.5T760-440q0-117-81.5-198.5T480-720h-6l62 62-56 58-160-160 160-160 56 58-62 62h6q75 0 140.5 28.5t114 77.5q48.5 49 77 114.5T840-440q0 75-28.5 140.5t-77.5 114q-49 48.5-114.5 77T480-80Z")
-        }
+        val CheckBox: ImageVector get() = LibSymbols.Rounded.Check_box
+        val CheckBoxOutlineBlank: ImageVector get() = LibSymbols.Rounded.Check_box_outline_blank
+        val Restore: ImageVector get() = LibSymbols.Rounded.Settings_backup_restore
         val ContentCopy: ImageVector get() = LibSymbols.Rounded.Content_copy
         val ContentPaste: ImageVector get() = LibSymbols.Rounded.Content_paste
 
         // ── Settings Categories & Badges (Filled / Solid as per old Flutter design) ──
         val BusinessCenter: ImageVector get() = LibSymbols.RoundedFilled.Business_center
         val Apartment: ImageVector get() = LibSymbols.RoundedFilled.Business_center
-        val CurrencyRupee: ImageVector by lazy {
-            symbol("CurrencyRupee", "M280-160v-80h164q38-16 62-49t26-79H280v-80h252q-11-46-45.5-73.5T402-550H280v-80h380v80h-94q25 18 41 45.5t21 58.5H680v80h-48q-4 69-45 119.5T478-240h-34v80H280Z")
-        }
+        val CurrencyRupee: ImageVector get() = LibSymbols.RoundedFilled.Currency_rupee
         val LocationOn: ImageVector get() = LibSymbols.RoundedFilled.Location_on
         val CreditCard: ImageVector get() = LibSymbols.RoundedFilled.Credit_card
-        val Payments: ImageVector by lazy {
-            symbol("Payments", "M200-280q-33 0-56.5-23.5T120-360v-400q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v400q0 33-23.5 56.5T760-280H200Zm0-80h560v-400H200v400Zm-80 160q-33 0-56.5-23.5T40-280v-440h80v440h600v80H120Zm360-200q33 0 56.5-23.5T560-480q0-33-23.5-56.5T480-560q-33 0-56.5 23.5T400-480q0 33 23.5 56.5T480-400Z")
-        }
-        val QrCode: ImageVector by lazy {
-            symbol("QrCode", "M480-80q-17 0-28.5-11.5T440-120v-80h-80q-17 0-28.5-11.5T320-240v-480q0-17 11.5-28.5T360-760h240q17 0 28.5 11.5T640-720v480q0 17-11.5 28.5T600-200h-80v80q0 17-11.5 28.5T480-80Zm-80-200h160v-400H400v400Z")
-        }
-        val AccountBalance: ImageVector by lazy {
-            symbol("AccountBalance", "M200-200v-80h560v80H200Zm0-160v-240h80v240h-80Zm160 0v-240h80v240h-80Zm160 0v-240h80v240h-80Zm160 0v-240h80v240h-80ZM120-680v-80l360-180 360 180v80H120Z")
-        }
+        val Payments: ImageVector get() = LibSymbols.RoundedFilled.Payments
+        val QrCode: ImageVector get() = LibSymbols.RoundedFilled.Qr_code
+        val AccountBalance: ImageVector get() = LibSymbols.RoundedFilled.Account_balance
         val Person: ImageVector get() = LibSymbols.RoundedFilled.Person
         val LightMode: ImageVector get() = LibSymbols.RoundedFilled.Light_mode
         val DarkMode: ImageVector get() = LibSymbols.RoundedFilled.Dark_mode
@@ -146,18 +128,10 @@ object MaterialSymbols {
         val BrokenImage: ImageVector get() = LibSymbols.Rounded.Broken_image
         val PhotoLibrary: ImageVector get() = LibSymbols.Rounded.Photo_library
         val FolderOpen: ImageVector get() = LibSymbols.Rounded.Folder_open
-        val Call: ImageVector by lazy {
-            symbol("Call", "M798-120q-125 0-247-54.5T329-329Q229-429 174.5-551T120-798q0-18 12-30t30-12h162q14 0 25 9.5t13 22.5l26 140q2 16-1 27t-11 19l-97 98q20 37 47 71.5t57 62.5q31 31 64.5 57.5T490-298l96-98q10-10 23-14.5t27-1.5l138 28q14 4 23.5 14.5T808-346v184q0 18-12 30t-30 12Z")
-        }
-        val Percent: ImageVector by lazy {
-            symbol("Percent", "M280-560q-33 0-56.5-23.5T200-640q0-33 23.5-56.5T280-760q33 0 56.5 23.5T360-640q0 33-23.5 56.5T280-560Zm400 360q-33 0-56.5-23.5T600-280q0-33 23.5-56.5T680-400q33 0 56.5 23.5T760-320q0 33-23.5 56.5T680-200ZM274-200l-54-54 506-506 54 54-506 506Z")
-        }
-        val Straighten: ImageVector by lazy {
-            symbol("Straighten", "M120-240v-480h720v480H120Zm80-80h80v-160h80v160h80v-240h80v240h80v-160h80v160h80v-320H200v320Z")
-        }
-        val LocalShipping: ImageVector by lazy {
-            symbol("LocalShipping", "M240-200q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35Zm480 0q-50 0-85-35t-35-85q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35ZM120-440h80v-80H80q-17 0-28.5-11.5T40-560v-200q0-17 11.5-28.5T80-800h560q17 0 28.5 11.5T680-760v80h120l120 160v240h-80q0-83-58.5-141.5T720-480q-83 0-141.5 58.5T520-280H440q0-83-58.5-141.5T240-480q-83 0-141.5 58.5T40-280H0v-160h120Zm480-80v-200H120v200h480Zm80 0h140l-75-100h-65v100Z")
-        }
+        val Call: ImageVector get() = LibSymbols.Rounded.Call
+        val Percent: ImageVector get() = LibSymbols.Rounded.Percent
+        val Straighten: ImageVector get() = LibSymbols.Rounded.Straighten
+        val LocalShipping: ImageVector get() = LibSymbols.Rounded.Local_shipping
     }
 
     /**

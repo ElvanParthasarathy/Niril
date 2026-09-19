@@ -1,5 +1,6 @@
 package com.elvan.udukkai.core.platform
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.ContextWrapper
 import android.graphics.Color
@@ -16,6 +17,9 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.window.DialogWindowProvider
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.core.view.WindowCompat
 
 actual val currentPlatform: PlatformType = PlatformType.ANDROID
@@ -46,15 +50,67 @@ actual fun ConfigureDialogWindow(
         return null
     }
 
+    fun findActivity(): ComponentActivity? {
+        var ctx = view.context
+        while (ctx is ContextWrapper) {
+            if (ctx is ComponentActivity) {
+                return ctx
+            }
+            ctx = ctx.baseContext
+        }
+        return null
+    }
+
+    fun applyActivityNavBar(activity: ComponentActivity, color: Int?) {
+        val window = activity.window
+        if (color != null) {
+            activity.enableEdgeToEdge(
+                statusBarStyle = if (isDark) {
+                    SystemBarStyle.dark(Color.TRANSPARENT)
+                } else {
+                    SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+                },
+                navigationBarStyle = if (isDark) {
+                    SystemBarStyle.dark(color)
+                } else {
+                    SystemBarStyle.light(color, color)
+                }
+            )
+            window.navigationBarColor = color
+        } else {
+            activity.enableEdgeToEdge(
+                statusBarStyle = if (isDark) {
+                    SystemBarStyle.dark(Color.TRANSPARENT)
+                } else {
+                    SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+                },
+                navigationBarStyle = if (isDark) {
+                    SystemBarStyle.dark(Color.TRANSPARENT)
+                } else {
+                    SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+                }
+            )
+            window.navigationBarColor = Color.TRANSPARENT
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.isNavigationBarContrastEnforced = false
+        }
+        val actDecor = window.decorView
+        val actInsetsController = WindowCompat.getInsetsController(window, actDecor)
+        actInsetsController.isAppearanceLightNavigationBars = !isDark
+    }
+
     fun applySystemBars(window: Window) {
         val decorView = window.decorView
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT)
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         if (clearDim) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             window.setDimAmount(0f)
+            window.setWindowAnimations(0)
         }
         val targetNavBarColor = if (navBarColor != null) {
             navBarColor.toArgb()
@@ -105,7 +161,17 @@ actual fun ConfigureDialogWindow(
         view.post {
             findDialogWindow()?.let { applySystemBars(it) }
         }
-        onDispose {}
+        val activity = findActivity()
+        if (navBarColor != null && activity != null) {
+            val argb = navBarColor.toArgb()
+            applyActivityNavBar(activity, argb)
+            view.post { applyActivityNavBar(activity, argb) }
+            view.postDelayed({ applyActivityNavBar(activity, argb) }, 100)
+        }
+        onDispose {
+            // Restore activity shell nav bar to transparent when dialog closes
+            activity?.let { applyActivityNavBar(it, null) }
+        }
     }
 }
 

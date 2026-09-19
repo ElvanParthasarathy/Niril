@@ -1,6 +1,7 @@
 package com.elvan.udukkai.ui.components.shell
 
 import androidx.compose.animation.*
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -39,6 +40,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.elvan.udukkai.core.platform.ConfigureDialogWindow
 import com.elvan.udukkai.core.platform.PlatformType
 import com.elvan.udukkai.core.platform.currentPlatform
+import com.elvan.udukkai.core.platform.getNavBarBottomPadding
 import com.elvan.udukkai.localization.tr
 import com.elvan.udukkai.theme.LocalAppFontFamily
 import com.elvan.udukkai.theme.LocalShellColors
@@ -155,18 +157,25 @@ fun <T> ElvanSelectionBottomSheet(
 
     // Mobile Presentation: Rock-Solid Bottom-Anchored Sheet (Zero Detach, Zero Upward Bounce)
     val coroutineScope = rememberCoroutineScope()
-    var isVisible by remember { mutableStateOf(false) }
+    val density = LocalDensity.current
+    val initialSheetOffsetPx = with(density) { 1000.dp.toPx() }
+    val sheetOffsetY = remember { Animatable(initialSheetOffsetPx) }
     var isClosing by remember { mutableStateOf(false) }
     var dragOffsetY by remember { mutableFloatStateOf(0f) }
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
-    val density = LocalDensity.current
     val imeBottomPx = WindowInsets.ime.getBottom(density)
     val isKeyboardOpen = imeBottomPx > 0
 
     LaunchedEffect(Unit) {
-        isVisible = true
+        sheetOffsetY.animateTo(
+            targetValue = 0f,
+            animationSpec = tween(
+                durationMillis = 300,
+                easing = CubicBezierEasing(0.05f, 0.7f, 0.1f, 1.0f)
+            )
+        )
     }
 
     fun dismissSheet() {
@@ -174,9 +183,17 @@ fun <T> ElvanSelectionBottomSheet(
         keyboardController?.hide()
         focusManager.clearFocus()
         isClosing = true
-        isVisible = false
         coroutineScope.launch {
-            delay(220)
+            val currentTotal = sheetOffsetY.value + dragOffsetY
+            sheetOffsetY.snapTo(currentTotal)
+            dragOffsetY = 0f
+            sheetOffsetY.animateTo(
+                targetValue = initialSheetOffsetPx,
+                animationSpec = tween(
+                    durationMillis = 240,
+                    easing = CubicBezierEasing(0.3f, 0.0f, 0.8f, 0.15f)
+                )
+            )
             onDismissRequest()
         }
     }
@@ -192,6 +209,19 @@ fun <T> ElvanSelectionBottomSheet(
         }
         val target = dragOffsetY + delta
         dragOffsetY = target.coerceAtLeast(0f)
+    }
+
+    fun snapBackDrag() {
+        if (dragOffsetY > 0f) {
+            coroutineScope.launch {
+                androidx.compose.animation.core.Animatable(dragOffsetY).animateTo(
+                    targetValue = 0f,
+                    animationSpec = tween(160, easing = CubicBezierEasing(0.2f, 0f, 0f, 1f))
+                ) {
+                    dragOffsetY = value
+                }
+            }
+        }
     }
 
     val downwardScrollConnection = remember(isKeyboardOpen) {
@@ -232,7 +262,7 @@ fun <T> ElvanSelectionBottomSheet(
                     dismissSheet()
                     return available
                 } else if (dragOffsetY > 0f) {
-                    dragOffsetY = 0f
+                    snapBackDrag()
                     return available
                 }
                 return Velocity.Zero
@@ -248,19 +278,20 @@ fun <T> ElvanSelectionBottomSheet(
             dismissOnClickOutside = true
         )
     ) {
-        ConfigureDialogWindow(isDark = isDark, navBarColor = sheetBg)
+        ConfigureDialogWindow(isDark = isDark, clearDim = true, navBarColor = sheetBg)
 
         // Scrim background with smooth fade
         val scrimAlpha by animateFloatAsState(
-            targetValue = if (isVisible && !isClosing) 0.5f else 0.0f,
-            animationSpec = tween(durationMillis = 200),
+            targetValue = if (!isClosing) 0.5f else 0.0f,
+            animationSpec = tween(durationMillis = if (!isClosing) 300 else 240),
             label = "scrimAlpha"
         )
+
+        val navBarBottomPadding = getNavBarBottomPadding()
 
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .navigationBarsPadding()
                 .imePadding()
                 .background(Color.Black.copy(alpha = scrimAlpha))
                 .clickable(
@@ -271,26 +302,9 @@ fun <T> ElvanSelectionBottomSheet(
                 },
             contentAlignment = Alignment.BottomCenter
         ) {
-            val availableHeight = maxHeight
-            val maxListHeight = (availableHeight - 140.dp).coerceIn(140.dp, 560.dp)
+                val availableHeight = maxHeight
+                val maxListHeight = (availableHeight - 140.dp).coerceIn(140.dp, 560.dp)
 
-            AnimatedVisibility(
-                visible = isVisible,
-                enter = slideInVertically(
-                    initialOffsetY = { fullHeight -> fullHeight },
-                    animationSpec = tween(
-                        durationMillis = 260,
-                        easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f)
-                    )
-                ) + fadeIn(animationSpec = tween(180)),
-                exit = slideOutVertically(
-                    targetOffsetY = { fullHeight -> fullHeight },
-                    animationSpec = tween(
-                        durationMillis = 200,
-                        easing = CubicBezierEasing(0.4f, 0.0f, 1.0f, 1.0f)
-                    )
-                ) + fadeOut(animationSpec = tween(150))
-            ) {
                 Surface(
                     shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
                     color = sheetBg,
@@ -298,7 +312,7 @@ fun <T> ElvanSelectionBottomSheet(
                     shadowElevation = 16.dp,
                     modifier = modifier
                         .fillMaxWidth()
-                        .offset { IntOffset(0, dragOffsetY.roundToInt()) }
+                        .offset { IntOffset(0, (sheetOffsetY.value + dragOffsetY).roundToInt()) }
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null
@@ -310,7 +324,7 @@ fun <T> ElvanSelectionBottomSheet(
                         modifier = Modifier
                             .fillMaxWidth()
                             .nestedScroll(downwardScrollConnection)
-                            .padding(bottom = 16.dp)
+                            .padding(bottom = navBarBottomPadding + 16.dp)
                     ) {
                         // Full Header Draggable Area (Clean Drag Handle only, generous breathing room)
                         Box(
@@ -323,7 +337,7 @@ fun <T> ElvanSelectionBottomSheet(
                                         if (dragOffsetY > 100f || velocity > 800f) {
                                             dismissSheet()
                                         } else {
-                                            dragOffsetY = 0f
+                                            snapBackDrag()
                                         }
                                     }
                                 )
@@ -354,7 +368,7 @@ fun <T> ElvanSelectionBottomSheet(
                                             if (dragOffsetY > 100f || velocity > 800f) {
                                                 dismissSheet()
                                             } else {
-                                                dragOffsetY = 0f
+                                                snapBackDrag()
                                             }
                                         }
                                     )
@@ -383,7 +397,7 @@ fun <T> ElvanSelectionBottomSheet(
                                             if (dragOffsetY > 100f || velocity > 800f) {
                                                 dismissSheet()
                                             } else {
-                                                dragOffsetY = 0f
+                                                snapBackDrag()
                                             }
                                         }
                                     )
@@ -454,8 +468,8 @@ fun <T> ElvanSelectionBottomSheet(
                         }
                     }
                 }
-            }
         }
     }
 }
+
 

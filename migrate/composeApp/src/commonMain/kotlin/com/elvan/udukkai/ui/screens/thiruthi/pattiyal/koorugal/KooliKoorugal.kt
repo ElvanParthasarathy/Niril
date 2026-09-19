@@ -575,7 +575,7 @@ fun KooliMothangalKooru(
             // Subtotal
             KooliTotalsRow(
                 label = K.subtotal.tr(),
-                value = "₹ ${CurrencyUtils.formatInr(totals.adippadaiMothangal)}",
+                value = CurrencyUtils.formatInr(totals.adippadaiMothangal),
                 labelWeight = FontWeight.SemiBold,
                 valueWeight = FontWeight.Bold
             )
@@ -584,7 +584,7 @@ fun KooliMothangalKooru(
             if (ahimsaPattuThogai > 0) {
                 KooliTotalsRow(
                     label = K.ahimsaSilk.tr(),
-                    value = "₹ ${CurrencyUtils.formatInr(ahimsaPattuThogai)}"
+                    value = CurrencyUtils.formatInr(ahimsaPattuThogai)
                 )
             }
 
@@ -592,7 +592,7 @@ fun KooliMothangalKooru(
             if (thabaalThogai > 0) {
                 KooliTotalsRow(
                     label = K.courier.tr(),
-                    value = "₹ ${CurrencyUtils.formatInr(thabaalThogai)}"
+                    value = CurrencyUtils.formatInr(thabaalThogai)
                 )
             }
 
@@ -601,7 +601,7 @@ fun KooliMothangalKooru(
                 if (charge.thogai > 0) {
                     KooliTotalsRow(
                         label = charge.peyar.ifEmpty { K.other.tr() },
-                        value = "₹ ${CurrencyUtils.formatInr(charge.thogai)}"
+                        value = CurrencyUtils.formatInr(charge.thogai)
                     )
                 }
             }
@@ -644,7 +644,7 @@ fun KooliMothangalKooru(
                 )
 
                 Text(
-                    text = "₹ ${CurrencyUtils.formatInr(totals.perumMothangal)}",
+                    text = CurrencyUtils.formatInr(totals.perumMothangal),
                     style = TextStyle(
                         fontFamily = ff,
                         fontSize = 22.sp,
