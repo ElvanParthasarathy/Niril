@@ -319,21 +319,10 @@ fun BottomNavBar(
             Spacer(modifier = Modifier.width(10.dp))
 
             val addInteractionSource = remember { MutableInteractionSource() }
-            val isAddPressed by addInteractionSource.collectIsPressedAsState()
-            val addScale by animateFloatAsState(
-                targetValue = if (isAddPressed) 0.92f else 1.0f,
-                animationSpec = tween(120, easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f)),
-                label = "addScale"
-            )
 
             Box(
                 modifier = Modifier
                     .size(56.dp)
-                    .graphicsLayer {
-                        scaleX = addScale
-                        scaleY = addScale
-                        clip = false
-                    }
                     .cssShadow(color = Color.Black, alpha = 0.05f, blurRadius = 16.dp, offsetY = 4.dp)
                     .background(
                         color = colors.floatingBg.copy(alpha = 0.88f),
@@ -347,7 +336,7 @@ fun BottomNavBar(
                     .clip(CircleShape)
                     .clickable(
                         interactionSource = addInteractionSource,
-                        indication = null,
+                        indication = ripple(bounded = true, radius = 28.dp),
                         onClick = onAddClick
                     ),
                 contentAlignment = Alignment.Center
