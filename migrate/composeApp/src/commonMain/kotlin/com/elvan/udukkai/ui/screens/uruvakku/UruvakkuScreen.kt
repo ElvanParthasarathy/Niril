@@ -18,6 +18,7 @@ import com.elvan.udukkai.core.utils.DateUtils
 import com.elvan.udukkai.ui.components.shell.UruvakkuCardSkeleton
 import kotlinx.coroutines.delay
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -66,6 +67,8 @@ fun UruvakkuScreen(
     val colors = rememberShellColors()
     val isDark = colors.isDark
     val ff = LocalAppFontFamily.current
+    val uiLang = LocalAppLanguage.current
+    val isTa = uiLang.lowercase().startsWith("ta")
 
     val profiles = NiruvanaTharavugalRepository.getAllProfiles(mode)
 
@@ -245,11 +248,29 @@ fun UruvakkuScreen(
                 item(key = "active_date_filter_banner") {
                     val startMillis = if (selectedSegment == 0) PattiyalRepository.startDateFilter else PatrugalRepository.startDateFilter
                     val endMillis = if (selectedSegment == 0) PattiyalRepository.endDateFilter else PatrugalRepository.endDateFilter
-                    val filterText = when {
-                        startMillis != null && endMillis != null -> "${DateUtils.formatDate(startMillis)} - ${DateUtils.formatDate(endMillis)}"
-                        startMillis != null -> ">= ${DateUtils.formatDate(startMillis)}"
-                        endMillis != null -> "<= ${DateUtils.formatDate(endMillis)}"
-                        else -> ""
+                    val filterText = remember(startMillis, endMillis, isTa) {
+                        if (startMillis == null && endMillis == null) {
+                            ""
+                        } else if (startMillis != null && endMillis != null) {
+                            val startKey = DateGroupUtils.getDayKey(startMillis)
+                            val endKey = DateGroupUtils.getDayKey(endMillis)
+                            if (startKey == endKey) {
+                                val now = System.currentTimeMillis()
+                                val todayKey = DateGroupUtils.getDayKey(now)
+                                val yesterdayKey = DateGroupUtils.getDayKey(now - 86400000L)
+                                when (startKey) {
+                                    todayKey -> if (isTa) "இன்று" else "Today"
+                                    yesterdayKey -> if (isTa) "நேற்று" else "Yesterday"
+                                    else -> DateUtils.formatDate(startMillis)
+                                }
+                            } else {
+                                "${DateUtils.formatDate(startMillis)} - ${DateUtils.formatDate(endMillis)}"
+                            }
+                        } else if (startMillis != null) {
+                            ">= ${DateUtils.formatDate(startMillis)}"
+                        } else {
+                            "<= ${DateUtils.formatDate(endMillis!!)}"
+                        }
                     }
                     Box(
                         modifier = Modifier
@@ -258,12 +279,13 @@ fun UruvakkuScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         Surface(
-                            shape = CircleShape,
-                            color = colors.accent.copy(alpha = 0.12f),
-                            modifier = Modifier.clickable {
+                            onClick = {
                                 PattiyalRepository.clearDateFilter()
                                 PatrugalRepository.clearDateFilter()
-                            }
+                            },
+                            shape = CircleShape,
+                            color = colors.accent.copy(alpha = 0.12f),
+                            modifier = Modifier.clip(CircleShape)
                         ) {
                             Row(
                                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),

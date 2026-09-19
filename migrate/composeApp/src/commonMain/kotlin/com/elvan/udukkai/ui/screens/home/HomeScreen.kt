@@ -342,23 +342,12 @@ fun HomeScreen() {
                                 ElvanTopBarIconButton(
                                     onClick = { showDateFilterSheet = true }
                                 ) {
-                                    Box(contentAlignment = Alignment.Center) {
-                                        Icon(
-                                            imageVector = MaterialSymbols.Rounded.FilterList,
-                                            contentDescription = "Filter",
-                                            tint = if (isFilterActive) colors.accent else colors.textPrimary,
-                                            modifier = Modifier.size(22.dp)
-                                        )
-                                        if (isFilterActive) {
-                                            Box(
-                                                modifier = Modifier
-                                                    .align(Alignment.TopEnd)
-                                                    .size(6.dp)
-                                                    .clip(CircleShape)
-                                                    .background(colors.accent)
-                                            )
-                                        }
-                                    }
+                                    Icon(
+                                        imageVector = MaterialSymbols.Rounded.FilterList,
+                                        contentDescription = "Filter",
+                                        tint = if (isFilterActive) colors.accent else colors.textPrimary,
+                                        modifier = Modifier.size(22.dp)
+                                    )
                                 }
                             }
 
