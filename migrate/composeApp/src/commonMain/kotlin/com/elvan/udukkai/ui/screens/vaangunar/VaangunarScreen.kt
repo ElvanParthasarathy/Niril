@@ -138,7 +138,7 @@ fun VaangunarScreen(
             }
 
             if (isSearchLoading || isRefreshing) {
-                items(3) {
+                items(10) {
                     VaangunarCardSkeleton()
                 }
             } else if (merchants.isEmpty()) {

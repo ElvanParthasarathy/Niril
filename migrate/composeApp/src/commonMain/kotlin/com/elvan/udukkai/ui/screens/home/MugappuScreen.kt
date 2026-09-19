@@ -86,7 +86,7 @@ fun MugappuScreen(
                 )
             }
 
-            items(3) {
+            items(5) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()

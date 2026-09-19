@@ -135,7 +135,7 @@ fun PorulScreen(
             }
 
             if (isSearchLoading || isRefreshing) {
-                items(3) {
+                items(10) {
                     PorulCardSkeleton()
                 }
             } else if (items.isEmpty()) {

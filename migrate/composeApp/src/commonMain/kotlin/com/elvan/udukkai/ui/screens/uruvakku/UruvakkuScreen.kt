@@ -298,7 +298,7 @@ fun UruvakkuScreen(
             }
 
             if (isSearchLoading || isRefreshing) {
-                items(3) {
+                items(6) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
