@@ -53,6 +53,7 @@ class MainActivity : ComponentActivity() {
         com.elvan.udukkai.localization.LanguageManager.init()
         com.elvan.udukkai.theme.ThemeManager.init()
         com.elvan.udukkai.theme.FontManager.init()
+        com.elvan.udukkai.core.auth.AuthManager.init()
         com.elvan.udukkai.data.settings.NiruvanaTharavugalRepository.refreshFromDatabase()
 
         if (savedInstanceState == null) {

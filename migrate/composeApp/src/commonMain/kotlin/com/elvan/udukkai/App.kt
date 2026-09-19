@@ -29,15 +29,11 @@ import com.elvan.udukkai.ui.components.shell.ElvanBottomSheetHost
 import com.elvan.udukkai.ui.components.shell.ElvanSnackbarHost
 import com.elvan.udukkai.ui.components.shell.LocalElvanBottomSheetController
 import com.elvan.udukkai.ui.screens.home.HomeScreen
-import com.elvan.udukkai.ui.screens.mode.ModeSelectorContent
 import com.elvan.udukkai.ui.screens.mode.ModeSelectorScreen
-import com.elvan.udukkai.ui.screens.splash.SplashBackground
-import com.elvan.udukkai.ui.screens.splash.SplashContent
 import com.elvan.udukkai.ui.screens.ulnuzhaivu.thiraigal.AnumadhiKaavalarThirai
 import com.elvan.udukkai.ui.screens.ulnuzhaivu.thiraigal.NalvaravuThirai
 import com.elvan.udukkai.ui.screens.ulnuzhaivu.thiraigal.NalvaravuWelcomeScreen
 import com.elvan.udukkai.ui.screens.ulnuzhaivu.thiraigal.UllnuzhaivuThirai
-import kotlinx.coroutines.delay
 
 private enum class AppFlowState {
     PERMISSION_GUARD,
@@ -53,12 +49,9 @@ fun App() {
         mutableStateOf(currentPlatform == PlatformType.DESKTOP || isStoragePermissionGranted()) 
     }
     var showLoginPage by rememberSaveable { mutableStateOf(false) }
-    var isSplashVisible by rememberSaveable { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         AuthManager.init()
-        delay(600)
-        isSplashVisible = false
     }
 
     ProvideAppLanguage {
@@ -131,27 +124,12 @@ fun App() {
                                         label = "startup_mode_flow"
                                     ) { hasSelectedMode ->
                                         if (!hasSelectedMode) {
-                                            SplashBackground(isDark = ThemeManager.isDark()) {
-                                                AnimatedContent(
-                                                    targetState = isSplashVisible,
-                                                    transitionSpec = {
-                                                        fadeIn(animationSpec = tween(280)) togetherWith
-                                                            fadeOut(animationSpec = tween(200))
-                                                    },
-                                                    label = "splash_to_mode_selector"
-                                                ) { showSplash ->
-                                                    if (showSplash) {
-                                                        SplashContent()
-                                                    } else {
-                                                        ModeSelectorContent(
-                                                            onModeSelected = { selectedMode ->
-                                                                ModeManager.setMode(selectedMode)
-                                                            },
-                                                            canDismiss = false
-                                                        )
-                                                    }
-                                                }
-                                            }
+                                            ModeSelectorScreen(
+                                                onModeSelected = { selectedMode ->
+                                                    ModeManager.setMode(selectedMode)
+                                                },
+                                                canDismiss = false
+                                            )
                                         } else {
                                             Box(modifier = Modifier.fillMaxSize()) {
                                                 HomeScreen()
