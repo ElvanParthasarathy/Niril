@@ -48,14 +48,15 @@ fun MugappuScreen(
     val companiesSummary = PattiyalRepository.getCompaniesSummary(profiles)
     val invoiceCountSummary = PattiyalRepository.getInvoiceCountSummary(profiles)
 
-    LazyColumn(
-        state = scrollState,
-        modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(
-            bottom = Dimens.ContentPaddingBottom
-        ),
-        verticalArrangement = Arrangement.spacedBy(Dimens.ItemSpacing)
-    ) {
+    Box(modifier = modifier.fillMaxSize()) {
+        LazyColumn(
+            state = scrollState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
+                bottom = Dimens.ContentPaddingBottom
+            ),
+            verticalArrangement = Arrangement.spacedBy(Dimens.ItemSpacing)
+        ) {
         // Collapsible Top Header spacer
         item(key = "home_top_spacer") {
             Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
@@ -155,5 +156,7 @@ fun MugappuScreen(
                 }
             }
         }
+    }
+
     }
 }

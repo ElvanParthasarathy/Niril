@@ -151,13 +151,21 @@ object DateGroupUtils {
         val c = getDateComponents(millis)
         val mEn = MONTH_NAMES_EN[c.month]
         val mTa = MONTH_NAMES_TA[c.month]
+        val wEn = WEEKDAY_NAMES_EN[c.dayOfWeek]
+        val wTa = WEEKDAY_NAMES_TA[c.dayOfWeek]
+        val currentYear = getDateComponents(System.currentTimeMillis()).year
+        val yearSuffix = if (c.year != currentYear) " ${c.year}" else ""
 
         return if (!isBilingual) {
-            if (isEnglishPrimary) "${c.day} $mEn ${c.year}" else "${c.day} $mTa ${c.year}"
+            if (diffDays in 2..6) {
+                if (isEnglishPrimary) "$wEn, ${c.day} $mEn" else "$wTa, ${c.day} $mTa"
+            } else {
+                if (isEnglishPrimary) "${c.day} $mEn$yearSuffix" else "${c.day} $mTa$yearSuffix"
+            }
         } else if (isEnglishPrimary) {
-            "${c.day} $mEn ${c.year}  •  ${c.day} $mTa"
+            "${c.day} $mEn$yearSuffix  •  ${c.day} $mTa"
         } else {
-            "${c.day} $mTa ${c.year}  •  ${c.day} $mEn"
+            "${c.day} $mTa$yearSuffix  •  ${c.day} $mEn"
         }
     }
 

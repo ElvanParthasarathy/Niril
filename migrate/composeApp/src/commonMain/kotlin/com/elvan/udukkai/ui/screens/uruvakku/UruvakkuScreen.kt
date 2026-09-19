@@ -10,6 +10,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Surface
+import com.elvan.udukkai.core.utils.DateUtils
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -134,38 +138,7 @@ fun UruvakkuScreen(
         DateGroupUtils.groupItemsByDate(receipts) { it.patruNaal }
     }
 
-    val dateIndexMap = remember(selectedSegment, invoiceGroups, receiptGroups, businessShifterItems.size) {
-        val map = mutableListOf<Long>()
-        val headerCount = if (businessShifterItems.size > 1) 3 else 2
-        val activeGroups = if (selectedSegment == 0) invoiceGroups else receiptGroups
-        val firstDate = activeGroups.firstOrNull()?.dateMillis ?: System.currentTimeMillis()
 
-        repeat(headerCount) {
-            map.add(firstDate)
-        }
-
-        activeGroups.forEach { group ->
-            // Date section header item
-            map.add(group.dateMillis)
-            // Cards in this group
-            repeat(group.items.size) {
-                map.add(group.dateMillis)
-            }
-        }
-        map
-    }
-
-    val uiLang = LocalAppLanguage.current
-    val dateProvider: (Int) -> String = remember(dateIndexMap, uiLang) {
-        { idx ->
-            val dateMillis = dateIndexMap.getOrNull(idx) ?: dateIndexMap.firstOrNull() ?: 0L
-            if (dateMillis > 0L) {
-                DateGroupUtils.formatPillDate(dateMillis, isBilingual = false, primaryLang = uiLang)
-            } else {
-                ""
-            }
-        }
-    }
 
     val shifterItems = listOf(
         PillShifterItem(
@@ -223,6 +196,63 @@ fun UruvakkuScreen(
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
                     )
+                }
+            }
+
+            val isDateFilterActive = if (selectedSegment == 0) PattiyalRepository.isDateFilterActive else PatrugalRepository.isDateFilterActive
+            if (isDateFilterActive) {
+                item(key = "active_date_filter_banner") {
+                    val startMillis = if (selectedSegment == 0) PattiyalRepository.startDateFilter else PatrugalRepository.startDateFilter
+                    val endMillis = if (selectedSegment == 0) PattiyalRepository.endDateFilter else PatrugalRepository.endDateFilter
+                    val filterText = when {
+                        startMillis != null && endMillis != null -> "${DateUtils.formatDate(startMillis)} - ${DateUtils.formatDate(endMillis)}"
+                        startMillis != null -> ">= ${DateUtils.formatDate(startMillis)}"
+                        endMillis != null -> "<= ${DateUtils.formatDate(endMillis)}"
+                        else -> ""
+                    }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Surface(
+                            shape = CircleShape,
+                            color = colors.accent.copy(alpha = 0.12f),
+                            modifier = Modifier.clickable {
+                                PattiyalRepository.clearDateFilter()
+                                PatrugalRepository.clearDateFilter()
+                            }
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Icon(
+                                    imageVector = MaterialSymbols.Rounded.FilterList,
+                                    contentDescription = null,
+                                    tint = colors.accent,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                                Text(
+                                    text = filterText,
+                                    style = TextStyle(
+                                        fontFamily = ff,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = colors.accent
+                                    )
+                                )
+                                Icon(
+                                    imageVector = MaterialSymbols.Rounded.Close,
+                                    contentDescription = "Clear",
+                                    tint = colors.accent,
+                                    modifier = Modifier.size(14.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             }
 
@@ -393,13 +423,5 @@ fun UruvakkuScreen(
             }
         }
 
-        // Google Photos style Side Fast Scroller with floating date pill
-        ElvanDateFastScroller(
-            scrollState = scrollState,
-            dateProvider = dateProvider,
-            colors = colors,
-            topPadding = 104.dp,
-            bottomPadding = 104.dp
-        )
     }
 }

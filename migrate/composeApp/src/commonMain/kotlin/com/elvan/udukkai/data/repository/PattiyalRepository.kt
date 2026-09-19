@@ -28,17 +28,40 @@ object PattiyalRepository {
         private set
 
     var searchQuery by mutableStateOf("")
+    var startDateFilter by mutableStateOf<Long?>(null)
+    var endDateFilter by mutableStateOf<Long?>(null)
+
+    val isDateFilterActive: Boolean
+        get() = startDateFilter != null || endDateFilter != null
+
+    fun setDateRange(start: Long?, end: Long?) {
+        startDateFilter = start
+        endDateFilter = end
+    }
+
+    fun clearDateFilter() {
+        startDateFilter = null
+        endDateFilter = null
+    }
 
     val filteredInvoices: List<PattiyalTharavuru>
         get() {
             val q = searchQuery.trim().lowercase()
-            if (q.isEmpty()) return invoices
-
             return invoices.filter { invoice ->
-                val enMatches = invoice.patrucheettuEn.lowercase().contains(q)
-                val peyarMatches = invoice.vaangunarPeyar.values.any { it.lowercase().contains(q) }
-                val oorMatches = invoice.vaangunarMunvari.values.any { it.lowercase().contains(q) }
-                enMatches || peyarMatches || oorMatches
+                val matchesQuery = if (q.isEmpty()) true else {
+                    invoice.patrucheettuEn.lowercase().contains(q) ||
+                    invoice.vaangunarPeyar.values.any { it.lowercase().contains(q) } ||
+                    invoice.vaangunarMunvari.values.any { it.lowercase().contains(q) }
+                }
+                val s = startDateFilter
+                val e = endDateFilter
+                val matchesDate = when {
+                    s != null && e != null -> invoice.pattiyalNaal in s..e
+                    s != null -> invoice.pattiyalNaal >= s
+                    e != null -> invoice.pattiyalNaal <= e
+                    else -> true
+                }
+                matchesQuery && matchesDate
             }
         }
 

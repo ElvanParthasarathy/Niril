@@ -1,8 +1,10 @@
 package com.elvan.udukkai.ui.components.shell
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
@@ -21,10 +23,12 @@ import com.elvan.udukkai.theme.LocalAppFontFamily
 import com.elvan.udukkai.theme.ShellColors
 import com.elvan.udukkai.theme.rememberShellColors
 
+
 /**
  * Master Subpage Shell for Jetpack Compose (matching Neram / Flutter's ElvanSubpageShell).
  * Lightweight wrapper around ElvanShell exclusively designed for subpages (Settings, etc.).
  * Disables the bottom navbar and provides full One UI collapsible physics with floating back chevron.
+ * Includes a default Android-style passive scrollbar (proportional, auto-fading, non-draggable).
  */
 @Composable
 fun ElvanSubShell(
@@ -36,6 +40,7 @@ fun ElvanSubShell(
     actions: @Composable RowScope.() -> Unit = {},
     content: @Composable () -> Unit
 ) {
+    val colors = rememberShellColors()
     ElvanShell(
         title = title,
         onBack = onBack,

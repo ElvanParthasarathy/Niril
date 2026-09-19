@@ -36,7 +36,8 @@ fun DateSectionHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 6.dp),
+            .padding(start = 38.dp, end = 38.dp, top = 8.dp, bottom = 0.dp)
+            .offset(y = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -44,9 +45,9 @@ fun DateSectionHeader(
             text = primaryDate.preventBrokenLigatures(),
             style = TextStyle(
                 fontFamily = ff,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-                color = colors.textPrimary
+                fontSize = 12.5.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = colors.textSecondary
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

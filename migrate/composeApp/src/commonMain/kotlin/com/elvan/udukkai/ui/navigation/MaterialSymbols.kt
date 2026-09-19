@@ -29,6 +29,19 @@ object MaterialSymbols {
         ).build()
     }
 
+    private fun symbol24(name: String, pathData: String): ImageVector {
+        return ImageVector.Builder(
+            name = name,
+            defaultWidth = 24.dp,
+            defaultHeight = 24.dp,
+            viewportWidth = 24f,
+            viewportHeight = 24f
+        ).addPath(
+            fill = SolidColor(Color.Black),
+            pathData = PathParser().parsePathString(pathData).toNodes()
+        ).build()
+    }
+
     object Rounded {
         // ── Navigation Dynamic Fill (Inactive = Outline, Active = Filled) ──
         val Home: ImageVector get() = LibSymbols.Rounded.Home
@@ -63,6 +76,12 @@ object MaterialSymbols {
         val Check: ImageVector get() = LibSymbols.Rounded.Check
         val Add: ImageVector get() = LibSymbols.Rounded.Add
         val Search: ImageVector get() = LibSymbols.Rounded.Search
+        val FilterList: ImageVector by lazy {
+            symbol24(
+                "FilterList",
+                "M10,18h4c0.55,0,1-0.45,1-1s-0.45-1-1-1h-4c-0.55,0-1,0.45-1,1S9.45,18,10,18z M3,7h18c0.55,0,1-0.45,1-1s-0.45-1-1-1H3C2.45,5,2,5.45,2,6S2.45,7,3,7z M6,13h12c0.55,0,1-0.45,1-1s-0.45-1-1-1H6c-0.55,0-1,0.45-1,1S5.45,13,6,13z"
+            )
+        }
         val ChevronRight: ImageVector get() = LibSymbols.Rounded.Keyboard_arrow_right
         val KeyboardArrowDown: ImageVector get() = LibSymbols.Rounded.Keyboard_arrow_down
         val MoreVert: ImageVector get() = LibSymbols.Rounded.More_vert

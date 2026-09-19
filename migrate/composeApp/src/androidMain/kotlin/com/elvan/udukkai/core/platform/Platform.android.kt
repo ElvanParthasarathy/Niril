@@ -3,6 +3,7 @@ package com.elvan.udukkai.core.platform
 import android.app.Dialog
 import android.content.ContextWrapper
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.view.View
 import android.view.ViewParent
@@ -12,6 +13,7 @@ import android.view.WindowManager
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.window.DialogWindowProvider
 import androidx.core.view.WindowCompat
@@ -19,7 +21,11 @@ import androidx.core.view.WindowCompat
 actual val currentPlatform: PlatformType = PlatformType.ANDROID
 
 @Composable
-actual fun ConfigureDialogWindow(isDark: Boolean) {
+actual fun ConfigureDialogWindow(
+    isDark: Boolean,
+    clearDim: Boolean,
+    navBarColor: androidx.compose.ui.graphics.Color?
+) {
     val view = LocalView.current
 
     fun findDialogWindow(): Window? {
@@ -46,7 +52,16 @@ actual fun ConfigureDialogWindow(isDark: Boolean) {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-        window.navigationBarColor = Color.TRANSPARENT
+        if (clearDim) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            window.setDimAmount(0f)
+        }
+        val targetNavBarColor = if (navBarColor != null) {
+            navBarColor.toArgb()
+        } else {
+            Color.TRANSPARENT
+        }
+        window.navigationBarColor = targetNavBarColor
         window.statusBarColor = Color.TRANSPARENT
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -85,7 +100,7 @@ actual fun ConfigureDialogWindow(isDark: Boolean) {
         findDialogWindow()?.let { applySystemBars(it) }
     }
 
-    DisposableEffect(isDark) {
+    DisposableEffect(isDark, navBarColor) {
         findDialogWindow()?.let { applySystemBars(it) }
         view.post {
             findDialogWindow()?.let { applySystemBars(it) }
@@ -93,3 +108,14 @@ actual fun ConfigureDialogWindow(isDark: Boolean) {
         onDispose {}
     }
 }
+
+@OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
+@Composable
+actual fun DisableOverscroll(content: @Composable () -> Unit) {
+    androidx.compose.runtime.CompositionLocalProvider(
+        androidx.compose.foundation.LocalOverscrollConfiguration provides null
+    ) {
+        content()
+    }
+}
+

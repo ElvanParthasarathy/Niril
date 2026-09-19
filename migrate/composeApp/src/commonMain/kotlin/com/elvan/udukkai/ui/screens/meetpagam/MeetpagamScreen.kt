@@ -107,13 +107,13 @@ fun MeetpagamScreen(
         LazyColumn(
             state = scrollState,
             modifier = modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                bottom = Dimens.SubpageContentPaddingBottom
-            ),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = Dimens.SubpageContentPaddingBottom
+                ),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
             item(key = "top_spacer") {
                 Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
             }

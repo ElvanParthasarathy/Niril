@@ -152,16 +152,17 @@ fun PorulScreen(
             }
         }
     } else {
-        LazyColumn(
-            state = scrollState,
-            modifier = modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = Dimens.ContentPadding,
-                end = Dimens.ContentPadding,
-                bottom = Dimens.ContentPaddingBottom
-            ),
-            verticalArrangement = Arrangement.spacedBy(Dimens.ItemSpacing)
-        ) {
+        Box(modifier = modifier.fillMaxSize()) {
+            LazyColumn(
+                state = scrollState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = Dimens.ContentPadding,
+                    end = Dimens.ContentPadding,
+                    bottom = Dimens.ContentPaddingBottom
+                ),
+                verticalArrangement = Arrangement.spacedBy(Dimens.ItemSpacing)
+            ) {
             item(key = "top_spacer") {
                 Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
             }
@@ -200,6 +201,7 @@ fun PorulScreen(
                     )
                 }
             }
+        }
         }
     }
 }

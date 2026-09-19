@@ -1,47 +1,60 @@
 package com.elvan.udukkai.ui.components.shell
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.unit.Velocity
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import com.elvan.udukkai.core.platform.ConfigureDialogWindow
+import com.elvan.udukkai.core.platform.PlatformType
+import com.elvan.udukkai.core.platform.currentPlatform
 import com.elvan.udukkai.localization.tr
+import com.elvan.udukkai.theme.LocalAppFontFamily
+import com.elvan.udukkai.theme.LocalShellColors
 import com.elvan.udukkai.theme.ShellColors
 import com.elvan.udukkai.theme.rememberShellColors
-import com.elvan.udukkai.core.platform.ConfigureDialogWindow
+import com.elvan.udukkai.ui.components.ElvanSimpleScrollbar
 import com.elvan.udukkai.ui.components.shell.maeladukkugal.*
-import com.elvan.udukkai.theme.LocalShellColors
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 /**
- * ElvanSelectionBottomSheet — Flutter-matching selection bottom sheet.
- * Replicates `showElvanSelectionBottomSheet` and `ElvanSelectionBottomSheet` in Flutter (`elvan_kizh_maeladukku.dart`).
- * Modular architecture using:
- * - `ElvanMaeladukkuThalaipu` (Header)
- * - `ElvanMaeladukkuThaedal` (Cupertino Search Pill)
- * - `ElvanMaeladukkuUrupadi` (List Item with Monochrome Checkmark)
- * - `ElvanMaeladukkuPudhiyaPothan` (Centered Add New Action)
+ * ElvanSelectionBottomSheet — Rock-Solid Raw Bottom Sheet.
+ * Anchored directly to the bottom of the screen with zero upward spring lift-off (Zero Detach).
+ * Built with Dialog + full-screen scrim + downward-only drag to dismiss.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> ElvanSelectionBottomSheet(
     title: String,
@@ -61,6 +74,7 @@ fun <T> ElvanSelectionBottomSheet(
 ) {
     val isDark = colors.isDark
     val sheetBg = LocalShellColors.current.surface
+    val ff = LocalAppFontFamily.current
     var searchQuery by remember { mutableStateOf("") }
 
     val filteredItems = remember(items, searchQuery) {
@@ -76,253 +90,9 @@ fun <T> ElvanSelectionBottomSheet(
         }
     }
 
-    val content: @Composable () -> Unit = {
-        ConfigureDialogWindow(isDark = isDark)
-        BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-            // Dynamic max list height restricted to 65% of available sheet height (capped between 220.dp and 520.dp)
-            val maxListHeight = (maxHeight * 0.65f).coerceIn(220.dp, 520.dp)
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .imePadding()
-            ) {
-                // 1. Title matching Flutter's ElvanMaeladukkuThalaipu
-                ElvanMaeladukkuThalaipu(
-                    title = title,
-                    colors = colors
-                )
-
-                // 2. Search pill if enabled matching Flutter's ElvanMaeladukkuThaedal
-                if (showSearch) {
-                    ElvanMaeladukkuThaedal(
-                        value = searchQuery,
-                        onValueChange = { searchQuery = it },
-                        colors = colors
-                    )
-                }
-
-                // 3. Dynamic Items list matching Flutter:
-                // Small list (<= 25 items): dynamically wraps content using Column + verticalScroll
-                // Large list (> 25 items): uses LazyColumn with recycling capped at maxListHeight
-                val isSmallList = filteredItems.size <= 25
-
-                if (isSmallList) {
-                    val scrollState = rememberScrollState()
-                    val isScrolling = scrollState.isScrollInProgress
-                    val scrollbarAlpha by animateFloatAsState(
-                        targetValue = if (isScrolling) 1f else 0f,
-                        animationSpec = tween(durationMillis = 300),
-                        label = "sheetScrollbarAlpha"
-                    )
-                    val scrollbarColor = if (isDark) Color.White.copy(alpha = 0.35f) else Color.Black.copy(alpha = 0.35f)
-
-                    val canScrollMore by remember {
-                        derivedStateOf { scrollState.value < scrollState.maxValue }
-                    }
-                    val canScrollBack by remember {
-                        derivedStateOf { scrollState.value > 0 }
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(max = maxListHeight)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .verticalScroll(scrollState)
-                                .drawScrollbar(
-                                    scrollState = scrollState,
-                                    color = scrollbarColor,
-                                    alpha = scrollbarAlpha
-                                )
-                                .padding(top = 4.dp, bottom = if (onRequestAddNew != null) 8.dp else 24.dp)
-                        ) {
-                            filteredItems.forEach { item ->
-                                val isSelected = item == currentValue
-                                val subtitle = subtitleBuilder?.invoke(item)
-
-                                ElvanMaeladukkuUrupadi(
-                                    title = itemLabelBuilder(item),
-                                    subtitle = subtitle,
-                                    isSelected = isSelected,
-                                    onTap = {
-                                        onSelected(item)
-                                        onDismissRequest()
-                                    },
-                                    leading = leadingBuilder?.let { { it(item) } },
-                                    colors = colors
-                                )
-                            }
-                        }
-
-                        // Top Fade Mask (only when scrolled down)
-                        val topFadeAlpha by animateFloatAsState(
-                            targetValue = if (canScrollBack) 1f else 0f,
-                            label = "sheetTopFadeAlpha"
-                        )
-                        if (topFadeAlpha > 0f) {
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.TopCenter)
-                                    .fillMaxWidth()
-                                    .height(24.dp)
-                                    .graphicsLayer { alpha = topFadeAlpha }
-                                    .background(
-                                        Brush.verticalGradient(
-                                            0.0f to sheetBg,
-                                            0.35f to sheetBg.copy(alpha = 0.55f),
-                                            0.7f to sheetBg.copy(alpha = 0.16f),
-                                            1.0f to Color.Transparent
-                                        )
-                                    )
-                            )
-                        }
-
-                        // Bottom Fade Mask (only when content overflows)
-                        val bottomFadeAlpha by animateFloatAsState(
-                            targetValue = if (canScrollMore) 1f else 0f,
-                            label = "sheetBottomFadeAlpha"
-                        )
-                        if (bottomFadeAlpha > 0f) {
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .fillMaxWidth()
-                                    .height(28.dp)
-                                    .graphicsLayer { alpha = bottomFadeAlpha }
-                                    .background(
-                                        Brush.verticalGradient(
-                                            0.0f to Color.Transparent,
-                                            0.3f to sheetBg.copy(alpha = 0.16f),
-                                            0.65f to sheetBg.copy(alpha = 0.55f),
-                                            1.0f to sheetBg
-                                        )
-                                    )
-                            )
-                        }
-                    }
-                } else {
-                    val listState = rememberLazyListState()
-                    val isScrolling = listState.isScrollInProgress
-                    val scrollbarAlpha by animateFloatAsState(
-                        targetValue = if (isScrolling) 1f else 0f,
-                        animationSpec = tween(durationMillis = 300),
-                        label = "sheetLazyScrollbarAlpha"
-                    )
-                    val scrollbarColor = if (isDark) Color.White.copy(alpha = 0.35f) else Color.Black.copy(alpha = 0.35f)
-
-                    val canScrollMore by remember {
-                        derivedStateOf { listState.canScrollForward }
-                    }
-                    val canScrollBack by remember {
-                        derivedStateOf { listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0 }
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(maxListHeight)
-                    ) {
-                        LazyColumn(
-                            state = listState,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .drawVerticalScrollbar(
-                                    listState = listState,
-                                    color = scrollbarColor,
-                                    alpha = scrollbarAlpha
-                                ),
-                            contentPadding = PaddingValues(top = 4.dp, bottom = if (onRequestAddNew != null) 8.dp else 24.dp)
-                        ) {
-                            items(filteredItems) { item ->
-                                val isSelected = item == currentValue
-                                val subtitle = subtitleBuilder?.invoke(item)
-
-                                ElvanMaeladukkuUrupadi(
-                                    title = itemLabelBuilder(item),
-                                    subtitle = subtitle,
-                                    isSelected = isSelected,
-                                    onTap = {
-                                        onSelected(item)
-                                        onDismissRequest()
-                                    },
-                                    leading = leadingBuilder?.let { { it(item) } },
-                                    colors = colors
-                                )
-                            }
-                        }
-
-                        // Top Fade Mask
-                        val topFadeAlpha by animateFloatAsState(
-                            targetValue = if (canScrollBack) 1f else 0f,
-                            label = "sheetLazyTopFadeAlpha"
-                        )
-                        if (topFadeAlpha > 0f) {
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.TopCenter)
-                                    .fillMaxWidth()
-                                    .height(24.dp)
-                                    .graphicsLayer { alpha = topFadeAlpha }
-                                    .background(
-                                        Brush.verticalGradient(
-                                            0.0f to sheetBg,
-                                            0.35f to sheetBg.copy(alpha = 0.55f),
-                                            0.7f to sheetBg.copy(alpha = 0.16f),
-                                            1.0f to Color.Transparent
-                                        )
-                                    )
-                            )
-                        }
-
-                        // Bottom Fade Mask
-                        val bottomFadeAlpha by animateFloatAsState(
-                            targetValue = if (canScrollMore) 1f else 0f,
-                            label = "sheetLazyBottomFadeAlpha"
-                        )
-                        if (bottomFadeAlpha > 0f) {
-                            Box(
-                                modifier = Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .fillMaxWidth()
-                                    .height(28.dp)
-                                    .graphicsLayer { alpha = bottomFadeAlpha }
-                                    .background(
-                                        Brush.verticalGradient(
-                                            0.0f to Color.Transparent,
-                                            0.3f to sheetBg.copy(alpha = 0.16f),
-                                            0.65f to sheetBg.copy(alpha = 0.55f),
-                                            1.0f to sheetBg
-                                        )
-                                    )
-                            )
-                        }
-                    }
-                }
-
-                // 4. Optional "+ Add New" button matching Flutter's ElvanMaeladukkuPudhiyaPothan
-                if (onRequestAddNew != null) {
-                    ElvanMaeladukkuPudhiyaPothan(
-                        onTap = {
-                            onDismissRequest()
-                            onRequestAddNew()
-                        },
-                        label = addNewLabel ?: com.elvan.udukkai.localization.K.addNew.tr(),
-                        colors = colors
-                    )
-                } else {
-                    Spacer(modifier = Modifier.height(4.dp))
-                }
-            }
-        }
-    }
-
-    if (com.elvan.udukkai.core.platform.currentPlatform == com.elvan.udukkai.core.platform.PlatformType.DESKTOP) {
-        androidx.compose.ui.window.Dialog(onDismissRequest = onDismissRequest) {
+    // Desktop Presentation (Clean centered modal card)
+    if (currentPlatform == PlatformType.DESKTOP) {
+        Dialog(onDismissRequest = onDismissRequest) {
             Surface(
                 shape = RoundedCornerShape(16.dp),
                 color = sheetBg,
@@ -332,84 +102,360 @@ fun <T> ElvanSelectionBottomSheet(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                content()
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    ElvanMaeladukkuThalaipu(title = title, colors = colors)
+                    if (showSearch) {
+                        ElvanMaeladukkuThaedal(
+                            value = searchQuery,
+                            onValueChange = { searchQuery = it },
+                            colors = colors
+                        )
+                    }
+                    val desktopListState = rememberLazyListState()
+                    LazyColumn(
+                        state = desktopListState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 400.dp),
+                        contentPadding = PaddingValues(
+                            top = 4.dp,
+                            bottom = if (onRequestAddNew != null) 8.dp else 24.dp
+                        )
+                    ) {
+                        items(filteredItems) { item ->
+                            val isSelected = item == currentValue
+                            ElvanMaeladukkuUrupadi(
+                                title = itemLabelBuilder(item),
+                                subtitle = subtitleBuilder?.invoke(item),
+                                isSelected = isSelected,
+                                onTap = {
+                                    onSelected(item)
+                                    onDismissRequest()
+                                },
+                                leading = leadingBuilder?.let { { it(item) } },
+                                colors = colors
+                            )
+                        }
+                    }
+                    if (onRequestAddNew != null) {
+                        ElvanMaeladukkuPudhiyaPothan(
+                            onTap = {
+                                onDismissRequest()
+                                onRequestAddNew()
+                            },
+                            label = addNewLabel ?: com.elvan.udukkai.localization.K.addNew.tr(),
+                            colors = colors
+                        )
+                    }
+                }
             }
         }
-    } else {
-        val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        return
+    }
 
-        ModalBottomSheet(
-            onDismissRequest = onDismissRequest,
-            sheetState = sheetState,
-            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-            containerColor = sheetBg,
-            scrimColor = Color.Black.copy(alpha = 0.45f),
-            dragHandle = { BottomSheetDefaults.DragHandle() },
-            modifier = modifier
-        ) {
-            content()
+    // Mobile Presentation: Rock-Solid Bottom-Anchored Sheet (Zero Detach, Zero Upward Bounce)
+    val coroutineScope = rememberCoroutineScope()
+    var isVisible by remember { mutableStateOf(false) }
+    var isClosing by remember { mutableStateOf(false) }
+    var dragOffsetY by remember { mutableFloatStateOf(0f) }
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    val density = LocalDensity.current
+    val imeBottomPx = WindowInsets.ime.getBottom(density)
+    val isKeyboardOpen = imeBottomPx > 0
+
+    LaunchedEffect(Unit) {
+        isVisible = true
+    }
+
+    fun dismissSheet() {
+        if (isClosing) return
+        keyboardController?.hide()
+        focusManager.clearFocus()
+        isClosing = true
+        isVisible = false
+        coroutineScope.launch {
+            delay(220)
+            onDismissRequest()
         }
     }
-}
 
-/**
- * Clean vertical scrollbar indicator along the right edge of LazyColumn.
- * Smoothly fades in while actively scrolling and auto-hides when resting.
- */
-private fun Modifier.drawVerticalScrollbar(
-    listState: LazyListState,
-    color: Color,
-    alpha: Float,
-    width: Dp = 3.dp,
-    paddingEnd: Dp = 3.dp
-): Modifier = drawWithContent {
-    drawContent()
-    val layoutInfo = listState.layoutInfo
-    val totalItemsCount = layoutInfo.totalItemsCount
-    val visibleItems = layoutInfo.visibleItemsInfo
-    if (totalItemsCount > 0 && visibleItems.isNotEmpty() && alpha > 0.02f) {
-        val firstVisible = visibleItems.first()
-        val lastVisible = visibleItems.last()
-        val visibleCount = lastVisible.index - firstVisible.index + 1
-        if (visibleCount < totalItemsCount) {
-            val viewHeight = size.height
-            val thumbHeight = ((viewHeight * visibleCount) / totalItemsCount).coerceIn(24.dp.toPx(), viewHeight * 0.75f)
-            val maxScrollIndex = (totalItemsCount - visibleCount).coerceAtLeast(1)
-            val scrollProgress = (firstVisible.index.toFloat() / maxScrollIndex).coerceIn(0f, 1f)
-            val scrollOffset = scrollProgress * (viewHeight - thumbHeight)
-            drawRoundRect(
-                color = color.copy(alpha = color.alpha * alpha),
-                topLeft = Offset(size.width - width.toPx() - paddingEnd.toPx(), scrollOffset),
-                size = Size(width.toPx(), thumbHeight),
-                cornerRadius = CornerRadius(width.toPx() / 2, width.toPx() / 2)
-            )
+    val listState = rememberLazyListState()
+
+    val draggableState = rememberDraggableState { delta ->
+        // Clamped at 0f: Only allow dragging DOWNWARDS (delta > 0).
+        // Upward dragging is strictly prohibited to guarantee 100% Zero-Detach.
+        if (delta > 5f && isKeyboardOpen) {
+            keyboardController?.hide()
+            focusManager.clearFocus()
+        }
+        val target = dragOffsetY + delta
+        dragOffsetY = target.coerceAtLeast(0f)
+    }
+
+    val downwardScrollConnection = remember(isKeyboardOpen) {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (available.y < -10f && isKeyboardOpen) {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                }
+                // If sheet is already pulled down and user drags back up, consume delta
+                if (available.y < 0f && dragOffsetY > 0f) {
+                    val consumed = available.y.coerceAtLeast(-dragOffsetY)
+                    dragOffsetY += consumed
+                    return Offset(0f, consumed)
+                }
+                return Offset.Zero
+            }
+
+            override fun onPostScroll(
+                consumed: Offset,
+                available: Offset,
+                source: NestedScrollSource
+            ): Offset {
+                // Only pull the sheet down if the list is physically at the top
+                val isAtTop = !listState.canScrollBackward
+                if (available.y > 0f && isAtTop && source == NestedScrollSource.UserInput) {
+                    dragOffsetY += available.y * 0.7f
+                    return Offset(0f, available.y)
+                }
+                // UPWARD IS NEVER CONSUMED AND NEVER MOVES SHEET: Zero Bounce!
+                return Offset.Zero
+            }
+
+            override suspend fun onPreFling(available: Velocity): Velocity {
+                // ONLY dismiss if the sheet itself was dragged down significantly (dragOffsetY > 70f)
+                // Never dismiss on regular list flings (when dragOffsetY <= 70f)!
+                if (dragOffsetY > 140f || (dragOffsetY > 70f && available.y > 1000f)) {
+                    dismissSheet()
+                    return available
+                } else if (dragOffsetY > 0f) {
+                    dragOffsetY = 0f
+                    return available
+                }
+                return Velocity.Zero
+            }
         }
     }
-}
 
-/**
- * Clean vertical scrollbar indicator along the right edge of a scrollable Column.
- * Smoothly fades in while actively scrolling and auto-hides when resting.
- */
-private fun Modifier.drawScrollbar(
-    scrollState: ScrollState,
-    color: Color,
-    alpha: Float,
-    width: Dp = 3.dp,
-    paddingEnd: Dp = 3.dp
-): Modifier = drawWithContent {
-    drawContent()
-    if (scrollState.maxValue > 0 && alpha > 0.02f) {
-        val viewHeight = size.height
-        val totalContentHeight = viewHeight + scrollState.maxValue
-        val thumbHeight = ((viewHeight * viewHeight) / totalContentHeight).coerceIn(24.dp.toPx(), viewHeight * 0.75f)
-        val scrollProgress = (scrollState.value.toFloat() / scrollState.maxValue.toFloat()).coerceIn(0f, 1f)
-        val scrollOffset = scrollProgress * (viewHeight - thumbHeight)
-        drawRoundRect(
-            color = color.copy(alpha = color.alpha * alpha),
-            topLeft = Offset(size.width - width.toPx() - paddingEnd.toPx(), scrollOffset),
-            size = Size(width.toPx(), thumbHeight),
-            cornerRadius = CornerRadius(width.toPx() / 2, width.toPx() / 2)
+    Dialog(
+        onDismissRequest = { dismissSheet() },
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true
         )
+    ) {
+        ConfigureDialogWindow(isDark = isDark, navBarColor = sheetBg)
+
+        // Scrim background with smooth fade
+        val scrimAlpha by animateFloatAsState(
+            targetValue = if (isVisible && !isClosing) 0.5f else 0.0f,
+            animationSpec = tween(durationMillis = 200),
+            label = "scrimAlpha"
+        )
+
+        BoxWithConstraints(
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding()
+                .imePadding()
+                .background(Color.Black.copy(alpha = scrimAlpha))
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    dismissSheet()
+                },
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            val availableHeight = maxHeight
+            val maxListHeight = (availableHeight - 140.dp).coerceIn(140.dp, 560.dp)
+
+            AnimatedVisibility(
+                visible = isVisible,
+                enter = slideInVertically(
+                    initialOffsetY = { fullHeight -> fullHeight },
+                    animationSpec = tween(
+                        durationMillis = 260,
+                        easing = CubicBezierEasing(0.0f, 0.0f, 0.2f, 1.0f)
+                    )
+                ) + fadeIn(animationSpec = tween(180)),
+                exit = slideOutVertically(
+                    targetOffsetY = { fullHeight -> fullHeight },
+                    animationSpec = tween(
+                        durationMillis = 200,
+                        easing = CubicBezierEasing(0.4f, 0.0f, 1.0f, 1.0f)
+                    )
+                ) + fadeOut(animationSpec = tween(150))
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
+                    color = sheetBg,
+                    contentColor = colors.textPrimary,
+                    shadowElevation = 16.dp,
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .offset { IntOffset(0, dragOffsetY.roundToInt()) }
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            // Consume clicks so tapping inside the sheet does not dismiss
+                        }
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .nestedScroll(downwardScrollConnection)
+                            .padding(bottom = 16.dp)
+                    ) {
+                        // Full Header Draggable Area (Clean Drag Handle only, generous breathing room)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .draggable(
+                                    state = draggableState,
+                                    orientation = Orientation.Vertical,
+                                    onDragStopped = { velocity ->
+                                        if (dragOffsetY > 100f || velocity > 800f) {
+                                            dismissSheet()
+                                        } else {
+                                            dragOffsetY = 0f
+                                        }
+                                    }
+                                )
+                                .padding(top = 16.dp, bottom = if (showSearch) 18.dp else 12.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .width(36.dp)
+                                    .height(4.dp)
+                                    .clip(RoundedCornerShape(2.dp))
+                                    .background(
+                                        if (isDark) Color.White.copy(alpha = 0.25f)
+                                        else Color.Black.copy(alpha = 0.2f)
+                                    )
+                            )
+                        }
+
+                        // Search pill if enabled (with generous spacing and downward drag-to-dismiss)
+                        if (showSearch) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .draggable(
+                                        state = draggableState,
+                                        orientation = Orientation.Vertical,
+                                        onDragStopped = { velocity ->
+                                            if (dragOffsetY > 100f || velocity > 800f) {
+                                                dismissSheet()
+                                            } else {
+                                                dragOffsetY = 0f
+                                            }
+                                        }
+                                    )
+                            ) {
+                                ElvanMaeladukkuThaedal(
+                                    value = searchQuery,
+                                    onValueChange = { searchQuery = it },
+                                    colors = colors
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(10.dp))
+                        } else {
+                            Spacer(modifier = Modifier.height(6.dp))
+                        }
+
+                        // Items List
+                        if (filteredItems.size <= 7 && !showSearch) {
+                            // Direct forEach: Draggable container so swiping down anywhere on items dismisses sheet
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .draggable(
+                                        state = draggableState,
+                                        orientation = Orientation.Vertical,
+                                        onDragStopped = { velocity ->
+                                            if (dragOffsetY > 100f || velocity > 800f) {
+                                                dismissSheet()
+                                            } else {
+                                                dragOffsetY = 0f
+                                            }
+                                        }
+                                    )
+                            ) {
+                                filteredItems.forEach { item ->
+                                    val isSelected = item == currentValue
+                                    ElvanMaeladukkuUrupadi(
+                                        title = itemLabelBuilder(item),
+                                        subtitle = subtitleBuilder?.invoke(item),
+                                        isSelected = isSelected,
+                                        onTap = {
+                                            onSelected(item)
+                                            dismissSheet()
+                                        },
+                                        leading = leadingBuilder?.let { { it(item) } },
+                                        colors = colors
+                                    )
+                                }
+                            }
+                        } else {
+                            // Standard LazyColumn: List scrolls normally; sheet stays firmly pinned
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(max = maxListHeight)
+                            ) {
+                                LazyColumn(
+                                    state = listState,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    items(filteredItems) { item ->
+                                        val isSelected = item == currentValue
+                                        ElvanMaeladukkuUrupadi(
+                                            title = itemLabelBuilder(item),
+                                            subtitle = subtitleBuilder?.invoke(item),
+                                            isSelected = isSelected,
+                                            onTap = {
+                                                onSelected(item)
+                                                dismissSheet()
+                                            },
+                                            leading = leadingBuilder?.let { { it(item) } },
+                                            colors = colors
+                                        )
+                                    }
+                                }
+
+                                ElvanSimpleScrollbar(
+                                    scrollState = listState,
+                                    modifier = Modifier.matchParentSize(),
+                                    colors = colors,
+                                    topPadding = 4.dp,
+                                    bottomPadding = 4.dp,
+                                    headerItemsCount = 0
+                                )
+                            }
+                        }
+
+                        // Optional Add New button
+                        if (onRequestAddNew != null) {
+                            ElvanMaeladukkuPudhiyaPothan(
+                                onTap = {
+                                    dismissSheet()
+                                    onRequestAddNew()
+                                },
+                                label = addNewLabel ?: com.elvan.udukkai.localization.K.addNew.tr(),
+                                colors = colors
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
+

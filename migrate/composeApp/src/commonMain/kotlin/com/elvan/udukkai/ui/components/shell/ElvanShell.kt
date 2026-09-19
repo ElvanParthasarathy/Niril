@@ -310,11 +310,9 @@ fun ElvanShell(
                 .background(colors.background)
                 .nestedScroll(nestedScrollConnection)
         ) {
-            // Layer 1: Content
+            // Layer 1: Content (100% Full screen, ZERO translation, ZERO bottom clipping)
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .then(if (!showNavbar) Modifier.imePadding() else Modifier)
+                modifier = Modifier.fillMaxSize()
             ) {
                 content()
             }
@@ -394,7 +392,6 @@ fun ElvanShell(
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
                         .height(96.dp + 60.dp + 16.dp + navBarsPadding)
-                        .zIndex(180f)
                         .background(
                             Brush.verticalGradient(
                                 0.0f to Color.Transparent,
@@ -409,7 +406,6 @@ fun ElvanShell(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
-                        .zIndex(200f)
                         .graphicsLayer {
                             alpha = effectiveNavOpacity
                         },
@@ -424,7 +420,6 @@ fun ElvanShell(
                         .align(Alignment.BottomCenter)
                         .fillMaxWidth()
                         .height(48.dp + navBarsPadding)
-                        .zIndex(180f)
                         .background(
                             Brush.verticalGradient(
                                 0.0f to Color.Transparent,

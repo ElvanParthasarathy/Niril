@@ -11,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.elvan.udukkai.core.mode.LocalAppMode
@@ -51,7 +52,9 @@ import com.elvan.udukkai.ui.screens.thiruthi.pattiyal.PattiyalThiruthiScreen
 import com.elvan.udukkai.ui.screens.thiruthi.pattiyal.PattuPattiyalThiruthiScreen
 import com.elvan.udukkai.ui.screens.thiruthi.porul.PorulThiruthiScreen
 import com.elvan.udukkai.ui.screens.thiruthi.vaangunar.VaangunarThiruthiScreen
+import androidx.compose.foundation.shape.CircleShape
 import com.elvan.udukkai.ui.screens.uruvakku.UruvakkuScreen
+import com.elvan.udukkai.ui.screens.uruvakku.koorugal.UruvakkuDateFilterSheet
 import com.elvan.udukkai.ui.screens.vaangunar.VaangunarScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -89,6 +92,7 @@ fun HomeScreen() {
     var isSelectionMode by remember { mutableStateOf(false) }
     var selectedItemIds by remember { mutableStateOf<Set<Long>>(emptySet()) }
     var showBulkDeleteConfirm by remember { mutableStateOf(false) }
+    var showDateFilterSheet by remember { mutableStateOf(false) }
 
     val onToggleItem: (Long) -> Unit = { id ->
         val newSet = if (selectedItemIds.contains(id)) selectedItemIds - id else selectedItemIds + id
@@ -322,6 +326,32 @@ fun HomeScreen() {
                                         tint = colors.textPrimary,
                                         modifier = Modifier.size(22.dp)
                                     )
+                                }
+                            }
+
+                            // Filter Circle Button (exclusive for Uruvakku: Search -> Filter -> 3-Dot)
+                            if (selectedTab == NavTab.Create) {
+                                val isFilterActive = PattiyalRepository.isDateFilterActive || PatrugalRepository.isDateFilterActive
+                                ElvanTopBarIconButton(
+                                    onClick = { showDateFilterSheet = true }
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Icon(
+                                            imageVector = MaterialSymbols.Rounded.FilterList,
+                                            contentDescription = "Filter",
+                                            tint = if (isFilterActive) colors.accent else colors.textPrimary,
+                                            modifier = Modifier.size(22.dp)
+                                        )
+                                        if (isFilterActive) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .align(Alignment.TopEnd)
+                                                    .size(6.dp)
+                                                    .clip(CircleShape)
+                                                    .background(colors.accent)
+                                            )
+                                        }
+                                    }
                                 }
                             }
 
@@ -668,6 +698,18 @@ fun HomeScreen() {
                 colors = colors
             )
         }
+
+        UruvakkuDateFilterSheet(
+            isOpen = showDateFilterSheet,
+            currentStartMillis = if (uruvakkuSegment == 0) PattiyalRepository.startDateFilter else PatrugalRepository.startDateFilter,
+            currentEndMillis = if (uruvakkuSegment == 0) PattiyalRepository.endDateFilter else PatrugalRepository.endDateFilter,
+            onDismissRequest = { showDateFilterSheet = false },
+            onApplyFilter = { start, end, _ ->
+                PattiyalRepository.setDateRange(start, end)
+                PatrugalRepository.setDateRange(start, end)
+            },
+            colors = colors
+        )
             }
         }
     }

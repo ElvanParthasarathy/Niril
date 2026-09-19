@@ -23,18 +23,41 @@ object PatrugalRepository {
         private set
 
     var searchQuery by mutableStateOf("")
+    var startDateFilter by mutableStateOf<Long?>(null)
+    var endDateFilter by mutableStateOf<Long?>(null)
+
+    val isDateFilterActive: Boolean
+        get() = startDateFilter != null || endDateFilter != null
+
+    fun setDateRange(start: Long?, end: Long?) {
+        startDateFilter = start
+        endDateFilter = end
+    }
+
+    fun clearDateFilter() {
+        startDateFilter = null
+        endDateFilter = null
+    }
 
     val filteredReceipts: List<PatrugalTharavuru>
         get() {
             val q = searchQuery.trim().lowercase()
-            if (q.isEmpty()) return receipts
-
             return receipts.filter { receipt ->
-                val enMatches = receipt.patruEn.lowercase().contains(q)
-                val peyarMatches = receipt.vaangunarPeyar.values.any { it.lowercase().contains(q) }
-                val muraiMatches = receipt.seluthumMurai.lowercase().contains(q)
-                val vangiMatches = receipt.vangiPeyar?.lowercase()?.contains(q) == true
-                enMatches || peyarMatches || muraiMatches || vangiMatches
+                val matchesQuery = if (q.isEmpty()) true else {
+                    receipt.patruEn.lowercase().contains(q) ||
+                    receipt.vaangunarPeyar.values.any { it.lowercase().contains(q) } ||
+                    receipt.seluthumMurai.lowercase().contains(q) ||
+                    receipt.vangiPeyar?.lowercase()?.contains(q) == true
+                }
+                val s = startDateFilter
+                val e = endDateFilter
+                val matchesDate = when {
+                    s != null && e != null -> receipt.patruNaal in s..e
+                    s != null -> receipt.patruNaal >= s
+                    e != null -> receipt.patruNaal <= e
+                    else -> true
+                }
+                matchesQuery && matchesDate
             }
         }
 
