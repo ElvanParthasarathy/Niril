@@ -56,6 +56,7 @@ fun UruvakkuScreen(
     onSegmentSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
     isRefreshing: Boolean = false,
+    isSearchActive: Boolean = false,
     isSelectionMode: Boolean = false,
     selectedItemIds: Set<Long> = emptySet(),
     onToggleSelect: ((Long) -> Unit)? = null,
@@ -211,108 +212,111 @@ fun UruvakkuScreen(
                 Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
             }
 
-            // Segmented Pill Shifter (Invoices vs Receipts - Original Centered Style)
-            item(key = "pill_shifter") {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    ElvanPillShifter(
-                        items = shifterItems,
-                        selectedIndex = selectedSegment,
-                        onIndexSelected = onSegmentSelected,
-                        colors = colors,
-                        isFullWidth = false
-                    )
-                }
-            }
-
-            // Business Profile Filter Shifter (below Invoices vs Receipts pill - End to End)
-            if (businessShifterItems.size > 1) {
-                item(key = "business_shifter") {
-                    ElvanPillShifter(
-                        items = businessShifterItems,
-                        selectedIndex = safeProfileIndex,
-                        onIndexSelected = { selectedProfileFilterIndex = it },
-                        colors = colors,
-                        isFullWidth = true,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                    )
-                }
-            }
-
-            val isDateFilterActive = if (selectedSegment == 0) PattiyalRepository.isDateFilterActive else PatrugalRepository.isDateFilterActive
-            if (isDateFilterActive) {
-                item(key = "active_date_filter_banner") {
-                    val startMillis = if (selectedSegment == 0) PattiyalRepository.startDateFilter else PatrugalRepository.startDateFilter
-                    val endMillis = if (selectedSegment == 0) PattiyalRepository.endDateFilter else PatrugalRepository.endDateFilter
-                    val filterText = remember(startMillis, endMillis, isTa) {
-                        if (startMillis == null && endMillis == null) {
-                            ""
-                        } else if (startMillis != null && endMillis != null) {
-                            val startKey = DateGroupUtils.getDayKey(startMillis)
-                            val endKey = DateGroupUtils.getDayKey(endMillis)
-                            if (startKey == endKey) {
-                                val now = System.currentTimeMillis()
-                                val todayKey = DateGroupUtils.getDayKey(now)
-                                val yesterdayKey = DateGroupUtils.getDayKey(now - 86400000L)
-                                when (startKey) {
-                                    todayKey -> if (isTa) "இன்று" else "Today"
-                                    yesterdayKey -> if (isTa) "நேற்று" else "Yesterday"
-                                    else -> DateUtils.formatDate(startMillis)
-                                }
-                            } else {
-                                "${DateUtils.formatDate(startMillis)} - ${DateUtils.formatDate(endMillis)}"
-                            }
-                        } else if (startMillis != null) {
-                            ">= ${DateUtils.formatDate(startMillis)}"
-                        } else {
-                            "<= ${DateUtils.formatDate(endMillis!!)}"
-                        }
-                    }
+            val hideShifters = isSearchActive || isSelectionMode
+            if (!hideShifters) {
+                // Segmented Pill Shifter (Invoices vs Receipts - Original Centered Style)
+                item(key = "pill_shifter") {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
+                        modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Surface(
-                            onClick = {
-                                PattiyalRepository.clearDateFilter()
-                                PatrugalRepository.clearDateFilter()
-                            },
-                            shape = CircleShape,
-                            color = colors.accent.copy(alpha = 0.12f),
-                            modifier = Modifier.clip(CircleShape)
+                        ElvanPillShifter(
+                            items = shifterItems,
+                            selectedIndex = selectedSegment,
+                            onIndexSelected = onSegmentSelected,
+                            colors = colors,
+                            isFullWidth = false
+                        )
+                    }
+                }
+
+                // Business Profile Filter Shifter (below Invoices vs Receipts pill - End to End)
+                if (businessShifterItems.size > 1) {
+                    item(key = "business_shifter") {
+                        ElvanPillShifter(
+                            items = businessShifterItems,
+                            selectedIndex = safeProfileIndex,
+                            onIndexSelected = { selectedProfileFilterIndex = it },
+                            colors = colors,
+                            isFullWidth = true,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                        )
+                    }
+                }
+
+                val isDateFilterActive = if (selectedSegment == 0) PattiyalRepository.isDateFilterActive else PatrugalRepository.isDateFilterActive
+                if (isDateFilterActive) {
+                    item(key = "active_date_filter_banner") {
+                        val startMillis = if (selectedSegment == 0) PattiyalRepository.startDateFilter else PatrugalRepository.startDateFilter
+                        val endMillis = if (selectedSegment == 0) PattiyalRepository.endDateFilter else PatrugalRepository.endDateFilter
+                        val filterText = remember(startMillis, endMillis, isTa) {
+                            if (startMillis == null && endMillis == null) {
+                                ""
+                            } else if (startMillis != null && endMillis != null) {
+                                val startKey = DateGroupUtils.getDayKey(startMillis)
+                                val endKey = DateGroupUtils.getDayKey(endMillis)
+                                if (startKey == endKey) {
+                                    val now = System.currentTimeMillis()
+                                    val todayKey = DateGroupUtils.getDayKey(now)
+                                    val yesterdayKey = DateGroupUtils.getDayKey(now - 86400000L)
+                                    when (startKey) {
+                                        todayKey -> if (isTa) "இன்று" else "Today"
+                                        yesterdayKey -> if (isTa) "நேற்று" else "Yesterday"
+                                        else -> DateUtils.formatDate(startMillis)
+                                    }
+                                } else {
+                                    "${DateUtils.formatDate(startMillis)} - ${DateUtils.formatDate(endMillis)}"
+                                }
+                            } else if (startMillis != null) {
+                                ">= ${DateUtils.formatDate(startMillis)}"
+                            } else {
+                                "<= ${DateUtils.formatDate(endMillis!!)}"
+                            }
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            Surface(
+                                onClick = {
+                                    PattiyalRepository.clearDateFilter()
+                                    PatrugalRepository.clearDateFilter()
+                                },
+                                shape = CircleShape,
+                                color = colors.accent.copy(alpha = 0.12f),
+                                modifier = Modifier.clip(CircleShape)
                             ) {
-                                Icon(
-                                    imageVector = MaterialSymbols.Rounded.FilterList,
-                                    contentDescription = null,
-                                    tint = colors.accent,
-                                    modifier = Modifier.size(14.dp)
-                                )
-                                Text(
-                                    text = filterText,
-                                    style = TextStyle(
-                                        fontFamily = ff,
-                                        fontSize = 12.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = colors.accent
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = MaterialSymbols.Rounded.FilterList,
+                                        contentDescription = null,
+                                        tint = colors.accent,
+                                        modifier = Modifier.size(14.dp)
                                     )
-                                )
-                                Icon(
-                                    imageVector = MaterialSymbols.Rounded.Close,
-                                    contentDescription = "Clear",
-                                    tint = colors.accent,
-                                    modifier = Modifier.size(14.dp)
-                                )
+                                    Text(
+                                        text = filterText,
+                                        style = TextStyle(
+                                            fontFamily = ff,
+                                            fontSize = 12.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = colors.accent
+                                        )
+                                    )
+                                    Icon(
+                                        imageVector = MaterialSymbols.Rounded.Close,
+                                        contentDescription = "Clear",
+                                        tint = colors.accent,
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                }
                             }
                         }
                     }

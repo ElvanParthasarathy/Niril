@@ -320,7 +320,7 @@ fun HomeScreen() {
                         scrollState = currentScrollState,
                         title = selectedTab.getLocalizedHeader(),
                         showNavbar = !isWideScreen,
-                        hasActions = !isSearchActive,
+                        hasActions = !isSearchActive && !isSelectionMode,
                         isSearchActive = isSearchActive,
                         actions = {
                             if (selectedTab != NavTab.Home) {
@@ -576,6 +576,7 @@ fun HomeScreen() {
                                             PatrugalRepository.searchQuery = ""
                                         },
                                         isRefreshing = isRefreshing,
+                                        isSearchActive = isSearchActive,
                                         isSelectionMode = isSelectionMode,
                                         selectedItemIds = selectedItemIds,
                                         onToggleSelect = onToggleItem,
