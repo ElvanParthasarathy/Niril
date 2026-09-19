@@ -87,6 +87,7 @@ fun VaangunarScreen(
     scrollState: LazyListState = rememberLazyListState(),
     mode: AppMode = LocalAppMode.current,
     colors: ShellColors = rememberShellColors(),
+    isRefreshing: Boolean = false,
     isSelectionMode: Boolean = false,
     selectedItemIds: Set<Long> = emptySet(),
     onToggleSelect: ((Long) -> Unit)? = null,
@@ -136,7 +137,7 @@ fun VaangunarScreen(
                 Spacer(modifier = Modifier.height(LocalElvanTopSpacerHeight.current))
             }
 
-            if (isSearchLoading) {
+            if (isSearchLoading || isRefreshing) {
                 items(3) {
                     VaangunarCardSkeleton()
                 }

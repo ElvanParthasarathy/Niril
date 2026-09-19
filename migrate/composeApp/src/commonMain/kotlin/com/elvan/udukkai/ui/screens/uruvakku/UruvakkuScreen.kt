@@ -54,6 +54,7 @@ fun UruvakkuScreen(
     selectedSegment: Int,
     onSegmentSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    isRefreshing: Boolean = false,
     isSelectionMode: Boolean = false,
     selectedItemIds: Set<Long> = emptySet(),
     onToggleSelect: ((Long) -> Unit)? = null,
@@ -296,7 +297,7 @@ fun UruvakkuScreen(
                 }
             }
 
-            if (isSearchLoading) {
+            if (isSearchLoading || isRefreshing) {
                 items(3) {
                     Box(
                         modifier = Modifier

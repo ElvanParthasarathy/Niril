@@ -545,7 +545,7 @@ fun HomeScreen() {
                                             PattiyalRepository.loadAll(currentMode)
                                             PatrugalRepository.loadAll(currentMode)
                                             NiruvanaTharavugalRepository.refreshFromDatabase()
-                                            delay(600)
+                                            delay(700)
                                             isRefreshing = false
                                         }
                                     },
@@ -557,6 +557,7 @@ fun HomeScreen() {
                                             selectedTab = NavTab.Create
                                             uruvakkuSegment = 0
                                         },
+                                        isRefreshing = isRefreshing,
                                         onInvoiceClick = { invoice ->
                                             activeSubpage = ActiveSubpage.InvoiceView(invoice)
                                         }
@@ -572,7 +573,7 @@ fun HomeScreen() {
                                             isRefreshing = true
                                             PattiyalRepository.loadAll(currentMode)
                                             PatrugalRepository.loadAll(currentMode)
-                                            delay(600)
+                                            delay(700)
                                             isRefreshing = false
                                         }
                                     },
@@ -589,6 +590,7 @@ fun HomeScreen() {
                                             PattiyalRepository.searchQuery = ""
                                             PatrugalRepository.searchQuery = ""
                                         },
+                                        isRefreshing = isRefreshing,
                                         isSelectionMode = isSelectionMode,
                                         selectedItemIds = selectedItemIds,
                                         onToggleSelect = onToggleItem,
@@ -610,7 +612,7 @@ fun HomeScreen() {
                                         scope.launch {
                                             isRefreshing = true
                                             PorulRepository.loadAll(currentMode)
-                                            delay(600)
+                                            delay(700)
                                             isRefreshing = false
                                         }
                                     },
@@ -618,6 +620,7 @@ fun HomeScreen() {
                                 ) {
                                     PorulScreen(
                                         scrollState = productsScrollState,
+                                        isRefreshing = isRefreshing,
                                         onItemClick = { activeSubpage = ActiveSubpage.ProductView(it) },
                                         isSelectionMode = isSelectionMode,
                                         selectedItemIds = selectedItemIds,
@@ -634,7 +637,7 @@ fun HomeScreen() {
                                         scope.launch {
                                             isRefreshing = true
                                             VaangunarRepository.loadAll(currentMode)
-                                            delay(600)
+                                            delay(700)
                                             isRefreshing = false
                                         }
                                     },
@@ -642,6 +645,7 @@ fun HomeScreen() {
                                 ) {
                                     VaangunarScreen(
                                         scrollState = customersScrollState,
+                                        isRefreshing = isRefreshing,
                                         onMerchantClick = { activeSubpage = ActiveSubpage.CustomerView(it) },
                                         isSelectionMode = isSelectionMode,
                                         selectedItemIds = selectedItemIds,

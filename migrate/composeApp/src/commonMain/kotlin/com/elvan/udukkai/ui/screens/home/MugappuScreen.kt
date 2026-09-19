@@ -18,6 +18,8 @@ import com.elvan.udukkai.localization.tr
 import com.elvan.udukkai.theme.Dimens
 import com.elvan.udukkai.theme.rememberShellColors
 import com.elvan.udukkai.ui.components.shell.LocalElvanTopSpacerHeight
+import com.elvan.udukkai.ui.components.shell.MugappuStatsSkeleton
+import com.elvan.udukkai.ui.components.shell.UruvakkuCardSkeleton
 import com.elvan.udukkai.ui.navigation.MaterialSymbols
 import com.elvan.udukkai.ui.screens.home.koorugal.*
 
@@ -37,6 +39,7 @@ fun MugappuScreen(
     scrollState: LazyListState,
     onSeeAll: () -> Unit,
     modifier: Modifier = Modifier,
+    isRefreshing: Boolean = false,
     onInvoiceClick: (PattiyalTharavuru) -> Unit = {}
 ) {
     val mode = LocalAppMode.current
@@ -67,91 +70,118 @@ fun MugappuScreen(
             VanakkamPill(colors = colors)
         }
 
-        // 2. Bento Stats Grid
-        item(key = "stats_bento_grid") {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = Dimens.ContentPadding),
-                verticalArrangement = Arrangement.spacedBy(Dimens.ItemSpacing)
-            ) {
-                // Top row: 2 cards with identical size, aligned in the same horizontal line
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(Dimens.ItemSpacing)
-                ) {
-                    ElvanStatsCard(
-                        icon = MaterialSymbols.Rounded.CurrencyRupee,
-                        label = K.totalInvoiced.tr(),
-                        value = CurrencyUtils.formatInr(overallTotal),
-                        colors = colors,
-                        modifier = Modifier.weight(1f),
-                        isFullWidth = false
-                    )
+        if (isRefreshing) {
+            // Shimmer state when pull-down-to-refresh is active
+            item(key = "stats_shimmer") {
+                MugappuStatsSkeleton()
+            }
 
-                    ElvanStatsCard(
-                        icon = MaterialSymbols.Rounded.Apartment,
-                        label = K.companies.tr(),
-                        value = companiesSummary,
-                        colors = colors,
-                        modifier = Modifier.weight(1f),
-                        isFullWidth = false
-                    )
-                }
-
-                // Full-width 3rd card: Invoice count with company breakdown
-                ElvanStatsCard(
-                    icon = MaterialSymbols.Rounded.Description,
-                    label = K.totalInvoices.tr(),
-                    value = invoiceCountSummary,
+            item(key = "recent_shimmer_header") {
+                RecentActivityHeader(
+                    onSeeAll = onSeeAll,
                     colors = colors,
-                    modifier = Modifier.fillMaxWidth(),
-                    isFullWidth = true,
-                    onClick = onSeeAll
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .offset(y = 8.dp)
                 )
             }
-        }
 
-        // 3. Recent Activity Header (closely attached to the card below)
-        item(key = "recent_activity_header") {
-            RecentActivityHeader(
-                onSeeAll = onSeeAll,
-                colors = colors,
-                modifier = Modifier
-                    .padding(top = 8.dp)
-                    .offset(y = 8.dp)
-            )
-        }
-
-        // 4. Recent Invoices or Empty State
-        if (recentBills.isEmpty()) {
-            item(key = "recent_empty_state") {
-                MugappuEmptyState(colors = colors)
-            }
-        } else {
-            itemsIndexed(
-                items = recentBills,
-                key = { _, item -> "recent_inv_${item.id}" }
-            ) { index, item ->
+            items(3) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = Dimens.ContentPadding)
                 ) {
-                    if (mode == AppMode.KOOLI) {
-                        KooliMugappuAttai(
-                            index = index,
-                            pattiyal = item,
+                    UruvakkuCardSkeleton()
+                }
+            }
+        } else {
+            // 2. Bento Stats Grid
+            item(key = "stats_bento_grid") {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Dimens.ContentPadding),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.ItemSpacing)
+                ) {
+                    // Top row: 2 cards with identical size, aligned in the same horizontal line
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(Dimens.ItemSpacing)
+                    ) {
+                        ElvanStatsCard(
+                            icon = MaterialSymbols.Rounded.CurrencyRupee,
+                            label = K.totalInvoiced.tr(),
+                            value = CurrencyUtils.formatInr(overallTotal),
                             colors = colors,
-                            onClick = { onInvoiceClick(item) }
+                            modifier = Modifier.weight(1f),
+                            isFullWidth = false
                         )
-                    } else {
-                        PattuMugappuAttai(
-                            index = index,
-                            pattiyal = item,
+
+                        ElvanStatsCard(
+                            icon = MaterialSymbols.Rounded.Apartment,
+                            label = K.companies.tr(),
+                            value = companiesSummary,
                             colors = colors,
-                            onClick = { onInvoiceClick(item) }
+                            modifier = Modifier.weight(1f),
+                            isFullWidth = false
                         )
+                    }
+
+                    // Full-width 3rd card: Invoice count with company breakdown
+                    ElvanStatsCard(
+                        icon = MaterialSymbols.Rounded.Description,
+                        label = K.totalInvoices.tr(),
+                        value = invoiceCountSummary,
+                        colors = colors,
+                        modifier = Modifier.fillMaxWidth(),
+                        isFullWidth = true,
+                        onClick = onSeeAll
+                    )
+                }
+            }
+
+            // 3. Recent Activity Header (closely attached to the card below)
+            item(key = "recent_activity_header") {
+                RecentActivityHeader(
+                    onSeeAll = onSeeAll,
+                    colors = colors,
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .offset(y = 8.dp)
+                )
+            }
+
+            // 4. Recent Invoices or Empty State
+            if (recentBills.isEmpty()) {
+                item(key = "recent_empty_state") {
+                    MugappuEmptyState(colors = colors)
+                }
+            } else {
+                itemsIndexed(
+                    items = recentBills,
+                    key = { _, item -> "recent_inv_${item.id}" }
+                ) { index, item ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = Dimens.ContentPadding)
+                    ) {
+                        if (mode == AppMode.KOOLI) {
+                            KooliMugappuAttai(
+                                index = index,
+                                pattiyal = item,
+                                colors = colors,
+                                onClick = { onInvoiceClick(item) }
+                            )
+                        } else {
+                            PattuMugappuAttai(
+                                index = index,
+                                pattiyal = item,
+                                colors = colors,
+                                onClick = { onInvoiceClick(item) }
+                            )
+                        }
                     }
                 }
             }

@@ -2,7 +2,6 @@ package com.elvan.udukkai.ui.components.shell
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +14,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.elvan.udukkai.theme.Dimens
 import com.elvan.udukkai.theme.rememberShellColors
 
 /**
@@ -76,7 +76,6 @@ fun UruvakkuCardSkeleton(
             .fillMaxWidth()
             .clip(shape)
             .background(colors.surface)
-            .border(0.5.dp, colors.border, shape)
             .padding(18.dp)
     ) {
         Column(
@@ -151,7 +150,6 @@ fun ItemCardSkeleton(
             .fillMaxWidth()
             .clip(shape)
             .background(colors.surface)
-            .border(0.5.dp, colors.border, shape)
             .padding(horizontal = 16.dp, vertical = 14.dp)
     ) {
         Row(
@@ -215,4 +213,115 @@ fun PorulCardSkeleton(
     modifier: Modifier = Modifier,
     shimmerBrush: Brush = rememberShimmerBrush()
 ) = ItemCardSkeleton(modifier = modifier, shimmerBrush = shimmerBrush, hasThirdLine = false)
+
+/**
+ * Skeleton placeholder for the Mugappu Home Screen Bento Stats Grid.
+ */
+@Composable
+fun MugappuStatsSkeleton(
+    modifier: Modifier = Modifier,
+    shimmerBrush: Brush = rememberShimmerBrush()
+) {
+    val colors = rememberShellColors()
+    val shape = RoundedCornerShape(22.dp)
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = Dimens.ContentPadding),
+        verticalArrangement = Arrangement.spacedBy(Dimens.ItemSpacing)
+    ) {
+        // Top row: 2 cards (height 124dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.ItemSpacing)
+        ) {
+            repeat(2) {
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(124.dp)
+                        .clip(shape)
+                        .background(colors.surface)
+                        .padding(14.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        // Icon placeholder
+                        Box(
+                            modifier = Modifier
+                                .size(38.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(shimmerBrush)
+                        )
+                        // Label & value placeholder
+                        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.6f)
+                                    .height(12.dp)
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(shimmerBrush)
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(0.85f)
+                                    .height(20.dp)
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(shimmerBrush)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // Bottom full-width card (height 78dp)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(78.dp)
+                .clip(shape)
+                .background(colors.surface)
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Icon placeholder
+                Box(
+                    modifier = Modifier
+                        .size(44.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(shimmerBrush)
+                )
+                Spacer(modifier = Modifier.width(14.dp))
+                // Label & value placeholder
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.45f)
+                            .height(12.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(shimmerBrush)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.75f)
+                            .height(18.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(shimmerBrush)
+                    )
+                }
+            }
+        }
+    }
+}
+
 
